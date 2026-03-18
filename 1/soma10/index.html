@@ -1,1 +1,271 @@
+Entendido! Vamos fazer essa pequena mas importante alteração no nome. O jogo passará a chamar-se Soma10, o que faz todo o sentido já que o objetivo inicial é atingir os 10 pontos para subir de nível.
 
+Aqui tens o código final com o nome atualizado no título e no cabeçalho:
+
+HTML
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soma10 - 1º Ano</title>
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            background-color: #ff9f43;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        header h2 { margin: 0; font-size: 1.5rem; }
+
+        .btn-topo {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            background: rgba(0,0,0,0.2);
+            padding: 8px 15px;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #level-indicator { font-size: 1.2rem; color: #ff9f43; font-weight: bold; margin-bottom: 5px; }
+        #score { font-size: 1.5rem; color: #7f8c8d; margin-bottom: 20px; font-weight: bold; }
+
+        #question-box {
+            font-size: 4.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 50px;
+            border: 6px solid #ff9f43;
+            padding: 40px 60px;
+            border-radius: 30px;
+            background: #fffaf5;
+            transition: all 0.3s ease;
+            min-width: 350px;
+            text-align: center;
+        }
+
+        .fill-number { color: #2ecc71; text-decoration: underline; }
+        .wrong-anim { color: #e74c3c !important; border-color: #e74c3c !important; }
+        .correct-anim { border-color: #2ecc71 !important; }
+
+        .options-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            width: 100%;
+            padding-bottom: 60px;
+        }
+
+        .option-btn {
+            background-color: #ff9f43;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 20px 40px;
+            font-size: 2.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 6px 0 #e67e22;
+            min-width: 100px;
+        }
+
+        .option-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #e67e22; }
+
+        /* Modais */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,159,67,0.98);
+            z-index: 100;
+            flex-direction: column; align-items: center; justify-content: center;
+            color: white; text-align: center;
+        }
+
+        .stats-box {
+            background: white;
+            color: #333;
+            padding: 20px;
+            border-radius: 20px;
+            margin: 20px;
+            width: 80%;
+            max-width: 400px;
+        }
+
+        .btn-final {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="next-level-modal" class="modal">
+        <h1>🌟 NÍVEL 1 CONCLUÍDO! 🌟</h1>
+        <p style="font-size: 1.5rem;">Chegaste aos 10 pontos!</p>
+        <button class="btn-final" style="background: white; color: #ff9f43;" onclick="startLevel2()">Ir para o Nível 2 🚀</button>
+    </div>
+
+    <div id="final-modal" class="modal" style="background: #2ecc71;">
+        <h1>🏆 MISSÃO CUMPRIDA! 🏆</h1>
+        <div class="stats-box">
+            <h3>Relatório de Jogo Soma10:</h3>
+            <p><strong>Nível 1:</strong> <span id="s1"></span> ✅ | <span id="e1"></span> ❌</p>
+            <p><strong>Nível 2:</strong> <span id="s2"></span> ✅ | <span id="e2"></span> ❌</p>
+        </div>
+        <div>
+            <button class="btn-final" onclick="location.reload()">Jogar Novamente 🔄</button>
+            <a href="../" class="btn-final">Sair para o Menu 🏠</a>
+        </div>
+    </div>
+
+    <header>
+        <h2>➕ Soma10</h2>
+        <a href="../" class="btn-topo">⬅ 1º Ano</a>
+    </header>
+
+    <main>
+        <div id="level-indicator">NÍVEL 1</div>
+        <div id="score">Pontos: 0</div>
+        <div id="question-box"></div>
+        <div class="options-container" id="options"></div>
+    </main>
+
+    <script>
+        let score = 0;
+        let correctAnswer = 0;
+        let canClick = true;
+        let currentLevel = 1;
+
+        let stats = {
+            l1_hits: 0, l1_errors: 0,
+            l2_hits: 0, l2_errors: 0
+        };
+
+        function nextQuestion() {
+            if (score >= 10 && currentLevel === 1) {
+                document.getElementById('next-level-modal').style.display = 'flex';
+                return;
+            }
+            if (score >= 20) {
+                showFinalReport();
+                return;
+            }
+
+            canClick = true;
+            const optionsDiv = document.getElementById('options');
+            const qBox = document.getElementById('question-box');
+            optionsDiv.innerHTML = ''; 
+            qBox.classList.remove('correct-anim', 'wrong-anim');
+
+            let n1, n2, res;
+            if (currentLevel === 1) {
+                n1 = Math.floor(Math.random() * 6) + 1;
+                n2 = Math.floor(Math.random() * 5) + 1;
+                correctAnswer = n1 + n2;
+                qBox.innerHTML = `${n1} + ${n2} = <span id="gap">?</span>`;
+            } else {
+                n1 = Math.floor(Math.random() * 7) + 1;
+                correctAnswer = Math.floor(Math.random() * 5) + 1;
+                res = n1 + correctAnswer;
+                qBox.innerHTML = `${n1} + <span id="gap">__</span> = ${res}`;
+            }
+
+            let choices = [correctAnswer];
+            while(choices.length < 4) {
+                let r = Math.floor(Math.random() * 15) + 1;
+                if(!choices.includes(r)) choices.push(r);
+            }
+            choices.sort(() => Math.random() - 0.5);
+
+            choices.forEach(val => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = val;
+                btn.onclick = () => check(val);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function check(selected) {
+            if (!canClick) return;
+            const qBox = document.getElementById('question-box');
+            const gap = document.getElementById('gap');
+
+            if(selected === correctAnswer) {
+                canClick = false;
+                score++;
+                currentLevel === 1 ? stats.l1_hits++ : stats.l2_hits++;
+                updateScore();
+                gap.innerHTML = selected;
+                gap.className = "fill-number";
+                qBox.classList.add('correct-anim');
+                setTimeout(nextQuestion, 1000);
+            } else {
+                if(score > 0) score--; 
+                currentLevel === 1 ? stats.l1_errors++ : stats.l2_errors++;
+                updateScore();
+                qBox.classList.add('wrong-anim');
+                setTimeout(() => qBox.classList.remove('wrong-anim'), 500);
+            }
+        }
+
+        function updateScore() {
+            document.getElementById('score').innerText = `Pontos: ${score}`;
+        }
+
+        function startLevel2() {
+            currentLevel = 2;
+            document.getElementById('next-level-modal').style.display = 'none';
+            document.getElementById('level-indicator').innerText = "NÍVEL 2";
+            document.getElementById('level-indicator').style.color = "#9b59b6";
+            nextQuestion();
+        }
+
+        function showFinalReport() {
+            document.getElementById('s1').innerText = stats.l1_hits;
+            document.getElementById('e1').innerText = stats.l1_errors;
+            document.getElementById('s2').innerText = stats.l2_hits;
+            document.getElementById('e2').innerText = stats.l2_errors;
+            document.getElementById('final-modal').style.display = 'flex';
+        }
+
+        nextQuestion();
+    </script>
+</body>
+</html>
