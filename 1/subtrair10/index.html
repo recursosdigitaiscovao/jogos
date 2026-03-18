@@ -1,3 +1,8 @@
+Com certeza, Professor Luís. Aqui tens o código completo e revisado.
+
+Nesta versão, os links de "Voltar" e "Menu" já estão configurados com ../index.html. Isto assume que o jogo está dentro de uma subpasta (como /1/subtrair10/index.html) e queres subir um nível para chegar ao menu principal do 1º Ano (/1/index.html).
+
+HTML
 <!DOCTYPE html>
 <html lang="pt-pt">
 <head>
@@ -132,6 +137,7 @@
             font-weight: bold;
             text-decoration: none;
             margin-top: 10px;
+            display: inline-block;
         }
 
         @media (min-width: 600px) {
@@ -155,12 +161,12 @@
             <p>Nível 2: <span id="s2"></span> ✅ | <span id="e2"></span> ❌</p>
         </div>
         <button class="btn-final" onclick="location.reload()">REPETIR 🔄</button>
-        <a href="index.html" class="btn-final" style="background: rgba(0,0,0,0.3);">MENU 🏠</a>
+        <a href="../index.html" class="btn-final" style="background: rgba(0,0,0,0.3);">MENU 🏠</a>
     </div>
 
     <header>
         <h2>➖ Subtrair10</h2>
-        <a href="index.html" class="btn-topo">⬅ Voltar</a>
+        <a href="../index.html" class="btn-topo">⬅ Voltar</a>
     </header>
 
     <main>
@@ -177,7 +183,6 @@
         let stats = { l1_hits: 0, l1_errors: 0, l2_hits: 0, l2_errors: 0 };
 
         function nextQuestion() {
-            // Verifica progressão
             if (score >= 10 && currentLevel === 1) {
                 document.getElementById('next-level-modal').style.display = 'flex';
                 return;
@@ -196,20 +201,17 @@
             let n1, n2, res;
 
             if (currentLevel === 1) {
-                // Nível 1: n1 - n2 = ?
-                n1 = Math.floor(Math.random() * 6) + 5; // Min 5, Max 10
+                n1 = Math.floor(Math.random() * 6) + 5; 
                 n2 = Math.floor(Math.random() * (n1 + 1)); 
                 correctAnswer = n1 - n2;
                 qBox.innerHTML = `${n1} - ${n2} = <span id="gap">?</span>`;
             } else {
-                // Nível 2: n1 - __ = res
                 n1 = Math.floor(Math.random() * 6) + 5;
                 res = Math.floor(Math.random() * (n1 + 1));
                 correctAnswer = n1 - res;
                 qBox.innerHTML = `${n1} - <span id="gap">__</span> = ${res}`;
             }
 
-            // Gerar Opções
             let choices = [correctAnswer];
             while(choices.length < 4) {
                 let r = Math.floor(Math.random() * 11);
@@ -236,18 +238,14 @@
                 score++;
                 currentLevel === 1 ? stats.l1_hits++ : stats.l2_hits++;
                 updateScoreUI();
-                
-                // Feedback: Enche a lacuna
                 gap.innerHTML = selected;
                 gap.className = "fill-number";
                 qBox.classList.add('correct-anim');
-                
                 setTimeout(nextQuestion, 1200);
             } else {
                 if(score > 0) score--;
                 currentLevel === 1 ? stats.l1_errors++ : stats.l2_errors++;
                 updateScoreUI();
-                
                 qBox.classList.add('wrong-anim');
                 setTimeout(() => qBox.classList.remove('wrong-anim'), 500);
             }
