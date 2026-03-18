@@ -1,9 +1,16 @@
+Aqui tens o código completo para o Subtrair10, já totalmente otimizado para telemóveis e tablets.
+
+Este código utiliza o sistema de grelha (grid) para que os botões de resposta fiquem grandes e fáceis de tocar, além de impedir o "zoom" automático que às vezes atrapalha as crianças ao clicarem rápido.
+
+Copia este código para o teu ficheiro 1/subtracao.html:
+
+HTML
 <!DOCTYPE html>
 <html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Soma10 - Mobile Ready</title>
+    <title>Subtrair10 - 1º Ano</title>
     <style>
         body {
             background-color: #ffffff;
@@ -13,13 +20,12 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            /* Impede scroll acidental no telemóvel */
             overflow: hidden; 
             touch-action: manipulation;
         }
 
         header {
-            background-color: #ff9f43;
+            background-color: #ff9f43; /* Laranja padrão do 1º Ano */
             color: white;
             padding: 10px 15px;
             display: flex;
@@ -44,14 +50,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-evenly; /* Distribui melhor o espaço no telemóvel */
+            justify-content: space-evenly;
             padding: 10px;
         }
 
         #score { font-size: 1.2rem; font-weight: bold; color: #7f8c8d; }
 
         #question-box {
-            font-size: clamp(2.5rem, 15vw, 4.5rem); /* Tamanho de letra fluído */
+            font-size: clamp(2.5rem, 15vw, 4.5rem);
             font-weight: bold;
             color: #2c3e50;
             border: 6px solid #ff9f43;
@@ -66,7 +72,7 @@
 
         .options-container {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2x2 no telemóvel para ser mais fácil de clicar */
+            grid-template-columns: repeat(2, 1fr); /* 2x2 no telemóvel */
             gap: 15px;
             width: 90%;
             max-width: 500px;
@@ -83,7 +89,7 @@
             font-weight: bold;
             box-shadow: 0 5px 0 #e67e22;
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent; /* Remove o flash azul ao tocar no Android/iOS */
+            -webkit-tap-highlight-color: transparent;
         }
 
         .option-btn:active {
@@ -96,7 +102,7 @@
         .correct-anim { border-color: #2ecc71 !important; }
         .fill-number { color: #2ecc71; text-decoration: underline; }
 
-        /* Modais adaptados */
+        /* Modais */
         .modal {
             display: none;
             position: fixed;
@@ -106,9 +112,10 @@
             flex-direction: column; align-items: center; justify-content: center;
             padding: 20px;
             box-sizing: border-box;
+            color: white;
+            text-align: center;
         }
 
-        /* Ajuste para ecrãs maiores (Tablets/PC) */
         @media (min-width: 600px) {
             .options-container { grid-template-columns: repeat(4, 1fr); }
             #question-box { padding: 40px 60px; }
@@ -119,22 +126,23 @@
 
     <div id="next-level-modal" class="modal">
         <h1>🌟 NÍVEL 2! 🚀</h1>
-        <button class="option-btn" style="background: white; color: #ff9f43;" onclick="startLevel2()">AVANÇAR</button>
+        <p style="font-size: 1.2rem;">Ficaste craque a tirar números!</p>
+        <button class="option-btn" style="background: white; color: #ff9f43; min-width: 200px;" onclick="startLevel2()">AVANÇAR</button>
     </div>
 
     <div id="final-modal" class="modal" style="background: #2ecc71;">
-        <h2>🏆 PARABÉNS!</h2>
-        <div style="background:white; color:#333; padding:15px; border-radius:15px; margin:10px; width:100%;">
+        <h2>🏆 SUBTRAIR10 CONCLUÍDO!</h2>
+        <div style="background:white; color:#333; padding:15px; border-radius:15px; margin:10px; width:100%; max-width: 300px;">
             <p>Nível 1: <span id="s1"></span>✅ | <span id="e1"></span>❌</p>
             <p>Nível 2: <span id="s2"></span>✅ | <span id="e2"></span>❌</p>
         </div>
-        <button class="option-btn" style="background:#2c3e50; margin-bottom:10px;" onclick="location.reload()">REPETIR 🔄</button>
-        <a href="../" style="color:white; font-weight:bold; text-decoration:none;">Sair para o Menu</a>
+        <button class="option-btn" style="background:#2c3e50; margin-bottom:10px; min-width: 200px;" onclick="location.reload()">REPETIR 🔄</button>
+        <a href="index.html" style="color:white; font-weight:bold; text-decoration:none; margin-top: 10px;">Voltar ao Menu</a>
     </div>
 
     <header>
-        <h2 id="title-text">➕ Soma10</h2>
-        <a href="../" class="btn-topo">⬅ 1º Ano</a>
+        <h2>➖ Subtrair10</h2>
+        <a href="index.html" class="btn-topo">⬅ 1º Ano</a>
     </header>
 
     <main>
@@ -144,7 +152,6 @@
     </main>
 
     <script>
-        // A lógica do JS mantém-se a mesma das versões anteriores
         let score = 0;
         let correctAnswer = 0;
         let canClick = true;
@@ -168,24 +175,24 @@
             qBox.classList.remove('correct-anim', 'wrong-anim');
 
             let n1, n2, res;
-            // Se o título for Subtrair10, faz subtração, senão faz soma
-            const isSub = document.getElementById('title-text').innerText.includes("Subtrair");
 
             if (currentLevel === 1) {
-                n1 = Math.floor(Math.random() * 6) + (isSub ? 5 : 1);
-                n2 = Math.floor(Math.random() * 5);
-                correctAnswer = isSub ? (n1 - n2) : (n1 + n2);
-                qBox.innerHTML = `${n1} ${isSub?'-':'+'} ${n2} = <span id="gap">?</span>`;
+                // Subtração simples: n1 - n2 = ?
+                n1 = Math.floor(Math.random() * 6) + 5; // 5 a 10
+                n2 = Math.floor(Math.random() * (n1 + 1)); // Garante resultado positivo
+                correctAnswer = n1 - n2;
+                qBox.innerHTML = `${n1} - ${n2} = <span id="gap">?</span>`;
             } else {
-                n1 = Math.floor(Math.random() * 6) + 4;
-                correctAnswer = Math.floor(Math.random() * 5) + 1;
-                res = isSub ? (n1 - correctAnswer) : (n1 + correctAnswer);
-                qBox.innerHTML = `${n1} ${isSub?'-':'+'} <span id="gap">__</span> = ${res}`;
+                // Subtração com lacuna: n1 - ? = res
+                n1 = Math.floor(Math.random() * 6) + 5;
+                res = Math.floor(Math.random() * (n1 + 1));
+                correctAnswer = n1 - res;
+                qBox.innerHTML = `${n1} - <span id="gap">__</span> = ${res}`;
             }
 
             let choices = [correctAnswer];
             while(choices.length < 4) {
-                let r = Math.floor(Math.random() * 12);
+                let r = Math.floor(Math.random() * 11);
                 if(!choices.includes(r)) choices.push(r);
             }
             choices.sort(() => Math.random() - 0.5);
