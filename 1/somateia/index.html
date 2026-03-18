@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teia Matemática - Nível 2 Dinâmico</title>
+    <title>Teia Matemática - Final</title>
     <style>
         body {
             background-color: #ffffff;
@@ -25,8 +25,6 @@
             align-items: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-
-        header h2 { margin: 0; font-size: 1.5rem; }
 
         .btn-topo {
             color: white;
@@ -63,9 +61,7 @@
             text-align: center;
         }
 
-        /* Destaque para o número que preenche a lacuna */
         .fill-number { color: #2ecc71; text-decoration: underline; }
-
         .wrong-anim { color: #e74c3c !important; border-color: #e74c3c !important; }
         .correct-anim { border-color: #2ecc71 !important; }
 
@@ -86,30 +82,64 @@
             font-size: 2.2rem;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s;
             box-shadow: 0 6px 0 #e67e22;
             min-width: 100px;
         }
 
-        .option-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #e67e22; }
-
-        #next-level-modal {
+        /* Modais */
+        .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,159,67,0.95);
+            background: rgba(255,159,67,0.98);
             z-index: 100;
             flex-direction: column; align-items: center; justify-content: center;
             color: white; text-align: center;
+        }
+
+        .stats-box {
+            background: white;
+            color: #333;
+            padding: 20px;
+            border-radius: 20px;
+            margin: 20px;
+            width: 80%;
+            max-width: 400px;
+        }
+
+        .btn-final {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <div id="next-level-modal">
-        <h1>🌟 EXCELENTE! 🌟</h1>
-        <p style="font-size: 1.5rem;">Chegaste aos 10 pontos!</p>
-        <button style="background: white; color: #ff9f43; padding: 20px 40px; border-radius: 50px; font-size: 1.5rem; border: none; cursor: pointer; font-weight: bold;" onclick="startLevel2()">Ir para o Nível 2 🚀</button>
+    <div id="next-level-modal" class="modal">
+        <h1>🌟 NÍVEL 1 CONCLUÍDO! 🌟</h1>
+        <button class="btn-final" style="background: white; color: #ff9f43;" onclick="startLevel2()">Ir para o Nível 2 🚀</button>
+    </div>
+
+    <div id="final-modal" class="modal" style="background: #2ecc71;">
+        <h1>🏆 MISSÃO CUMPRIDA! 🏆</h1>
+        <div class="stats-box">
+            <h3>Relatório de Jogo:</h3>
+            <p><strong>Nível 1:</strong> <span id="s1"></span> ✅ | <span id="e1"></span> ❌</p>
+            <p><strong>Nível 2:</strong> <span id="s2"></span> ✅ | <span id="e2"></span> ❌</p>
+        </div>
+        <div>
+            <button class="btn-final" onclick="location.reload()">Jogar Novamente 🔄</button>
+            <a href="../" class="btn-final">Sair para o Menu 🏠</a>
+        </div>
     </div>
 
     <header>
@@ -129,11 +159,20 @@
         let correctAnswer = 0;
         let canClick = true;
         let currentLevel = 1;
-        let num1, resultTotal;
+
+        // Estatísticas
+        let stats = {
+            l1_hits: 0, l1_errors: 0,
+            l2_hits: 0, l2_errors: 0
+        };
 
         function nextQuestion() {
             if (score >= 10 && currentLevel === 1) {
                 document.getElementById('next-level-modal').style.display = 'flex';
+                return;
+            }
+            if (score >= 20) {
+                showFinalReport();
                 return;
             }
 
@@ -143,21 +182,22 @@
             optionsDiv.innerHTML = ''; 
             qBox.classList.remove('correct-anim', 'wrong-anim');
 
+            let n1, n2, res;
             if (currentLevel === 1) {
-                num1 = Math.floor(Math.random() * 6) + 1;
-                let num2 = Math.floor(Math.random() * 5) + 1;
-                correctAnswer = num1 + num2;
-                qBox.innerHTML = `${num1} + ${num2} = <span id="gap">?</span>`;
+                n1 = Math.floor(Math.random() * 6) + 1;
+                n2 = Math.floor(Math.random() * 5) + 1;
+                correctAnswer = n1 + n2;
+                qBox.innerHTML = `${n1} + ${n2} = <span id="gap">?</span>`;
             } else {
-                num1 = Math.floor(Math.random() * 7) + 1;
+                n1 = Math.floor(Math.random() * 7) + 1;
                 correctAnswer = Math.floor(Math.random() * 5) + 1;
-                resultTotal = num1 + correctAnswer;
-                qBox.innerHTML = `${num1} + <span id="gap">__</span> = ${resultTotal}`;
+                res = n1 + correctAnswer;
+                qBox.innerHTML = `${n1} + <span id="gap">__</span> = ${res}`;
             }
 
             let choices = [correctAnswer];
             while(choices.length < 4) {
-                let r = Math.floor(Math.random() * 12) + 1;
+                let r = Math.floor(Math.random() * 15) + 1;
                 if(!choices.includes(r)) choices.push(r);
             }
             choices.sort(() => Math.random() - 0.5);
@@ -179,16 +219,15 @@
             if(selected === correctAnswer) {
                 canClick = false;
                 score++;
+                currentLevel === 1 ? stats.l1_hits++ : stats.l2_hits++;
                 updateScore();
-                
-                // Preencher a lacuna com o número correto e mudar cor
                 gap.innerHTML = selected;
                 gap.className = "fill-number";
                 qBox.classList.add('correct-anim');
-                
-                setTimeout(nextQuestion, 1200); // Espera um pouco mais para a criança ver o resultado
+                setTimeout(nextQuestion, 1000);
             } else {
                 if(score > 0) score--; 
+                currentLevel === 1 ? stats.l1_errors++ : stats.l2_errors++;
                 updateScore();
                 qBox.classList.add('wrong-anim');
                 setTimeout(() => qBox.classList.remove('wrong-anim'), 500);
@@ -205,6 +244,14 @@
             document.getElementById('level-indicator').innerText = "NÍVEL 2";
             document.getElementById('level-indicator').style.color = "#9b59b6";
             nextQuestion();
+        }
+
+        function showFinalReport() {
+            document.getElementById('s1').innerText = stats.l1_hits;
+            document.getElementById('e1').innerText = stats.l1_errors;
+            document.getElementById('s2').innerText = stats.l2_hits;
+            document.getElementById('e2').innerText = stats.l2_errors;
+            document.getElementById('final-modal').style.display = 'flex';
         }
 
         nextQuestion();
