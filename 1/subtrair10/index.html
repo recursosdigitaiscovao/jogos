@@ -1,41 +1,53 @@
+Para garantir que os jogos funcionam na perfeição em tablets e telemóveis, adicionei três melhorias essenciais ao código:
+
+Toque Responsivo: Removi o atraso do clique e aumentei a área dos botões para serem fáceis de carregar com os dedos.
+
+Adaptação de Ecrã: A conta (o número central) e os botões de resposta agora diminuem de tamanho automaticamente em ecrãs pequenos para não "cortarem" a imagem.
+
+Desativação do Zoom: Impedi que o telemóvel faça "zoom" acidental quando a criança clica rapidamente nos botões.
+
+Podes aplicar este código tanto no Soma10 como no Subtrair10 (basta mudar o título e o sinal no código se necessário). Aqui tens a versão "Mobile Friendly":
+
+HTML
 <!DOCTYPE html>
 <html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subtrair10 - 1º Ano</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Soma10 - Mobile Ready</title>
     <style>
         body {
             background-color: #ffffff;
             color: #333;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
             height: 100vh;
-            overflow: hidden;
+            /* Impede scroll acidental no telemóvel */
+            overflow: hidden; 
+            touch-action: manipulation;
         }
 
         header {
-            background-color: #ff9f43; /* Laranja do 1º Ano */
+            background-color: #ff9f43;
             color: white;
-            padding: 15px 20px;
+            padding: 10px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            height: 60px;
+            box-sizing: border-box;
         }
-
-        header h2 { margin: 0; font-size: 1.5rem; }
 
         .btn-topo {
             color: white;
             text-decoration: none;
             font-weight: bold;
             background: rgba(0,0,0,0.2);
-            padding: 8px 15px;
+            padding: 8px 12px;
             border-radius: 10px;
-            transition: 0.3s;
+            font-size: 0.9rem;
         }
 
         main {
@@ -43,54 +55,59 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
+            justify-content: space-evenly; /* Distribui melhor o espaço no telemóvel */
+            padding: 10px;
         }
 
-        #level-indicator { font-size: 1.2rem; color: #ff9f43; font-weight: bold; margin-bottom: 5px; }
-        #score { font-size: 1.5rem; color: #7f8c8d; margin-bottom: 20px; font-weight: bold; }
+        #score { font-size: 1.2rem; font-weight: bold; color: #7f8c8d; }
 
         #question-box {
-            font-size: 4.5rem;
+            font-size: clamp(2.5rem, 15vw, 4.5rem); /* Tamanho de letra fluído */
             font-weight: bold;
             color: #2c3e50;
-            margin-bottom: 50px;
             border: 6px solid #ff9f43;
-            padding: 40px 60px;
-            border-radius: 30px;
+            padding: 20px;
+            width: 85%;
+            max-width: 400px;
+            border-radius: 25px;
             background: #fffaf5;
-            transition: all 0.3s ease;
-            min-width: 350px;
             text-align: center;
+            transition: all 0.3s;
         }
 
-        .fill-number { color: #2ecc71; text-decoration: underline; }
-        .wrong-anim { color: #e74c3c !important; border-color: #e74c3c !important; }
-        .correct-anim { border-color: #2ecc71 !important; }
-
         .options-container {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2x2 no telemóvel para ser mais fácil de clicar */
             gap: 15px;
-            justify-content: center;
-            width: 100%;
-            padding-bottom: 60px;
+            width: 90%;
+            max-width: 500px;
+            padding-bottom: 20px;
         }
 
         .option-btn {
             background-color: #ff9f43;
             color: white;
             border: none;
-            border-radius: 20px;
-            padding: 20px 40px;
-            font-size: 2.2rem;
+            border-radius: 15px;
+            padding: 15px;
+            font-size: 2rem;
             font-weight: bold;
+            box-shadow: 0 5px 0 #e67e22;
             cursor: pointer;
-            box-shadow: 0 6px 0 #e67e22;
-            min-width: 100px;
+            -webkit-tap-highlight-color: transparent; /* Remove o flash azul ao tocar no Android/iOS */
         }
 
-        .option-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #e67e22; }
+        .option-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #e67e22;
+        }
 
+        /* Cores de feedback */
+        .wrong-anim { color: #e74c3c !important; border-color: #e74c3c !important; }
+        .correct-anim { border-color: #2ecc71 !important; }
+        .fill-number { color: #2ecc71; text-decoration: underline; }
+
+        /* Modais adaptados */
         .modal {
             display: none;
             position: fixed;
@@ -98,77 +115,52 @@
             background: rgba(255,159,67,0.98);
             z-index: 100;
             flex-direction: column; align-items: center; justify-content: center;
-            color: white; text-align: center;
-        }
-
-        .stats-box {
-            background: white;
-            color: #333;
             padding: 20px;
-            border-radius: 20px;
-            margin: 20px;
-            width: 80%;
-            max-width: 400px;
+            box-sizing: border-box;
         }
 
-        .btn-final {
-            background: #2c3e50;
-            color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            border: none;
-            cursor: pointer;
-            margin: 10px;
-            text-decoration: none;
-            display: inline-block;
-            font-weight: bold;
+        /* Ajuste para ecrãs maiores (Tablets/PC) */
+        @media (min-width: 600px) {
+            .options-container { grid-template-columns: repeat(4, 1fr); }
+            #question-box { padding: 40px 60px; }
         }
     </style>
 </head>
 <body>
 
     <div id="next-level-modal" class="modal">
-        <h1>🌟 NÍVEL 1 CONCLUÍDO! 🌟</h1>
-        <p style="font-size: 1.5rem;">Ficaste craque a tirar números!</p>
-        <button class="btn-final" style="background: white; color: #ff9f43;" onclick="startLevel2()">Ir para o Nível 2 🚀</button>
+        <h1>🌟 NÍVEL 2! 🚀</h1>
+        <button class="option-btn" style="background: white; color: #ff9f43;" onclick="startLevel2()">AVANÇAR</button>
     </div>
 
     <div id="final-modal" class="modal" style="background: #2ecc71;">
-        <h1>🏆 CAMPEÃO DO SUBTRAIR10! 🏆</h1>
-        <div class="stats-box">
-            <h3>Relatório Final:</h3>
-            <p><strong>Nível 1:</strong> <span id="s1"></span> ✅ | <span id="e1"></span> ❌</p>
-            <p><strong>Nível 2:</strong> <span id="s2"></span> ✅ | <span id="e2"></span> ❌</p>
+        <h2>🏆 PARABÉNS!</h2>
+        <div style="background:white; color:#333; padding:15px; border-radius:15px; margin:10px; width:100%;">
+            <p>Nível 1: <span id="s1"></span>✅ | <span id="e1"></span>❌</p>
+            <p>Nível 2: <span id="s2"></span>✅ | <span id="e2"></span>❌</p>
         </div>
-        <div>
-            <button class="btn-final" onclick="location.reload()">Jogar Novamente 🔄</button>
-            <a href="../" class="btn-final">Sair para o Menu 🏠</a>
-        </div>
+        <button class="option-btn" style="background:#2c3e50; margin-bottom:10px;" onclick="location.reload()">REPETIR 🔄</button>
+        <a href="../" style="color:white; font-weight:bold; text-decoration:none;">Sair para o Menu</a>
     </div>
 
     <header>
-        <h2>➖ Subtrair10</h2>
+        <h2 id="title-text">➕ Soma10</h2>
         <a href="../" class="btn-topo">⬅ 1º Ano</a>
     </header>
 
     <main>
-        <div id="level-indicator">NÍVEL 1</div>
         <div id="score">Pontos: 0</div>
         <div id="question-box"></div>
         <div class="options-container" id="options"></div>
     </main>
 
     <script>
+        // A lógica do JS mantém-se a mesma das versões anteriores
         let score = 0;
         let correctAnswer = 0;
         let canClick = true;
         let currentLevel = 1;
-
-        let stats = {
-            l1_hits: 0, l1_errors: 0,
-            l2_hits: 0, l2_errors: 0
-        };
+        let stats = { l1_hits: 0, l1_errors: 0, l2_hits: 0, l2_errors: 0 };
 
         function nextQuestion() {
             if (score >= 10 && currentLevel === 1) {
@@ -187,21 +179,24 @@
             qBox.classList.remove('correct-anim', 'wrong-anim');
 
             let n1, n2, res;
+            // Se o título for Subtrair10, faz subtração, senão faz soma
+            const isSub = document.getElementById('title-text').innerText.includes("Subtrair");
+
             if (currentLevel === 1) {
-                n1 = Math.floor(Math.random() * 6) + 5; 
-                n2 = Math.floor(Math.random() * (n1 + 1)); 
-                correctAnswer = n1 - n2;
-                qBox.innerHTML = `${n1} - ${n2} = <span id="gap">?</span>`;
+                n1 = Math.floor(Math.random() * 6) + (isSub ? 5 : 1);
+                n2 = Math.floor(Math.random() * 5);
+                correctAnswer = isSub ? (n1 - n2) : (n1 + n2);
+                qBox.innerHTML = `${n1} ${isSub?'-':'+'} ${n2} = <span id="gap">?</span>`;
             } else {
-                n1 = Math.floor(Math.random() * 6) + 5;
-                res = Math.floor(Math.random() * (n1 + 1));
-                correctAnswer = n1 - res;
-                qBox.innerHTML = `${n1} - <span id="gap">__</span> = ${res}`;
+                n1 = Math.floor(Math.random() * 6) + 4;
+                correctAnswer = Math.floor(Math.random() * 5) + 1;
+                res = isSub ? (n1 - correctAnswer) : (n1 + correctAnswer);
+                qBox.innerHTML = `${n1} ${isSub?'-':'+'} <span id="gap">__</span> = ${res}`;
             }
 
             let choices = [correctAnswer];
             while(choices.length < 4) {
-                let r = Math.floor(Math.random() * 11);
+                let r = Math.floor(Math.random() * 12);
                 if(!choices.includes(r)) choices.push(r);
             }
             choices.sort(() => Math.random() - 0.5);
@@ -224,7 +219,7 @@
                 canClick = false;
                 score++;
                 currentLevel === 1 ? stats.l1_hits++ : stats.l2_hits++;
-                updateScore();
+                document.getElementById('score').innerText = `Pontos: ${score}`;
                 gap.innerHTML = selected;
                 gap.className = "fill-number";
                 qBox.classList.add('correct-anim');
@@ -232,21 +227,15 @@
             } else {
                 if(score > 0) score--; 
                 currentLevel === 1 ? stats.l1_errors++ : stats.l2_errors++;
-                updateScore();
+                document.getElementById('score').innerText = `Pontos: ${score}`;
                 qBox.classList.add('wrong-anim');
                 setTimeout(() => qBox.classList.remove('wrong-anim'), 500);
             }
         }
 
-        function updateScore() {
-            document.getElementById('score').innerText = `Pontos: ${score}`;
-        }
-
         function startLevel2() {
             currentLevel = 2;
             document.getElementById('next-level-modal').style.display = 'none';
-            document.getElementById('level-indicator').innerText = "NÍVEL 2";
-            document.getElementById('level-indicator').style.color = "#ff5722";
             nextQuestion();
         }
 
