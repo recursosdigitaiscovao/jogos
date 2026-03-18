@@ -1,3 +1,8 @@
+Com certeza! Vamos ajustar a estrutura para que o jogo pareça uma aplicação mais moderna e limpa: fundo branco, uma barra superior (header) com a cor laranja do 1º Ano e os botões de resposta alinhados na parte inferior.
+
+Aqui está o código completo para substituir no seu ficheiro (pode ser o 1/index.html ou um novo como 1/teia.html):
+
+HTML
 <!DOCTYPE html>
 <html lang="pt-pt">
 <head>
@@ -5,141 +10,178 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teia Matemática - 1º Ano</title>
     <style>
+        /* Estrutura Limpa */
         body {
-            background-color: #2c3e50;
-            color: white;
-            font-family: 'Segoe UI', sans-serif;
-            text-align: center;
+            background-color: #ffffff; /* Fundo Branco */
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
         }
 
-        #game-container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
+        /* Barra do Topo (Cor do 1º Ano) */
+        header {
+            background-color: #ff9f43; /* Laranja do 1º Ano */
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        header h2 { margin: 0; font-size: 1.5rem; }
+
+        .btn-voltar {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            background: rgba(0,0,0,0.2);
+            padding: 8px 15px;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-voltar:hover { background: rgba(0,0,0,0.3); }
+
+        /* Área do Jogo (Centro) */
+        main {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
-
-        #question {
-            font-size: 3rem;
-            background: rgba(0,0,0,0.5);
-            padding: 20px 40px;
-            border-radius: 50px;
-            border: 4px solid #ff9f43;
-            margin-bottom: 20px;
-            z-index: 10;
-        }
-
-        .spider {
-            position: absolute;
-            width: 80px;
-            height: 80px;
-            background: #ff9f43;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-            border: 4px solid #fff;
-            box-shadow: 0 0 20px rgba(255,159,67,0.5);
-        }
-
-        .spider:hover { transform: scale(1.1); }
 
         #score {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 10px;
         }
 
-        .btn-voltar {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            background: white;
-            color: #2c3e50;
-            text-decoration: none;
-            border-radius: 20px;
+        #question-box {
+            font-size: 4rem;
             font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 50px;
+            border: 5px solid #ff9f43;
+            padding: 30px 60px;
+            border-radius: 25px;
+            background: #fffaf5;
+        }
+
+        /* Menu de Respostas (Alinhado em baixo) */
+        .options-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            width: 100%;
+            padding-bottom: 50px;
+        }
+
+        .option-btn {
+            background-color: #ff9f43;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 20px 40px;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 5px 0 #e67e22; /* Sombra para parecer botão real */
+            min-width: 100px;
+        }
+
+        .option-btn:hover {
+            transform: translateY(-5px);
+            background-color: #f39c12;
+        }
+
+        .option-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #e67e22;
+        }
+
+        /* Responsividade */
+        @media (max-width: 500px) {
+            .options-container { flex-wrap: wrap; }
+            #question-box { font-size: 2.5rem; }
         }
     </style>
 </head>
 <body>
 
-<div id="game-container">
-    <div id="score">Pontos: 0</div>
-    <div id="question">A carregar...</div>
-    
-    <div id="options-container"></div>
+    <header>
+        <h2>🕸️ Teia Matemática</h2>
+        <a href="../" class="btn-voltar">⬅ Voltar ao Menu</a>
+    </header>
 
-    <a href="../" class="btn-voltar">⬅ Voltar</a>
-</div>
-
-<script>
-    let score = 0;
-    let correctAnswer = 0;
-
-    function generateGame() {
-        const container = document.getElementById('options-container');
-        container.innerHTML = ''; // Limpar opções anteriores
+    <main>
+        <div id="score">Pontos: 0</div>
         
-        // Gerar conta simples (números até 10 para o 1º ano)
-        let n1 = Math.floor(Math.random() * 10);
-        let n2 = Math.floor(Math.random() * 10);
-        correctAnswer = n1 + n2;
-        
-        document.getElementById('question').innerText = `${n1} + ${n2} = ?`;
+        <div id="question-box">...</div>
 
-        // Criar 4 opções (uma correta e 3 erradas)
-        let answers = [correctAnswer];
-        while(answers.length < 4) {
-            let wrong = Math.floor(Math.random() * 20);
-            if(!answers.includes(wrong)) answers.push(wrong);
+        <div class="options-container" id="options">
+            </div>
+    </main>
+
+    <script>
+        let score = 0;
+        let correctAnswer = 0;
+
+        function nextQuestion() {
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = ''; // Limpa botões anteriores
+
+            // Gera números simples para o 1º ano
+            let n1 = Math.floor(Math.random() * 10) + 1;
+            let n2 = Math.floor(Math.random() * 10) + 1;
+            correctAnswer = n1 + n2;
+
+            document.getElementById('question-box').innerText = `${n1} + ${n2}`;
+
+            // Criar lista de opções (1 certa e 3 erradas)
+            let choices = [correctAnswer];
+            while(choices.length < 4) {
+                let r = Math.floor(Math.random() * 20) + 1;
+                if(!choices.includes(r)) choices.push(r);
+            }
+
+            // Baralhar opções
+            choices.sort(() => Math.random() - 0.5);
+
+            // Criar botões
+            choices.forEach(val => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = val;
+                btn.onclick = () => check(val);
+                optionsDiv.appendChild(btn);
+            });
         }
 
-        // Baralhar as respostas
-        answers.sort(() => Math.random() - 0.5);
-
-        // Posicionar as aranhas no ecrã
-        answers.forEach((val, index) => {
-            const spider = document.createElement('div');
-            spider.className = 'spider';
-            spider.innerText = val;
-            
-            // Posições aleatórias fugindo do centro
-            const angle = (index / 4) * Math.PI * 2;
-            const dist = 200;
-            spider.style.left = `calc(50% - 40px + ${Math.cos(angle) * dist}px)`;
-            spider.style.top = `calc(50% - 40px + ${Math.sin(angle) * dist}px)`;
-
-            spider.onclick = () => checkAnswer(val);
-            container.appendChild(spider);
-        });
-    }
-
-    function checkAnswer(selected) {
-        if(selected === correctAnswer) {
-            score++;
-            document.getElementById('score').innerText = `Pontos: ${score}`;
-            alert("Correto! 🕸️");
-            generateGame();
-        } else {
-            alert("Ups! Tenta outra vez. 🕷️");
+        function check(selected) {
+            if(selected === correctAnswer) {
+                score++;
+                document.getElementById('score').innerText = `Pontos: ${score}`;
+                // Feedback visual rápido
+                document.getElementById('question-box').style.color = '#10ac84';
+                setTimeout(() => {
+                    document.getElementById('question-box').style.color = '#2c3e50';
+                    nextQuestion();
+                }, 500);
+            } else {
+                alert("Tenta outra vez! 🕷️");
+            }
         }
-    }
 
-    // Iniciar o jogo
-    generateGame();
-</script>
+        // Iniciar
+        nextQuestion();
+    </script>
 
 </body>
 </html>
