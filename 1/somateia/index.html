@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teia Matemática - 1º Ano</title>
+    <title>Teia Matemática - Progressão</title>
     <style>
         body {
             background-color: #ffffff;
@@ -47,41 +47,40 @@
             padding: 20px;
         }
 
+        #level-indicator {
+            font-size: 1.2rem;
+            color: #ff9f43;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
         #score {
             font-size: 1.5rem;
             color: #7f8c8d;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             font-weight: bold;
         }
 
-        /* Caixa da Conta */
         #question-box {
-            font-size: 5rem;
+            font-size: 4.5rem;
             font-weight: bold;
             color: #2c3e50;
             margin-bottom: 50px;
             border: 6px solid #ff9f43;
-            padding: 40px 80px;
+            padding: 40px 60px;
             border-radius: 30px;
             background: #fffaf5;
             transition: all 0.3s ease;
+            min-width: 300px;
+            text-align: center;
         }
 
-        /* Classes de animação para a conta */
-        .wrong-anim {
-            color: #e74c3c !important; /* Vermelho */
-            border-color: #e74c3c !important;
-            transform: scale(0.95);
-        }
-
-        .correct-anim {
-            color: #2ecc71 !important; /* Verde */
-            border-color: #2ecc71 !important;
-        }
+        .wrong-anim { color: #e74c3c !important; border-color: #e74c3c !important; }
+        .correct-anim { color: #2ecc71 !important; border-color: #2ecc71 !important; }
 
         .options-container {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             justify-content: center;
             width: 100%;
             padding-bottom: 60px;
@@ -92,35 +91,62 @@
             color: white;
             border: none;
             border-radius: 20px;
-            padding: 25px 45px;
-            font-size: 2.5rem;
+            padding: 20px 40px;
+            font-size: 2.2rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 0 6px 0 #e67e22;
-            min-width: 120px;
+            min-width: 100px;
         }
 
-        .option-btn:hover { transform: translateY(-3px); }
         .option-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #e67e22; }
 
-        @media (max-width: 600px) {
-            .options-container { flex-wrap: wrap; gap: 10px; }
-            #question-box { font-size: 3rem; padding: 20px 40px; }
+        /* Estilo do Modal de Mudança de Nível */
+        #next-level-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,159,67,0.95);
+            z-index: 100;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+
+        .btn-proximo {
+            background: white;
+            color: #ff9f43;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+            border: none;
         }
     </style>
 </head>
 <body>
 
+    <div id="next-level-modal">
+        <h1>🌟 PARABÉNS! 🌟</h1>
+        <p style="font-size: 1.5rem;">Completaste o Nível 1 com 10 pontos!</p>
+        <button class="btn-proximo" onclick="startLevel2()">Ir para o Nível 2 🚀</button>
+    </div>
+
     <header>
-        <h2>🕸️ Teia Matemática</h2>
+        <h2 id="game-title">🕸️ Teia Matemática</h2>
         <a href="../" class="btn-topo">⬅ 1º Ano</a>
     </header>
 
     <main>
+        <div id="level-indicator">NÍVEL 1</div>
         <div id="score">Pontos: 0</div>
         <div id="question-box">...</div>
-
         <div class="options-container" id="options"></div>
     </main>
 
@@ -128,27 +154,42 @@
         let score = 0;
         let correctAnswer = 0;
         let canClick = true;
+        let currentLevel = 1;
 
         function nextQuestion() {
+            if (score >= 10 && currentLevel === 1) {
+                showLevelModal();
+                return;
+            }
+
             canClick = true;
             const optionsDiv = document.getElementById('options');
             const qBox = document.getElementById('question-box');
-            
             optionsDiv.innerHTML = ''; 
             qBox.classList.remove('correct-anim', 'wrong-anim');
 
-            let n1 = Math.floor(Math.random() * 6) + 1;
-            let n2 = Math.floor(Math.random() * 5) + 1;
-            correctAnswer = n1 + n2;
+            let n1, n2, result;
 
-            qBox.innerText = `${n1} + ${n2}`;
-
-            let choices = [correctAnswer];
-            while(choices.length < 4) {
-                let r = Math.floor(Math.random() * 11) + 1;
-                if(!choices.includes(r)) choices.push(r);
+            if (currentLevel === 1) {
+                // Nível 1: Soma normal (n1 + n2 = ?)
+                n1 = Math.floor(Math.random() * 6) + 1;
+                n2 = Math.floor(Math.random() * 5) + 1;
+                correctAnswer = n1 + n2;
+                qBox.innerText = `${n1} + ${n2}`;
+            } else {
+                // Nível 2: Encontrar o número (n1 + ? = result)
+                n1 = Math.floor(Math.random() * 7) + 1;
+                correctAnswer = Math.floor(Math.random() * 5) + 1;
+                result = n1 + correctAnswer;
+                qBox.innerText = `${n1} + __ = ${result}`;
             }
 
+            // Gerar opções
+            let choices = [correctAnswer];
+            while(choices.length < 4) {
+                let r = Math.floor(Math.random() * (currentLevel === 1 ? 12 : 10)) + 1;
+                if(!choices.includes(r)) choices.push(r);
+            }
             choices.sort(() => Math.random() - 0.5);
 
             choices.forEach(val => {
@@ -169,17 +210,12 @@
                 score++;
                 updateScore();
                 qBox.classList.add('correct-anim');
-                setTimeout(nextQuestion, 600);
+                setTimeout(nextQuestion, 700);
             } else {
-                // Se errar: perde 1 ponto (mínimo 0) e a conta fica vermelha
                 if(score > 0) score--; 
                 updateScore();
-                
                 qBox.classList.add('wrong-anim');
-                // Remove o vermelho após meio segundo para o aluno tentar de novo
-                setTimeout(() => {
-                    qBox.classList.remove('wrong-anim');
-                }, 500);
+                setTimeout(() => qBox.classList.remove('wrong-anim'), 500);
             }
         }
 
@@ -187,8 +223,21 @@
             document.getElementById('score').innerText = `Pontos: ${score}`;
         }
 
+        function showLevelModal() {
+            document.getElementById('next-level-modal').style.display = 'flex';
+        }
+
+        function startLevel2() {
+            currentLevel = 2;
+            score = 10; // Começa o nível 2 com os pontos acumulados
+            document.getElementById('next-level-modal').style.display = 'none';
+            document.getElementById('level-indicator').innerText = "NÍVEL 2";
+            document.getElementById('level-indicator').style.color = "#9b59b6"; // Muda cor para distinguir
+            updateScore();
+            nextQuestion();
+        }
+
         nextQuestion();
     </script>
-
 </body>
 </html>
