@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Subtrair10 - 1º Ano</title>
+    
     <style>
         body {
             background-color: #ffffff;
@@ -25,7 +26,10 @@
             justify-content: space-between;
             align-items: center;
             height: 60px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
+
+        header h2 { margin: 0; font-size: 1.3rem; }
 
         .btn-topo {
             color: white;
@@ -48,7 +52,6 @@
 
         #score { font-size: 1.3rem; font-weight: bold; color: #7f8c8d; }
 
-        /* Caixa da Conta */
         #question-box {
             font-size: clamp(2.5rem, 12vw, 4.5rem);
             font-weight: bold;
@@ -63,12 +66,12 @@
             transition: all 0.3s;
         }
 
-        /* Cores de Feedback na Conta */
+        /* Feedback Visual */
         .wrong-anim { color: #e74c3c !important; border-color: #e74c3c !important; }
         .correct-anim { border-color: #2ecc71 !important; }
         .fill-number { color: #2ecc71; text-decoration: underline; }
 
-        /* Contentor de Opções (2x2 no Mobile) */
+        /* Botões de Opção (Grelha 2x2 no Mobile) */
         .options-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -128,6 +131,7 @@
             border: none;
             font-weight: bold;
             text-decoration: none;
+            margin-top: 10px;
         }
 
         @media (min-width: 600px) {
@@ -139,19 +143,19 @@
 
     <div id="next-level-modal" class="modal">
         <h1>🌟 NÍVEL 1 CONCLUÍDO!</h1>
-        <p style="font-size: 1.4rem;">Agora vamos descobrir o número que falta!</p>
+        <p style="font-size: 1.4rem;">Agora descobre o número que falta na conta!</p>
         <button class="option-btn" style="background: white; color: #ff9f43; min-width: 200px;" onclick="startLevel2()">AVANÇAR 🚀</button>
     </div>
 
     <div id="final-modal" class="modal" style="background: #2ecc71;">
-        <h1>🏆 EXCELENTE TRABALHO!</h1>
+        <h1>🏆 EXCELENTE!</h1>
         <div class="stats-box">
-            <h3>Teu Desempenho:</h3>
+            <h3>Teu Relatório Subtrair10:</h3>
             <p>Nível 1: <span id="s1"></span> ✅ | <span id="e1"></span> ❌</p>
             <p>Nível 2: <span id="s2"></span> ✅ | <span id="e2"></span> ❌</p>
         </div>
-        <button class="btn-final" onclick="location.reload()">JOGAR DE NOVO 🔄</button>
-        <a href="index.html" class="btn-final" style="margin-top: 15px; background: rgba(0,0,0,0.3);">SAIR 🏠</a>
+        <button class="btn-final" onclick="location.reload()">REPETIR 🔄</button>
+        <a href="index.html" class="btn-final" style="background: rgba(0,0,0,0.3);">MENU 🏠</a>
     </div>
 
     <header>
@@ -173,6 +177,7 @@
         let stats = { l1_hits: 0, l1_errors: 0, l2_hits: 0, l2_errors: 0 };
 
         function nextQuestion() {
+            // Verifica progressão
             if (score >= 10 && currentLevel === 1) {
                 document.getElementById('next-level-modal').style.display = 'flex';
                 return;
@@ -191,20 +196,20 @@
             let n1, n2, res;
 
             if (currentLevel === 1) {
-                // Subtração Simples (Max 10)
-                n1 = Math.floor(Math.random() * 6) + 5; // Escolhe entre 5 e 10
-                n2 = Math.floor(Math.random() * (n1 + 1)); // Tira no máximo o valor de n1
+                // Nível 1: n1 - n2 = ?
+                n1 = Math.floor(Math.random() * 6) + 5; // Min 5, Max 10
+                n2 = Math.floor(Math.random() * (n1 + 1)); 
                 correctAnswer = n1 - n2;
                 qBox.innerHTML = `${n1} - ${n2} = <span id="gap">?</span>`;
             } else {
-                // Subtração com Lacuna (n1 - __ = res)
+                // Nível 2: n1 - __ = res
                 n1 = Math.floor(Math.random() * 6) + 5;
                 res = Math.floor(Math.random() * (n1 + 1));
                 correctAnswer = n1 - res;
                 qBox.innerHTML = `${n1} - <span id="gap">__</span> = ${res}`;
             }
 
-            // Gerar 4 opções
+            // Gerar Opções
             let choices = [correctAnswer];
             while(choices.length < 4) {
                 let r = Math.floor(Math.random() * 11);
@@ -232,14 +237,13 @@
                 currentLevel === 1 ? stats.l1_hits++ : stats.l2_hits++;
                 updateScoreUI();
                 
-                // Feedback visual: preenche e fica verde
+                // Feedback: Enche a lacuna
                 gap.innerHTML = selected;
                 gap.className = "fill-number";
                 qBox.classList.add('correct-anim');
                 
                 setTimeout(nextQuestion, 1200);
             } else {
-                // Errou: perde 1 ponto (mínimo 0) e fica vermelho
                 if(score > 0) score--;
                 currentLevel === 1 ? stats.l1_errors++ : stats.l2_errors++;
                 updateScoreUI();
