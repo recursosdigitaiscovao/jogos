@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar - Associar Imagens</title>
+    <title>Pré-Escolar - Encontrar Pares</title>
     <style>
-        /* Reset e Estilo Geral */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
@@ -15,11 +14,10 @@
             margin: 0;
             display: flex;
             flex-direction: column;
-            min-height: 100vh; /* Permite crescer se necessário */
+            min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Barra Superior Fixa */
         header {
             background-color: #ffb3c6; 
             color: white;
@@ -48,7 +46,6 @@
             border: 1px solid white;
         }
 
-        /* Área do Jogo Responsiva */
         main {
             flex: 1;
             display: flex;
@@ -61,65 +58,45 @@
         }
 
         .instrucao {
-            font-size: clamp(1rem, 4.5vw, 1.4rem);
+            font-size: clamp(1rem, 4.5vw, 1.3rem);
             font-weight: bold;
             color: #ff6b81;
             text-align: center;
+            margin: 0;
         }
 
-        /* Moldura da imagem MAIOR */
-        .alvo-container {
-            background: #fff0f3; 
-            padding: clamp(15px, 5vw, 30px);
-            border-radius: 30px;
-            border: 4px dashed #ffb3c6;
-            width: 90%;
-            max-width: 350px;
-            aspect-ratio: 1 / 1; /* Mantém quadrado */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #animal-grande {
-            font-size: clamp(5rem, 25vw, 8rem);
-            animation: pulse 2s infinite;
-        }
-
-        /* Grelha de Opções */
-        .opcoes-container {
+        /* Grelha de Jogo */
+        .game-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: clamp(8px, 2vw, 15px);
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
         }
 
-        .btn-opcao {
+        .btn-card {
             background: #fff9fa;
             border: 3px solid #ffdae3;
             border-radius: 18px;
-            padding: clamp(10px, 3vw, 20px);
-            font-size: clamp(2rem, 10vw, 3.2rem);
+            aspect-ratio: 1 / 1;
             cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s;
             box-shadow: 0 4px 0 #ffdae3;
         }
 
-        .btn-opcao.correto { background-color: #7bed9f !important; border-color: #2ed573 !important; box-shadow: 0 4px 0 #2ed573 !important; }
-        .btn-opcao.errado { background-color: #ff7675 !important; border-color: #d63031 !important; box-shadow: 0 4px 0 #d63031 !important; }
+        /* Diferença de tamanhos */
+        .grande { font-size: clamp(2.5rem, 12vw, 4rem); }
+        .pequeno { font-size: clamp(1.2rem, 6vw, 2rem); }
 
-        .btn-opcao:active { transform: translateY(2px); box-shadow: 0 2px 0 #ffdae3; }
+        /* Estados */
+        .selecionado { border-color: #3498db; background-color: #ebf5fb; transform: scale(1.05); box-shadow: 0 4px 0 #3498db; }
+        .correto { background-color: #7bed9f !important; border-color: #2ed573 !important; box-shadow: 0 4px 0 #2ed573 !important; visibility: hidden; opacity: 0; }
+        .errado { background-color: #ff7675 !important; border-color: #d63031 !important; box-shadow: 0 4px 0 #d63031 !important; }
 
-        .progresso { color: #95a5a6; font-weight: bold; font-size: 0.9rem; margin-top: 10px; }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
+        .progresso { color: #95a5a6; font-weight: bold; font-size: 0.9rem; }
 
         /* Painel Final */
         #final-panel {
@@ -138,7 +115,6 @@
             gap: 12px;
             width: 100%;
             max-width: 280px;
-            margin-top: 20px;
         }
 
         .btn-final {
@@ -150,24 +126,14 @@
             border: none;
             font-size: 1.1rem;
             cursor: pointer;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
-        }
-
-        /* AJUSTES PARA ECRÃS PEQUENOS E PAISAGEM */
-        @media (max-height: 550px) {
-            header { height: 50px; }
-            main { gap: 10px; padding: 10px; }
-            .alvo-container { max-width: 180px; padding: 10px; }
-            #animal-grande { font-size: 4rem; }
-            .instrucao { font-size: 1rem; }
         }
 
         @media (max-height: 500px) and (orientation: landscape) {
-            main { flex-direction: row; flex-wrap: wrap; }
-            .instrucao { width: 100%; margin-bottom: 0; }
-            .alvo-container { width: 180px; margin-right: 20px; }
-            .opcoes-container { width: calc(100% - 220px); max-width: 350px; }
-            .progresso { width: 100%; }
+            header { height: 45px; }
+            main { gap: 8px; padding: 10px; }
+            .game-grid { grid-template-columns: repeat(4, 1fr); max-width: 400px; }
+            .grande { font-size: 2.5rem; }
+            .pequeno { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -175,27 +141,23 @@
 
     <header>
         <div class="titulo-container">
-            <span>🟦</span> <h2>Associar Imagens</h2>
+            <span>🧩</span> <h2>Pares de Animais</h2>
         </div>
         <a href="../index.html" class="btn-topo">⬅ Voltar</a>
     </header>
 
     <main id="jogo-container">
-        <p class="instrucao">🔍 Encontra o igual e pequenino!</p>
+        <p class="instrucao">Clica no animal grande e no seu par pequeno!</p>
         
-        <div class="alvo-container">
-            <div id="animal-grande">🦁</div>
-        </div>
-
-        <div class="opcoes-container" id="opcoes"></div>
+        <div class="game-grid" id="grid"></div>
 
         <p class="progresso">Ronda <span id="ronda-atual">1</span> de 10</p>
     </main>
 
     <div id="final-panel">
-        <div style="font-size: 5rem;">✨</div>
-        <h1 style="color: #ff6b81; margin: 0;">Boa!</h1>
-        <p style="font-size: 1.2rem; color: #7f8c8d;">Terminaste o desafio!</p>
+        <div style="font-size: 5rem;">🌟</div>
+        <h1 style="color: #ff6b81; margin: 0;">Incrível!</h1>
+        <p style="font-size: 1.2rem; color: #7f8c8d;">Encontraste todos os pares!</p>
         
         <div class="botoes-final">
             <button class="btn-final" style="background:#2ecc71;" onclick="reiniciarJogo()">Jogar de Novo 🔄</button>
@@ -206,7 +168,8 @@
     <script>
         const animaisPool = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', '🦊', '🐻', '🐥', '🦄', '🐝', '🐞', '🦋', '🐢', '🐨'];
         let ronda = 1;
-        let animalCerto = '';
+        let primeiraEscolha = null;
+        let paresEncontrados = 0;
 
         function iniciarRonda() {
             if (ronda > 10) {
@@ -216,42 +179,67 @@
             }
 
             document.getElementById('ronda-atual').innerText = ronda;
+            paresEncontrados = 0;
+            primeiraEscolha = null;
             
-            animalCerto = animaisPool[Math.floor(Math.random() * animaisPool.length)];
-            document.getElementById('animal-grande').innerText = animalCerto;
-
-            let opcoes = [animalCerto];
-            while (opcoes.length < 3) {
-                let errado = animaisPool[Math.floor(Math.random() * animaisPool.length)];
-                if (!opcoes.includes(errado)) opcoes.push(errado);
-            }
-
-            opcoes.sort(() => Math.random() - 0.5);
-
-            const container = document.getElementById('opcoes');
-            container.innerHTML = '';
+            // Selecionar 4 animais aleatórios
+            let selecionados = [...animaisPool].sort(() => 0.5 - Math.random()).slice(0, 4);
             
-            opcoes.forEach(emoji => {
+            // Criar objetos para a grelha (4 grandes e 4 pequenos)
+            let cartas = [];
+            selecionados.forEach(animal => {
+                cartas.push({ animal, tamanho: 'grande' });
+                cartas.push({ animal, tamanho: 'pequeno' });
+            });
+
+            // Baralhar
+            cartas.sort(() => 0.5 - Math.random());
+
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+
+            cartas.forEach((item, index) => {
                 const btn = document.createElement('button');
-                btn.className = 'btn-opcao';
-                btn.innerText = emoji;
-                btn.onclick = () => verificarResposta(emoji, btn);
-                container.appendChild(btn);
+                btn.className = `btn-card ${item.tamanho}`;
+                btn.innerText = item.animal;
+                btn.dataset.animal = item.animal;
+                btn.onclick = () => clicarCarta(btn);
+                grid.appendChild(btn);
             });
         }
 
-        function verificarResposta(escolha, btn) {
-            if (document.querySelector('.correto') || document.querySelector('.errado')) return;
+        function clicarCarta(btn) {
+            if (btn.classList.contains('correto') || btn === primeiraEscolha) return;
 
-            if (escolha === animalCerto) {
-                btn.classList.add('correto');
-                setTimeout(() => {
-                    ronda++;
-                    iniciarRonda();
-                }, 800);
+            btn.classList.add('selecionado');
+
+            if (!primeiraEscolha) {
+                primeiraEscolha = btn;
             } else {
-                btn.classList.add('errado');
-                setTimeout(() => btn.classList.remove('errado'), 500);
+                if (primeiraEscolha.dataset.animal === btn.dataset.animal) {
+                    // ACERTO
+                    primeiraEscolha.classList.add('correto');
+                    btn.classList.add('correto');
+                    paresEncontrados++;
+                    primeiraEscolha = null;
+
+                    if (paresEncontrados === 4) {
+                        setTimeout(() => {
+                            ronda++;
+                            iniciarRonda();
+                        }, 1000);
+                    }
+                } else {
+                    // ERRO
+                    btn.classList.add('errado');
+                    primeiraEscolha.classList.add('errado');
+                    
+                    setTimeout(() => {
+                        btn.classList.remove('selecionado', 'errado');
+                        primeiraEscolha.classList.remove('selecionado', 'errado');
+                        primeiraEscolha = null;
+                    }, 500);
+                }
             }
         }
 
