@@ -3,15 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar - Associa o Par</title>
+    <title>Associa o Par - Professor Luís</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
-        /* Bloqueio total de movimentos parasitas no telemóvel */
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            touch-action: none; /* Crucial para o drag and drop no telemóvel */
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; }
 
         body {
             background-color: #ffffff;
@@ -28,7 +23,7 @@
         header {
             background-color: #ffb3c6;
             color: white;
-            padding: 0 10px;
+            padding: 0 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -37,13 +32,12 @@
         }
 
         .titulo-wrapper { display: flex; align-items: center; gap: 8px; }
-        .icon-header { font-size: 1.3rem; }
-        header h2 { margin: 0; font-size: 1rem; }
+        header h2 { margin: 0; font-size: 1.1rem; }
 
         .btn-topo {
             color: white; text-decoration: none; font-weight: bold;
             background: rgba(255,255,255,0.2); padding: 5px 10px;
-            border-radius: 8px; font-size: 0.7rem; border: 1px solid white;
+            border-radius: 8px; font-size: 0.75rem; border: 1px solid white;
         }
 
         main {
@@ -52,23 +46,23 @@
             flex-direction: column;
             padding: 10px 5px;
             align-items: center;
+            position: relative;
         }
 
         .instrucao {
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: bold;
             color: #ff6b81;
+            margin-bottom: 15px;
             text-align: center;
-            margin-bottom: 10px;
         }
 
-        /* Contentor do Jogo: 3 colunas fixas */
         .game-grid {
             display: grid;
-            grid-template-columns: 75px 1fr 75px; /* Colunas laterais fixas para não quebrar */
-            gap: 10px;
+            grid-template-columns: 80px 1fr 80px;
+            gap: 15px;
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
             flex: 1;
             align-items: center;
         }
@@ -76,8 +70,8 @@
         .coluna-pequenas {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            justify-content: space-around;
+            gap: 20px;
+            justify-content: center;
             height: 100%;
         }
 
@@ -85,55 +79,45 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            height: 100%;
-            justify-content: space-around;
+            justify-content: center;
         }
 
-        /* Contentor do Par Grande */
         .par-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             background: #fff9fa;
             border: 2px solid #ffdae3;
-            border-radius: 12px;
-            padding: 5px;
-            position: relative;
+            border-radius: 15px;
+            padding: 8px;
         }
 
-        .img-grande {
-            font-size: 3rem;
-            line-height: 1;
-            margin-bottom: 5px;
-        }
+        .img-grande { font-size: 3.2rem; margin-bottom: 5px; }
 
-        /* Alvo Branco - Onde se larga */
         .alvo-largada {
-            width: 65px;
-            height: 65px;
+            width: 70px;
+            height: 70px;
             background: white;
             border: 3px dashed #ffb3c6;
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* Imagens Pequenas Arrastáveis */
         .img-pequena {
             background: white;
             border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            width: 65px;
-            height: 65px;
-            font-size: 2.2rem;
+            border-radius: 12px;
+            width: 70px;
+            height: 70px;
+            font-size: 2.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 3px 0 #e0e0e0;
+            box-shadow: 0 4px 0 #e0e0e0;
             cursor: grab;
-            z-index: 100;
-            touch-action: none;
+            user-select: none; /* Impede seleção de texto/azul no PC */
         }
 
         .img-pequena.correto {
@@ -143,27 +127,35 @@
             transform: scale(0.9);
         }
 
-        /* Ajuste para ecrãs maiores (PC/Tablet) */
+        /* Rodapé Assinado */
+        footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8rem;
+            color: #95a5a6;
+            background: #fdfdfd;
+            border-top: 1px solid #eee;
+        }
+
         @media (min-width: 600px) {
-            .game-grid { grid-template-columns: 100px 1fr 100px; max-width: 700px; }
-            .img-pequena, .alvo-largada { width: 85px; height: 85px; font-size: 2.8rem; }
-            .img-grande { font-size: 4rem; }
+            .game-grid { grid-template-columns: 110px 1fr 110px; max-width: 750px; }
+            .img-pequena, .alvo-largada { width: 90px; height: 90px; font-size: 3rem; }
+            .img-grande { font-size: 4.5rem; }
         }
 
-        #final-panel { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
-        .btn-final { padding: 15px 30px; border-radius: 20px; color: white; border: none; font-weight: bold; background: #2ecc71; cursor: pointer; }
-
-        /* Estilo da peça enquanto é arrastada */
-        .sortable-fallback {
-            opacity: 1 !important;
-        }
+        #final-panel { display: none; flex-direction: column; align-items: center; justify-content: center; flex: 1; }
+        .btn-final { padding: 15px 30px; border-radius: 20px; color: white; border: none; font-weight: bold; background: #2ecc71; cursor: pointer; font-size: 1.2rem; }
+        
+        /* Remove a seleção azul durante o arrasto */
+        .sortable-chosen { opacity: 0.5; }
+        .sortable-ghost { opacity: 0; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="titulo-wrapper">
-            <span class="icon-header">🧩</span>
+            <span>🧩</span>
             <h2>Associa o Par</h2>
         </div>
         <a href="../index.html" class="btn-topo">⬅ Voltar</a>
@@ -181,9 +173,13 @@
 
     <div id="final-panel">
         <div style="font-size: 5rem;">🌟</div>
-        <h1 style="#ff6b81">Muito bem!</h1>
-        <button class="btn-final" onclick="reiniciarJogo()">Recomeçar 🔄</button>
+        <h1 style="color: #ff6b81">Muito bem!</h1>
+        <button class="btn-final" onclick="reiniciarJogo()">Jogar de Novo 🔄</button>
     </div>
+
+    <footer>
+        Recursos Digitais Covão - Professor Luís
+    </footer>
 
     <script>
         const animaisPool = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', '🦊', '🐻', '🐥', '🦄', '🐝', '🐞', '🦋', '🐢', '🐨', '🐷', '🐮', '🐱', '🐶', '🦓', '🐹'];
@@ -197,15 +193,11 @@
             
             colEsq.innerHTML = ''; colCen.innerHTML = ''; colDir.innerHTML = '';
 
-            // Escolher 3 animais para os pares e 3 para distrair
             let misturados = [...animaisPool].sort(() => 0.5 - Math.random());
             let selecionados = misturados.slice(0, 3);
             let distratores = misturados.slice(3, 6);
-            
-            // Criar as 6 imagens pequenas (3 certas + 3 distratores)
             let todasPequenas = [...selecionados, ...distratores].sort(() => 0.5 - Math.random());
 
-            // Gerar Centro (3 Grandes)
             selecionados.forEach(animal => {
                 const container = document.createElement('div');
                 container.className = 'par-container';
@@ -215,12 +207,9 @@
                 `;
                 colCen.appendChild(container);
 
-                // Configurar o alvo para receber
                 new Sortable(container.querySelector('.alvo-largada'), {
                     group: 'jogo',
-                    animation: 150,
-                    swapThreshold: 1,
-                    forceFallback: true,
+                    animation: 200,
                     onAdd: function(evt) {
                         const item = evt.item;
                         if (item.dataset.animal === evt.to.dataset.animal) {
@@ -239,26 +228,24 @@
                 });
             });
 
-            // Distribuir as 6 pequenas (3 esquerda, 3 direita)
             todasPequenas.forEach((animal, i) => {
                 const el = document.createElement('div');
                 el.className = 'img-pequena';
                 el.innerText = animal;
                 el.dataset.animal = animal;
-                
                 if (i < 3) colEsq.appendChild(el);
                 else colDir.appendChild(el);
             });
 
-            // Configurar as colunas laterais para permitir arrastar
             [colEsq, colDir].forEach(col => {
                 new Sortable(col, {
                     group: 'jogo',
-                    animation: 150,
+                    animation: 200,
                     sort: false,
-                    forceFallback: true,
-                    delay: 0, // Inicia o drag imediatamente ao tocar
-                    touchStartThreshold: 0
+                    // Desativamos o forceFallback para o PC usar o drag nativo limpo
+                    // mas mantemos o suporte a toque para o telemóvel
+                    delay: 0,
+                    touchStartThreshold: 3
                 });
             });
         }
