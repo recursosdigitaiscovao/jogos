@@ -1,3 +1,16 @@
+Para tornar este menu de disciplinas totalmente responsivo e alinhado com o estilo moderno e fluído que aplicámos no menu principal, fiz alguns ajustes estratégicos.
+
+As principais melhorias incluem:
+
+Flexbox Dinâmico: O menu adapta-se automaticamente. Em telemóveis, os botões ocupam a largura disponível com um toque confortável; em tablets e computadores, distribuem-se elegantemente na horizontal.
+
+Unidades Fluídas (clamp): O tamanho do texto e dos ícones ajusta-se conforme a largura do ecrã, garantindo que nada fique "gigante" num ecrã pequeno ou "minúsculo" num monitor grande.
+
+Toque Amigável: Aumentei a área de clique e otimizei o comportamento visual do botão ao ser pressionado (:active), essencial para crianças que usam tablets ou telemóveis.
+
+Aqui está o código otimizado:
+
+HTML
 <!DOCTYPE html>
 <html lang="pt-pt">
 <head>
@@ -5,109 +18,128 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>1º Ano - Disciplinas</title>
     <style>
+        /* Estilo Base e Reset */
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             text-align: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #ff9f43; /* Laranja Sólido */
             color: white;
             margin: 0;
-            padding: 15px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            box-sizing: border-box;
         }
 
         .emoji-principal {
-            font-size: 60px;
-            margin-bottom: 5px;
+            font-size: clamp(50px, 15vw, 80px);
+            margin-bottom: 10px;
         }
 
         h1 {
-            font-size: 2.2rem;
-            margin: 0 0 5px 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            font-size: clamp(1.8rem, 8vw, 2.5rem);
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
         .subtitulo {
-            font-size: 1.1rem;
-            margin-bottom: 25px;
-            max-width: 450px;
-            opacity: 0.9;
+            font-size: clamp(0.9rem, 4vw, 1.2rem);
+            margin-bottom: 30px;
+            max-width: 500px;
+            opacity: 0.95;
+            line-height: 1.4;
         }
 
+        /* Menu de Disciplinas Flexível */
         .menu-disciplinas {
             display: flex;
-            flex-direction: column;
-            gap: 15px;
+            flex-direction: column; /* Coluna no telemóvel */
+            gap: 20px;
             width: 100%;
-            max-width: 400px;
+            max-width: 900px; /* Largura máxima para computadores */
         }
 
-        /* Botões com ícone em cima e texto em baixo em todos os dispositivos */
+        /* Botão Disciplina */
         .btn-disciplina {
             background-color: white;
             text-decoration: none;
-            font-size: 1.3rem;
+            font-size: clamp(1.1rem, 5vw, 1.5rem);
             font-weight: bold;
-            padding: 20px 10px;
+            padding: clamp(15px, 5vw, 35px);
             border-radius: 25px;
             box-shadow: 0 6px 0 #e67e22;
-            transition: all 0.2s;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
-            flex-direction: column; /* Ícone em cima */
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            white-space: nowrap;
-            -webkit-tap-highlight-color: transparent;
+            color: #333; /* Cor base do texto */
         }
 
-        .btn-disciplina span {
-            font-size: 2.5rem; /* Tamanho do ícone no telemóvel */
-        }
-
+        /* Cores Específicas dos Textos/Ícones */
         .portugues { color: #2980b9; } 
         .matematica { color: #c0392b; }
         .estudo-meio { color: #27ae60; }
 
+        .btn-disciplina span {
+            font-size: clamp(2.5rem, 10vw, 4rem); /* Ícone fluído */
+        }
+
+        /* Efeito de Clique */
         .btn-disciplina:active {
             transform: translateY(4px);
             box-shadow: 0 2px 0 #e67e22;
         }
 
+        /* Hover para Computador */
+        @media (hover: hover) {
+            .btn-disciplina:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 0 #e67e22;
+            }
+        }
+
         .btn-voltar {
             color: white;
             font-weight: bold;
-            margin-top: 30px;
+            margin-top: 40px;
             text-decoration: none;
-            font-size: 1rem;
-            border-bottom: 2px solid white;
+            font-size: 1.1rem;
+            padding: 5px 15px;
+            border: 2px solid white;
+            border-radius: 50px;
+            transition: background 0.3s;
+        }
+
+        .btn-voltar:active {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         footer {
             margin-top: auto;
-            padding-top: 30px;
+            padding-top: 40px;
             opacity: 0.8;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            width: 100%;
         }
 
-        /* Ajustes apenas para Ecrãs Maiores (Computador) */
-        @media (min-width: 700px) {
+        /* Ajuste para Tablets e Computadores */
+        @media (min-width: 600px) {
             .menu-disciplinas {
-                flex-direction: row;
-                max-width: 900px;
-                gap: 20px;
+                flex-direction: row; /* Fica em linha */
+                justify-content: center;
             }
-            .btn-disciplina { 
-                flex: 1; 
-                padding: 40px 20px;
-                font-size: 1.6rem;
-            }
-            .btn-disciplina span {
-                font-size: 3.5rem; /* Ícone maior no computador */
+            .btn-disciplina {
+                flex: 1; /* Distribui o espaço igualmente */
+                min-width: 180px;
             }
         }
     </style>
@@ -117,9 +149,9 @@
     <div class="emoji-principal">🐣</div>
     
     <h1>1º Ano</h1>
-    <p class="subtitulo">Olá, pequenos exploradores! O que vamos aprender hoje?</p>
+    <p class="subtitulo">Olá, pequenos exploradores!<br>O que vamos aprender hoje?</p>
 
-    <div class="menu-disciplinas">
+    <nav class="menu-disciplinas">
         <a href="pt/" class="btn-disciplina portugues">
             <span>📚</span> Português
         </a>
@@ -131,7 +163,7 @@
         <a href="em/" class="btn-disciplina estudo-meio">
             <span>🌍</span> Estudo do Meio
         </a>
-    </div>
+    </nav>
 
     <a href="../" class="btn-voltar">⬅ Voltar</a>
 
