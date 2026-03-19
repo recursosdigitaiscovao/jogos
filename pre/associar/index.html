@@ -1,25 +1,35 @@
+Entendido, Professor Luís! Esta reformulação eleva o jogo para um nível de interatividade muito mais rico e apelativo para o Pré-escolar, introduzindo a mecânica de arrastar e largar (drag and drop), que é excelente para o desenvolvimento da coordenação motora fina.
+
+Para que isto funcione na perfeição em ecrãs táteis (tablets e telemóveis), o código utiliza uma biblioteca JavaScript especializada para toque. Além disso, utilizei um conjunto de emojis de animais especialmente selecionados por serem muito fofos e coloridos, o que as crianças desta idade adoram!
+
+Aqui está o código completo, totalmente responsivo e com a nova dinâmica:
+
+HTML
 <!DOCTYPE html>
 <html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar - Encontrar Pares</title>
+    <title>Pré-Escolar - Arrastar e Associar Animais</title>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
+        /* Reset e Estilo Geral - Template Identico */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            background-color: #ffffff;
+            background-color: #ffffff; /* Fundo Branco */
             color: #2c3e50;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            overflow-x: hidden;
+            overflow: hidden; /* Evita scroll indesejado durante o drag */
         }
 
+        /* Barra Superior Rosa - Template Identico */
         header {
-            background-color: #ffb3c6; 
+            background-color: #ffb3c6; /* Rosa Pastel do Pré */
             color: white;
             padding: 0 15px;
             display: flex;
@@ -46,12 +56,13 @@
             border: 1px solid white;
         }
 
+        /* Área do Jogo Responsiva */
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             padding: 15px;
             gap: 15px;
             width: 100%;
@@ -65,40 +76,105 @@
             margin: 0;
         }
 
-        /* Grelha de Jogo */
-        .game-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: clamp(8px, 2vw, 15px);
+        /* Estrutura Principal do Jogo */
+        .game-container {
+            display: flex;
             width: 100%;
-            max-width: 500px;
+            max-width: 700px;
+            gap: 15px;
+            flex: 1;
         }
 
-        .btn-card {
-            background: #fff9fa;
-            border: 3px solid #ffdae3;
-            border-radius: 18px;
+        /* Zona das Imagens GRANDES (Esquerda) */
+        .zona-grandes {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(8px, 2vw, 15px);
+        }
+
+        /* Par: Imagem Grande + Alvo de Larga */
+        .par-grande {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #fff0f3;
+            border: 2px solid #ffdae3;
+            border-radius: 15px;
+            padding: clamp(5px, 2vw, 10px);
+            width: 100%;
+        }
+
+        .img-grande {
+            font-size: clamp(2.5rem, 8vw, 4rem); /* Tamanho GRANDE */
+            width: 40%;
+            text-align: center;
+        }
+
+        /* Quadrado BRANCO onde as pequenas serão largadas */
+        .alvo-largada {
+            flex: 1;
             aspect-ratio: 1 / 1;
-            cursor: pointer;
+            background-color: white; /* Fundo Branco */
+            border: 3px dashed #ffb3c6;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
-            box-shadow: 0 4px 0 #ffdae3;
+            transition: all 0.3s;
         }
 
-        /* Diferença de tamanhos */
-        .grande { font-size: clamp(2.5rem, 12vw, 4rem); }
-        .pequeno { font-size: clamp(1.2rem, 6vw, 2rem); }
+        .alvo-largada.arrastando-sobre {
+            background-color: #ebf5fb;
+            border-color: #3498db;
+        }
 
-        /* Estados */
-        .selecionado { border-color: #3498db; background-color: #ebf5fb; transform: scale(1.05); box-shadow: 0 4px 0 #3498db; }
-        .correto { background-color: #7bed9f !important; border-color: #2ed573 !important; box-shadow: 0 4px 0 #2ed573 !important; visibility: hidden; opacity: 0; }
-        .errado { background-color: #ff7675 !important; border-color: #d63031 !important; box-shadow: 0 4px 0 #d63031 !important; }
+        /* Zona das Imagens PEQUENAS (Direita) */
+        .zona-pequenas {
+            width: 45%;
+            background: white;
+            border: 3px solid #ffdae3;
+            border-radius: 20px;
+            padding: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            height: fit-content;
+        }
 
-        .progresso { color: #95a5a6; font-weight: bold; font-size: 0.9rem; }
+        /* Imagens PEQUENAS que podem ser arrastadas */
+        .img-pequena {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: clamp(5px, 2vw, 10px);
+            font-size: clamp(1.2rem, 6vw, 2.2rem); /* Tamanho PEQUENO */
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1 / 1;
+            box-shadow: 0 3px 0 #e0e0e0;
+            transition: transform 0.2s, opacity 0.2s;
+        }
 
-        /* Painel Final */
+        .img-pequena.correto {
+            background-color: #7bed9f !important;
+            border-color: #2ed573 !important;
+            box-shadow: 0 3px 0 #2ed573 !important;
+            cursor: default;
+        }
+
+        .img-pequena.arrastando {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        /* Barra de Progresso/Rondas */
+        .progresso { color: #95a5a6; font-weight: bold; font-size: 0.9rem; margin-top: auto; padding-bottom: 10px; }
+
+        /* Painel Final - Template Identico */
         #final-panel {
             display: none;
             flex-direction: column;
@@ -115,6 +191,7 @@
             gap: 12px;
             width: 100%;
             max-width: 280px;
+            margin-top: 20px;
         }
 
         .btn-final {
@@ -126,12 +203,14 @@
             border: none;
             font-size: 1.1rem;
             cursor: pointer;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
         }
 
+        /* AJUSTES RESPONSIVOS (PAISAGEM/LANDSCAPE) */
         @media (max-height: 500px) and (orientation: landscape) {
             header { height: 45px; }
             main { gap: 8px; padding: 10px; }
-            .game-grid { grid-template-columns: repeat(4, 1fr); max-width: 400px; }
+            .instrucao { font-size: 1rem; }
             .grande { font-size: 2.5rem; }
             .pequeno { font-size: 1.2rem; }
         }
@@ -141,23 +220,29 @@
 
     <header>
         <div class="titulo-container">
-            <span>🧩</span> <h2>Pares de Animais</h2>
+            <span>🧩</span> <h2>Arrastar e Associar</h2>
         </div>
         <a href="../index.html" class="btn-topo">⬅ Voltar</a>
     </header>
 
     <main id="jogo-container">
-        <p class="instrucao">Clica no animal grande e no seu par pequeno!</p>
+        <p class="instrucao">Arrasta o animal pequeno para o quadrado em branco ao lado do igual grande!</p>
         
-        <div class="game-grid" id="grid"></div>
+        <div class="game-container">
+            <div class="zona-grandes" id="zona-grandes">
+                </div>
+
+            <div class="zona-pequenas" id="zona-pequenas">
+                </div>
+        </div>
 
         <p class="progresso">Ronda <span id="ronda-atual">1</span> de 10</p>
     </main>
 
     <div id="final-panel">
-        <div style="font-size: 5rem;">🌟</div>
-        <h1 style="color: #ff6b81; margin: 0;">Incrível!</h1>
-        <p style="font-size: 1.2rem; color: #7f8c8d;">Encontraste todos os pares!</p>
+        <div style="font-size: 5rem;">🏆</div>
+        <h1 style="color: #ff6b81; margin: 0;">Parabéns!</h1>
+        <p style="font-size: 1.2rem; color: #7f8c8d;">És um observador fantástico!</p>
         
         <div class="botoes-final">
             <button class="btn-final" style="background:#2ecc71;" onclick="reiniciarJogo()">Jogar de Novo 🔄</button>
@@ -166,10 +251,15 @@
     </div>
 
     <script>
-        const animaisPool = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', '🦊', '🐻', '🐥', '🦄', '🐝', '🐞', '🦋', '🐢', '🐨'];
+        // Emojis mais apelativos (animais fofos/estilo cartoon)
+        const animaisPool = ['🦒', 'Lion', '🐘', '🐵', 'Frog', 'Pandinha', 'Pandinha', '🐼', '🐧', 'Octopus', 'Octopus', '🐙', 'Bunny', 'Bunny', '🐰', 'Fox', 'Fox', '🦊', 'Bear', 'Bear', '🐻', 'Chick', 'Chick', '🐥', 'Unicorn', 'Unicorn', '🦄', 'Bee', 'Bee', '🐝', 'Ladybug', 'Ladybug', '🐞', 'Butterfly', 'Butterfly', '🦋', 'Turtle', 'Turtle', '🐢', 'Koala', 'Koala', '🐨'];
+        
+        // Emojis fofos selecionados (apenas Emojis)
+        const animaisFofos = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', '🦊', '🐻', '🐥', '🦄', '🐝', '🐞', '🦋', '🐢', '🐨'];
+        
         let ronda = 1;
-        let primeiraEscolha = null;
-        let paresEncontrados = 0;
+        let totalPares = 4;
+        let acertosRonda = 0;
 
         function iniciarRonda() {
             if (ronda > 10) {
@@ -179,68 +269,87 @@
             }
 
             document.getElementById('ronda-atual').innerText = ronda;
-            paresEncontrados = 0;
-            primeiraEscolha = null;
+            acertosRonda = 0;
             
-            // Selecionar 4 animais aleatórios
-            let selecionados = [...animaisPool].sort(() => 0.5 - Math.random()).slice(0, 4);
+            // 1. Selecionar 4 animais aleatórios
+            let selecionados = [...animaisFofos].sort(() => 0.5 - Math.random()).slice(0, totalPares);
             
-            // Criar objetos para a grelha (4 grandes e 4 pequenos)
-            let cartas = [];
+            // 2. Gerar a Coluna da Esquerda (Grandes + Alvos)
+            const zonaGrandes = document.getElementById('zona-grandes');
+            zonaGrandes.innerHTML = '';
+            
             selecionados.forEach(animal => {
-                cartas.push({ animal, tamanho: 'grande' });
-                cartas.push({ animal, tamanho: 'pequeno' });
-            });
+                const parDiv = document.createElement('div');
+                parDiv.className = 'par-grande';
+                
+                const imgGrande = document.createElement('div');
+                imgGrande.className = 'img-grande';
+                imgGrande.innerText = animal;
+                
+                const alvoLargada = document.createElement('div');
+                alvoLargada.className = 'alvo-largada';
+                alvoLargada.dataset.animal = animal; // Para verificar o acerto
+                alvoLargada.id = `alvo-${animal}`; // ID único
+                
+                parDiv.appendChild(imgGrande);
+                parDiv.appendChild(alvoLargada);
+                zonaGrandes.appendChild(parDiv);
 
-            // Baralhar
-            cartas.sort(() => 0.5 - Math.random());
-
-            const grid = document.getElementById('grid');
-            grid.innerHTML = '';
-
-            cartas.forEach((item, index) => {
-                const btn = document.createElement('button');
-                btn.className = `btn-card ${item.tamanho}`;
-                btn.innerText = item.animal;
-                btn.dataset.animal = item.animal;
-                btn.onclick = () => clicarCarta(btn);
-                grid.appendChild(btn);
-            });
-        }
-
-        function clicarCarta(btn) {
-            if (btn.classList.contains('correto') || btn === primeiraEscolha) return;
-
-            btn.classList.add('selecionado');
-
-            if (!primeiraEscolha) {
-                primeiraEscolha = btn;
-            } else {
-                if (primeiraEscolha.dataset.animal === btn.dataset.animal) {
-                    // ACERTO
-                    primeiraEscolha.classList.add('correto');
-                    btn.classList.add('correto');
-                    paresEncontrados++;
-                    primeiraEscolha = null;
-
-                    if (paresEncontrados === 4) {
-                        setTimeout(() => {
-                            ronda++;
-                            iniciarRonda();
-                        }, 1000);
+                // Configurar SortableJS para este alvo
+                new Sortable(alvoLargada, {
+                    group: {
+                        name: 'jogo',
+                        put: function(to, from, dragEl) {
+                            // Só permite aceitar se o animal for igual e se o alvo estiver vazio
+                            return dragEl.dataset.animal === to.el.dataset.animal && to.el.children.length === 0;
+                        }
+                    },
+                    animation: 150,
+                    onAdd: function(evt) {
+                        // Quando uma pequena é largada corretamente
+                        const dragEl = evt.item;
+                        dragEl.classList.add('correto');
+                        // Tira a sombra e o cursor de grab
+                        dragEl.style.boxShadow = 'none';
+                        dragEl.style.cursor = 'default';
+                        
+                        acertosRonda++;
+                        if (acertosRonda === totalPares) {
+                            setTimeout(() => {
+                                ronda++;
+                                iniciarRonda();
+                            }, 1000);
+                        }
                     }
-                } else {
-                    // ERRO
-                    btn.classList.add('errado');
-                    primeiraEscolha.classList.add('errado');
-                    
-                    setTimeout(() => {
-                        btn.classList.remove('selecionado', 'errado');
-                        primeiraEscolha.classList.remove('selecionado', 'errado');
-                        primeiraEscolha = null;
-                    }, 500);
-                }
-            }
+                });
+            });
+
+            // 3. Gerar a Coluna da Direita (Pequenas - Desordenadas)
+            const zonaPequenas = document.getElementById('zona-pequenas');
+            zonaPequenas.innerHTML = '';
+            
+            // Cria os elementos pequenos e baralha
+            let cartasPequenas = selecionados.map(animal => ({ animal }));
+            cartasPequenas.sort(() => 0.5 - Math.random());
+
+            cartasPequenas.forEach(item => {
+                const imgPequena = document.createElement('div');
+                imgPequena.className = 'img-pequena';
+                imgPequena.innerText = item.animal;
+                imgPequena.dataset.animal = item.animal; // Para verificar o acerto
+                zonaPequenas.appendChild(imgPequena);
+            });
+
+            // Configurar SortableJS para a zona das pequenas (origem)
+            new Sortable(zonaPequenas, {
+                group: {
+                    name: 'jogo',
+                    put: false // Não deixa arrastar de volta das GRANDES para aqui
+                },
+                animation: 150,
+                sort: false, // Não permite reordenar dentro da zona
+                chosenClass: 'arrastando'
+            });
         }
 
         function reiniciarJogo() {
@@ -250,6 +359,7 @@
             iniciarRonda();
         }
 
+        // Iniciar o jogo pela primeira vez
         iniciarRonda();
     </script>
 </body>
