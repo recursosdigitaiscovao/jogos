@@ -56,57 +56,57 @@
             text-align: center;
         }
 
-        /* Contentor Principal em 3 Colunas */
+        /* Estrutura Responsiva em 3 Colunas */
         .game-wrapper {
             display: flex;
-            flex-direction: row;
             width: 100%;
-            max-width: 900px;
-            height: 80%;
+            max-width: 800px;
             gap: 10px;
             align-items: center;
+            justify-content: center;
         }
 
-        /* Colunas Laterais */
         .coluna-pequenas {
-            width: 80px;
+            width: 75px;
             display: flex;
             flex-direction: column;
             gap: 15px;
             justify-content: center;
         }
 
-        /* Coluna Central com os Pares */
         .coluna-central {
             flex: 1;
             display: flex;
             flex-direction: column;
             gap: 12px;
             justify-content: center;
+            align-items: center; /* Centraliza os pares no meio do ecrã */
         }
 
-        /* Contentor do Par: Imagem + Quadrado LADO A LADO */
+        /* Par: Imagem e Quadrado LADO A LADO */
         .par-container {
             display: flex;
-            flex-direction: row; /* GARANTE QUE FICA AO LADO */
+            flex-direction: row;
             align-items: center;
             justify-content: center;
             background: #fff9fa;
             border: 2px solid #ffdae3;
             border-radius: 15px;
-            padding: 10px;
-            gap: 15px;
+            padding: 8px;
+            gap: 12px;
+            width: 100%;
+            max-width: 280px;
         }
 
         .img-grande {
-            font-size: clamp(2.5rem, 8vh, 4rem);
+            font-size: clamp(2.5rem, 7vh, 4rem);
             flex: 1;
-            text-align: right;
+            text-align: center;
         }
 
         .alvo-largada {
-            width: clamp(65px, 15vw, 90px);
-            height: clamp(65px, 15vw, 90px);
+            width: 70px;
+            height: 70px;
             background: white;
             border: 3px dashed #ffb3c6;
             border-radius: 12px;
@@ -116,45 +116,51 @@
             flex-shrink: 0;
         }
 
-        /* Imagens Pequenas Arrastáveis */
         .img-pequena {
             background: white;
             border: 2px solid #e0e0e0;
             border-radius: 12px;
-            width: 70px;
-            height: 70px;
-            font-size: 2.2rem;
+            width: 65px;
+            height: 65px;
+            font-size: 2rem;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 0 #e0e0e0;
             cursor: grab;
-            user-select: none;
         }
 
         .img-pequena.correto {
             background-color: #7bed9f !important;
             border-color: #2ed573 !important;
             box-shadow: none !important;
-            transform: scale(0.9);
+            transform: scale(0.85);
+        }
+
+        .progresso {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #95a5a6;
+            margin-top: 10px;
         }
 
         footer {
             text-align: center;
             padding: 8px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #95a5a6;
             border-top: 1px solid #eee;
         }
 
-        /* Ajustes para ecrãs maiores */
         @media (min-width: 600px) {
             .coluna-pequenas { width: 100px; }
-            .img-pequena { width: 90px; height: 90px; font-size: 3rem; }
+            .img-pequena { width: 85px; height: 85px; font-size: 2.8rem; }
+            .alvo-largada { width: 85px; height: 85px; }
+            .par-container { max-width: 350px; padding: 15px; }
         }
 
         #final-panel { display: none; flex-direction: column; align-items: center; justify-content: center; flex: 1; }
-        .btn-final { padding: 15px 30px; border-radius: 20px; color: white; border: none; font-weight: bold; background: #2ecc71; cursor: pointer; font-size: 1.2rem; }
+        .btn-final { padding: 15px 30px; border-radius: 20px; color: white; border: none; font-weight: bold; background: #2ecc71; cursor: pointer; font-size: 1.1rem; }
         
         .sortable-ghost { opacity: 0; }
     </style>
@@ -167,13 +173,14 @@
     </header>
 
     <main id="jogo-container">
-        <p class="instrucao">Arrasta o pequeno para o lado do igual grande!</p>
+        <p class="instrucao">Leva o pequeno para o lado do igual!</p>
         
         <div class="game-wrapper">
             <div class="coluna-pequenas" id="col-esq"></div>
             <div class="coluna-central" id="col-cen"></div>
             <div class="coluna-pequenas" id="col-dir"></div>
         </div>
+        <p class="progresso">Ronda <span id="ronda-atual">1</span> de 5</p>
     </main>
 
     <div id="final-panel">
@@ -188,9 +195,17 @@
 
     <script>
         const animaisPool = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', '🦊', '🐻', '🐥', '🦄', '🐝', '🐞', '🦋', '🐢', '🐨', '🐷', '🐮', '🐱', '🐶', '🦓', '🐹'];
+        let ronda = 1;
         let acertosRonda = 0;
 
         function iniciarJogo() {
+            if (ronda > 5) {
+                document.getElementById('jogo-container').style.display = 'none';
+                document.getElementById('final-panel').style.display = 'flex';
+                return;
+            }
+
+            document.getElementById('ronda-atual').innerText = ronda;
             acertosRonda = 0;
             const colEsq = document.getElementById('col-esq');
             const colCen = document.getElementById('col-cen');
@@ -222,9 +237,9 @@
                             acertosRonda++;
                             if (acertosRonda === 3) {
                                 setTimeout(() => {
-                                    document.getElementById('jogo-container').style.display = 'none';
-                                    document.getElementById('final-panel').style.display = 'flex';
-                                }, 600);
+                                    ronda++;
+                                    iniciarJogo();
+                                }, 700);
                             }
                         } else {
                             evt.from.appendChild(item);
@@ -254,6 +269,7 @@
         }
 
         function reiniciarJogo() {
+            ronda = 1;
             document.getElementById('jogo-container').style.display = 'flex';
             document.getElementById('final-panel').style.display = 'none';
             iniciarJogo();
