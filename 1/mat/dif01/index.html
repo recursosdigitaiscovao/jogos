@@ -1,14 +1,9 @@
-Com certeza, Professor Luís. Refinei o jogo para que as imagens pareçam muito mais "cheias" e desafiantes, adicionando objetos decorativos que são iguais em ambas as partes para distrair o olhar, tal como nos jogos de diferenças reais.
-
-Também adicionei os títulos "Original" e "Encontra aqui as diferenças" por cima de cada quadro.
-
-HTML
 <!DOCTYPE html>
 <html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Diferenças Matemáticas - 1º Ano</title>
+    <title>Diferenças Geométricas - 1º Ano</title>
     <style>
         body {
             background-color: #ffffff;
@@ -52,13 +47,12 @@ HTML
             flex-direction: column;
             align-items: center;
             padding: 5px 10px;
-            gap: 5px;
         }
 
         .status-bar {
             display: flex;
             gap: 10px;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .info-box {
@@ -74,7 +68,7 @@ HTML
         .canvas-container {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 5px;
+            gap: 8px;
             width: 100%;
             max-width: 900px;
             flex-grow: 1;
@@ -83,7 +77,6 @@ HTML
         .image-section {
             display: flex;
             flex-direction: column;
-            gap: 2px;
         }
 
         .label-imagem {
@@ -92,29 +85,39 @@ HTML
             font-size: 0.9rem;
             text-align: center;
             background: #fff3e6;
-            padding: 2px;
+            padding: 3px;
             border-radius: 10px 10px 0 0;
+            border: 1px solid #ff9f43;
+            border-bottom: none;
         }
 
         .image-box {
             position: relative;
-            background: #f0f4f8;
+            background: #ffffff;
             border: 3px solid #ff9f43;
             border-radius: 0 0 15px 15px;
             width: 100%;
-            height: 33vh; /* Ajuste para caber tudo sem scroll */
+            height: 32vh;
             overflow: hidden;
             user-select: none;
         }
 
+        /* Formas Geométricas de Fundo */
+        .bg-shape {
+            position: absolute;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
         .math-item {
             position: absolute;
-            font-size: 1.8rem;
+            font-size: 2rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 45px;
-            height: 45px;
+            width: 50px;
+            height: 50px;
+            z-index: 5;
         }
 
         .diff-target {
@@ -124,9 +127,9 @@ HTML
 
         .marker {
             position: absolute;
-            width: 35px;
-            height: 35px;
-            border: 3px solid #e74c3c;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e74c3c;
             border-radius: 50%;
             pointer-events: none;
             display: none;
@@ -145,7 +148,7 @@ HTML
         }
 
         .btn-final {
-            padding: 15px 20px;
+            padding: 15px 25px;
             border-radius: 15px;
             text-decoration: none;
             font-weight: bold;
@@ -153,12 +156,13 @@ HTML
             border: none;
             box-shadow: 0 5px 0 rgba(0,0,0,0.2);
             cursor: pointer;
-            margin: 5px;
+            margin: 10px;
+            font-size: 1.1rem;
         }
 
         @media (min-width: 700px) {
             .canvas-container { grid-template-columns: 1fr 1fr; }
-            .image-box { height: 65vh; }
+            .image-box { height: 62vh; }
             header h2 { font-size: 1.5rem; }
         }
     </style>
@@ -173,7 +177,7 @@ HTML
     <main id="main-content">
         <div class="status-bar" id="game-stats">
             <div class="info-box">Nível <span id="level-txt">1</span></div>
-            <div class="info-box">Erros: <span id="count">0</span> / <span id="total-txt">5</span></div>
+            <div class="info-box">Diferenças: <span id="count">0</span> / <span id="total-txt">5</span></div>
         </div>
 
         <div id="game-area" class="canvas-container">
@@ -188,9 +192,9 @@ HTML
         </div>
 
         <div id="final-panel">
-            <div style="font-size: 4rem;">🏆</div>
-            <h1 style="color: #ff9f43; margin:10px;">Parabéns!</h1>
-            <p>Conseguiste encontrar todos os erros!</p>
+            <div style="font-size: 5rem;">🥳</div>
+            <h1 style="color: #ff9f43; margin:10px; font-size: 2.5rem;">Incrível!</h1>
+            <p style="font-size: 1.2rem;">Encontraste todos os erros matemáticos!</p>
             <div style="display: flex;">
                 <button onclick="location.reload()" class="btn-final" style="background:#2ecc71;">Repetir 🔄</button>
                 <a href="../index.html" class="btn-final" style="background:#3498db;">Matemática 🧮</a>
@@ -199,30 +203,44 @@ HTML
     </main>
 
     <script>
-        // Objetos de decoração (iguais em ambos os quadros para distrair)
-        const deco = [
-            {x:50,y:10,e:'☁️'}, {x:20,y:85,e:'🌱'}, {x:80,y:85,e:'🌱'}, 
-            {x:5,y:45,e:'🦋'}, {x:90,y:15,e:'☀️'}, {x:45,y:80,e:'🍄'}
-        ];
-
+        // Configuração dos Níveis
         const levels = [
             { id: 1, total: 5, 
-              orig: [{x:10,y:10,e:'1️⃣'}, {x:70,y:20,e:'🔺'}, {x:40,y:50,e:'🔵'}, {x:15,y:70,e:'📏'}, {x:75,y:70,e:'🖍️'}],
-              diff: [{x:10,y:10,e:'2️⃣'}, {x:70,y:20,e:'🟦'}, {x:40,y:50,e:'⭐'}, {x:15,y:70,e:'📐'}, {x:75,y:70,e:'✂️'}]
+              orig: [{x:15,y:15,e:'1️⃣'}, {x:75,y:25,e:'🔺'}, {x:45,y:55,e:'🔵'}, {x:20,y:75,e:'📏'}, {x:80,y:75,e:'🖍️'}],
+              diff: [{x:15,y:15,e:'2️⃣'}, {x:75,y:25,e:'🟦'}, {x:45,y:55,e:'⭐'}, {x:20,y:75,e:'📐'}, {x:80,y:75,e:'✂️'}]
             },
             { id: 2, total: 7,
-              orig: [{x:10,y:15,e:'➕'}, {x:80,y:10,e:'3️⃣'}, {x:45,y:15,e:'🟢'}, {x:10,y:40,e:'📦'}, {x:80,y:45,e:'5️⃣'}, {x:25,y:75,e:'⭕'}, {x:70,y:80,e:'🔢'}],
-              diff: [{x:10,y:15,e:'➖'}, {x:80,y:10,e:'9️⃣'}, {x:45,y:15,e:'🟡'}, {x:10,y:40,e:'🎁'}, {x:80,y:45,e:'6️⃣'}, {x:25,y:75,e:'❌'}, {x:70,y:80,e:'🔡'}]
+              orig: [{x:10,y:15,e:'➕'}, {x:80,y:10,e:'3️⃣'}, {x:45,y:15,e:'🟢'}, {x:10,y:40,e:'📦'}, {x:85,y:45,e:'5️⃣'}, {x:25,y:75,e:'⭕'}, {x:70,y:80,e:'🔢'}],
+              diff: [{x:10,y:15,e:'➖'}, {x:80,y:10,e:'9️⃣'}, {x:45,y:15,e:'🟡'}, {x:10,y:40,e:'🎁'}, {x:85,y:45,e:'6️⃣'}, {x:25,y:75,e:'❌'}, {x:70,y:80,e:'🔡'}]
             },
             { id: 3, total: 10,
-              orig: [{x:5,y:5,e:'🍎'},{x:45,y:5,e:'7️⃣'},{x:85,y:5,e:'🔷'},{x:10,y:35,e:'⏰'},{x:50,y:40,e:'➕'},{x:85,y:40,e:'0️⃣'},{x:5,y:70,e:'📏'},{x:35,y:75,e:'🎨'},{x:65,y:75,e:'💡'},{x:85,y:80,e:'🪁'}],
-              diff: [{x:5,y:5,e:'🍐'},{x:45,y:5,e:'1️⃣'},{x:85,y:5,e:'🔶'},{x:10,y:35,e:'⌚'},{x:50,y:40,e:'✖️'},{x:85,y:40,e:'8️⃣'},{x:5,y:70,e:'📐'},{x:35,y:75,e:'🎭'},{x:65,y:75,e:'🔦'},{x:85,y:80,e:'🎈'}]
+              orig: [{x:5,y:10,e:'🍎'},{x:45,y:8,e:'7️⃣'},{x:85,y:10,e:'🔷'},{x:15,y:35,e:'⏰'},{x:55,y:40,e:'➕'},{x:85,y:45,e:'0️⃣'},{x:8,y:70,e:'📏'},{x:35,y:80,e:'🎨'},{x:65,y:75,e:'💡'},{x:88,y:82,e:'🪁'}],
+              diff: [{x:5,y:10,e:'🍐'},{x:45,y:8,e:'1️⃣'},{x:85,y:10,e:'🔶'},{x:15,y:35,e:'⌚'},{x:55,y:40,e:'✖️'},{x:85,y:45,e:'8️⃣'},{x:8,y:70,e:'📐'},{x:35,y:80,e:'🎭'},{x:65,y:75,e:'🔦'},{x:88,y:82,e:'🎈'}]
             }
         ];
 
         let currentLevelIndex = 0;
         let foundInLevel = 0;
         let foundState = [];
+
+        function createBackground(box) {
+            const colors = ['#ff9f43', '#2ecc71', '#3498db', '#e74c3c', '#9b59b6', '#f1c40f'];
+            const shapes = ['50%', '0%', '20%']; // Círculo, Quadrado, Arredondado
+            
+            for (let i = 0; i < 15; i++) {
+                const shape = document.createElement('div');
+                shape.className = 'bg-shape';
+                const size = Math.random() * 40 + 20;
+                shape.style.width = size + 'px';
+                shape.style.height = size + 'px';
+                shape.style.left = Math.random() * 90 + '%';
+                shape.style.top = Math.random() * 90 + '%';
+                shape.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                shape.style.borderRadius = shapes[Math.floor(Math.random() * shapes.length)];
+                shape.style.transform = `rotate(${Math.random() * 360}deg)`;
+                box.appendChild(shape);
+            }
+        }
 
         function loadLevel() {
             const level = levels[currentLevelIndex];
@@ -238,22 +256,14 @@ HTML
             origBox.innerHTML = '';
             diffBox.innerHTML = '';
 
-            // 1. Adicionar Objetos Decorativos (Iguais em ambos)
-            [origBox, diffBox].forEach(box => {
-                deco.forEach(d => {
-                    const el = document.createElement('div');
-                    el.className = 'math-item';
-                    el.style.left = d.x + '%';
-                    el.style.top = d.y + '%';
-                    el.style.opacity = '0.4'; // Mais clarinhos para não confundir com o jogo
-                    el.innerText = d.e;
-                    box.appendChild(el);
-                });
-            });
+            // Gerar o mesmo fundo geométrico para ambos
+            const seed = Math.random(); // Para garantir que o fundo seja igual nos dois lados
+            createBackground(origBox);
+            createBackground(diffBox);
 
-            // 2. Adicionar os elementos do jogo
+            // Adicionar os elementos do jogo
             level.orig.forEach((item, index) => {
-                // No original (estático)
+                // No original
                 const elOrig = document.createElement('div');
                 elOrig.className = 'math-item';
                 elOrig.style.left = item.x + '%';
@@ -261,7 +271,7 @@ HTML
                 elOrig.innerText = item.e;
                 origBox.appendChild(elOrig);
 
-                // No diferencial (clicável)
+                // No diferencial
                 const target = document.createElement('div');
                 target.className = 'math-item diff-target';
                 target.style.left = level.diff[index].x + '%';
@@ -294,7 +304,7 @@ HTML
                     } else {
                         showWin();
                     }
-                }, 500);
+                }, 400);
             }
         }
 
