@@ -1,1 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Subtrair10 - 1º Ano</title>
+    
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
 
+        header {
+            background-color: #ff9f43; /* Laranja do 1º Ano */
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        header h2 { margin: 0; font-size: 1.3rem; }
+
+        .btn-topo {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            background: rgba(0,0,0,0.2);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+            padding: 10px;
+        }
+
+        #score { font-size: 1.3rem; font-weight: bold; color: #7f8c8d; }
+
+        #question-box {
+            font-size: clamp(2.5rem, 12vw, 4.5rem);
+            font-weight: bold;
+            color: #2c3e50;
+            border: 6px solid #ff9f43;
+            padding: 25px;
+            width: 85%;
+            max-width: 450px;
+            border-radius: 30px;
+            background: #fffaf5;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        /* Feedback Visual */
+        .wrong-anim { color: #e74c3c !important; border-color: #e74c3c !important; }
+        .correct-anim { border-color: #2ecc71 !important; }
+        .fill-number { color: #2ecc71; text-decoration: underline; }
+
+        /* Botões de Opção (Grelha 2x2 no Mobile) */
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 90%;
+            max-width: 500px;
+            padding-bottom: 20px;
+        }
+
+        .option-btn {
+            background-color: #ff9f43;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 15px;
+            font-size: 2.2rem;
+            font-weight: bold;
+            box-shadow: 0 6px 0 #e67e22;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .option-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #e67e22;
+        }
+
+        /* Modais */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,159,67,0.98);
+            z-index: 100;
+            flex-direction: column; align-items: center; justify-content: center;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .stats-box {
+            background: white;
+            color: #333;
+            padding: 20px;
+            border-radius: 20px;
+            margin: 20px;
+            width: 90%;
+            max-width: 350px;
+        }
+
+        .btn-final {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            border: none;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        @media (min-width: 600px) {
+            .options-container { grid-template-columns: repeat(4, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="next-level-modal" class="modal">
+        <h1>🌟 NÍVEL 1 CONCLUÍDO!</h1>
+        <p style="font-size: 1.4rem;">Agora descobre o número que falta na conta!</p>
+        <button class="option-btn" style="background: white; color: #ff9f43; min-width: 200px;" onclick="startLevel2()">AVANÇAR 🚀</button>
+    </div>
+
+    <div id="final-modal" class="modal" style="background: #2ecc71;">
+        <h1>🏆 EXCELENTE!</h1>
+        <div class="stats-box">
+            <h3>Teu Relatório Subtrair10:</h3>
+            <p>Nível 1: <span id="s1"></span> ✅ | <span id="e1"></span> ❌</p>
+            <p>Nível 2: <span id="s2"></span> ✅ | <span id="e2"></span> ❌</p>
+        </div>
+        <button class="btn-final" onclick="location.reload()">REPETIR 🔄</button>
+        <a href="../index.html" class="btn-final" style="background: rgba(0,0,0,0.3);">MENU 🏠</a>
+    </div>
+
+    <header>
+        <h2>➖ Subtrair10</h2>
+        <a href="../index.html" class="btn-topo">⬅ 1ºAno</a>
+    </header>
+
+    <main>
+        <div id="score">Pontos: 0</div>
+        <div id="question-box"></div>
+        <div class="options-container" id="options"></div>
+    </main>
+
+    <script>
+        let score = 0;
+        let correctAnswer = 0;
+        let canClick = true;
+        let currentLevel = 1;
+        let stats = { l1_hits: 0, l1_errors: 0, l2_hits: 0, l2_errors: 0 };
+
+        function nextQuestion() {
+            if (score >= 10 && currentLevel === 1) {
+                document.getElementById('next-level-modal').style.display = 'flex';
+                return;
+            }
+            if (score >= 20) {
+                showFinalReport();
+                return;
+            }
+
+            canClick = true;
+            const optionsDiv = document.getElementById('options');
+            const qBox = document.getElementById('question-box');
+            optionsDiv.innerHTML = ''; 
+            qBox.classList.remove('correct-anim', 'wrong-anim');
+
+            let n1, n2, res;
+
+            if (currentLevel === 1) {
+                n1 = Math.floor(Math.random() * 6) + 5; 
+                n2 = Math.floor(Math.random() * (n1 + 1)); 
+                correctAnswer = n1 - n2;
+                qBox.innerHTML = `${n1} - ${n2} = <span id="gap">?</span>`;
+            } else {
+                n1 = Math.floor(Math.random() * 6) + 5;
+                res = Math.floor(Math.random() * (n1 + 1));
+                correctAnswer = n1 - res;
+                qBox.innerHTML = `${n1} - <span id="gap">__</span> = ${res}`;
+            }
+
+            let choices = [correctAnswer];
+            while(choices.length < 4) {
+                let r = Math.floor(Math.random() * 11);
+                if(!choices.includes(r)) choices.push(r);
+            }
+            choices.sort(() => Math.random() - 0.5);
+
+            choices.forEach(val => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = val;
+                btn.onclick = () => check(val);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function check(selected) {
+            if (!canClick) return;
+            const qBox = document.getElementById('question-box');
+            const gap = document.getElementById('gap');
+
+            if(selected === correctAnswer) {
+                canClick = false;
+                score++;
+                currentLevel === 1 ? stats.l1_hits++ : stats.l2_hits++;
+                updateScoreUI();
+                gap.innerHTML = selected;
+                gap.className = "fill-number";
+                qBox.classList.add('correct-anim');
+                setTimeout(nextQuestion, 1200);
+            } else {
+                if(score > 0) score--;
+                currentLevel === 1 ? stats.l1_errors++ : stats.l2_errors++;
+                updateScoreUI();
+                qBox.classList.add('wrong-anim');
+                setTimeout(() => qBox.classList.remove('wrong-anim'), 500);
+            }
+        }
+
+        function updateScoreUI() {
+            document.getElementById('score').innerText = `Pontos: ${score}`;
+        }
+
+        function startLevel2() {
+            currentLevel = 2;
+            document.getElementById('next-level-modal').style.display = 'none';
+            nextQuestion();
+        }
+
+        function showFinalReport() {
+            document.getElementById('s1').innerText = stats.l1_hits;
+            document.getElementById('e1').innerText = stats.l1_errors;
+            document.getElementById('s2').innerText = stats.l2_hits;
+            document.getElementById('e2').innerText = stats.l2_errors;
+            document.getElementById('final-modal').style.display = 'flex';
+        }
+
+        nextQuestion();
+    </script>
+</body>
+</html>
