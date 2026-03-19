@@ -15,7 +15,9 @@
             margin: 0;
             display: flex;
             flex-direction: column;
+            /* svh garante que as barras do telemóvel não tapem o conteúdo */
             height: 100vh;
+            height: 100svh; 
             overflow: hidden;
         }
 
@@ -26,14 +28,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 45px; /* Reduzido de 50px para ganhar espaço */
+            height: 40px;
             flex-shrink: 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .titulo-wrapper { display: flex; align-items: center; gap: 8px; }
-        header h2 { margin: 0; font-size: clamp(0.85rem, 4vw, 1rem); }
-
+        header h2 { margin: 0; font-size: 0.9rem; }
         .btn-topo {
             color: white; text-decoration: none; font-weight: bold;
             background: rgba(255,255,255,0.2); padding: 4px 8px;
@@ -47,13 +46,13 @@
             padding: 5px;
             align-items: center;
             min-height: 0;
-            /* Folga de 50px no fundo para o menu do telemóvel não tapar */
-            padding-bottom: 55px; 
+            /* Folga extra generosa para os controlos do telemóvel */
+            padding-bottom: 80px; 
         }
 
         .instrucao {
-            font-size: clamp(0.75rem, 3vw, 0.95rem);
-            font-weight: bold; color: #ff6b81; text-align: center; margin: 4px 0;
+            font-size: 0.85rem;
+            font-weight: bold; color: #ff6b81; text-align: center; margin: 5px 0;
         }
 
         .game-layout {
@@ -74,9 +73,10 @@
             gap: 6px;
             padding: 5px;
             background: #ffffff;
-            border: 2px solid #f2f2f2;
+            border: 2px solid #f8f8f8;
             border-radius: 12px;
-            min-height: 65px;
+            /* Altura mínima menor para não empurrar o resto */
+            min-height: 60px; 
         }
 
         .zona-central {
@@ -95,14 +95,13 @@
             border: 2px solid #ffdae3;
             border-radius: 12px;
             padding: 4px;
-            /* Altura reduzida para garantir que os 4 cabem com folga */
             height: 18%; 
-            max-height: 80px;
+            max-height: 75px;
         }
 
         .img-grande {
             flex: 1;
-            font-size: clamp(1.8rem, 8vh, 3rem);
+            font-size: clamp(1.8rem, 7vh, 2.8rem);
             text-align: center;
         }
 
@@ -110,7 +109,7 @@
             flex: 1;
             height: 85%;
             background: white;
-            border: 2.5px dashed #ffb3c6;
+            border: 2px dashed #ffb3c6;
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -121,44 +120,43 @@
             background: white;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
-            width: clamp(45px, 14vw, 65px);
-            height: clamp(45px, 14vw, 65px);
-            font-size: clamp(1.5rem, 7vw, 2.4rem);
+            /* Peças ligeiramente menores no telemóvel para caberem bem */
+            width: clamp(45px, 12vw, 60px);
+            height: clamp(45px, 12vw, 60px);
+            font-size: clamp(1.4rem, 6vw, 2.2rem);
             cursor: grab;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 3px 0 #e0e0e0;
-            z-index: 10;
         }
 
         .img-pequena.correto {
             background-color: #7bed9f !important;
             border-color: #2ed573 !important;
             box-shadow: none !important;
-            transform: scale(0.85);
+            transform: scale(0.8);
         }
 
-        .progresso { color: #95a5a6; font-size: 0.75rem; font-weight: bold; margin-bottom: 2px; }
+        .progresso { color: #95a5a6; font-size: 0.7rem; font-weight: bold; margin-top: 2px; }
 
-        /* Media Query para Tablets/Desktop - Removemos a folga de 50px */
+        /* Tablet e Desktop */
         @media (min-width: 768px) {
-            main { padding-bottom: 5px; }
+            main { padding-bottom: 10px; }
             .game-layout { flex-direction: row; }
             .zona-pequenas { flex-direction: column; width: 110px; height: auto; }
-            .zona-central { padding: 0 40px; }
             .par-container { height: 20%; max-height: 100px; }
-            .img-grande { font-size: 3.5rem; }
+            .img-pequena { width: 70px; height: 70px; font-size: 2.8rem; }
         }
 
         #final-panel {
             display: none; flex-direction: column; align-items: center;
-            justify-content: center; text-align: center; height: 100%;
+            justify-content: center; height: 100%;
         }
 
         .btn-final {
             padding: 12px 25px; border-radius: 15px; color: white; border: none;
-            font-weight: bold; font-size: 1rem; margin-top: 15px; cursor: pointer;
+            font-weight: bold; background:#2ecc71; cursor: pointer;
         }
     </style>
 </head>
@@ -177,7 +175,9 @@
         
         <div class="game-layout">
             <div class="zona-pequenas" id="zona-1"></div>
+            
             <div class="zona-central" id="zona-alvos"></div>
+            
             <div class="zona-pequenas" id="zona-2"></div>
         </div>
 
@@ -187,7 +187,7 @@
     <div id="final-panel">
         <div style="font-size: 4rem;">🌟</div>
         <h1 style="color: #ff6b81;">Muito bem!</h1>
-        <button class="btn-final" style="background:#2ecc71;" onclick="reiniciarJogo()">Recomeçar 🔄</button>
+        <button class="btn-final" onclick="reiniciarJogo()">Recomeçar 🔄</button>
     </div>
 
     <script>
@@ -229,10 +229,9 @@
                         if (item.dataset.animal === alvo.dataset.animal) {
                             item.classList.add('correto');
                             acertosRonda++;
-                            if (acertosRonda === 4) setTimeout(() => { ronda++; iniciarRonda(); }, 800);
+                            if (acertosRonda === 4) setTimeout(() => { ronda++; iniciarRonda(); }, 600);
                         } else {
-                            // Devolve à origem
-                            origem.appendChild(item);
+                            origem.appendChild(item); // Volta se errar
                         }
                     }
                 });
