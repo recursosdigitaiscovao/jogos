@@ -6,7 +6,6 @@
     <title>Pré-Escolar - Associa o Par</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
-        /* Impede o scroll padrão para podermos detetar o deslize para baixo */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; }
 
         body {
@@ -19,22 +18,6 @@
             height: 100vh;
             height: 100svh;
             overflow: hidden;
-            position: relative;
-        }
-
-        /* Indicador visual de atualização */
-        #refresh-indicator {
-            position: absolute;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ffb3c6;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 0 0 20px 20px;
-            font-weight: bold;
-            transition: top 0.2s;
-            z-index: 999;
         }
 
         header {
@@ -44,21 +27,19 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 50px;
+            height: 55px;
             flex-shrink: 0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            z-index: 10;
         }
 
-        /* Correção do Ícone no Telemóvel */
+        /* Título e Ícone sempre lado a lado */
         .titulo-wrapper { 
             display: flex !important; 
-            flex-direction: row !important;
             align-items: center !important; 
-            gap: 10px;
+            gap: 10px !important;
         }
         
-        .icon-header { font-size: 1.4rem; display: inline-block; }
+        .icon-header { font-size: 1.5rem; line-height: 1; }
         header h2 { margin: 0; font-size: 1.1rem; white-space: nowrap; }
 
         .btn-topo {
@@ -74,7 +55,7 @@
             padding: 10px 5px;
             align-items: center;
             min-height: 0;
-            padding-bottom: 70px; 
+            padding-bottom: 80px; /* Folga para telemóvel */
         }
 
         .instrucao {
@@ -122,7 +103,7 @@
             border-radius: 18px;
             padding: 6px;
             height: 20%; 
-            max-height: 100px;
+            max-height: 95px;
         }
 
         .img-grande {
@@ -154,6 +135,7 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 0 #e0e0e0;
+            z-index: 100;
         }
 
         .img-pequena.correto {
@@ -172,12 +154,10 @@
         }
 
         #final-panel { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
-        .btn-final { padding: 15px 30px; border-radius: 20px; color: white; border: none; font-weight: bold; background: #2ecc71; }
+        .btn-final { padding: 15px 30px; border-radius: 20px; color: white; border: none; font-weight: bold; background: #2ecc71; cursor: pointer; }
     </style>
 </head>
-<body id="body-main">
-
-    <div id="refresh-indicator">🔄 A atualizar...</div>
+<body>
 
     <header>
         <div class="titulo-wrapper">
@@ -209,30 +189,6 @@
         const animaisPool = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', '🦊', '🐻', '🐥', '🦄', '🐝', '🐞', '🦋', '🐢', '🐨', '🐷', '🐮', '🐱', '🐶', '🦓', '🐹'];
         let ronda = 1;
         let acertosRonda = 0;
-
-        // Lógica de "Pull to Refresh" (Deslizar para baixo)
-        let touchStart = 0;
-        let touchEnd = 0;
-        
-        document.addEventListener('touchstart', e => { touchStart = e.targetTouches[0].pageY; }, false);
-        
-        document.addEventListener('touchmove', e => {
-            touchEnd = e.targetTouches[0].pageY;
-            if (touchEnd - touchStart > 100 && window.scrollY === 0) {
-                document.getElementById('refresh-indicator').style.top = '0px';
-            }
-        }, false);
-
-        document.addEventListener('touchend', e => {
-            if (touchEnd - touchStart > 100) {
-                setTimeout(() => {
-                    document.getElementById('refresh-indicator').style.top = '-50px';
-                    iniciarRonda(); // Reinicia a ronda atual
-                }, 500);
-            }
-            touchStart = 0;
-            touchEnd = 0;
-        }, false);
 
         function iniciarRonda() {
             if (ronda > 10) {
@@ -266,7 +222,7 @@
                             acertosRonda++;
                             if (acertosRonda === 4) setTimeout(() => { ronda++; iniciarRonda(); }, 800);
                         } else {
-                            evt.from.appendChild(item);
+                            evt.from.appendChild(item); // Volta ao erro
                         }
                     }
                 });
