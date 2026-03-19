@@ -6,384 +6,270 @@
     <title>Pré-Escolar - Associa o Par</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
-        /* Reset e Estilo Geral */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-        body {
-            background-color: #ffffff; /* Fundo Branco */
-            color: #2c3e50;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            overflow: hidden; /* Evita scroll indesejado durante o drag */
+        /* Bloqueio total de movimentos parasitas no telemóvel */
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            touch-action: none; /* Crucial para o drag and drop no telemóvel */
         }
 
-        /* Barra Superior Rosa */
+        body {
+            background-color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            height: 100vh;
+            height: 100svh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            overscroll-behavior-y: contain;
+        }
+
         header {
-            background-color: #ffb3c6; /* Rosa Pastel */
+            background-color: #ffb3c6;
             color: white;
-            padding: 0 15px;
+            padding: 0 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 60px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            height: 50px;
+            flex-shrink: 0;
         }
 
-        .titulo-container { display: flex; align-items: center; gap: 8px; }
-        header h2 { margin: 0; font-size: clamp(0.9rem, 4vw, 1.2rem); }
+        .titulo-wrapper { display: flex; align-items: center; gap: 8px; }
+        .icon-header { font-size: 1.3rem; }
+        header h2 { margin: 0; font-size: 1rem; }
 
         .btn-topo {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            background: rgba(255,255,255,0.2);
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            border: 1px solid white;
+            color: white; text-decoration: none; font-weight: bold;
+            background: rgba(255,255,255,0.2); padding: 5px 10px;
+            border-radius: 8px; font-size: 0.7rem; border: 1px solid white;
         }
 
-        /* Área do Jogo Responsiva */
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
+            padding: 10px 5px;
             align-items: center;
-            justify-content: flex-start;
-            padding: 15px;
-            gap: 15px;
-            width: 100%;
         }
 
         .instrucao {
-            font-size: clamp(1rem, 4.5vw, 1.3rem);
+            font-size: 0.9rem;
             font-weight: bold;
             color: #ff6b81;
             text-align: center;
-            margin: 0;
+            margin-bottom: 10px;
         }
 
-        /* Estrutura Principal do Jogo */
-        .game-area {
-            display: flex;
+        /* Contentor do Jogo: 3 colunas fixas */
+        .game-grid {
+            display: grid;
+            grid-template-columns: 75px 1fr 75px; /* Colunas laterais fixas para não quebrar */
+            gap: 10px;
             width: 100%;
-            max-width: 800px;
-            gap: 15px;
+            max-width: 500px;
             flex: 1;
+            align-items: center;
         }
 
-        /* Colunas Laterais de Pequenas */
-        .zona-pequenas-lateral {
-            width: 20%;
+        .coluna-pequenas {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            justify-content: space-around;
+            height: 100%;
+        }
+
+        .coluna-central {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            height: 100%;
+            justify-content: space-around;
+        }
+
+        /* Contentor do Par Grande */
+        .par-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             background: #fff9fa;
             border: 2px solid #ffdae3;
-            border-radius: 20px;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            height: fit-content;
-        }
-
-        /* Coluna Central de Grandes */
-        .zona-grandes-central {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            justify-content: center;
-        }
-
-        /* Par: Imagem Grande + Alvo de Larga */
-        .par-grande {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            background: #fff0f3;
-            border: 2px solid #ffdae3;
-            border-radius: 20px;
-            padding: 15px;
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
+            border-radius: 12px;
+            padding: 5px;
+            position: relative;
         }
 
         .img-grande {
-            font-size: clamp(3rem, 12vw, 5rem); /* Tamanho GRANDE */
-            width: 40%;
-            text-align: center;
+            font-size: 3rem;
+            line-height: 1;
+            margin-bottom: 5px;
         }
 
-        /* Quadrado BRANCO onde as pequenas serão largadas */
+        /* Alvo Branco - Onde se larga */
         .alvo-largada {
-            flex: 1;
-            aspect-ratio: 1 / 1;
-            max-width: 100px;
-            background-color: white; /* Fundo Branco */
-            border: 4px dashed #ffb3c6;
-            border-radius: 15px;
+            width: 65px;
+            height: 65px;
+            background: white;
+            border: 3px dashed #ffb3c6;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s;
         }
 
-        .alvo-largada.arrastando-sobre {
-            background-color: #ebf5fb;
-            border-color: #3498db;
-        }
-
-        /* Imagens PEQUENAS Arrastáveis */
-        .img-pequena-draggable {
+        /* Imagens Pequenas Arrastáveis */
+        .img-pequena {
             background: white;
             border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            padding: 10px;
-            font-size: clamp(2rem, 8vw, 3rem); /* Tamanho PEQUENO */
-            cursor: grab;
+            border-radius: 10px;
+            width: 65px;
+            height: 65px;
+            font-size: 2.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            aspect-ratio: 1 / 1;
-            box-shadow: 0 4px 0 #e0e0e0;
-            transition: transform 0.2s, opacity 0.2s;
+            box-shadow: 0 3px 0 #e0e0e0;
+            cursor: grab;
+            z-index: 100;
+            touch-action: none;
         }
 
-        .img-pequena-draggable.correto {
+        .img-pequena.correto {
             background-color: #7bed9f !important;
             border-color: #2ed573 !important;
-            box-shadow: 0 4px 0 #2ed573 !important;
-            cursor: default;
+            box-shadow: none !important;
+            transform: scale(0.9);
         }
 
-        .img-pequena-draggable.arrastando {
-            opacity: 0.5;
-            cursor: grabbing;
+        /* Ajuste para ecrãs maiores (PC/Tablet) */
+        @media (min-width: 600px) {
+            .game-grid { grid-template-columns: 100px 1fr 100px; max-width: 700px; }
+            .img-pequena, .alvo-largada { width: 85px; height: 85px; font-size: 2.8rem; }
+            .img-grande { font-size: 4rem; }
         }
 
-        /* Barra de Progresso/Rondas */
-        .progresso { color: #95a5a6; font-weight: bold; font-size: 0.9rem; margin-top: auto; padding-bottom: 10px; }
+        #final-panel { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+        .btn-final { padding: 15px 30px; border-radius: 20px; color: white; border: none; font-weight: bold; background: #2ecc71; cursor: pointer; }
 
-        /* Painel Final */
-        #final-panel {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 40px 20px;
-            flex: 1;
-        }
-
-        .botoes-final {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-            max-width: 280px;
-            margin-top: 20px;
-        }
-
-        .btn-final {
-            padding: 16px;
-            border-radius: 15px;
-            text-decoration: none;
-            font-weight: bold;
-            color: white;
-            border: none;
-            font-size: 1.1rem;
-            cursor: pointer;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
-        }
-
-        /* Ajustes Responsivos */
-        @media (max-width: 600px) {
-            .game-area { gap: 10px; }
-            .zona-pequenas-lateral { width: 25%; padding: 5px; gap: 5px; }
-            .img-pequena-draggable { border-radius: 10px; padding: 5px; }
-            .par-grande { padding: 10px; gap: 10px; border-radius: 15px; }
-            .alvo-largada { border-width: 3px; border-radius: 10px; }
-        }
-
-        @media (max-height: 500px) and (orientation: landscape) {
-            header { height: 45px; }
-            main { gap: 8px; padding: 10px; }
-            .game-area { gap: 8px; }
-            .par-grande { gap: 8px; padding: 8px; border-radius: 15px; }
-            .img-grande { font-size: 3rem; }
-            .alvo-largada { border-radius: 10px; }
-            .zona-pequenas-lateral { gap: 5px; padding: 5px; border-radius: 15px; }
-            .img-pequena-draggable { border-radius: 10px; }
+        /* Estilo da peça enquanto é arrastada */
+        .sortable-fallback {
+            opacity: 1 !important;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="titulo-container">
-            <span>🧩</span> <h2>Associa o Par</h2>
+        <div class="titulo-wrapper">
+            <span class="icon-header">🧩</span>
+            <h2>Associa o Par</h2>
         </div>
         <a href="../index.html" class="btn-topo">⬅ Voltar</a>
     </header>
 
     <main id="jogo-container">
-        <p class="instrucao">Arrasta o animal pequeno para o quadrado em branco ao lado do igual grande!</p>
+        <p class="instrucao">Arrasta o pequeno para o seu par grande!</p>
         
-        <div class="game-area">
-            <div class="zona-pequenas-lateral" id="zona-esquerda">
-                </div>
-
-            <div class="zona-grandes-central" id="zona-central">
-                </div>
-
-            <div class="zona-pequenas-lateral" id="zona-direita">
-                </div>
+        <div class="game-grid">
+            <div class="coluna-pequenas" id="col-esq"></div>
+            <div class="coluna-central" id="col-cen"></div>
+            <div class="coluna-pequenas" id="col-dir"></div>
         </div>
-
-        <p class="progresso">Ronda <span id="ronda-atual">1</span> de 10</p>
     </main>
 
     <div id="final-panel">
-        <div style="font-size: 5rem;">🏆</div>
-        <h1 style="color: #ff6b81; margin: 0;">Parabéns!</h1>
-        <p style="font-size: 1.2rem; color: #7f8c8d;">És um observador fantástico!</p>
-        
-        <div class="botoes-final">
-            <button class="btn-final" style="background:#2ecc71;" onclick="reiniciarJogo()">Jogar de Novo 🔄</button>
-            <a href="../index.html" class="btn-final" style="background:#ffb3c6;">Sair ⬅️</a>
-        </div>
+        <div style="font-size: 5rem;">🌟</div>
+        <h1 style="#ff6b81">Muito bem!</h1>
+        <button class="btn-final" onclick="reiniciarJogo()">Recomeçar 🔄</button>
     </div>
 
     <script>
-        const animaisPool = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', '🦊', '🐻', '🐥', 'Unicórnio', 'Unicórnio', '🦄', 'Unicórnio', 'Unicórnio', 'Unicórnio', 'Unicórnio', 'Abelha', 'Abelha', 'Abelha', 'Abelha', 'Joaninha', 'Joaninha', 'Joaninha', 'Borboleta', 'Borboleta', 'Borboleta', 'Tartaruga', 'Tartaruga', 'Tartaruga', 'Coala', 'Coala', 'Coala'];
-        const animaisPoolLimpo = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', '🦊', '🐻', '🐥', '🦄', '🐝', '🐞', '🦋', '🐢', '🐨'];
-        let ronda = 1;
-        let totalPares = 3;
+        const animaisPool = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', '🦊', '🐻', '🐥', '🦄', '🐝', '🐞', '🦋', '🐢', '🐨', '🐷', '🐮', '🐱', '🐶', '🦓', '🐹'];
         let acertosRonda = 0;
 
-        function iniciarRonda() {
-            if (ronda > 10) {
-                document.getElementById('jogo-container').style.display = 'none';
-                document.getElementById('final-panel').style.display = 'flex';
-                return;
-            }
-
-            document.getElementById('ronda-atual').innerText = ronda;
+        function iniciarJogo() {
             acertosRonda = 0;
+            const colEsq = document.getElementById('col-esq');
+            const colCen = document.getElementById('col-cen');
+            const colDir = document.getElementById('col-dir');
             
-            // 1. Selecionar 3 animais aleatórios para os pares
-            let selecionadosParaPares = [...animaisPoolLimpo].sort(() => 0.5 - Math.random()).slice(0, totalPares);
-            
-            // 2. Gerar a Coluna Central (Grandes + Alvos)
-            const zonaCentral = document.getElementById('zona-central');
-            zonaCentral.innerHTML = '';
-            
-            selecionadosParaPares.forEach(animal => {
-                const parDiv = document.createElement('div');
-                parDiv.className = 'par-grande';
-                
-                const imgGrande = document.createElement('div');
-                imgGrande.className = 'img-grande';
-                imgGrande.innerText = animal;
-                
-                const alvoLargada = document.createElement('div');
-                alvoLargada.className = 'alvo-largada';
-                alvoLargada.dataset.animal = animal; // Para verificar o acerto
-                alvoLargada.id = `alvo-${animal}`; // ID único
-                
-                parDiv.appendChild(imgGrande);
-                parDiv.appendChild(alvoLargada);
-                zonaCentral.appendChild(parDiv);
+            colEsq.innerHTML = ''; colCen.innerHTML = ''; colDir.innerHTML = '';
 
-                // Configurar SortableJS para este alvo
-                new Sortable(alvoLargada, {
-                    group: {
-                        name: 'jogo',
-                        put: function(to, from, dragEl) {
-                            // Só permite aceitar se o animal for igual e se o alvo estiver vazio
-                            return dragEl.dataset.animal === to.el.dataset.animal && to.el.children.length === 0;
-                        }
-                    },
+            // Escolher 3 animais para os pares e 3 para distrair
+            let misturados = [...animaisPool].sort(() => 0.5 - Math.random());
+            let selecionados = misturados.slice(0, 3);
+            let distratores = misturados.slice(3, 6);
+            
+            // Criar as 6 imagens pequenas (3 certas + 3 distratores)
+            let todasPequenas = [...selecionados, ...distratores].sort(() => 0.5 - Math.random());
+
+            // Gerar Centro (3 Grandes)
+            selecionados.forEach(animal => {
+                const container = document.createElement('div');
+                container.className = 'par-container';
+                container.innerHTML = `
+                    <div class="img-grande">${animal}</div>
+                    <div class="alvo-largada" data-animal="${animal}"></div>
+                `;
+                colCen.appendChild(container);
+
+                // Configurar o alvo para receber
+                new Sortable(container.querySelector('.alvo-largada'), {
+                    group: 'jogo',
                     animation: 150,
+                    swapThreshold: 1,
+                    forceFallback: true,
                     onAdd: function(evt) {
-                        // Quando uma pequena é largada corretamente
-                        const dragEl = evt.item;
-                        dragEl.classList.add('correto');
-                        dragEl.style.boxShadow = 'none'; // Tira a sombra
-                        
-                        acertosRonda++;
-                        if (acertosRonda === totalPares) {
-                            setTimeout(() => {
-                                ronda++;
-                                iniciarRonda();
-                            }, 1000);
+                        const item = evt.item;
+                        if (item.dataset.animal === evt.to.dataset.animal) {
+                            item.classList.add('correto');
+                            acertosRonda++;
+                            if (acertosRonda === 3) {
+                                setTimeout(() => {
+                                    document.getElementById('jogo-container').style.display = 'none';
+                                    document.getElementById('final-panel').style.display = 'flex';
+                                }, 600);
+                            }
+                        } else {
+                            evt.from.appendChild(item);
                         }
                     }
                 });
             });
 
-            // 3. Selecionar 3 animais distratores (diferentes dos pares)
-            let disponiveisParaDistratores = animaisPoolLimpo.filter(a => !selecionadosParaPares.includes(a));
-            let selecionadosParaDistratores = disponiveisParaDistratores.sort(() => 0.5 - Math.random()).slice(0, totalPares);
-
-            // 4. Criar a lista total de pequenas (3 corretas + 3 distratores = 6)
-            let cartasPequenas = [];
-            selecionadosParaPares.forEach(animal => cartasPequenas.push({ animal }));
-            selecionadosParaDistratores.forEach(animal => cartasPequenas.push({ animal }));
-
-            // Baralhar
-            cartasPequenas.sort(() => 0.5 - Math.random());
-
-            // 5. Distribuir as pequenas pelas colunas laterais
-            const zonaEsquerda = document.getElementById('zona-esquerda');
-            const zonaDireita = document.getElementById('zona-direita');
-            zonaEsquerda.innerHTML = '';
-            zonaDireita.innerHTML = '';
-            
-            cartasPequenas.forEach((item, index) => {
-                const imgPequena = document.createElement('div');
-                imgPequena.className = 'img-pequena-draggable';
-                imgPequena.innerText = item.animal;
-                imgPequena.dataset.animal = item.animal; // Para verificar o acerto
-
-                // Divide metade para cada lado
-                if (index < totalPares) {
-                    zonaEsquerda.appendChild(imgPequena);
-                } else {
-                    zonaDireita.appendChild(imgPequena);
-                }
+            // Distribuir as 6 pequenas (3 esquerda, 3 direita)
+            todasPequenas.forEach((animal, i) => {
+                const el = document.createElement('div');
+                el.className = 'img-pequena';
+                el.innerText = animal;
+                el.dataset.animal = animal;
+                
+                if (i < 3) colEsq.appendChild(el);
+                else colDir.appendChild(el);
             });
 
-            // Configurar SortableJS para as zonas laterais (origem)
-            [zonaEsquerda, zonaDireita].forEach(zona => {
-                new Sortable(zona, {
-                    group: {
-                        name: 'jogo',
-                        put: false // Não deixa arrastar de volta das GRANDES para aqui
-                    },
+            // Configurar as colunas laterais para permitir arrastar
+            [colEsq, colDir].forEach(col => {
+                new Sortable(col, {
+                    group: 'jogo',
                     animation: 150,
-                    sort: false, // Não permite reordenar dentro da zona
-                    chosenClass: 'arrastando'
+                    sort: false,
+                    forceFallback: true,
+                    delay: 0, // Inicia o drag imediatamente ao tocar
+                    touchStartThreshold: 0
                 });
             });
         }
 
         function reiniciarJogo() {
-            ronda = 1;
             document.getElementById('jogo-container').style.display = 'flex';
             document.getElementById('final-panel').style.display = 'none';
-            iniciarRonda();
+            iniciarJogo();
         }
 
-        // Iniciar o jogo pela primeira vez
-        iniciarRonda();
+        iniciarJogo();
     </script>
 </body>
 </html>
