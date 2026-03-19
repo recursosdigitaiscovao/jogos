@@ -10,6 +10,7 @@
             color: #333;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
             height: 100vh;
@@ -110,7 +111,6 @@
             justify-content: center;
             width: 50px;
             height: 50px;
-            transition: transform 0.2s;
         }
 
         .clickable { cursor: pointer; z-index: 10; }
@@ -127,6 +127,27 @@
         }
 
         .found { display: block; }
+
+        /* Feedback de Nível Concluído */
+        #feedback-nivel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: #2ecc71;
+            color: white;
+            padding: 30px 50px;
+            border-radius: 50px;
+            font-size: 2.5rem;
+            font-weight: bold;
+            z-index: 100;
+            pointer-events: none;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .show-feedback { transform: translate(-50%, -50%) scale(1) !important; }
 
         #final-panel {
             display: none;
@@ -156,6 +177,8 @@
     </style>
 </head>
 <body>
+
+    <div id="feedback-nivel">BOA! ⭐<br><span style="font-size: 1.2rem;">Nível Concluído!</span></div>
 
     <header>
         <h2>🔍 Geometria das Diferenças</h2>
@@ -191,7 +214,6 @@
     </main>
 
     <script>
-        // Formas comuns que não mudam (Decoração idêntica)
         const baseShapes = [
             {x:5, y:5, e:'🟦'}, {x:45, y:5, e:'🟡'}, {x:85, y:5, e:'🔺'},
             {x:5, y:30, e:'🟢'}, {x:85, y:30, e:'🟧'}, {x:45, y:85, e:'🔷'},
@@ -233,7 +255,6 @@
             origBox.innerHTML = '';
             diffBox.innerHTML = '';
 
-            // 1. Adicionar as 15 figuras de base (IGUAIS)
             [origBox, diffBox].forEach(box => {
                 baseShapes.forEach(s => {
                     const el = document.createElement('div');
@@ -245,9 +266,7 @@
                 });
             });
 
-            // 2. Adicionar as figuras que mudam (ERROS)
             level.orig.forEach((item, index) => {
-                // No original
                 const elOrig = document.createElement('div');
                 elOrig.className = 'shape';
                 elOrig.style.left = item.x + '%';
@@ -255,7 +274,6 @@
                 elOrig.innerText = item.e;
                 origBox.appendChild(elOrig);
 
-                // No diferencial (Clicável)
                 const target = document.createElement('div');
                 target.className = 'shape clickable';
                 target.style.left = level.diff[index].x + '%';
@@ -276,18 +294,25 @@
             if (foundState[index]) return;
             foundState[index] = true;
             foundInLevel++;
+            
             document.getElementById('m-' + index).classList.add('found');
             document.getElementById('count').innerText = foundInLevel;
 
+            // Se for a última diferença do nível atual
             if (foundInLevel === levels[currentLevelIndex].total) {
+                const pop = document.getElementById('feedback-nivel');
+                pop.classList.add('show-feedback');
+                
                 setTimeout(() => {
+                    pop.classList.remove('show-feedback');
                     currentLevelIndex++;
+                    
                     if (currentLevelIndex < levels.length) {
                         loadLevel();
                     } else {
                         showWin();
                     }
-                }, 400);
+                }, 1500); // Mostra o feedback por 1.5 segundos
             }
         }
 
