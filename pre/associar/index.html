@@ -6,12 +6,7 @@
     <title>Pré-Escolar - Associa o Par</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
-        /* Bloqueio total de scroll e atualização por gesto */
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            touch-action: none; 
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; }
 
         body {
             background-color: #ffffff;
@@ -21,10 +16,10 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            height: 100svh; /* Altura real do telemóvel */
+            height: 100svh;
             overflow: hidden;
-            /* CRUCIAL: Impede o telemóvel de atualizar a página ao puxar para baixo */
-            overscroll-behavior-y: contain; 
+            /* Bloqueia o "pull-to-refresh" do navegador */
+            overscroll-behavior-y: contain;
         }
 
         header {
@@ -34,41 +29,40 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 55px;
+            height: 50px;
             flex-shrink: 0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* Título e Ícone Alinhados */
+        /* Ícone colado ao título */
         .titulo-wrapper { 
             display: flex !important; 
             align-items: center !important; 
-            gap: 10px !important;
+            gap: 10px !important; 
         }
         
-        .icon-header { font-size: 1.5rem; line-height: 1; }
+        .icon-header { font-size: 1.4rem; line-height: 1; }
         header h2 { margin: 0; font-size: 1.1rem; white-space: nowrap; }
 
         .btn-topo {
             color: white; text-decoration: none; font-weight: bold;
-            background: rgba(255,255,255,0.2); padding: 6px 12px;
-            border-radius: 10px; font-size: 0.8rem; border: 1px solid white;
+            background: rgba(255,255,255,0.2); padding: 6px 10px;
+            border-radius: 8px; font-size: 0.8rem; border: 1px solid white;
         }
 
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 10px 5px;
+            padding: 5px; /* Reduzido para dar mais espaço ao jogo */
             align-items: center;
             min-height: 0;
-            /* Folga de segurança para as peças de baixo */
-            padding-bottom: 85px; 
+            padding-bottom: 60px; /* Margem de segurança inferior */
         }
 
         .instrucao {
             font-size: 1rem;
-            font-weight: bold; color: #ff6b81; text-align: center; margin-bottom: 10px;
+            font-weight: bold; color: #ff6b81; text-align: center; margin: 8px 0;
         }
 
         .game-layout {
@@ -76,7 +70,7 @@
             flex-direction: column;
             width: 100%;
             height: 100%;
-            gap: 12px;
+            gap: 8px;
             min-height: 0;
         }
 
@@ -87,11 +81,11 @@
             justify-content: center;
             align-content: center;
             gap: 10px;
-            padding: 10px;
+            padding: 8px;
             background: #fdfdfd;
-            border: 2px solid #eee;
-            border-radius: 15px;
-            min-height: 90px;
+            border: 2px solid #f0f0f0;
+            border-radius: 12px;
+            min-height: 85px; /* Aumentado ligeiramente */
         }
 
         .zona-central {
@@ -108,15 +102,15 @@
             align-items: center;
             background: #fff9fa;
             border: 2px solid #ffdae3;
-            border-radius: 18px;
+            border-radius: 15px;
             padding: 6px;
-            height: 20%; 
-            max-height: 100px;
+            height: 20%; /* Aumentado de 18% para 20% */
+            max-height: 95px;
         }
 
         .img-grande {
             flex: 1;
-            font-size: clamp(2.3rem, 10vh, 3.8rem);
+            font-size: clamp(2.2rem, 9vh, 3.5rem); /* Aumentado */
             text-align: center;
         }
 
@@ -124,8 +118,8 @@
             flex: 1;
             height: 90%;
             background: white;
-            border: 3px dashed #ffb3c6;
-            border-radius: 12px;
+            border: 2.5px dashed #ffb3c6;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -134,16 +128,16 @@
         .img-pequena {
             background: white;
             border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            width: clamp(58px, 17vw, 80px);
-            height: clamp(58px, 17vw, 80px);
-            font-size: clamp(1.9rem, 9vw, 3rem);
+            border-radius: 10px;
+            width: clamp(52px, 15vw, 75px); /* Aumentado */
+            height: clamp(52px, 15vw, 75px); /* Aumentado */
+            font-size: clamp(1.7rem, 8vw, 2.6rem); /* Aumentado */
             cursor: grab;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 0 #e0e0e0;
-            z-index: 100;
+            z-index: 10;
         }
 
         .img-pequena.correto {
@@ -153,32 +147,24 @@
             transform: scale(0.85);
         }
 
-        .progresso { color: #95a5a6; font-size: 0.85rem; font-weight: bold; margin-top: 5px; }
+        .progresso { color: #95a5a6; font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; }
 
-        /* Ajuste para ecrãs maiores (Tablets) */
         @media (min-width: 768px) {
+            main { padding-bottom: 10px; }
             .game-layout { flex-direction: row; }
-            .zona-pequenas { flex-direction: column; width: 140px; height: auto; }
-            .par-container { height: 22%; }
+            .zona-pequenas { flex-direction: column; width: 130px; height: auto; }
+            .par-container { height: 22%; max-height: 110px; }
         }
 
-        #final-panel { 
-            display: none; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100%; 
+        #final-panel {
+            display: none; flex-direction: column; align-items: center;
+            justify-content: center; text-align: center; height: 100%;
         }
-        
-        .btn-final { 
-            padding: 15px 35px; 
-            border-radius: 20px; 
-            color: white; 
-            border: none; 
-            font-weight: bold; 
-            background: #2ecc71; 
-            cursor: pointer; 
-            font-size: 1.2rem;
+
+        .btn-final {
+            padding: 15px 30px; border-radius: 20px; color: white; border: none;
+            font-weight: bold; font-size: 1.1rem; margin-top: 15px; cursor: pointer;
+            background: #2ecc71;
         }
     </style>
 </head>
@@ -197,9 +183,7 @@
         
         <div class="game-layout">
             <div class="zona-pequenas" id="zona-1"></div>
-            
             <div class="zona-central" id="zona-alvos"></div>
-            
             <div class="zona-pequenas" id="zona-2"></div>
         </div>
 
@@ -209,7 +193,7 @@
     <div id="final-panel">
         <div style="font-size: 5rem;">🌟</div>
         <h1 style="color: #ff6b81;">Muito bem!</h1>
-        <button class="btn-final" onclick="reiniciarJogo()">Jogar de Novo 🔄</button>
+        <button class="btn-final" onclick="reiniciarJogo()">Recomeçar 🔄</button>
     </div>
 
     <script>
@@ -223,6 +207,7 @@
                 document.getElementById('final-panel').style.display = 'flex';
                 return;
             }
+
             document.getElementById('ronda-atual').innerText = ronda;
             acertosRonda = 0;
             
@@ -252,7 +237,6 @@
                             acertosRonda++;
                             if (acertosRonda === 4) setTimeout(() => { ronda++; iniciarRonda(); }, 800);
                         } else {
-                            // Se errar, volta para a caixa de onde saiu
                             origem.appendChild(item);
                         }
                     }
@@ -262,6 +246,7 @@
             const z1 = document.getElementById('zona-1');
             const z2 = document.getElementById('zona-2');
             z1.innerHTML = ''; z2.innerHTML = '';
+
             todasPequenas.forEach((animal, i) => {
                 const el = document.createElement('div');
                 el.className = 'img-pequena';
