@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar - Mestre da Observação</title>
+    <title>Pré-Escolar - Associa o Par</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; }
@@ -28,13 +28,17 @@
             align-items: center;
             height: 55px;
             flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        header h2 { margin: 0; font-size: clamp(0.8rem, 4vw, 1.1rem); }
+        .titulo-wrapper { display: flex; align-items: center; gap: 10px; }
+        header h2 { margin: 0; font-size: clamp(0.9rem, 4.5vw, 1.2rem); }
+        .icon-titulo { font-size: 1.4rem; }
+
         .btn-topo {
             color: white; text-decoration: none; font-weight: bold;
-            background: rgba(255,255,255,0.2); padding: 6px 10px;
-            border-radius: 10px; font-size: 0.75rem; border: 1px solid white;
+            background: rgba(255,255,255,0.2); padding: 6px 12px;
+            border-radius: 10px; font-size: 0.8rem; border: 1px solid white;
         }
 
         main {
@@ -48,39 +52,36 @@
 
         .instrucao {
             font-size: clamp(0.85rem, 3.5vw, 1.1rem);
-            font-weight: bold; color: #ff6b81; text-align: center; margin: 5px 0;
+            font-weight: bold; color: #ff6b81; text-align: center; margin: 8px 0;
         }
 
-        /* Contentor Principal Flexível */
         .game-layout {
             display: flex;
-            flex-direction: column; /* Vertical por defeito (mobile) */
+            flex-direction: column;
             width: 100%;
             height: 100%;
-            gap: 5px;
-            max-width: 1000px;
+            gap: 8px;
+            max-width: 1100px;
         }
 
-        /* Zonas das Pequenas (Laterais/Topo/Fundo) */
         .zona-pequenas {
             display: flex;
-            flex-direction: row; /* Horizontal no mobile */
+            flex-direction: row;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             padding: 10px;
-            background: #fff;
-            border: 2px solid #f0f0f0;
-            border-radius: 15px;
-            min-height: 70px;
+            background: #ffffff;
+            border: 2px solid #f2f2f2;
+            border-radius: 20px;
+            min-height: 80px;
         }
 
-        /* Zona Central dos Alvos */
         .zona-central {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             justify-content: center;
         }
 
@@ -89,37 +90,37 @@
             align-items: center;
             background: #fff9fa;
             border: 2px solid #ffdae3;
-            border-radius: 15px;
-            padding: 5px;
-            height: calc(18vh - 20px);
-            max-height: 100px;
+            border-radius: 20px;
+            padding: 8px;
+            height: calc(18vh - 15px);
+            max-height: 110px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
         .img-grande {
             flex: 1;
-            font-size: clamp(2.5rem, 12vh, 4rem);
+            font-size: clamp(2.5rem, 11vh, 4.5rem);
             text-align: center;
         }
 
         .alvo-largada {
             flex: 1;
-            height: 90%;
+            height: 95%;
             background: white;
             border: 3px dashed #ffb3c6;
-            border-radius: 12px;
+            border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* Peças Draggable */
         .img-pequena {
             background: white;
             border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            width: clamp(55px, 14vw, 85px);
-            height: clamp(55px, 14vw, 85px);
-            font-size: clamp(1.8rem, 8vw, 3rem);
+            border-radius: 15px;
+            width: clamp(55px, 13vw, 90px);
+            height: clamp(55px, 13vw, 90px);
+            font-size: clamp(1.8rem, 8vw, 3.2rem);
             cursor: grab;
             display: flex;
             align-items: center;
@@ -135,45 +136,43 @@
             transform: scale(0.85);
         }
 
-        .progresso { color: #95a5a6; font-size: 0.8rem; font-weight: bold; margin: 5px; }
+        .progresso { color: #95a5a6; font-size: 0.85rem; font-weight: bold; margin: 5px; }
 
-        /* Media Query para ecrãs largos (Tablets/PC) */
-        @media (min-width: 768px) {
+        @media (min-width: 800px) {
             .game-layout { flex-direction: row; align-items: stretch; }
-            .zona-pequenas { flex-direction: column; width: 120px; height: auto; }
-            .zona-central { padding: 0 20px; }
+            .zona-pequenas { flex-direction: column; width: 140px; height: auto; padding: 15px; }
+            .zona-central { padding: 0 30px; }
             .par-container { height: calc(20vh - 30px); }
         }
 
-        /* Painel Final */
         #final-panel {
             display: none; flex-direction: column; align-items: center;
             justify-content: center; text-align: center; height: 100%;
         }
 
         .btn-final {
-            padding: 15px 30px; border-radius: 15px; color: white; border: none;
-            font-weight: bold; font-size: 1.1rem; margin-top: 20px; cursor: pointer;
+            padding: 16px 35px; border-radius: 20px; color: white; border: none;
+            font-weight: bold; font-size: 1.2rem; margin-top: 25px; cursor: pointer;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="titulo-container">
-            <span>🦁</span> <h2>Associa o par</h2>
+        <div class="titulo-wrapper">
+            <span class="icon-titulo">🧩</span>
+            <h2>Associa o Par</h2>
         </div>
         <a href="../index.html" class="btn-topo">⬅ Voltar</a>
     </header>
 
     <main id="jogo-container">
-        <p class="instrucao">Arrasta os pares pequenos para o quadrado branco!</p>
+        <p class="instrucao">Leva o animal pequeno para o quadrado ao lado do grande!</p>
         
         <div class="game-layout">
             <div class="zona-pequenas" id="zona-1"></div>
-            
             <div class="zona-central" id="zona-alvos"></div>
-            
             <div class="zona-pequenas" id="zona-2"></div>
         </div>
 
@@ -181,9 +180,9 @@
     </main>
 
     <div id="final-panel">
-        <div style="font-size: 5rem;">🏆</div>
-        <h1 style="color: #ff6b81;">Parabéns!</h1>
-        <p>Completaste o desafio de observação!</p>
+        <div style="font-size: 6rem;">🌟</div>
+        <h1 style="color: #ff6b81; margin: 10px 0;">Excelente Trabalho!</h1>
+        <p style="font-size: 1.2rem; color: #7f8c8d;">Conseguiste encontrar todos os pares.</p>
         <button class="btn-final" style="background:#2ecc71;" onclick="reiniciarJogo()">Jogar de Novo 🔄</button>
         <a href="../index.html" class="btn-final" style="background:#ffb3c6; text-decoration:none; display:inline-block;">Sair</a>
     </div>
@@ -203,13 +202,11 @@
             document.getElementById('ronda-atual').innerText = ronda;
             acertosRonda = 0;
             
-            // Escolher 4 para os pares e 4 distratores (Total 8 pequenas)
             let misturados = [...animaisPool].sort(() => 0.5 - Math.random());
             let selecionadosGrandes = misturados.slice(0, 4);
             let distratores = misturados.slice(4, 8);
             let todasPequenas = [...selecionadosGrandes, ...distratores].sort(() => 0.5 - Math.random());
 
-            // Limpar e Gerar Alvos Centrais
             const centro = document.getElementById('zona-alvos');
             centro.innerHTML = '';
             selecionadosGrandes.forEach(animal => {
@@ -228,14 +225,12 @@
                             acertosRonda++;
                             if (acertosRonda === 4) setTimeout(() => { ronda++; iniciarRonda(); }, 800);
                         } else {
-                            // Devolve à zona original se estiver errado
                             document.getElementById('zona-1').appendChild(item);
                         }
                     }
                 });
             });
 
-            // Distribuir as 8 pequenas pelas duas zonas (4 cada)
             const z1 = document.getElementById('zona-1');
             const z2 = document.getElementById('zona-2');
             z1.innerHTML = ''; z2.innerHTML = '';
