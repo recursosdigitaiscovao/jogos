@@ -68,7 +68,7 @@
         .canvas-container {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 8px;
+            gap: 10px;
             width: 100%;
             max-width: 900px;
             flex-grow: 1;
@@ -87,48 +87,38 @@
             background: #fff3e6;
             padding: 3px;
             border-radius: 10px 10px 0 0;
-            border: 1px solid #ff9f43;
+            border: 2px solid #ff9f43;
             border-bottom: none;
         }
 
         .image-box {
             position: relative;
-            background: #ffffff;
+            background: #fdfdfd;
             border: 3px solid #ff9f43;
             border-radius: 0 0 15px 15px;
             width: 100%;
-            height: 32vh;
+            height: 33vh;
             overflow: hidden;
             user-select: none;
         }
 
-        /* Formas Geométricas de Fundo */
-        .bg-shape {
+        .shape {
             position: absolute;
-            opacity: 0.15;
-            pointer-events: none;
-        }
-
-        .math-item {
-            position: absolute;
-            font-size: 2rem;
+            font-size: 2.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
             width: 50px;
             height: 50px;
-            z-index: 5;
+            transition: transform 0.2s;
         }
 
-        .diff-target {
-            cursor: pointer;
-            z-index: 10;
-        }
+        .clickable { cursor: pointer; z-index: 10; }
 
         .marker {
             position: absolute;
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border: 4px solid #e74c3c;
             border-radius: 50%;
             pointer-events: none;
@@ -142,9 +132,9 @@
             display: none;
             flex-direction: column;
             align-items: center;
-            text-align: center;
             justify-content: center;
             height: 100%;
+            text-align: center;
         }
 
         .btn-final {
@@ -157,27 +147,25 @@
             box-shadow: 0 5px 0 rgba(0,0,0,0.2);
             cursor: pointer;
             margin: 10px;
-            font-size: 1.1rem;
         }
 
         @media (min-width: 700px) {
             .canvas-container { grid-template-columns: 1fr 1fr; }
-            .image-box { height: 62vh; }
-            header h2 { font-size: 1.5rem; }
+            .image-box { height: 65vh; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h2>🔍 Jogo das Diferenças</h2>
+        <h2>🔍 Geometria das Diferenças</h2>
         <a href="../index.html" class="btn-topo">⬅ 1ºAno</a>
     </header>
 
-    <main id="main-content">
+    <main>
         <div class="status-bar" id="game-stats">
             <div class="info-box">Nível <span id="level-txt">1</span></div>
-            <div class="info-box">Diferenças: <span id="count">0</span> / <span id="total-txt">5</span></div>
+            <div class="info-box">Erros: <span id="count">0</span> / <span id="total-txt">5</span></div>
         </div>
 
         <div id="game-area" class="canvas-container">
@@ -192,55 +180,44 @@
         </div>
 
         <div id="final-panel">
-            <div style="font-size: 5rem;">🥳</div>
-            <h1 style="color: #ff9f43; margin:10px; font-size: 2.5rem;">Incrível!</h1>
-            <p style="font-size: 1.2rem;">Encontraste todos os erros matemáticos!</p>
+            <div style="font-size: 4rem;">📐</div>
+            <h1 style="color: #ff9f43;">Excelente Observador!</h1>
+            <p>Conseguiste identificar todas as mudanças nas figuras!</p>
             <div style="display: flex;">
                 <button onclick="location.reload()" class="btn-final" style="background:#2ecc71;">Repetir 🔄</button>
-                <a href="../index.html" class="btn-final" style="background:#3498db;">Matemática 🧮</a>
+                <a href="../index.html" class="btn-final" style="background:#3498db;">Voltar 🧮</a>
             </div>
         </div>
     </main>
 
     <script>
-        // Configuração dos Níveis
+        // Formas comuns que não mudam (Decoração idêntica)
+        const baseShapes = [
+            {x:5, y:5, e:'🟦'}, {x:45, y:5, e:'🟡'}, {x:85, y:5, e:'🔺'},
+            {x:5, y:30, e:'🟢'}, {x:85, y:30, e:'🟧'}, {x:45, y:85, e:'🔷'},
+            {x:5, y:85, e:'🟥'}, {x:85, y:85, e:'🟣'}, {x:25, y:15, e:'⭐'},
+            {x:65, y:15, e:'🟡'}, {x:10, y:55, e:'🔺'}, {x:80, y:55, e:'🟦'},
+            {x:30, y:40, e:'🟠'}, {x:60, y:40, e:'🟢'}, {x:20, y:70, e:'🟨'}
+        ];
+
         const levels = [
             { id: 1, total: 5, 
-              orig: [{x:15,y:15,e:'1️⃣'}, {x:75,y:25,e:'🔺'}, {x:45,y:55,e:'🔵'}, {x:20,y:75,e:'📏'}, {x:80,y:75,e:'🖍️'}],
-              diff: [{x:15,y:15,e:'2️⃣'}, {x:75,y:25,e:'🟦'}, {x:45,y:55,e:'⭐'}, {x:20,y:75,e:'📐'}, {x:80,y:75,e:'✂️'}]
+              orig: [{x:45,y:30,e:'🟦'}, {x:15,y:45,e:'🔺'}, {x:75,y:45,e:'🟡'}, {x:35,y:65,e:'⭐'}, {x:65,y:65,e:'🟩'}],
+              diff: [{x:45,y:30,e:'🟥'}, {x:15,y:45,e:'🟡'}, {x:75,y:45,e:'🔺'}, {x:35,y:65,e:'🔷'}, {x:65,y:65,e:'🟠'}]
             },
             { id: 2, total: 7,
-              orig: [{x:10,y:15,e:'➕'}, {x:80,y:10,e:'3️⃣'}, {x:45,y:15,e:'🟢'}, {x:10,y:40,e:'📦'}, {x:85,y:45,e:'5️⃣'}, {x:25,y:75,e:'⭕'}, {x:70,y:80,e:'🔢'}],
-              diff: [{x:10,y:15,e:'➖'}, {x:80,y:10,e:'9️⃣'}, {x:45,y:15,e:'🟡'}, {x:10,y:40,e:'🎁'}, {x:85,y:45,e:'6️⃣'}, {x:25,y:75,e:'❌'}, {x:70,y:80,e:'🔡'}]
+              orig: [{x:45,y:30,e:'🟦'}, {x:15,y:45,e:'🔺'}, {x:75,y:45,e:'🟡'}, {x:35,y:65,e:'⭐'}, {x:65,y:65,e:'🟩'}, {x:50,y:60,e:'🟣'}, {x:40,y:15,e:'🟫'}],
+              diff: [{x:45,y:30,e:'🟩'}, {x:15,y:45,e:'⭐'}, {x:75,y:45,e:'🟧'}, {x:35,y:65,e:'🟥'}, {x:65,y:65,e:'🔵'}, {x:50,y:60,e:'🟡'}, {x:40,y:15,e:'🟦'}]
             },
             { id: 3, total: 10,
-              orig: [{x:5,y:10,e:'🍎'},{x:45,y:8,e:'7️⃣'},{x:85,y:10,e:'🔷'},{x:15,y:35,e:'⏰'},{x:55,y:40,e:'➕'},{x:85,y:45,e:'0️⃣'},{x:8,y:70,e:'📏'},{x:35,y:80,e:'🎨'},{x:65,y:75,e:'💡'},{x:88,y:82,e:'🪁'}],
-              diff: [{x:5,y:10,e:'🍐'},{x:45,y:8,e:'1️⃣'},{x:85,y:10,e:'🔶'},{x:15,y:35,e:'⌚'},{x:55,y:40,e:'✖️'},{x:85,y:45,e:'8️⃣'},{x:8,y:70,e:'📐'},{x:35,y:80,e:'🎭'},{x:65,y:75,e:'🔦'},{x:88,y:82,e:'🎈'}]
+              orig: [{x:45,y:30,e:'🟦'}, {x:15,y:45,e:'🔺'}, {x:75,y:45,e:'🟡'}, {x:35,y:65,e:'⭐'}, {x:65,y:65,e:'🟩'}, {x:50,y:60,e:'🟣'}, {x:40,y:15,e:'🟫'}, {x:30,y:80,e:'🟡'}, {x:70,y:80,e:'🟦'}, {x:50,y:45,e:'🔺'}],
+              diff: [{x:45,y:30,e:'🟡'}, {x:15,y:45,e:'🟦'}, {x:75,y:45,e:'🔺'}, {x:35,y:65,e:'🟥'}, {x:65,y:65,e:'⭐'}, {x:50,y:60,e:'🟢'}, {x:40,y:15,e:'🟧'}, {x:30,y:80,e:'🔺'}, {x:70,y:80,e:'🟡'}, {x:50,y:45,e:'🟦'}]
             }
         ];
 
         let currentLevelIndex = 0;
         let foundInLevel = 0;
         let foundState = [];
-
-        function createBackground(box) {
-            const colors = ['#ff9f43', '#2ecc71', '#3498db', '#e74c3c', '#9b59b6', '#f1c40f'];
-            const shapes = ['50%', '0%', '20%']; // Círculo, Quadrado, Arredondado
-            
-            for (let i = 0; i < 15; i++) {
-                const shape = document.createElement('div');
-                shape.className = 'bg-shape';
-                const size = Math.random() * 40 + 20;
-                shape.style.width = size + 'px';
-                shape.style.height = size + 'px';
-                shape.style.left = Math.random() * 90 + '%';
-                shape.style.top = Math.random() * 90 + '%';
-                shape.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                shape.style.borderRadius = shapes[Math.floor(Math.random() * shapes.length)];
-                shape.style.transform = `rotate(${Math.random() * 360}deg)`;
-                box.appendChild(shape);
-            }
-        }
 
         function loadLevel() {
             const level = levels[currentLevelIndex];
@@ -256,24 +233,31 @@
             origBox.innerHTML = '';
             diffBox.innerHTML = '';
 
-            // Gerar o mesmo fundo geométrico para ambos
-            const seed = Math.random(); // Para garantir que o fundo seja igual nos dois lados
-            createBackground(origBox);
-            createBackground(diffBox);
+            // 1. Adicionar as 15 figuras de base (IGUAIS)
+            [origBox, diffBox].forEach(box => {
+                baseShapes.forEach(s => {
+                    const el = document.createElement('div');
+                    el.className = 'shape';
+                    el.style.left = s.x + '%';
+                    el.style.top = s.y + '%';
+                    el.innerText = s.e;
+                    box.appendChild(el);
+                });
+            });
 
-            // Adicionar os elementos do jogo
+            // 2. Adicionar as figuras que mudam (ERROS)
             level.orig.forEach((item, index) => {
                 // No original
                 const elOrig = document.createElement('div');
-                elOrig.className = 'math-item';
+                elOrig.className = 'shape';
                 elOrig.style.left = item.x + '%';
                 elOrig.style.top = item.y + '%';
                 elOrig.innerText = item.e;
                 origBox.appendChild(elOrig);
 
-                // No diferencial
+                // No diferencial (Clicável)
                 const target = document.createElement('div');
-                target.className = 'math-item diff-target';
+                target.className = 'shape clickable';
                 target.style.left = level.diff[index].x + '%';
                 target.style.top = level.diff[index].y + '%';
                 target.innerText = level.diff[index].e;
@@ -290,7 +274,6 @@
 
         function markFound(index) {
             if (foundState[index]) return;
-            
             foundState[index] = true;
             foundInLevel++;
             document.getElementById('m-' + index).classList.add('found');
