@@ -2,10 +2,15 @@
 <html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Recursos Digitais - Galeria de Jogos</title>
     <style>
-        /* Estilo Geral - Limpo e Focado */
+        /* Reset e Estilo Geral */
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             background-color: #f4f7f6;
             color: #333;
@@ -13,45 +18,50 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start; /* Melhor para scroll em telas pequenas */
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
+            padding: 40px 20px;
         }
 
         header {
             text-align: center;
-            margin-bottom: 35px; /* Ajuste ligeiro */
+            margin-bottom: 5vh;
+            width: 100%;
+            max-width: 800px;
         }
 
         h1 {
             color: #2c3e50;
             margin: 0;
-            font-size: 2.5rem; /* Tamanho intermédio */
+            font-size: clamp(1.8rem, 5vw, 2.5rem); /* Tamanho fluído */
             letter-spacing: -1px;
+            line-height: 1.2;
         }
 
         .subtitle {
             color: #7f8c8d;
-            font-size: 1.15rem;
+            font-size: clamp(1rem, 3vw, 1.15rem);
             margin-top: 10px;
+            padding: 0 10px;
         }
 
-        /* Contentor dos Menus (Grelha) */
+        /* Container Responsivo (Grelha) */
         .menu-container {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 22px; /* Espaçamento ligeiramente maior */
-            max-width: 700px; /* Largura intermédia */
+            /* Responsividade automática: tenta manter 300px, se não couber, quebra */
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
+            gap: clamp(15px, 3vw, 25px);
+            max-width: 800px;
             width: 100%;
+            margin-bottom: 40px;
         }
 
-        /* Estilo dos Botões/Cards - Aumentados ligeiramente */
+        /* Estilo dos Botões/Cards */
         .btn-menu {
             text-decoration: none;
-            border-radius: 18px; /* Cantos arredondados equilibrados */
-            padding: 28px 15px; /* Aumentado ligeiramente */
+            border-radius: 20px;
+            padding: clamp(20px, 5vw, 35px) 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -59,60 +69,68 @@
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 6px 12px rgba(0,0,0,0.05);
             border: 2px solid white;
-            -webkit-tap-highlight-color: transparent; /* Remove flash no mobile */
+            position: relative;
+            overflow: hidden;
         }
 
-        .btn-menu:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 10px 18px rgba(0,0,0,0.1);
+        .btn-menu:hover, .btn-menu:active {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.1);
         }
 
-        /* Emojis Intermédios */
         .icon {
-            font-size: 3.8rem; /* Aumentado ligeiramente */
-            margin-bottom: 12px;
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            margin-bottom: 10px;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
 
-        /* Texto do Ano */
         .ano-texto {
-            font-size: 1.4rem; /* Aumentado ligeiramente */
+            font-size: clamp(1rem, 4vw, 1.4rem);
             font-weight: 800;
             color: white;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            text-align: center;
+            white-space: nowrap;
         }
 
-        /* Cores Vibrantes por Ano */
-        .btn-1 { background-color: #ff9f43; } /* Laranja */
-        .btn-2 { background-color: #10ac84; } /* Verde */
-        .btn-3 { background-color: #2e86de; } /* Azul */
-        .btn-4 { background-color: #9b59b6; } /* Roxo */
+        /* Cores Vibrantes */
+        .btn-1 { background-color: #ff9f43; }
+        .btn-2 { background-color: #10ac84; }
+        .btn-3 { background-color: #2e86de; }
+        .btn-4 { background-color: #9b59b6; }
 
-        /* Rodapé */
+        /* Rodapé Fixo na base se houver espaço */
         footer {
-            margin-top: 50px;
+            margin-top: auto;
             color: #95a5a6;
             font-size: 0.95rem;
             border-top: 1px solid #e0e0e0;
             width: 100%;
-            max-width: 350px;
+            max-width: 400px;
             text-align: center;
-            padding-top: 18px;
+            padding-top: 20px;
+            padding-bottom: 10px;
         }
 
-        footer strong {
-            color: #2c3e50;
-        }
+        footer strong { color: #2c3e50; }
 
-        /* Ajuste para Telemóveis */
-        @media (max-width: 600px) {
+        /* Ajustes Finos para Telas Muito Pequenas */
+        @media (max-width: 360px) {
             .menu-container {
-                grid-template-columns: repeat(2, 1fr); /* Mantém 2 colunas para compactar */
-                gap: 18px;
+                grid-template-columns: 1fr; /* 1 coluna apenas se for muito estreito */
             }
-            h1 { font-size: 2rem; }
-            .icon { font-size: 3rem; }
-            .ano-texto { font-size: 1.1rem; }
+            .btn-menu {
+                flex-direction: row; /* Ícone ao lado do texto para ganhar espaço vertical */
+                gap: 15px;
+                padding: 15px;
+            }
+            .icon { margin-bottom: 0; font-size: 2.2rem; }
+        }
+
+        /* Ajuste para Orientação Landscape em Telemóveis */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body { padding: 20px; }
+            .menu-container { grid-template-columns: repeat(4, 1fr); }
+            header { margin-bottom: 20px; }
         }
     </style>
 </head>
@@ -123,7 +141,7 @@
         <p class="subtitle">Escolhe o teu ano e diverte-te a aprender!</p>
     </header>
 
-    <div class="menu-container">
+    <nav class="menu-container">
         <a href="https://recursosdigitaiscovao.github.io/jogos/1" class="btn-menu btn-1">
             <span class="icon">🐣</span>
             <span class="ano-texto">1º ANO</span>
@@ -143,7 +161,7 @@
             <span class="icon">🚀</span>
             <span class="ano-texto">4º ANO</span>
         </a>
-    </div>
+    </nav>
 
     <footer>
         Criado por: <strong>Professor Luís</strong>
