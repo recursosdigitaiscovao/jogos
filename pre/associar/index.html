@@ -15,83 +15,82 @@
             margin: 0;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh; /* Permite crescer se necessário */
+            overflow-x: hidden;
         }
 
-        /* Barra Superior Rosa com Ícone */
+        /* Barra Superior Fixa */
         header {
             background-color: #ffb3c6; 
             color: white;
-            padding: 10px 15px;
+            padding: 0 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             height: 60px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .titulo-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        header h2 { margin: 0; font-size: clamp(0.9rem, 4vw, 1.2rem); }
+        .titulo-container { display: flex; align-items: center; gap: 8px; }
+        header h2 { margin: 0; font-size: clamp(0.85rem, 4vw, 1.2rem); }
 
         .btn-topo {
             color: white;
             text-decoration: none;
             font-weight: bold;
             background: rgba(255,255,255,0.2);
-            padding: 8px 15px;
-            border-radius: 12px;
-            font-size: 0.85rem;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
             border: 1px solid white;
         }
 
+        /* Área do Jogo Responsiva */
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            gap: 20px;
+            padding: 15px;
+            gap: 15px;
+            width: 100%;
         }
 
         .instrucao {
-            font-size: clamp(1.1rem, 4vw, 1.3rem);
+            font-size: clamp(1rem, 4.5vw, 1.4rem);
             font-weight: bold;
             color: #ff6b81;
-            margin: 0;
+            text-align: center;
         }
 
         /* Moldura da imagem MAIOR */
         .alvo-container {
             background: #fff0f3; 
-            padding: 30px;
+            padding: clamp(15px, 5vw, 30px);
             border-radius: 30px;
             border: 4px dashed #ffb3c6;
-            width: 100%;
-            max-width: 380px;
+            width: 90%;
+            max-width: 350px;
+            aspect-ratio: 1 / 1; /* Mantém quadrado */
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
         #animal-grande {
-            font-size: clamp(6rem, 25vw, 8.5rem);
-            margin: 0;
+            font-size: clamp(5rem, 25vw, 8rem);
             animation: pulse 2s infinite;
         }
 
-        /* Grelha de Opções (Pequenas) */
+        /* Grelha de Opções */
         .opcoes-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 10px;
             width: 100%;
             max-width: 450px;
         }
@@ -99,11 +98,11 @@
         .btn-opcao {
             background: #fff9fa;
             border: 3px solid #ffdae3;
-            border-radius: 20px;
-            padding: 15px;
-            font-size: clamp(2.5rem, 10vw, 3.2rem);
+            border-radius: 18px;
+            padding: clamp(10px, 3vw, 20px);
+            font-size: clamp(2rem, 10vw, 3.2rem);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: transform 0.2s, background 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -115,12 +114,11 @@
 
         .btn-opcao:active { transform: translateY(2px); box-shadow: 0 2px 0 #ffdae3; }
 
-        .progresso { color: #95a5a6; font-weight: bold; margin: 0; font-size: 0.9rem; }
+        .progresso { color: #95a5a6; font-weight: bold; font-size: 0.9rem; margin-top: 10px; }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         /* Painel Final */
@@ -130,8 +128,8 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            gap: 25px;
-            padding: 20px;
+            padding: 40px 20px;
+            flex: 1;
         }
 
         .botoes-final {
@@ -140,24 +138,36 @@
             gap: 12px;
             width: 100%;
             max-width: 280px;
+            margin-top: 20px;
         }
 
         .btn-final {
             padding: 16px;
-            border-radius: 20px;
+            border-radius: 15px;
             text-decoration: none;
             font-weight: bold;
             color: white;
             border: none;
-            font-size: 1rem;
+            font-size: 1.1rem;
             cursor: pointer;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+
+        /* AJUSTES PARA ECRÃS PEQUENOS E PAISAGEM */
+        @media (max-height: 550px) {
+            header { height: 50px; }
+            main { gap: 10px; padding: 10px; }
+            .alvo-container { max-width: 180px; padding: 10px; }
+            #animal-grande { font-size: 4rem; }
+            .instrucao { font-size: 1rem; }
         }
 
         @media (max-height: 500px) and (orientation: landscape) {
-            main { flex-direction: row; padding: 10px; }
-            .instrucao { display: none; }
-            .alvo-container { width: 30%; padding: 10px; }
-            #animal-grande { font-size: 4.5rem; }
+            main { flex-direction: row; flex-wrap: wrap; }
+            .instrucao { width: 100%; margin-bottom: 0; }
+            .alvo-container { width: 180px; margin-right: 20px; }
+            .opcoes-container { width: calc(100% - 220px); max-width: 350px; }
+            .progresso { width: 100%; }
         }
     </style>
 </head>
