@@ -6,7 +6,7 @@
     <title>Pré-Escolar - Associa o Par</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
-        /* BLOQUEIO DE ATUALIZAÇÃO: Impede o "puxar para baixo" do navegador */
+        /* Bloqueio total de scroll e atualização por gesto */
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
@@ -21,9 +21,9 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            height: 100svh;
+            height: 100svh; /* Altura real do telemóvel */
             overflow: hidden;
-            /* Esta linha impede o pull-to-refresh nativo do telemóvel */
+            /* CRUCIAL: Impede o telemóvel de atualizar a página ao puxar para baixo */
             overscroll-behavior-y: contain; 
         }
 
@@ -39,13 +39,14 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
+        /* Título e Ícone Alinhados */
         .titulo-wrapper { 
             display: flex !important; 
             align-items: center !important; 
             gap: 10px !important;
         }
         
-        .icon-header { font-size: 1.5rem; }
+        .icon-header { font-size: 1.5rem; line-height: 1; }
         header h2 { margin: 0; font-size: 1.1rem; white-space: nowrap; }
 
         .btn-topo {
@@ -61,7 +62,8 @@
             padding: 10px 5px;
             align-items: center;
             min-height: 0;
-            padding-bottom: 80px; 
+            /* Folga de segurança para as peças de baixo */
+            padding-bottom: 85px; 
         }
 
         .instrucao {
@@ -74,7 +76,7 @@
             flex-direction: column;
             width: 100%;
             height: 100%;
-            gap: 10px;
+            gap: 12px;
             min-height: 0;
         }
 
@@ -85,11 +87,11 @@
             justify-content: center;
             align-content: center;
             gap: 10px;
-            padding: 8px;
+            padding: 10px;
             background: #fdfdfd;
             border: 2px solid #eee;
             border-radius: 15px;
-            min-height: 85px;
+            min-height: 90px;
         }
 
         .zona-central {
@@ -109,12 +111,12 @@
             border-radius: 18px;
             padding: 6px;
             height: 20%; 
-            max-height: 95px;
+            max-height: 100px;
         }
 
         .img-grande {
             flex: 1;
-            font-size: clamp(2.2rem, 9vh, 3.5rem);
+            font-size: clamp(2.3rem, 10vh, 3.8rem);
             text-align: center;
         }
 
@@ -133,9 +135,9 @@
             background: white;
             border: 2px solid #e0e0e0;
             border-radius: 12px;
-            width: clamp(55px, 16vw, 75px);
-            height: clamp(55px, 16vw, 75px);
-            font-size: clamp(1.8rem, 8vw, 2.8rem);
+            width: clamp(58px, 17vw, 80px);
+            height: clamp(58px, 17vw, 80px);
+            font-size: clamp(1.9rem, 9vw, 3rem);
             cursor: grab;
             display: flex;
             align-items: center;
@@ -153,9 +155,10 @@
 
         .progresso { color: #95a5a6; font-size: 0.85rem; font-weight: bold; margin-top: 5px; }
 
+        /* Ajuste para ecrãs maiores (Tablets) */
         @media (min-width: 768px) {
             .game-layout { flex-direction: row; }
-            .zona-pequenas { flex-direction: column; width: 130px; height: auto; }
+            .zona-pequenas { flex-direction: column; width: 140px; height: auto; }
             .par-container { height: 22%; }
         }
 
@@ -168,13 +171,14 @@
         }
         
         .btn-final { 
-            padding: 15px 30px; 
+            padding: 15px 35px; 
             border-radius: 20px; 
             color: white; 
             border: none; 
             font-weight: bold; 
             background: #2ecc71; 
             cursor: pointer; 
+            font-size: 1.2rem;
         }
     </style>
 </head>
@@ -193,7 +197,9 @@
         
         <div class="game-layout">
             <div class="zona-pequenas" id="zona-1"></div>
+            
             <div class="zona-central" id="zona-alvos"></div>
+            
             <div class="zona-pequenas" id="zona-2"></div>
         </div>
 
@@ -203,7 +209,7 @@
     <div id="final-panel">
         <div style="font-size: 5rem;">🌟</div>
         <h1 style="color: #ff6b81;">Muito bem!</h1>
-        <button class="btn-final" onclick="reiniciarJogo()">Recomeçar 🔄</button>
+        <button class="btn-final" onclick="reiniciarJogo()">Jogar de Novo 🔄</button>
     </div>
 
     <script>
@@ -238,12 +244,16 @@
                     animation: 200,
                     onAdd: function(evt) {
                         const item = evt.item;
-                        if (item.dataset.animal === evt.to.dataset.animal) {
+                        const alvo = evt.to;
+                        const origem = evt.from;
+
+                        if (item.dataset.animal === alvo.dataset.animal) {
                             item.classList.add('correto');
                             acertosRonda++;
                             if (acertosRonda === 4) setTimeout(() => { ronda++; iniciarRonda(); }, 800);
                         } else {
-                            evt.from.appendChild(item);
+                            // Se errar, volta para a caixa de onde saiu
+                            origem.appendChild(item);
                         }
                     }
                 });
