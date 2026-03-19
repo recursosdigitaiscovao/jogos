@@ -6,191 +6,266 @@
     <title>Pré-Escolar - Associa o Par</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; }
+        /* Reset e Estilo Geral */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            background-color: #ffffff;
+            background-color: #ffffff; /* Fundo Branco */
             color: #2c3e50;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            height: 100svh;
-            overflow: hidden;
-            overscroll-behavior-y: contain; /* Impede atualização ao puxar para baixo */
+            min-height: 100vh;
+            overflow: hidden; /* Evita scroll indesejado durante o drag */
         }
 
+        /* Barra Superior Rosa */
         header {
-            background-color: #ffb3c6;
+            background-color: #ffb3c6; /* Rosa Pastel */
             color: white;
             padding: 0 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 50px;
-            flex-shrink: 0;
+            height: 60px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .titulo-wrapper { display: flex !important; align-items: center !important; gap: 10px !important; }
-        .icon-header { font-size: 1.5rem; }
-        header h2 { margin: 0; font-size: 1.1rem; white-space: nowrap; }
+        .titulo-container { display: flex; align-items: center; gap: 8px; }
+        header h2 { margin: 0; font-size: clamp(0.9rem, 4vw, 1.2rem); }
 
         .btn-topo {
-            color: white; text-decoration: none; font-weight: bold;
-            background: rgba(255,255,255,0.2); padding: 6px 12px;
-            border-radius: 10px; font-size: 0.8rem; border: 1px solid white;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            border: 1px solid white;
         }
 
+        /* Área do Jogo Responsiva */
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 5px;
             align-items: center;
-            min-height: 0;
-            padding-bottom: 70px; /* Espaço para não tapar as peças de baixo */
+            justify-content: flex-start;
+            padding: 15px;
+            gap: 15px;
+            width: 100%;
         }
 
         .instrucao {
-            font-size: 1rem;
+            font-size: clamp(1rem, 4.5vw, 1.3rem);
             font-weight: bold;
             color: #ff6b81;
             text-align: center;
-            margin: 8px 0;
+            margin: 0;
         }
 
-        .game-layout {
+        /* Estrutura Principal do Jogo */
+        .game-area {
+            display: flex;
+            width: 100%;
+            max-width: 800px;
+            gap: 15px;
+            flex: 1;
+        }
+
+        /* Colunas Laterais de Pequenas */
+        .zona-pequenas-lateral {
+            width: 20%;
+            background: #fff9fa;
+            border: 2px solid #ffdae3;
+            border-radius: 20px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
-            width: 100%;
-            height: 100%;
             gap: 10px;
-            min-height: 0;
+            height: fit-content;
         }
 
-        .zona-pequenas {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-content: center;
-            gap: 10px;
-            padding: 10px;
-            background: #fdfdfd;
-            border: 2px solid #eee;
-            border-radius: 15px;
-            min-height: 90px;
-        }
-
-        .zona-central {
+        /* Coluna Central de Grandes */
+        .zona-grandes-central {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 15px;
             justify-content: center;
-            min-height: 0;
         }
 
-        .par-container {
+        /* Par: Imagem Grande + Alvo de Larga */
+        .par-grande {
             display: flex;
             align-items: center;
-            justify-content: space-evenly;
-            background: #fff9fa;
+            justify-content: center;
+            gap: 15px;
+            background: #fff0f3;
             border: 2px solid #ffdae3;
-            border-radius: 18px;
-            padding: 8px;
-            height: 20%;
-            max-height: 100px;
+            border-radius: 20px;
+            padding: 15px;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
         .img-grande {
-            flex: 1;
-            font-size: clamp(2.5rem, 10vh, 3.5rem);
+            font-size: clamp(3rem, 12vw, 5rem); /* Tamanho GRANDE */
+            width: 40%;
             text-align: center;
         }
 
-        /* Quadrado em branco onde se coloca a imagem - Ajustado */
+        /* Quadrado BRANCO onde as pequenas serão largadas */
         .alvo-largada {
-            flex: 0 0 85px; /* Tamanho fixo para não deformar */
-            height: 85px;
-            background: white;
-            border: 3px dashed #ffb3c6;
-            border-radius: 12px;
+            flex: 1;
+            aspect-ratio: 1 / 1;
+            max-width: 100px;
+            background-color: white; /* Fundo Branco */
+            border: 4px dashed #ffb3c6;
+            border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.3s;
         }
 
-        .img-pequena {
+        .alvo-largada.arrastando-sobre {
+            background-color: #ebf5fb;
+            border-color: #3498db;
+        }
+
+        /* Imagens PEQUENAS Arrastáveis */
+        .img-pequena-draggable {
             background: white;
             border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            width: 75px;
-            height: 75px;
-            font-size: 2.5rem;
+            border-radius: 15px;
+            padding: 10px;
+            font-size: clamp(2rem, 8vw, 3rem); /* Tamanho PEQUENO */
             cursor: grab;
             display: flex;
             align-items: center;
             justify-content: center;
+            aspect-ratio: 1 / 1;
             box-shadow: 0 4px 0 #e0e0e0;
-            z-index: 100;
+            transition: transform 0.2s, opacity 0.2s;
         }
 
-        .img-pequena.correto {
+        .img-pequena-draggable.correto {
             background-color: #7bed9f !important;
             border-color: #2ed573 !important;
-            box-shadow: none !important;
-            transform: scale(0.9);
+            box-shadow: 0 4px 0 #2ed573 !important;
+            cursor: default;
         }
 
-        .progresso { color: #95a5a6; font-size: 0.85rem; font-weight: bold; margin-top: 5px; }
-
-        /* Responsividade para PC / Tablets */
-        @media (min-width: 768px) {
-            .game-layout { flex-direction: row; }
-            .zona-pequenas { flex-direction: column; width: 140px; height: auto; }
-            .par-container { height: 22%; }
-            .alvo-largada { flex-basis: 95px; height: 95px; }
-            .img-pequena { width: 85px; height: 85px; }
+        .img-pequena-draggable.arrastando {
+            opacity: 0.5;
+            cursor: grabbing;
         }
 
-        #final-panel { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
-        .btn-final { padding: 15px 30px; border-radius: 20px; color: white; border: none; font-weight: bold; background: #2ecc71; cursor: pointer; }
+        /* Barra de Progresso/Rondas */
+        .progresso { color: #95a5a6; font-weight: bold; font-size: 0.9rem; margin-top: auto; padding-bottom: 10px; }
+
+        /* Painel Final */
+        #final-panel {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            flex: 1;
+        }
+
+        .botoes-final {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 280px;
+            margin-top: 20px;
+        }
+
+        .btn-final {
+            padding: 16px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: bold;
+            color: white;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+
+        /* Ajustes Responsivos */
+        @media (max-width: 600px) {
+            .game-area { gap: 10px; }
+            .zona-pequenas-lateral { width: 25%; padding: 5px; gap: 5px; }
+            .img-pequena-draggable { border-radius: 10px; padding: 5px; }
+            .par-grande { padding: 10px; gap: 10px; border-radius: 15px; }
+            .alvo-largada { border-width: 3px; border-radius: 10px; }
+        }
+
+        @media (max-height: 500px) and (orientation: landscape) {
+            header { height: 45px; }
+            main { gap: 8px; padding: 10px; }
+            .game-area { gap: 8px; }
+            .par-grande { gap: 8px; padding: 8px; border-radius: 15px; }
+            .img-grande { font-size: 3rem; }
+            .alvo-largada { border-radius: 10px; }
+            .zona-pequenas-lateral { gap: 5px; padding: 5px; border-radius: 15px; }
+            .img-pequena-draggable { border-radius: 10px; }
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="titulo-wrapper">
-            <span class="icon-header">🧩</span>
-            <h2>Associa o Par</h2>
+        <div class="titulo-container">
+            <span>🧩</span> <h2>Associa o Par</h2>
         </div>
         <a href="../index.html" class="btn-topo">⬅ Voltar</a>
     </header>
 
     <main id="jogo-container">
-        <p class="instrucao">Leva o pequeno para o par igual!</p>
+        <p class="instrucao">Arrasta o animal pequeno para o quadrado em branco ao lado do igual grande!</p>
         
-        <div class="game-layout">
-            <div class="zona-pequenas" id="zona-1"></div>
-            <div class="zona-central" id="zona-alvos"></div>
-            <div class="zona-pequenas" id="zona-2"></div>
+        <div class="game-area">
+            <div class="zona-pequenas-lateral" id="zona-esquerda">
+                </div>
+
+            <div class="zona-grandes-central" id="zona-central">
+                </div>
+
+            <div class="zona-pequenas-lateral" id="zona-direita">
+                </div>
         </div>
 
         <p class="progresso">Ronda <span id="ronda-atual">1</span> de 10</p>
     </main>
 
     <div id="final-panel">
-        <div style="font-size: 5rem;">🌟</div>
-        <h1 style="color: #ff6b81;">Muito bem!</h1>
-        <button class="btn-final" onclick="reiniciarJogo()">Recomeçar 🔄</button>
+        <div style="font-size: 5rem;">🏆</div>
+        <h1 style="color: #ff6b81; margin: 0;">Parabéns!</h1>
+        <p style="font-size: 1.2rem; color: #7f8c8d;">És um observador fantástico!</p>
+        
+        <div class="botoes-final">
+            <button class="btn-final" style="background:#2ecc71;" onclick="reiniciarJogo()">Jogar de Novo 🔄</button>
+            <a href="../index.html" class="btn-final" style="background:#ffb3c6;">Sair ⬅️</a>
+        </div>
     </div>
 
     <script>
-        const animaisPool = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', '🦊', '🐻', '🐥', '🦄', '🐝', '🐞', '🦋', '🐢', '🐨', '🐷', '🐮', '🐱', '🐶', '🦓', '🐹'];
+        const animaisPool = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', '🦊', '🐻', '🐥', 'Unicórnio', 'Unicórnio', '🦄', 'Unicórnio', 'Unicórnio', 'Unicórnio', 'Unicórnio', 'Abelha', 'Abelha', 'Abelha', 'Abelha', 'Joaninha', 'Joaninha', 'Joaninha', 'Borboleta', 'Borboleta', 'Borboleta', 'Tartaruga', 'Tartaruga', 'Tartaruga', 'Coala', 'Coala', 'Coala'];
+        const animaisPoolLimpo = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', '🦊', '🐻', '🐥', '🦄', '🐝', '🐞', '🦋', '🐢', '🐨'];
         let ronda = 1;
+        let totalPares = 3;
         let acertosRonda = 0;
 
         function iniciarRonda() {
@@ -199,56 +274,105 @@
                 document.getElementById('final-panel').style.display = 'flex';
                 return;
             }
+
             document.getElementById('ronda-atual').innerText = ronda;
             acertosRonda = 0;
             
-            let misturados = [...animaisPool].sort(() => 0.5 - Math.random());
-            let selecionadosGrandes = misturados.slice(0, 4);
-            let distratores = misturados.slice(4, 8);
-            let todasPequenas = [...selecionadosGrandes, ...distratores].sort(() => 0.5 - Math.random());
+            // 1. Selecionar 3 animais aleatórios para os pares
+            let selecionadosParaPares = [...animaisPoolLimpo].sort(() => 0.5 - Math.random()).slice(0, totalPares);
+            
+            // 2. Gerar a Coluna Central (Grandes + Alvos)
+            const zonaCentral = document.getElementById('zona-central');
+            zonaCentral.innerHTML = '';
+            
+            selecionadosParaPares.forEach(animal => {
+                const parDiv = document.createElement('div');
+                parDiv.className = 'par-grande';
+                
+                const imgGrande = document.createElement('div');
+                imgGrande.className = 'img-grande';
+                imgGrande.innerText = animal;
+                
+                const alvoLargada = document.createElement('div');
+                alvoLargada.className = 'alvo-largada';
+                alvoLargada.dataset.animal = animal; // Para verificar o acerto
+                alvoLargada.id = `alvo-${animal}`; // ID único
+                
+                parDiv.appendChild(imgGrande);
+                parDiv.appendChild(alvoLargada);
+                zonaCentral.appendChild(parDiv);
 
-            const centro = document.getElementById('zona-alvos');
-            centro.innerHTML = '';
-            selecionadosGrandes.forEach(animal => {
-                const par = document.createElement('div');
-                par.className = 'par-container';
-                par.innerHTML = `<div class="img-grande">${animal}</div><div class="alvo-largada" data-animal="${animal}"></div>`;
-                centro.appendChild(par);
-
-                new Sortable(par.querySelector('.alvo-largada'), {
-                    group: 'jogo',
-                    animation: 200,
-                    forceFallback: true, // Garante comportamento limpo no PC e Telemóvel
+                // Configurar SortableJS para este alvo
+                new Sortable(alvoLargada, {
+                    group: {
+                        name: 'jogo',
+                        put: function(to, from, dragEl) {
+                            // Só permite aceitar se o animal for igual e se o alvo estiver vazio
+                            return dragEl.dataset.animal === to.el.dataset.animal && to.el.children.length === 0;
+                        }
+                    },
+                    animation: 150,
                     onAdd: function(evt) {
-                        const item = evt.item;
-                        if (item.dataset.animal === evt.to.dataset.animal) {
-                            item.classList.add('correto');
-                            acertosRonda++;
-                            if (acertosRonda === 4) setTimeout(() => { ronda++; iniciarRonda(); }, 800);
-                        } else {
-                            evt.from.appendChild(item);
+                        // Quando uma pequena é largada corretamente
+                        const dragEl = evt.item;
+                        dragEl.classList.add('correto');
+                        dragEl.style.boxShadow = 'none'; // Tira a sombra
+                        
+                        acertosRonda++;
+                        if (acertosRonda === totalPares) {
+                            setTimeout(() => {
+                                ronda++;
+                                iniciarRonda();
+                            }, 1000);
                         }
                     }
                 });
             });
 
-            const z1 = document.getElementById('zona-1');
-            const z2 = document.getElementById('zona-2');
-            z1.innerHTML = ''; z2.innerHTML = '';
-            todasPequenas.forEach((animal, i) => {
-                const el = document.createElement('div');
-                el.className = 'img-pequena';
-                el.innerText = animal;
-                el.dataset.animal = animal;
-                (i < 4 ? z1 : z2).appendChild(el);
+            // 3. Selecionar 3 animais distratores (diferentes dos pares)
+            let disponiveisParaDistratores = animaisPoolLimpo.filter(a => !selecionadosParaPares.includes(a));
+            let selecionadosParaDistratores = disponiveisParaDistratores.sort(() => 0.5 - Math.random()).slice(0, totalPares);
+
+            // 4. Criar a lista total de pequenas (3 corretas + 3 distratores = 6)
+            let cartasPequenas = [];
+            selecionadosParaPares.forEach(animal => cartasPequenas.push({ animal }));
+            selecionadosParaDistratores.forEach(animal => cartasPequenas.push({ animal }));
+
+            // Baralhar
+            cartasPequenas.sort(() => 0.5 - Math.random());
+
+            // 5. Distribuir as pequenas pelas colunas laterais
+            const zonaEsquerda = document.getElementById('zona-esquerda');
+            const zonaDireita = document.getElementById('zona-direita');
+            zonaEsquerda.innerHTML = '';
+            zonaDireita.innerHTML = '';
+            
+            cartasPequenas.forEach((item, index) => {
+                const imgPequena = document.createElement('div');
+                imgPequena.className = 'img-pequena-draggable';
+                imgPequena.innerText = item.animal;
+                imgPequena.dataset.animal = item.animal; // Para verificar o acerto
+
+                // Divide metade para cada lado
+                if (index < totalPares) {
+                    zonaEsquerda.appendChild(imgPequena);
+                } else {
+                    zonaDireita.appendChild(imgPequena);
+                }
             });
 
-            [z1, z2].forEach(z => new Sortable(z, { 
-                group: 'jogo', 
-                animation: 200, 
-                sort: false,
-                forceFallback: true 
-            }));
+            // Configurar SortableJS para as zonas laterais (origem)
+            [zonaEsquerda, zonaDireita].forEach(zona => {
+                new Sortable(zona, {
+                    group: {
+                        name: 'jogo',
+                        put: false // Não deixa arrastar de volta das GRANDES para aqui
+                    },
+                    animation: 150,
+                    sort: false, // Não permite reordenar dentro da zona
+                    chosenClass: 'arrastando'
+                });
+            });
         }
 
         function reiniciarJogo() {
@@ -258,6 +382,7 @@
             iniciarRonda();
         }
 
+        // Iniciar o jogo pela primeira vez
         iniciarRonda();
     </script>
 </body>
