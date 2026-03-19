@@ -14,12 +14,12 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            overflow: hidden; /* Impede o scroll */
+            overflow: hidden;
             touch-action: manipulation;
         }
 
         header {
-            background-color: #ff9f43; /* Laranja do 1º Ano */
+            background-color: #ff9f43;
             color: white;
             padding: 10px 15px;
             display: flex;
@@ -52,14 +52,13 @@
             gap: 10px;
         }
 
-        .instrucao {
+        .info-jogo {
             color: #7f8c8d;
-            font-size: 0.9rem;
+            font-size: 1rem;
             margin: 0;
             font-weight: bold;
         }
 
-        /* Grelha do Jogo - Otimizada para não fazer scroll */
         .game-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -67,7 +66,7 @@
             width: 100%;
             max-width: 500px;
             flex-grow: 1;
-            max-height: 75vh; /* Garante que cabe no ecrã */
+            max-height: 70vh;
         }
 
         .column {
@@ -77,29 +76,38 @@
             justify-content: center;
         }
 
+        /* Cartões mais apelativos */
         .item {
-            background-color: #f8f9fa;
-            color: #333;
-            border-radius: 15px;
+            background-color: #f0f7ff;
+            color: #2c3e50;
+            border-radius: 20px;
             padding: 10px;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: bold;
-            box-shadow: 0 4px 0 #ff9f43;
+            box-shadow: 0 5px 0 #d0e4f5;
             cursor: pointer;
             transition: all 0.2s;
-            flex: 1; /* Faz os botões dividirem o espaço disponível */
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 3px solid #eee;
+            border: 3px solid #bedcff;
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* Cores alternadas para a coluna das palavras */
+        #words-col .item {
+            background-color: #f0fff4;
+            border-color: #c1f0d0;
+            box-shadow: 0 5px 0 #a8e6bc;
+        }
+
         .selected {
-            background-color: #2e86de !important;
+            background-color: #ff9f43 !important;
             color: white !important;
-            border-color: #2e86de;
-            box-shadow: 0 4px 0 #1b4f8a;
+            border-color: #fff !important;
+            box-shadow: 0 5px 0 #e67e22 !important;
+            transform: scale(1.02);
         }
 
         .correct {
@@ -108,10 +116,35 @@
             pointer-events: none;
         }
 
+        /* Painel Final */
+        #final-panel {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .btn-final {
+            background-color: #2ecc71;
+            color: white;
+            text-decoration: none;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border: none;
+            box-shadow: 0 6px 0 #27ae60;
+            cursor: pointer;
+        }
+
+        .btn-final.mat {
+            background-color: #3498db;
+            box-shadow: 0 6px 0 #2980b9;
+        }
+
         @media (min-width: 700px) {
-            header h2 { font-size: 1.5rem; }
             .item { font-size: 1.8rem; }
-            .game-container { gap: 20px; }
         }
     </style>
 </head>
@@ -119,14 +152,21 @@
 
     <header>
         <h2>🔢 Ligar Números</h2>
-        <a href="index.html" class="btn-topo">⬅ 1ºAno</a>
+        <a href="../index.html" class="btn-topo">⬅ 1ºAno</a>
     </header>
 
     <main>
-        <p class="instrucao">Liga o número ao seu nome!</p>
-        <div class="game-container">
+        <p id="label-info" class="info-jogo">Ronda: <span id="ronda-atual">1</span> / 3</p>
+        
+        <div id="game-board" class="game-container">
             <div class="column" id="numbers-col"></div>
             <div class="column" id="words-col"></div>
+        </div>
+
+        <div id="final-panel">
+            <h1 style="color:#ff9f43; margin-top:0;">🌟 Parabéns!</h1>
+            <button class="btn-final" onclick="location.reload()">Jogar Novamente 🔄</button>
+            <a href="../index.html" class="btn-final mat">Voltar à Matemática 🧮</a>
         </div>
     </main>
 
@@ -141,8 +181,15 @@
         let selectedNum = null;
         let selectedWord = null;
         let pairsFound = 0;
+        let currentRound = 1;
 
         function initGame() {
+            if (currentRound > 3) {
+                showFinal();
+                return;
+            }
+
+            document.getElementById('ronda-atual').innerText = currentRound;
             const numsCol = document.getElementById('numbers-col');
             const wordsCol = document.getElementById('words-col');
             
@@ -195,7 +242,8 @@
                         sW.classList.add('correct');
                         pairsFound++;
                         if (pairsFound === 5) {
-                            setTimeout(initGame, 500);
+                            currentRound++;
+                            setTimeout(initGame, 600);
                         }
                     }, 250);
                     selectedNum = null;
@@ -211,6 +259,12 @@
                     selectedWord = null;
                 }
             }
+        }
+
+        function showFinal() {
+            document.getElementById('game-board').style.display = 'none';
+            document.getElementById('label-info').style.display = 'none';
+            document.getElementById('final-panel').style.display = 'flex';
         }
 
         initGame();
