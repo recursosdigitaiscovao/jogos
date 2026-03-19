@@ -6,6 +6,7 @@
     <title>Pré-Escolar - Associa o Par</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
+        /* Impede o scroll padrão para podermos detetar o deslize para baixo */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: none; }
 
         body {
@@ -16,8 +17,24 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            height: 100svh; /* Altura segura para telemóveis */
+            height: 100svh;
             overflow: hidden;
+            position: relative;
+        }
+
+        /* Indicador visual de atualização */
+        #refresh-indicator {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffb3c6;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 0 0 20px 20px;
+            font-weight: bold;
+            transition: top 0.2s;
+            z-index: 999;
         }
 
         header {
@@ -27,44 +44,42 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 45px;
+            height: 50px;
             flex-shrink: 0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 10;
         }
 
-        /* Título com Ícone ao lado */
+        /* Correção do Ícone no Telemóvel */
         .titulo-wrapper { 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
+            display: flex !important; 
+            flex-direction: row !important;
+            align-items: center !important; 
+            gap: 10px;
         }
         
-        .icon-header {
-            font-size: 1.3rem;
-        }
-
-        header h2 { margin: 0; font-size: clamp(0.85rem, 4vw, 1.1rem); }
+        .icon-header { font-size: 1.4rem; display: inline-block; }
+        header h2 { margin: 0; font-size: 1.1rem; white-space: nowrap; }
 
         .btn-topo {
             color: white; text-decoration: none; font-weight: bold;
-            background: rgba(255,255,255,0.2); padding: 5px 10px;
-            border-radius: 8px; font-size: 0.75rem; border: 1px solid white;
+            background: rgba(255,255,255,0.2); padding: 6px 12px;
+            border-radius: 10px; font-size: 0.8rem; border: 1px solid white;
         }
 
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 5px;
+            padding: 10px 5px;
             align-items: center;
             min-height: 0;
-            /* Margem para as imagens de baixo não ficarem tapadas */
-            padding-bottom: 80px; 
+            padding-bottom: 70px; 
         }
 
         .instrucao {
-            font-size: clamp(0.8rem, 3.2vw, 0.95rem);
-            font-weight: bold; color: #ff6b81; text-align: center; margin: 5px 0;
+            font-size: 1rem;
+            font-weight: bold; color: #ff6b81; text-align: center; margin-bottom: 10px;
         }
 
         .game-layout {
@@ -72,7 +87,7 @@
             flex-direction: column;
             width: 100%;
             height: 100%;
-            gap: 5px;
+            gap: 10px;
             min-height: 0;
         }
 
@@ -82,19 +97,19 @@
             flex-wrap: wrap;
             justify-content: center;
             align-content: center;
-            gap: 8px;
-            padding: 5px;
-            background: #ffffff;
-            border: 2px solid #f2f2f2;
-            border-radius: 12px;
-            min-height: 65px;
+            gap: 10px;
+            padding: 8px;
+            background: #fdfdfd;
+            border: 2px solid #eee;
+            border-radius: 15px;
+            min-height: 80px;
         }
 
         .zona-central {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
             justify-content: center;
             min-height: 0;
         }
@@ -104,24 +119,24 @@
             align-items: center;
             background: #fff9fa;
             border: 2px solid #ffdae3;
-            border-radius: 15px;
-            padding: 4px;
-            height: 18%; 
-            max-height: 80px;
+            border-radius: 18px;
+            padding: 6px;
+            height: 20%; 
+            max-height: 100px;
         }
 
         .img-grande {
             flex: 1;
-            font-size: clamp(1.8rem, 8vh, 3rem);
+            font-size: clamp(2.2rem, 9vh, 3.5rem);
             text-align: center;
         }
 
         .alvo-largada {
             flex: 1;
-            height: 85%;
+            height: 90%;
             background: white;
-            border: 2.5px dashed #ffb3c6;
-            border-radius: 10px;
+            border: 3px dashed #ffb3c6;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -130,16 +145,15 @@
         .img-pequena {
             background: white;
             border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            width: clamp(48px, 13vw, 65px);
-            height: clamp(48px, 13vw, 65px);
-            font-size: clamp(1.5rem, 7vw, 2.4rem);
+            border-radius: 12px;
+            width: clamp(55px, 16vw, 75px);
+            height: clamp(55px, 16vw, 75px);
+            font-size: clamp(1.8rem, 8vw, 2.8rem);
             cursor: grab;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 3px 0 #e0e0e0;
-            z-index: 10;
+            box-shadow: 0 4px 0 #e0e0e0;
         }
 
         .img-pequena.correto {
@@ -149,29 +163,21 @@
             transform: scale(0.85);
         }
 
-        .progresso { color: #95a5a6; font-size: 0.75rem; font-weight: bold; margin-bottom: 2px; }
+        .progresso { color: #95a5a6; font-size: 0.85rem; font-weight: bold; margin-top: 5px; }
 
         @media (min-width: 768px) {
-            main { padding-bottom: 10px; }
             .game-layout { flex-direction: row; }
-            .zona-pequenas { flex-direction: column; width: 110px; height: auto; }
-            .par-container { height: 20%; max-height: 100px; }
-            .img-grande { font-size: 3.5rem; }
+            .zona-pequenas { flex-direction: column; width: 130px; height: auto; }
+            .par-container { height: 22%; }
         }
 
-        #final-panel {
-            display: none; flex-direction: column; align-items: center;
-            justify-content: center; text-align: center; height: 100%;
-        }
-
-        .btn-final {
-            padding: 12px 25px; border-radius: 15px; color: white; border: none;
-            font-weight: bold; font-size: 1rem; margin-top: 15px; cursor: pointer;
-            background: #2ecc71;
-        }
+        #final-panel { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+        .btn-final { padding: 15px 30px; border-radius: 20px; color: white; border: none; font-weight: bold; background: #2ecc71; }
     </style>
 </head>
-<body>
+<body id="body-main">
+
+    <div id="refresh-indicator">🔄 A atualizar...</div>
 
     <header>
         <div class="titulo-wrapper">
@@ -194,7 +200,7 @@
     </main>
 
     <div id="final-panel">
-        <div style="font-size: 4rem;">🌟</div>
+        <div style="font-size: 5rem;">🌟</div>
         <h1 style="color: #ff6b81;">Muito bem!</h1>
         <button class="btn-final" onclick="reiniciarJogo()">Recomeçar 🔄</button>
     </div>
@@ -204,13 +210,36 @@
         let ronda = 1;
         let acertosRonda = 0;
 
+        // Lógica de "Pull to Refresh" (Deslizar para baixo)
+        let touchStart = 0;
+        let touchEnd = 0;
+        
+        document.addEventListener('touchstart', e => { touchStart = e.targetTouches[0].pageY; }, false);
+        
+        document.addEventListener('touchmove', e => {
+            touchEnd = e.targetTouches[0].pageY;
+            if (touchEnd - touchStart > 100 && window.scrollY === 0) {
+                document.getElementById('refresh-indicator').style.top = '0px';
+            }
+        }, false);
+
+        document.addEventListener('touchend', e => {
+            if (touchEnd - touchStart > 100) {
+                setTimeout(() => {
+                    document.getElementById('refresh-indicator').style.top = '-50px';
+                    iniciarRonda(); // Reinicia a ronda atual
+                }, 500);
+            }
+            touchStart = 0;
+            touchEnd = 0;
+        }, false);
+
         function iniciarRonda() {
             if (ronda > 10) {
                 document.getElementById('jogo-container').style.display = 'none';
                 document.getElementById('final-panel').style.display = 'flex';
                 return;
             }
-
             document.getElementById('ronda-atual').innerText = ronda;
             acertosRonda = 0;
             
@@ -232,15 +261,12 @@
                     animation: 200,
                     onAdd: function(evt) {
                         const item = evt.item;
-                        const alvo = evt.to;
-                        const origem = evt.from;
-
-                        if (item.dataset.animal === alvo.dataset.animal) {
+                        if (item.dataset.animal === evt.to.dataset.animal) {
                             item.classList.add('correto');
                             acertosRonda++;
                             if (acertosRonda === 4) setTimeout(() => { ronda++; iniciarRonda(); }, 800);
                         } else {
-                            origem.appendChild(item);
+                            evt.from.appendChild(item);
                         }
                     }
                 });
@@ -249,7 +275,6 @@
             const z1 = document.getElementById('zona-1');
             const z2 = document.getElementById('zona-2');
             z1.innerHTML = ''; z2.innerHTML = '';
-
             todasPequenas.forEach((animal, i) => {
                 const el = document.createElement('div');
                 el.className = 'img-pequena';
