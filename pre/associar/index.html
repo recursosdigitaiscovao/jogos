@@ -1,1 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pré-Escolar - Jogo dos Tamanhos</title>
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+        body {
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffb3c6; /* Rosa Pastel do Pré */
+            color: #2c3e50;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header-jogo { margin-bottom: 20px; }
+        
+        h1 { font-size: clamp(1.5rem, 6vw, 2.2rem); color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); margin: 10px 0; }
+
+        .card-principal {
+            background: white;
+            padding: 20px;
+            border-radius: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+
+        .instrucao { font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; color: #ff6b81; }
+
+        /* Área onde aparece o animal GRANDE */
+        .alvo-container {
+            font-size: 8rem; /* Tamanho GRANDE */
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+
+        /* Opções para clicar (Animais pequenos) */
+        .opcoes-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .btn-opcao {
+            background: white;
+            border: 4px solid #f0f0f0;
+            border-radius: 20px;
+            padding: 15px;
+            font-size: 2.5rem; /* Tamanho PEQUENO */
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-opcao:active { transform: scale(0.9); }
+
+        .correto { background-color: #7bed9f !important; border-color: #2ed573 !important; }
+        .errado { background-color: #ff7675 !important; border-color: #d63031 !important; }
+
+        .progresso { color: white; font-weight: bold; margin-top: 15px; font-size: 1.1rem; }
+
+        .btn-voltar {
+            margin-top: auto;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border: 2px solid white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            margin-bottom: 20px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Tela Final */
+        #tela-final { display: none; }
+        .btn-reiniciar {
+            background: white;
+            color: #ff6b81;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="jogo-container">
+        <header class="header-jogo">
+            <h1>Onde está o pequeno?</h1>
+        </header>
+
+        <div class="card-principal">
+            <p class="instrucao">Encontra o amigo igual, mas pequenino!</p>
+            <div class="alvo-container" id="animal-grande">🦒</div>
+        </div>
+
+        <div class="opcoes-container" id="opcoes">
+            </div>
+
+        <p class="progresso">Ronda: <span id="ronda-atual">1</span> / 5</p>
+    </div>
+
+    <div id="tela-final">
+        <div class="emoji-principal" style="font-size: 6rem;">🌟</div>
+        <h1>Parabéns!</h1>
+        <p style="font-size: 1.3rem;">És um explorador fantástico!</p>
+        <button class="btn-reiniciar" onclick="reiniciarJogo()">Jogar de Novo</button>
+    </div>
+
+    <a href="../" class="btn-voltar">⬅ Voltar</a>
+
+    <script>
+        const animais = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰'];
+        let ronda = 1;
+        let animalCerto = '';
+
+        function iniciarRonda() {
+            if (ronda > 5) {
+                document.getElementById('jogo-container').style.display = 'none';
+                document.getElementById('tela-final').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('ronda-atual').innerText = ronda;
+            
+            // Escolher animal certo
+            animalCerto = animais[Math.floor(Math.random() * animais.length)];
+            document.getElementById('animal-grande').innerText = animalCerto;
+
+            // Criar lista de opções (1 certa + 2 erradas)
+            let opcoes = [animalCerto];
+            while (opcoes.length < 3) {
+                let errado = animais[Math.floor(Math.random() * animais.length)];
+                if (!opcoes.includes(errado)) opcoes.push(errado);
+            }
+
+            // Embaralhar opções
+            opcoes.sort(() => Math.random() - 0.5);
+
+            // Renderizar botões
+            const container = document.getElementById('opcoes');
+            container.innerHTML = '';
+            opcoes.forEach(emoji => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-opcao';
+                btn.innerText = emoji;
+                btn.onclick = () => verificarResposta(emoji, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function verificarResposta(escolha, btn) {
+            if (escolha === animalCerto) {
+                btn.classList.add('correto');
+                setTimeout(() => {
+                    ronda++;
+                    iniciarRonda();
+                }, 1000);
+            } else {
+                btn.classList.add('errado');
+                setTimeout(() => btn.classList.remove('errado'), 500);
+            }
+        }
+
+        function reiniciarJogo() {
+            ronda = 1;
+            document.getElementById('jogo-container').style.display = 'block';
+            document.getElementById('tela-final').style.display = 'none';
+            iniciarRonda();
+        }
+
+        // Iniciar primeira vez
+        iniciarRonda();
+    </script>
+</body>
+</html>
