@@ -1,1 +1,235 @@
+Para este jogo de Ligar Números à Leitura, criei uma mecânica simples e tátil para o 1º Ano. O aluno clica no número e depois na palavra correspondente (ou vice-versa). Quando acerta, o par desaparece ou fica marcado.
 
+Como pediu, mantive o fundo sólido laranja, os ícones em cima, e os botões grandes.
+
+Aqui tem o código completo:
+
+HTML
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ligar Números - 1º Ano</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ff9f43; /* Laranja do 1º Ano */
+            color: white;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        h1 { font-size: 1.8rem; margin: 10px 0 5px 0; }
+        .instrucao { font-size: 1.1rem; margin-bottom: 20px; opacity: 0.9; }
+
+        /* Contentor das duas colunas */
+        .game-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 500px;
+            flex-grow: 1;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Botões do Jogo */
+        .item {
+            background-color: white;
+            color: #333;
+            border-radius: 20px;
+            padding: 15px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 5px 0 #e67e22;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+            border: 4px solid transparent;
+        }
+
+        /* Estado Selecionado */
+        .selected {
+            background-color: #2e86de !important;
+            color: white !important;
+            transform: scale(1.05);
+            border-color: #fff;
+        }
+
+        /* Estado Correto */
+        .correct {
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .btn-voltar {
+            color: white;
+            font-weight: bold;
+            margin: 20px 0;
+            text-decoration: none;
+            font-size: 1rem;
+            border-bottom: 2px solid white;
+        }
+
+        /* Feedback Final */
+        #win-message {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-reset {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 20px;
+            box-shadow: 0 5px 0 #1e8449;
+        }
+
+        @media (min-width: 700px) {
+            h1 { font-size: 2.5rem; }
+            .item { font-size: 2rem; padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="game-header">
+        <h1>🔢 Ligar Números</h1>
+        <p class="instrucao">Clica no número e depois no nome dele!</p>
+    </header>
+
+    <div id="game-board" class="game-container">
+        <div class="column" id="numbers-col"></div>
+        <div class="column" id="words-col"></div>
+    </div>
+
+    <div id="win-message">
+        <span style="font-size: 5rem;">🏆</span>
+        <h1>MUITO BEM!</h1>
+        <p>Conseguiste ligar todos os números!</p>
+        <button class="btn-reset" onclick="location.reload()">REPETIR 🔄</button>
+    </div>
+
+    <a href="index.html" class="btn-voltar">⬅ Voltar</a>
+
+    <script>
+        const data = [
+            { n: "1", w: "Um" },
+            { n: "2", w: "Dois" },
+            { n: "3", w: "Três" },
+            { n: "4", w: "Quatro" },
+            { n: "5", w: "Cinco" },
+            { n: "6", w: "Seis" },
+            { n: "7", w: "Sete" },
+            { n: "8", w: "Oito" },
+            { n: "9", w: "Nove" },
+            { n: "10", w: "Dez" }
+        ];
+
+        let selectedNum = null;
+        let selectedWord = null;
+        let pairsFound = 0;
+
+        function initGame() {
+            // Selecionar 5 números aleatórios para não encher muito o ecrã do telemóvel
+            const shuffled = data.sort(() => 0.5 - Math.random()).slice(0, 5);
+            
+            const nums = [...shuffled].sort(() => 0.5 - Math.random());
+            const words = [...shuffled].sort(() => 0.5 - Math.random());
+
+            const numsCol = document.getElementById('numbers-col');
+            const wordsCol = document.getElementById('words-col');
+
+            nums.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerHTML = `<span>🔢</span>${item.n}`;
+                div.onclick = () => selectItem(div, 'num', item.n);
+                numsCol.appendChild(div);
+            });
+
+            words.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerHTML = `<span>📝</span>${item.w}`;
+                div.onclick = () => selectItem(div, 'word', item.n); // guardamos o n para comparar
+                wordsCol.appendChild(div);
+            });
+        }
+
+        function selectItem(el, type, val) {
+            if (el.classList.contains('correct')) return;
+
+            // Desmarcar anterior do mesmo tipo
+            if (type === 'num') {
+                document.querySelectorAll('#numbers-col .item').forEach(i => i.classList.remove('selected'));
+                selectedNum = { el, val };
+            } else {
+                document.querySelectorAll('#words-col .item').forEach(i => i.classList.remove('selected'));
+                selectedWord = { el, val };
+            }
+
+            el.classList.add('selected');
+
+            // Verificar par
+            if (selectedNum && selectedWord) {
+                if (selectedNum.val === selectedWord.val) {
+                    // Acertou
+                    setTimeout(() => {
+                        selectedNum.el.classList.add('correct');
+                        selectedWord.el.classList.add('correct');
+                        selectedNum = null;
+                        selectedWord = null;
+                        pairsFound++;
+                        if (pairsFound === 5) showWin();
+                    }, 300);
+                } else {
+                    // Errou - Limpar seleção após breve delay
+                    setTimeout(() => {
+                        selectedNum.el.classList.remove('selected');
+                        selectedWord.el.classList.remove('selected');
+                        selectedNum = null;
+                        selectedWord = null;
+                    }, 400);
+                }
+            }
+        }
+
+        function showWin() {
+            document.getElementById('game-board').style.display = 'none';
+            document.getElementById('game-header').style.display = 'none';
+            document.getElementById('win-message').style.display = 'flex';
+        }
+
+        initGame();
+    </script>
+</body>
+</html>
