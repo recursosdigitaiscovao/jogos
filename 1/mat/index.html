@@ -5,152 +5,256 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>1º Ano - Matemática</title>
     <style>
-        /* Estilo Base e Reset */
         * {
-            box-sizing: border-box;
+            box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent;
+            margin: 0; padding: 0;
         }
 
         body {
-            text-align: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #ff9f43; /* Laranja Sólido */
-            color: white;
-            margin: 0;
+            /* Laranja suave sólido padrão 1º Ano */
+            background-color: rgba(255, 159, 67, 0.15); 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            height: 100svh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        /* HEADER PADRONIZADO */
+        header {
+            width: 100%;
+            background-color: #ffffff;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-icon {
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #2c3e50;
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            font-weight: 800;
+        }
+
+        /* BOTÃO VOLTAR 3D */
+        .btn-voltar-3d {
+            text-decoration: none;
+            color: #000000;
+            background-color: #ff9f43;
+            font-weight: bold;
+            font-size: 0.8rem;
+            padding: 8px 18px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #e67e22;
+            box-shadow: 0 2px 0 #e67e22;
+            transition: all 0.1s ease;
+        }
+
+        .btn-voltar-3d:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 0 #e67e22;
+        }
+
+        /* SIDEBAR - LINKS (Saindo de 1/mat/ para a raiz) */
+        .sidebar {
+            position: fixed;
+            left: -280px;
+            top: 0;
+            width: 280px;
+            height: 100%;
+            background: white;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 200;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.active { left: 0; }
+
+        .sidebar h3 { 
+            color: #2c3e50; 
+            margin-bottom: 20px; 
+            padding-bottom: 10px; 
+            border-bottom: 2px solid #ff9f43; 
+        }
+
+        .sidebar-menu { display: flex; flex-direction: column; gap: 10px; }
+
+        .sidebar-item {
+            text-decoration: none; color: #444; font-weight: bold;
+            padding: 14px; border-radius: 12px; background: #f8f9fa;
+            display: flex; align-items: center; gap: 15px;
+        }
+
+        .sidebar-item:hover { background: #ff9f43; color: white; }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); display: none; z-index: 150;
+        }
+        .overlay.active { display: block; }
+
+        /* CONTEÚDO PRINCIPAL */
+        main {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
+            padding: 20px;
         }
 
         .emoji-principal {
-            font-size: clamp(50px, 12vw, 70px);
-            margin-bottom: 5px;
+            font-size: 4rem;
+            margin-bottom: 10px;
         }
 
-        h1 {
-            font-size: clamp(1.8rem, 6vw, 2.5rem);
-            margin: 0 0 10px 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 1.8rem;
         }
 
         .subtitulo {
-            font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+            color: #7f8c8d;
             margin-bottom: 30px;
-            max-width: 450px;
-            opacity: 0.95;
+            font-weight: 500;
         }
 
-        /* Grelha de Jogos Responsiva */
         .menu-jogos {
             display: grid;
-            /* No telemóvel pequeno, os 3 botões ficam lado a lado */
             grid-template-columns: repeat(3, 1fr); 
-            gap: clamp(10px, 3vw, 20px);
+            gap: 15px;
             width: 100%;
-            max-width: 800px;
+            max-width: 600px;
         }
 
         .btn-jogo {
             background-color: white;
             text-decoration: none;
-            font-size: clamp(0.75rem, 2.5vw, 1.2rem);
+            color: #2c3e50;
+            padding: 20px 10px;
+            border-radius: 20px;
             font-weight: bold;
-            padding: clamp(12px, 4vw, 30px) 5px;
-            border-radius: clamp(15px, 3vw, 20px);
-            box-shadow: 0 5px 0 #e67e22;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 0.9rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
-            color: #2c3e50;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            border: 2px solid transparent;
+            transition: all 0.2s;
         }
 
         .btn-jogo span {
-            font-size: clamp(1.8rem, 7vw, 3.5rem); /* Ícone fluído */
+            font-size: 2.5rem;
         }
 
-        /* Cores dos Ícones */
-        .soma { color: #27ae60; }
-        .subtrair { color: #c0392b; }
-        .ligar { color: #2980b9; }
-
-        /* Feedback de Toque/Clique */
         .btn-jogo:active {
-            transform: translateY(3px) scale(0.95);
-            box-shadow: 0 2px 0 #e67e22;
+            transform: scale(0.95);
+            border-color: #ff9f43;
         }
 
-        @media (hover: hover) {
-            .btn-jogo:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 0 #e67e22;
-            }
-        }
-
-        .btn-voltar {
-            color: white;
-            font-weight: bold;
-            margin-top: 40px;
-            text-decoration: none;
-            font-size: 1rem;
-            padding: 8px 20px;
-            border: 2px solid white;
-            border-radius: 50px;
-            transition: background 0.3s;
-        }
-
-        .btn-voltar:active {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
+        /* FOOTER */
         footer {
-            margin-top: auto;
-            padding-top: 40px;
-            opacity: 0.8;
-            font-size: 0.85rem;
+            width: 100%;
+            padding: 15px;
+            background-color: #ffffff;
+            text-align: center;
+            color: #7f8c8d;
+            border-top: 1px solid #ddd;
+            font-size: 0.9rem;
+            flex-shrink: 0;
         }
 
-        /* Ajuste extra para ecrãs muito estreitos (evita que o texto saia do botão) */
-        @media (max-width: 320px) {
-            .menu-jogos { gap: 5px; }
-            .btn-jogo { padding: 10px 2px; font-size: 0.7rem; }
+        @media (max-width: 350px) {
+            .menu-jogos { gap: 8px; }
+            .btn-jogo { font-size: 0.75rem; padding: 15px 5px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="emoji-principal">🐣</div>
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     
-    <h1>Matemática</h1>
-    <p class="subtitulo">Escolhe o teu desafio favorito:</p>
+    <div class="sidebar" id="sidebar">
+        <h3>Navegação</h3>
+        <nav class="sidebar-menu">
+            <a href="../../" class="sidebar-item"><span>🏠</span> Início</a>
+            <a href="../../pre" class="sidebar-item"><span>🦒</span> Pré-Escolar</a>
+            <a href="../../1" class="sidebar-item"><span>🐥</span> 1º Ano</a>
+            <a href="../../2" class="sidebar-item"><span>🐢</span> 2º Ano</a>
+            <a href="../../3" class="sidebar-item"><span>🦊</span> 3º Ano</a>
+            <a href="../../4" class="sidebar-item"><span>👨‍🚀</span> 4º Ano</a>
+        </nav>
+        <button onclick="toggleMenu()" style="margin-top:auto; padding:12px; border:none; background:#f0f0f0; cursor:pointer; font-weight:bold; border-radius:10px;">Fechar ×</button>
+    </div>
 
-    <nav class="menu-jogos">
-        <a href="soma10/" class="btn-jogo">
-            <span class="soma">➕</span>
-            Somar10
+    <header>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <h1>Matemática</h1>
+        </div>
+        <a href="../" class="btn-voltar-3d">
+            <span>⬅</span> 1º ANO
         </a>
+    </header>
 
-        <a href="subtrair10/" class="btn-jogo">
-            <span class="subtrair">➖</span>
-            Subtrair10
-        </a>
+    <main>
+        <div class="emoji-principal">🐣</div>
+        <h2>Desafios</h2>
+        <p class="subtitulo">Escolhe o teu jogo favorito:</p>
 
-        <a href="liga10/" class="btn-jogo">
-            <span class="ligar">🔢</span>
-            Ligar10
-        </a>
-    </nav>
+        <nav class="menu-jogos">
+            <a href="soma10/" class="btn-jogo">
+                <span style="color: #27ae60;">➕</span>
+                Somar10
+            </a>
 
-    <a href="../" class="btn-voltar">⬅ Voltar</a>
+            <a href="subtrair10/" class="btn-jogo">
+                <span style="color: #e74c3c;">➖</span>
+                Subtrair10
+            </a>
+
+            <a href="liga10/" class="btn-jogo">
+                <span style="color: #2980b9;">🔢</span>
+                Ligar10
+            </a>
+        </nav>
+    </main>
 
     <footer>
-        Recursos Digitais Covão - Professor Luís
+        Recursos Digitais Covão - <strong>Professor Luís</strong>
     </footer>
 
+    <script>
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+    </script>
 </body>
 </html>
