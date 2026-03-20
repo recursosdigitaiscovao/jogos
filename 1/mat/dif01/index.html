@@ -12,7 +12,8 @@
         }
 
         body {
-            background-color: #ff9f43; 
+            /* Fundo Laranja com Transparência (RGBA) como no Soma10 */
+            background-color: rgba(255, 159, 67, 0.8); 
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             height: 100vh;
             height: 100svh;
@@ -46,73 +47,53 @@
             box-shadow: 0 2px 0 #e67e22;
         }
 
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
-            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.2);
-            transition: 0.3s; z-index: 200; padding: 20px; display: flex; flex-direction: column;
-        }
-        .sidebar.active { left: 0; }
-        .sidebar-item {
-            text-decoration: none; color: #444; font-weight: bold;
-            padding: 14px; border-radius: 12px; background: #f8f9fa;
-            display: flex; align-items: center; gap: 15px; margin-bottom: 10px;
-        }
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); display: none; z-index: 150;
-        }
-        .overlay.active { display: block; }
-
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 10px;
+            justify-content: flex-start;
         }
 
         .instrucao-card {
             background: white;
-            padding: 15px 20px;
+            padding: 15px;
             border-radius: 20px;
-            box-shadow: 0 6px 0 #e67e22;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.1);
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             width: 100%;
-            max-width: 500px;
+            max-width: 400px;
         }
 
-        .instrucao-card h2 { font-size: 1.2rem; }
-        .instrucao-card span { color: #e67e22; font-weight: 800; }
-
-        /* GRELHA ALINHADA */
+        /* GRELHA DE 12 IMAGENS (3 colunas x 4 linhas) */
         .grelha-formas {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 20px;
-            border-radius: 25px;
             width: 100%;
-            max-width: 500px;
+            max-width: 400px;
+            padding: 10px;
         }
 
-        .forma-btn {
+        .forma-container {
             background: white;
             aspect-ratio: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
-            border-radius: 15px;
+            border-radius: 20px;
             cursor: pointer;
-            transition: transform 0.1s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             border: none;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            overflow: hidden;
         }
 
-        .forma-btn:active { transform: scale(0.9); }
+        /* Variação de tamanhos */
+        .tam-pequeno { font-size: 1.8rem; }
+        .tam-medio { font-size: 2.8rem; }
+        .tam-grande { font-size: 3.8rem; }
 
         #pop-sucesso {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
@@ -123,92 +104,93 @@
         .show-pop { transform: translate(-50%, -50%) scale(1) !important; }
 
         footer {
-            width: 100%; padding: 10px; background: white;
-            text-align: center; color: #7f8c8d; font-size: 0.8rem;
+            width: 100%; padding: 12px; background: white;
+            text-align: center; color: #7f8c8d; font-size: 0.85rem;
+            border-top: 1px solid #ddd; flex-shrink: 0;
+        }
+
+        /* Responsividade para ecrãs muito pequenos */
+        @media (max-width: 350px) {
+            .grelha-formas { gap: 10px; }
+            .tam-grande { font-size: 3rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-    <div id="pop-sucesso">MUITO BEM! ⭐</div>
-
-    <div class="sidebar" id="sidebar">
-        <h3>Navegação</h3>
-        <nav class="sidebar-menu">
-            <a href="../../" class="sidebar-item"><span>🏠</span> Início</a>
-            <a href="../../1" class="sidebar-item"><span>🐥</span> 1º Ano</a>
-        </nav>
-    </div>
+    <div id="pop-sucesso">BOA! ⭐</div>
 
     <header>
         <div class="header-left">
-            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <span class="menu-icon">🐥</span>
             <h1>Identifica as Formas</h1>
         </div>
-        <a href="../" class="btn-voltar-3d"><span>⬅</span> SAIR</a>
+        <a href="../" class="btn-voltar-3d">SAIR</a>
     </header>
 
     <main>
         <div class="instrucao-card">
-            <h2 id="instrucao">Clica apenas nos <span id="alvo-nome">Quadrados</span></h2>
-            <p style="margin-top:5px; font-size: 0.9rem;">Faltam: <strong id="faltam-txt">0</strong></p>
+            <h2>Clica nos <span id="alvo-nome" style="color:#e67e22">...</span></h2>
+            <p>Faltam encontrar: <strong id="faltam-txt">0</strong></p>
         </div>
 
         <div class="grelha-formas" id="grelha"></div>
     </main>
 
-    <footer>Recursos Digitais Covão - Professor Luís</footer>
+    <footer>
+        Recursos Digitais Covão - <strong>Professor Luís</strong>
+    </footer>
 
     <script>
-        const figuras = [
+        const formasConfig = [
             { nome: "Quadrados", tipo: "Q", emojis: ["🟦", "🟨", "🟥", "🟩"] },
             { nome: "Círculos", tipo: "C", emojis: ["🔵", "🟡", "🔴", "🟢"] },
-            { nome: "Triângulos", tipo: "T", emojis: ["🔺"] }, // O emoji de triângulo é mais limitado em cores padrão
+            { nome: "Triângulos", tipo: "T", emojis: ["🔺"] },
+            { nome: "Retângulos", tipo: "R", emojis: ["▮", "▬"] }, // Representação de retângulos
             { nome: "Estrelas", tipo: "E", emojis: ["⭐"] }
         ];
 
+        const tamanhos = ["tam-pequeno", "tam-medio", "tam-grande"];
         let alvoAtual;
-        let nivel = 1;
-
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
 
         function novoJogo() {
             const grelha = document.getElementById('grelha');
             grelha.innerHTML = "";
             
-            // Escolhe um alvo aleatório
-            alvoAtual = figuras[Math.floor(Math.random() * figuras.length)];
+            // Escolhe alvo aleatório
+            alvoAtual = formasConfig[Math.floor(Math.random() * formasConfig.length)];
             document.getElementById('alvo-nome').innerText = alvoAtual.nome;
 
-            // Criar lista de formas (16 total na grelha 4x4)
-            let totalItens = 16;
-            let itensAlvo = 3 + nivel; 
+            let totalItens = 12; // Apenas 12 imagens como pedido
+            let itensAlvo = 3; 
             let listaFinal = [];
 
             // Adicionar alvos
             for(let i=0; i<itensAlvo; i++) {
-                listaFinal.push({ tipo: alvoAtual.tipo, emoji: alvoAtual.emojis[Math.floor(Math.random()*alvoAtual.emojis.length)] });
+                listaFinal.push({ 
+                    tipo: alvoAtual.tipo, 
+                    emoji: alvoAtual.emojis[Math.floor(Math.random()*alvoAtual.emojis.length)],
+                    tamanho: tamanhos[Math.floor(Math.random()*tamanhos.length)]
+                });
             }
 
             // Adicionar distrações
             while(listaFinal.length < totalItens) {
-                let distracao = figuras[Math.floor(Math.random() * figuras.length)];
+                let distracao = formasConfig[Math.floor(Math.random() * formasConfig.length)];
                 if(distracao.tipo !== alvoAtual.tipo) {
-                    listaFinal.push({ tipo: distracao.tipo, emoji: distracao.emojis[Math.floor(Math.random()*distracao.emojis.length)] });
+                    listaFinal.push({ 
+                        tipo: distracao.tipo, 
+                        emoji: distracao.emojis[Math.floor(Math.random()*distracao.emojis.length)],
+                        tamanho: tamanhos[Math.floor(Math.random()*tamanhos.length)]
+                    });
                 }
             }
 
-            // Baralhar a lista
             listaFinal.sort(() => Math.random() - 0.5);
 
-            // Gerar botões
             listaFinal.forEach(item => {
-                const btn = document.createElement('button');
-                btn.className = 'forma-btn';
+                const btn = document.createElement('div');
+                btn.className = `forma-container ${item.tamanho}`;
                 btn.innerText = item.emoji;
                 btn.onclick = function() {
                     if(item.tipo === alvoAtual.tipo) {
@@ -226,17 +208,23 @@
         }
 
         function atualizarContagem() {
-            let restantes = 0;
-            const botoes = document.querySelectorAll('.forma-btn');
-            // Lógica simples para contar quantos do tipo alvo ainda estão visíveis
-            // No mundo real compararíamos o conteúdo ou uma propriedade
-            // Para simplificar, vamos apenas ver quem falta
-            const totalAlvos = 3 + nivel;
-            let encontrados = 0;
-            document.querySelectorAll('.forma-btn').forEach(b => {
-                if(b.style.visibility === "hidden") encontrados++;
+            let visiveis = 0;
+            const containers = document.querySelectorAll('.forma-container');
+            // Como as formas desaparecem, contamos apenas as que ainda estão lá e são do tipo alvo
+            // Para simplificar, usamos o texto da instrução
+            const itensRestantes = Array.from(document.querySelectorAll('.forma-container'))
+                .filter(b => b.style.visibility !== "hidden" && b.innerText.match) // Lógica simplificada
+            
+            // Recontagem real baseada na visibilidade para o aluno
+            let faltaEncontrar = 0;
+            // Aqui uma lógica interna para o contador
+            const totalAlvosIniciais = 3;
+            let escondidos = 0;
+            document.querySelectorAll('.forma-container').forEach(b => {
+                if(b.style.visibility === "hidden") escondidos++;
             });
-            document.getElementById('faltam-txt').innerText = totalAlvos - encontrados;
+            
+            document.getElementById('faltam-txt').innerText = totalAlvosIniciais - escondidos;
         }
 
         function verificarFim() {
@@ -246,7 +234,6 @@
                 pop.classList.add('show-pop');
                 setTimeout(() => {
                     pop.classList.remove('show-pop');
-                    nivel = nivel < 5 ? nivel + 1 : 1;
                     novoJogo();
                 }, 1200);
             }
