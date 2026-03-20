@@ -3,184 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Recursos Digitais - Galeria de Jogos</title>
+    <title>Associa o Par - Prof. Luís</title>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
-        /* Reset e Estilo Base */
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+        /* Reset Total */
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            touch-action: none; 
+            margin: 0; padding: 0;
         }
 
         body {
-            background-color: #f0f4f8;
-            color: #333;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            background-color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+            height: 100vh;
+            height: 100svh; 
             display: flex;
             flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            overflow: hidden;
         }
 
-        /* Cabeçalho Melhorado */
+        /* BARRA DO TOPO - AGORA DEFINITIVAMENTE ROSA */
         header {
+            background-color: #ffb3c6 !important; /* Rosa Pastel */
             width: 100%;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            padding: 40px 20px;
-            text-align: center;
-            color: white;
-            border-bottom: 6px solid #ffb3c6;
-            margin-bottom: 40px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            height: 45px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 10;
         }
 
-        h1 {
-            margin: 0;
-            font-size: clamp(2rem, 6vw, 3rem);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+        header h2 { 
+            color: white; 
+            font-size: 1rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px;
         }
 
-        .subtitle {
-            margin-top: 10px;
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            opacity: 0.9;
-            font-weight: 300;
+        .btn-topo {
+            color: white; 
+            text-decoration: none; 
+            font-weight: bold;
+            background: rgba(255,255,255,0.3); 
+            padding: 5px 10px;
+            border-radius: 10px; 
+            font-size: 0.75rem; 
+            border: 1px solid white;
         }
 
-        /* Container de Navegação */
-        .menu-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 20px;
-            width: 95%;
-            max-width: 1100px;
-            padding: 20px;
-            margin-bottom: 40px;
-        }
-
-        /* Botões Estilo Card 3D */
-        .btn-menu {
-            text-decoration: none;
-            border-radius: 25px;
-            padding: 30px 15px;
+        main {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
-            border: 4px solid white;
-            position: relative;
-            overflow: hidden;
+            padding: 5px;
         }
 
-        /* Cores e Sombras 3D específicas */
-        .btn-pre { background-color: #ffb3c6; box-shadow: 0 8px 0 #e691a7; }
-        .btn-1   { background-color: #ffbe76; box-shadow: 0 8px 0 #e6a75a; }
-        .btn-2   { background-color: #55efc4; box-shadow: 0 8px 0 #45cfa8; }
-        .btn-3   { background-color: #74b9ff; box-shadow: 0 8px 0 #5ea2e6; }
-        .btn-4   { background-color: #a29bfe; box-shadow: 0 8px 0 #8a81e6; }
-
-        .btn-menu:active {
-            transform: translateY(4px);
-            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        .instrucao {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #ff6b81;
+            margin-bottom: 8px;
         }
 
-        @media (hover: hover) {
-            .btn-menu:hover {
-                transform: translateY(-5px);
-                filter: brightness(1.05);
-            }
-        }
-
-        /* Ícones e Texto */
-        .icon {
-            font-size: clamp(3rem, 10vw, 4.5rem);
-            margin-bottom: 15px;
-            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1));
-        }
-
-        .ano-texto {
-            font-size: 1.2rem;
-            font-weight: 900;
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-        }
-
-        /* Footer */
-        footer {
-            margin-top: auto;
+        /* Área de Jogo Otimizada para Altura de Telemóvel */
+        .game-wrapper {
+            display: flex;
             width: 100%;
-            padding: 25px;
-            background-color: #fff;
+            max-width: 800px;
+            height: 70vh; /* Ocupa 70% da altura da tela */
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .coluna-pequenas {
+            width: clamp(65px, 18vw, 95px);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .coluna-central {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Par: Grande e Quadrado sempre LADO A LADO */
+        .par-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff9fa;
+            border: 2px solid #ffdae3;
+            border-radius: 15px;
+            padding: 6px 12px;
+            width: 100%;
+            max-width: 280px;
+            height: 22%; /* Altura proporcional */
+        }
+
+        .img-grande {
+            font-size: clamp(2.2rem, 7vh, 3.8rem);
+            line-height: 1;
+        }
+
+        .alvo-largada {
+            width: clamp(60px, 12vh, 80px);
+            height: clamp(60px, 12vh, 80px);
+            background: white;
+            border: 3px dashed #ffb3c6;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .img-pequena {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            width: clamp(60px, 12vh, 80px);
+            height: clamp(60px, 12vh, 80px);
+            font-size: clamp(2rem, 6vh, 2.8rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 0 #e0e0e0;
+        }
+
+        .img-pequena.correto {
+            background-color: #7bed9f !important;
+            border-color: #2ed573 !important;
+            box-shadow: none !important;
+            transform: scale(0.85);
+        }
+
+        .progresso {
+            font-size: 0.8rem;
+            color: #95a5a6;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        footer {
             text-align: center;
-            color: #7f8c8d;
-            border-top: 1px solid #ddd;
+            padding: 8px;
+            font-size: 0.75rem;
+            color: #95a5a6;
+            background: #fff;
+            border-top: 1px solid #eee;
         }
 
-        footer strong {
-            color: #2c3e50;
-            border-bottom: 2px solid #ffb3c6;
-        }
+        #final-panel { display: none; flex-direction: column; align-items: center; justify-content: center; flex: 1; }
+        .btn-final { padding: 15px 30px; border-radius: 20px; color: white; background: #2ecc71; border: none; font-weight: bold; cursor: pointer; }
 
-        /* Ajustes para ecrãs pequenos */
-        @media (max-width: 480px) {
-            .menu-container {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-            .btn-pre { grid-column: span 2; } /* Destaque para o pré no mobile */
-        }
-
-        /* Ajustes para modo paisagem em telemóveis */
-        @media (max-height: 500px) and (orientation: landscape) {
-            header { padding: 15px; margin-bottom: 15px; }
-            .menu-container { grid-template-columns: repeat(5, 1fr); gap: 10px; }
-            .icon { font-size: 2.2rem; margin-bottom: 5px; }
-            .ano-texto { font-size: 0.9rem; }
-        }
+        .sortable-ghost { opacity: 0; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🎮 Galeria de Jogos</h1>
-        <p class="subtitle">Aprender é a maior aventura!</p>
+        <h2><span>🧩</span> Associa o Par</h2>
+        <a href="../index.html" class="btn-topo">⬅ Voltar</a>
     </header>
 
-    <nav class="menu-container">
-        <a href="https://recursosdigitaiscovao.github.io/jogos/pre" class="btn-menu btn-pre">
-            <span class="icon">🦒</span>
-            <span class="ano-texto">PRÉ-ESCOLAR</span>
-        </a>
+    <main id="jogo-container">
+        <p class="instrucao">Leva o pequeno para o quadrado!</p>
+        
+        <div class="game-wrapper">
+            <div class="coluna-pequenas" id="col-esq"></div>
+            <div class="coluna-central" id="col-cen"></div>
+            <div class="coluna-pequenas" id="col-dir"></div>
+        </div>
+        
+        <p class="progresso">Ronda <span id="ronda-atual">1</span> de 5</p>
+    </main>
 
-        <a href="https://recursosdigitaiscovao.github.io/jogos/1" class="btn-menu btn-1">
-            <span class="icon">🐥</span>
-            <span class="ano-texto">1º ANO</span>
-        </a>
-
-        <a href="https://recursosdigitaiscovao.github.io/jogos/2" class="btn-menu btn-2">
-            <span class="icon">🐢</span>
-            <span class="ano-texto">2º ANO</span>
-        </a>
-
-        <a href="https://recursosdigitaiscovao.github.io/jogos/3" class="btn-menu btn-3">
-            <span class="icon">🦊</span>
-            <span class="ano-texto">3º ANO</span>
-        </a>
-
-        <a href="https://recursosdigitaiscovao.github.io/jogos/4" class="btn-menu btn-4">
-            <span class="icon">👨‍🚀</span>
-            <span class="ano-texto">4º ANO</span>
-        </a>
-    </nav>
+    <div id="final-panel">
+        <div style="font-size: 4rem;">🌟</div>
+        <h1 style="color: #ff6b81; margin: 15px 0;">Muito bem!</h1>
+        <button class="btn-final" onclick="reiniciarJogo()">Jogar de Novo 🔄</button>
+    </div>
 
     <footer>
-        Recursos Digitais Covão - <strong>Professor Luís</strong>
+        Recursos Digitais Covão - Professor Luís
     </footer>
 
+    <script>
+        const animaisPool = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', '🦊', '🐻', '🐥', '🦄', '🐝', '🐞', '🦋', '🐢', '🐨', '🐷', '🐮', '🐱', '🐶', '🦓', '🐹'];
+        let ronda = 1;
+        let acertosRonda = 0;
+
+        function iniciarJogo() {
+            if (ronda > 5) {
+                document.getElementById('jogo-container').style.display = 'none';
+                document.getElementById('final-panel').style.display = 'flex';
+                return;
+            }
+            document.getElementById('ronda-atual').innerText = ronda;
+            acertosRonda = 0;
+            const colEsq = document.getElementById('col-esq');
+            const colCen = document.getElementById('col-cen');
+            const colDir = document.getElementById('col-dir');
+            colEsq.innerHTML = ''; colCen.innerHTML = ''; colDir.innerHTML = '';
+
+            let selecionados = [...animaisPool].sort(() => 0.5 - Math.random()).slice(0, 3);
+            let distratores = animaisPool.filter(a => !selecionados.includes(a)).sort(() => 0.5 - Math.random()).slice(0, 3);
+            let todasPequenas = [...selecionados, ...distratores].sort(() => 0.5 - Math.random());
+
+            selecionados.forEach(animal => {
+                const container = document.createElement('div');
+                container.className = 'par-container';
+                container.innerHTML = `<div class="img-grande">${animal}</div><div class="alvo-largada" data-animal="${animal}"></div>`;
+                colCen.appendChild(container);
+
+                new Sortable(container.querySelector('.alvo-largada'), {
+                    group: 'jogo',
+                    onAdd: function(evt) {
+                        const item = evt.item;
+                        if (item.dataset.animal === evt.to.dataset.animal) {
+                            item.classList.add('correto');
+                            acertosRonda++;
+                            if (acertosRonda === 3) { setTimeout(() => { ronda++; iniciarJogo(); }, 600); }
+                        } else { evt.from.appendChild(item); }
+                    }
+                });
+            });
+
+            todasPequenas.forEach((animal, i) => {
+                const el = document.createElement('div');
+                el.className = 'img-pequena';
+                el.innerText = animal;
+                el.dataset.animal = animal;
+                if (i < 3) colEsq.appendChild(el); else colDir.appendChild(el);
+            });
+
+            [colEsq, colDir].forEach(col => {
+                new Sortable(col, { group: 'jogo', animation: 200, sort: false, delay: 0, touchStartThreshold: 5 });
+            });
+        }
+
+        function reiniciarJogo() {
+            ronda = 1;
+            document.getElementById('jogo-container').style.display = 'flex';
+            document.getElementById('final-panel').style.display = 'none';
+            iniciarJogo();
+        }
+        iniciarJogo();
+    </script>
 </body>
 </html>
-       
