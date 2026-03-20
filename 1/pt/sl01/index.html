@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sopa de Letras - 1º Ano</title>
+    <title>Sopa de Letras: Frutas - 1º Ano</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
@@ -15,7 +15,7 @@
             overflow: hidden; touch-action: manipulation;
         }
 
-        /* HEADER */
+        /* HEADER PADRONIZADO */
         header {
             width: 100%; background-color: #ffffff; padding: 15px 20px;
             display: flex; align-items: center; justify-content: space-between;
@@ -53,13 +53,13 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
 
-        /* JOGO */
+        /* ÁREA DO JOGO */
         main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
         .level-tag { background: #ff9f43; color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; margin-bottom: 15px; }
         
         .grid { display: grid; gap: 5px; background: white; padding: 10px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .cell {
-            width: 35px; height: 35px; background: #fff; border: 2px solid #eee;
+            width: 36px; height: 36px; background: #fff; border: 2px solid #eee;
             display: flex; align-items: center; justify-content: center;
             font-weight: bold; font-size: 1.1rem; border-radius: 6px; cursor: pointer;
             user-select: none; transition: 0.2s;
@@ -100,8 +100,8 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <span style="font-size:1.5rem">🔍</span>
-            <h1>Sopa de Letras</h1>
+            <span style="font-size:1.5rem">🍎</span>
+            <h1>Sopa de Frutas</h1>
         </div>
         <a href="../" class="btn-voltar-3d"><span>⬅</span> Voltar</a>
     </header>
@@ -116,13 +116,13 @@
     <footer>Recursos Digitais Covão - <strong>Professor Luís</strong></footer>
 
     <script>
+        // Configuração apenas com FRUTAS
         const levels = [
-            { words: ["GATO", "PATO", "CASA", "BOLA"], size: 8 },
-            { words: ["BANANA", "LARANJA", "PERA", "UVA", "MELÃO", "KIWI"], size: 10 }
+            { words: ["PERA", "MACA", "UVA", "FIGO"], size: 8 },
+            { words: ["BANANA", "LARANJA", "MELAO", "KIWI", "ANANAS", "MANGA"], size: 10 }
         ];
 
         let currentLevel = 0;
-        let selectedCells = [];
         let foundWordsCount = 0;
 
         function toggleMenu() {
@@ -133,8 +133,7 @@
         function initGame() {
             const level = levels[currentLevel];
             foundWordsCount = 0;
-            selectedCells = [];
-            document.getElementById('level-info').innerText = `Nível ${currentLevel + 1}: ${level.words.length} Palavras`;
+            document.getElementById('level-info').innerText = `Nível ${currentLevel + 1}: ${level.words.length} Frutas`;
             document.getElementById('btn-next').style.display = 'none';
             generateGrid(level);
             renderWords(level);
@@ -142,7 +141,7 @@
 
         function generateGrid(level) {
             const gridEl = document.getElementById('grid');
-            gridEl.style.gridTemplateColumns = `repeat(${level.size}, 35px)`;
+            gridEl.style.gridTemplateColumns = `repeat(${level.size}, 36px)`;
             gridEl.innerHTML = '';
 
             let matrix = Array(level.size).fill().map(() => Array(level.size).fill(''));
@@ -170,7 +169,7 @@
                 }
             });
 
-            const alphabet = "ABCDEFGJKLMNOPQRSTUVX";
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVX";
             for (let r = 0; r < level.size; r++) {
                 for (let c = 0; c < level.size; c++) {
                     if (matrix[r][c] === '') matrix[r][c] = alphabet[Math.floor(Math.random() * alphabet.length)];
@@ -187,11 +186,11 @@
             const listEl = document.getElementById('word-list');
             listEl.innerHTML = '';
             level.words.forEach(word => {
-                const span = document.createElement('div');
-                span.className = 'word-box';
-                span.innerText = word;
-                span.id = 'word-' + word;
-                listEl.appendChild(span);
+                const div = document.createElement('div');
+                div.className = 'word-box';
+                div.innerText = word;
+                div.id = 'word-' + word;
+                listEl.appendChild(div);
             });
         }
 
@@ -220,7 +219,7 @@
                         if (currentLevel < levels.length - 1) {
                             document.getElementById('btn-next').style.display = 'block';
                         } else {
-                            alert("Incrível! Completaste o jogo!");
+                            setTimeout(() => alert("Parabéns! Encontraste todas as frutas! 🍎🍇🍓"), 300);
                         }
                     }
                 }
