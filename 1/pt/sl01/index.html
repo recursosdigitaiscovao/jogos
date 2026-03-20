@@ -1,1 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sopa de Letras - Animais</title>
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
+        body {
+            background-color: rgba(255, 179, 198, 0.15);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh; height: 100svh;
+            display: flex; flex-direction: column;
+            overflow: hidden; touch-action: none;
+        }
+
+        /* HEADER */
+        header {
+            width: 100%; background: #ffffff; padding: 15px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid #ddd; flex-shrink: 0; z-index: 100;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .menu-icon { font-size: 1.8rem; cursor: pointer; color: #2c3e50; }
+        header h1 { font-size: 1.1rem; color: #2c3e50; font-weight: 800; }
+
+        .btn-voltar-3d {
+            text-decoration: none; color: #ffffff; background: #ffb3c6;
+            font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
+            border-radius: 8px; display: flex; align-items: center; gap: 8px;
+            border: 1px solid #ff8fa3; box-shadow: 0 2px 0 #ff8fa3;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
+            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+            transition: 0.3s; z-index: 200; padding: 20px; display: flex; flex-direction: column;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-item {
+            text-decoration: none; color: #444; font-weight: bold;
+            padding: 14px; border-radius: 12px; background: #f8f9fa;
+            display: flex; align-items: center; gap: 15px; margin-bottom: 10px;
+        }
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); display: none; z-index: 150;
+        }
+        .overlay.active { display: block; }
+
+        /* JOGO */
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px; overflow-y: auto; }
+        
+        #grid {
+            display: grid; gap: 4px; background: white; padding: 10px;
+            border-radius: 10px; border: 3px solid #ffb3c6;
+            user-select: none; margin-bottom: 20px;
+        }
+        .cell {
+            width: clamp(25px, 8vw, 40px); height: clamp(25px, 8vw, 40px);
+            display: flex; align-items: center; justify-content: center;
+            background: #fdfdfd; border-radius: 4px; font-weight: bold;
+            font-size: 1.1rem; cursor: pointer; border: 1px solid #eee;
+        }
+        .cell.selected { background: #ffe4eb; color: #ff6b81; }
+        .cell.found { background: #7bed9f; color: white; border-color: #2ed573; }
+
+        /* LISTA DE PALAVRAS */
+        #word-list {
+            display: flex; flex-wrap: wrap; justify-content: center;
+            gap: 10px; max-width: 500px;
+        }
+        .word-item {
+            padding: 5px 12px; background: white; border-radius: 15px;
+            border: 2px solid #ffdae3; font-weight: bold; color: #2c3e50;
+        }
+        .word-item.found { opacity: 0.3; text-decoration: line-through; }
+
+        /* MODAL */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 179, 198, 0.95); z-index: 300;
+            flex-direction: column; align-items: center; justify-content: center; text-align: center;
+        }
+
+        footer { width: 100%; padding: 10px; background: white; text-align: center; font-size: 0.8rem; border-top: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="sidebar" id="sidebar">
+        <h3>Navegação</h3>
+        <nav class="sidebar-menu">
+            <a href="/" class="sidebar-item">🏠 Início</a>
+            <a href="/pre" class="sidebar-item">🦒 Pré-Escolar</a>
+            <a href="/1" class="sidebar-item">🐥 1º Ano</a>
+            <a href="/2" class="sidebar-item">🐢 2º Ano</a>
+            <a href="/3" class="sidebar-item">🦊 3º Ano</a>
+            <a href="/4" class="sidebar-item">👨‍🚀 4º Ano</a>
+        </nav>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <h1>🐾 Sopa de Animais</h1>
+        </div>
+        <a href="../" class="btn-voltar-3d">⬅ Voltar</a>
+    </header>
+
+    <main>
+        <div id="grid"></div>
+        <div id="word-list"></div>
+    </main>
+
+    <div id="modal-next" class="modal">
+        <h1 id="modal-title" style="color: white; margin-bottom: 20px;">BOA!</h1>
+        <button class="btn-voltar-3d" style="background:white; color:#ffb3c6; padding: 15px 30px;" onclick="proximoNivel()">PRÓXIMO NÍVEL ➡️</button>
+    </div>
+
+    <footer>Recursos Digitais Covão - <strong>Professor Luís</strong></footer>
+
+    <script>
+        const niveis = [
+            { grid: 8, words: ["GATO", "CAO", "LEAO", "PATO", "RATO"] },
+            { grid: 12, words: ["ELEFANTE", "GIRAFA", "MACACO", "COELHO", "TARTARUGA", "ZEBRA", "COBRA", "PEIXE", "CAVALO", "OVELHA"] }
+        ];
+
+        let nivelAtual = 0;
+        let selecionados = [];
+        let palavrasEncontradas = [];
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function initGame() {
+            const data = niveis[nivelAtual];
+            palavrasEncontradas = [];
+            const gridContainer = document.getElementById('grid');
+            gridContainer.style.gridTemplateColumns = `repeat(${data.grid}, 1fr)`;
+            gridContainer.innerHTML = '';
+
+            // Gerar matriz vazia
+            let matrix = Array(data.grid).fill().map(() => Array(data.grid).fill(''));
+
+            // Inserir palavras (Simples: apenas horizontal por agora para o 1º ano)
+            data.words.forEach(word => {
+                let placed = false;
+                while(!placed) {
+                    let r = Math.floor(Math.random() * data.grid);
+                    let c = Math.floor(Math.random() * (data.grid - word.length));
+                    let spaceOk = true;
+                    for(let i=0; i<word.length; i++) if(matrix[r][c+i] !== '') spaceOk = false;
+                    
+                    if(spaceOk) {
+                        for(let i=0; i<word.length; i++) matrix[r][c+i] = {char: word[i], word: word};
+                        placed = true;
+                    }
+                }
+            });
+
+            // Preencher espaços vazios e renderizar
+            for(let r=0; r<data.grid; r++) {
+                for(let c=0; c<data.grid; c++) {
+                    const div = document.createElement('div');
+                    div.className = 'cell';
+                    const isObj = typeof matrix[r][c] === 'object';
+                    div.innerText = isObj ? matrix[r][c].char : "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*26)];
+                    if(isObj) div.dataset.word = matrix[r][c].word;
+                    
+                    div.onclick = () => handleSelect(div);
+                    gridContainer.appendChild(div);
+                }
+            }
+
+            renderWords();
+        }
+
+        function handleSelect(el) {
+            if(el.classList.contains('found')) return;
+            el.classList.toggle('selected');
+            checkWord();
+        }
+
+        function checkWord() {
+            const selectedCells = document.querySelectorAll('.cell.selected');
+            if(selectedCells.length < 2) return;
+
+            const wordAttempt = Array.from(selectedCells).map(c => c.innerText).join('');
+            const currentLevelWords = niveis[nivelAtual].words;
+
+            if(currentLevelWords.includes(wordAttempt) && !palavrasEncontradas.includes(wordAttempt)) {
+                palavrasEncontradas.push(wordAttempt);
+                selectedCells.forEach(c => {
+                    c.classList.remove('selected');
+                    c.classList.add('found');
+                });
+                renderWords();
+                if(palavrasEncontradas.length === currentLevelWords.length) {
+                    setTimeout(() => document.getElementById('modal-next').style.display = 'flex', 500);
+                }
+            }
+        }
+
+        function renderWords() {
+            const list = document.getElementById('word-list');
+            list.innerHTML = niveis[nivelAtual].words.map(w => 
+                `<span class="word-item ${palavrasEncontradas.includes(w) ? 'found' : ''}">${w}</span>`
+            ).join('');
+        }
+
+        function proximoNivel() {
+            nivelAtual++;
+            if(nivelAtual >= niveis.length) {
+                document.getElementById('modal-title').innerText = "JOGO CONCLUÍDO! 🏆";
+                document.querySelector('#modal-next button').style.display = 'none';
+            } else {
+                document.getElementById('modal-next').style.display = 'none';
+                initGame();
+            }
+        }
+
+        initGame();
+    </script>
+</body>
+</html>
