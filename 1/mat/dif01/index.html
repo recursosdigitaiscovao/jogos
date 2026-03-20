@@ -1,96 +1,253 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo Educativo - 1º Ano</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Formas Fixolas - 1º Ano</title>
     <style>
-        :root {
-            --bg-glass: rgba(255, 255, 255, 0.85); /* Transparência controlada */
-            --accent: #4CAF50;
+        * {
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+            margin: 0; padding: 0;
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Comic Sans MS', 'Arial', sans-serif;
-            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
-            min-height: 100vh;
+            background-color: rgba(52, 152, 219, 0.15); /* Azul suave transparente */
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            height: 100svh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        /* HEADER */
+        header {
+            width: 100%;
+            background-color: #ffffff;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .menu-icon { font-size: 1.8rem; cursor: pointer; color: #2c3e50; }
+        header h1 { font-size: 1.2rem; color: #2c3e50; font-weight: 800; }
+
+        .btn-voltar-3d {
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #3498db;
+            font-weight: bold;
+            font-size: 0.8rem;
+            padding: 8px 18px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #2980b9;
+            box-shadow: 0 2px 0 #2980b9;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
+            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+            transition: 0.3s; z-index: 200; padding: 20px; display: flex; flex-direction: column;
+        }
+        .sidebar.active { left: 0; }
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); display: none; z-index: 150;
+        }
+        .overlay.active { display: block; }
+
+        /* JOGO */
+        main {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: space-evenly;
+            padding: 20px;
         }
 
-        /* Container Responsivo */
-        .game-container {
-            background: var(--bg-glass);
-            backdrop-filter: blur(10px);
-            margin: 20px;
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        #instruction-box {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            background: white;
+            padding: 20px;
             width: 90%;
-            max-width: 800px; /* Limite para Desktop */
+            max-width: 500px;
+            border-radius: 20px;
             text-align: center;
-            flex-grow: 1;
+            border: 4px solid #3498db;
+            box-shadow: 0 10px 25px rgba(52,152,219,0.2);
         }
 
-        .shapes-grid {
+        .shapes-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 500px;
+            justify-items: center;
         }
 
-        /* Lógica: Quadrados também são Retângulos */
-        .shape {
-            margin: auto;
+        /* DESENHO DAS FORMAS */
+        .shape-item {
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: transform 0.2s;
         }
 
-        .square {
-            width: 80px;
-            height: 80px;
-            background: #e74c3c;
+        .shape-item:active { transform: scale(0.9); }
+
+        .circle { background: #e74c3c; border-radius: 50%; }
+        .square { background: #f1c40f; }
+        .rectangle { width: 100px; height: 60px; background: #9b59b6; }
+        
+        .triangle {
+            width: 0; height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-bottom: 80px solid #2ecc71;
         }
 
-        .rectangle {
-            width: 120px;
-            height: 70px;
-            background: #3498db;
+        .pentagon {
+            background: #e67e22;
+            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
         }
+
+        .hexagon {
+            background: #34495e;
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+        }
+
+        .selected { opacity: 0.3; pointer-events: none; transform: scale(0.8); }
 
         footer {
-            width: 100%;
-            padding: 15px 0;
-            background: rgba(255, 255, 255, 0.5);
-            text-align: center;
-            font-size: 0.9rem;
-            font-weight: bold;
+            width: 100%; padding: 12px; background-color: #ffffff;
+            text-align: center; color: #7f8c8d; border-top: 1px solid #ddd;
+            font-size: 0.9rem; flex-shrink: 0;
         }
 
-        /* Ajustes para ecrãs pequenos */
-        @media (max-width: 480px) {
-            .game-container { padding: 1rem; }
-            h1 { font-size: 1.5rem; }
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(52, 152, 219, 0.98); z-index: 300;
+            flex-direction: column; align-items: center; justify-content: center;
+            color: white; text-align: center;
         }
     </style>
 </head>
 <body>
 
-    <div class="game-container">
-        <h1>Vamos Aprender as Formas!</h1>
-        <p>Sabias que todo o <strong>quadrado</strong> também é um <strong>retângulo</strong> especial?</p>
-        
-        <div class="shapes-grid">
-            <div class="shape square" title="Sou um quadrado e um retângulo!"></div>
-            <div class="shape rectangle" title="Sou um retângulo!"></div>
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    
+    <div class="sidebar" id="sidebar">
+        <h3>Menu</h3>
+        <nav style="display: flex; flex-direction: column; gap: 10px;">
+            <a href="../../../" style="text-decoration:none; color:#333; padding:10px; background:#f0f0f0; border-radius:8px;">🏠 Início</a>
+            <a href="../../../1" style="text-decoration:none; color:#333; padding:10px; background:#f0f0f0; border-radius:8px;">🐥 1º Ano</a>
+        </nav>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <h1>Formas Fixolas</h1>
         </div>
+        <a href="../" class="btn-voltar-3d">⬅ 1º ANO</a>
+    </header>
+
+    <main>
+        <div id="instruction-box">Clica em todos os... <br><strong id="target-shape">---</strong></div>
+        <div class="shapes-container" id="shapes-grid"></div>
+    </main>
+
+    <div id="win-modal" class="modal">
+        <h1 style="font-size: 3rem;">PARABÉNS! 🌟</h1>
+        <p style="font-size: 1.5rem; margin: 20px;">Encontraste todas as formas!</p>
+        <button onclick="location.reload()" style="padding: 15px 30px; font-size: 1.2rem; border-radius: 10px; border: none; cursor: pointer;">Jogar de Novo 🔄</button>
     </div>
 
     <footer>
-        Criado por: [Seu Nome/Criador]
+        Recursos Digitais Covão - <strong>Professor Luís</strong>
     </footer>
 
+    <script>
+        const shapeTypes = [
+            { id: 'quadrado', class: 'square', isRect: true },
+            { id: 'retângulo', class: 'rectangle', isRect: true },
+            { id: 'círculo', class: 'circle', isRect: false },
+            { id: 'triângulo', class: 'triangle', isRect: false },
+            { id: 'pentágono', class: 'pentagon', isRect: false },
+            { id: 'exágono', class: 'hexagon', isRect: false }
+        ];
+
+        let target = '';
+        let shapesToFind = 0;
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function initGame() {
+            const grid = document.getElementById('shapes-grid');
+            grid.innerHTML = '';
+            
+            // Escolher forma alvo aleatória (exceto o retângulo para não confundir no início, ou incluir na lógica)
+            const randomTarget = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+            target = randomTarget.id;
+            document.getElementById('target-shape').innerText = target.toUpperCase() + "S";
+
+            // Criar 9 formas aleatórias
+            for (let i = 0; i < 9; i++) {
+                const randomShape = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+                const div = document.createElement('div');
+                div.className = `shape-item ${randomShape.class}`;
+                
+                // Lógica Especial: Quadrados também são Retângulos
+                let isMatch = false;
+                if (target === 'retângulo') {
+                    if (randomShape.id === 'retângulo' || randomShape.id === 'quadrado') isMatch = true;
+                } else {
+                    if (randomShape.id === target) isMatch = true;
+                }
+
+                if (isMatch) shapesToFind++;
+
+                div.onclick = function() {
+                    if (isMatch) {
+                        this.classList.add('selected');
+                        shapesToFind--;
+                        if (shapesToFind === 0) {
+                            setTimeout(() => { document.getElementById('win-modal').style.display = 'flex'; }, 500);
+                        }
+                    } else {
+                        this.style.border = "4px solid red";
+                        setTimeout(() => { this.style.border = "none"; }, 500);
+                    }
+                };
+                grid.appendChild(div);
+            }
+
+            // Se por azar não gerou nenhuma forma alvo, reinicia
+            if (shapesToFind === 0) initGame();
+        }
+
+        initGame();
+    </script>
 </body>
 </html>
