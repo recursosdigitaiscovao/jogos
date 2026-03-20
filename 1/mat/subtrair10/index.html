@@ -4,81 +4,159 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Subtrair10 - 1º Ano</title>
-    
     <style>
+        * {
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+            margin: 0; padding: 0;
+        }
+
         body {
-            background-color: #ffffff;
-            color: #333;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
+            /* Fundo sólido laranja suave padrão 1º Ano */
+            background-color: rgba(255, 159, 67, 0.15); 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            height: 100svh;
             display: flex;
             flex-direction: column;
-            height: 100vh;
             overflow: hidden;
             touch-action: manipulation;
         }
 
+        /* HEADER PADRONIZADO */
         header {
-            background-color: #ff9f43; /* Laranja do 1º Ano */
-            color: white;
-            padding: 10px 15px;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 15px 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            height: 60px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
+            flex-shrink: 0;
+            z-index: 100;
         }
 
-        header h2 { margin: 0; font-size: 1.3rem; }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-        .btn-topo {
-            color: white;
+        .menu-icon {
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #2c3e50;
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            font-weight: 800;
+        }
+
+        /* BOTÃO VOLTAR 3D */
+        .btn-voltar-3d {
             text-decoration: none;
+            color: #000000;
+            background-color: #ff9f43;
             font-weight: bold;
-            background: rgba(0,0,0,0.2);
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
+            padding: 8px 18px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #e67e22;
+            box-shadow: 0 2px 0 #e67e22;
+            transition: all 0.1s ease;
         }
 
+        .btn-voltar-3d:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 0 #e67e22;
+        }
+
+        /* SIDEBAR - LINKS CORRIGIDOS */
+        .sidebar {
+            position: fixed;
+            left: -280px;
+            top: 0;
+            width: 280px;
+            height: 100%;
+            background: white;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 200;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.active { left: 0; }
+
+        .sidebar h3 { 
+            color: #2c3e50; 
+            margin-bottom: 20px; 
+            padding-bottom: 10px; 
+            border-bottom: 2px solid #ff9f43; 
+        }
+
+        .sidebar-menu { display: flex; flex-direction: column; gap: 10px; }
+
+        .sidebar-item {
+            text-decoration: none; color: #444; font-weight: bold;
+            padding: 14px; border-radius: 12px; background: #f8f9fa;
+            display: flex; align-items: center; gap: 15px;
+        }
+
+        .sidebar-item:hover { background: #ff9f43; color: white; }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); display: none; z-index: 150;
+        }
+        .overlay.active { display: block; }
+
+        /* ÁREA DO JOGO */
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-evenly;
-            padding: 10px;
+            padding: 20px;
         }
 
-        #score { font-size: 1.3rem; font-weight: bold; color: #7f8c8d; }
+        #score {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #d35400;
+            background: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
 
         #question-box {
-            font-size: clamp(2.5rem, 12vw, 4.5rem);
+            font-size: clamp(2.5rem, 12vw, 4rem);
             font-weight: bold;
             color: #2c3e50;
             border: 6px solid #ff9f43;
             padding: 25px;
-            width: 85%;
+            width: 90%;
             max-width: 450px;
             border-radius: 30px;
-            background: #fffaf5;
+            background: white;
             text-align: center;
-            transition: all 0.3s;
+            box-shadow: 0 15px 35px rgba(255,159,67,0.2);
         }
 
-        /* Feedback Visual */
-        .wrong-anim { color: #e74c3c !important; border-color: #e74c3c !important; }
-        .correct-anim { border-color: #2ecc71 !important; }
-        .fill-number { color: #2ecc71; text-decoration: underline; }
-
-        /* Botões de Opção (Grelha 2x2 no Mobile) */
         .options-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            width: 90%;
+            width: 100%;
             max-width: 500px;
-            padding-bottom: 20px;
         }
 
         .option-btn {
@@ -86,53 +164,48 @@
             color: white;
             border: none;
             border-radius: 20px;
-            padding: 15px;
+            padding: 20px;
             font-size: 2.2rem;
             font-weight: bold;
             box-shadow: 0 6px 0 #e67e22;
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .option-btn:active {
             transform: translateY(3px);
-            box-shadow: 0 2px 0 #e67e22;
+            box-shadow: 0 3px 0 #e67e22;
         }
 
-        /* Modais */
+        /* FOOTER */
+        footer {
+            width: 100%;
+            padding: 12px;
+            background-color: #ffffff;
+            text-align: center;
+            color: #7f8c8d;
+            border-top: 1px solid #ddd;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        /* MODAIS E FEEDBACK */
+        .wrong-anim { color: #e74c3c !important; border-color: #e74c3c !important; }
+        .correct-anim { border-color: #2ecc71 !important; }
+        .fill-number { color: #2ecc71; text-decoration: underline; }
+
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(255,159,67,0.98);
-            z-index: 100;
+            z-index: 300;
             flex-direction: column; align-items: center; justify-content: center;
-            padding: 20px;
-            color: white;
-            text-align: center;
+            padding: 20px; text-align: center; color: white;
         }
 
         .stats-box {
-            background: white;
-            color: #333;
-            padding: 20px;
-            border-radius: 20px;
-            margin: 20px;
-            width: 90%;
-            max-width: 350px;
-        }
-
-        .btn-final {
-            background: #2c3e50;
-            color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            border: none;
-            font-weight: bold;
-            text-decoration: none;
-            margin-top: 10px;
-            display: inline-block;
+            background: white; color: #333; padding: 20px;
+            border-radius: 20px; margin: 20px 0; width: 100%; max-width: 350px;
         }
 
         @media (min-width: 600px) {
@@ -142,26 +215,46 @@
 </head>
 <body>
 
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    
+    <div class="sidebar" id="sidebar">
+        <h3>Navegação</h3>
+        <nav class="sidebar-menu">
+            <a href="../../../" class="sidebar-item"><span>🏠</span> Início</a>
+            <a href="../../../pre" class="sidebar-item"><span>🦒</span> Pré-Escolar</a>
+            <a href="../../../1" class="sidebar-item"><span>🐥</span> 1º Ano</a>
+            <a href="../../../2" class="sidebar-item"><span>🐢</span> 2º Ano</a>
+            <a href="../../../3" class="sidebar-item"><span>🦊</span> 3º Ano</a>
+            <a href="../../../4" class="sidebar-item"><span>👨‍🚀</span> 4º Ano</a>
+        </nav>
+        <button onclick="toggleMenu()" style="margin-top:auto; padding:12px; border:none; background:#f0f0f0; cursor:pointer; font-weight:bold; border-radius:10px;">Fechar ×</button>
+    </div>
+
     <div id="next-level-modal" class="modal">
-        <h1>🌟 NÍVEL 1 CONCLUÍDO!</h1>
-        <p style="font-size: 1.4rem;">Agora descobre o número que falta na conta!</p>
-        <button class="option-btn" style="background: white; color: #ff9f43; min-width: 200px;" onclick="startLevel2()">AVANÇAR 🚀</button>
+        <h1 style="font-size: 2.5rem;">🌟 NÍVEL 1 CONCLUÍDO!</h1>
+        <p style="font-size: 1.4rem; margin-bottom: 30px;">Agora descobre o número que falta na conta!</p>
+        <button class="option-btn" style="background: white; color: #ff9f43; min-width: 250px;" onclick="startLevel2()">AVANÇAR 🚀</button>
     </div>
 
     <div id="final-modal" class="modal" style="background: #2ecc71;">
-        <h1>🏆 EXCELENTE!</h1>
+        <h1 style="font-size: 2.5rem;">🏆 EXCELENTE!</h1>
         <div class="stats-box">
             <h3>Teu Relatório Subtrair10:</h3>
-            <p>Nível 1: <span id="s1"></span> ✅ | <span id="e1"></span> ❌</p>
-            <p>Nível 2: <span id="s2"></span> ✅ | <span id="e2"></span> ❌</p>
+            <p style="margin: 10px 0;">Nível 1: <span id="s1"></span> ✅ | <span id="e1"></span> ❌</p>
+            <p style="margin: 10px 0;">Nível 2: <span id="s2"></span> ✅ | <span id="e2"></span> ❌</p>
         </div>
-        <button class="btn-final" onclick="location.reload()">REPETIR 🔄</button>
-        <a href="../index.html" class="btn-final" style="background: rgba(0,0,0,0.3);">MENU 🏠</a>
+        <button class="option-btn" style="background:#2c3e50; margin-bottom:20px; min-width: 250px;" onclick="location.reload()">REPETIR 🔄</button>
+        <a href="../" style="color:white; font-weight:bold; text-decoration:underline;">Sair para o Menu</a>
     </div>
 
     <header>
-        <h2>➖ Subtrair10</h2>
-        <a href="../index.html" class="btn-topo">⬅ 1ºAno</a>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <h1>➖ Subtrair10</h1>
+        </div>
+        <a href="../" class="btn-voltar-3d">
+            <span>⬅</span> 1º ANO
+        </a>
     </header>
 
     <main>
@@ -170,12 +263,21 @@
         <div class="options-container" id="options"></div>
     </main>
 
+    <footer>
+        Recursos Digitais Covão - <strong>Professor Luís</strong>
+    </footer>
+
     <script>
         let score = 0;
         let correctAnswer = 0;
         let canClick = true;
         let currentLevel = 1;
         let stats = { l1_hits: 0, l1_errors: 0, l2_hits: 0, l2_errors: 0 };
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
 
         function nextQuestion() {
             if (score >= 10 && currentLevel === 1) {
