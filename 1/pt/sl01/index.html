@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sopa de Letras: Frutas - 1º Ano</title>
+    <title>Sopa de Frutas Dinâmica - 1º Ano</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
@@ -15,7 +15,7 @@
             overflow: hidden; touch-action: manipulation;
         }
 
-        /* HEADER PADRONIZADO */
+        /* HEADER */
         header {
             width: 100%; background-color: #ffffff; padding: 15px 20px;
             display: flex; align-items: center; justify-content: space-between;
@@ -100,8 +100,8 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <span style="font-size:1.5rem">🍎</span>
-            <h1>Sopa de Frutas</h1>
+            <span style="font-size:1.5rem">🍓</span>
+            <h1>Sopa de Frutas Aleatória</h1>
         </div>
         <a href="../" class="btn-voltar-3d"><span>⬅</span> Voltar</a>
     </header>
@@ -116,42 +116,55 @@
     <footer>Recursos Digitais Covão - <strong>Professor Luís</strong></footer>
 
     <script>
-        // Configuração apenas com FRUTAS
-        const levels = [
-            { words: ["PERA", "MACA", "UVA", "FIGO"], size: 8 },
-            { words: ["BANANA", "LARANJA", "MELAO", "KIWI", "ANANAS", "MANGA"], size: 10 }
+        // Base de dados ampliada de frutas
+        const frutasPool = [
+            "PERA", "MACA", "UVA", "FIGO", "BANANA", "LARANJA", "MELAO", 
+            "KIWI", "ANANAS", "MANGA", "LIMAO", "AMORA", "COCO", "CEREJA", "AMEIXA"
         ];
 
         let currentLevel = 0;
         let foundWordsCount = 0;
+        let currentWords = [];
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        function initGame() {
-            const level = levels[currentLevel];
-            foundWordsCount = 0;
-            document.getElementById('level-info').innerText = `Nível ${currentLevel + 1}: ${level.words.length} Frutas`;
-            document.getElementById('btn-next').style.display = 'none';
-            generateGrid(level);
-            renderWords(level);
+        // Função para baralhar e escolher palavras aleatórias
+        function getRandomWords(count) {
+            const shuffled = [...frutasPool].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
         }
 
-        function generateGrid(level) {
+        function initGame() {
+            foundWordsCount = 0;
+            const wordCount = currentLevel === 0 ? 4 : 6;
+            const gridSize = currentLevel === 0 ? 8 : 10;
+            
+            currentWords = getRandomWords(wordCount);
+            
+            document.getElementById('level-info').innerText = `Nível ${currentLevel + 1}: ${wordCount} Frutas`;
+            document.getElementById('btn-next').style.display = 'none';
+            
+            generateGrid(gridSize, currentWords);
+            renderWords(currentWords);
+        }
+
+        function generateGrid(size, words) {
             const gridEl = document.getElementById('grid');
-            gridEl.style.gridTemplateColumns = `repeat(${level.size}, 36px)`;
+            gridEl.style.gridTemplateColumns = `repeat(${size}, 36px)`;
             gridEl.innerHTML = '';
 
-            let matrix = Array(level.size).fill().map(() => Array(level.size).fill(''));
+            let matrix = Array(size).fill().map(() => Array(size).fill(''));
 
-            level.words.forEach(word => {
+            words.forEach(word => {
                 let placed = false;
-                while (!placed) {
+                let attempts = 0;
+                while (!placed && attempts < 100) {
                     const isVert = Math.random() > 0.5;
-                    const row = Math.floor(Math.random() * (isVert ? level.size - word.length : level.size));
-                    const col = Math.floor(Math.random() * (isVert ? level.size : level.size - word.length));
+                    const row = Math.floor(Math.random() * (isVert ? size - word.length : size));
+                    const col = Math.floor(Math.random() * (isVert ? size : size - word.length));
                     
                     let canPlace = true;
                     for (let i = 0; i < word.length; i++) {
@@ -166,12 +179,13 @@
                         }
                         placed = true;
                     }
+                    attempts++;
                 }
             });
 
             const alphabet = "ABCDEFGHIJKLMNOPQRSTUVX";
-            for (let r = 0; r < level.size; r++) {
-                for (let c = 0; c < level.size; c++) {
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
                     if (matrix[r][c] === '') matrix[r][c] = alphabet[Math.floor(Math.random() * alphabet.length)];
                     const cell = document.createElement('div');
                     cell.className = 'cell';
@@ -182,10 +196,10 @@
             }
         }
 
-        function renderWords(level) {
+        function renderWords(words) {
             const listEl = document.getElementById('word-list');
             listEl.innerHTML = '';
-            level.words.forEach(word => {
+            words.forEach(word => {
                 const div = document.createElement('div');
                 div.className = 'word-box';
                 div.innerText = word;
@@ -202,8 +216,7 @@
             const currentString = selected.map(c => c.innerText).join('');
             const reversedString = currentString.split('').reverse().join('');
             
-            const levelWords = levels[currentLevel].words;
-            const foundWord = levelWords.find(w => w === currentString || w === reversedString);
+            const foundWord = currentWords.find(w => w === currentString || w === reversedString);
 
             if (foundWord) {
                 const wordElement = document.getElementById('word-' + foundWord);
@@ -215,11 +228,11 @@
                     wordElement.classList.add('found');
                     foundWordsCount++;
 
-                    if (foundWordsCount === levelWords.length) {
-                        if (currentLevel < levels.length - 1) {
+                    if (foundWordsCount === currentWords.length) {
+                        if (currentLevel === 0) {
                             document.getElementById('btn-next').style.display = 'block';
                         } else {
-                            setTimeout(() => alert("Parabéns! Encontraste todas as frutas! 🍎🍇🍓"), 300);
+                            setTimeout(() => alert("Parabéns! Descobriste todas as frutas! 🏆"), 300);
                         }
                     }
                 }
@@ -227,7 +240,7 @@
         }
 
         function nextLevel() {
-            currentLevel++;
+            currentLevel = 1;
             initGame();
         }
 
