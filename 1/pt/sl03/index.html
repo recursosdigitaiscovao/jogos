@@ -1,1 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sopa de Letras: Animais - 1º Ano</title>
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        
+        body {
+            background-color: rgba(255, 159, 67, 0.15); 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh; height: 100svh;
+            display: flex; flex-direction: column;
+            overflow: hidden; touch-action: manipulation;
+        }
 
+        /* HEADER PADRONIZADO */
+        header {
+            width: 100%; background-color: #ffffff; padding: 15px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid #ddd; flex-shrink: 0; z-index: 100;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .menu-icon { font-size: 1.8rem; cursor: pointer; color: #2c3e50; }
+        header h1 { font-size: 1.1rem; color: #2c3e50; font-weight: 800; }
+        .game-icon { font-size: 1.5rem; display: flex; align-items: center; }
+
+        /* BOTÃO VOLTAR 3D */
+        .btn-voltar-3d {
+            text-decoration: none; color: #000; background-color: #ff9f43;
+            font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
+            border-radius: 8px; display: flex; align-items: center; gap: 8px;
+            border: 1px solid #e67e22; box-shadow: 0 2px 0 #e67e22; transition: all 0.1s;
+        }
+        .btn-voltar-3d:active { transform: translateY(1px); box-shadow: 0 1px 0 #e67e22; }
+
+        /* SIDEBAR COMPLETA */
+        .sidebar {
+            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
+            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200;
+            padding: 20px; display: flex; flex-direction: column;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar h3 { color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #ff9f43; }
+        .sidebar-menu { display: flex; flex-direction: column; gap: 10px; }
+        .sidebar-item {
+            text-decoration: none; color: #444; font-weight: bold;
+            padding: 14px; border-radius: 12px; background: #f8f9fa;
+            display: flex; align-items: center; gap: 15px;
+        }
+        .sidebar-item:hover { background: #ff9f43; color: white; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* ÁREA DO JOGO */
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
+        .level-tag { background: #ff9f43; color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; margin-bottom: 15px; }
+        
+        .grid { display: grid; gap: 5px; background: white; padding: 10px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .cell {
+            width: 34px; height: 34px; background: #fff; border: 2px solid #eee;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 1.1rem; border-radius: 6px; cursor: pointer;
+            user-select: none; transition: 0.2s;
+        }
+        .cell.selected { background: #ff9f43; color: white; border-color: #e67e22; }
+        .cell.found { background: #2ecc71; color: white; border-color: #27ae60; }
+
+        .word-list { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 20px; max-width: 350px; }
+        .word-box { padding: 6px 12px; background: white; border-radius: 10px; font-weight: bold; color: #95a5a6; border: 1px solid #ddd; }
+        .word-box.found { background: #2ecc71; color: white; border-color: #27ae60; text-decoration: line-through; }
+
+        .btn-next {
+            display: none; margin-top: 20px; padding: 12px 25px; background: #2ecc71; 
+            color: white; border: none; border-radius: 12px; font-weight: bold; 
+            cursor: pointer; box-shadow: 0 4px 0 #27ae60;
+        }
+
+        footer { width: 100%; padding: 12px; background: #fff; text-align: center; border-top: 1px solid #ddd; font-size: 0.9rem; flex-shrink: 0; }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    
+    <div class="sidebar" id="sidebar">
+        <h3>Navegação</h3>
+        <nav class="sidebar-menu">
+            <a href="/jogos" class="sidebar-item"><span>🏠</span> Início</a>
+            <a href="/jogos/pre" class="sidebar-item"><span>🦒</span> Pré-Escolar</a>
+            <a href="/jogos/1" class="sidebar-item"><span>🐥</span> 1º Ano</a>
+            <a href="/jogos/2" class="sidebar-item"><span>🐢</span> 2º Ano</a>
+            <a href="/jogos/3" class="sidebar-item"><span>🦊</span> 3º Ano</a>
+            <a href="/jogos/4" class="sidebar-item"><span>👨‍🚀</span> 4º Ano</a>
+        </nav>
+        <button onclick="toggleMenu()" style="margin-top:auto; padding:12px; border:none; background:#f0f0f0; cursor:pointer; font-weight:bold; border-radius:10px;">Fechar ×</button>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <span class="game-icon">🔍</span>
+            <h1>Sopa de Animais</h1>
+        </div>
+        <a href="../" class="btn-voltar-3d"><span>⬅</span> Voltar</a>
+    </header>
+
+    <main>
+        <div class="level-tag" id="level-info">Nível 1</div>
+        <div id="grid" class="grid"></div>
+        <div id="word-list" class="word-list"></div>
+        <button id="btn-next" class="btn-next" onclick="nextLevel()">Próximo Nível! 🚀</button>
+    </main>
+
+    <footer>Recursos Digitais Covão - <strong>Professor Luís</strong></footer>
+
+    <script>
+        // Base de dados com 20 animais para garantir variabilidade
+        const animalPool = [
+            "GATO", "CÃO", "RATO", "PATO", "LEÃO", "ZEBRA", "VACA", 
+            "SAPO", "LOBO", "PEIXE", "URSO", "GIRAFA", "MACACO", "COELHO", 
+            "TIGRE", "PORCO", "AVE", "GALO", "PERU", "COBRA"
+        ];
+
+        let currentLevel = 0;
+        let foundWordsCount = 0;
+        let currentWords = [];
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function getRandomWords(count) {
+            return [...animalPool].sort(() => 0.5 - Math.random()).slice(0, count);
+        }
+
+        function initGame() {
+            foundWordsCount = 0;
+            const wordCount = currentLevel === 0 ? 4 : 6;
+            const gridSize = currentLevel === 0 ? 9 : 11;
+            
+            currentWords = getRandomWords(wordCount);
+            document.getElementById('level-info').innerText = `Nível ${currentLevel + 1}: ${wordCount} Animais`;
+            document.getElementById('btn-next').style.display = 'none';
+            
+            generateGrid(gridSize, currentWords);
+            renderWords(currentWords);
+        }
+
+        function generateGrid(size, words) {
+            const gridEl = document.getElementById('grid');
+            gridEl.style.gridTemplateColumns = `repeat(${size}, 34px)`;
+            gridEl.innerHTML = '';
+            let matrix = Array(size).fill().map(() => Array(size).fill(''));
+
+            words.forEach(word => {
+                let placed = false;
+                let attempts = 0;
+                while (!placed && attempts < 250) {
+                    const isVert = Math.random() > 0.5;
+                    const row = Math.floor(Math.random() * (isVert ? size - word.length : size));
+                    const col = Math.floor(Math.random() * (isVert ? size : size - word.length));
+                    
+                    let canPlace = true;
+                    // REGRA DE ISOLAMENTO: Verifica a célula e vizinhas (incluindo diagonais)
+                    for (let i = -1; i <= (isVert ? word.length : 1); i++) {
+                        for (let j = -1; j <= (isVert ? 1 : word.length); j++) {
+                            let r = row + i;
+                            let c = col + j;
+                            if (r >= 0 && r < size && c >= 0 && c < size) {
+                                if (matrix[r][c] !== '') { canPlace = false; break; }
+                            }
+                        }
+                        if (!canPlace) break;
+                    }
+
+                    if (canPlace) {
+                        for (let i = 0; i < word.length; i++) {
+                            matrix[isVert ? row + i : row][isVert ? col : col + i] = word[i];
+                        }
+                        placed = true;
+                    }
+                    attempts++;
+                }
+            });
+
+            const alphabet = "ABCDEFGJKLMNOPQRSTUVX";
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    if (matrix[r][c] === '') matrix[r][c] = alphabet[Math.floor(Math.random() * alphabet.length)];
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.innerText = matrix[r][c];
+                    cell.onclick = () => handleSelect(cell);
+                    gridEl.appendChild(cell);
+                }
+            }
+        }
+
+        function renderWords(words) {
+            const listEl = document.getElementById('word-list');
+            listEl.innerHTML = '';
+            words.forEach(word => {
+                const div = document.createElement('div');
+                div.className = 'word-box';
+                div.innerText = word;
+                div.id = 'word-' + word;
+                listEl.appendChild(div);
+            });
+        }
+
+        function handleSelect(cell) {
+            if (cell.classList.contains('found')) return;
+            cell.classList.toggle('selected');
+            
+            const selected = Array.from(document.querySelectorAll('.cell.selected'));
+            const str = selected.map(c => c.innerText).join('');
+            const rev = str.split('').reverse().join('');
+            const foundWord = currentWords.find(w => w === str || w === rev);
+
+            if (foundWord) {
+                const el = document.getElementById('word-' + foundWord);
+                if (!el.classList.contains('found')) {
+                    selected.forEach(c => {
+                        c.classList.remove('selected');
+                        c.classList.add('found');
+                    });
+                    el.classList.add('found');
+                    foundWordsCount++;
+
+                    if (foundWordsCount === currentWords.length) {
+                        if (currentLevel === 0) {
+                            document.getElementById('btn-next').style.display = 'block';
+                        } else {
+                            setTimeout(() => alert("Parabéns! Encontraste todos os animais! 🦁🐾"), 300);
+                        }
+                    }
+                }
+            }
+        }
+
+        function nextLevel() {
+            currentLevel = 1;
+            initGame();
+        }
+
+        initGame();
+    </script>
+</body>
+</html>
