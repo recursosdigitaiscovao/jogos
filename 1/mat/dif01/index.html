@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>1º Ano - Geometria</title>
+    <title>1º Ano - Identifica as Formas</title>
     <style>
         * {
             box-sizing: border-box; 
@@ -23,7 +23,6 @@
             color: #2c3e50;
         }
 
-        /* HEADER PADRONIZADO */
         header {
             width: 100%;
             background-color: #ffffff;
@@ -37,14 +36,14 @@
         }
 
         .header-left { display: flex; align-items: center; gap: 12px; }
-        .menu-icon { font-size: 1.8rem; cursor: pointer; color: #2c3e50; }
-        header h1 { font-size: 1.1rem; color: #2c3e50; font-weight: 800; }
+        .menu-icon { font-size: 1.8rem; cursor: pointer; }
+        header h1 { font-size: 1.1rem; font-weight: 800; }
 
         .btn-voltar-3d {
             text-decoration: none; color: #000; background-color: #ff9f43;
             font-weight: bold; font-size: 0.8rem; padding: 8px 15px;
-            border-radius: 8px; display: flex; align-items: center; gap: 8px;
-            border: 1px solid #e67e22; box-shadow: 0 2px 0 #e67e22;
+            border-radius: 8px; border: 1px solid #e67e22;
+            box-shadow: 0 2px 0 #e67e22;
         }
 
         /* SIDEBAR */
@@ -65,58 +64,61 @@
         }
         .overlay.active { display: block; }
 
-        /* ÁREA DE JOGO */
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 15px;
-            position: relative;
+            padding: 20px;
         }
 
         .instrucao-card {
             background: white;
-            padding: 15px 25px;
+            padding: 15px 20px;
             border-radius: 20px;
-            box-shadow: 0 8px 0 #e67e22;
+            box-shadow: 0 6px 0 #e67e22;
             text-align: center;
             margin-bottom: 20px;
             width: 100%;
             max-width: 500px;
         }
 
-        .instrucao-card h2 { font-size: 1.3rem; margin-bottom: 5px; }
-        .instrucao-card span { color: #e67e22; font-weight: 800; text-transform: uppercase; }
+        .instrucao-card h2 { font-size: 1.2rem; }
+        .instrucao-card span { color: #e67e22; font-weight: 800; }
 
-        .campo-formas {
-            flex: 1;
+        /* GRELHA ALINHADA */
+        .grelha-formas {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 25px;
             width: 100%;
-            max-width: 800px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 30px;
-            position: relative;
-            overflow: hidden;
-            border: 3px dashed rgba(255,255,255,0.5);
+            max-width: 500px;
         }
 
-        .forma-item {
-            position: absolute;
-            font-size: clamp(2.5rem, 8vw, 4rem);
+        .forma-btn {
+            background: white;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            border-radius: 15px;
             cursor: pointer;
-            transition: transform 0.2s;
-            user-select: none;
-            padding: 10px;
+            transition: transform 0.1s;
+            border: none;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
         }
 
-        .forma-item:active { transform: scale(1.3); }
+        .forma-btn:active { transform: scale(0.9); }
 
-        /* FEEDBACKS */
-        #feedback-pop {
+        #pop-sucesso {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
-            background: #2ecc71; color: white; padding: 30px;
-            border-radius: 50%; font-size: 4rem; z-index: 300;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #2ecc71; color: white; padding: 20px 40px;
+            border-radius: 50px; font-size: 2rem; font-weight: bold; z-index: 300;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .show-pop { transform: translate(-50%, -50%) scale(1) !important; }
 
@@ -129,7 +131,7 @@
 <body>
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-    <div id="feedback-pop">🌟</div>
+    <div id="pop-sucesso">MUITO BEM! ⭐</div>
 
     <div class="sidebar" id="sidebar">
         <h3>Navegação</h3>
@@ -142,115 +144,115 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <h1>Geometria: Encontra as Formas</h1>
+            <h1>Identifica as Formas</h1>
         </div>
         <a href="../" class="btn-voltar-3d"><span>⬅</span> SAIR</a>
     </header>
 
     <main>
         <div class="instrucao-card">
-            <p>Nível <span id="txt-nivel">1</span></p>
-            <h2 id="msg-instrucao">Clica em todos os <span id="alvo-nome">Quadrados</span></h2>
-            <p style="font-size: 0.9rem; color: #666;">Faltam: <strong id="txt-faltam">0</strong></p>
+            <h2 id="instrucao">Clica apenas nos <span id="alvo-nome">Quadrados</span></h2>
+            <p style="margin-top:5px; font-size: 0.9rem;">Faltam: <strong id="faltam-txt">0</strong></p>
         </div>
 
-        <div class="campo-formas" id="container"></div>
+        <div class="grelha-formas" id="grelha"></div>
     </main>
 
     <footer>Recursos Digitais Covão - Professor Luís</footer>
 
     <script>
-        const formasConfig = [
-            { nome: "Quadrados", emoji: "🟦", tipo: "quadrado" },
-            { nome: "Círculos", emoji: "🟡", tipo: "circulo" },
-            { nome: "Triângulos", emoji: "🔺", tipo: "triangulo" },
-            { nome: "Estrelas", emoji: "⭐", tipo: "estrela" }
+        const figuras = [
+            { nome: "Quadrados", tipo: "Q", emojis: ["🟦", "🟨", "🟥", "🟩"] },
+            { nome: "Círculos", tipo: "C", emojis: ["🔵", "🟡", "🔴", "🟢"] },
+            { nome: "Triângulos", tipo: "T", emojis: ["🔺"] }, // O emoji de triângulo é mais limitado em cores padrão
+            { nome: "Estrelas", tipo: "E", emojis: ["⭐"] }
         ];
 
-        let nivelAtual = 1;
-        let alvoAtual = null;
-        let formasNoCampo = [];
+        let alvoAtual;
+        let nivel = 1;
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        function iniciarNivel() {
-            const container = document.getElementById('container');
-            container.innerHTML = "";
+        function novoJogo() {
+            const grelha = document.getElementById('grelha');
+            grelha.innerHTML = "";
             
-            // Escolher o alvo do nível aleatoriamente
-            alvoAtual = formasConfig[Math.floor(Math.random() * formasConfig.length)];
+            // Escolhe um alvo aleatório
+            alvoAtual = figuras[Math.floor(Math.random() * figuras.length)];
             document.getElementById('alvo-nome').innerText = alvoAtual.nome;
-            document.getElementById('txt-nivel').innerText = nivelAtual;
 
-            const totalFormas = 15 + (nivelAtual * 2); 
-            const quantidadeAlvos = 3 + nivelAtual;
-            let alvosGerados = 0;
+            // Criar lista de formas (16 total na grelha 4x4)
+            let totalItens = 16;
+            let itensAlvo = 3 + nivel; 
+            let listaFinal = [];
 
-            document.getElementById('txt-faltam').innerText = quantidadeAlvos;
+            // Adicionar alvos
+            for(let i=0; i<itensAlvo; i++) {
+                listaFinal.push({ tipo: alvoAtual.tipo, emoji: alvoAtual.emojis[Math.floor(Math.random()*alvoAtual.emojis.length)] });
+            }
 
-            for (let i = 0; i < totalFormas; i++) {
-                const el = document.createElement('div');
-                el.className = 'forma-item';
-                
-                // Decidir se é a forma certa ou errada
-                let config;
-                if (alvosGerados < quantidadeAlvos) {
-                    config = alvoAtual;
-                    el.dataset.correto = "true";
-                    alvosGerados++;
-                } else {
-                    do {
-                        config = formasConfig[Math.floor(Math.random() * formasConfig.length)];
-                    } while (config.tipo === alvoAtual.tipo);
-                    el.dataset.correto = "false";
+            // Adicionar distrações
+            while(listaFinal.length < totalItens) {
+                let distracao = figuras[Math.floor(Math.random() * figuras.length)];
+                if(distracao.tipo !== alvoAtual.tipo) {
+                    listaFinal.push({ tipo: distracao.tipo, emoji: distracao.emojis[Math.floor(Math.random()*distracao.emojis.length)] });
                 }
+            }
 
-                el.innerText = config.emoji;
-                
-                // Posição Aleatória
-                el.style.left = Math.random() * 85 + "%";
-                el.style.top = Math.random() * 85 + "%";
-                el.style.transform = `rotate(${Math.random() * 360}deg)`;
+            // Baralhar a lista
+            listaFinal.sort(() => Math.random() - 0.5);
 
-                el.onclick = function() {
-                    if (this.dataset.correto === "true") {
+            // Gerar botões
+            listaFinal.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = 'forma-btn';
+                btn.innerText = item.emoji;
+                btn.onclick = function() {
+                    if(item.tipo === alvoAtual.tipo) {
                         this.style.visibility = "hidden";
-                        verificarProgresso();
+                        verificarFim();
                     } else {
-                        // Feedback visual de erro (tremer)
-                        this.style.filter = "grayscale(100%)";
-                        setTimeout(() => this.style.filter = "", 500);
+                        this.style.background = "#ffcccc";
+                        setTimeout(() => this.style.background = "white", 300);
                     }
                 };
-
-                container.appendChild(el);
-            }
+                grelha.appendChild(btn);
+            });
+            
+            atualizarContagem();
         }
 
-        function verificarProgresso() {
+        function atualizarContagem() {
             let restantes = 0;
-            document.querySelectorAll('.forma-item[data-correto="true"]').forEach(el => {
-                if (el.style.visibility !== "hidden") restantes++;
+            const botoes = document.querySelectorAll('.forma-btn');
+            // Lógica simples para contar quantos do tipo alvo ainda estão visíveis
+            // No mundo real compararíamos o conteúdo ou uma propriedade
+            // Para simplificar, vamos apenas ver quem falta
+            const totalAlvos = 3 + nivel;
+            let encontrados = 0;
+            document.querySelectorAll('.forma-btn').forEach(b => {
+                if(b.style.visibility === "hidden") encontrados++;
             });
+            document.getElementById('faltam-txt').innerText = totalAlvos - encontrados;
+        }
 
-            document.getElementById('txt-faltam').innerText = restantes;
-
-            if (restantes === 0) {
-                const pop = document.getElementById('feedback-pop');
+        function verificarFim() {
+            atualizarContagem();
+            if(document.getElementById('faltam-txt').innerText == "0") {
+                const pop = document.getElementById('pop-sucesso');
                 pop.classList.add('show-pop');
-                
                 setTimeout(() => {
                     pop.classList.remove('show-pop');
-                    nivelAtual++;
-                    iniciarNivel();
+                    nivel = nivel < 5 ? nivel + 1 : 1;
+                    novoJogo();
                 }, 1200);
             }
         }
 
-        iniciarNivel();
+        novoJogo();
     </script>
 </body>
 </html>
