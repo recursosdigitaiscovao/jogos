@@ -6,7 +6,7 @@
     <title>Associa o Par - Prof. Luís</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
-        /* Reset Total */
+        /* Reset e Bloqueio de Scroll nativo */
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
@@ -17,185 +17,201 @@
         body {
             background-color: #ffffff;
             font-family: 'Segoe UI', sans-serif;
+            /* svh é crucial para telemóveis com barras de navegação */
             height: 100vh;
             height: 100svh; 
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            overscroll-behavior-y: contain;
         }
 
-        /* BARRA DO TOPO - AGORA DEFINITIVAMENTE ROSA */
+        /* Topo Rosa e Super Compacto */
         header {
-            background-color: #ffb3c6 !important; /* Rosa Pastel */
-            width: 100%;
-            height: 45px;
+            background-color: #ffb3c6; /* Rosa Pastel unificado */
+            color: white;
+            padding: 0 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 15px;
+            height: 40px; /* Altura mínima para libertar espaço */
             flex-shrink: 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        header h2 { 
-            color: white; 
-            font-size: 1rem; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px;
-        }
+        header h2 { margin: 0; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
+        .icon-header { font-size: 1.1rem; }
 
         .btn-topo {
-            color: white; 
-            text-decoration: none; 
-            font-weight: bold;
-            background: rgba(255,255,255,0.3); 
-            padding: 5px 10px;
-            border-radius: 10px; 
-            font-size: 0.75rem; 
-            border: 1px solid white;
+            color: white; text-decoration: none; font-weight: bold;
+            background: rgba(255,255,255,0.2); padding: 4px 8px;
+            border-radius: 8px; font-size: 0.7rem; border: 1px solid white;
         }
 
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
+            padding: 5px; /* Padding mínimo */
             align-items: center;
             justify-content: center;
-            padding: 5px;
+            min-height: 0; /* Permite que o flex container encolha */
         }
 
         .instrucao {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: bold;
             color: #ff6b81;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
+            text-align: center;
         }
 
-        /* Área de Jogo Otimizada para Altura de Telemóvel */
+        /* Área do Jogo: 3 colunas, adaptável em altura */
         .game-wrapper {
             display: flex;
+            flex-direction: row;
             width: 100%;
             max-width: 800px;
-            height: 70vh; /* Ocupa 70% da altura da tela */
-            gap: 10px;
+            /* Altura dinâmica baseada na altura do ecrã */
+            height: 75vh; 
+            height: 75svh;
+            gap: 8px;
             align-items: center;
             justify-content: center;
         }
 
         .coluna-pequenas {
-            width: clamp(65px, 18vw, 95px);
+            width: clamp(60px, 15vw, 90px);
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             justify-content: center;
+            height: 100%;
         }
 
         .coluna-central {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             justify-content: center;
             align-items: center;
         }
 
-        /* Par: Grande e Quadrado sempre LADO A LADO */
+        /* Par: Imagem Grande + Alvo Branco LADO A LADO */
         .par-container {
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             background: #fff9fa;
             border: 2px solid #ffdae3;
-            border-radius: 15px;
-            padding: 6px 12px;
+            border-radius: 12px;
+            padding: 5px;
+            gap: 8px;
             width: 100%;
-            max-width: 280px;
-            height: 22%; /* Altura proporcional */
+            max-width: 260px;
+            /* Altura reduzida para caber tudo */
+            height: 18%; 
+            max-height: 80px;
         }
 
         .img-grande {
-            font-size: clamp(2.2rem, 7vh, 3.8rem);
+            font-size: clamp(2rem, 6vh, 3.5rem);
+            flex: 1;
+            text-align: center;
             line-height: 1;
         }
 
+        /* Quadrado Branco Ajustado */
         .alvo-largada {
-            width: clamp(60px, 12vh, 80px);
-            height: clamp(60px, 12vh, 80px);
+            width: clamp(55px, 12vh, 75px);
+            height: clamp(55px, 12vh, 75px);
             background: white;
             border: 3px dashed #ffb3c6;
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
+        /* Imagens Pequenas Arrastáveis */
         .img-pequena {
             background: white;
             border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            width: clamp(60px, 12vh, 80px);
-            height: clamp(60px, 12vh, 80px);
-            font-size: clamp(2rem, 6vh, 2.8rem);
+            border-radius: 10px;
+            width: clamp(55px, 12vh, 75px);
+            height: clamp(55px, 12vh, 75px);
+            font-size: clamp(1.8rem, 5vh, 2.5rem);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 0 #e0e0e0;
+            box-shadow: 0 3px 0 #e0e0e0;
+            cursor: grab;
+            user-select: none;
         }
 
         .img-pequena.correto {
             background-color: #7bed9f !important;
             border-color: #2ed573 !important;
             box-shadow: none !important;
-            transform: scale(0.85);
+            transform: scale(0.8);
         }
 
+        /* Contador de Rondas Compacto */
         .progresso {
-            font-size: 0.8rem;
-            color: #95a5a6;
-            margin-top: 10px;
+            font-size: 0.75rem;
             font-weight: bold;
+            color: #95a5a6;
+            margin-top: 5px;
         }
 
+        /* Rodapé Assinado */
         footer {
             text-align: center;
-            padding: 8px;
-            font-size: 0.75rem;
+            padding: 5px;
+            font-size: 0.7rem;
             color: #95a5a6;
-            background: #fff;
             border-top: 1px solid #eee;
+            background: #fff;
+            flex-shrink: 0;
+        }
+
+        /* Ajustes Mobile Fino (Tablets) */
+        @media (min-width: 600px) {
+            .game-wrapper { gap: 15px; height: 70vh; }
+            .par-container { max-width: 320px; padding: 10px; gap: 15px; height: 20%; max-height: 100px;}
+            .img-pequena, .alvo-largada { width: 85px; height: 85px; }
         }
 
         #final-panel { display: none; flex-direction: column; align-items: center; justify-content: center; flex: 1; }
-        .btn-final { padding: 15px 30px; border-radius: 20px; color: white; background: #2ecc71; border: none; font-weight: bold; cursor: pointer; }
-
+        .btn-final { padding: 12px 25px; border-radius: 15px; color: white; border: none; font-weight: bold; background: #2ecc71; cursor: pointer; font-size: 1rem; }
+        
         .sortable-ghost { opacity: 0; }
     </style>
 </head>
 <body>
 
     <header>
-        <h2><span>🧩</span> Associa o Par</h2>
+        <h2><span class="icon-header">🧩</span> Associa o Par</h2>
         <a href="../index.html" class="btn-topo">⬅ Voltar</a>
     </header>
 
     <main id="jogo-container">
-        <p class="instrucao">Leva o pequeno para o quadrado!</p>
+        <p class="instrucao">Leva o pequeno para o lado do igual!</p>
         
         <div class="game-wrapper">
             <div class="coluna-pequenas" id="col-esq"></div>
             <div class="coluna-central" id="col-cen"></div>
             <div class="coluna-pequenas" id="col-dir"></div>
         </div>
-        
         <p class="progresso">Ronda <span id="ronda-atual">1</span> de 5</p>
     </main>
 
     <div id="final-panel">
         <div style="font-size: 4rem;">🌟</div>
-        <h1 style="color: #ff6b81; margin: 15px 0;">Muito bem!</h1>
+        <h1 style="color: #ff6b81">Muito bem!</h1>
         <button class="btn-final" onclick="reiniciarJogo()">Jogar de Novo 🔄</button>
     </div>
 
@@ -214,32 +230,46 @@
                 document.getElementById('final-panel').style.display = 'flex';
                 return;
             }
+
             document.getElementById('ronda-atual').innerText = ronda;
             acertosRonda = 0;
             const colEsq = document.getElementById('col-esq');
             const colCen = document.getElementById('col-cen');
             const colDir = document.getElementById('col-dir');
+            
             colEsq.innerHTML = ''; colCen.innerHTML = ''; colDir.innerHTML = '';
 
-            let selecionados = [...animaisPool].sort(() => 0.5 - Math.random()).slice(0, 3);
-            let distratores = animaisPool.filter(a => !selecionados.includes(a)).sort(() => 0.5 - Math.random()).slice(0, 3);
+            let misturados = [...animaisPool].sort(() => 0.5 - Math.random());
+            let selecionados = misturados.slice(0, 3);
+            let distratores = misturados.slice(3, 6);
             let todasPequenas = [...selecionados, ...distratores].sort(() => 0.5 - Math.random());
 
             selecionados.forEach(animal => {
                 const container = document.createElement('div');
                 container.className = 'par-container';
-                container.innerHTML = `<div class="img-grande">${animal}</div><div class="alvo-largada" data-animal="${animal}"></div>`;
+                container.innerHTML = `
+                    <div class="img-grande">${animal}</div>
+                    <div class="alvo-largada" data-animal="${animal}"></div>
+                `;
                 colCen.appendChild(container);
 
                 new Sortable(container.querySelector('.alvo-largada'), {
                     group: 'jogo',
+                    animation: 200,
                     onAdd: function(evt) {
                         const item = evt.item;
                         if (item.dataset.animal === evt.to.dataset.animal) {
                             item.classList.add('correto');
                             acertosRonda++;
-                            if (acertosRonda === 3) { setTimeout(() => { ronda++; iniciarJogo(); }, 600); }
-                        } else { evt.from.appendChild(item); }
+                            if (acertosRonda === 3) {
+                                setTimeout(() => {
+                                    ronda++;
+                                    iniciarJogo();
+                                }, 600);
+                            }
+                        } else {
+                            evt.from.appendChild(item);
+                        }
                     }
                 });
             });
@@ -249,11 +279,18 @@
                 el.className = 'img-pequena';
                 el.innerText = animal;
                 el.dataset.animal = animal;
-                if (i < 3) colEsq.appendChild(el); else colDir.appendChild(el);
+                if (i < 3) colEsq.appendChild(el);
+                else colDir.appendChild(el);
             });
 
             [colEsq, colDir].forEach(col => {
-                new Sortable(col, { group: 'jogo', animation: 200, sort: false, delay: 0, touchStartThreshold: 5 });
+                new Sortable(col, {
+                    group: 'jogo',
+                    animation: 200,
+                    sort: false,
+                    delay: 0,
+                    touchStartThreshold: 5
+                });
             });
         }
 
@@ -263,6 +300,7 @@
             document.getElementById('final-panel').style.display = 'none';
             iniciarJogo();
         }
+
         iniciarJogo();
     </script>
 </body>
