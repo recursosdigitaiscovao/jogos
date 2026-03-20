@@ -3,37 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sopa de Letras - Animais</title>
+    <title>Sopa de Letras - 1º Ano</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
-            background-color: rgba(255, 179, 198, 0.15);
+            background-color: rgba(255, 165, 0, 0.1); /* Laranja suave */
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             height: 100vh; height: 100svh;
             display: flex; flex-direction: column;
             overflow: hidden; touch-action: none;
         }
 
-        /* HEADER TEMPLATE_1 */
+        /* HEADER LARANJA - TEMPLATE_1 */
         header {
             width: 100%; background: #ffffff; padding: 15px 20px;
             display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid #ddd; flex-shrink: 0; z-index: 100;
+            border-bottom: 2px solid #ff9800; flex-shrink: 0; z-index: 100;
         }
         .header-left { display: flex; align-items: center; gap: 12px; }
-        .menu-icon { font-size: 1.8rem; cursor: pointer; color: #2c3e50; }
+        .menu-icon { font-size: 1.8rem; cursor: pointer; color: #e67e22; }
         .game-icon { font-size: 1.5rem; }
-        header h1 { font-size: 1.1rem; color: #2c3e50; font-weight: 800; }
+        header h1 { font-size: 1.1rem; color: #e67e22; font-weight: 800; }
 
         .btn-voltar-3d {
-            text-decoration: none; color: #ffffff; background: #ffb3c6;
+            text-decoration: none; color: #ffffff; background: #ff9800;
             font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
             border-radius: 8px; display: flex; align-items: center; gap: 8px;
-            border: 1px solid #ff8fa3; box-shadow: 0 2px 0 #ff8fa3;
+            border: 1px solid #e67e22; box-shadow: 0 3px 0 #e67e22;
             transition: 0.1s;
         }
-        .btn-voltar-3d:active { transform: translateY(1px); box-shadow: 0 1px 0 #ff8fa3; }
+        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
 
         /* SIDEBAR */
         .sidebar {
@@ -43,14 +43,13 @@
             padding: 20px; display: flex; flex-direction: column;
         }
         .sidebar.active { left: 0; }
-        .sidebar h3 { color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #ffb3c6; }
+        .sidebar h3 { color: #e67e22; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #ff9800; }
         .sidebar-menu { display: flex; flex-direction: column; gap: 10px; }
         .sidebar-item {
             text-decoration: none; color: #444; font-weight: bold;
-            padding: 14px; border-radius: 12px; background: #f8f9fa;
+            padding: 14px; border-radius: 12px; background: #fff4e5;
             display: flex; align-items: center; gap: 15px;
         }
-        .sidebar-item:hover { background: #ffb3c6; color: white; }
 
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -58,44 +57,40 @@
         }
         .overlay.active { display: block; }
 
-        /* JOGO */
+        /* ÁREA DO JOGO */
         main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
         
         #grid {
-            display: grid; gap: 5px; background: white; padding: 10px;
-            border-radius: 15px; border: 3px solid #ffdae3;
-            user-select: none; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; 
+            background: white; padding: 10px; border-radius: 15px; 
+            border: 3px solid #ff9800; user-select: none; margin-bottom: 15px;
         }
         .cell {
-            width: clamp(30px, 9vw, 45px); height: clamp(30px, 9vw, 45px);
+            width: clamp(35px, 10vw, 45px); height: clamp(35px, 10vw, 45px);
             display: flex; align-items: center; justify-content: center;
-            background: #fdfdfd; border-radius: 8px; font-weight: bold;
-            font-size: 1.2rem; cursor: pointer; border: 1px solid #eee;
-            transition: 0.2s;
+            background: #fff; border-radius: 8px; font-weight: bold;
+            font-size: 1.2rem; cursor: pointer; border: 1px solid #ffe0b2;
         }
-        .cell.selected { background: #ffb3c6; color: white; border-color: #ff8fa3; }
-        .cell.found { background: #7bed9f; color: white; border-color: #2ed573; cursor: default; }
+        .cell.selected { background: #ff9800; color: white; }
+        .cell.found { background: #4caf50; color: white; border-color: #388e3c; cursor: default; }
 
         /* LISTA DE PALAVRAS */
-        #word-list {
-            display: flex; flex-wrap: wrap; justify-content: center;
-            gap: 10px; max-width: 600px;
-        }
+        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 600px; }
         .word-item {
             padding: 8px 15px; background: white; border-radius: 20px;
-            border: 2px solid #ffdae3; font-weight: bold; color: #2c3e50;
-            transition: 0.3s;
+            border: 2px solid #ffcc80; font-weight: bold; color: #e67e22;
         }
-        .word-item.found { opacity: 0.3; text-decoration: line-through; transform: scale(0.9); }
+        .word-item.found { opacity: 0.3; text-decoration: line-through; }
+
+        .progresso { margin-top: 15px; font-weight: bold; color: #a67c00; }
 
         /* MODAL FINAL */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 179, 198, 0.98); z-index: 300;
+            background: rgba(255, 152, 0, 0.95); z-index: 300;
             flex-direction: column; align-items: center; justify-content: center; text-align: center;
         }
 
-        /* FOOTER CUSTOM */
         footer { 
             width: 100%; padding: 12px; background: #ffffff; text-align: center; 
             color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.9rem; flex-shrink: 0; 
@@ -122,7 +117,7 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <span class="game-icon">🐾</span>
+            <span class="game-icon">🦁</span>
             <h1>Sopa de Animais</h1>
         </div>
         <a href="../" class="btn-voltar-3d"><span>⬅</span> Voltar</a>
@@ -131,45 +126,50 @@
     <main>
         <div id="grid"></div>
         <div id="word-list"></div>
+        <p class="progresso">Ronda <span id="ronda-atual">1</span> de 5</p>
     </main>
 
     <div id="modal-next" class="modal">
-        <div style="font-size: 5rem; margin-bottom: 20px;">🌟</div>
+        <div style="font-size: 5rem; margin-bottom: 20px;">🎉</div>
         <h1 id="modal-title" style="color: white; margin-bottom: 30px;">MUITO BEM!</h1>
-        <button class="btn-voltar-3d" style="background:white; color:#ffb3c6; padding: 15px 40px; font-size: 1.2rem;" onclick="proximoNivel()">PRÓXIMO NÍVEL ➡️</button>
+        <button class="btn-voltar-3d" style="background:white; color:#ff9800; padding: 15px 40px; font-size: 1.2rem; border:none;" onclick="proximaRonda()">PRÓXIMA RONDA ➡️</button>
     </div>
 
     <footer>Recursos Digitais Covão - <strong>Professor Luís</strong></footer>
 
     <script>
-        const niveis = [
-            { grid: 8, words: ["GATO", "CAO", "PATO", "RATO"] },
-            { grid: 10, words: ["LEAO", "ZEBRA", "COBRA", "PEIXE", "URSO", "VACA"] }
-        ];
-
-        let nivelAtual = 0;
-        let selecionados = [];
-        let palavrasEncontradas = [];
+        const animaisPool = ["GATO", "CAO", "PATO", "RATO", "LEAO", "VACA", "URSO", "LOBO", "ZEBRA", "COBRA", "PEIXE", "SAPO", "GALO", "PERU"];
+        let ronda = 1;
+        let palavrasRonda = [];
+        let encontradas = [];
+        const tamanhoGrid = 8;
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        function initGame() {
-            const data = niveis[nivelAtual];
-            palavrasEncontradas = [];
+        function sortearPalavras() {
+            // Sorteia 4 palavras aleatórias do pool
+            return [...animaisPool].sort(() => 0.5 - Math.random()).slice(0, 4);
+        }
+
+        function initRonda() {
+            document.getElementById('ronda-atual').innerText = ronda;
+            palavrasRonda = sortearPalavras();
+            encontradas = [];
+            
             const gridContainer = document.getElementById('grid');
-            gridContainer.style.gridTemplateColumns = `repeat(${data.grid}, 1fr)`;
             gridContainer.innerHTML = '';
+            
+            let matrix = Array(tamanhoGrid).fill().map(() => Array(tamanhoGrid).fill(''));
 
-            let matrix = Array(data.grid).fill().map(() => Array(data.grid).fill(''));
-
-            data.words.forEach(word => {
+            // Inserir as 4 palavras sorteadas
+            palavrasRonda.forEach(word => {
                 let placed = false;
                 while(!placed) {
-                    let r = Math.floor(Math.random() * data.grid);
-                    let c = Math.floor(Math.random() * (data.grid - word.length));
+                    let r = Math.floor(Math.random() * tamanhoGrid);
+                    let c = Math.floor(Math.random() * (tamanhoGrid - word.length));
                     let spaceOk = true;
                     for(let i=0; i<word.length; i++) if(matrix[r][c+i] !== '') spaceOk = false;
                     
@@ -180,65 +180,61 @@
                 }
             });
 
-            for(let r=0; r<data.grid; r++) {
-                for(let c=0; c<data.grid; c++) {
+            // Renderizar Grelha
+            for(let r=0; r<tamanhoGrid; r++) {
+                for(let c=0; c<tamanhoGrid; c++) {
                     const div = document.createElement('div');
                     div.className = 'cell';
                     div.innerText = matrix[r][c] !== '' ? matrix[r][c] : "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*26)];
-                    div.onclick = () => handleSelect(div);
+                    div.onclick = () => {
+                        if(!div.classList.contains('found')) {
+                            div.classList.toggle('selected');
+                            verificarSelecao();
+                        }
+                    };
                     gridContainer.appendChild(div);
                 }
             }
-            renderWords();
+            renderLista();
         }
 
-        function handleSelect(el) {
-            if(el.classList.contains('found')) return;
-            el.classList.toggle('selected');
-            verificarPalavra();
-        }
+        function verificarSelecao() {
+            const cells = Array.from(document.querySelectorAll('.cell.selected'));
+            if(cells.length < 2) return;
 
-        function verificarPalavra() {
-            const selectedCells = Array.from(document.querySelectorAll('.cell.selected'));
-            if(selectedCells.length < 2) return;
-
-            const tentativa = selectedCells.map(c => c.innerText).join('');
-            const currentLevelWords = niveis[nivelAtual].words;
-
-            if(currentLevelWords.includes(tentativa) && !palavrasEncontradas.includes(tentativa)) {
-                palavrasEncontradas.push(tentativa);
-                selectedCells.forEach(c => {
+            const palavra = cells.map(c => c.innerText).join('');
+            if(palavrasRonda.includes(palavra) && !encontradas.includes(palavra)) {
+                encontradas.push(palavra);
+                cells.forEach(c => {
                     c.classList.remove('selected');
                     c.classList.add('found');
                 });
-                renderWords();
+                renderLista();
                 
-                if(palavrasEncontradas.length === currentLevelWords.length) {
-                    setTimeout(() => document.getElementById('modal-next').style.display = 'flex', 600);
+                if(encontradas.length === palavrasRonda.length) {
+                    setTimeout(() => document.getElementById('modal-next').style.display = 'flex', 500);
                 }
             }
         }
 
-        function renderWords() {
+        function renderLista() {
             const list = document.getElementById('word-list');
-            list.innerHTML = niveis[nivelAtual].words.map(w => 
-                `<span class="word-item ${palavrasEncontradas.includes(w) ? 'found' : ''}">${w}</span>`
+            list.innerHTML = palavrasRonda.map(w => 
+                `<span class="word-item ${encontradas.includes(w) ? 'found' : ''}">${w}</span>`
             ).join('');
         }
 
-        function proximoNivel() {
-            nivelAtual++;
-            if(nivelAtual >= niveis.length) {
-                document.getElementById('modal-title').innerText = "JOGO TERMINADO! 🏆";
-                document.querySelector('#modal-next button').innerText = "RECOMEÇAR 🔄";
-                document.querySelector('#modal-next button').onclick = () => location.reload();
-            } else {
-                document.getElementById('modal-next').style.display = 'none';
-                initGame();
+        function proximaRonda() {
+            ronda++;
+            document.getElementById('modal-next').style.display = 'none';
+            if(ronda > 5) {
+                ronda = 1;
+                alert("Parabéns! Completaste as 5 rondas.");
             }
+            initRonda();
         }
 
-        initGame();
+        initRonda();
     </script>
 </body>
 </html>
