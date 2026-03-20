@@ -5,157 +5,237 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pré-Escolar - Menu da Girafa</title>
     <style>
-        /* Estilo Base e Reset */
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            text-align: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #ffb3c6; /* Rosa Pastel */
+            background-color: #ffb3c6; /* Rosa Pastel mantido no fundo */
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            height: 100svh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header igual ao anterior */
+        header {
+            width: 100%;
+            background-color: #ffffff;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Botão Hamburger */
+        .menu-icon {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #2c3e50;
+            padding: 5px;
+        }
+
+        header h1 {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        header p {
+            color: #2e86de; /* Azul solicitado */
+            font-weight: bold;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        /* Menu Lateral Expansível */
+        .sidebar {
+            position: fixed;
+            left: -250px;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transition: 0.3s;
+            z-index: 200;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .sidebar.active { left: 0; }
+
+        .sidebar h3 {
+            color: #2c3e50;
+            border-bottom: 2px solid #ffb3c6;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar a {
+            text-decoration: none;
             color: #444;
-            margin: 0;
-            padding: 10px; /* Reduzido para dar mais espaço em mobile */
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            transition: 0.2s;
+        }
+
+        .sidebar a:hover { background: #ffb3c6; color: white; }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3);
+            display: none;
+            z-index: 150;
+        }
+        .overlay.active { display: block; }
+
+        /* Área Central */
+        main {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            min-height: 100svh; /* Suporte para barras de navegação mobile */
+            padding: 20px;
+            text-align: center;
         }
 
         .emoji-principal {
-            font-size: clamp(50px, 12vh, 90px);
-            margin-bottom: 5px;
+            font-size: clamp(3rem, 10vh, 5rem);
+            margin-bottom: 10px;
             filter: drop-shadow(0 4px 5px rgba(0,0,0,0.1));
         }
 
-        h1 {
-            font-size: clamp(1.6rem, 7vw, 2.5rem);
-            margin: 0 0 5px 0;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-
         .subtitulo {
-            font-size: clamp(0.9rem, 4vw, 1.2rem);
-            margin-bottom: 25px;
-            max-width: 90%;
+            font-size: 1.1rem;
             font-weight: bold;
-            color: rgba(255, 255, 255, 0.9);
+            color: white;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
 
-        /* Menu de Jogos Responsivo com Grid */
+        /* Menu de Jogos */
         .menu-jogos {
             display: grid;
-            grid-template-columns: 1fr; /* Uma coluna por padrão (Mobile) */
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 15px;
             width: 100%;
-            max-width: 700px;
-            padding: 10px;
+            max-width: 600px;
         }
 
-        /* Botão do Jogo */
         .btn-jogo {
             background-color: white;
             text-decoration: none;
-            font-size: clamp(1.1rem, 4vw, 1.5rem);
-            font-weight: bold;
-            padding: clamp(20px, 5vh, 40px);
-            border-radius: 25px;
-            box-shadow: 0 6px 0 #ff8fa3;
-            transition: all 0.2s ease-in-out;
+            padding: 20px;
+            border-radius: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 10px;
             color: #ff6b81;
-            border: 4px solid #fff;
+            font-weight: bold;
+            border: 4px solid white;
+            box-shadow: 0 6px 0 #e691a7;
+            transition: all 0.2s;
+            height: clamp(120px, 20vh, 180px);
         }
 
-        .btn-jogo span {
-            font-size: clamp(2.5rem, 10vw, 4rem);
-        }
+        .btn-jogo span { font-size: 2.5rem; }
 
-        /* Efeito de Clique */
         .btn-jogo:active {
             transform: translateY(3px);
-            box-shadow: 0 3px 0 #ff8fa3;
+            box-shadow: 0 3px 0 #e691a7;
         }
 
-        /* Hover para Computador */
-        @media (hover: hover) {
-            .btn-jogo:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 0 #ff8fa3;
-                background-color: #fffafb;
-            }
-        }
-
-        /* Ajuste para Tablets e Computadores (Lado a Lado) */
-        @media (min-width: 600px) {
-            .menu-jogos {
-                grid-template-columns: 1fr 1fr; /* Duas colunas */
-                gap: 20px;
-            }
-        }
-
-        /* Ajuste para Telemóveis em Horizontal (Landscape) */
-        @media (max-height: 450px) {
-            body { padding: 5px; }
-            .emoji-principal { display: none; } /* Esconde o emoji grande para ganhar espaço */
-            .menu-jogos { grid-template-columns: 1fr 1fr; }
-            .btn-jogo { padding: 10px; flex-direction: row; }
-            .btn-jogo span { font-size: 2rem; }
-        }
-
-        .btn-voltar {
-            color: white;
-            font-weight: bold;
-            margin: 25px 0;
-            text-decoration: none;
-            font-size: 1rem;
-            padding: 8px 25px;
-            border: 2px solid white;
-            border-radius: 50px;
-            transition: background 0.3s;
-        }
-
+        /* Footer */
         footer {
-            margin-top: auto;
-            padding: 15px 0;
-            opacity: 0.9;
-            font-size: 0.8rem;
-            color: white;
             width: 100%;
+            padding: 10px;
+            background-color: #ffffff;
+            text-align: center;
+            color: #7f8c8d;
+            border-top: 1px solid #ddd;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        footer strong { color: #2c3e50; }
+
+        /* Ajustes PC */
+        @media (min-width: 768px) {
+            .menu-jogos { grid-template-columns: 1fr 1fr; }
+            .btn-jogo { height: 200px; font-size: 1.2rem; }
+            .btn-jogo span { font-size: 3.5rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="emoji-principal">🦒</div>
-    
-    <h1>Jogos da Girafa</h1>
-    <p class="subtitulo">Olá! Escolhe um jogo para começares:</p>
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="sidebar" id="sidebar">
+        <h3>Navegação</h3>
+        <a href="../">🏠 Página Inicial</a>
+        <a href="#">🦒 Jogos da Girafa</a>
+        <a href="#">📚 Outras Etapas</a>
+        <button onclick="toggleMenu()" style="margin-top:auto; padding:10px; border-radius:8px; border:none; background:#eee; cursor:pointer;">Fechar ×</button>
+    </div>
 
-    <nav class="menu-jogos">
-        <a href="associar/" class="btn-jogo">
-            <span>🧩</span> Associa o Par
-        </a>
+    <header>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <h1><span>🦒</span> Jogos da Pré</h1>
+        </div>
+        <p>Escolhe o teu ano e diverte-te!</p>
+    </header>
 
-        <a href="procurar/" class="btn-jogo">
-            <span>🔍</span> Procurar
-        </a>
-    </nav>
+    <main>
+        <div class="emoji-principal">🦒</div>
+        <p class="subtitulo">Olá! Escolhe um jogo para começares:</p>
 
-    <a href="../" class="btn-voltar">⬅ Voltar</a>
+        <nav class="menu-jogos">
+            <a href="associar/" class="btn-jogo">
+                <span>🧩</span> Associa o Par
+            </a>
+
+            <a href="procurar/" class="btn-jogo">
+                <span>🔍</span> Procurar
+            </a>
+        </nav>
+    </main>
 
     <footer>
-        Recursos Digitais Covão - Professor Luís
+        Recursos Digitais Covão - <strong>Professor Luís</strong>
     </footer>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+    </script>
 
 </body>
 </html>
