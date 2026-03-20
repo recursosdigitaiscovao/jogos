@@ -117,7 +117,7 @@
     <footer>Recursos Digitais Covão - <strong>Professor Luís</strong></footer>
 
     <script>
-        const materialPool = ["LAPIS", "GOMA", "COLA", "REGUA", "LIVRO", "PAPEL", "TINTA", "ESTOJO", "PASTA", "CANETA", "MOCHILA", "TESOURA", "PINCEL", "CADERNO"];
+        const materialPool = ["LAPIS", "GOMA", "COLA", "REGUA", "LIVRO", "PAPEL", "TINTA", "ESTOJO", "PASTA", "CANETA", "MOCHILA", "TESOURA", "PINCEL", "CADERNO", "QUADRO", "MAPA", "Lupa", "Giz"];
 
         let currentLevel = 0;
         let foundWordsCount = 0;
@@ -129,13 +129,13 @@
         }
 
         function getRandomWords(count) {
-            return [...materialPool].sort(() => 0.5 - Math.random()).slice(0, count);
+            // Converte tudo para maiúsculas para evitar erros e baralha
+            return [...materialPool].map(w => w.toUpperCase()).sort(() => 0.5 - Math.random()).slice(0, count);
         }
 
         function initGame() {
             foundWordsCount = 0;
             const wordCount = currentLevel === 0 ? 4 : 6;
-            // Grelha ligeiramente maior para garantir espaço de isolamento
             const gridSize = currentLevel === 0 ? 9 : 11;
             
             currentWords = getRandomWords(wordCount);
@@ -150,19 +150,18 @@
             const gridEl = document.getElementById('grid');
             gridEl.style.gridTemplateColumns = `repeat(${size}, 34px)`;
             gridEl.innerHTML = '';
-
             let matrix = Array(size).fill().map(() => Array(size).fill(''));
 
             words.forEach(word => {
                 let placed = false;
                 let attempts = 0;
-                while (!placed && attempts < 200) {
+                while (!placed && attempts < 250) {
                     const isVert = Math.random() > 0.5;
                     const row = Math.floor(Math.random() * (isVert ? size - word.length : size));
                     const col = Math.floor(Math.random() * (isVert ? size : size - word.length));
                     
                     let canPlace = true;
-                    // REGRA DE ISOLAMENTO: Verifica a célula e todas as vizinhas (incluindo diagonais)
+                    // REGRA DE ISOLAMENTO: Verifica células vizinhas
                     for (let i = -1; i <= (isVert ? word.length : 1); i++) {
                         for (let j = -1; j <= (isVert ? 1 : word.length); j++) {
                             let r = row + i;
@@ -220,7 +219,7 @@
 
             if (foundWord) {
                 const el = document.getElementById('word-' + foundWord);
-                if (!el.classList.contains('found')) {
+                if (el && !el.classList.contains('found')) {
                     selected.forEach(c => {
                         c.classList.remove('selected');
                         c.classList.add('found');
