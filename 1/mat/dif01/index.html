@@ -3,330 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Diferenças Aleatórias - 1º Ano</title>
+    <title>1º Ano - Geometria</title>
     <style>
+        * {
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+            margin: 0; padding: 0;
+        }
+
         body {
-            background-color: #ffffff;
-            color: #333;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
+            background-color: #ff9f43; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            height: 100svh;
             display: flex;
             flex-direction: column;
-            height: 100vh;
             overflow: hidden;
             touch-action: manipulation;
+            color: #2c3e50;
         }
 
+        /* HEADER PADRONIZADO */
         header {
-            background-color: #ff9f43;
-            color: white;
-            padding: 10px 15px;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 15px 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            height: 60px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
             flex-shrink: 0;
+            z-index: 100;
         }
 
-        header h2 { margin: 0; font-size: 1.1rem; }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .menu-icon { font-size: 1.8rem; cursor: pointer; color: #2c3e50; }
+        header h1 { font-size: 1.1rem; color: #2c3e50; font-weight: 800; }
 
-        .btn-topo {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            background: rgba(0,0,0,0.2);
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 0.9rem;
+        .btn-voltar-3d {
+            text-decoration: none; color: #000; background-color: #ff9f43;
+            font-weight: bold; font-size: 0.8rem; padding: 8px 15px;
+            border-radius: 8px; display: flex; align-items: center; gap: 8px;
+            border: 1px solid #e67e22; box-shadow: 0 2px 0 #e67e22;
         }
 
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
+            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+            transition: 0.3s; z-index: 200; padding: 20px; display: flex; flex-direction: column;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-item {
+            text-decoration: none; color: #444; font-weight: bold;
+            padding: 14px; border-radius: 12px; background: #f8f9fa;
+            display: flex; align-items: center; gap: 15px; margin-bottom: 10px;
+        }
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); display: none; z-index: 150;
+        }
+        .overlay.active { display: block; }
+
+        /* ÁREA DE JOGO */
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 5px 10px;
-        }
-
-        .status-bar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        .info-box {
-            background: #f8f9fa;
-            padding: 4px 12px;
-            border-radius: 20px;
-            border: 2px solid #ff9f43;
-            font-weight: bold;
-            color: #ff9f43;
-            font-size: 0.85rem;
-        }
-
-        .canvas-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            width: 100%;
-            max-width: 900px;
-            flex-grow: 1;
-        }
-
-        .image-section { display: flex; flex-direction: column; }
-
-        .label-imagem {
-            font-weight: bold;
-            color: #ff9f43;
-            font-size: 0.9rem;
-            text-align: center;
-            background: #fff3e6;
-            padding: 3px;
-            border-radius: 10px 10px 0 0;
-            border: 2px solid #ff9f43;
-            border-bottom: none;
-        }
-
-        .image-box {
+            padding: 15px;
             position: relative;
-            background: #fdfdfd;
-            border: 3px solid #ff9f43;
-            border-radius: 0 0 15px 15px;
-            width: 100%;
-            height: 33vh;
-            overflow: hidden;
-            user-select: none;
         }
 
-        .shape {
-            position: absolute;
-            font-size: 2.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 45px;
-            height: 45px;
-            user-select: none;
-        }
-
-        .clickable { cursor: pointer; z-index: 10; }
-
-        .marker {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border: 4px solid #e74c3c;
-            border-radius: 50%;
-            pointer-events: none;
-            display: none;
-            z-index: 20;
-        }
-
-        .found { display: block; }
-
-        #feedback-nivel {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: #2ecc71;
-            color: white;
-            padding: 30px 50px;
-            border-radius: 50px;
-            font-size: 2.5rem;
-            font-weight: bold;
-            z-index: 100;
-            text-align: center;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .show-feedback { transform: translate(-50%, -50%) scale(1) !important; }
-
-        #final-panel {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            text-align: center;
-        }
-
-        .btn-final {
+        .instrucao-card {
+            background: white;
             padding: 15px 25px;
-            border-radius: 15px;
-            text-decoration: none;
-            font-weight: bold;
-            color: white;
-            border: none;
-            box-shadow: 0 5px 0 rgba(0,0,0,0.2);
-            cursor: pointer;
-            margin: 10px;
+            border-radius: 20px;
+            box-shadow: 0 8px 0 #e67e22;
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 500px;
         }
 
-        @media (min-width: 700px) {
-            .canvas-container { grid-template-columns: 1fr 1fr; }
-            .image-box { height: 65vh; }
+        .instrucao-card h2 { font-size: 1.3rem; margin-bottom: 5px; }
+        .instrucao-card span { color: #e67e22; font-weight: 800; text-transform: uppercase; }
+
+        .campo-formas {
+            flex: 1;
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden;
+            border: 3px dashed rgba(255,255,255,0.5);
+        }
+
+        .forma-item {
+            position: absolute;
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            cursor: pointer;
+            transition: transform 0.2s;
+            user-select: none;
+            padding: 10px;
+        }
+
+        .forma-item:active { transform: scale(1.3); }
+
+        /* FEEDBACKS */
+        #feedback-pop {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            background: #2ecc71; color: white; padding: 30px;
+            border-radius: 50%; font-size: 4rem; z-index: 300;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .show-pop { transform: translate(-50%, -50%) scale(1) !important; }
+
+        footer {
+            width: 100%; padding: 10px; background: white;
+            text-align: center; color: #7f8c8d; font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
 
-    <div id="feedback-nivel">BOA! ⭐<br><span style="font-size: 1.2rem;">Nível Concluído!</span></div>
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div id="feedback-pop">🌟</div>
+
+    <div class="sidebar" id="sidebar">
+        <h3>Navegação</h3>
+        <nav class="sidebar-menu">
+            <a href="../../" class="sidebar-item"><span>🏠</span> Início</a>
+            <a href="../../1" class="sidebar-item"><span>🐥</span> 1º Ano</a>
+        </nav>
+    </div>
 
     <header>
-        <h2>🔍 Geometria Infinita</h2>
-        <a href="../index.html" class="btn-topo">⬅ 1ºAno</a>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <h1>Geometria: Encontra as Formas</h1>
+        </div>
+        <a href="../" class="btn-voltar-3d"><span>⬅</span> SAIR</a>
     </header>
 
     <main>
-        <div class="status-bar" id="game-stats">
-            <div class="info-box">Nível <span id="level-txt">1</span></div>
-            <div class="info-box">Erros: <span id="count">0</span> / <span id="total-txt">5</span></div>
+        <div class="instrucao-card">
+            <p>Nível <span id="txt-nivel">1</span></p>
+            <h2 id="msg-instrucao">Clica em todos os <span id="alvo-nome">Quadrados</span></h2>
+            <p style="font-size: 0.9rem; color: #666;">Faltam: <strong id="txt-faltam">0</strong></p>
         </div>
 
-        <div id="game-area" class="canvas-container">
-            <div class="image-section">
-                <div class="label-imagem">Original</div>
-                <div class="image-box" id="img-orig"></div>
-            </div>
-            <div class="image-section">
-                <div class="label-imagem">Encontra aqui as diferenças</div>
-                <div class="image-box" id="img-diff"></div>
-            </div>
-        </div>
-
-        <div id="final-panel">
-            <div style="font-size: 4rem;">🌀</div>
-            <h1 style="color: #ff9f43;">Mestre da Geometria!</h1>
-            <p>Conseguiste superar todos os desafios aleatórios!</p>
-            <div style="display: flex;">
-                <button onclick="location.reload()" class="btn-final" style="background:#2ecc71;">Repetir 🔄</button>
-                <a href="../index.html" class="btn-final" style="background:#3498db;">Voltar 🧮</a>
-            </div>
-        </div>
+        <div class="campo-formas" id="container"></div>
     </main>
 
+    <footer>Recursos Digitais Covão - Professor Luís</footer>
+
     <script>
-        const shapesPool = ['🟦', '🟡', '🔺', '🟢', '🟧', '🔷', '🟥', '🟣', '⭐', '🟨', '🟠', '🟩', '🔘', '💎'];
-        let currentLevel = 1;
-        let foundInLevel = 0;
-        let totalToFind = 5;
-        let foundState = [];
+        const formasConfig = [
+            { nome: "Quadrados", emoji: "🟦", tipo: "quadrado" },
+            { nome: "Círculos", emoji: "🟡", tipo: "circulo" },
+            { nome: "Triângulos", emoji: "🔺", tipo: "triangulo" },
+            { nome: "Estrelas", emoji: "⭐", tipo: "estrela" }
+        ];
 
-        function getRandomPos() {
-            return {
-                x: Math.floor(Math.random() * 85) + 5,
-                y: Math.floor(Math.random() * 80) + 5
-            };
+        let nivelAtual = 1;
+        let alvoAtual = null;
+        let formasNoCampo = [];
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
         }
 
-        function loadLevel() {
-            foundInLevel = 0;
-            // Define total de erros baseados no nível (1: 5, 2: 7, 3: 10)
-            totalToFind = currentLevel === 1 ? 5 : (currentLevel === 2 ? 7 : 10);
-            foundState = new Array(totalToFind).fill(false);
+        function iniciarNivel() {
+            const container = document.getElementById('container');
+            container.innerHTML = "";
             
-            document.getElementById('level-txt').innerText = currentLevel;
-            document.getElementById('total-txt').innerText = totalToFind;
-            document.getElementById('count').innerText = 0;
+            // Escolher o alvo do nível aleatoriamente
+            alvoAtual = formasConfig[Math.floor(Math.random() * formasConfig.length)];
+            document.getElementById('alvo-nome').innerText = alvoAtual.nome;
+            document.getElementById('txt-nivel').innerText = nivelAtual;
 
-            const origBox = document.getElementById('img-orig');
-            const diffBox = document.getElementById('img-diff');
-            origBox.innerHTML = '';
-            diffBox.innerHTML = '';
+            const totalFormas = 15 + (nivelAtual * 2); 
+            const quantidadeAlvos = 3 + nivelAtual;
+            let alvosGerados = 0;
 
-            // Criar 25 posições aleatórias (15 base + 10 potenciais erros)
-            let positions = [];
-            while(positions.length < 25) {
-                let pos = getRandomPos();
-                // Evitar sobreposição excessiva básica
-                if(!positions.some(p => Math.abs(p.x - pos.x) < 8 && Math.abs(p.y - pos.y) < 10)) {
-                    positions.push(pos);
-                }
-            }
+            document.getElementById('txt-faltam').innerText = quantidadeAlvos;
 
-            // Separar as posições: as primeiras 15 são estáticas, o resto são erros
-            const staticPositions = positions.slice(0, 15);
-            const errorPositions = positions.slice(15, 15 + totalToFind);
-
-            // 1. Desenhar figuras IGUAIS
-            staticPositions.forEach(pos => {
-                const shape = shapesPool[Math.floor(Math.random() * shapesPool.length)];
-                [origBox, diffBox].forEach(box => {
-                    const el = document.createElement('div');
-                    el.className = 'shape';
-                    el.style.left = pos.x + '%';
-                    el.style.top = pos.y + '%';
-                    el.innerText = shape;
-                    box.appendChild(el);
-                });
-            });
-
-            // 2. Desenhar as DIFERENÇAS (Erros)
-            errorPositions.forEach((pos, index) => {
-                const shapeOrig = shapesPool[Math.floor(Math.random() * shapesPool.length)];
-                let shapeDiff;
-                do {
-                    shapeDiff = shapesPool[Math.floor(Math.random() * shapesPool.length)];
-                } while (shapeDiff === shapeOrig); // Garante que a forma/cor é diferente
-
-                // No Original
-                const elOrig = document.createElement('div');
-                elOrig.className = 'shape';
-                elOrig.style.left = pos.x + '%';
-                elOrig.style.top = pos.y + '%';
-                elOrig.innerText = shapeOrig;
-                origBox.appendChild(elOrig);
-
-                // No Diferencial (Clicável)
-                const target = document.createElement('div');
-                target.className = 'shape clickable';
-                target.style.left = pos.x + '%';
-                target.style.top = pos.y + '%';
-                target.innerText = shapeDiff;
+            for (let i = 0; i < totalFormas; i++) {
+                const el = document.createElement('div');
+                el.className = 'forma-item';
                 
-                const marker = document.createElement('div');
-                marker.className = 'marker';
-                marker.id = 'm-' + index;
-                target.appendChild(marker);
+                // Decidir se é a forma certa ou errada
+                let config;
+                if (alvosGerados < quantidadeAlvos) {
+                    config = alvoAtual;
+                    el.dataset.correto = "true";
+                    alvosGerados++;
+                } else {
+                    do {
+                        config = formasConfig[Math.floor(Math.random() * formasConfig.length)];
+                    } while (config.tipo === alvoAtual.tipo);
+                    el.dataset.correto = "false";
+                }
 
-                target.onclick = () => markFound(index);
-                diffBox.appendChild(target);
-            });
+                el.innerText = config.emoji;
+                
+                // Posição Aleatória
+                el.style.left = Math.random() * 85 + "%";
+                el.style.top = Math.random() * 85 + "%";
+                el.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+                el.onclick = function() {
+                    if (this.dataset.correto === "true") {
+                        this.style.visibility = "hidden";
+                        verificarProgresso();
+                    } else {
+                        // Feedback visual de erro (tremer)
+                        this.style.filter = "grayscale(100%)";
+                        setTimeout(() => this.style.filter = "", 500);
+                    }
+                };
+
+                container.appendChild(el);
+            }
         }
 
-        function markFound(index) {
-            if (foundState[index]) return;
-            foundState[index] = true;
-            foundInLevel++;
-            
-            document.getElementById('m-' + index).classList.add('found');
-            document.getElementById('count').innerText = foundInLevel;
+        function verificarProgresso() {
+            let restantes = 0;
+            document.querySelectorAll('.forma-item[data-correto="true"]').forEach(el => {
+                if (el.style.visibility !== "hidden") restantes++;
+            });
 
-            if (foundInLevel === totalToFind) {
-                const pop = document.getElementById('feedback-nivel');
-                pop.classList.add('show-feedback');
+            document.getElementById('txt-faltam').innerText = restantes;
+
+            if (restantes === 0) {
+                const pop = document.getElementById('feedback-pop');
+                pop.classList.add('show-pop');
                 
                 setTimeout(() => {
-                    pop.classList.remove('show-feedback');
-                    if (currentLevel < 3) {
-                        currentLevel++;
-                        loadLevel();
-                    } else {
-                        showWin();
-                    }
-                }, 1500);
+                    pop.classList.remove('show-pop');
+                    nivelAtual++;
+                    iniciarNivel();
+                }, 1200);
             }
         }
 
-        function showWin() {
-            document.getElementById('game-area').style.display = 'none';
-            document.getElementById('game-stats').style.display = 'none';
-            document.getElementById('final-panel').style.display = 'flex';
-        }
-
-        loadLevel();
+        iniciarNivel();
     </script>
 </body>
 </html>
