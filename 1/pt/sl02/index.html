@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sopa de Letras: Material Escolar - 1º Ano</title>
+    <title>Sopa de Letras: Cores - 1º Ano</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
@@ -15,7 +15,7 @@
             overflow: hidden; touch-action: manipulation;
         }
 
-        /* HEADER PADRONIZADO */
+        /* HEADER PADRONIZADO TEMPLATE_1 */
         header {
             width: 100%; background-color: #ffffff; padding: 15px 20px;
             display: flex; align-items: center; justify-content: space-between;
@@ -35,7 +35,7 @@
         }
         .btn-voltar-3d:active { transform: translateY(1px); box-shadow: 0 1px 0 #e67e22; }
 
-        /* SIDEBAR COMPLETA */
+        /* SIDEBAR */
         .sidebar {
             position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
             background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.2);
@@ -102,7 +102,7 @@
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
             <span class="game-icon">🔍</span>
-            <h1>Sopa de Material Escolar</h1>
+            <h1>Sopa de Cores</h1>
         </div>
         <a href="../" class="btn-voltar-3d"><span>⬅</span> Voltar</a>
     </header>
@@ -117,7 +117,12 @@
     <footer>Recursos Digitais Covão - <strong>Professor Luís</strong></footer>
 
     <script>
-        const materialPool = ["LAPIS", "GOMA", "COLA", "REGUA", "LIVRO", "PAPEL", "TINTA", "ESTOJO", "PASTA", "CANETA", "MOCHILA", "TESOURA", "PINCEL", "CADERNO", "QUADRO", "MAPA", "Lupa", "Giz"];
+        // Lista com acentuação correta
+        const colorPool = [
+            "AZUL", "ROSA", "AMARELO", "VERDE", "VERMELHO", "PRETO", "BRANCO", "ROXO", 
+            "CINZA", "LARANJA", "MARROM", "LILÁS", "PÚRPURA", "TURQUESA", 
+            "BEGE", "DOURADO", "PRATEADO", "SALMÃO", "VIOLETA", "ESMERALDA"
+        ];
 
         let currentLevel = 0;
         let foundWordsCount = 0;
@@ -129,17 +134,16 @@
         }
 
         function getRandomWords(count) {
-            // Converte tudo para maiúsculas para evitar erros e baralha
-            return [...materialPool].map(w => w.toUpperCase()).sort(() => 0.5 - Math.random()).slice(0, count);
+            return [...colorPool].sort(() => 0.5 - Math.random()).slice(0, count);
         }
 
         function initGame() {
             foundWordsCount = 0;
             const wordCount = currentLevel === 0 ? 4 : 6;
-            const gridSize = currentLevel === 0 ? 9 : 11;
+            const gridSize = currentLevel === 0 ? 10 : 12; // Aumentado ligeiramente para cores longas
             
             currentWords = getRandomWords(wordCount);
-            document.getElementById('level-info').innerText = `Nível ${currentLevel + 1}: ${wordCount} Palavras`;
+            document.getElementById('level-info').innerText = `Nível ${currentLevel + 1}: ${wordCount} Cores`;
             document.getElementById('btn-next').style.display = 'none';
             
             generateGrid(gridSize, currentWords);
@@ -155,13 +159,13 @@
             words.forEach(word => {
                 let placed = false;
                 let attempts = 0;
-                while (!placed && attempts < 250) {
+                while (!placed && attempts < 300) {
                     const isVert = Math.random() > 0.5;
                     const row = Math.floor(Math.random() * (isVert ? size - word.length : size));
                     const col = Math.floor(Math.random() * (isVert ? size : size - word.length));
                     
                     let canPlace = true;
-                    // REGRA DE ISOLAMENTO: Verifica células vizinhas
+                    // REGRA DE ISOLAMENTO TOTAL
                     for (let i = -1; i <= (isVert ? word.length : 1); i++) {
                         for (let j = -1; j <= (isVert ? 1 : word.length); j++) {
                             let r = row + i;
@@ -231,7 +235,7 @@
                         if (currentLevel === 0) {
                             document.getElementById('btn-next').style.display = 'block';
                         } else {
-                            setTimeout(() => alert("Excelente! Encontraste todo o material escolar! 🎒✨"), 300);
+                            setTimeout(() => alert("Incrível! Encontraste todas as cores! 🌈✨"), 300);
                         }
                     }
                 }
