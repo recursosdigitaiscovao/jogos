@@ -2,239 +2,182 @@
 <html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sopa de Letras - 1º Ano</title>
     <style>
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        :root {
+            --primary-black: #000000;
+            --bg-light: #f4f4f4;
+            --white: #ffffff;
+            --btn-3d-shadow: #b3b3b3;
+        }
 
         body {
-            background-color: rgba(255, 165, 0, 0.1); /* Laranja suave */
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            height: 100vh; height: 100svh;
-            display: flex; flex-direction: column;
-            overflow: hidden; touch-action: none;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            background-color: var(--bg-light);
         }
 
-        /* HEADER LARANJA - TEMPLATE_1 */
+        /* Sidebar */
+        aside {
+            width: 200px;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Header Ajustado */
         header {
-            width: 100%; background: #ffffff; padding: 15px 20px;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 2px solid #ff9800; flex-shrink: 0; z-index: 100;
-        }
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        .menu-icon { font-size: 1.8rem; cursor: pointer; color: #e67e22; }
-        .game-icon { font-size: 1.5rem; }
-        header h1 { font-size: 1.1rem; color: #e67e22; font-weight: 800; }
-
-        .btn-voltar-3d {
-            text-decoration: none; color: #ffffff; background: #ff9800;
-            font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
-            border-radius: 8px; display: flex; align-items: center; gap: 8px;
-            border: 1px solid #e67e22; box-shadow: 0 3px 0 #e67e22;
-            transition: 0.1s;
-        }
-        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
-
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
-            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.2);
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200; 
-            padding: 20px; display: flex; flex-direction: column;
-        }
-        .sidebar.active { left: 0; }
-        .sidebar h3 { color: #e67e22; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #ff9800; }
-        .sidebar-menu { display: flex; flex-direction: column; gap: 10px; }
-        .sidebar-item {
-            text-decoration: none; color: #444; font-weight: bold;
-            padding: 14px; border-radius: 12px; background: #fff4e5;
-            display: flex; align-items: center; gap: 15px;
+            display: flex;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: var(--white);
+            position: absolute;
+            top: 0;
+            left: 200px;
+            right: 0;
+            border-bottom: none; /* Remoção da linha laranja */
         }
 
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); display: none; z-index: 150;
+        header .menu-icon {
+            font-size: 24px;
+            color: var(--primary-black); /* Ícone em preto */
+            margin-right: 15px;
+            cursor: pointer;
         }
-        .overlay.active { display: block; }
 
-        /* ÁREA DO JOGO */
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
-        
-        #grid {
-            display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; 
-            background: white; padding: 10px; border-radius: 15px; 
-            border: 3px solid #ff9800; user-select: none; margin-bottom: 15px;
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+            color: var(--primary-black); /* Título em preto */
         }
+
+        /* Área Principal */
+        main {
+            flex-grow: 1;
+            margin-top: 80px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Botão 3D de Voltar */
+        .back-btn {
+            background-color: var(--white);
+            border: 2px solid var(--primary-black);
+            border-bottom: 5px solid var(--btn-3d-shadow);
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.1s;
+            text-decoration: none;
+            color: var(--primary-black);
+            margin-bottom: 20px;
+        }
+
+        .back-btn:active {
+            border-bottom-width: 2px;
+            transform: translateY(3px);
+        }
+
+        /* Jogo - Sopa de Letras */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(8, 40px);
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
         .cell {
-            width: clamp(35px, 10vw, 45px); height: clamp(35px, 10vw, 45px);
-            display: flex; align-items: center; justify-content: center;
-            background: #fff; border-radius: 8px; font-weight: bold;
-            font-size: 1.2rem; cursor: pointer; border: 1px solid #ffe0b2;
-        }
-        .cell.selected { background: #ff9800; color: white; }
-        .cell.found { background: #4caf50; color: white; border-color: #388e3c; cursor: default; }
-
-        /* LISTA DE PALAVRAS */
-        #word-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 600px; }
-        .word-item {
-            padding: 8px 15px; background: white; border-radius: 20px;
-            border: 2px solid #ffcc80; font-weight: bold; color: #e67e22;
-        }
-        .word-item.found { opacity: 0.3; text-decoration: line-through; }
-
-        .progresso { margin-top: 15px; font-weight: bold; color: #a67c00; }
-
-        /* MODAL FINAL */
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 152, 0, 0.95); z-index: 300;
-            flex-direction: column; align-items: center; justify-content: center; text-align: center;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
         }
 
-        footer { 
-            width: 100%; padding: 12px; background: #ffffff; text-align: center; 
-            color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.9rem; flex-shrink: 0; 
+        .cell.selected {
+            background-color: #ffeb3b;
+        }
+
+        /* Rodapé Personalizado */
+        footer {
+            position: absolute;
+            bottom: 0;
+            left: 200px;
+            right: 0;
+            padding: 10px;
+            background-color: #eee;
+            text-align: center;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-    
-    <div class="sidebar" id="sidebar">
-        <h3>Navegação</h3>
-        <nav class="sidebar-menu">
-            <a href="/" class="sidebar-item"><span>🏠</span> Início</a>
-            <a href="/pre" class="sidebar-item"><span>🦒</span> Pré-Escolar</a>
-            <a href="/1" class="sidebar-item"><span>🐥</span> 1º Ano</a>
-            <a href="/2" class="sidebar-item"><span>🐢</span> 2º Ano</a>
-            <a href="/3" class="sidebar-item"><span>🦊</span> 3º Ano</a>
-            <a href="/4" class="sidebar-item"><span>👨‍🚀</span> 4º Ano</a>
-        </nav>
-        <button onclick="toggleMenu()" style="margin-top:auto; padding:12px; border:none; background:#f0f0f0; cursor:pointer; font-weight:bold; border-radius:10px;">Fechar ×</button>
-    </div>
+    <aside>
+        <h3>Níveis</h3>
+        <div>Nível 1 (4 Palavras)</div>
+        <div>Nível 2 (6 Palavras)</div>
+    </aside>
 
     <header>
-        <div class="header-left">
-            <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <span class="game-icon">🦁</span>
-            <h1>Sopa de Animais</h1>
-        </div>
-        <a href="../" class="btn-voltar-3d"><span>⬅</span> Voltar</a>
+        <span class="menu-icon">☰</span>
+        <h1>Sopa de Letras</h1>
     </header>
 
     <main>
-        <div id="grid"></div>
-        <div id="word-list"></div>
-        <p class="progresso">Ronda <span id="ronda-atual">1</span> de 5</p>
+        <button class="back-btn">⬅ VOLTAR</button>
+        
+        <div id="game-info">
+            <h2 id="level-title">Nível 1</h2>
+            <p>Encontra as palavras escondidas!</p>
+        </div>
+
+        <div class="grid" id="letter-grid">
+            </div>
+
+        <div id="word-list">
+            </div>
     </main>
 
-    <div id="modal-next" class="modal">
-        <div style="font-size: 5rem; margin-bottom: 20px;">🎉</div>
-        <h1 id="modal-title" style="color: white; margin-bottom: 30px;">MUITO BEM!</h1>
-        <button class="btn-voltar-3d" style="background:white; color:#ff9800; padding: 15px 40px; font-size: 1.2rem; border:none;" onclick="proximaRonda()">PRÓXIMA RONDA ➡️</button>
-    </div>
-
-    <footer>Recursos Digitais Covão - <strong>Professor Luís</strong></footer>
+    <footer>
+        Recurso Educativo - 1º Ano de Escolaridade
+    </footer>
 
     <script>
-        const animaisPool = ["GATO", "CAO", "PATO", "RATO", "LEAO", "VACA", "URSO", "LOBO", "ZEBRA", "COBRA", "PEIXE", "SAPO", "GALO", "PERU"];
-        let ronda = 1;
-        let palavrasRonda = [];
-        let encontradas = [];
-        const tamanhoGrid = 8;
+        // Lógica simples para demonstrar os níveis
+        const levels = {
+            1: ["CASA", "BOLA", "PATO", "DADO"],
+            2: ["ESCOLA", "AMIGO", "LIVRO", "CANETA", "LÁPIS", "ALUNO"]
+        };
 
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        function sortearPalavras() {
-            // Sorteia 4 palavras aleatórias do pool
-            return [...animaisPool].sort(() => 0.5 - Math.random()).slice(0, 4);
-        }
-
-        function initRonda() {
-            document.getElementById('ronda-atual').innerText = ronda;
-            palavrasRonda = sortearPalavras();
-            encontradas = [];
+        function generateGrid() {
+            const gridElement = document.getElementById('letter-grid');
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             
-            const gridContainer = document.getElementById('grid');
-            gridContainer.innerHTML = '';
-            
-            let matrix = Array(tamanhoGrid).fill().map(() => Array(tamanhoGrid).fill(''));
-
-            // Inserir as 4 palavras sorteadas
-            palavrasRonda.forEach(word => {
-                let placed = false;
-                while(!placed) {
-                    let r = Math.floor(Math.random() * tamanhoGrid);
-                    let c = Math.floor(Math.random() * (tamanhoGrid - word.length));
-                    let spaceOk = true;
-                    for(let i=0; i<word.length; i++) if(matrix[r][c+i] !== '') spaceOk = false;
-                    
-                    if(spaceOk) {
-                        for(let i=0; i<word.length; i++) matrix[r][c+i] = word[i];
-                        placed = true;
-                    }
-                }
-            });
-
-            // Renderizar Grelha
-            for(let r=0; r<tamanhoGrid; r++) {
-                for(let c=0; c<tamanhoGrid; c++) {
-                    const div = document.createElement('div');
-                    div.className = 'cell';
-                    div.innerText = matrix[r][c] !== '' ? matrix[r][c] : "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*26)];
-                    div.onclick = () => {
-                        if(!div.classList.contains('found')) {
-                            div.classList.toggle('selected');
-                            verificarSelecao();
-                        }
-                    };
-                    gridContainer.appendChild(div);
-                }
-            }
-            renderLista();
-        }
-
-        function verificarSelecao() {
-            const cells = Array.from(document.querySelectorAll('.cell.selected'));
-            if(cells.length < 2) return;
-
-            const palavra = cells.map(c => c.innerText).join('');
-            if(palavrasRonda.includes(palavra) && !encontradas.includes(palavra)) {
-                encontradas.push(palavra);
-                cells.forEach(c => {
-                    c.classList.remove('selected');
-                    c.classList.add('found');
-                });
-                renderLista();
-                
-                if(encontradas.length === palavrasRonda.length) {
-                    setTimeout(() => document.getElementById('modal-next').style.display = 'flex', 500);
-                }
+            for (let i = 0; i < 64; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.textContent = alphabet[Math.floor(Math.random() * alphabet.length)];
+                cell.onclick = () => cell.classList.toggle('selected');
+                gridElement.appendChild(cell);
             }
         }
 
-        function renderLista() {
-            const list = document.getElementById('word-list');
-            list.innerHTML = palavrasRonda.map(w => 
-                `<span class="word-item ${encontradas.includes(w) ? 'found' : ''}">${w}</span>`
-            ).join('');
-        }
-
-        function proximaRonda() {
-            ronda++;
-            document.getElementById('modal-next').style.display = 'none';
-            if(ronda > 5) {
-                ronda = 1;
-                alert("Parabéns! Completaste as 5 rondas.");
-            }
-            initRonda();
-        }
-
-        initRonda();
+        generateGrid();
     </script>
 </body>
 </html>
