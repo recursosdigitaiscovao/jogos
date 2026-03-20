@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Formas Fixolas - 1º Ano</title>
+    <title>Identifica as Formas - 1º Ano</title>
     <style>
         * {
             box-sizing: border-box; 
@@ -12,7 +12,8 @@
         }
 
         body {
-            background-color: rgba(255, 159, 67, 0.15); 
+            /* Laranja Sólido padrão do 1º Ano, sem transparência */
+            background-color: #ff9f43; 
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             height: 100vh;
             height: 100svh;
@@ -22,7 +23,7 @@
             touch-action: manipulation;
         }
 
-        /* HEADER */
+        /* HEADER PADRONIZADO */
         header {
             width: 100%;
             background-color: #ffffff;
@@ -35,11 +36,31 @@
             z-index: 100;
         }
 
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        .menu-icon { font-size: 1.8rem; cursor: pointer; color: #2c3e50; }
-        header h1 { font-size: 1.1rem; color: #2c3e50; font-weight: 800; }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-        .btn-voltar-3d {
+        .menu-icon {
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #2c3e50;
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            font-weight: 800;
+        }
+
+        header .emoji {
+            font-size: 1.5rem;
+            margin-left: 5px;
+        }
+
+        /* BOTÃO VOLTAR 3D NO HEADER */
+        .btn-voltar-3d-header {
             text-decoration: none;
             color: #000000;
             background-color: #ff9f43;
@@ -52,22 +73,69 @@
             gap: 8px;
             border: 1px solid #e67e22;
             box-shadow: 0 2px 0 #e67e22;
+            transition: all 0.1s ease;
         }
 
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
-            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.2);
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 200; padding: 20px; display: flex; flex-direction: column;
+        .btn-voltar-3d-header:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 0 #e67e22;
         }
+
+        /* BOTÃO VOLTAR NO FIM DO JOGO */
+        .btn-voltar-fim {
+            display: none;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #2c3e50;
+            font-weight: bold;
+            font-size: 1rem;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 1px solid #1a252f;
+            box-shadow: 0 4px 0 #1a252f;
+            transition: all 0.1s ease;
+        }
+
+        .btn-voltar-fim:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #1a252f;
+        }
+
+        /* SIDEBAR - LINKS (Recuando para a raiz) */
+        .sidebar {
+            position: fixed;
+            left: -280px;
+            top: 0;
+            width: 280px;
+            height: 100%;
+            background: white;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 200;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
         .sidebar.active { left: 0; }
-        .sidebar h3 { color: #2c3e50; margin-bottom: 20px; border-bottom: 2px solid #ff9f43; }
+
+        .sidebar h3 { 
+            color: #2c3e50; 
+            margin-bottom: 20px; 
+            padding-bottom: 10px; 
+            border-bottom: 2px solid #ff9f43; 
+        }
+
+        .sidebar-menu { display: flex; flex-direction: column; gap: 10px; }
+
         .sidebar-item {
             text-decoration: none; color: #444; font-weight: bold;
             padding: 14px; border-radius: 12px; background: #f8f9fa;
-            display: flex; align-items: center; gap: 15px; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 15px;
         }
+
+        .sidebar-item:hover { background: #ff9f43; color: white; }
 
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -75,79 +143,90 @@
         }
         .overlay.active { display: block; }
 
-        /* JOGO */
+        /* ÁREA PRINCIPAL COM CARD BRANCO */
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-evenly;
-            padding: 15px;
+            justify-content: center;
+            padding: 20px;
         }
 
-        #round-indicator {
-            font-weight: bold;
-            color: #e67e22;
-            background: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            margin-bottom: 10px;
-        }
-
-        #instruction-box {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #2c3e50;
-            background: white;
-            padding: 15px;
-            width: 90%;
-            max-width: 450px;
-            border-radius: 20px;
-            text-align: center;
-            border: 4px solid #ff9f43;
-        }
-
-        .shapes-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+        .card-menu {
+            background-color: #ffffff;
+            padding: 30px 20px;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 400px;
-            justify-items: center;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
 
-        /* FORMAS */
-        .shape-item { width: 70px; height: 70px; cursor: pointer; transition: 0.2s; }
-        .circle { background: #e74c3c; border-radius: 50%; }
-        .square { background: #f1c40f; }
-        .rectangle { width: 90px; height: 55px; background: #9b59b6; margin: 7px 0; }
-        .triangle {
-            width: 0; height: 0;
-            border-left: 35px solid transparent; border-right: 35px solid transparent;
-            border-bottom: 70px solid #2ecc71;
-        }
-        .pentagon {
-            background: #e67e22;
-            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
-        }
-        .hexagon {
-            background: #34495e;
-            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+        h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
         }
 
-        .selected { opacity: 0.1; pointer-events: none; }
+        .subtitulo {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
 
+        .menu-jogos {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 12px;
+            width: 100%;
+        }
+
+        .btn-jogo {
+            background-color: #f8f9fa;
+            text-decoration: none;
+            color: #2c3e50;
+            padding: 20px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .btn-jogo span {
+            font-size: 2.2rem;
+        }
+
+        .btn-jogo:active {
+            transform: scale(0.95);
+            background-color: #e9ecef;
+            border-color: #ff9f43;
+        }
+
+        /* FOOTER */
         footer {
-            width: 100%; padding: 12px; background-color: #ffffff;
-            text-align: center; color: #7f8c8d; border-top: 1px solid #ddd;
-            font-size: 0.8rem;
+            width: 100%;
+            padding: 15px;
+            background-color: #ffffff;
+            text-align: center;
+            color: #7f8c8d;
+            border-top: 1px solid #ddd;
+            font-size: 0.9rem;
+            flex-shrink: 0;
         }
 
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 159, 67, 0.98); z-index: 300;
-            flex-direction: column; align-items: center; justify-content: center;
-            color: white; text-align: center;
+        @media (max-width: 380px) {
+            h2 { font-size: 1.5rem; }
+            .btn-jogo span { font-size: 1.8rem; }
+            .btn-jogo { font-size: 0.75rem; padding: 15px 5px; }
         }
     </style>
 </head>
@@ -158,106 +237,68 @@
     <div class="sidebar" id="sidebar">
         <h3>Navegação</h3>
         <nav class="sidebar-menu">
-            <a href="../../../" class="sidebar-item"><span>🏠</span> Início</a>
-            <a href="../../../pre" class="sidebar-item"><span>🦒</span> Pré-Escolar</a>
-            <a href="../../../1" class="sidebar-item"><span>🐥</span> 1º Ano</a>
-            <a href="../../../2" class="sidebar-item"><span>🐢</span> 2º Ano</a>
-            <a href="../../../3" class="sidebar-item"><span>🦊</span> 3º Ano</a>
-            <a href="../../../4" class="sidebar-item"><span>👨‍🚀</span> 4º Ano</a>
+            <a href="../../" class="sidebar-item"><span>🏠</span> Início</a>
+            <a href="../../pre" class="sidebar-item"><span>🦒</span> Pré-Escolar</a>
+            <a href="../../1" class="sidebar-item"><span>🐥</span> 1º Ano</a>
+            <a href="../../2" class="sidebar-item"><span>🐢</span> 2º Ano</a>
+            <a href="../../3" class="sidebar-item"><span>🦊</span> 3º Ano</a>
+            <a href="../../4" class="sidebar-item"><span>👨‍🚀</span> 4º Ano</a>
         </nav>
-        <button onclick="toggleMenu()" style="margin-top:auto; padding:12px; border:none; background:#f0f0f0; border-radius:10px;">Fechar ×</button>
+        <button onclick="toggleMenu()" style="margin-top:auto; padding:12px; border:none; background:#f0f0f0; cursor:pointer; font-weight:bold; border-radius:10px;">Fechar ×</button>
     </div>
 
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <h1>Formas Fixolas</h1>
+            <h1>Identifica as Formas<span class="emoji">🐥</span></h1>
         </div>
-        <a href="../" class="btn-voltar-3d">⬅ VOLTAR</a>
+        <a href="../" class="btn-voltar-3d-header">
+            <span>⬅</span> 1º ANO
+        </a>
     </header>
 
     <main>
-        <div id="round-indicator">Ronda: <span id="current-round">1</span> / 10</div>
-        <div id="instruction-box">Clica em todos os... <br><strong id="target-shape" style="color: #e67e22;">---</strong></div>
-        <div class="shapes-container" id="shapes-grid"></div>
-    </main>
+        <div class="card-menu">
+            <h2>Desafios</h2>
+            <p class="subtitulo">Escolhe o teu jogo favorito:</p>
 
-    <div id="win-modal" class="modal">
-        <h1 style="font-size: 3rem;">INCRÍVEL! 🏆</h1>
-        <p style="font-size: 1.5rem; margin: 20px;">Completaste as 10 rondas!</p>
-        <button onclick="location.reload()" style="padding: 15px 40px; border-radius: 15px; border: none; background: white; color: #ff9f43; font-weight: bold; cursor: pointer;">Recomeçar 🔄</button>
-    </div>
+            <nav class="menu-jogos">
+                <a href="soma10/" class="btn-jogo">
+                    <span style="color: #27ae60;">➕</span>
+                    Somar10
+                </a>
+
+                <a href="subtrair10/" class="btn-jogo">
+                    <span style="color: #e74c3c;">➖</span>
+                    Subtrair10
+                </a>
+
+                <a href="liga10/" class="btn-jogo">
+                    <span style="color: #2980b9;">🔢</span>
+                    Ligar10
+                </a>
+            </nav>
+
+            <a href="../" class="btn-voltar-fim" id="btn-voltar-fim">
+                <span>⬅</span> VOLTAR
+            </a>
+        </div>
+    </main>
 
     <footer>
         Recursos Digitais Covão - <strong>Professor Luís</strong>
     </footer>
 
     <script>
-        const shapeTypes = [
-            { id: 'quadrado', class: 'square' },
-            { id: 'retângulo', class: 'rectangle' },
-            { id: 'círculo', class: 'circle' },
-            { id: 'triângulo', class: 'triangle' },
-            { id: 'pentágono', class: 'pentagon' },
-            { id: 'hexágono', class: 'hexagon' }
-        ];
-
-        let currentRound = 1;
-        let shapesToFind = 0;
-        let targetId = '';
-
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        function startRound() {
-            if (currentRound > 10) {
-                document.getElementById('win-modal').style.display = 'flex';
-                return;
-            }
-
-            document.getElementById('current-round').innerText = currentRound;
-            const grid = document.getElementById('shapes-grid');
-            grid.innerHTML = '';
-            shapesToFind = 0;
-
-            const randomTarget = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
-            targetId = randomTarget.id;
-            document.getElementById('target-shape').innerText = targetId.toUpperCase() + (targetId.endsWith('o') ? 'S' : 'ES');
-
-            for (let i = 0; i < 9; i++) {
-                const randomShape = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
-                const div = document.createElement('div');
-                div.className = `shape-item ${randomShape.class}`;
-                
-                // Lógica: Quadrados também são retângulos
-                let isMatch = (targetId === 'retângulo') 
-                    ? (randomShape.id === 'retângulo' || randomShape.id === 'quadrado')
-                    : (randomShape.id === targetId);
-
-                if (isMatch) shapesToFind++;
-
-                div.onclick = function() {
-                    if (isMatch) {
-                        this.classList.add('selected');
-                        shapesToFind--;
-                        if (shapesToFind === 0) {
-                            currentRound++;
-                            setTimeout(startRound, 600);
-                        }
-                    } else {
-                        this.style.filter = "drop-shadow(0 0 8px red)";
-                        setTimeout(() => this.style.filter = "none", 400);
-                    }
-                };
-                grid.appendChild(div);
-            }
-
-            if (shapesToFind === 0) startRound();
+        // Função para mostrar o botão voltar no fim do jogo (para ser chamada pela lógica do jogo)
+        function mostrarBotaoVoltar() {
+            document.getElementById('btn-voltar-fim').style.display = 'block';
         }
-
-        startRound();
     </script>
 </body>
 </html>
