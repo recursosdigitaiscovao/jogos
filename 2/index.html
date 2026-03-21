@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>2º Ano - Boas-vindas</title>
+    <title>2º Ano - Disciplinas</title>
     <style>
         * {
             box-sizing: border-box; 
@@ -51,6 +51,7 @@
             font-weight: 800;
         }
 
+        /* Botão Voltar 3D Verde */
         .btn-voltar-3d {
             text-decoration: none;
             color: #ffffff;
@@ -65,6 +66,11 @@
             border: none;
             box-shadow: 0 4px 0 #0d8a6a;
             transition: all 0.1s ease;
+        }
+
+        .btn-voltar-3d:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #0d8a6a;
         }
 
         /* Sidebar */
@@ -92,6 +98,12 @@
             border-bottom: 2px solid #10ac84;
         }
 
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
         .sidebar-item {
             text-decoration: none;
             color: #444;
@@ -102,13 +114,9 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-bottom: 10px;
         }
 
-        .sidebar-item.active {
-            background: #10ac84;
-            color: white;
-        }
+        .sidebar-item.active { background: #10ac84; color: white; }
 
         .overlay {
             position: fixed;
@@ -125,26 +133,59 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Centralizado sem os botões */
+            justify-content: flex-start; 
             padding: 25px 20px;
-            text-align: center;
         }
 
         .emoji-principal {
-            font-size: clamp(5rem, 20vh, 8rem);
-            margin-bottom: 20px;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+            font-size: clamp(4rem, 15vh, 7rem);
+            margin-bottom: 5px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
         }
 
-        .mensagem-boas-vindas {
-            font-size: clamp(1.5rem, 5vh, 2.2rem);
-            font-weight: 800;
+        .subtitulo {
+            font-size: 1.1rem;
+            font-weight: bold;
             color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-            max-width: 600px;
-            line-height: 1.3;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            text-align: center;
         }
 
+        .menu-disciplinas {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .btn-disciplina {
+            background-color: white;
+            text-decoration: none;
+            padding: 15px;
+            border-radius: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: bold;
+            border: 4px solid white;
+            box-shadow: 0 6px 0 #0d8a6a;
+            height: clamp(140px, 25vh, 220px);
+            transition: 0.2s;
+        }
+
+        .btn-disciplina span { font-size: clamp(2.5rem, 8vh, 4rem); }
+
+        .portugues { color: #2980b9; } 
+        .matematica { color: #c0392b; }
+        .estudo-meio { color: #27ae60; }
+
+        .btn-disciplina:active { transform: translateY(3px); box-shadow: 0 3px 0 #0d8a6a; }
+
+        /* Footer */
         footer {
             width: 100%;
             padding: 12px;
@@ -155,37 +196,64 @@
             font-size: 0.9rem;
             flex-shrink: 0;
         }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            .menu-disciplinas { grid-template-columns: 1fr; gap: 10px; }
+            .btn-disciplina { 
+                height: 85px; 
+                flex-direction: row; 
+                gap: 20px; 
+                padding: 10px 25px;
+                justify-content: flex-start;
+            }
+            .btn-disciplina span { font-size: 2.2rem; min-width: 50px; text-align: center; }
+        }
     </style>
 </head>
 <body>
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     <div class="sidebar" id="sidebar">
-        <h3>Menu de Navegação</h3>
-        <nav>
-            <a href="../" class="sidebar-item"><span>🏠</span> Início</a>
-            <a href="../pre" class="sidebar-item"><span>🦒</span> Pré-Escolar</a>
-            <a href="../1" class="sidebar-item"><span>🐥</span> 1º Ano</a>
-            <a href="../2" class="sidebar-item active"><span>🐢</span> 2º Ano</a>
-            <a href="../3" class="sidebar-item"><span>🦊</span> 3º Ano</a>
-            <a href="../4" class="sidebar-item"><span>👨‍🚀</span> 4º Ano</a>
+        <h3>Navegação</h3>
+        <nav class="sidebar-menu">
+            <a href="/" class="sidebar-item"><span>🏠</span> Início</a>
+            <a href="/jogos/pre" class="sidebar-item"><span>🦒</span> Pré-Escolar</a>
+            <a href="/jogos/1" class="sidebar-item"><span>🐥</span> 1º Ano</a>
+            <a href="/jogos/2" class="sidebar-item active"><span>🐢</span> 2º Ano</a>
+            <a href="/jogos/3" class="sidebar-item"><span>🦊</span> 3º Ano</a>
+            <a href="/jogos/4" class="sidebar-item"><span>👨‍🚀</span> 4º Ano</a>
         </nav>
-        <button onclick="toggleMenu()" style="margin-top:auto; padding:12px; border:none; background:#f0f0f0; cursor:pointer; font-weight:bold; border-radius:10px; color:#10ac84;">Fechar ×</button>
+        <button onclick="toggleMenu()" style="margin-top:auto; padding:12px; border:none; background:#f0f0f0; cursor:pointer; font-weight:bold; border-radius:10px; color: #10ac84;">Fechar ×</button>
     </div>
 
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <h1>Espaço do 2º Ano</h1>
+            <h1>Menu do 2º Ano</h1>
         </div>
-        <a href="../" class="btn-voltar-3d">
+        <a href="/" class="btn-voltar-3d">
             <span>⬅</span> VOLTAR
         </a>
     </header>
 
     <main>
         <div class="emoji-principal">🐢</div>
-        <h2 class="mensagem-boas-vindas">Bem-vindos ao 2º Ano!<br>Estão prontos para novas descobertas?</h2>
+        <p class="subtitulo">Olá, exploradores! Vamos começar a aprender?</p>
+
+        <nav class="menu-disciplinas">
+            <a href="/jogos/2/pt/" class="btn-disciplina portugues">
+                <span>📚</span> Português
+            </a>
+
+            <a href="/jogos/2/mat/" class="btn-disciplina matematica">
+                <span>🧮</span> Matemática
+            </a>
+
+            <a href="/jogos/2/em/" class="btn-disciplina estudo-meio">
+                <span>🌍</span> Estudo do Meio
+            </a>
+        </nav>
     </main>
 
     <footer>
