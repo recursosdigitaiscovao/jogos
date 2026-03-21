@@ -71,6 +71,18 @@
 
         /* JOGO */
         #game-area { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; padding: 10px; gap: 8px; }
+        
+        /* CONTENTOR DE DICA (ÍCONE OU MANCHA) */
+        #word-hint-container {
+            display: flex; align-items: center; justify-content: center;
+            width: 100px; height: 100px; 
+            background: #fff; border-radius: 50%; border: 3px solid #ff9f43;
+            margin-bottom: 10px;
+        }
+        #word-img { font-size: 3.2rem; }
+        #color-blot { width: 70px; height: 70px; border-radius: 50%; display: none; }
+
+        /* BONECO */
         .hangman-box { width: 160px; height: 130px; position: relative; background: #fff; border-radius: 15px; border: 1px solid #eee; }
         .part { position: absolute; background: #2c3e50; display: none; }
         .base { width: 60px; height: 4px; bottom: 10px; left: 20px; display: block; }
@@ -86,11 +98,8 @@
 
         .word-display { font-size: 2rem; font-weight: bold; letter-spacing: 5px; color: #2c3e50; margin: 5px 0; }
         
-        /* TECLADO ORGANIZADO */
-        .keyboard { 
-            display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; 
-            width: 100%; max-width: 480px; padding: 5px;
-        }
+        /* TECLADO */
+        .keyboard { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; width: 100%; max-width: 480px; padding: 5px; }
         .key { 
             background: #fff; border: 2px solid #ccc; border-radius: 10px;
             padding: 12px 0; font-weight: 800; font-size: 1.1rem; cursor: pointer; 
@@ -112,11 +121,11 @@
     <div class="sidebar" id="sidebar">
         <h3>Menu Global</h3>
         <a href="#" class="sidebar-item" onclick="location.reload()">🏠 Menu de Temas</a>
-        <a href="#" class="sidebar-item"><span>🦒</span> Pré-Escolar</a>
-        <a href="#" class="sidebar-item active"><span>🐥</span> 1º Ano</a>
-        <a href="#" class="sidebar-item"><span>🐢</span> 2º Ano</a>
-        <a href="#" class="sidebar-item"><span>🦊</span> 3º Ano</a>
-        <a href="#" class="sidebar-item"><span>👨‍🚀</span> 4º Ano</a>
+        <a href="/jogos/pre" class="sidebar-item"><span>🦒</span> Pré-Escolar</a>
+        <a href="/jogos/1" class="sidebar-item active"><span>🐥</span> 1º Ano</a>
+        <a href="/jogos/2" class="sidebar-item"><span>🐢</span> 2º Ano</a>
+        <a href="/jogos/3" class="sidebar-item"><span>🦊</span> 3º Ano</a>
+        <a href="/jogos/4" class="sidebar-item"><span>👨‍🚀</span> 4º Ano</a>
         <button onclick="toggleMenu()" style="margin-top:auto; padding:10px; border:none; background:#eee; border-radius:8px; font-weight:bold;">Fechar ×</button>
     </div>
 
@@ -147,7 +156,9 @@
     </div>
 
     <main id="game-area">
-        <div id="word-img" style="font-size: 3.2rem;">❓</div>
+        <div id="word-hint-container">
+            <div id="word-img">❓</div>
+            <div id="color-blot"></div> </div>
         <div class="hangman-box">
             <div class="part base"></div><div class="part pole"></div><div class="part gallows-top"></div><div class="part rope"></div>
             <div class="part head" id="h-head"></div><div class="part body-v" id="h-body"></div>
@@ -167,9 +178,19 @@
 
     <script>
         const themes = {
-            "Frutas": {icon:"🍎", words:[{p:"UVA",i:"🍇"},{p:"BANANA",i:"🍌"},{p:"PERA",i:"🍐"},{p:"FIGO",i:"🥯"},{p:"LIMA",i:"🍋"},{p:"KIWI",i:"🥝"},{p:"MANGA",i:"🥭"},{p:"MELAO",i:"🍈"},{p:"ANANAS",i:"🍍"},{p:"MORANGO",i:"🍓"},{p:"COCO",i:"🥥"},{p:"CEREJA",i:"🍒"},{p:"AMORA",i:"🍇"},{p:"AMEIXA",i:"🫐"},{p:"TAMARA",i:"🌴"},{p:"MELANCIA",i:"🍉"},{p:"ABACATE",i:"🥑"},{p:"LIMAO",i:"🍋"},{p:"PESSSEGO",i:"🍑"},{p:"KAKI",i:"🍅"}]},
+            "Frutas": {icon:"🍎", words:[
+                {p:"UVA",i:"🍇"},{p:"BANANA",i:"🍌"},{p:"PERA",i:"🍐"},{p:"MELAO",i:"🍈"},{p:"LIMA",i:"🍋"},
+                {p:"KIWI",i:"🥝"},{p:"MANGA",i:"🥭"},{p:"MORANGO",i:"🍓"},{p:"ANANAS",i:"🍍"},{p:"COCO",i:"🥥"},
+                {p:"CEREJA",i:"🍒"},{p:"AMEIXA",i:"🫐"},{p:"MELANCIA",i:"🍉"},{p:"ABACATE",i:"🥑"},{p:"LIMAO",i:"🍋"},
+                {p:"FIGO",i:"🍇"},{p:"AMORA",i:"🍇"},{p:"CAQUI",i:"🍅"},{p:"PESSEGO",i:"🍑"},{p:"NESPERA",i:"🍊"}
+            ]},
             "Animais": {icon:"🐶", words:[{p:"CAO",i:"🐶"},{p:"GATO",i:"🐱"},{p:"PATO",i:"🦆"},{p:"VACA",i:"🐮"},{p:"ZEBRA",i:"🦓"},{p:"LEAO",i:"🦁"},{p:"TIGRE",i:"🐯"},{p:"URSO",i:"🐻"},{p:"RATO",i:"🐭"},{p:"SAPO",i:"🐸"},{p:"GALO",i:"🐓"},{p:"PORCO",i:"🐷"},{p:"MOSCA",i:"🪰"},{p:"GIRAFA",i:"🦒"},{p:"MACACO",i:"🐒"},{p:"COBRA",i:"🐍"},{p:"PEIXE",i:"🐟"},{p:"GRILO",i:"🦗"},{p:"LOUVA",i:"🦗"},{p:"PANDA",i:"🐼"}]},
-            "Cores": {icon:"🎨", words:[{p:"AZUL",i:"🔵"},{p:"ROSA",i:"💗"},{p:"VERDE",i:"🟢"},{p:"PRETO",i:"⚫"},{p:"BRANCO",i:"⚪"},{p:"ROXO",i:"🟣"},{p:"CINZA",i:"🔘"},{p:"AMARELO",i:"🟡"},{p:"LARANJA",i:"🟠"},{p:"BEGE",i:"🏷️"},{p:"PRATA",i:"🥈"},{p:"CREME",i:"🍦"},{p:"LILA",i:"🌸"},{p:"CASTANHO",i:"🟤"},{p:"VERMELHO",i:"🔴"},{p:"DOURADO",i:"👑"},{p:"TURQUESA",i:"💎"},{p:"CARMIM",i:"💄"},{p:"SALMAO",i:"🍣"},{p:"GELO",i:"🧊"}]},
+            "Cores": {icon:"🎨", words:[
+                {p:"AZUL", c:"#0000FF"},{p:"ROSA", c:"#FFC0CB"},{p:"VERDE", c:"#008000"},{p:"PRETO", c:"#000000"},{p:"BRANCO", c:"#FFFFFF"},
+                {p:"ROXO", c:"#800080"},{p:"CINZA", c:"#808080"},{p:"AMARELO", c:"#FFFF00"},{p:"LARANJA", c:"#FFA500"},{p:"BEGE", c:"#F5F5DC"},
+                {p:"PRATA", c:"#C0C0C0"},{p:"CREME", c:"#FFFDD0"},{p:"LILA", c:"#C8A2C8"},{p:"CASTANHO", c:"#8B4513"},{p:"VERMELHO", c:"#FF0000"},
+                {p:"DOURADO", c:"#FFD700"},{p:"TURQUESA", c:"#40E0D0"},{p:"CARMIM", c:"#960018"},{p:"SALMAO", c:"#FA8072"},{p:"GELO", c:"#F0F8FF"}
+            ]},
             "Escola": {icon:"🎒", words:[{p:"COLA",i:"🧪"},{p:"PASTA",i:"🎒"},{p:"LIVRO",i:"📚"},{p:"MESA",i:"🪑"},{p:"GIZ",i:"🖍️"},{p:"ESTOJO",i:"👝"},{p:"PAPEL",i:"📄"},{p:"MAPA",i:"🗺️"},{p:"SALA",i:"🏫"},{p:"ALUNO",i:"🧑‍🎓"},{p:"TINTA",i:"🎨"},{p:"BANCO",i:"🪑"},{p:"QUADRO",i:"🖼️"},{p:"CANETA",i:"🖊️"},{p:"FOLHA",i:"📄"},{p:"TESTE",i:"📝"},{p:"PINCEL",i:"🖌️"},{p:"RECREIO",i:"🛝"},{p:"RÉGUA",i:"📏"},{p:"PONTAS",i:"✏️"}]}
         };
 
@@ -180,7 +201,7 @@
         function fecharAjuda() { document.getElementById('modal-ajuda').style.display = 'none'; }
 
         function createThemes() {
-            const grid = document.getElementById('theme-grid');
+            const grid = document.getElementById('theme-grid'); grid.innerHTML = '';
             Object.keys(themes).forEach(key => {
                 const card = document.createElement('div'); card.className = 'theme-card';
                 card.onclick = () => { activeCategory = key; resetGame(); };
@@ -198,7 +219,22 @@
             const data = available[Math.floor(Math.random() * available.length)];
             
             secretWord = data.p; playedWords[activeCategory].push(data.p);
-            document.getElementById('word-img').innerText = data.i;
+            
+            const imgEl = document.getElementById('word-img');
+            const blotEl = document.getElementById('color-blot');
+            
+            // LÓGICA PARA DIFERENCIAR CORES DE OUTRAS CATEGORIAS
+            if (activeCategory === "Cores") {
+                imgEl.style.display = 'none';
+                blotEl.style.display = 'block';
+                blotEl.style.backgroundColor = data.c;
+                if(data.p === "BRANCO") blotEl.style.border = "2px solid #ccc"; else blotEl.style.border = "none";
+            } else {
+                imgEl.style.display = 'block';
+                blotEl.style.display = 'none';
+                imgEl.innerText = data.i;
+            }
+            
             guessedLetters = []; mistakes = 0;
             document.getElementById('menu-container').style.display = 'none';
             document.getElementById('game-area').style.display = 'flex';
