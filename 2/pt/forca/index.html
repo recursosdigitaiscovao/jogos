@@ -142,6 +142,14 @@
         <button onclick="toggleMenu()" style="margin-top:auto; padding:10px; border:none; background:#eee; border-radius:8px; font-weight:bold;">Fechar ×</button>
     </div>
 
+    <div class="modal-overlay" id="modal-ajuda">
+        <div class="modal-content">
+            <h2 style="color:#3498db; margin-bottom:15px;">Como Jogar</h2>
+            <p>Observa a imagem ao lado da forca e tenta adivinhar a palavra. Se acertares, passas logo à próxima! Se errares 6 vezes, o boneco aparece!</p>
+            <button onclick="fecharAjuda()" style="margin-top:20px; padding:12px 25px; background:#2ecc71; color:white; border:none; border-radius:15px; font-weight:bold; box-shadow:0 4px 0 #27ae60; cursor:pointer;">Entendi!</button>
+        </div>
+    </div>
+
     <header>
         <div class="header-left">
             <span class="menu-icon" onclick="toggleMenu()">☰</span>
@@ -152,7 +160,12 @@
     </header>
 
     <div id="menu-container">
-        <div class="theme-grid" id="theme-grid" style="padding: 20px;"></div>
+        <div style="padding: 15px;">
+            <button onclick="abrirAjuda()" style="background:#3498db; color:white; border:none; padding:10px 20px; border-radius:15px; font-weight:bold; box-shadow:0 4px 0 #2980b9; display:flex; align-items:center; gap:8px; margin: 0 auto; cursor:pointer;">
+                <span>ℹ️</span> Como se Joga
+            </button>
+        </div>
+        <div class="theme-grid" id="theme-grid" style="padding: 10px;"></div>
     </div>
 
     <main id="game-area">
@@ -194,13 +207,15 @@
                 {p:"COLA",i:"🧪"},{p:"PASTA",i:"🎒"},{p:"LIVRO",i:"📚"},{p:"MESA",i:"🪑"},{p:"GIZ",i:"🖍️"},{p:"ESTOJO",i:"👝"},{p:"PAPEL",i:"📄"},{p:"MAPA",i:"🗺️"},{p:"SALA",i:"🏫"},{p:"ALUNO",i:"🧑‍🎓"},{p:"TINTA",i:"🎨"},{p:"BANCO",i:"🪑"},{p:"QUADRO",i:"🖼️"},{p:"CANETA",i:"🖊️"},{p:"FOLHA",i:"📄"},{p:"TESTE",i:"📝"},{p:"PINCEL",i:"🖌️"},{p:"LATA",i:"🥫"},{p:"BLOCO",i:"🗒️"},{p:"LUPA",i:"🔍"}
             ]},
             "Utensilios": {icon:"🍴", words:[
-                {p:"GARFO",i:"🍴"},{p:"FACA",i:"🔪"},{p:"COPO",i:"🥛"},{p:"PRATO",i:"🍽️"},{p:"BULE",i:"🫖"},{p:"TACA",i:"🥣"},{p:"JARRA",i:"🏺"},{p:"PANELA",i:"🥘"},{p:"COLHER",i:"🥄"},{p:"TABUA",i:"🪵"},{p:"VASO",i:"🏺"},{p:"BALDE",i:"🪣"},{p:"PENTE",i:"🪮"},{p:"MALA",i:"💼"},{p:"CHAVE",i:"🔑"},{p:"LUVA",i:"🧤"},{p:"VELA",i:"🕯️"},{p:"RODO",i:"🧹"},{p:"BOTA",i:"🥾"},{p:"REDE",i:"🕸️"}
+                {p:"GARFO",i:"🍴"},{p:"FACA",i:"🔪"},{p:"COPO",i:"🥛"},{p:"PRATO",i:"🍽️"},{p:"BULE",i:"🫖"},{p:"TACA",i:"🏆"},{p:"JARRA",i:"🏺"},{p:"PANELA",i:"🥘"},{p:"COLHER",i:"🥄"},{p:"TABUA",i:"🪵"},{p:"VASO",i:"🪴"},{p:"BALDE",i:"🪣"},{p:"PENTE",i:"🪮"},{p:"MALA",i:"💼"},{p:"CHAVE",i:"🔑"},{p:"LUVA",i:"🧤"},{p:"VELA",i:"🕯️"},{p:"RODO",i:"🧹"},{p:"BOTA",i:"🥾"},{p:"REDE",i:"🕸️"}
             ]}
         };
 
         let activeCategory = "", secretWord = "", guessedLetters = [], mistakes = 0, playedWords = {};
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay-bg').classList.toggle('active'); }
+        function abrirAjuda() { document.getElementById('modal-ajuda').style.display = 'flex'; }
+        function fecharAjuda() { document.getElementById('modal-ajuda').style.display = 'none'; }
 
         function createThemes() {
             const grid = document.getElementById('theme-grid'); grid.innerHTML = '';
@@ -285,10 +300,7 @@
             
             if(won) { 
                 s.innerText = "🏆 MUITO BEM!"; s.style.color = "#2ecc71";
-                // Lógica de nova palavra automática após 1 segundo
-                setTimeout(() => {
-                    resetGame();
-                }, 1000);
+                setTimeout(() => { resetGame(); }, 1000);
             } else { 
                 s.innerText = "❌ A PALAVRA ERA: " + secretWord; s.style.color = "#e74c3c";
                 document.getElementById('game-controls').style.display = 'flex';
