@@ -72,17 +72,11 @@
         /* JOGO */
         #game-area { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; padding: 10px; gap: 15px; }
         
-        /* CONTENTOR VISUAL LATERAL (FORCA + IMAGEM AO LADO) */
         .game-visual-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px; /* Espaço entre a forca e a imagem */
-            width: 100%;
-            max-width: 400px;
+            display: flex; align-items: center; justify-content: center;
+            gap: 20px; width: 100%; max-width: 400px;
         }
 
-        /* BONECO */
         .hangman-box { width: 140px; height: 110px; position: relative; background: rgba(255,255,255,0.8); border-radius: 15px; border: 1px solid #eee; flex-shrink: 0; }
         .part { position: absolute; background: #2c3e50; display: none; }
         .base { width: 50px; height: 4px; bottom: 10px; left: 20px; display: block; }
@@ -96,15 +90,13 @@
         .l-leg { width: 20px; height: 3px; top: 80px; left: 60px; transform: rotate(-45deg); }
         .r-leg { width: 20px; height: 3px; top: 80px; left: 78px; transform: rotate(45deg); }
 
-        /* NOVO DESIGN DO CONTENTOR DE IMAGEM AO LADO DA FORCA */
         #word-hint-container {
             display: flex; align-items: center; justify-content: center;
             width: 100px; height: 100px; 
             background: #fff; border-radius: 20px; 
             border: 3px solid #ff9f43;
             box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-            position: relative;
-            flex-shrink: 0;
+            position: relative; flex-shrink: 0;
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
@@ -150,14 +142,6 @@
         <button onclick="toggleMenu()" style="margin-top:auto; padding:10px; border:none; background:#eee; border-radius:8px; font-weight:bold;">Fechar ×</button>
     </div>
 
-    <div class="modal-overlay" id="modal-ajuda">
-        <div class="modal-content">
-            <h2 style="color:#3498db; margin-bottom:15px;">Como Jogar</h2>
-            <p>Observa a imagem ao lado da forca e tenta adivinhar a palavra clicando nas letras. Se errares 6 vezes, o boneco aparece!</p>
-            <button onclick="fecharAjuda()" style="margin-top:20px; padding:12px 25px; background:#2ecc71; color:white; border:none; border-radius:15px; font-weight:bold; box-shadow:0 4px 0 #27ae60;">Entendi!</button>
-        </div>
-    </div>
-
     <header>
         <div class="header-left">
             <span class="menu-icon" onclick="toggleMenu()">☰</span>
@@ -168,12 +152,7 @@
     </header>
 
     <div id="menu-container">
-        <div style="padding: 15px;">
-            <button onclick="abrirAjuda()" style="background:#3498db; color:white; border:none; padding:10px 20px; border-radius:15px; font-weight:bold; box-shadow:0 4px 0 #2980b9; display:flex; align-items:center; gap:8px; margin: 0 auto;">
-                <span>ℹ️</span> Como se Joga
-            </button>
-        </div>
-        <div class="theme-grid" id="theme-grid"></div>
+        <div class="theme-grid" id="theme-grid" style="padding: 20px;"></div>
     </div>
 
     <main id="game-area">
@@ -184,16 +163,13 @@
                 <div class="part l-arm" id="h-larm"></div><div class="part r-arm" id="h-rarm"></div>
                 <div class="part l-leg" id="h-lleg"></div><div class="part r-leg" id="h-rleg"></div>
             </div>
-
             <div id="word-hint-container">
                 <div id="word-img">❓</div>
                 <div id="color-blot"></div> 
             </div>
         </div>
-        
         <div class="word-display" id="word-display"></div>
-        
-        <div id="status-msg" style="font-weight:bold; margin:5px 0; text-align:center;"></div>
+        <div id="status-msg" style="font-weight:bold; margin:5px 0; text-align:center; min-height: 24px;"></div>
         <div id="game-controls">
             <button class="btn-final" style="background:#2ecc71; box-shadow:0 4px 0 #27ae60;" onclick="resetGame()">Jogar de Novo 🔄</button>
             <button class="btn-final" style="background:#3498db; box-shadow:0 4px 0 #2980b9;" onclick="location.reload()">Escolher Tema 🏠</button>
@@ -225,8 +201,6 @@
         let activeCategory = "", secretWord = "", guessedLetters = [], mistakes = 0, playedWords = {};
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay-bg').classList.toggle('active'); }
-        function abrirAjuda() { document.getElementById('modal-ajuda').style.display = 'flex'; }
-        function fecharAjuda() { document.getElementById('modal-ajuda').style.display = 'none'; }
 
         function createThemes() {
             const grid = document.getElementById('theme-grid'); grid.innerHTML = '';
@@ -258,19 +232,16 @@
             const imgEl = document.getElementById('word-img');
             const blotEl = document.getElementById('color-blot');
             
-            // Reiniciar animação
             hintContainer.style.animation = 'none';
-            hintContainer.offsetHeight; // trigger reflow
+            hintContainer.offsetHeight;
             hintContainer.style.animation = 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
 
             if (activeCategory === "Cores") {
-                imgEl.style.display = 'none';
-                blotEl.style.display = 'block';
+                imgEl.style.display = 'none'; blotEl.style.display = 'block';
                 blotEl.style.backgroundColor = data.c;
                 blotEl.style.border = (data.p === "BRANCO" || data.p === "GELO") ? "2px solid #eee" : "none";
             } else {
-                imgEl.style.display = 'block';
-                blotEl.style.display = 'none';
+                imgEl.style.display = 'block'; blotEl.style.display = 'none';
                 imgEl.innerText = data.i;
             }
             
@@ -309,11 +280,19 @@
         function resetHangman() { ["h-head", "h-body", "h-larm", "h-rarm", "h-lleg", "h-rleg"].forEach(id => document.getElementById(id).style.display='none'); }
 
         function endGame(won) {
-            document.getElementById('keyboard').style.display = 'none';
-            document.getElementById('game-controls').style.display = 'flex';
             const s = document.getElementById('status-msg');
-            if(won) { s.innerText = "🏆 MUITO BEM! GANHASTE!"; s.style.color = "#2ecc71"; }
-            else { s.innerText = "❌ UPS! A PALAVRA ERA: " + secretWord; s.style.color = "#e74c3c"; }
+            document.getElementById('keyboard').style.display = 'none';
+            
+            if(won) { 
+                s.innerText = "🏆 MUITO BEM!"; s.style.color = "#2ecc71";
+                // Lógica de nova palavra automática após 1 segundo
+                setTimeout(() => {
+                    resetGame();
+                }, 1000);
+            } else { 
+                s.innerText = "❌ A PALAVRA ERA: " + secretWord; s.style.color = "#e74c3c";
+                document.getElementById('game-controls').style.display = 'flex';
+            }
         }
 
         createThemes();
