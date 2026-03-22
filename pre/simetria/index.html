@@ -53,72 +53,68 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); display: none; z-index: 150;
         }
-        .overlay.active { display: block; }
+        .overlay.active { block; }
 
         /* JOGO PRINCIPAL */
         main {
             flex: 1; display: flex; flex-direction: column; align-items: center;
-            justify-content: center; padding: 25px 10px; gap: 20px;
+            justify-content: center; padding: 20px 10px; gap: 15px;
             overflow-y: auto;
-        }
-
-        .container-central {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap; /* Permite empilhar no telemóvel */
         }
 
         .area-desenho { 
             display: flex; 
-            gap: 15px; 
+            gap: 20px; 
             justify-content: center; 
             align-items: center;
-            flex-wrap: wrap; /* Faz uma imagem ficar debaixo da outra no telemóvel */
+            flex-wrap: wrap; /* Empilha no telemóvel */
         }
 
         .quadro {
-            background: white; padding: 10px; border-radius: 12px;
+            background: white; padding: 8px; border-radius: 12px;
             box-shadow: 0 6px 15px rgba(0,0,0,0.08); border: 3px solid #fff;
         }
         .quadro.alvo { border-color: #ffb3c6; }
         .quadro.interativo { border-color: #7bed9f; }
 
-        /* Grelha mais escura e maior no PC */
+        /* Grelha MAIS CLARA */
         .grid {
             display: grid; 
             grid-template-columns: repeat(4, 55px); /* Tamanho PC */
             grid-template-rows: repeat(4, 55px); 
-            gap: 2px; /* Espaço entre células */
-            background: #999; /* Cor das linhas (mais escura) */
+            gap: 1px;
+            background: #eee; /* Cor das linhas (mais clara, quase branca) */
+            border: 1px solid #ddd;
         }
 
         .cell { width: 100%; height: 100%; background: white; cursor: pointer; }
 
-        /* CONTROLOS */
-        .controles-laterais {
+        /* NOVA BARRA DE FERRAMENTAS INFERIOR */
+        .barra-ferramentas {
             display: flex;
-            flex-direction: column;
+            align-items: center;
             gap: 15px;
-        }
-
-        .btn-acao {
-            width: 55px; height: 55px; border-radius: 15px; border: none;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 1.6rem; color: white; transition: 0.2s;
-        }
-
-        .btn-verificar-small { background: #2ecc71; box-shadow: 0 4px 0 #27ae60; }
-        .btn-limpar { background: #e74c3c; box-shadow: 0 4px 0 #c0392b; }
-        .btn-acao:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.2); }
-
-        /* PALETA */
-        .paleta {
-            display: flex; gap: 15px; background: white; padding: 12px 30px;
-            border-radius: 50px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            background: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             margin-top: 10px;
         }
+
+        /* Botões de Ação Circulares (mesmo tamanho da paleta) */
+        .btn-circular {
+            width: 42px; height: 42px; border-radius: 50%; border: none;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; color: white; transition: 0.2s;
+        }
+
+        .btn-limpar { background: #e74c3c; box-shadow: 0 3px 0 #c0392b; }
+        .btn-verificar-v { background: #2ecc71; box-shadow: 0 3px 0 #27ae60; }
+        
+        .btn-circular:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.2); }
+
+        /* PALETA AO CENTRO */
+        .paleta { display: flex; gap: 10px; align-items: center; }
         .cor-btn { width: 42px; height: 42px; border-radius: 50%; border: 3px solid #f0f0f0; cursor: pointer; }
         .cor-btn.active { border-color: #2d3436; transform: scale(1.1); }
 
@@ -147,16 +143,14 @@
 
         /* AJUSTES PARA TELEMÓVEL */
         @media (max-width: 600px) {
-            main { justify-content: flex-start; padding-top: 15px; }
+            main { justify-content: flex-start; padding-top: 20px; gap: 10px; }
             .grid {
-                grid-template-columns: repeat(4, 42px); /* Menor no telemóvel para caber */
-                grid-template-rows: repeat(4, 42px);
+                grid-template-columns: repeat(4, 45px); /* Menor no telemóvel */
+                grid-template-rows: repeat(4, 45px);
             }
-            .controles-laterais {
-                flex-direction: row; /* Botões lado a lado no telemóvel */
-                margin-top: 10px;
-            }
-            .area-desenho { flex-direction: column; } /* Um debaixo do outro */
+            .area-desenho { flex-direction: column; gap: 10px; } /* Um debaixo do outro */
+            .barra-ferramentas { gap: 10px; padding: 10px; }
+            .cor-btn, .btn-circular { width: 38px; height: 38px; }
         }
     </style>
 </head>
@@ -166,15 +160,15 @@
 
     <div id="modal-info" class="modal-custom">
         <h2 style="color: #ff6b81;">Como Jogar? 🎨</h2>
-        <p style="margin: 15px 0;">Pinta o quadro de baixo igual ao quadro de cima! ⭐</p>
-        <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="fecharModais()">VAMOS LÁ!</button>
+        <p style="margin: 15px 0;">Pinta o quadro de baixo igual ao quadro de cima! ⭐<br><br>Clica no ✅ quando terminares ou na 🧽 para recomeçar.</p>
+        <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="fecharModais()">OK!</button>
     </div>
 
     <div id="modal-sucesso" class="modal-custom">
         <div style="font-size: 3.5rem;">🌟</div>
         <h2 style="color: #2ecc71;">Muito Bem!</h2>
         <p style="margin: 10px 0;">Ficou igualzinho!</p>
-        <button class="btn-verificar-small" style="width: 100%; height: 50px; border-radius: 12px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="proximaRonda()">PRÓXIMO</button>
+        <button class="btn-verificar-v" style="width: 100%; height: 50px; border-radius: 12px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="proximaRonda()">PRÓXIMO</button>
     </div>
 
     <div class="sidebar" id="sidebar">
@@ -199,22 +193,21 @@
     </header>
 
     <main>
-        <div class="container-central">
-            <div class="area-desenho">
-                <div class="quadro alvo"><div class="grid" id="grid-modelo"></div></div>
-                <div class="quadro interativo"><div class="grid" id="grid-pintura"></div></div>
-            </div>
-
-            <div class="controles-laterais">
-                <button class="btn-acao btn-verificar-small" onclick="verificar()" title="Verificar">✅</button>
-                <button class="btn-acao btn-limpar" onclick="limparQuadro()" title="Limpar">🧹</button>
-            </div>
+        <div class="area-desenho">
+            <div class="quadro alvo"><div class="grid" id="grid-modelo"></div></div>
+            <div class="quadro interativo"><div class="grid" id="grid-pintura"></div></div>
         </div>
 
-        <div class="paleta" id="paleta"></div>
+        <div class="barra-ferramentas">
+            <button class="btn-circular btn-limpar" onclick="limparQuadro()" title="Limpar">🧽</button>
+            
+            <div class="paleta" id="paleta"></div>
+            
+            <button class="btn-circular btn-verificar-v" onclick="verificar()" title="Verificar">✅</button>
+        </div>
 
         <div class="barra-progresso-info">
-            <p style="font-weight: bold; color: #7f8c8d;">Ronda <span id="ronda-atual">1</span> / 5</p>
+            <p style="font-weight: bold; color: #7f8c8d; font-size: 0.9rem;">Ronda <span id="ronda-atual">1</span> / 5</p>
             <div class="btn-info-mini" onclick="mostrarInfo()">i</div>
         </div>
     </main>
@@ -307,7 +300,7 @@
                 const r = Math.floor(i / 4);
                 const col = i % 4;
                 const cM = document.createElement('div');
-                cM.className = 'cell';
+                cM.className = 'cell readonly'; // Modelo não é clicável
                 cM.style.backgroundColor = dados.m[r][col];
                 gMod.appendChild(cM);
 
