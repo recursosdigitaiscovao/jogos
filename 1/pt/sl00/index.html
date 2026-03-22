@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sopa de Letras: 1º Ano - Português</title>
+    <title>Sopa de Letras: 1º Ano</title>
     <style>
+        /* Reset e Estilo Geral - Template_1 */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
         body {
-            background-color: rgba(255, 159, 67, 0.1); 
+            background-color: #fff4e6;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             height: 100vh; height: 100svh;
             display: flex; flex-direction: column;
@@ -17,210 +18,300 @@
 
         /* HEADER */
         header {
-            width: 100%; background-color: #ffffff; padding: 12px 20px;
+            width: 100%; background: white; padding: 12px 20px;
             display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 2px solid #eee; flex-shrink: 0; z-index: 100;
+            border-bottom: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; z-index: 100;
         }
         .header-left { display: flex; align-items: center; gap: 12px; }
-        .menu-icon { font-size: 1.8rem; cursor: pointer; color: #2c3e50; }
-        .game-icon { font-size: 1.5rem; }
-        header h1 { font-size: 1rem; color: #2c3e50; font-weight: 800; }
+        .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; }
+        header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; }
 
+        /* BOTÃO VOLTAR - TEXTO PRETO */
         .btn-voltar-3d {
-            text-decoration: none; color: #000; background-color: #ff9f43;
+            text-decoration: none; color: #000000; background-color: #ff9f43;
             font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
-            border-radius: 8px; display: flex; align-items: center; gap: 8px;
-            border: 1px solid #e67e22; box-shadow: 0 3px 0 #e67e22; transition: all 0.1s;
-            cursor: pointer;
+            border-radius: 8px; border: 1px solid #e67e22; box-shadow: 0 3px 0 #e67e22;
+            cursor: pointer; display: flex; align-items: center; gap: 8px;
+            transition: all 0.1s;
         }
         .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
 
-        /* SIDEBAR ATUALIZADA - NEUTRA */
+        /* SIDEBAR COM HOVER */
         .sidebar {
             position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
-            background: white; box-shadow: 4px 0 15px rgba(0,0,0,0.1);
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200;
-            padding: 20px; display: flex; flex-direction: column;
+            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+            transition: 0.3s ease; z-index: 200; padding: 25px;
         }
         .sidebar.active { left: 0; }
-        .sidebar h3 { color: #2c3e50; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 3px solid #ff9f43; font-size: 1.2rem; }
-        .sidebar-menu { display: flex; flex-direction: column; gap: 10px; }
         .sidebar-item {
-            text-decoration: none; color: #444; font-weight: bold;
-            padding: 14px; border-radius: 12px; background: #f8f9fa;
-            display: flex; align-items: center; gap: 12px; transition: 0.2s;
+            text-decoration: none; color: #636e72; font-weight: 600;
+            padding: 14px; border-radius: 15px; background: #fdfdfd;
+            display: flex; align-items: center; gap: 15px; margin-bottom: 8px; 
+            border: 1px solid #eee; transition: all 0.2s;
         }
-        .sidebar-item:hover, .sidebar-item:active { background: #ffeaa7; color: #d35400; }
-        .overlay-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
-        .overlay-bg.active { display: block; }
+        .sidebar-item:hover { background-color: #ff9f43; color: #000000; border-color: #e67e22; }
 
-        /* MODAL DE AJUDA */
-        .modal-overlay {
+        .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); display: none; 
-            align-items: center; justify-content: center; z-index: 1000;
+            background: rgba(0,0,0,0.3); display: none; z-index: 150;
         }
-        .modal-content {
-            background: white; width: 85%; max-width: 400px; 
-            border-radius: 25px; padding: 25px; text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            animation: bounceIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes bounceIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal-content h2 { color: #3498db; margin-bottom: 15px; font-size: 1.4rem; }
-        .btn-fechar-modal {
-            background: #2ecc71; color: white; border: none; padding: 12px 30px;
-            border-radius: 15px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #27ae60;
-        }
+        .overlay.active { display: block; }
 
-        /* CONTEÚDO DO JOGO */
-        #menu-container { flex: 1; overflow-y: auto; padding: 10px; text-align: center; }
-        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; max-width: 600px; margin: 0 auto; padding-bottom: 40px; }
+        /* CONTEÚDO */
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; overflow-y: auto; }
+
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 400px; padding: 20px; }
         .theme-card {
-            background: #e0f7fa; border-radius: 20px; padding: 20px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; border: 2px solid #4dd0e1; position: relative; top: 0;
-            transition: all 0.2s ease; box-shadow: 0 6px 0 #4dd0e1;
+            background: white; padding: 20px; border-radius: 20px; border: 1px solid #ddd;
+            box-shadow: 0 5px 0 #ddd; cursor: pointer; text-align: center;
         }
-        .theme-card:active { top: 4px; box-shadow: 0 2px 0 #4dd0e1; }
-        .theme-card span { font-size: 2.5rem; margin-bottom: 8px; }
-        .theme-card p { font-size: 0.85rem; font-weight: 800; color: #006064; text-transform: uppercase; }
 
-        #game-area { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
-        .grid { display: grid; gap: 4px; background: white; padding: 10px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid #ff9f43; }
+        /* GRELHA SOPA LETRAS */
+        .grid { 
+            display: grid; gap: 4px; background: white; padding: 10px; 
+            border-radius: 15px; border: 3px solid #ff9f43; 
+            user-select: none; touch-action: none;
+        }
         .cell {
-            width: 34px; height: 34px; background: #fff; border: 1px solid #eee;
+            width: 35px; height: 35px; background: #f9f9f9; border: 1px solid #eee;
             display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 1.1rem; border-radius: 6px; cursor: pointer;
+            font-weight: 800; font-size: 1.1rem; border-radius: 6px; cursor: pointer;
         }
         .cell.selected { background: #ff9f43; color: white; }
-        .cell.found { background: #2ecc71; color: white; }
+        .cell.found { background: #2ecc71 !important; color: white !important; }
 
-        footer { width: 100%; padding: 12px; background: #fff; text-align: center; border-top: 2px solid #eee; font-size: 0.85rem; flex-shrink: 0; }
+        .word-tag {
+            background: white; padding: 5px 12px; border-radius: 10px;
+            font-weight: bold; border: 1px solid #ddd; color: #7f8c8d;
+        }
+        .word-tag.done { background: #2ecc71; color: white; border-color: #27ae60; text-decoration: line-through; }
+
+        /* MODAIS */
+        .modal-custom {
+            display: none; position: fixed; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); width: 85%; max-width: 350px;
+            background: white; padding: 25px; border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 400; text-align: center;
+        }
+
+        footer { width: 100%; padding: 10px; background: white; text-align: center; color: #95a5a6; font-size: 0.75rem; border-top: 1px solid #eee; }
     </style>
 </head>
 <body>
 
-    <div class="modal-overlay" id="modal-ajuda">
-        <div class="modal-content">
-            <h2>Como Jogar</h2>
-            <p style="margin-bottom:20px; color:#2c3e50; line-height:1.6;">Encontra as palavras escondidas na grelha clicando nas letras!</p>
-            <button class="btn-fechar-modal" onclick="fecharAjuda()">Entendi!</button>
+    <div class="overlay" id="overlay" onclick="fecharModais()"></div>
+    
+    <div id="modal-info" class="modal-custom">
+        <h2 style="color: #e67e22; margin-bottom: 10px;">Como Jogar</h2>
+        <p style="color: #636e72;">Encontra as palavras escondidas na grelha! Clica nas letras para formar a palavra.</p>
+        <button class="btn-voltar-3d" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="fecharModais()">VAMOS A ISSO!</button>
+    </div>
+
+    <div id="end-modal" class="modal-custom">
+        <div style="font-size: 3.5rem;">🏆</div>
+        <h2 style="margin: 10px 0;">Muito bem!</h2>
+        <p style="margin-bottom: 20px; color: #636e72; font-weight: bold;">Acertaste em todas as palavras!</p>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-voltar-3d" style="flex: 1; justify-content: center;" onclick="startGame(activeCategory)">DE NOVO</button>
+            <button class="btn-voltar-3d" style="flex: 1; justify-content: center; background-color: #bdc3c7; border-color: #7f8c8d; box-shadow: 0 3px 0 #7f8c8d;" onclick="showMenu()">MENU</button>
         </div>
     </div>
 
-    <div class="overlay-bg" id="overlay-bg" onclick="toggleMenu()"></div>
-    
     <div class="sidebar" id="sidebar">
-        <h3>Menu de Navegação</h3>
-        <nav class="sidebar-menu">
-            <a href="/jogos/" class="sidebar-item"><span>🏠</span> Início</a>
-            <a href="/jogos/pre" class="sidebar-item"><span>🦒</span> Pré-Escolar</a>
-            <a href="/jogos/1" class="sidebar-item"><span>🐥</span> 1º Ano</a>
-            <a href="/jogos/2" class="sidebar-item"><span>🐢</span> 2º Ano</a>
-            <a href="/jogos/3" class="sidebar-item"><span>🦊</span> 3º Ano</a>
-            <a href="/jogos/4" class="sidebar-item"><span>👨‍🚀</span> 4º Ano</a>
+        <h3 style="margin-bottom: 15px; color: #e67e22;">Menu</h3>
+        <nav>
+            <a href="../../../" class="sidebar-item">🏠 Início</a>
+            <a href="../../../1" class="sidebar-item">🐥 1º Ano</a>
         </nav>
-        <button onclick="toggleMenu()" style="margin-top:auto; padding:12px; border:none; background:#f0f0f0; cursor:pointer; font-weight:bold; border-radius:12px; color:#2c3e50;">Fechar ×</button>
     </div>
 
     <header>
         <div class="header-left">
-            <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <span class="game-icon">🔍</span>
+            <span class="menu-icon" onclick="toggleMenu()">☰</span>
+            <span style="font-size:1.4rem">🔍</span>
             <h1 id="header-title">Sopa de Letras</h1>
         </div>
-        <button class="btn-voltar-3d" onclick="handleBackAction()">
-            <span>⬅</span> Voltar
-        </button>
+        <button class="btn-voltar-3d" onclick="handleBack()">⬅ VOLTAR</button>
     </header>
 
-    <div id="menu-container">
-        <div style="padding: 20px 0 10px 0;"><button class="btn-voltar-3d" style="background:#3498db; border-color:#2980b9; box-shadow: 0 3px 0 #2980b9; color:white;" onclick="abrirAjuda()">ℹ️ Como Jogar</button></div>
-        <div class="theme-grid" id="theme-grid"></div>
-    </div>
+    <main>
+        <div id="menu-container">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px;">
+                <h2 style="color: #e67e22;">Escolhe um tema</h2>
+                <button class="btn-voltar-3d" style="padding: 5px 10px; min-width: auto;" onclick="abrirAjuda()">i</button>
+            </div>
+            <div class="theme-grid" id="theme-grid"></div>
+        </div>
 
-    <main id="game-area">
-        <div style="background:#2ecc71; color:white; padding:5px 15px; border-radius:20px; font-weight:bold; margin-bottom:10px;" id="level-indicator">Nível 1</div>
-        <div id="grid" class="grid"></div>
-        <div id="word-list" style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:15px; max-width:360px;"></div>
-        <button id="btn-next" style="display:none; margin-top:20px; padding:12px 30px; background:#2ecc71; color:white; border:none; border-radius:15px; font-weight:bold; cursor:pointer; box-shadow:0 5px 0 #27ae60;" onclick="startLevel2()">Próximo Nível! 🚀</button>
+        <div id="game-area" style="display: none; flex-direction: column; align-items: center;">
+            <div id="grid" class="grid"></div>
+            <div id="word-list" style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:20px; max-width:350px;"></div>
+        </div>
     </main>
 
-    <footer>Recursos Digitais Covão - <strong>Professor Luís</strong></footer>
+    <footer>Recursos Digitais Covão • Professor Luís</footer>
 
     <script>
         const themes = {
             "Escola": { icon: "🎒", words: ["LÁPIS", "COLA", "LIVRO", "PASTA"] },
-            "Frutas": { icon: "🍎", words: ["MAÇÃ", "PERA", "UVA", "FIGO"] }
+            "Frutas": { icon: "🍎", words: ["MAÇÃ", "PERA", "UVA", "FIGO"] },
+            "Animais": { icon: "🐶", words: ["GATO", "CÃO", "PATO", "LEÃO"] }
         };
 
         let activeCategory = "";
-        let currentLevel = 1;
-        let selectedWords = [];
-        let foundCount = 0;
-        let isGameActive = false;
+        let selectedCells = [];
+        let foundWords = [];
+        let gridData = [];
+        const gridSize = 9;
 
-        function abrirAjuda() { document.getElementById('modal-ajuda').style.display = 'flex'; }
-        function fecharAjuda() { document.getElementById('modal-ajuda').style.display = 'none'; }
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay-bg').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
         }
 
-        function createMenu() {
-            const grid = document.getElementById('theme-grid');
-            grid.innerHTML = '';
-            Object.keys(themes).forEach(key => {
-                const card = document.createElement('div');
-                card.className = 'theme-card';
-                card.onclick = () => startCategory(key);
-                card.innerHTML = `<span>${themes[key].icon}</span><p>${key}</p>`;
-                grid.appendChild(card);
-            });
+        function fecharModais() {
+            document.getElementById('modal-info').style.display = 'none';
+            document.getElementById('end-modal').style.display = 'none';
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('sidebar').classList.remove('active');
         }
 
-        function handleBackAction() {
-            if (isGameActive) { showMenu(); } 
-            else { window.location.href = '/jogos/1/pt'; }
+        function abrirAjuda() {
+            document.getElementById('modal-info').style.display = 'block';
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        function handleBack() {
+            if (document.getElementById('game-area').style.display === 'flex') showMenu();
+            else window.location.href = "../";
         }
 
         function showMenu() {
-            isGameActive = false;
             document.getElementById('menu-container').style.display = 'block';
             document.getElementById('game-area').style.display = 'none';
             document.getElementById('header-title').innerText = "Sopa de Letras";
         }
 
-        function startCategory(key) {
-            activeCategory = key;
-            currentLevel = 1;
-            setupLevel();
+        function initThemes() {
+            const grid = document.getElementById('theme-grid');
+            grid.innerHTML = '';
+            Object.keys(themes).forEach(key => {
+                const card = document.createElement('div');
+                card.className = 'theme-card';
+                card.onclick = () => startGame(key);
+                card.innerHTML = `<span style="font-size:2.5rem">${themes[key].icon}</span><p style="font-weight:bold; color:black; margin-top:5px;">${key}</p>`;
+                grid.appendChild(card);
+            });
         }
 
-        function setupLevel() {
-            isGameActive = true;
-            selectedWords = themes[activeCategory].words;
-            foundCount = 0;
+        function startGame(key) {
+            activeCategory = key;
+            foundWords = [];
+            selectedCells = [];
             document.getElementById('menu-container').style.display = 'none';
             document.getElementById('game-area').style.display = 'flex';
-            document.getElementById('header-title').innerText = activeCategory;
-            generateGrid(9, selectedWords);
+            document.getElementById('header-title').innerText = key;
+            generateGrid();
+            renderWordList();
         }
 
-        function generateGrid(size, words) {
+        function generateGrid() {
             const gridEl = document.getElementById('grid');
-            gridEl.style.gridTemplateColumns = `repeat(${size}, 34px)`;
+            gridEl.style.gridTemplateColumns = `repeat(${gridSize}, 35px)`;
             gridEl.innerHTML = '';
-            for (let i=0; i<size*size; i++) {
+            gridData = Array(gridSize * gridSize).fill(null);
+
+            const words = themes[activeCategory].words;
+
+            words.forEach(word => {
+                let placed = false;
+                while (!placed) {
+                    const direction = Math.random() > 0.5 ? 1 : gridSize; // 1: Horizontal, gridSize: Vertical
+                    const start = Math.floor(Math.random() * gridData.length);
+                    
+                    if (canPlace(word, start, direction)) {
+                        for (let i = 0; i < word.length; i++) {
+                            gridData[start + i * direction] = { letter: word[i], word: word };
+                        }
+                        placed = true;
+                    }
+                }
+            });
+
+            for (let i = 0; i < gridData.length; i++) {
                 const cell = document.createElement('div');
                 cell.className = 'cell';
-                cell.innerText = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+                const char = gridData[i] ? gridData[i].letter : String.fromCharCode(65 + Math.floor(Math.random() * 26));
+                cell.innerText = char;
+                cell.dataset.index = i;
+                cell.onclick = () => selectCell(cell, i);
                 gridEl.appendChild(cell);
             }
         }
 
-        createMenu();
+        function canPlace(word, start, direction) {
+            for (let i = 0; i < word.length; i++) {
+                const idx = start + i * direction;
+                if (idx >= gridSize * gridSize || gridData[idx] !== null) return false;
+                if (direction === 1 && Math.floor(idx / gridSize) !== Math.floor(start / gridSize)) return false;
+            }
+            return true;
+        }
+
+        function renderWordList() {
+            const list = document.getElementById('word-list');
+            list.innerHTML = '';
+            themes[activeCategory].words.forEach(w => {
+                const span = document.createElement('span');
+                span.className = 'word-tag';
+                span.id = 'word-' + w;
+                span.innerText = w;
+                list.appendChild(span);
+            });
+        }
+
+        function selectCell(el, idx) {
+            if (el.classList.contains('found')) return;
+
+            if (el.classList.contains('selected')) {
+                el.classList.remove('selected');
+                selectedCells = selectedCells.filter(c => c !== idx);
+            } else {
+                el.classList.add('selected');
+                selectedCells.push(idx);
+            }
+
+            checkSelection();
+        }
+
+        function checkSelection() {
+            const currentString = selectedCells.map(idx => {
+                const cell = document.querySelector(`.cell[data-index='${idx}']`);
+                return cell.innerText;
+            }).join('');
+
+            const reversedString = currentString.split('').reverse().join('');
+
+            themes[activeCategory].words.forEach(word => {
+                if ((currentString === word || reversedString === word) && !foundWords.includes(word)) {
+                    foundWords.push(word);
+                    selectedCells.forEach(idx => {
+                        document.querySelector(`.cell[data-index='${idx}']`).classList.add('found');
+                    });
+                    document.getElementById('word-' + word).classList.add('done');
+                    selectedCells = [];
+                    
+                    if (foundWords.length === themes[activeCategory].words.length) {
+                        setTimeout(() => {
+                            document.getElementById('end-modal').style.display = 'block';
+                            document.getElementById('overlay').classList.add('active');
+                        }, 500);
+                    }
+                }
+            });
+        }
+
+        initThemes();
     </script>
 </body>
 </html>
