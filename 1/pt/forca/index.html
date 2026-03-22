@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>1º Ano - Jogo dos Balões</title>
+    <title>1º Ano - Jogo das Palavras</title>
     <style>
         /* Reset e Estilo Geral - Template_1 */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -26,12 +26,17 @@
         .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; }
         header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; }
 
+        /* BOTÃO VOLTAR - TEXTO PRETO */
         .btn-voltar-3d {
-            text-decoration: none; color: white; background-color: #ff9f43;
+            text-decoration: none; 
+            color: #000000; /* Texto em Preto */
+            background-color: #ff9f43;
             font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
             border-radius: 8px; border: 1px solid #e67e22; box-shadow: 0 3px 0 #e67e22;
             cursor: pointer; display: flex; align-items: center; gap: 8px;
+            transition: all 0.1s;
         }
+        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
 
         /* SIDEBAR COM HOVER */
         .sidebar {
@@ -46,10 +51,9 @@
             display: flex; align-items: center; gap: 15px; margin-bottom: 8px; 
             border: 1px solid #eee; transition: all 0.2s;
         }
-        /* Efeito de cor ao passar por cima */
         .sidebar-item:hover {
             background-color: #ff9f43;
-            color: white;
+            color: #000000;
             border-color: #e67e22;
         }
 
@@ -70,7 +74,6 @@
 
         .balloons-row { display: flex; gap: 8px; justify-content: center; min-height: 45px; }
         .balloon { font-size: 1.8rem; transition: transform 0.3s ease, opacity 0.3s ease; }
-        .balloon.popped { transform: scale(0); opacity: 0; }
 
         .hint-and-img { display: flex; align-items: center; gap: 20px; }
         #word-hint { font-size: 3.5rem; }
@@ -88,7 +91,7 @@
         .key.used { opacity: 0.2; box-shadow: none; transform: translateY(2px); pointer-events: none; }
 
         .btn-info {
-            background-color: #ff9f43; color: white; width: 30px; height: 30px;
+            background-color: #ff9f43; color: #000000; width: 30px; height: 30px;
             border-radius: 50%; border: none; font-weight: bold; font-size: 1rem;
             box-shadow: 0 2px 0 #e67e22; cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
@@ -120,7 +123,7 @@
         <p id="end-msg" style="margin-bottom: 20px; color: #636e72; font-weight: bold;"></p>
         <div style="display: flex; gap: 10px;">
             <button class="btn-voltar-3d" style="flex: 1; justify-content: center;" onclick="startGame(activeTheme)">DE NOVO</button>
-            <button class="btn-voltar-3d" style="flex: 1; justify-content: center; background-color: #2c3e50; border-color: #1a252f; box-shadow: 0 3px 0 #1a252f;" onclick="showMenu()">MENU</button>
+            <button class="btn-voltar-3d" style="flex: 1; justify-content: center; background-color: #bdc3c7; border-color: #7f8c8d; box-shadow: 0 3px 0 #7f8c8d;" onclick="showMenu()">MENU</button>
         </div>
     </div>
 
@@ -128,11 +131,7 @@
         <h3 style="margin-bottom: 15px; color: #e67e22;">Menu</h3>
         <nav>
             <a href="../../../" class="sidebar-item">🏠 Início</a>
-            <a href="../../../pre" class="sidebar-item">🦒 Pré-Escolar</a>
             <a href="../../../1" class="sidebar-item">🐥 1º Ano</a>
-            <a href="../../../2" class="sidebar-item">🐢 2º Ano</a>
-            <a href="../../../3" class="sidebar-item">🦊 3º Ano</a>
-            <a href="../../../4" class="sidebar-item">👨‍🚀 4º Ano</a>
         </nav>
     </div>
 
@@ -177,7 +176,7 @@
         };
 
         let activeTheme = "", secretWord = "", guessed = [], mistakes = 0, isPlaying = false;
-        let lastWord = ""; // Para evitar palavras repetidas seguidas
+        let lastWord = "";
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -215,7 +214,7 @@
                 const btn = document.createElement('div');
                 btn.style = "background:white; padding:20px; border-radius:20px; border:1px solid #ddd; box-shadow:0 5px 0 #ddd; cursor:pointer; text-align:center;";
                 btn.onclick = () => startGame(key);
-                btn.innerHTML = `<span style="font-size:2rem">${themes[key].icon}</span><p style="font-weight:bold">${key}</p>`;
+                btn.innerHTML = `<span style="font-size:2rem">${themes[key].icon}</span><p style="font-weight:bold; color: black;">${key}</p>`;
                 grid.appendChild(btn);
             });
         }
@@ -228,7 +227,6 @@
             const words = themes[themeKey].words;
             let data;
             
-            // Lógica para não repetir a mesma palavra
             do {
                 data = words[Math.floor(Math.random() * words.length)];
             } while (data.p === lastWord && words.length > 1);
@@ -282,8 +280,9 @@
                     } else {
                         const bal = document.getElementById('bal-' + mistakes);
                         if(bal) {
-                            bal.classList.add('popped');
+                            bal.style.opacity = '0';
                             bal.innerText = '💥';
+                            setTimeout(() => bal.style.display = 'none', 300);
                         }
                         mistakes++;
                         if (mistakes === 6) endGame(false);
