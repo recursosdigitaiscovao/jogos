@@ -1,1 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pré-Escolar - Jogo dos Números</title>
+    <style>
+        /* Reset e Estilo Geral */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
+        body {
+            background-color: rgba(255, 179, 198, 0.4); 
+            color: #2c3e50;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            height: 100svh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        /* HEADER PADRONIZADO */
+        header {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; padding: 5px; }
+        header h1 { font-size: 1rem; color: #2d3436; font-weight: 700; }
+
+        .btn-voltar-3d {
+            text-decoration: none;
+            color: #2d3436;
+            background-color: #ffb3c6;
+            font-weight: bold;
+            font-size: 0.75rem;
+            padding: 8px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border: 1px solid #ef87a1;
+            box-shadow: 0 3px 0 #ef87a1; 
+            transition: all 0.1s ease;
+            cursor: pointer;
+        }
+        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #ef87a1; }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed; left: -280px; top: 0; width: 260px; height: 100%;
+            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200;
+            padding: 20px; display: flex; flex-direction: column;
+        }
+        .sidebar.active { left: 0; }
+        
+        .sidebar-item {
+            text-decoration: none; color: #636e72; font-weight: 600;
+            padding: 12px; border-radius: 12px; background: #fdfdfd;
+            display: flex; align-items: center; gap: 12px; margin-bottom: 6px;
+            border: 1px solid #eee; transition: all 0.2s ease;
+        }
+
+        .sidebar-item:hover {
+            background-color: #ffb3c6;
+            color: white;
+            border-color: #ef87a1;
+            transform: translateX(5px);
+        }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); display: none; z-index: 150;
+        }
+        .overlay.active { display: block; }
+
+        /* ÁREA DO JOGO */
+        main {
+            flex: 1; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; padding: 15px;
+        }
+
+        .cartao-numero {
+            background: white;
+            width: 150px;
+            height: 180px;
+            border: 5px solid #ffdae3;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7rem;
+            font-weight: 900;
+            color: #ff6b81;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            animation: bounceIn 0.6s ease-out;
+        }
+
+        /* TECLADO NUMÉRICO */
+        .teclado-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+        }
+
+        .tecla {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 15px 5px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2d3436;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #eee;
+            transition: all 0.1s;
+            display: flex; align-items: center; justify-content: center;
+            aspect-ratio: 1/1;
+        }
+
+        .tecla:active { transform: translateY(2px); box-shadow: 0 2px 0 #eee; }
+        .tecla.correto { background-color: #7bed9f !important; border-color: #2ed573 !important; color: white; box-shadow: 0 4px 0 #2ed573 !important; }
+        .tecla.errado { background-color: #ff7675 !important; border-color: #d63031 !important; color: white; box-shadow: 0 4px 0 #d63031 !important; }
+
+        /* BARRA INFERIOR */
+        .barra-progresso-info {
+            display: flex; align-items: center; justify-content: center;
+            gap: 15px; margin-top: 25px;
+        }
+
+        .progresso { color: #7f8c8d; font-weight: 700; font-size: 1rem; }
+
+        .btn-info-mini {
+            width: 32px; height: 32px; background-color: #ffb3c6;
+            border: 1px solid #ef87a1; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; color: #2d3436; font-weight: bold; cursor: pointer;
+            box-shadow: 0 2px 0 #ef87a1;
+        }
+
+        /* MODAIS */
+        .modal-custom {
+            display: none; position: fixed; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); width: 85%; max-width: 320px;
+            background: white; padding: 25px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 400;
+            text-align: center; border: 3px solid #ffb3c6;
+        }
+        .modal-custom.active { display: block; }
+
+        #final-panel {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 179, 198, 0.98); z-index: 300;
+            flex-direction: column; align-items: center; justify-content: center;
+            color: white; text-align: center;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        footer {
+            width: 100%; padding: 10px; background-color: rgba(255, 255, 255, 0.8);
+            text-align: center; color: #2d3436; font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="fecharModais()"></div>
+    
+    <div id="modal-info" class="modal-custom">
+        <h2 style="color: #ff6b81; margin-bottom: 15px;">Como Jogar? 🔢</h2>
+        <p style="margin-bottom: 20px;">Vê o número que aparece no cartão rosa e clica no número igual no teclado em baixo! ⭐</p>
+        <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="fecharModais()">VAMOS LÁ!</button>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <h3 style="margin-bottom: 20px; border-bottom: 2px solid #ffb3c6; color: #ff6b81;">Menu Escolar</h3>
+        <nav>
+            <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+            <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
+            <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
+            <a href="/jogos/2/" class="sidebar-item">🐢 2º Ano</a>
+            <a href="/jogos/3/" class="sidebar-item">🦁 3º Ano</a>
+            <a href="/jogos/4/" class="sidebar-item">🐘 4º Ano</a>
+        </nav>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <span style="font-size: 1.3rem;">123</span>
+            <h1>Qual é o Número?</h1>
+        </div>
+        <a href="/jogos/pre/" class="btn-voltar-3d">⬅ VOLTAR</a>
+    </header>
+
+    <main id="jogo-main">
+        <div class="cartao-numero" id="numero-alvo">?</div>
+        
+        <div class="teclado-container" id="teclado"></div>
+
+        <div class="barra-progresso-info">
+            <p class="progresso">Número <span id="ronda-atual">1</span> / 10</p>
+            <div class="btn-info-mini" onclick="mostrarInfo()">i</div>
+        </div>
+    </main>
+
+    <div id="final-panel">
+        <div style="font-size: 5rem;">🏆</div>
+        <h1 style="font-size: 2.5rem; margin-bottom: 10px;">MUITO BEM!</h1>
+        <p style="font-size: 1.2rem; margin-bottom: 25px;">És um mestre dos números!</p>
+        <button class="btn-voltar-3d" style="background: white; color: #ff6b81; padding: 15px 40px; margin-bottom: 10px; justify-content: center;" onclick="reiniciarJogo()">REPETIR 🔄</button>
+        <a href="/jogos/pre/" class="btn-voltar-3d" style="padding: 15px 40px; border-color: white; justify-content: center;">SAIR ⬅️</a>
+    </div>
+
+    <footer>
+        Recursos Digitais Covão • <strong>Professor Luís</strong>
+    </footer>
+
+    <script>
+        const numeros = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+        let ronda = 1;
+        let numeroCorreto = "";
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function fecharModais() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('modal-info').classList.remove('active');
+        }
+
+        function mostrarInfo() {
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('modal-info').classList.add('active');
+        }
+
+        function criarTeclado() {
+            const container = document.getElementById('teclado');
+            container.innerHTML = '';
+            numeros.forEach(num => {
+                const btn = document.createElement('div');
+                btn.className = 'tecla';
+                btn.innerText = num;
+                btn.onclick = () => verificarNumero(num, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function novaRonda() {
+            if (ronda > 10) {
+                document.getElementById('jogo-main').style.display = 'none';
+                document.getElementById('final-panel').style.display = 'flex';
+                return;
+            }
+
+            document.getElementById('ronda-atual').innerText = ronda;
+            numeroCorreto = numeros[Math.floor(Math.random() * numeros.length)];
+            
+            const cartao = document.getElementById('numero-alvo');
+            cartao.innerText = numeroCorreto;
+            
+            document.querySelectorAll('.tecla').forEach(t => {
+                t.classList.remove('correto', 'errado');
+            });
+        }
+
+        function verificarNumero(escolha, elemento) {
+            if (document.querySelector('.correto')) return;
+
+            if (escolha === numeroCorreto) {
+                elemento.classList.add('correto');
+                setTimeout(() => {
+                    ronda++;
+                    novaRonda();
+                }, 800);
+            } else {
+                elemento.classList.add('errado');
+                setTimeout(() => elemento.classList.remove('errado'), 500);
+            }
+        }
+
+        function reiniciarJogo() {
+            ronda = 1;
+            document.getElementById('jogo-main').style.display = 'flex';
+            document.getElementById('final-panel').style.display = 'none';
+            novaRonda();
+        }
+
+        criarTeclado();
+        novaRonda();
+    </script>
+</body>
+</html>
