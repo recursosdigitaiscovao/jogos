@@ -167,4 +167,141 @@
     <script>
         const themes = {
             "Animais": {icon:"🐶", words:[{p:"GATO",i:"🐱"},{p:"PATO",i:"🦆"},{p:"VACA",i:"🐮"},{p:"SAPO",i:"🐸"},{p:"RATO",i:"🐭"}]},
-            "Cores": {icon:"🎨", words:[{p:"AZUL", c:"#0000FF"},{p:"
+            "Cores": {icon:"🎨", words:[{p:"AZUL", c:"#0000FF"},{p:"ROSA", c:"#FFC0CB"},{p:"VERDE", c:"#008000"},{p:"AMARELO", c:"#FFFF00"}]},
+            "Escola": {icon:"🎒", words:[{p:"COLA",i:"🧪"},{p:"PASTA",i:"🎒"},{p:"LIVRO",i:"📚"},{p:"MESA",i:"🪑"}]}
+        };
+
+        let activeTheme = "", secretWord = "", guessed = [], mistakes = 0, isPlaying = false;
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function fecharModais() {
+            document.getElementById('modal-info').style.display = 'none';
+            document.getElementById('end-modal').style.display = 'none';
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('sidebar').classList.remove('active');
+        }
+
+        function mostrarInfo() {
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('modal-info').style.display = 'block';
+        }
+
+        function handleBack() {
+            if (isPlaying) showMenu(); else window.location.href = "../";
+        }
+
+        function showMenu() {
+            isPlaying = false;
+            document.getElementById('menu-container').style.display = 'block';
+            document.getElementById('game-area').style.display = 'none';
+            fecharModais();
+            document.getElementById('header-title').innerText = "Jogo das Palavras";
+        }
+
+        function initThemes() {
+            const grid = document.getElementById('theme-grid');
+            grid.innerHTML = '';
+            Object.keys(themes).forEach(key => {
+                const btn = document.createElement('div');
+                btn.style = "background:white; padding:20px; border-radius:20px; border:1px solid #ddd; box-shadow:0 5px 0 #ddd; cursor:pointer; text-align:center;";
+                btn.onclick = () => startGame(key);
+                btn.innerHTML = `<span style="font-size:2rem">${themes[key].icon}</span><p style="font-weight:bold">${key}</p>`;
+                grid.appendChild(btn);
+            });
+        }
+
+        function startGame(themeKey) {
+            isPlaying = true;
+            activeTheme = themeKey;
+            fecharModais();
+            
+            const words = themes[themeKey].words;
+            const data = words[Math.floor(Math.random() * words.length)];
+            secretWord = data.p;
+            guessed = []; mistakes = 0;
+
+            document.getElementById('menu-container').style.display = 'none';
+            document.getElementById('game-area').style.display = 'flex';
+            document.getElementById('header-title').innerText = themeKey;
+            
+            const hint = document.getElementById('word-hint');
+            const blot = document.getElementById('color-blot');
+            if (themeKey === "Cores") {
+                hint.style.display = 'none'; blot.style.display = 'block';
+                blot.style.backgroundColor = data.c;
+            } else {
+                hint.style.display = 'block'; blot.style.display = 'none';
+                hint.innerText = data.i;
+            }
+
+            renderBalloons();
+            createKeyboard();
+            updateDisplay();
+        }
+
+        function renderBalloons() {
+            const container = document.getElementById('balloons-container');
+            container.innerHTML = '';
+            for(let i=0; i<6; i++) {
+                const b = document.createElement('span');
+                b.className = 'balloon';
+                b.id = 'bal-' + i;
+                b.innerText = '🎈';
+                container.appendChild(b);
+            }
+        }
+
+        function createKeyboard() {
+            const kb = document.getElementById('keyboard');
+            kb.innerHTML = '';
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(l => {
+                const b = document.createElement('button');
+                b.className = 'key'; b.innerText = l;
+                b.onclick = () => {
+                    b.classList.add('used');
+                    if (secretWord.includes(l)) {
+                        guessed.push(l);
+                        if (secretWord.split("").every(x => guessed.includes(x))) endGame(true);
+                    } else {
+                        const bal = document.getElementById('bal-' + mistakes);
+                        if(bal) {
+                            bal.classList.add('popped');
+                            bal.innerText = '💥';
+                        }
+                        mistakes++;
+                        if (mistakes === 6) endGame(false);
+                    }
+                    updateDisplay();
+                };
+                kb.appendChild(b);
+            });
+        }
+
+        function updateDisplay() {
+            document.getElementById('word-display').innerText = secretWord.split("").map(l => guessed.includes(l) ? l : "_").join(" ");
+        }
+
+        function endGame(won) {
+            const modal = document.getElementById('end-modal');
+            document.getElementById('overlay').classList.add('active');
+            modal.style.display = 'block';
+            
+            if (won) {
+                document.getElementById('end-icon').innerText = "🏆";
+                document.getElementById('end-title').innerText = "Muito bem!";
+                document.getElementById('end-msg').innerText = "Acertaste na palavra!";
+            } else {
+                document.getElementById('end-icon').innerText = "💥🎈";
+                document.getElementById('end-title').innerText = "Fica para a próxima!";
+                document.getElementById('end-msg').innerText = "A palavra era: " + secretWord;
+            }
+        }
+
+        initThemes();
+    </script>
+</body>
+</html>
