@@ -1,1 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pré-Escolar - Jogo das Sombras</title>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
+        body {
+            background-color: rgba(255, 179, 198, 0.4); 
+            color: #2c3e50;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            height: 100svh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        /* HEADER PADRONIZADO */
+        header {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; padding: 5px; }
+        header h1 { font-size: 1rem; color: #2d3436; font-weight: 700; }
+
+        .btn-voltar-3d {
+            text-decoration: none; color: #2d3436; background-color: #ffb3c6;
+            font-weight: bold; font-size: 0.75rem; padding: 8px 14px;
+            border-radius: 8px; display: flex; align-items: center; gap: 5px;
+            border: 1px solid #ef87a1; box-shadow: 0 3px 0 #ef87a1;
+            transition: all 0.1s ease; cursor: pointer;
+        }
+        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #ef87a1; }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed; left: -280px; top: 0; width: 260px; height: 100%;
+            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200;
+            padding: 20px; display: flex; flex-direction: column;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-item {
+            text-decoration: none; color: #636e72; font-weight: 600;
+            padding: 12px; border-radius: 12px; background: #fdfdfd;
+            display: flex; align-items: center; gap: 12px; margin-bottom: 6px;
+        }
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); display: none; z-index: 150;
+        }
+        .overlay.active { display: block; }
+
+        /* ÁREA DO JOGO */
+        main {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 10px;
+        }
+
+        .container-jogo {
+            width: 100%; max-width: 600px; display: flex; flex-direction: column; gap: 40px;
+        }
+
+        /* ZONA DAS SOMBRAS (CIMA) */
+        .zona-sombras {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+        }
+
+        .slot-sombra {
+            background: rgba(255, 255, 255, 0.5);
+            border: 3px dashed #ffb3c6; border-radius: 20px;
+            aspect-ratio: 1/1; display: flex; align-items: center;
+            justify-content: center; position: relative;
+        }
+
+        .sombra-img {
+            font-size: 3rem; filter: brightness(0); opacity: 0.2;
+            pointer-events: none; position: absolute;
+        }
+
+        /* ZONA DOS ANIMAIS (BAIXO) */
+        .zona-animais {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            padding-top: 20px; border-top: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .card-animal {
+            background: white; border-radius: 18px; aspect-ratio: 1/1;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; cursor: grab;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            border: 2px solid #f0f0f0;
+        }
+
+        .card-animal.correto {
+            background-color: #7bed9f !important;
+            border-color: #2ed573 !important;
+            box-shadow: none !important;
+            transform: scale(0.9);
+        }
+
+        /* PROGRESSO */
+        .barra-progresso { margin-top: 30px; color: #7f8c8d; font-weight: 700; }
+
+        /* MODAL FINAL */
+        .modal-final {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 179, 198, 0.98); z-index: 300;
+            flex-direction: column; align-items: center; justify-content: center;
+            color: white; text-align: center;
+        }
+
+        footer {
+            width: 100%; padding: 10px; background-color: rgba(255, 255, 255, 0.8);
+            text-align: center; color: #2d3436; font-size: 0.75rem;
+        }
+
+        .sortable-ghost { opacity: 0; }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="fecharMenu()"></div>
+    
+    <div class="sidebar" id="sidebar">
+        <h3 style="margin-bottom: 20px; border-bottom: 2px solid #ffb3c6;">Menu</h3>
+        <nav>
+            <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+            <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
+            <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
+        </nav>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <span style="font-size: 1.3rem;">👤</span>
+            <h1>Onde está a Sombra?</h1>
+        </div>
+        <a href="/jogos/pre/" class="btn-voltar-3d">⬅ VOLTAR</a>
+    </header>
+
+    <main id="game-main">
+        <div class="container-jogo">
+            <div class="zona-sombras" id="zona-sombras"></div>
+            
+            <div class="zona-animais" id="zona-animais"></div>
+        </div>
+        
+        <div class="barra-progresso">
+            Ronda <span id="ronda-atual">1</span> / 5
+        </div>
+    </main>
+
+    <div id="final-modal" class="modal-final">
+        <div style="font-size: 5rem;">🏆</div>
+        <h1 style="font-size: 2.5rem; margin-bottom: 20px;">FANTÁSTICO!</h1>
+        <button class="btn-voltar-3d" style="background: white; color: #ff6b81; padding: 15px 40px; justify-content: center;" onclick="reiniciarJogo()">REPETIR 🔄</button>
+    </div>
+
+    <footer>
+        Recursos Digitais Covão • <strong>Professor Luís</strong>
+    </footer>
+
+    <script>
+        const animaisPool = ['🦒', 'Lion', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', '🦊', '🐻', '🐥', '🦄', '🐝', '🐞', '🦋', '🐢', '🐨', '🐷', '🐮', '🐱', '🐶', '🦓', '🐹', '🦀', '🐳', '🦖', '🦜', '🦩', '🦭', '🐿️', '🦉', '🦔', '🦘', '🦝', '🦑', '🐊', '🐆', '🐫', '🦢', '🦃', '🐎', '🐐', '🐓'];
+        
+        // Corrigindo o Leão que estava em texto
+        const poolLimpa = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', '🦊', '🐻', '🐥', '🦄', '🐝', '🐞', '🦋', '🐢', '🐨', '🐷', '🐮', '🐱', '🐶', '🦓', '🐹', '🦀', '🐳', '🦖', '🦜', '🦩', '🦭', '🐿️', '🦉', '🦔', '🦘', '🦝', '🦑', '🐊', '🐆', '🐫', '🦢', '🦃', '🐎', '🐐', '🐓'];
+
+        let ronda = 1;
+        let acertosRonda = 0;
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        function fecharMenu() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        function iniciarJogo() {
+            if (ronda > 5) {
+                document.getElementById('game-main').style.display = 'none';
+                document.getElementById('final-modal').style.display = 'flex';
+                return;
+            }
+
+            document.getElementById('ronda-atual').innerText = ronda;
+            acertosRonda = 0;
+            const zonaSombras = document.getElementById('zona-sombras');
+            const zonaAnimais = document.getElementById('zona-animais');
+            
+            zonaSombras.innerHTML = ''; 
+            zonaAnimais.innerHTML = '';
+
+            // Selecionar 4 animais aleatórios
+            let selecionados = [...poolLimpa].sort(() => 0.5 - Math.random()).slice(0, 4);
+            
+            // Criar Sombras (Ordem Fixa)
+            selecionados.forEach(animal => {
+                const slot = document.createElement('div');
+                slot.className = 'slot-sombra';
+                slot.dataset.animal = animal;
+                slot.innerHTML = `<div class="sombra-img">${animal}</div>`;
+                zonaSombras.appendChild(slot);
+
+                new Sortable(slot, {
+                    group: 'jogo',
+                    animation: 200,
+                    onAdd: function(evt) {
+                        const item = evt.item;
+                        if (item.dataset.animal === evt.to.dataset.animal) {
+                            item.classList.add('correto');
+                            acertosRonda++;
+                            if (acertosRonda === 4) {
+                                setTimeout(() => { ronda++; iniciarJogo(); }, 800);
+                            }
+                        } else {
+                            // Devolve à zona de origem se estiver errado
+                            document.getElementById('zona-animais').appendChild(item);
+                        }
+                    }
+                });
+            });
+
+            // Criar Animais (Ordem Baralhada) para baixo
+            let baralhados = [...selecionados].sort(() => 0.5 - Math.random());
+            baralhados.forEach(animal => {
+                const card = document.createElement('div');
+                card.className = 'card-animal';
+                card.innerText = animal;
+                card.dataset.animal = animal;
+                zonaAnimais.appendChild(card);
+            });
+
+            new Sortable(zonaAnimais, {
+                group: 'jogo',
+                animation: 200,
+                sort: true
+            });
+        }
+
+        function reiniciarJogo() {
+            ronda = 1;
+            document.getElementById('game-main').style.display = 'flex';
+            document.getElementById('final-modal').style.display = 'none';
+            iniciarJogo();
+        }
+
+        iniciarJogo();
+    </script>
+</body>
+</html>
