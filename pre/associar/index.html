@@ -68,6 +68,7 @@
             text-decoration: none; color: #636e72; font-weight: 600;
             padding: 12px; border-radius: 12px; background: #fdfdfd;
             display: flex; align-items: center; gap: 12px; margin-bottom: 6px;
+            border: 1px solid #eee;
         }
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -75,13 +76,13 @@
         }
         .overlay.active { display: block; }
 
-        /* ÁREA DO JOGO (Centralizada verticalmente) */
+        /* ÁREA DO JOGO */
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Alterado de flex-start para center */
+            justify-content: center;
             padding: 10px; 
         }
 
@@ -90,7 +91,7 @@
             width: 100%;
             max-width: 650px;
             gap: 15px;
-            align-items: center; /* Centralizado para melhor aspeto */
+            align-items: center;
             justify-content: center;
         }
 
@@ -159,7 +160,7 @@
             transform: scale(0.85);
         }
 
-        /* BARRA DE PROGRESSO */
+        /* BARRA INFERIOR: RONDAS + INFO */
         .barra-progresso-info {
             display: flex;
             align-items: center;
@@ -171,11 +172,27 @@
 
         .progresso { color: #7f8c8d; font-weight: 700; font-size: 1rem; }
 
-        /* FOOTER */
-        footer {
-            width: 100%; padding: 10px; background-color: rgba(255, 255, 255, 0.8);
-            text-align: center; color: #2d3436; font-size: 0.75rem;
+        /* Botão Info Redondo Rosa 3D */
+        .btn-info-final {
+            background-color: #ffb3c6; color: #2d3436; width: 36px; height: 36px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-family: 'Segoe UI', Arial, sans-serif; font-weight: bold; font-size: 1.1rem;
+            border: 1px solid #ef87a1; box-shadow: 0 3px 0 #ef87a1;
+            cursor: pointer; transition: all 0.1s ease;
         }
+        .btn-info-final:active { transform: translateY(2px); box-shadow: 0 1px 0 #ef87a1; }
+
+        /* MODAIS PERSONALIZADOS */
+        .modal-custom {
+            display: none; position: fixed; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); width: 85%; max-width: 320px;
+            background: white; padding: 25px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 400;
+            text-align: center; border: 3px solid #ffb3c6;
+        }
+
+        .modal-custom h2 { color: #ff6b81; margin-bottom: 15px; font-size: 1.4rem; }
+        .modal-custom p { color: #636e72; margin-bottom: 20px; line-height: 1.4; font-weight: 500; }
 
         .modal-final {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -183,19 +200,32 @@
             flex-direction: column; align-items: center; justify-content: center;
             color: white; text-align: center;
         }
+
+        footer {
+            width: 100%; padding: 10px; background-color: rgba(255, 255, 255, 0.8);
+            text-align: center; color: #2d3436; font-size: 0.75rem;
+        }
     </style>
 </head>
 <body>
 
     <div class="overlay" id="overlay" onclick="fecharModais()"></div>
     
+    <div id="modal-info" class="modal-custom">
+        <h2>Como Jogar</h2>
+        <p>Arrasta os animais das colunas laterais para o quadrado tracejado ao lado do animal igual! 🐾</p>
+        <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="fecharModais()">OK!</button>
+    </div>
+
     <div class="sidebar" id="sidebar">
-        <h3 style="margin-bottom: 20px; border-bottom: 2px solid #ffb3c6;">Menu</h3>
+        <h3 style="margin-bottom: 20px; border-bottom: 2px solid #ffb3c6; color: #ff6b81;">Menu Escolar</h3>
         <nav>
             <a href="/jogos/" class="sidebar-item">🏠 Início</a>
             <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
             <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
             <a href="/jogos/2/" class="sidebar-item">🐢 2º Ano</a>
+            <a href="/jogos/3/" class="sidebar-item">🦁 3º Ano</a>
+            <a href="/jogos/4/" class="sidebar-item">🐘 4º Ano</a>
         </nav>
     </div>
 
@@ -217,6 +247,7 @@
         
         <div class="barra-progresso-info">
             <p class="progresso">Ronda <span id="ronda-atual">1</span> / 5</p>
+            <button class="btn-info-final" onclick="mostrarInfo()">i</button>
         </div>
     </main>
 
@@ -249,6 +280,12 @@
         function fecharModais() {
             document.getElementById('sidebar').classList.remove('active');
             document.getElementById('overlay').classList.remove('active');
+            document.getElementById('modal-info').style.display = 'none';
+        }
+
+        function mostrarInfo() {
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('modal-info').style.display = 'block';
         }
 
         function iniciarJogo() {
