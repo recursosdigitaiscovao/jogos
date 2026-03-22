@@ -6,7 +6,6 @@
     <title>Pré-Escolar - Jogo das Sombras</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
-        /* Reset e Estilo Geral */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
@@ -25,7 +24,7 @@
         header {
             width: 100%;
             background-color: rgba(255, 255, 255, 0.95);
-            padding: 10px 15px;
+            padding: 8px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -34,44 +33,34 @@
             z-index: 100;
         }
 
-        .header-left { display: flex; align-items: center; gap: 10px; }
-        .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; padding: 5px; }
-        header h1 { font-size: 0.9rem; color: #2d3436; font-weight: 700; }
+        .header-left { display: flex; align-items: center; gap: 8px; }
+        .menu-icon { font-size: 1.5rem; cursor: pointer; color: #2d3436; padding: 5px; }
+        header h1 { font-size: 0.85rem; color: #2d3436; font-weight: 700; }
 
-        .header-right { display: flex; align-items: center; gap: 8px; }
+        .header-right { display: flex; align-items: center; gap: 6px; }
 
-        .btn-info {
-            background: #74b9ff;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .btn-voltar-3d {
+        /* BOTÕES 3D PADRONIZADOS */
+        .btn-3d {
             text-decoration: none;
             color: #2d3436;
             background-color: #ffb3c6;
             font-weight: bold;
-            font-size: 0.7rem;
-            padding: 8px 12px;
+            font-size: 0.65rem;
+            padding: 6px 10px;
             border-radius: 8px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             border: 1px solid #ef87a1;
             box-shadow: 0 3px 0 #ef87a1;
             transition: all 0.1s ease;
+            cursor: pointer;
         }
-        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #ef87a1; }
+        .btn-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #ef87a1; }
 
         /* SIDEBAR */
         .sidebar {
-            position: fixed; left: -280px; top: 0; width: 260px; height: 100%;
+            position: fixed; left: -280px; top: 0; width: 250px; height: 100%;
             background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
             transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200;
             padding: 20px; display: flex; flex-direction: column;
@@ -79,9 +68,9 @@
         .sidebar.active { left: 0; }
         .sidebar-item {
             text-decoration: none; color: #636e72; font-weight: 600;
-            padding: 12px; border-radius: 12px; background: #fdfdfd;
-            display: flex; align-items: center; gap: 12px; margin-bottom: 6px;
-            border: 1px solid #eee;
+            padding: 10px; border-radius: 10px; background: #fdfdfd;
+            display: flex; align-items: center; gap: 10px; margin-bottom: 5px;
+            border: 1px solid #eee; font-size: 0.9rem;
         }
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -89,35 +78,34 @@
         }
         .overlay.active { display: block; }
 
-        /* ÁREA DO JOGO */
+        /* ÁREA DO JOGO REDUZIDA */
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 10px;
+            padding: 5px;
         }
 
         .container-jogo {
             width: 100%;
-            max-width: 600px;
+            max-width: 450px; /* Reduzido para ser mais compacto */
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
         }
 
-        /* ZONA DAS SOMBRAS (8 slots em 2 filas) */
-        .zona-sombras {
+        .zona-sombras, .zona-animais {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
+            gap: 6px;
         }
 
         .slot-sombra {
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.4);
             border: 2px dashed #ffb3c6;
-            border-radius: 15px;
+            border-radius: 12px;
             aspect-ratio: 1/1;
             display: flex;
             align-items: center;
@@ -126,32 +114,22 @@
         }
 
         .sombra-img {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             filter: brightness(0);
-            opacity: 0.15;
+            opacity: 0.12;
             pointer-events: none;
-            position: absolute;
-        }
-
-        /* ZONA DOS ANIMAIS (8 animais em 2 filas) */
-        .zona-animais {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            padding-top: 15px;
-            border-top: 2px solid rgba(255, 255, 255, 0.3);
         }
 
         .card-animal {
             background: white;
-            border-radius: 15px;
+            border-radius: 12px;
             aspect-ratio: 1/1;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             cursor: grab;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
             border: 1px solid #f0f0f0;
         }
 
@@ -159,12 +137,12 @@
             background-color: #7bed9f !important;
             border-color: #2ed573 !important;
             box-shadow: none !important;
-            transform: scale(0.9);
+            transform: scale(0.85);
         }
 
-        .progresso { margin-top: 15px; color: #7f8c8d; font-weight: 700; font-size: 0.9rem; }
+        .progresso { margin-top: 10px; color: #7f8c8d; font-weight: 700; font-size: 0.8rem; }
 
-        /* MODAIS */
+        /* MODAL FINAL */
         .modal-final {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(255, 179, 198, 0.98); z-index: 300;
@@ -173,10 +151,9 @@
         }
 
         footer {
-            width: 100%; padding: 8px; background-color: rgba(255, 255, 255, 0.8);
-            text-align: center; color: #2d3436; font-size: 0.7rem;
+            width: 100%; padding: 6px; background-color: rgba(255, 255, 255, 0.8);
+            text-align: center; color: #2d3436; font-size: 0.65rem;
         }
-
         .sortable-ghost { opacity: 0; }
     </style>
 </head>
@@ -185,7 +162,7 @@
     <div class="overlay" id="overlay" onclick="fecharModais()"></div>
     
     <div class="sidebar" id="sidebar">
-        <h3 style="margin-bottom: 20px; border-bottom: 2px solid #ffb3c6; color: #ff6b81;">Menu Escolar</h3>
+        <h3 style="margin-bottom: 15px; border-bottom: 2px solid #ffb3c6; color: #ff6b81;">Menu Escolar</h3>
         <nav>
             <a href="/jogos/" class="sidebar-item">🏠 Início</a>
             <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
@@ -199,12 +176,12 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <span style="font-size: 1.2rem;">👤</span>
+            <span style="font-size: 1.1rem;">👤</span>
             <h1>Sombras dos Animais</h1>
         </div>
         <div class="header-right">
-            <button class="btn-info" onclick="mostrarInfo()">?</button>
-            <a href="/jogos/pre/" class="btn-voltar-3d">⬅ VOLTAR</a>
+            <button class="btn-3d" onclick="mostrarInfo()">INFO</button>
+            <a href="/jogos/pre/" class="btn-3d">⬅ VOLTAR</a>
         </div>
     </header>
 
@@ -217,9 +194,9 @@
     </main>
 
     <div id="final-modal" class="modal-final">
-        <div style="font-size: 4rem;">🏆</div>
-        <h1 style="font-size: 2rem; margin-bottom: 20px;">EXCELENTE TRABALHO!</h1>
-        <button class="btn-voltar-3d" style="background: white; color: #ff6b81; padding: 12px 30px; justify-content: center;" onclick="reiniciarJogo()">REPETIR 🔄</button>
+        <div style="font-size: 3rem;">🏆</div>
+        <h1 style="font-size: 1.8rem; margin-bottom: 15px;">MUITO BEM!</h1>
+        <button class="btn-3d" style="background: white; color: #ff6b81; padding: 10px 25px; font-size: 1rem;" onclick="reiniciarJogo()">REPETIR 🔄</button>
     </div>
 
     <footer>
@@ -227,7 +204,6 @@
     </footer>
 
     <script>
-        const animaisPool = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', ' foxes', '🐻', '🐥', '🦄', '🐝', '🐞', '🦋', '🐢', '🐨', '🐷', '🐮', '🐱', '🐶', '🦓', '🐹', '🦀', '🐳', '🦖', '🦜', '🦩', '🦭', '🐿️', '🦉', '🦔', '🦘', '🦝', '🦑', '🐊', '🐆', '🐫', '🦢', '🦃', '🐎', '🐐', '🐓'];
         const poolLimpa = ['🦒', '🦁', '🐘', '🐵', '🐸', '🐼', '🐧', '🐙', '🐰', '🦊', '🐻', '🐥', '🦄', '🐝', '🐞', '🦋', '🐢', '🐨', '🐷', '🐮', '🐱', '🐶', '🦓', '🐹', '🦀', '🐳', '🦖', '🦜', '🦩', '🦭', '🐿️', '🦉', '🦔', '🦘', '🦝', '🦑', '🐊', '🐆', '🐫', '🦢', '🦃', '🐎', '🐐', '🐓'];
 
         let ronda = 1;
@@ -244,7 +220,7 @@
         }
 
         function mostrarInfo() {
-            alert("Objetivo: Arrastar cada animal para a sua sombra correspondente no topo!");
+            alert("Arrasta os animais de baixo para a sua sombra correta em cima!");
         }
 
         function iniciarJogo() {
@@ -262,10 +238,8 @@
             zonaSombras.innerHTML = ''; 
             zonaAnimais.innerHTML = '';
 
-            // Selecionar 8 animais aleatórios
             let selecionados = [...poolLimpa].sort(() => 0.5 - Math.random()).slice(0, 8);
             
-            // Criar Sombras
             selecionados.forEach(animal => {
                 const slot = document.createElement('div');
                 slot.className = 'slot-sombra';
@@ -282,7 +256,7 @@
                             item.classList.add('correto');
                             acertosRonda++;
                             if (acertosRonda === 8) {
-                                setTimeout(() => { ronda++; iniciarJogo(); }, 800);
+                                setTimeout(() => { ronda++; iniciarJogo(); }, 600);
                             }
                         } else {
                             document.getElementById('zona-animais').appendChild(item);
@@ -291,7 +265,6 @@
                 });
             });
 
-            // Criar Animais (Baralhados)
             let baralhados = [...selecionados].sort(() => 0.5 - Math.random());
             baralhados.forEach(animal => {
                 const card = document.createElement('div');
