@@ -9,7 +9,7 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
-            background-color: #fff4e6;
+            background-color: #fff4e6; /* Laranja Suave padrão 1º Ano */
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             height: 100vh;
             height: 100svh;
@@ -19,15 +19,15 @@
             touch-action: manipulation;
         }
 
-        /* HEADER */
+        /* HEADER PADRONIZADO */
         header {
             width: 100%;
-            background-color: white;
+            background-color: rgba(255, 255, 255, 0.95);
             padding: 12px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
             flex-shrink: 0;
             z-index: 100;
         }
@@ -35,7 +35,9 @@
         .header-left { display: flex; align-items: center; gap: 12px; }
         .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; }
         header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; }
+        .game-icon { font-size: 1.4rem; }
 
+        /* BOTÃO VOLTAR 3D */
         .btn-voltar-3d {
             text-decoration: none;
             color: #ffffff;
@@ -51,6 +53,7 @@
             box-shadow: 0 3px 0 #e67e22;
             transition: all 0.1s ease;
         }
+
         .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
 
         /* SIDEBAR */
@@ -60,13 +63,18 @@
             transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200;
             padding: 25px; display: flex; flex-direction: column;
         }
+
         .sidebar.active { left: 0; }
+        .sidebar h3 { color: #e67e22; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #ffcc80; }
+
         .sidebar-item {
             text-decoration: none; color: #636e72; font-weight: 600;
             padding: 14px; border-radius: 15px; background: #fdfdfd;
             display: flex; align-items: center; gap: 15px; margin-bottom: 8px;
-            border: 1px solid #eee;
+            border: 1px solid #eee; transition: all 0.2s ease;
         }
+
+        .sidebar-item:hover { background-color: #fff4e6; color: #e67e22; border-color: #ffcc80; }
 
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -74,18 +82,14 @@
         }
         .overlay.active { display: block; }
 
-        /* ÁREA DE JOGO */
+        /* ÁREA PRINCIPAL */
         main {
             flex: 1; display: flex; flex-direction: column;
             align-items: center; justify-content: space-evenly;
             padding: 15px;
         }
 
-        .controles-topo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .pontuacao-container { display: flex; align-items: center; gap: 15px; }
 
         #round-indicator {
             font-weight: bold; color: #e67e22;
@@ -93,53 +97,41 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
-        .btn-info {
-            background-color: #ff9f43;
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-            border: none;
-            box-shadow: 0 3px 0 #e67e22;
-            cursor: pointer;
-        }
-
         #instruction-box {
             font-size: 1.2rem; font-weight: bold; color: #2c3e50;
             background: white; padding: 15px; width: 90%; max-width: 450px;
             border-radius: 20px; text-align: center; border: 4px solid #ff9f43;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.05);
         }
 
         .shapes-container {
             display: grid; grid-template-columns: repeat(3, 1fr);
             gap: 15px; width: 100%; max-width: 380px; justify-items: center;
-            align-items: center;
+            align-items: center; /* Centraliza verticalmente as formas na linha */
         }
 
-        /* ESTILO BASE DAS FORMAS COM RELEVO */
+        /* FORMAS - ESTILO ATUALIZADO (BORDA) */
         .shape-item { 
             width: 70px; height: 70px; 
             cursor: pointer; 
-            transition: 0.2s cubic-bezier(0.6, -0.28, 0.735, 0.045);
-            /* Efeito de relevo base */
-            box-shadow: 0 6px 0 rgba(0,0,0,0.15), inset 0 3px 0 rgba(255,255,255,0.2);
+            transition: transform 0.2s, opacity 0.2s;
+            /* Borda sólida para destaque */
+            border: 3px solid #ffffff; 
+            box-shadow: 0 5px 0 rgba(0,0,0,0.05); /* Sombra plana sutil */
             position: relative;
+            margin: auto; /* Garante que não se toquem e fiquem centradas na célula */
         }
 
-        .shape-item:active {
-            transform: translateY(3px);
-            box-shadow: 0 3px 0 rgba(0,0,0,0.15), inset 0 2px 0 rgba(255,255,255,0.2);
-        }
+        .shape-item:active { transform: translateY(2px); box-shadow: 0 3px 0 rgba(0,0,0,0.05); }
 
         /* DEFINIÇÕES GEOMÉTRICAS */
         .circle { border-radius: 50%; }
         .square { }
-        .rectangle { width: 95px; height: 60px; }
+        .rectangle { 
+            width: 90px; height: 60px; 
+            /* Margens automáticas nas laterais garantem centralização e zero sobreposição */
+            margin-left: auto; margin-right: auto;
+        }
         
         .triangle {
             width: 0; height: 0;
@@ -147,7 +139,7 @@
             box-shadow: none !important; /* Reseta o relevo padrão */
             border-left: 35px solid transparent; 
             border-right: 35px solid transparent;
-            /* A cor e o relevo do triângulo são feitos com pseudo-elementos */
+            /* A cor do triângulo é feita com pseudo-elementos */
         }
 
         .pentagon {
@@ -158,18 +150,17 @@
             clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
         }
 
-        /* Pseudo-elemento para aplicar gradiente e relevo extra dentro das formas */
+        /* Pseudo-elemento para aplicar gradiente sutil dentro das formas */
         .shape-item::after {
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             border-radius: inherit;
-            /* Gradiente sutil para dar volume */
-            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.05) 100%);
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.02) 100%);
             pointer-events: none;
         }
         
-        /* Ajuste específico para o relevo do triângulo */
+        /* Ajuste específico para o triângulo */
         .triangle::after {
             content: '';
             position: absolute;
@@ -177,8 +168,8 @@
             width: 0; height: 0;
             border-left: 35px solid transparent; 
             border-right: 35px solid transparent;
-            border-bottom: 70px solid rgba(0,0,0,0.1); /* Sombra base */
-            filter: blur(2px);
+            border-bottom: 70px solid rgba(0,0,0,0.03); /* Sombra base sutil */
+            filter: blur(1px);
             z-index: -1;
         }
 
@@ -194,10 +185,18 @@
             text-align: center; border: 3px solid #ff9f43;
         }
 
+        .btn-info {
+            background-color: #ff9f43; color: white; width: 38px; height: 38px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 1.2rem; border: none;
+            box-shadow: 0 3px 0 #e67e22; cursor: pointer;
+        }
+
+        /* FOOTER */
         footer {
             width: 100%; padding: 12px; background-color: white;
             text-align: center; color: #95a5a6; font-size: 0.8rem;
-            border-top: 1px solid #eee;
+            border-top: 1px solid #eee; flex-shrink: 0;
         }
     </style>
 </head>
@@ -207,14 +206,16 @@
     
     <div id="modal-info" class="modal-custom">
         <h2 style="color: #e67e22; margin-bottom: 15px;">Como Jogar</h2>
-        <p style="color: #636e72; margin-bottom: 20px;">Lê o desafio no quadro e clica apenas nas formas que ele pede. Precisas de encontrar todas para passar de ronda!</p>
-        <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="fecharModais()">VAMOS LÁ!</button>
+        <p style="color: #636e72; margin-bottom: 20px; font-weight: 500;">
+            Lê o desafio no quadro e clica apenas nas formas que ele pede. Precisas de encontrar todas para passar de ronda!
+        </p>
+        <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="fecharModais()">ENTENDI!</button>
     </div>
 
     <div id="win-modal" class="modal-custom">
         <div style="font-size: 3.5rem;">🏆</div>
         <h2 style="color: #ff9f43; margin-bottom: 10px;">Incrível!</h2>
-        <p style="color: #636e72; margin-bottom: 25px;">Completaste os 10 desafios das formas!</p>
+        <p style="color: #636e72; margin-bottom: 25px; font-weight: 600;">Completaste todas as 10 rondas das formas!</p>
         <div style="display: flex; gap: 10px;">
             <button class="btn-voltar-3d" style="flex: 1; justify-content: center;" onclick="location.reload()">REPETIR</button>
             <a href="../" class="btn-voltar-3d" style="flex: 1; justify-content: center; background-color: #2c3e50; border-color: #1a252f; box-shadow: 0 3px 0 #1a252f;">SAIR</a>
@@ -222,7 +223,7 @@
     </div>
 
     <div class="sidebar" id="sidebar">
-        <h3 style="color:#e67e22; margin-bottom:20px;">Menu</h3>
+        <h3>Menu</h3>
         <nav>
             <a href="../../../" class="sidebar-item">🏠 Início</a>
             <a href="../../../1" class="sidebar-item">🐥 1º Ano</a>
@@ -232,14 +233,14 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <span style="font-size:1.4rem">🔵</span>
+            <span class="game-icon">🔵</span>
             <h1>Identifica as Formas</h1>
         </div>
         <a href="../" class="btn-voltar-3d">⬅ VOLTAR</a>
     </header>
 
     <main>
-        <div class="controles-topo">
+        <div class="pontuacao-container">
             <div id="round-indicator">Ronda: <span id="current-round">1</span> / 10</div>
             <button class="btn-info" onclick="mostrarInfo()">i</button>
         </div>
@@ -249,7 +250,9 @@
         <div class="shapes-container" id="shapes-grid"></div>
     </main>
 
-    <footer>Recursos Digitais Covão • Professor Luís</footer>
+    <footer>
+        Recursos Digitais Covão • Professor Luís
+    </footer>
 
     <script>
         // Paleta de cores vibrantes para as formas
@@ -312,8 +315,11 @@
             const randomTarget = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
             targetId = randomTarget.id;
             
+            // Plural simples para 1º ano
             let displayTarget = targetId.toUpperCase();
-            displayTarget += (displayTarget.endsWith('O') ? 'S' : 'ES');
+            if (displayTarget.endsWith('O')) displayTarget += 'S';
+            else displayTarget += 'ES';
+            
             document.getElementById('target-shape').innerText = displayTarget;
 
             for (let i = 0; i < 9; i++) {
@@ -328,11 +334,12 @@
                     div.style.borderBottomColor = randomColor;
                 } else {
                     div.style.backgroundColor = randomColor;
-                    // Ajusta a cor da sombra do relevo para combinar com o fundo
-                    div.style.boxShadow = `0 6px 0 rgba(0,0,0,0.15), inset 0 3px 0 rgba(255,255,255,0.2)`;
                 }
                 
-                let isMatch = (randomShape.id === targetId);
+                let isMatch = (targetId === 'retângulo') 
+                    ? (randomShape.id === 'retângulo' || randomShape.id === 'quadrado')
+                    : (randomShape.id === targetId);
+
                 if (isMatch) shapesToFind++;
 
                 div.onclick = function() {
@@ -344,13 +351,15 @@
                             setTimeout(startRound, 600);
                         }
                     } else {
-                        // Feedback de erro com drop-shadow para não quebrar o layout 3D
+                        // Feedback de erro com drop-shadow para não quebrar o layout plano
                         this.style.filter = "drop-shadow(0 0 10px #e74c3c)";
                         setTimeout(() => this.style.filter = "none", 400);
                     }
                 };
                 grid.appendChild(div);
             }
+
+            // Garantir que existe sempre pelo menos uma forma correta
             if (shapesToFind === 0) startRound();
         }
 
