@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>1º Ano - Jogo do Enforcado</title>
+    <title>1º Ano - Explorador de Palavras</title>
     <style>
         /* Reset e Estilo Geral - Template_1 */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
-            background-color: #fff4e6; /* Cor padrão 1º Ano */
+            background-color: #fff4e6;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             height: 100vh; height: 100svh;
             display: flex; flex-direction: column;
             overflow: hidden; touch-action: manipulation;
         }
 
-        /* HEADER PADRONIZADO */
+        /* HEADER */
         header {
             width: 100%; background: white; padding: 12px 20px;
             display: flex; align-items: center; justify-content: space-between;
@@ -26,30 +26,24 @@
         .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; }
         header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; }
 
-        /* BOTÃO VOLTAR 3D */
         .btn-voltar-3d {
             text-decoration: none; color: white; background-color: #ff9f43;
             font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
             border-radius: 8px; border: 1px solid #e67e22; box-shadow: 0 3px 0 #e67e22;
             cursor: pointer; display: flex; align-items: center; gap: 8px;
-            transition: all 0.1s ease;
         }
-        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
 
-        /* SIDEBAR COMPLETA */
+        /* SIDEBAR */
         .sidebar {
             position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
             background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200;
-            padding: 25px; display: flex; flex-direction: column;
+            transition: 0.3s ease; z-index: 200; padding: 25px;
         }
         .sidebar.active { left: 0; }
-        .sidebar h3 { color: #e67e22; margin-bottom: 20px; border-bottom: 2px solid #ffcc80; padding-bottom: 10px; }
         .sidebar-item {
             text-decoration: none; color: #636e72; font-weight: 600;
             padding: 14px; border-radius: 15px; background: #fdfdfd;
-            display: flex; align-items: center; gap: 15px; margin-bottom: 8px;
-            border: 1px solid #eee;
+            display: flex; align-items: center; gap: 15px; margin-bottom: 8px; border: 1px solid #eee;
         }
 
         .overlay {
@@ -58,115 +52,110 @@
         }
         .overlay.active { display: block; }
 
-        /* ÁREA DE JOGO */
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 15px; }
+        /* JOGO */
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; }
 
-        /* MENU DE TEMAS */
-        #menu-container { width: 100%; max-width: 500px; text-align: center; }
-        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
-        .theme-card {
-            background: white; border-radius: 20px; padding: 20px;
-            cursor: pointer; border: 1px solid #ddd; box-shadow: 0 5px 0 #ddd;
-            transition: 0.1s;
+        .visual-container {
+            display: flex; align-items: center; gap: 20px;
+            background: white; padding: 15px; border-radius: 25px;
+            border: 2px solid #ffcc80; width: 95%; max-width: 400px;
         }
-        .theme-card:active { transform: translateY(3px); box-shadow: 0 2px 0 #ddd; }
-        .theme-card span { font-size: 2.5rem; display: block; }
-        .theme-card p { font-weight: bold; color: #2d3436; margin-top: 5px; }
 
-        /* VISUAL DO JOGO */
-        #game-area { display: none; width: 100%; flex-direction: column; align-items: center; gap: 15px; }
-        
-        .visual-row { display: flex; align-items: center; gap: 20px; background: white; padding: 15px; border-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        /* FOGUETÃO (Substitui o Enforcado) */
+        .rocket-box { width: 100px; height: 120px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+        .rocket-part { font-size: 2rem; display: none; margin-bottom: -10px; }
+        #rocket-1 { display: none; font-size: 1.5rem; } /* Chamas */
+        #rocket-2 { display: none; } /* Base */
+        #rocket-3 { display: none; } /* Corpo */
+        #rocket-4 { display: none; } /* Janela */
+        #rocket-5 { display: none; } /* Topo */
+        #rocket-6 { display: none; } /* Astronauta */
 
-        /* FORCA SIMPLIFICADA */
-        .hangman-box { width: 100px; height: 100px; position: relative; border-right: 2px solid #eee; padding-right: 15px; }
-        .part { position: absolute; background: #2c3e50; display: none; }
-        .base { width: 40px; height: 3px; bottom: 5px; left: 10px; display: block; }
-        .pole { width: 3px; height: 80px; bottom: 5px; left: 10px; display: block; }
-        .gallows-top { width: 45px; height: 3px; top: 15px; left: 10px; display: block; }
-        .rope { width: 2px; height: 10px; top: 15px; left: 53px; display: block; }
-        .head { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #2c3e50; top: 25px; left: 44px; background: white; }
-        .body-v { width: 2px; height: 25px; top: 45px; left: 53px; }
-        .l-arm { width: 15px; height: 2px; top: 50px; left: 39px; transform: rotate(-30deg); }
-        .r-arm { width: 15px; height: 2px; top: 50px; left: 53px; transform: rotate(30deg); }
-        .l-leg { width: 15px; height: 2px; top: 70px; left: 40px; transform: rotate(-45deg); }
-        .r-leg { width: 15px; height: 2px; top: 70px; left: 53px; transform: rotate(45deg); }
+        #word-hint { font-size: 3.5rem; flex: 1; text-align: center; }
+        #color-blot { width: 60px; height: 60px; border-radius: 50%; border: 1.5px solid #7f8c8d; display: none; margin: auto; }
 
-        #word-hint { font-size: 3.5rem; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; }
-        #color-blot { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #7f8c8d; display: none; }
+        .word-display { font-size: 2rem; font-weight: 800; letter-spacing: 6px; color: #2c3e50; }
 
-        .word-display { font-size: 2.2rem; font-weight: 800; letter-spacing: 8px; color: #2c3e50; }
-        
         /* TECLADO */
-        .keyboard { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; width: 100%; max-width: 450px; }
+        .keyboard { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 100%; max-width: 450px; }
         .key { 
-            background: white; border: 1.5px solid #7f8c8d; border-radius: 10px;
-            padding: 12px 0; font-weight: bold; font-size: 1.1rem; cursor: pointer;
-            box-shadow: 0 3px 0 #7f8c8d; transition: 0.1s;
+            background: white; border: 1.5px solid #7f8c8d; border-radius: 8px;
+            padding: 12px 0; font-weight: bold; font-size: 1rem; cursor: pointer;
+            box-shadow: 0 3px 0 #7f8c8d;
         }
-        .key.used { opacity: 0.4; box-shadow: none; transform: translateY(2px); pointer-events: none; }
+        .key.used { opacity: 0.3; box-shadow: none; transform: translateY(2px); pointer-events: none; }
+
+        /* BOTÃO INFO */
+        .btn-info {
+            background-color: #ff9f43; color: white; width: 35px; height: 35px;
+            border-radius: 50%; border: none; font-weight: bold; font-size: 1.1rem;
+            box-shadow: 0 3px 0 #e67e22; cursor: pointer;
+        }
 
         /* MODAIS */
         .modal-custom {
             display: none; position: fixed; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); width: 85%; max-width: 380px;
-            background: white; padding: 30px; border-radius: 25px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2); z-index: 400; text-align: center;
+            transform: translate(-50%, -50%); width: 85%; max-width: 350px;
+            background: white; padding: 25px; border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 400; text-align: center;
         }
 
-        footer { width: 100%; padding: 12px; background: white; text-align: center; color: #95a5a6; font-size: 0.8rem; border-top: 1px solid #eee; }
+        footer { width: 100%; padding: 10px; background: white; text-align: center; color: #95a5a6; font-size: 0.75rem; border-top: 1px solid #eee; }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="overlay" id="overlay" onclick="fecharModais()"></div>
     
-    <div class="sidebar" id="sidebar">
-        <h3>Menu</h3>
-        <nav>
-            <a href="../../../" class="sidebar-item">🏠 Início</a>
-            <a href="../../../pre" class="sidebar-item">🦒 Pré-Escolar</a>
-            <a href="../../../1" class="sidebar-item">🐥 1º Ano</a>
-            <a href="../../../2" class="sidebar-item">🐢 2º Ano</a>
-            <a href="../../../3" class="sidebar-item">🦊 3º Ano</a>
-            <a href="../../../4" class="sidebar-item">👨‍🚀 4º Ano</a>
-        </nav>
+    <div id="modal-info" class="modal-custom">
+        <h2 style="color: #e67e22; margin-bottom: 10px;">Como Jogar</h2>
+        <p style="color: #636e72; font-size: 0.95rem;">Vê a imagem e tenta descobrir a palavra! Se errares muitas letras, o foguetão fica pronto para partir sem ti. Carrega nas letras para jogar!</p>
+        <button class="btn-voltar-3d" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="fecharModais()">VAMOS A ISSO!</button>
     </div>
 
     <div id="end-modal" class="modal-custom">
-        <div id="end-icon" style="font-size: 3.5rem;">🏆</div>
-        <h2 id="end-title" style="margin: 15px 0;">Boa!</h2>
-        <p id="end-msg" style="margin-bottom: 25px; color: #636e72;"></p>
-        <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="showMenu()">JOGAR NOVAMENTE</button>
+        <div id="end-icon" style="font-size: 3.5rem;">🚀</div>
+        <h2 id="end-title" style="margin: 10px 0;">Incrível!</h2>
+        <p id="end-msg" style="margin-bottom: 20px; color: #636e72;"></p>
+        <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="showMenu()">JOGAR DE NOVO</button>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <h3 style="color:#e67e22; margin-bottom:15px;">Menu</h3>
+        <nav>
+            <a href="../../../" class="sidebar-item">🏠 Início</a>
+            <a href="../../../1" class="sidebar-item">🐥 1º Ano</a>
+        </nav>
     </div>
 
     <header>
         <div class="header-left">
             <span class="menu-icon" onclick="toggleMenu()">☰</span>
-            <span style="font-size:1.4rem">📝</span>
-            <h1 id="header-title">Enforcado</h1>
+            <span style="font-size:1.4rem">🚀</span>
+            <h1 id="header-title">Explorador de Palavras</h1>
         </div>
         <button class="btn-voltar-3d" onclick="handleBack()">⬅ VOLTAR</button>
     </header>
 
     <main>
-        <div id="menu-container">
-            <h2 style="color: #e67e22; margin-bottom: 5px;">Escolhe um tema:</h2>
-            <div class="theme-grid" id="theme-grid"></div>
+        <div id="menu-container" style="text-align: center; width: 100%;">
+            <button class="btn-info" style="margin-bottom: 15px;" onclick="mostrarInfo()">i</button>
+            <h2 style="color: #e67e22; margin-bottom: 20px;">Escolhe um tema:</h2>
+            <div id="theme-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px;"></div>
         </div>
 
-        <div id="game-area">
-            <div class="visual-row">
-                <div class="hangman-box">
-                    <div class="part base"></div><div class="part pole"></div><div class="part gallows-top"></div><div class="part rope"></div>
-                    <div class="part head" id="h-head"></div><div class="part body-v" id="h-body"></div>
-                    <div class="part l-arm" id="h-larm"></div><div class="part r-arm" id="h-rarm"></div>
-                    <div class="part l-leg" id="h-lleg"></div><div class="part r-leg" id="h-rleg"></div>
+        <div id="game-area" style="display: none; width: 100%; flex-direction: column; align-items: center; gap: 15px;">
+            <div class="visual-container">
+                <div class="rocket-box">
+                    <div id="rocket-5" class="rocket-part">🚀</div>
+                    <div id="rocket-4" class="rocket-part">🛸</div>
+                    <div id="rocket-3" class="rocket-part">📦</div>
+                    <div id="rocket-2" class="rocket-part">📐</div>
+                    <div id="rocket-1" class="rocket-part">🔥</div>
                 </div>
                 <div id="word-hint">❓</div>
                 <div id="color-blot"></div>
             </div>
-
             <div class="word-display" id="word-display">_ _ _ _</div>
             <div class="keyboard" id="keyboard"></div>
         </div>
@@ -176,9 +165,9 @@
 
     <script>
         const themes = {
-            "Animais": {icon:"🐶", words:[{p:"GATO",i:"🐱"},{p:"PATO",i:"🦆"},{p:"VACA",i:"🐮"},{p:"URSO",i:"🐻"},{p:"RATO",i:"🐭"},{p:"SAPO",i:"🐸"}]},
+            "Animais": {icon:"🐶", words:[{p:"GATO",i:"🐱"},{p:"PATO",i:"🦆"},{p:"VACA",i:"🐮"},{p:"SAPO",i:"🐸"},{p:"RATO",i:"🐭"}]},
             "Cores": {icon:"🎨", words:[{p:"AZUL", c:"#0000FF"},{p:"ROSA", c:"#FFC0CB"},{p:"VERDE", c:"#008000"},{p:"AMARELO", c:"#FFFF00"}]},
-            "Escola": {icon:"🎒", words:[{p:"COLA",i:"🧪"},{p:"PASTA",i:"🎒"},{p:"LIVRO",i:"📚"},{p:"ALUNO",i:"🧑‍🎓"}]}
+            "Escola": {icon:"🎒", words:[{p:"COLA",i:"🧪"},{p:"PASTA",i:"🎒"},{p:"LIVRO",i:"📚"},{p:"LÁPIS",i:"✏️"}]}
         };
 
         let activeTheme = "", secretWord = "", guessed = [], mistakes = 0, isPlaying = false;
@@ -188,59 +177,62 @@
             document.getElementById('overlay').classList.toggle('active');
         }
 
+        function fecharModais() {
+            document.getElementById('modal-info').style.display = 'none';
+            document.getElementById('end-modal').style.display = 'none';
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('sidebar').classList.remove('active');
+        }
+
+        function mostrarInfo() {
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('modal-info').style.display = 'block';
+        }
+
         function handleBack() {
-            if (isPlaying) showMenu();
-            else window.location.href = "../";
+            if (isPlaying) showMenu(); else window.location.href = "../";
         }
 
         function showMenu() {
             isPlaying = false;
             document.getElementById('menu-container').style.display = 'block';
             document.getElementById('game-area').style.display = 'none';
-            document.getElementById('end-modal').style.display = 'none';
-            document.getElementById('overlay').classList.remove('active');
-            document.getElementById('header-title').innerText = "Enforcado";
+            fecharModais();
         }
 
         function initThemes() {
             const grid = document.getElementById('theme-grid');
             grid.innerHTML = '';
             Object.keys(themes).forEach(key => {
-                const card = document.createElement('div');
-                card.className = 'theme-card';
-                card.onclick = () => startGame(key);
-                card.innerHTML = `<span>${themes[key].icon}</span><p>${key}</p>`;
-                grid.appendChild(card);
+                const btn = document.createElement('div');
+                btn.style = "background:white; padding:20px; border-radius:20px; border:1px solid #ddd; box-shadow:0 5px 0 #ddd; cursor:pointer;";
+                btn.onclick = () => startGame(key);
+                btn.innerHTML = `<span style="font-size:2rem">${themes[key].icon}</span><p style="font-weight:bold">${key}</p>`;
+                grid.appendChild(btn);
             });
         }
 
         function startGame(themeKey) {
             isPlaying = true;
             activeTheme = themeKey;
-            const theme = themes[themeKey];
-            const data = theme.words[Math.floor(Math.random() * theme.words.length)];
-            
+            const data = themes[themeKey].words[Math.floor(Math.random() * themes[themeKey].words.length)];
             secretWord = data.p;
-            guessed = [];
-            mistakes = 0;
+            guessed = []; mistakes = 0;
 
-            // Interface
-            document.getElementById('header-title').innerText = themeKey;
             document.getElementById('menu-container').style.display = 'none';
             document.getElementById('game-area').style.display = 'flex';
             
-            // Dica Visual
             const hint = document.getElementById('word-hint');
             const blot = document.getElementById('color-blot');
             if (themeKey === "Cores") {
                 hint.style.display = 'none'; blot.style.display = 'block';
                 blot.style.backgroundColor = data.c;
             } else {
-                hint.style.display = 'flex'; blot.style.display = 'none';
+                hint.style.display = 'block'; blot.style.display = 'none';
                 hint.innerText = data.i;
             }
 
-            resetHangman();
+            resetRocket();
             createKeyboard();
             updateDisplay();
         }
@@ -249,55 +241,43 @@
             const kb = document.getElementById('keyboard');
             kb.innerHTML = '';
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(l => {
-                const btn = document.createElement('button');
-                btn.className = 'key';
-                btn.innerText = l;
-                btn.onclick = () => makeGuess(l, btn);
-                kb.appendChild(btn);
+                const b = document.createElement('button');
+                b.className = 'key'; b.innerText = l;
+                b.onclick = () => {
+                    b.classList.add('used');
+                    if (secretWord.includes(l)) {
+                        guessed.push(l);
+                        if (secretWord.split("").every(x => guessed.includes(x))) endGame(true);
+                    } else {
+                        mistakes++;
+                        if (mistakes <= 5) document.getElementById('rocket-'+mistakes).style.display = 'block';
+                        if (mistakes === 5) endGame(false);
+                    }
+                    updateDisplay();
+                };
+                kb.appendChild(b);
             });
-        }
-
-        function makeGuess(letter, btn) {
-            btn.classList.add('used');
-            if (secretWord.includes(letter)) {
-                guessed.push(letter);
-                if (secretWord.split("").every(l => guessed.includes(l))) endGame(true);
-            } else {
-                mistakes++;
-                drawHangman();
-                if (mistakes === 6) endGame(false);
-            }
-            updateDisplay();
         }
 
         function updateDisplay() {
-            document.getElementById('word-display').innerText = 
-                secretWord.split("").map(l => guessed.includes(l) ? l : "_").join(" ");
+            document.getElementById('word-display').innerText = secretWord.split("").map(l => guessed.includes(l) ? l : "_").join(" ");
         }
 
-        function drawHangman() {
-            const parts = ["h-head", "h-body", "h-larm", "h-rarm", "h-lleg", "h-rleg"];
-            if (mistakes > 0) document.getElementById(parts[mistakes-1]).style.display = 'block';
-        }
-
-        function resetHangman() {
-            ["h-head", "h-body", "h-larm", "h-rarm", "h-lleg", "h-rleg"].forEach(id => {
-                document.getElementById(id).style.display = 'none';
-            });
+        function resetRocket() {
+            for(let i=1; i<=5; i++) document.getElementById('rocket-'+i).style.display = 'none';
         }
 
         function endGame(won) {
             const modal = document.getElementById('end-modal');
             document.getElementById('overlay').classList.add('active');
             modal.style.display = 'block';
-            
             if (won) {
-                document.getElementById('end-icon').innerText = "🏆";
-                document.getElementById('end-title').innerText = "Parabéns!";
+                document.getElementById('end-icon').innerText = "🚀";
+                document.getElementById('end-title').innerText = "Boa Viagem!";
                 document.getElementById('end-msg').innerText = "Acertaste na palavra!";
             } else {
-                document.getElementById('end-icon').innerText = "❌";
-                document.getElementById('end-title').innerText = "Oh não!";
+                document.getElementById('end-icon').innerText = "🛸";
+                document.getElementById('end-title').innerText = "Fica para a próxima!";
                 document.getElementById('end-msg').innerText = "A palavra era: " + secretWord;
             }
         }
