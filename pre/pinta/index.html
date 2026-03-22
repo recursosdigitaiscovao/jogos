@@ -111,6 +111,20 @@
         .btn-visto-cinza { background: #95a5a6; box-shadow: 0 4px 0 #7a8a8b; color: white; }
         .btn-quadrado-cinza:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.2); }
 
+        /* INFO & RONDAS */
+        .container-info {
+            display: flex; align-items: center; gap: 12px; margin-top: 5px;
+        }
+
+        .btn-info-rosa {
+            width: 28px; height: 28px; background-color: #ffb3c6; color: white;
+            border-radius: 50%; border: 1px solid #ef87a1; font-weight: bold;
+            font-style: italic; font-family: 'Georgia', serif; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 0 #ef87a1; transition: 0.2s;
+        }
+        .btn-info-rosa:active { transform: translateY(2px); box-shadow: none; }
+
         /* MODAIS */
         .modal-custom {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -119,6 +133,7 @@
         }
         .modal-custom.active { display: block; }
         .modal-erro { border-color: #fab1a0; }
+        .modal-info { border-color: #a29bfe; }
 
         #final-panel {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -132,13 +147,10 @@
             font-size: 0.8rem; border-top: 1px solid #eee; flex-shrink: 0;
             color: #7f8c8d; position: relative; z-index: 10;
         }
-        footer span { color: #7f8c8d; font-weight: normal; }
 
         @media (max-width: 600px) {
             .grid { grid-template-columns: repeat(4, 40px); grid-template-rows: repeat(4, 40px); }
             .area-desenho { flex-direction: column; gap: 8px; }
-            .espacador { width: 15px; }
-            .cor-btn { width: 34px; height: 34px; }
             main { padding: 40px 5px 20px 5px; }
         }
     </style>
@@ -146,6 +158,18 @@
 <body>
 
     <div class="overlay" id="overlay" onclick="fecharModais()"></div>
+
+    <div id="modal-info" class="modal-custom modal-info">
+        <div style="font-size: 3rem;">ℹ️</div>
+        <h2 style="color: #6c5ce7; margin-top: 10px;">Como jogar?</h2>
+        <div style="text-align: left; margin: 15px 0; color: #636e72; font-size: 0.9rem; line-height: 1.5;">
+            <p>1. Observa o desenho no quadro da esquerda.</p>
+            <p>2. Escolhe uma cor na paleta em baixo.</p>
+            <p>3. Pinta os quadrados no quadro da direita até ficar igual!</p>
+            <p>4. No fim, clica no visto (✔) para verificar.</p>
+        </div>
+        <button class="btn-visto-cinza" style="width: 100%; height: 45px; border-radius: 12px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fecharModais()">ENTENDI!</button>
+    </div>
 
     <div id="modal-sucesso" class="modal-custom">
         <div style="font-size: 3.5rem;">🌟</div>
@@ -199,8 +223,9 @@
             </div>
         </div>
 
-        <div style="margin-top: 5px;">
+        <div class="container-info">
             <p style="font-weight: bold; color: #7f8c8d; font-size: 0.85rem;">Ronda <span id="ronda-atual">1</span> / 5</p>
+            <button class="btn-info-rosa" onclick="abrirInfo()">i</button>
         </div>
     </main>
 
@@ -237,6 +262,11 @@
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function abrirInfo() {
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('modal-info').classList.add('active');
         }
 
         function fecharModais() {
