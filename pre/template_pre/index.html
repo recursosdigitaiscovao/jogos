@@ -46,10 +46,6 @@
             color: #2d3436;
         }
 
-        .jogo-icon {
-            font-size: 1.4rem;
-        }
-
         header h1 {
             font-size: 1.1rem;
             color: #2d3436;
@@ -78,7 +74,7 @@
             box-shadow: 0 1px 0 #ef87a1;
         }
 
-        /* Sidebar - Menu Hambúrguer */
+        /* Sidebar */
         .sidebar {
             position: fixed;
             left: -280px;
@@ -97,7 +93,7 @@
         .sidebar.active { left: 0; }
 
         .sidebar h3 {
-            color: #2d3436;
+            color: #ff6b81;
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 2px solid #ffb3c6;
@@ -114,12 +110,7 @@
             align-items: center;
             gap: 15px;
             margin-bottom: 8px;
-            transition: 0.2s;
-        }
-
-        .sidebar-item:hover { 
-            background: #ffb3c6; 
-            color: white; 
+            border: 1px solid #eee;
         }
 
         .overlay {
@@ -131,7 +122,7 @@
         }
         .overlay.active { display: block; }
 
-        /* Área Principal */
+        /* Área Principal e Cartões */
         main {
             flex: 1;
             display: flex;
@@ -139,16 +130,87 @@
             align-items: center;
             justify-content: center; 
             padding: 20px;
-            background-color: rgba(255, 255, 255, 0.2); 
         }
 
-        .mensagem-template {
-            font-size: 1.4rem;
+        .grid-cartoes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .card-animal-template {
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 18px;
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+
+        .card-animal-template:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Barra de Informação/Progresso */
+        .barra-info-footer {
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .progresso-texto {
+            color: #7f8c8d;
             font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .btn-info-rosa {
+            background-color: #ffb3c6;
             color: #2d3436;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 1px solid #ef87a1;
+            box-shadow: 0 3px 0 #ef87a1;
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+
+        .btn-info-rosa:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #ef87a1;
+        }
+
+        /* Modal Info */
+        .modal-custom {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%; 
+            transform: translate(-50%, -50%);
+            width: 85%;
+            max-width: 320px;
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 400;
             text-align: center;
-            line-height: 1.4;
-            max-width: 80%;
+            border: 3px solid #ffb3c6;
         }
 
         footer {
@@ -158,40 +220,52 @@
             text-align: center;
             color: #2d3436;
             font-size: 0.85rem;
-            font-weight: 500;
         }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="overlay" id="overlay" onclick="fecharMenu()"></div>
     
+    <div id="modal-info" class="modal-custom">
+        <h2 style="color: #ff6b81; margin-bottom: 15px;">Ajuda</h2>
+        <p style="color: #636e72; margin-bottom: 20px; font-weight: 500;">Explicação de como o jogo funciona aqui.</p>
+        <button class="btn-voltar-3d-rosa" style="width: 100%; justify-content: center;" onclick="fecharMenu()">ENTENDI!</button>
+    </div>
+
     <div class="sidebar" id="sidebar">
-        <h3>Navegação</h3>
-        <nav class="sidebar-menu">
-            <a href="/jogos/" class="sidebar-item"><span>🏠</span> Início</a>
-            <a href="/jogos/pre/" class="sidebar-item"><span>🦒</span> Pré-Escolar</a>
-            <a href="/jogos/1/" class="sidebar-item"><span>🐥</span> 1º Ano</a>
-            <a href="/jogos/2/" class="sidebar-item"><span>🐢</span> 2º Ano</a>
-            <a href="/jogos/3/" class="sidebar-item"><span>🦊</span> 3º Ano</a>
-            <a href="/jogos/4/" class="sidebar-item"><span>👨‍🚀</span> 4º Ano</a>
+        <h3>Menu Escolar</h3>
+        <nav>
+            <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+            <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
+            <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
+            <a href="/jogos/2/" class="sidebar-item">🐢 2º Ano</a>
+            <a href="/jogos/3/" class="sidebar-item">🦊 3º Ano</a>
+            <a href="/jogos/4/" class="sidebar-item">👨‍🚀 4º Ano</a>
         </nav>
-        <button onclick="toggleMenu()" style="margin-top:auto; padding:12px; border:none; background:#f8f9fa; cursor:pointer; font-weight:bold; border-radius:12px; color:#636e72;">Fechar ×</button>
     </div>
 
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <div class="jogo-icon">🎮</div> 
-            <h1>Template para os jogos</h1>
+            <div style="font-size: 1.4rem;">🎯</div> 
+            <h1>Título do Jogo</h1>
         </div>
-        <a href="/jogos/pre/" class="btn-voltar-3d-rosa">
-            <span>⬅</span> VOLTAR
-        </a>
+        <a href="/jogos/pre/" class="btn-voltar-3d-rosa">⬅ VOLTAR</a>
     </header>
 
     <main>
-        <p class="mensagem-template">Template para os jogos da Pré</p>
+        <div class="grid-cartoes">
+            <div class="card-animal-template">🦁</div>
+            <div class="card-animal-template">🦒</div>
+            <div class="card-animal-template">🐼</div>
+            <div class="card-animal-template">🐸</div>
+        </div>
+
+        <div class="barra-info-footer">
+            <div class="progresso-texto">Ronda 1 / 5</div>
+            <button class="btn-info-rosa" onclick="mostrarInfo()">i</button>
+        </div>
     </main>
 
     <footer>
@@ -202,6 +276,17 @@
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function fecharMenu() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('modal-info').style.display = 'none';
+        }
+
+        function mostrarInfo() {
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('modal-info').style.display = 'block';
         }
     </script>
 
