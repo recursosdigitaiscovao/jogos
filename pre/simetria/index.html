@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar - Jogo do Espelho</title>
+    <title>Pré-Escolar - Pinta</title>
     <style>
         /* Reset e Estilo Geral */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -33,7 +33,7 @@
 
         .header-left { display: flex; align-items: center; gap: 10px; }
         .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; padding: 5px; }
-        header h1 { font-size: 1rem; color: #2d3436; font-weight: 700; }
+        header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; }
 
         .btn-voltar-3d {
             text-decoration: none;
@@ -46,21 +46,24 @@
             border: 1px solid #ef87a1;
             box-shadow: 0 3px 0 #ef87a1; 
             cursor: pointer;
+            display: flex; align-items: center; gap: 5px;
         }
 
-        /* SIDEBAR */
+        /* SIDEBAR COMPLETA */
         .sidebar {
             position: fixed; left: -280px; top: 0; width: 260px; height: 100%;
             background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
-            transition: 0.3s; z-index: 200;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200;
             padding: 20px; display: flex; flex-direction: column;
         }
         .sidebar.active { left: 0; }
         .sidebar-item {
             text-decoration: none; color: #636e72; font-weight: 600;
             padding: 12px; border-radius: 12px; display: flex; align-items: center; gap: 12px; margin-bottom: 6px;
-            border: 1px solid #eee;
+            border: 1px solid #eee; transition: 0.2s;
         }
+        .sidebar-item:hover { background: #ffb3c6; color: white; }
+
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); display: none; z-index: 150;
@@ -73,43 +76,69 @@
             justify-content: center; padding: 10px; gap: 15px;
         }
 
-        .jogo-container {
-            display: flex; background: white; padding: 8px; border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 4px solid #ffdae3;
+        /* Dois Quadros Separados */
+        .area-desenho {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
         }
+
+        .quadro {
+            background: white;
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            border: 4px solid #fff;
+        }
+        .quadro.alvo { border-color: #ffb3c6; }
+        .quadro.interativo { border-color: #7bed9f; }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(4, 45px);
-            grid-template-rows: repeat(4, 45px);
+            grid-template-columns: repeat(4, 42px);
+            grid-template-rows: repeat(4, 42px);
+            gap: 1px;
+            background: #eee;
         }
 
-        .divisor { width: 4px; background: #2d3436; margin: 0 2px; }
-
         .cell {
-            width: 45px; height: 45px; border: 1px solid #eee;
-            cursor: pointer; transition: 0.2s;
+            width: 42px; height: 42px; background: white;
+            cursor: pointer; transition: 0.1s;
         }
 
         /* PALETA */
         .paleta {
-            display: flex; gap: 10px; background: white; padding: 10px 20px;
+            display: flex; gap: 12px; background: white; padding: 12px 25px;
             border-radius: 50px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
         .cor-btn {
-            width: 40px; height: 40px; border-radius: 50%; border: 3px solid #f0f0f0;
+            width: 38px; height: 38px; border-radius: 50%; border: 3px solid #f0f0f0;
             cursor: pointer;
         }
-        .cor-btn.active { border-color: #2d3436; transform: scale(1.1); }
+        .cor-btn.active { border-color: #2d3436; transform: scale(1.15); }
 
         /* CONTROLOS */
-        .controlos { display: flex; gap: 10px; align-items: center; }
-        .btn-acao {
-            padding: 12px 20px; border-radius: 12px; border: none; font-weight: bold;
-            cursor: pointer; color: white;
+        .btn-verificar {
+            background: #2ecc71; color: white; border: none;
+            padding: 14px 35px; font-size: 1.1rem; font-weight: bold;
+            border-radius: 15px; box-shadow: 0 5px 0 #27ae60; cursor: pointer;
         }
-        .btn-verificar { background: #2ecc71; box-shadow: 0 4px 0 #27ae60; }
-        .btn-ajuda { background: #f1c40f; box-shadow: 0 4px 0 #f39c12; }
+        .btn-verificar:active { transform: translateY(3px); box-shadow: 0 2px 0 #27ae60; }
+
+        /* BARRA INFERIOR */
+        .barra-progresso-info {
+            display: flex; align-items: center; justify-content: center;
+            gap: 15px; margin-top: 10px;
+        }
+        .btn-info-mini {
+            width: 32px; height: 32px; background-color: #ffb3c6;
+            border: 1px solid #ef87a1; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; color: #2d3436; font-weight: bold; cursor: pointer;
+            box-shadow: 0 2px 0 #ef87a1;
+        }
 
         /* MODAIS */
         .modal-custom {
@@ -127,23 +156,16 @@
         }
 
         footer { width: 100%; padding: 8px; background: white; text-align: center; font-size: 0.7rem; }
-
-        /* Cores */
-        .c-sky { background: #c4e9f5; }
-        .c-blue { background: #0984e3; }
-        .c-red { background: #ff7675; }
-        .c-yellow { background: #fdcb6e; }
-        .c-white { background: #ffffff; }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="fecharTudo()"></div>
+    <div class="overlay" id="overlay" onclick="fecharModais()"></div>
 
     <div id="modal-info" class="modal-custom">
-        <h2 style="color: #ff6b81; margin-bottom: 10px;">Como Jogar? 🧩</h2>
-        <p>Copia as cores do lado esquerdo para o lado direito para fazeres um espelho igual! Usa o botão 💡 se precisares de ajuda.</p>
-        <button class="btn-voltar-3d" style="width: 100%; margin-top: 15px;" onclick="fecharTudo()">ENTENDI!</button>
+        <h2 style="color: #ff6b81; margin-bottom: 10px;">Como Jogar? 🎨</h2>
+        <p>Observa bem o quadro da esquerda e tenta pintar o quadro da direita exatamente igual! ⭐</p>
+        <button class="btn-voltar-3d" style="width: 100%; margin-top: 15px; justify-content: center;" onclick="fecharModais()">VAMOS LÁ!</button>
     </div>
 
     <div class="sidebar" id="sidebar">
@@ -152,53 +174,59 @@
             <a href="/jogos/" class="sidebar-item">🏠 Início</a>
             <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
             <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
+            <a href="/jogos/2/" class="sidebar-item">🐢 2º Ano</a>
+            <a href="/jogos/3/" class="sidebar-item">🦁 3º Ano</a>
+            <a href="/jogos/4/" class="sidebar-item">🐘 4º Ano</a>
         </nav>
     </div>
 
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <span style="font-size: 1.3rem;">🧩</span>
-            <h1>Pinta o Espelho</h1>
+            <span style="font-size: 1.3rem;">🎨</span>
+            <h1>Pinta</h1>
         </div>
         <a href="/jogos/pre/" class="btn-voltar-3d">⬅ VOLTAR</a>
     </header>
 
     <main id="jogo-main">
-        <div style="font-weight: bold; color: #ff6b81;">Desenho <span id="num-nivel">1</span> / 3</div>
+        <p style="font-weight: bold; color: #ff6b81; margin-bottom: 5px;">Pinta como está na imagem!</p>
         
-        <div class="jogo-container">
-            <div class="grid" id="grid-esq"></div>
-            <div class="divisor"></div>
-            <div class="grid" id="grid-dir"></div>
+        <div class="area-desenho">
+            <div class="quadro alvo">
+                <div class="grid" id="grid-modelo"></div>
+            </div>
+            <div class="quadro interativo">
+                <div class="grid" id="grid-pintura"></div>
+            </div>
         </div>
 
-        <div class="paleta" id="paleta-cores"></div>
+        <div class="paleta" id="paleta"></div>
 
-        <div class="controlos">
-            <button class="btn-acao btn-ajuda" onclick="mostrarAjuda()">💡 AJUDA</button>
-            <button class="btn-acao btn-verificar" onclick="verificar()">VERIFICAR ✅</button>
+        <button class="btn-verificar" onclick="verificar()">VERIFICAR ✅</button>
+
+        <div class="barra-progresso-info">
+            <p style="font-weight: bold; color: #7f8c8d;">Ronda <span id="ronda-atual">1</span> / 3</p>
+            <div class="btn-info-mini" onclick="mostrarInfo()">i</div>
         </div>
-
-        <div style="cursor: pointer; color: #7f8c8d; font-weight: bold;" onclick="mostrarInfo()">ℹ️ Ajuda</div>
     </main>
 
     <div id="final-panel">
         <div style="font-size: 5rem;">🏆</div>
-        <h1>PARABÉNS!</h1>
-        <p>Completaste todos os desafios!</p>
-        <button class="btn-voltar-3d" style="background: white; padding: 15px; margin-top: 20px;" onclick="location.reload()">REPETIR 🔄</button>
+        <h1>MUITO BEM!</h1>
+        <p>Pintas como um verdadeiro artista!</p>
+        <button class="btn-voltar-3d" style="background: white; padding: 15px 40px; margin-top: 20px; justify-content: center;" onclick="location.reload()">REPETIR 🔄</button>
     </div>
 
     <footer>Recursos Digitais Covão • <strong>Professor Luís</strong></footer>
 
     <script>
-        const S = '#c4e9f5', B = '#0984e3', R = '#ff7675', Y = '#fdcb6e', W = '#ffffff';
+        const B = '#0984e3', R = '#ff7675', Y = '#f1c40f', G = '#2ecc71', W = '#ffffff';
         
         const niveis = [
-            { cores: [B, R, Y], mapa: [[W,W,W,W],[W,B,B,W],[W,B,B,W],[W,W,W,W]] },
-            { cores: [B, R, S], mapa: [[R,W,W,W],[R,R,W,W],[R,R,R,W],[R,R,R,R]] },
-            { cores: [B, Y, S], mapa: [[W,B,B,W],[B,Y,Y,B],[B,Y,Y,B],[W,B,B,W]] }
+            { cores: [B, R], mapa: [[W,B,B,W],[B,R,R,B],[B,R,R,B],[W,B,B,W]] },
+            { cores: [G, Y], mapa: [[G,W,W,W],[G,G,W,W],[G,G,G,W],[G,G,G,G]] },
+            { cores: [R, Y, B], mapa: [[W,R,R,W],[Y,W,W,Y],[Y,W,W,Y],[W,B,B,W]] }
         ];
 
         let nivelAtual = 0;
@@ -209,7 +237,7 @@
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        function fecharTudo() {
+        function fecharModais() {
             document.getElementById('sidebar').classList.remove('active');
             document.getElementById('modal-info').classList.remove('active');
             document.getElementById('overlay').classList.remove('active');
@@ -220,12 +248,12 @@
             document.getElementById('modal-info').classList.add('active');
         }
 
-        function carregarNivel() {
+        function carregarRonda() {
             const dados = niveis[nivelAtual];
-            document.getElementById('num-nivel').innerText = nivelAtual + 1;
+            document.getElementById('ronda-atual').innerText = nivelAtual + 1;
             
-            // Gerar Paleta
-            const paleta = document.getElementById('paleta-cores');
+            // Paleta
+            const paleta = document.getElementById('paleta');
             paleta.innerHTML = '';
             [...dados.cores, W].forEach(cor => {
                 const b = document.createElement('div');
@@ -242,62 +270,49 @@
             corSelecionada = dados.cores[0]; 
             paleta.firstChild.classList.add('active');
 
-            // Gerar Grelhas
-            const gEsq = document.getElementById('grid-esq');
-            const gDir = document.getElementById('grid-dir');
-            gEsq.innerHTML = ''; gDir.innerHTML = '';
+            // Grelhas
+            const gMod = document.getElementById('grid-modelo');
+            const gPin = document.getElementById('grid-pintura');
+            gMod.innerHTML = ''; gPin.innerHTML = '';
 
             for(let i=0; i<4; i++) {
                 for(let j=0; j<4; j++) {
-                    const cE = document.createElement('div');
-                    cE.className = 'cell';
-                    cE.style.backgroundColor = dados.mapa[i][j];
-                    gEsq.appendChild(cE);
+                    const cM = document.createElement('div');
+                    cM.className = 'cell';
+                    cM.style.backgroundColor = dados.mapa[i][j];
+                    cM.style.cursor = 'default';
+                    gMod.appendChild(cM);
 
-                    const cD = document.createElement('div');
-                    cD.className = 'cell';
-                    cD.onclick = function() { this.style.backgroundColor = corSelecionada; };
-                    gDir.appendChild(cD);
+                    const cP = document.createElement('div');
+                    cP.className = 'cell';
+                    cP.onclick = function() { this.style.backgroundColor = corSelecionada; };
+                    gPin.appendChild(cP);
                 }
             }
         }
 
-        function mostrarAjuda() {
-            const cellsD = document.querySelectorAll('#grid-dir .cell');
-            const mapa = niveis[nivelAtual].mapa;
-            cellsD.forEach((c, idx) => {
-                const r = Math.floor(idx / 4);
-                const col = idx % 4;
-                c.style.opacity = "0.5";
-                c.style.backgroundColor = mapa[r][col];
-            });
-            setTimeout(() => {
-                cellsD.forEach(c => { c.style.opacity = "1"; c.style.backgroundColor = W; });
-            }, 1200);
-        }
-
         function verificar() {
-            const cellsD = document.querySelectorAll('#grid-dir .cell');
+            const cellsPin = document.querySelectorAll('#grid-pintura .cell');
             const mapa = niveis[nivelAtual].mapa;
-            let ganhou = true;
+            let correto = true;
 
-            cellsD.forEach((c, idx) => {
+            cellsPin.forEach((c, idx) => {
                 const r = Math.floor(idx / 4);
                 const col = idx % 4;
                 const corCelia = rgbToHex(c.style.backgroundColor) || '#ffffff';
-                if(corCelia !== mapa[r][col]) ganhou = false;
+                if(corCelia !== mapa[r][col]) correto = false;
             });
 
-            if(ganhou) {
+            if(correto) {
                 nivelAtual++;
                 if(nivelAtual < niveis.length) {
-                    alert("Boa! Vamos para o próximo! 🌟");
-                    carregarNivel();
+                    alert("Boa! Ronda concluída! 🌟");
+                    carregarRonda();
                 } else {
                     document.getElementById('final-panel').style.display = 'flex';
                 }
             } else {
-                alert("Ainda não está igual... tenta outra vez! 😊");
+                alert("Está quase! Verifica bem as cores! 😊");
             }
         }
 
@@ -307,7 +322,7 @@
             return "#" + vals.map(x => parseInt(x).toString(16).padStart(2, '0')).join("");
         }
 
-        carregarNivel();
+        carregarRonda();
     </script>
 </body>
 </html>
