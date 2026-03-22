@@ -90,21 +90,32 @@
             justify-content: center; padding: 15px;
         }
 
+        /* CARTÃO E LETRA ENGRAÇADA */
         .cartao-letra {
             background: white;
-            width: 150px;
-            height: 180px;
-            border: 5px solid #ffdae3;
-            border-radius: 20px;
+            width: 160px;
+            height: 190px;
+            border: 6px dashed #ffdae3;
+            border-radius: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 6rem;
-            font-weight: 900;
-            color: #ff6b81;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
             margin-bottom: 30px;
-            animation: bounceIn 0.6s ease-out;
+            position: relative;
+            background-image: radial-gradient(#fff5f7 2px, transparent 2px);
+            background-size: 15px 15px;
+        }
+
+        #letra-alvo {
+            font-size: 7rem;
+            font-weight: 900;
+            /* Efeito de autocolante/cartoon */
+            filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.1));
+            -webkit-text-stroke: 3px white;
+            paint-order: stroke fill;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: inline-block;
         }
 
         /* TECLADO */
@@ -120,10 +131,10 @@
         .tecla {
             background: white;
             border: 2px solid #f0f0f0;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 12px 5px;
             font-size: 1.4rem;
-            font-weight: bold;
+            font-weight: 800;
             color: #2d3436;
             cursor: pointer;
             box-shadow: 0 4px 0 #eee;
@@ -168,13 +179,6 @@
             color: white; text-align: center;
         }
 
-        @keyframes bounceIn {
-            0% { transform: scale(0.3); opacity: 0; }
-            50% { transform: scale(1.05); opacity: 1; }
-            70% { transform: scale(0.9); }
-            100% { transform: scale(1); }
-        }
-
         footer {
             width: 100%; padding: 10px; background-color: rgba(255, 255, 255, 0.8);
             text-align: center; color: #2d3436; font-size: 0.75rem;
@@ -187,7 +191,7 @@
     
     <div id="modal-info" class="modal-custom">
         <h2 style="color: #ff6b81; margin-bottom: 15px;">Como Jogar? 🎈</h2>
-        <p style="margin-bottom: 20px;">Vê a letra que aparece no cartão rosa e clica na letra igual no teclado em baixo! 🔠</p>
+        <p style="margin-bottom: 20px;">Vê a letra que aparece no cartão e clica na letra igual no teclado! 🔠</p>
         <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="fecharModais()">VAMOS LÁ!</button>
     </div>
 
@@ -206,14 +210,16 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <span style="font-size: 1.3rem;">ABC</span>
-            <h1>Qual é a Letra?</h1>
+            <span style="font-size: 1.3rem;">🎨</span>
+            <h1>Letras Coloridas</h1>
         </div>
         <a href="/jogos/pre/" class="btn-voltar-3d">⬅ VOLTAR</a>
     </header>
 
     <main id="jogo-main">
-        <div class="cartao-letra" id="letra-alvo">?</div>
+        <div class="cartao-letra">
+            <span id="letra-alvo">?</span>
+        </div>
         
         <div class="teclado-container" id="teclado"></div>
 
@@ -237,6 +243,7 @@
 
     <script>
         const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+        const coresEngracadas = ["#ff6b81", "#4834d4", "#6ab04c", "#f0932b", "#eb4d4b", "#be2edd", "#22a6b3"];
         let ronda = 1;
         let letraCorreta = "";
 
@@ -278,8 +285,21 @@
             document.getElementById('ronda-atual').innerText = ronda;
             letraCorreta = letras[Math.floor(Math.random() * letras.length)];
             
-            const cartao = document.getElementById('letra-alvo');
-            cartao.innerText = letraCorreta;
+            const spanLetra = document.getElementById('letra-alvo');
+            
+            // Estilo dinâmico "engraçado"
+            const corAleatoria = coresEngracadas[Math.floor(Math.random() * coresEngracadas.length)];
+            const anguloAleatorio = Math.floor(Math.random() * 20) - 10; // Entre -10 e 10 graus
+            
+            spanLetra.style.opacity = "0";
+            spanLetra.style.transform = "scale(0.5)";
+
+            setTimeout(() => {
+                spanLetra.innerText = letraCorreta;
+                spanLetra.style.color = corAleatoria;
+                spanLetra.style.transform = `scale(1) rotate(${anguloAleatorio}deg)`;
+                spanLetra.style.opacity = "1";
+            }, 100);
             
             document.querySelectorAll('.tecla').forEach(t => {
                 t.classList.remove('correto', 'errado');
@@ -287,10 +307,13 @@
         }
 
         function verificarLetra(escolha, elemento) {
-            if (document.querySelector('.correto')) return;
+            if (document.querySelector('.tecla.correto')) return;
 
             if (escolha === letraCorreta) {
                 elemento.classList.add('correto');
+                // Pequena animação de pulo na letra do cartão quando acerta
+                document.getElementById('letra-alvo').style.transform += " scale(1.2)";
+                
                 setTimeout(() => {
                     ronda++;
                     novaRonda();
