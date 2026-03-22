@@ -5,81 +5,223 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>3º Ano - Disciplinas</title>
     <style>
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+            margin: 0; padding: 0;
+        }
 
         body {
-            background-color: #2e86de; /* Azul do 3º Ano */
+            background-color: #74b9ff; /* Azul suave para o 3º Ano */
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+            height: 100vh;
+            height: 100svh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         /* Header */
         header {
-            width: 100%; background-color: #ffffff; padding: 15px 20px;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid #ddd; flex-shrink: 0; z-index: 100;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            flex-shrink: 0;
+            z-index: 100;
         }
 
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        .menu-icon { font-size: 1.8rem; cursor: pointer; color: #2e86de; }
-        header h1 { font-size: 1.2rem; color: #2c3e50; font-weight: 800; }
-
-        .btn-voltar-3d {
-            text-decoration: none; color: #ffffff; background-color: #2e86de;
-            font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
-            border-radius: 8px; display: flex; align-items: center; gap: 8px;
-            border: none; box-shadow: 0 4px 0 #1d5a96; transition: 0.1s;
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        /* Sidebar - Neutra */
+        .menu-icon {
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: #2d3436;
+        }
+
+        header h1 {
+            font-size: 1.1rem;
+            color: #2d3436;
+            font-weight: 700;
+        }
+
+        /* BOTÃO VOLTAR - ESTILO 3D EM AZUL #74b9ff */
+        .btn-voltar-3d-azul {
+            text-decoration: none;
+            color: #2d3436;
+            background-color: #74b9ff;
+            font-weight: bold;
+            font-size: 0.8rem;
+            padding: 8px 18px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #0984e3; /* Borda 3D mais escura */
+            box-shadow: 0 3px 0 #0984e3; /* Sombra inferior 3D */
+            transition: all 0.1s ease;
+            cursor: pointer;
+        }
+
+        .btn-voltar-3d-azul:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #0984e3;
+        }
+
+        /* Sidebar */
         .sidebar {
-            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
-            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.2);
-            transition: 0.3s ease; z-index: 200; padding: 20px; display: flex; flex-direction: column;
+            position: fixed;
+            left: -280px;
+            top: 0;
+            width: 280px;
+            height: 100%;
+            background: white;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 200;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
         }
+
         .sidebar.active { left: 0; }
-        .sidebar h3 { color: #2e86de; margin-bottom: 20px; border-bottom: 2px solid #2e86de; padding-bottom: 10px; }
-        
+
+        .sidebar h3 {
+            color: #2d3436;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #74b9ff;
+        }
+
         .sidebar-item {
-            text-decoration: none; color: #444; font-weight: bold; padding: 14px;
-            border-radius: 12px; background: #f8f9fa; display: flex; align-items: center; 
-            gap: 15px; margin-bottom: 10px;
+            text-decoration: none;
+            color: #636e72;
+            font-weight: 600;
+            padding: 14px;
+            border-radius: 15px;
+            background: #fdfdfd;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 8px;
+            transition: 0.2s;
+        }
+
+        .sidebar-item:hover { 
+            background: #74b9ff; 
+            color: white; 
         }
 
         .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); display: none; z-index: 150;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3);
+            display: none;
+            z-index: 150;
         }
         .overlay.active { display: block; }
 
-        /* Conteúdo Principal */
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 25px 20px; }
-        .emoji-principal { font-size: clamp(4rem, 15vh, 7rem); margin-bottom: 5px; }
+        /* Área Principal */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; 
+            padding: 20px;
+        }
+
+        .emoji-principal {
+            font-size: 5rem;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.08));
+        }
+
         .subtitulo {
-            font-size: 1.4rem; font-weight: 800; color: white;
-            margin-bottom: 30px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); text-align: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 35px;
+            text-align: center;
+            opacity: 0.9;
         }
 
-        .menu-disciplinas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; max-width: 900px; }
+        /* BOTÕES DISCIPLINAS */
+        .menu-disciplinas {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 850px;
+        }
+
         .btn-disciplina {
-            background-color: white; text-decoration: none; padding: 15px; border-radius: 25px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 10px; font-weight: bold; border: 4px solid white; box-shadow: 0 6px 0 #1d5a96;
-            height: clamp(140px, 25vh, 220px); transition: 0.2s;
+            background: #ffffff;
+            text-decoration: none;
+            padding: 25px;
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            height: clamp(160px, 28vh, 220px);
         }
-        .btn-disciplina span { font-size: clamp(2.5rem, 8vh, 4rem); }
-        .portugues { color: #2980b9; } 
-        .matematica { color: #c0392b; }
-        .estudo-meio { color: #27ae60; }
 
+        .btn-disciplina span { 
+            font-size: 3.5rem; 
+            transition: transform 0.3s ease;
+        }
+
+        .portugues { color: #4b7bec; box-shadow: 0 6px 0 rgba(75, 123, 236, 0.4); }
+        .matematica { color: #eb3b5a; box-shadow: 0 6px 0 rgba(235, 59, 90, 0.4); }
+        .estudo-meio { color: #20bf6b; box-shadow: 0 6px 0 rgba(32, 191, 107, 0.4); }
+
+        .btn-disciplina:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-disciplina:hover span {
+            transform: scale(1.1);
+        }
+
+        .btn-disciplina:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.1);
+        }
+
+        /* Footer */
         footer {
-            width: 100%; padding: 12px; background-color: #ffffff; text-align: center;
-            color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.9rem; flex-shrink: 0;
+            width: 100%;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            color: #2d3436;
+            font-size: 0.85rem;
+            font-weight: 500;
         }
 
         @media (max-width: 600px) {
-            .menu-disciplinas { grid-template-columns: 1fr; }
-            .btn-disciplina { height: 85px; flex-direction: row; padding: 0 25px; justify-content: flex-start; }
+            .menu-disciplinas { grid-template-columns: 1fr; gap: 15px; }
+            .btn-disciplina { 
+                height: 85px; 
+                flex-direction: row; 
+                justify-content: flex-start;
+                padding-left: 25px;
+                border-radius: 22px;
+            }
+            .btn-disciplina span { font-size: 2.2rem; min-width: 45px; }
         }
     </style>
 </head>
@@ -87,38 +229,50 @@
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     <div class="sidebar" id="sidebar">
-        <h3>Menu de Navegação</h3>
-        <nav>
-            <a href="/jogos/" class="sidebar-item"><span>🏠</span> Início</a>
-            <a href="/jogos/pre/" class="sidebar-item"><span>🦒</span> Pré-Escolar</a>
-            <a href="/jogos/1/" class="sidebar-item"><span>🐥</span> 1º Ano</a>
-            <a href="/jogos/2/" class="sidebar-item"><span>🐢</span> 2º Ano</a>
-            <a href="/jogos/3/" class="sidebar-item"><span>🦊</span> 3º Ano</a>
-            <a href="/jogos/4/" class="sidebar-item"><span>👨‍🚀</span> 4º Ano</a>
+        <h3>Navegação</h3>
+        <nav class="sidebar-menu">
+            <a href="../" class="sidebar-item"><span>🏠</span> Início</a>
+            <a href="../pre" class="sidebar-item"><span>🦒</span> Pré-Escolar</a>
+            <a href="../1" class="sidebar-item"><span>🐥</span> 1º Ano</a>
+            <a href="../2" class="sidebar-item"><span>🐢</span> 2º Ano</a>
+            <a href="../3" class="sidebar-item"><span>🦊</span> 3º Ano</a>
+            <a href="../4" class="sidebar-item"><span>👨‍🚀</span> 4º Ano</a>
         </nav>
-        <button onclick="toggleMenu()" style="margin-top:auto; padding:12px; border:none; background:#f0f0f0; cursor:pointer; font-weight:bold; border-radius:10px; color:#2e86de;">Fechar ×</button>
+        <button onclick="toggleMenu()" style="margin-top:auto; padding:12px; border:none; background:#f8f9fa; cursor:pointer; font-weight:bold; border-radius:12px; color:#636e72;">Fechar ×</button>
     </div>
 
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <h1>Espaço do 3º Ano</h1>
+            <h1>Menu do 3º Ano</h1>
         </div>
-        <a href="/jogos/" class="btn-voltar-3d"><span>⬅</span> VOLTAR</a>
+        <a href="../" class="btn-voltar-3d-azul">
+            <span>⬅</span> VOLTAR
+        </a>
     </header>
 
     <main>
         <div class="emoji-principal">🦊</div>
-        <p class="subtitulo">Novos conhecimentos à tua espera!<br>O que vamos treinar hoje?</p>
+        <p class="subtitulo">Qual a aventura que vamos escolher?</p>
 
         <nav class="menu-disciplinas">
-            <a href="/jogos/3/pt/" class="btn-disciplina portugues"><span>📚</span> Português</a>
-            <a href="/jogos/3/mat/" class="btn-disciplina matematica"><span>🧮</span> Matemática</a>
-            <a href="/jogos/3/em/" class="btn-disciplina estudo-meio"><span>🌍</span> Estudo do Meio</a>
+            <a href="pt/" class="btn-disciplina portugues">
+                <span>📚</span> Português
+            </a>
+
+            <a href="mat/" class="btn-disciplina matematica">
+                <span>🧮</span> Matemática
+            </a>
+
+            <a href="em/" class="btn-disciplina estudo-meio">
+                <span>🌍</span> Estudo do Meio
+            </a>
         </nav>
     </main>
 
-    <footer>Recursos Digitais Covão - <strong>Professor Luís</strong></footer>
+    <footer>
+        Recursos Digitais Covão • <strong>Professor Luís</strong>
+    </footer>
 
     <script>
         function toggleMenu() {
@@ -126,5 +280,6 @@
             document.getElementById('overlay').classList.toggle('active');
         }
     </script>
+
 </body>
 </html>
