@@ -37,11 +37,11 @@
         header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; }
         .icon-header { font-size: 1.4rem; filter: brightness(0); opacity: 0.8; }
 
-        /* Botão Voltar 3D Laranja */
+        /* Botão Voltar 3D Personalizado */
         .btn-voltar-3d {
             text-decoration: none;
             color: #ffffff;
-            background-color: #e67e22;
+            background-color: #ffbe76;
             font-weight: bold;
             font-size: 0.8rem;
             padding: 8px 18px;
@@ -49,12 +49,12 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            border: 1px solid #d35400;
-            box-shadow: 0 3px 0 #d35400;
+            border: 1px solid #e6a24e;
+            box-shadow: 0 3px 0 #e6a24e;
             transition: all 0.1s ease;
             cursor: pointer;
         }
-        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #d35400; }
+        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e6a24e; }
 
         /* SIDEBAR */
         .sidebar {
@@ -80,10 +80,16 @@
         }
         .overlay.active { display: block; }
 
-        /* ÁREA PRINCIPAL DO JOGO */
+        /* ÁREA PRINCIPAL */
         main {
             flex: 1; display: flex; flex-direction: column;
             align-items: center; justify-content: space-evenly; padding: 20px;
+        }
+
+        .pontuacao-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         #score {
@@ -94,7 +100,7 @@
 
         #question-box {
             font-size: clamp(2.5rem, 15vw, 4rem); font-weight: bold;
-            color: #2c3e50; border: 6px solid #e67e22; padding: 25px;
+            color: #2c3e50; border: 6px solid #ffbe76; padding: 25px;
             width: 95%; max-width: 450px; border-radius: 30px;
             background: white; text-align: center;
             box-shadow: 0 15px 35px rgba(230,126,34,0.15);
@@ -106,26 +112,35 @@
         }
 
         .option-btn {
-            background-color: #e67e22; color: white; border: none;
+            background-color: #ffbe76; color: white; border: none;
             border-radius: 20px; padding: 18px; font-size: 2rem;
-            font-weight: bold; box-shadow: 0 6px 0 #d35400;
+            font-weight: bold; box-shadow: 0 6px 0 #e6a24e;
             cursor: pointer; transition: 0.1s;
         }
-        .option-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #d35400; }
+        .option-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #e6a24e; }
 
         /* MODAIS */
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 244, 230, 0.98); z-index: 300;
-            flex-direction: column; align-items: center; justify-content: center;
-            padding: 20px; text-align: center;
+        .modal-custom {
+            display: none; position: fixed; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); width: 85%; max-width: 320px;
+            background: white; padding: 25px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 400;
+            text-align: center; border: 3px solid #ffbe76;
         }
 
         .btn-info {
-            background-color: #e67e22; color: white; width: 38px; height: 38px;
+            background-color: #ffbe76; color: white; width: 38px; height: 38px;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 1.2rem; border: 1px solid #d35400;
-            box-shadow: 0 3px 0 #d35400; cursor: pointer;
+            font-weight: bold; font-size: 1.2rem; border: 1px solid #e6a24e;
+            box-shadow: 0 3px 0 #e6a24e; cursor: pointer; transition: all 0.1s ease;
+        }
+        .btn-info:active { transform: translateY(2px); box-shadow: 0 1px 0 #e6a24e; }
+
+        /* FOOTER MINIMALISTA */
+        footer {
+            width: 100%; padding: 12px; background-color: white;
+            text-align: center; color: #95a5a6; font-size: 0.8rem;
+            border-top: 1px solid #eee; flex-shrink: 0;
         }
 
         /* ANIMAÇÕES */
@@ -133,18 +148,31 @@
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
         .correct-anim { border-color: #2ecc71 !important; }
         .fill-number { color: #2ecc71; text-decoration: underline; }
-
-        footer {
-            width: 100%; padding: 12px; background-color: white;
-            text-align: center; color: #95a5a6; font-size: 0.8rem;
-            border-top: 1px solid #eee; flex-shrink: 0;
-        }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="overlay" id="overlay" onclick="fecharMenu()"></div>
     
+    <div id="modal-info" class="modal-custom">
+        <h2 style="color: #e67e22; margin-bottom: 15px;">Como Jogar</h2>
+        <p style="color: #636e72; margin-bottom: 20px; font-weight: 500;">
+            Resolve a soma! <br><br>
+            <strong>Nível 1:</strong> Descobre o resultado.<br>
+            <strong>Nível 2:</strong> Descobre o número que falta.
+        </p>
+        <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="fecharMenu()">ENTENDI!</button>
+    </div>
+
+    <div id="final-modal" class="modal-custom" style="display: none;">
+        <h2 style="color: #2ecc71; margin-bottom: 15px;">🏆 CONCLUÍDO!</h2>
+        <div style="background:#f9f9f9; padding:15px; border-radius:15px; margin-bottom: 20px;">
+            <p>Nível 1: <span id="s1"></span>✅ | <span id="e1"></span>❌</p>
+            <p>Nível 2: <span id="s2"></span>✅ | <span id="e2"></span>❌</p>
+        </div>
+        <button class="btn-voltar-3d" style="width: 100%; justify-content: center; background-color: #2c3e50; border-color: #1a252f; box-shadow: 0 3px 0 #1a252f;" onclick="location.reload()">REPETIR 🔄</button>
+    </div>
+
     <div class="sidebar" id="sidebar">
         <h3>Menu Escolar</h3>
         <nav>
@@ -157,38 +185,23 @@
         </nav>
     </div>
 
-    <div id="next-level-modal" class="modal">
-        <h1 style="font-size: 3rem; color: #e67e22;">🌟 NÍVEL 2!</h1>
-        <p style="font-size: 1.5rem; margin-bottom: 30px; color: #2c3e50;">Chegaste aos 10 pontos!</p>
-        <button class="option-btn" style="min-width: 250px;" onclick="startLevel2()">AVANÇAR 🚀</button>
-    </div>
-
-    <div id="final-modal" class="modal">
-        <h2 style="font-size: 2.5rem; color: #2ecc71;">🏆 CONCLUÍDO!</h2>
-        <div style="background:white; color:#333; padding:20px; border-radius:20px; margin: 20px 0; width:100%; max-width: 350px; border: 2px solid #eee;">
-            <p>Nível 1: <span id="s1"></span>✅ | <span id="e1"></span>❌</p>
-            <p>Nível 2: <span id="s2"></span>✅ | <span id="e2"></span>❌</p>
-        </div>
-        <button class="option-btn" style="background:#2c3e50; box-shadow: 0 6px 0 #1a252f; margin-bottom:20px; min-width: 250px;" onclick="location.reload()">REPETIR 🔄</button>
-    </div>
-
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
             <div class="icon-header">➕</div> 
-            <h1>Soma10</h1>
+            <h1>Soma10 - 1º Ano</h1>
         </div>
         <a href="/jogos/1/" class="btn-voltar-3d">⬅ VOLTAR</a>
     </header>
 
     <main>
-        <div id="score">Pontos: 0</div>
+        <div class="pontuacao-container">
+            <div id="score">Pontos: 0</div>
+            <button class="btn-info" onclick="mostrarInfo()">i</button>
+        </div>
+
         <div id="question-box"></div>
         <div class="options-container" id="options"></div>
-        
-        <div style="margin-top: 20px;">
-            <button class="btn-info" onclick="alert('Resolve a soma! No Nível 1 falta o resultado, no Nível 2 falta uma parcela.')">i</button>
-        </div>
     </main>
 
     <footer>
@@ -207,10 +220,21 @@
             document.getElementById('overlay').classList.toggle('active');
         }
 
+        function fecharMenu() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('modal-info').style.display = 'none';
+        }
+
+        function mostrarInfo() {
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('modal-info').style.display = 'block';
+        }
+
         function nextQuestion() {
             if (score >= 10 && currentLevel === 1) {
-                document.getElementById('next-level-modal').style.display = 'flex';
-                return;
+                currentLevel = 2;
+                alert("🌟 BOA! Vamos para o Nível 2!");
             }
             if (score >= 20) {
                 showFinalReport();
@@ -223,23 +247,23 @@
             optionsDiv.innerHTML = ''; 
             qBox.classList.remove('correct-anim', 'wrong-anim');
 
-            let n1, n2, res;
+            let n1, res;
 
             if (currentLevel === 1) {
-                // Soma até 10
-                correctAnswer = Math.floor(Math.random() * 10) + 1; // Resultado (max 10)
-                n1 = Math.floor(Math.random() * correctAnswer); // Parcela 1
-                n2 = correctAnswer - n1; // Parcela 2
+                // Somas até 10
+                let total = Math.floor(Math.random() * 11); // 0 a 10
+                n1 = Math.floor(Math.random() * (total + 1));
+                let n2 = total - n1;
+                correctAnswer = total;
                 qBox.innerHTML = `${n1} + ${n2} = <span id="gap">?</span>`;
             } else {
-                // Parcela em falta (Soma até 10)
-                res = Math.floor(Math.random() * 9) + 2; // Resultado (min 2, max 10)
-                n1 = Math.floor(Math.random() * res); // Parcela fixa
-                correctAnswer = res - n1; // Parcela em falta
+                // Parcela em falta até 10
+                res = Math.floor(Math.random() * 11);
+                n1 = Math.floor(Math.random() * (res + 1));
+                correctAnswer = res - n1;
                 qBox.innerHTML = `${n1} + <span id="gap">__</span> = ${res}`;
             }
 
-            // Gerar opções próximas do resultado
             let choices = [correctAnswer];
             while(choices.length < 4) {
                 let r = Math.floor(Math.random() * 11);
@@ -279,18 +303,13 @@
             }
         }
 
-        function startLevel2() {
-            currentLevel = 2;
-            document.getElementById('next-level-modal').style.display = 'none';
-            nextQuestion();
-        }
-
         function showFinalReport() {
+            document.getElementById('overlay').classList.add('active');
             document.getElementById('s1').innerText = stats.l1_hits;
             document.getElementById('e1').innerText = stats.l1_errors;
             document.getElementById('s2').innerText = stats.l2_hits;
             document.getElementById('e2').innerText = stats.l2_errors;
-            document.getElementById('final-modal').style.display = 'flex';
+            document.getElementById('final-modal').style.display = 'block';
         }
 
         nextQuestion();
