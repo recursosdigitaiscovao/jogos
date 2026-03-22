@@ -106,71 +106,55 @@
 
         .shapes-container {
             display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 15px; width: 100%; max-width: 380px; justify-items: center;
+            gap: 20px; width: 100%; max-width: 380px; justify-items: center;
             align-items: center; /* Centraliza verticalmente as formas na linha */
         }
 
-        /* FORMAS - ESTILO ATUALIZADO (BORDA) */
+        /* FORMAS - ESTILO TOTALMENTE PLANO COM LIMITE CINZENTO */
         .shape-item { 
             width: 70px; height: 70px; 
             cursor: pointer; 
             transition: transform 0.2s, opacity 0.2s;
-            /* Borda sólida para destaque */
-            border: 3px solid #ffffff; 
-            box-shadow: 0 5px 0 rgba(0,0,0,0.05); /* Sombra plana sutil */
             position: relative;
-            margin: auto; /* Garante que não se toquem e fiquem centradas na célula */
+            margin: auto;
+            /* Limite cinzento pequeno padrão para formas básicas (círculo, quadrado, retângulo) */
+            border: 1.5px solid #7f8c8d; 
+            box-shadow: none !important; /* Sem relevo */
+            background-color: white; /* Cor de fallback */
         }
 
-        .shape-item:active { transform: translateY(2px); box-shadow: 0 3px 0 rgba(0,0,0,0.05); }
+        .shape-item:active { transform: translateY(2px); }
 
         /* DEFINIÇÕES GEOMÉTRICAS */
         .circle { border-radius: 50%; }
         .square { }
         .rectangle { 
             width: 90px; height: 60px; 
-            /* Margens automáticas nas laterais garantem centralização e zero sobreposição */
             margin-left: auto; margin-right: auto;
         }
         
         .triangle {
             width: 0; height: 0;
-            background: none !important; /* Reseta o fundo padrão */
-            box-shadow: none !important; /* Reseta o relevo padrão */
+            border: none !important; /* Sem borda padrão */
+            background: none !important; /* Sem fundo padrão */
             border-left: 35px solid transparent; 
             border-right: 35px solid transparent;
-            /* A cor do triângulo é feita com pseudo-elementos */
+            /* A cor e o limite cinzento do triângulo são feitos com um filtro */
+            filter: drop-shadow(0 0 1px #7f8c8d); /* Cria o contorno cinzento */
         }
 
         .pentagon {
             clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+            border: none !important; /* clip-path não aceita bordas CSS padrão */
+            /* O limite cinzento do pentágono é feito com um filtro */
+            filter: drop-shadow(0 0 1.5px #7f8c8d);
         }
         
         .hexagon {
             clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-        }
-
-        /* Pseudo-elemento para aplicar gradiente sutil dentro das formas */
-        .shape-item::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: inherit;
-            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.02) 100%);
-            pointer-events: none;
-        }
-        
-        /* Ajuste específico para o triângulo */
-        .triangle::after {
-            content: '';
-            position: absolute;
-            bottom: -70px; left: -35px;
-            width: 0; height: 0;
-            border-left: 35px solid transparent; 
-            border-right: 35px solid transparent;
-            border-bottom: 70px solid rgba(0,0,0,0.03); /* Sombra base sutil */
-            filter: blur(1px);
-            z-index: -1;
+            border: none !important;
+            /* O limite cinzento do hexágono é feito com um filtro */
+            filter: drop-shadow(0 0 1.5px #7f8c8d);
         }
 
         /* ESTADOS */
@@ -207,7 +191,7 @@
     <div id="modal-info" class="modal-custom">
         <h2 style="color: #e67e22; margin-bottom: 15px;">Como Jogar</h2>
         <p style="color: #636e72; margin-bottom: 20px; font-weight: 500;">
-            Lê o desafio no quadro e clica apenas nas formas que ele pede. Precisas de encontrar todas para passar de ronda!
+            Lê o desafio no quadro branco e clica apenas nas formas que pertencem ao grupo solicitado. Encontra todas para passar de ronda!
         </p>
         <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="fecharModais()">ENTENDI!</button>
     </div>
@@ -330,7 +314,7 @@
                 // Aplica cor aleatória
                 const randomColor = getRandomColor();
                 if (randomShape.id === 'triângulo') {
-                    // Triângulos usam border-bottom para a cor
+                    // Triângulos usam border-bottom para a cor (o contorno cinzento é drop-shadow)
                     div.style.borderBottomColor = randomColor;
                 } else {
                     div.style.backgroundColor = randomColor;
@@ -351,9 +335,16 @@
                             setTimeout(startRound, 600);
                         }
                     } else {
-                        // Feedback de erro com drop-shadow para não quebrar o layout plano
+                        // Feedback de erro com drop-shadow vermelho plano
                         this.style.filter = "drop-shadow(0 0 10px #e74c3c)";
-                        setTimeout(() => this.style.filter = "none", 400);
+                        setTimeout(() => {
+                            // Volta a aplicar o contorno cinzento se for uma forma complexa
+                            if (randomShape.id === 'triângulo' || randomShape.id === 'pentágono' || randomShape.id === 'hexágono') {
+                                this.style.filter = "drop-shadow(0 0 1.5px #7f8c8d)";
+                            } else {
+                                this.style.filter = "none";
+                            }
+                        }, 400);
                     }
                 };
                 grid.appendChild(div);
