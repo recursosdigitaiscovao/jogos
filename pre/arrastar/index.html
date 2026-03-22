@@ -98,7 +98,8 @@
             display: flex;
             align-items: center; 
             justify-content: center; 
-            position: relative;
+            position: relative; /* Importante para a sombra absoluta */
+            overflow: hidden;
         }
 
         .sombra-img {
@@ -106,6 +107,8 @@
             filter: brightness(0); 
             opacity: 0.25; 
             pointer-events: none;
+            position: absolute; /* Fixa a sombra no centro */
+            z-index: 1;
         }
 
         .card-animal {
@@ -118,14 +121,18 @@
             justify-content: center;
             font-size: 3.2rem; 
             cursor: grab; 
-            box-shadow: 0 6px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            height: 100%;
+            z-index: 2; /* Fica à frente da sombra */
         }
 
         .card-animal.correto {
             background-color: #7bed9f !important; 
             border-color: #2ed573 !important;
             box-shadow: none !important; 
-            transform: scale(0.85);
+            transform: scale(1); /* Mantém o tamanho para cobrir a sombra */
+            cursor: default;
         }
 
         .footer-controls {
@@ -271,11 +278,15 @@
                         const item = evt.item;
                         if (item.dataset.animal === evt.to.dataset.animal) {
                             item.classList.add('correto');
+                            // Garante que o item ocupa o slot inteiro e esconde a sombra por baixo
+                            item.style.width = '100%';
+                            item.style.height = '100%';
                             acertosRonda++;
                             if (acertosRonda === 8) {
                                 setTimeout(() => { ronda++; iniciarJogo(); }, 600);
                             }
                         } else {
+                            // Se estiver errado, volta para a zona de animais
                             document.getElementById('zona-animais').appendChild(item);
                         }
                     }
