@@ -9,6 +9,7 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
+            /* Fundo rosa com transparência 0.4 conforme o template padrão */
             background-color: rgba(255, 179, 198, 0.4); 
             color: #2c3e50;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -17,7 +18,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            touch-action: manipulation; /* Melhora resposta ao toque no telemóvel */
+            touch-action: manipulation;
         }
 
         /* HEADER PADRONIZADO */
@@ -38,32 +39,37 @@
         .jogo-icon { font-size: 1.3rem; }
         header h1 { font-size: 1rem; color: #2d3436; font-weight: 700; }
 
-        .btn-voltar-3d-rosa {
-            text-decoration: none; color: #2d3436; background-color: #ffb3c6;
-            font-weight: bold; font-size: 0.75rem; padding: 8px 14px;
-            border-radius: 8px; display: flex; align-items: center; gap: 5px;
-            border: 1px solid #ef87a1; box-shadow: 0 3px 0 #ef87a1;
-            transition: all 0.1s ease;
-        }
-        .btn-voltar-3d-rosa:active { transform: translateY(2px); box-shadow: 0 1px 0 #ef87a1; }
-
-        /* BOTÃO COMO JOGAR NO TOPO DO CORPO */
-        .btn-como-jogar {
-            background: #4b7bec;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
+        /* Estilo Base para Botões 3D Rosa (Voltar e Como Jogar) */
+        .btn-3d-rosa {
+            text-decoration: none;
+            color: #2d3436;
+            background-color: #ffb3c6;
             font-weight: bold;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #3867d6;
+            border-radius: 8px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
+            border: 1px solid #ef87a1;
+            box-shadow: 0 3px 0 #ef87a1;
+            transition: all 0.1s ease;
+            cursor: pointer;
         }
-        .btn-como-jogar:active { transform: translateY(2px); box-shadow: 0 2px 0 #3867d6; }
+        .btn-3d-rosa:active { transform: translateY(2px); box-shadow: 0 1px 0 #ef87a1; }
+
+        /* Botão Voltar Específico (tamanho menor) */
+        .btn-voltar {
+            font-size: 0.75rem;
+            padding: 8px 14px;
+        }
+
+        /* Botão Como Jogar Específico (no corpo) */
+        .btn-como-jogar-corpo {
+            font-size: 0.9rem;
+            padding: 10px 20px;
+            border-radius: 20px; /* Mais arredondado no corpo */
+            margin-bottom: 15px;
+            box-shadow: 0 4px 0 #ef87a1; /* Sombra ligeiramente maior */
+        }
 
         /* SIDEBAR E OVERLAY */
         .sidebar {
@@ -93,7 +99,8 @@
             align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .modal-info.active { display: flex; }
-        .modal-info h2 { color: #4b7bec; margin-bottom: 10px; font-size: 1.4rem; }
+        /* Título do modal agora usa a cor rosa do template */
+        .modal-info h2 { color: #ef87a1; margin-bottom: 10px; font-size: 1.4rem; }
         .modal-info p { color: #2d3436; line-height: 1.4; text-align: center; margin-bottom: 20px; font-size: 1rem; }
 
         /* ÁREA DO JOGO */
@@ -118,7 +125,7 @@
 
         .grelha-animais { 
             display: grid; 
-            grid-template-columns: repeat(4, 1fr); /* 4 colunas em telemóveis pequenos */
+            grid-template-columns: repeat(4, 1fr);
             gap: 8px; 
             width: 100%; 
         }
@@ -152,7 +159,7 @@
         }
 
         @media (max-height: 550px) and (orientation: landscape) {
-            .btn-como-jogar { margin-bottom: 5px; padding: 5px 15px; font-size: 0.8rem; }
+            .btn-como-jogar-corpo { margin-bottom: 5px; padding: 5px 15px; font-size: 0.8rem; }
             .card-principal { flex-direction: row; padding: 10px; max-width: 550px; }
             .instrucao-container { flex-direction: column; width: 30%; border-bottom: none; border-right: 2px dashed #ffdae3; margin: 0; }
             .grelha-animais { width: 70%; grid-template-columns: repeat(5, 1fr); padding-left: 10px; gap: 5px; }
@@ -176,7 +183,7 @@
     <div class="modal-info" id="modalInfo">
         <h2>Como Jogar? 🎮</h2>
         <p>Olha para o animal que está a saltar! Consegues encontrá-lo no meio dos outros?</p>
-        <button class="btn-voltar-3d-rosa" onclick="toggleInfo()" style="padding: 12px 30px; font-size: 1rem;">ENTENDI!</button>
+        <button class="btn-3d-rosa" onclick="toggleInfo()" style="padding: 12px 30px; font-size: 1rem; justify-content: center;">ENTENDI!</button>
     </div>
 
     <div class="sidebar" id="sidebar">
@@ -197,12 +204,12 @@
             <span class="jogo-icon">🔍</span>
             <h1>Encontra o Animal</h1>
         </div>
-        <a href="/jogos/pre/" class="btn-voltar-3d-rosa">⬅ VOLTAR</a>
+        <a href="/jogos/pre/" class="btn-3d-rosa btn-voltar">⬅ VOLTAR</a>
     </header>
 
     <main id="jogo-container">
-        <button class="btn-como-jogar" onclick="toggleInfo()">
-            <span>❓</span> COMO JOGAR?
+        <button class="btn-3d-rosa btn-como-jogar-corpo" onclick="toggleInfo()">
+            <span>ℹ️</span> COMO JOGAR?
         </button>
 
         <div class="card-principal">
@@ -219,8 +226,8 @@
         <div style="font-size: 5rem;">🏆</div>
         <h1 style="font-size: 2.5rem;">Parabéns!</h1>
         <p style="font-size: 1.2rem; margin-bottom: 25px;">És um observador fantástico!</p>
-        <button class="btn-voltar-3d-rosa" style="background: white; color: #ff6b81; padding: 15px 40px; margin-bottom: 10px;" onclick="reiniciarJogo()">REPETIR 🔄</button>
-        <a href="/jogos/pre/" class="btn-voltar-3d-rosa" style="padding: 15px 40px; border-color: white;">SAIR ⬅️</a>
+        <button class="btn-3d-rosa" style="background: white; color: #ff6b81; padding: 15px 40px; margin-bottom: 10px; justify-content: center;" onclick="reiniciarJogo()">REPETIR 🔄</button>
+        <a href="/jogos/pre/" class="btn-3d-rosa" style="padding: 15px 40px; border-color: white; justify-content: center;">SAIR ⬅️</a>
     </div>
 
     <footer>
