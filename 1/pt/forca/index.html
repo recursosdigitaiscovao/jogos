@@ -16,7 +16,7 @@
             overflow: hidden; touch-action: manipulation;
         }
 
-        /* HEADER */
+        /* HEADER PADRONIZADO */
         header {
             width: 100%; background: white; padding: 12px 20px;
             display: flex; align-items: center; justify-content: space-between;
@@ -31,7 +31,9 @@
             font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
             border-radius: 8px; border: 1px solid #e67e22; box-shadow: 0 3px 0 #e67e22;
             cursor: pointer; display: flex; align-items: center; gap: 8px;
+            transition: all 0.1s;
         }
+        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
 
         /* SIDEBAR */
         .sidebar {
@@ -52,7 +54,7 @@
         }
         .overlay.active { display: block; }
 
-        /* JOGO */
+        /* ÁREA PRINCIPAL */
         main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; }
 
         .visual-container {
@@ -61,9 +63,8 @@
             border: 2px solid #ffcc80; width: 95%; max-width: 400px;
         }
 
-        /* ÁREA DOS BALÕES */
         .balloons-row { display: flex; gap: 8px; justify-content: center; min-height: 45px; }
-        .balloon { font-size: 1.8rem; transition: transform 0.3s ease, opacity 0.3s ease; }
+        .balloon { font-size: 1.8rem; transition: all 0.3s ease; }
         .balloon.popped { transform: scale(0); opacity: 0; }
 
         .hint-and-img { display: flex; align-items: center; gap: 20px; }
@@ -77,11 +78,10 @@
         .key { 
             background: white; border: 1.5px solid #7f8c8d; border-radius: 8px;
             padding: 12px 0; font-weight: bold; font-size: 1rem; cursor: pointer;
-            box-shadow: 0 3px 0 #7f8c8d;
+            box-shadow: 0 3px 0 #7f8c8d; transition: 0.1s;
         }
         .key.used { opacity: 0.2; box-shadow: none; transform: translateY(2px); pointer-events: none; }
 
-        /* BOTÃO INFO */
         .btn-info {
             background-color: #ff9f43; color: white; width: 30px; height: 30px;
             border-radius: 50%; border: none; font-weight: bold; font-size: 1rem;
@@ -105,8 +105,8 @@
     
     <div id="modal-info" class="modal-custom">
         <h2 style="color: #e67e22; margin-bottom: 10px;">Como Jogar</h2>
-        <p style="color: #636e72;">Vê a imagem e tenta descobrir a palavra! Se errares uma letra, um balão rebenta. Não deixes os 6 balões rebentarem!</p>
-        <button class="btn-voltar-3d" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="fecharModais()">VAMOS A ISSO!</button>
+        <p style="color: #636e72;">Observa a imagem e descobre a palavra! Se errares uma letra, um balão rebenta. Tenta não deixar os 6 balões rebentarem!</p>
+        <button class="btn-voltar-3d" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="fecharModais()">ENTENDI!</button>
     </div>
 
     <div id="end-modal" class="modal-custom">
@@ -114,7 +114,7 @@
         <h2 id="end-title" style="margin: 10px 0;">Muito bem!</h2>
         <p id="end-msg" style="margin-bottom: 20px; color: #636e72; font-weight: bold;"></p>
         <div style="display: flex; gap: 10px;">
-            <button class="btn-voltar-3d" style="flex: 1; justify-content: center;" onclick="startGame(activeTheme)">JOGAR DE NOVO</button>
+            <button class="btn-voltar-3d" style="flex: 1; justify-content: center;" onclick="startGame(activeTheme)">DE NOVO</button>
             <button class="btn-voltar-3d" style="flex: 1; justify-content: center; background-color: #2c3e50; border-color: #1a252f; box-shadow: 0 3px 0 #1a252f;" onclick="showMenu()">MENU</button>
         </div>
     </div>
@@ -123,15 +123,19 @@
         <h3>Menu</h3>
         <nav>
             <a href="../../../" class="sidebar-item">🏠 Início</a>
+            <a href="../../../pre" class="sidebar-item">🦒 Pré-Escolar</a>
             <a href="../../../1" class="sidebar-item">🐥 1º Ano</a>
+            <a href="../../../2" class="sidebar-item">🐢 2º Ano</a>
+            <a href="../../../3" class="sidebar-item">🦊 3º Ano</a>
+            <a href="../../../4" class="sidebar-item">👨‍🚀 4º Ano</a>
         </nav>
     </div>
 
     <header>
         <div class="header-left">
             <span class="menu-icon" onclick="toggleMenu()">☰</span>
-            <span style="font-size:1.4rem">🎈</span>
-            <h1 id="header-title">Jogo dos Balões</h1>
+            <span style="font-size:1.4rem">📝</span>
+            <h1 id="header-title">Jogo das Palavras</h1>
         </div>
         <button class="btn-voltar-3d" onclick="handleBack()">⬅ VOLTAR</button>
     </header>
@@ -162,138 +166,5 @@
 
     <script>
         const themes = {
-            "Animais": {icon:"🐶", words:[{p:"GATO",i:"🐱"},{p:"PATO",i:"🦆"},{p:"VACA",i:"🐮"},{p:"SAPO",i:"🐸"},{p:"RATO",i:"🐭"},{p:"LEÃO",i:"🦁"}]},
-            "Cores": {icon:"🎨", words:[{p:"AZUL", c:"#0000FF"},{p:"ROSA", c:"#FFC0CB"},{p:"VERDE", c:"#008000"},{p:"AMARELO", c:"#FFFF00"},{p:"ROXO", c:"#800080"}]},
-            "Escola": {icon:"🎒", words:[{p:"COLA",i:"🧪"},{p:"PASTA",i:"🎒"},{p:"LIVRO",i:"📚"},{p:"LÁPIS",i:"✏️"},{p:"MESA",i:"🪑"}]}
-        };
-
-        let activeTheme = "", secretWord = "", guessed = [], mistakes = 0, isPlaying = false;
-
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        function fecharModais() {
-            document.getElementById('modal-info').style.display = 'none';
-            document.getElementById('end-modal').style.display = 'none';
-            document.getElementById('overlay').classList.remove('active');
-            document.getElementById('sidebar').classList.remove('active');
-        }
-
-        function mostrarInfo() {
-            document.getElementById('overlay').classList.add('active');
-            document.getElementById('modal-info').style.display = 'block';
-        }
-
-        function handleBack() {
-            if (isPlaying) showMenu(); else window.location.href = "../";
-        }
-
-        function showMenu() {
-            isPlaying = false;
-            document.getElementById('menu-container').style.display = 'block';
-            document.getElementById('game-area').style.display = 'none';
-            fecharModais();
-        }
-
-        function initThemes() {
-            const grid = document.getElementById('theme-grid');
-            grid.innerHTML = '';
-            Object.keys(themes).forEach(key => {
-                const btn = document.createElement('div');
-                btn.style = "background:white; padding:20px; border-radius:20px; border:1px solid #ddd; box-shadow:0 5px 0 #ddd; cursor:pointer; text-align:center;";
-                btn.onclick = () => startGame(key);
-                btn.innerHTML = `<span style="font-size:2rem">${themes[key].icon}</span><p style="font-weight:bold">${key}</p>`;
-                grid.appendChild(btn);
-            });
-        }
-
-        function startGame(themeKey) {
-            isPlaying = true;
-            activeTheme = themeKey;
-            fecharModais();
-            
-            const words = themes[themeKey].words;
-            const data = words[Math.floor(Math.random() * words.length)];
-            secretWord = data.p;
-            guessed = []; mistakes = 0;
-
-            document.getElementById('menu-container').style.display = 'none';
-            document.getElementById('game-area').style.display = 'flex';
-            
-            // Dica visual
-            const hint = document.getElementById('word-hint');
-            const blot = document.getElementById('color-blot');
-            if (themeKey === "Cores") {
-                hint.style.display = 'none'; blot.style.display = 'block';
-                blot.style.backgroundColor = data.c;
-            } else {
-                hint.style.display = 'block'; blot.style.display = 'none';
-                hint.innerText = data.i;
-            }
-
-            renderBalloons();
-            createKeyboard();
-            updateDisplay();
-        }
-
-        function renderBalloons() {
-            const container = document.getElementById('balloons-container');
-            container.innerHTML = '';
-            for(let i=0; i<6; i++) {
-                const b = document.createElement('span');
-                b.className = 'balloon';
-                b.id = 'bal-' + i;
-                b.innerText = '🎈';
-                container.appendChild(b);
-            }
-        }
-
-        function createKeyboard() {
-            const kb = document.getElementById('keyboard');
-            kb.innerHTML = '';
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(l => {
-                const b = document.createElement('button');
-                b.className = 'key'; b.innerText = l;
-                b.onclick = () => {
-                    b.classList.add('used');
-                    if (secretWord.includes(l)) {
-                        guessed.push(l);
-                        if (secretWord.split("").every(x => guessed.includes(x))) endGame(true);
-                    } else {
-                        const bal = document.getElementById('bal-' + mistakes);
-                        if(bal) bal.classList.add('popped');
-                        mistakes++;
-                        if (mistakes === 6) endGame(false);
-                    }
-                    updateDisplay();
-                };
-                kb.appendChild(b);
-            });
-        }
-
-        function updateDisplay() {
-            document.getElementById('word-display').innerText = secretWord.split("").map(l => guessed.includes(l) ? l : "_").join(" ");
-        }
-
-        function endGame(won) {
-            const modal = document.getElementById('end-modal');
-            document.getElementById('overlay').classList.add('active');
-            modal.style.display = 'block';
-            
-            if (won) {
-                document.getElementById('end-icon').innerText = "🏆";
-                document.getElementById('end-title').innerText = "Muito bem!";
-                document.getElementById('end-msg').innerText = "Acertaste na palavra!";
-            } else {
-                document.getElementById('end-icon').innerText = "🎈💥";
-                document.getElementById('end-title').innerText = "Oh não!";
-                document.getElementById('end-msg').innerText = "A palavra era: " + secretWord;
-            }
-        }
-
-        initThemes();
-    </script>
-</body>
-</html>
+            "Animais": {icon:"🐶", words:[{p:"GATO",i:"🐱"},{p:"PATO",i:"🦆"},{p:"VACA",i:"🐮"},{p:"SAPO",i:"🐸"},{p:"RATO",i:"🐭"}]},
+            "Cores": {icon:"🎨", words:[{p:"AZUL", c:"#0000FF"},{p:"
