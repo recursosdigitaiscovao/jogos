@@ -16,7 +16,7 @@
             overflow: hidden; touch-action: manipulation;
         }
 
-        /* HEADER PADRONIZADO */
+        /* HEADER */
         header {
             width: 100%; background: white; padding: 12px 20px;
             display: flex; align-items: center; justify-content: space-between;
@@ -31,11 +31,9 @@
             font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
             border-radius: 8px; border: 1px solid #e67e22; box-shadow: 0 3px 0 #e67e22;
             cursor: pointer; display: flex; align-items: center; gap: 8px;
-            transition: all 0.1s;
         }
-        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
 
-        /* SIDEBAR */
+        /* SIDEBAR COM HOVER */
         .sidebar {
             position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
             background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
@@ -45,7 +43,14 @@
         .sidebar-item {
             text-decoration: none; color: #636e72; font-weight: 600;
             padding: 14px; border-radius: 15px; background: #fdfdfd;
-            display: flex; align-items: center; gap: 15px; margin-bottom: 8px; border: 1px solid #eee;
+            display: flex; align-items: center; gap: 15px; margin-bottom: 8px; 
+            border: 1px solid #eee; transition: all 0.2s;
+        }
+        /* Efeito de cor ao passar por cima */
+        .sidebar-item:hover {
+            background-color: #ff9f43;
+            color: white;
+            border-color: #e67e22;
         }
 
         .overlay {
@@ -54,7 +59,7 @@
         }
         .overlay.active { display: block; }
 
-        /* ÁREA PRINCIPAL */
+        /* JOGO */
         main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; }
 
         .visual-container {
@@ -64,7 +69,7 @@
         }
 
         .balloons-row { display: flex; gap: 8px; justify-content: center; min-height: 45px; }
-        .balloon { font-size: 1.8rem; transition: all 0.3s ease; }
+        .balloon { font-size: 1.8rem; transition: transform 0.3s ease, opacity 0.3s ease; }
         .balloon.popped { transform: scale(0); opacity: 0; }
 
         .hint-and-img { display: flex; align-items: center; gap: 20px; }
@@ -78,7 +83,7 @@
         .key { 
             background: white; border: 1.5px solid #7f8c8d; border-radius: 8px;
             padding: 12px 0; font-weight: bold; font-size: 1rem; cursor: pointer;
-            box-shadow: 0 3px 0 #7f8c8d; transition: 0.1s;
+            box-shadow: 0 3px 0 #7f8c8d;
         }
         .key.used { opacity: 0.2; box-shadow: none; transform: translateY(2px); pointer-events: none; }
 
@@ -105,7 +110,7 @@
     
     <div id="modal-info" class="modal-custom">
         <h2 style="color: #e67e22; margin-bottom: 10px;">Como Jogar</h2>
-        <p style="color: #636e72;">Observa a imagem e descobre a palavra! Se errares uma letra, um balão rebenta. Tenta não deixar os 6 balões rebentarem!</p>
+        <p style="color: #636e72;">Observa a imagem e tenta descobrir a palavra! Se errares uma letra, um balão rebenta. Não deixes os 6 balões rebentarem!</p>
         <button class="btn-voltar-3d" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="fecharModais()">ENTENDI!</button>
     </div>
 
@@ -120,7 +125,7 @@
     </div>
 
     <div class="sidebar" id="sidebar">
-        <h3>Menu</h3>
+        <h3 style="margin-bottom: 15px; color: #e67e22;">Menu</h3>
         <nav>
             <a href="../../../" class="sidebar-item">🏠 Início</a>
             <a href="../../../pre" class="sidebar-item">🦒 Pré-Escolar</a>
@@ -172,6 +177,7 @@
         };
 
         let activeTheme = "", secretWord = "", guessed = [], mistakes = 0, isPlaying = false;
+        let lastWord = ""; // Para evitar palavras repetidas seguidas
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -220,8 +226,15 @@
             fecharModais();
             
             const words = themes[themeKey].words;
-            const data = words[Math.floor(Math.random() * words.length)];
+            let data;
+            
+            // Lógica para não repetir a mesma palavra
+            do {
+                data = words[Math.floor(Math.random() * words.length)];
+            } while (data.p === lastWord && words.length > 1);
+
             secretWord = data.p;
+            lastWord = secretWord;
             guessed = []; mistakes = 0;
 
             document.getElementById('menu-container').style.display = 'none';
