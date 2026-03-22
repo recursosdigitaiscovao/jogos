@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar - Jogo da Simetria</title>
+    <title>Pré-Escolar - Jogo do Espelho</title>
     <style>
+        /* Reset e Estilo Geral */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
-            background-color: rgba(255, 179, 198, 0.4);
-            font-family: 'Segoe UI', sans-serif;
+            background-color: rgba(255, 179, 198, 0.4); 
+            color: #2c3e50;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -19,17 +21,19 @@
         /* HEADER */
         header {
             width: 100%;
-            background: white;
+            background-color: white;
             padding: 10px 15px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid rgba(0,0,0,0.05);
             flex-shrink: 0;
+            z-index: 100;
         }
 
         .header-left { display: flex; align-items: center; gap: 10px; }
-        header h1 { font-size: 1rem; color: #2d3436; }
+        .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; padding: 5px; }
+        header h1 { font-size: 1rem; color: #2d3436; font-weight: 700; }
 
         .btn-voltar-3d {
             text-decoration: none;
@@ -40,251 +44,270 @@
             padding: 8px 14px;
             border-radius: 8px;
             border: 1px solid #ef87a1;
-            box-shadow: 0 3px 0 #ef87a1;
+            box-shadow: 0 3px 0 #ef87a1; 
             cursor: pointer;
         }
 
-        /* ÁREA PRINCIPAL */
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed; left: -280px; top: 0; width: 260px; height: 100%;
+            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+            transition: 0.3s; z-index: 200;
+            padding: 20px; display: flex; flex-direction: column;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-item {
+            text-decoration: none; color: #636e72; font-weight: 600;
+            padding: 12px; border-radius: 12px; display: flex; align-items: center; gap: 12px; margin-bottom: 6px;
+            border: 1px solid #eee;
+        }
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); display: none; z-index: 150;
+        }
+        .overlay.active { display: block; }
+
+        /* JOGO */
         main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-            gap: 20px;
+            flex: 1; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; padding: 10px; gap: 15px;
         }
 
-        /* GRELHA DO JOGO */
         .jogo-container {
-            display: flex;
-            background: white;
-            padding: 10px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            position: relative;
+            display: flex; background: white; padding: 8px; border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 4px solid #ffdae3;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(4, 40px);
-            grid-template-rows: repeat(8, 40px);
-            border: 2px solid #333;
+            grid-template-columns: repeat(4, 45px);
+            grid-template-rows: repeat(4, 45px);
         }
 
-        /* Divisória central grossa */
-        .divisor {
-            width: 6px;
-            background: #000;
-        }
+        .divisor { width: 4px; background: #2d3436; margin: 0 2px; }
 
         .cell {
-            width: 40px;
-            height: 40px;
-            border: 1px solid #ccc;
-            cursor: pointer;
-            transition: background 0.2s;
+            width: 45px; height: 45px; border: 1px solid #eee;
+            cursor: pointer; transition: 0.2s;
         }
 
-        .cell.readonly { cursor: default; }
-
-        /* PALETA DE CORES */
+        /* PALETA */
         .paleta {
-            display: flex;
-            gap: 15px;
-            background: white;
-            padding: 15px;
-            border-radius: 50px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex; gap: 10px; background: white; padding: 10px 20px;
+            border-radius: 50px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
-
-        .cor-opcao {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            border: 3px solid #eee;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .cor-opcao.selected {
-            transform: scale(1.2);
-            border-color: #2d3436;
-        }
-
-        /* BOTÃO VERIFICAR */
-        .btn-verificar {
-            background: #2ecc71;
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 15px;
-            box-shadow: 0 5px 0 #27ae60;
+        .cor-btn {
+            width: 40px; height: 40px; border-radius: 50%; border: 3px solid #f0f0f0;
             cursor: pointer;
         }
+        .cor-btn.active { border-color: #2d3436; transform: scale(1.1); }
 
-        .btn-verificar:active { transform: translateY(3px); box-shadow: 0 2px 0 #27ae60; }
+        /* CONTROLOS */
+        .controlos { display: flex; gap: 10px; align-items: center; }
+        .btn-acao {
+            padding: 12px 20px; border-radius: 12px; border: none; font-weight: bold;
+            cursor: pointer; color: white;
+        }
+        .btn-verificar { background: #2ecc71; box-shadow: 0 4px 0 #27ae60; }
+        .btn-ajuda { background: #f1c40f; box-shadow: 0 4px 0 #f39c12; }
 
-        /* MODAL FINAL */
+        /* MODAIS */
+        .modal-custom {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 85%; max-width: 320px; background: white; padding: 25px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 400; text-align: center;
+            border: 3px solid #ffb3c6;
+        }
+        .modal-custom.active { display: block; }
+
         #final-panel {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 179, 198, 0.98);
-            z-index: 300;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-align: center;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 179, 198, 0.98); z-index: 300;
+            flex-direction: column; align-items: center; justify-content: center; color: white;
         }
 
-        footer {
-            width: 100%; padding: 10px; background-color: white;
-            text-align: center; color: #2d3436; font-size: 0.75rem;
-        }
+        footer { width: 100%; padding: 8px; background: white; text-align: center; font-size: 0.7rem; }
 
-        /* CORES DO JOGO */
-        .c-sky { background-color: #c4e9f5; }
-        .c-black { background-color: #000000; }
-        .c-blue { background-color: #0000ff; }
-        .c-yellow { background-color: #ffff00; }
-        .c-white { background-color: #ffffff; }
+        /* Cores */
+        .c-sky { background: #c4e9f5; }
+        .c-blue { background: #0984e3; }
+        .c-red { background: #ff7675; }
+        .c-yellow { background: #fdcb6e; }
+        .c-white { background: #ffffff; }
     </style>
 </head>
 <body>
 
+    <div class="overlay" id="overlay" onclick="fecharTudo()"></div>
+
+    <div id="modal-info" class="modal-custom">
+        <h2 style="color: #ff6b81; margin-bottom: 10px;">Como Jogar? 🧩</h2>
+        <p>Copia as cores do lado esquerdo para o lado direito para fazeres um espelho igual! Usa o botão 💡 se precisares de ajuda.</p>
+        <button class="btn-voltar-3d" style="width: 100%; margin-top: 15px;" onclick="fecharTudo()">ENTENDI!</button>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <h3 style="margin-bottom: 20px; border-bottom: 2px solid #ffb3c6; color: #ff6b81;">Menu Escolar</h3>
+        <nav>
+            <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+            <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
+            <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
+        </nav>
+    </div>
+
     <header>
         <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
             <span style="font-size: 1.3rem;">🧩</span>
-            <h1>Faz o Espelho!</h1>
+            <h1>Pinta o Espelho</h1>
         </div>
         <a href="/jogos/pre/" class="btn-voltar-3d">⬅ VOLTAR</a>
     </header>
 
-    <main>
+    <main id="jogo-main">
+        <div style="font-weight: bold; color: #ff6b81;">Desenho <span id="num-nivel">1</span> / 3</div>
+        
         <div class="jogo-container">
-            <div class="grid" id="grid-left"></div>
-            
+            <div class="grid" id="grid-esq"></div>
             <div class="divisor"></div>
-            
-            <div class="grid" id="grid-right"></div>
+            <div class="grid" id="grid-dir"></div>
         </div>
 
-        <div class="paleta" id="paleta">
-            <div class="cor-opcao c-sky" onclick="selecionarCor('#c4e9f5', this)"></div>
-            <div class="cor-opcao c-black" onclick="selecionarCor('#000000', this)"></div>
-            <div class="cor-opcao c-blue" onclick="selecionarCor('#0000ff', this)"></div>
-            <div class="cor-opcao c-yellow" onclick="selecionarCor('#ffff00', this)"></div>
+        <div class="paleta" id="paleta-cores"></div>
+
+        <div class="controlos">
+            <button class="btn-acao btn-ajuda" onclick="mostrarAjuda()">💡 AJUDA</button>
+            <button class="btn-acao btn-verificar" onclick="verificar()">VERIFICAR ✅</button>
         </div>
 
-        <button class="btn-verificar" onclick="verificarSimetria()">Verifique ✅</button>
+        <div style="cursor: pointer; color: #7f8c8d; font-weight: bold;" onclick="mostrarInfo()">ℹ️ Ajuda</div>
     </main>
 
     <div id="final-panel">
-        <div style="font-size: 5rem;">🎨</div>
-        <h1 style="font-size: 2.5rem; margin-bottom: 10px;">INCRÍVEL!</h1>
-        <p style="font-size: 1.2rem; margin-bottom: 25px;">Ficou um espelho perfeito!</p>
-        <button class="btn-voltar-3d" style="background: white; color: #ff6b81; padding: 15px 40px; justify-content: center;" onclick="location.reload()">JOGAR DE NOVO 🔄</button>
+        <div style="font-size: 5rem;">🏆</div>
+        <h1>PARABÉNS!</h1>
+        <p>Completaste todos os desafios!</p>
+        <button class="btn-voltar-3d" style="background: white; padding: 15px; margin-top: 20px;" onclick="location.reload()">REPETIR 🔄</button>
     </div>
 
-    <footer>
-        Recursos Digitais Covão • <strong>Professor Luís</strong>
-    </footer>
+    <footer>Recursos Digitais Covão • <strong>Professor Luís</strong></footer>
 
     <script>
-        // Definição das cores da imagem (Lado Esquerdo)
-        // Cores: S (Sky), B (Blue), K (Black), Y (Yellow)
-        const S = '#c4e9f5', B = '#0000ff', K = '#000000', Y = '#ffff00';
+        const S = '#c4e9f5', B = '#0984e3', R = '#ff7675', Y = '#fdcb6e', W = '#ffffff';
         
-        const modeloEsquerdo = [
-            [S, S, S, S],
-            [S, S, B, B],
-            [S, B, S, S],
-            [S, B, S, K],
-            [B, B, B, B],
-            [B, B, Y, B],
-            [B, B, B, B],
-            [S, K, S, S]
+        const niveis = [
+            { cores: [B, R, Y], mapa: [[W,W,W,W],[W,B,B,W],[W,B,B,W],[W,W,W,W]] },
+            { cores: [B, R, S], mapa: [[R,W,W,W],[R,R,W,W],[R,R,R,W],[R,R,R,R]] },
+            { cores: [B, Y, S], mapa: [[W,B,B,W],[B,Y,Y,B],[B,Y,Y,B],[W,B,B,W]] }
         ];
 
+        let nivelAtual = 0;
         let corSelecionada = '';
 
-        function inicializarGrids() {
-            const leftGrid = document.getElementById('grid-left');
-            const rightGrid = document.getElementById('grid-right');
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
 
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 4; c++) {
-                    // Preencher esquerda (modelo)
-                    const cellL = document.createElement('div');
-                    cellL.className = 'cell readonly';
-                    cellL.style.backgroundColor = modeloEsquerdo[r][c];
-                    leftGrid.appendChild(cellL);
+        function fecharTudo() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('modal-info').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
 
-                    // Preencher direita (vazio)
-                    const cellR = document.createElement('div');
-                    cellR.className = 'cell';
-                    cellR.dataset.row = r;
-                    cellR.dataset.col = c;
-                    cellR.onclick = function() {
-                        if(corSelecionada) this.style.backgroundColor = corSelecionada;
-                    };
-                    rightGrid.appendChild(cellR);
+        function mostrarInfo() {
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('modal-info').classList.add('active');
+        }
+
+        function carregarNivel() {
+            const dados = niveis[nivelAtual];
+            document.getElementById('num-nivel').innerText = nivelAtual + 1;
+            
+            // Gerar Paleta
+            const paleta = document.getElementById('paleta-cores');
+            paleta.innerHTML = '';
+            [...dados.cores, W].forEach(cor => {
+                const b = document.createElement('div');
+                b.className = 'cor-btn';
+                b.style.backgroundColor = cor;
+                if(cor === W) b.style.border = "1px solid #ddd";
+                b.onclick = () => {
+                    corSelecionada = cor;
+                    document.querySelectorAll('.cor-btn').forEach(x => x.classList.remove('active'));
+                    b.classList.add('active');
+                };
+                paleta.appendChild(b);
+            });
+            corSelecionada = dados.cores[0]; 
+            paleta.firstChild.classList.add('active');
+
+            // Gerar Grelhas
+            const gEsq = document.getElementById('grid-esq');
+            const gDir = document.getElementById('grid-dir');
+            gEsq.innerHTML = ''; gDir.innerHTML = '';
+
+            for(let i=0; i<4; i++) {
+                for(let j=0; j<4; j++) {
+                    const cE = document.createElement('div');
+                    cE.className = 'cell';
+                    cE.style.backgroundColor = dados.mapa[i][j];
+                    gEsq.appendChild(cE);
+
+                    const cD = document.createElement('div');
+                    cD.className = 'cell';
+                    cD.onclick = function() { this.style.backgroundColor = corSelecionada; };
+                    gDir.appendChild(cD);
                 }
             }
         }
 
-        function selecionarCor(cor, elemento) {
-            corSelecionada = cor;
-            document.querySelectorAll('.cor-opcao').forEach(el => el.classList.remove('selected'));
-            elemento.classList.add('selected');
+        function mostrarAjuda() {
+            const cellsD = document.querySelectorAll('#grid-dir .cell');
+            const mapa = niveis[nivelAtual].mapa;
+            cellsD.forEach((c, idx) => {
+                const r = Math.floor(idx / 4);
+                const col = idx % 4;
+                c.style.opacity = "0.5";
+                c.style.backgroundColor = mapa[r][col];
+            });
+            setTimeout(() => {
+                cellsD.forEach(c => { c.style.opacity = "1"; c.style.backgroundColor = W; });
+            }, 1200);
         }
 
-        function verificarSimetria() {
-            const cellsR = document.querySelectorAll('#grid-right .cell');
-            let correto = true;
+        function verificar() {
+            const cellsD = document.querySelectorAll('#grid-dir .cell');
+            const mapa = niveis[nivelAtual].mapa;
+            let ganhou = true;
 
-            cellsR.forEach(cell => {
-                const r = cell.dataset.row;
-                const c = cell.dataset.col;
-                
-                // Na simetria horizontal simples, comparamos com a mesma linha e coluna espelhada
-                // Se o utilizador quiser simetria "espelho", a lógica seria comparar com a coluna invertida.
-                // Mas geralmente para o Pré, é reproduzir a cor na mesma posição (cópia).
-                // Vou usar a lógica de cópia exata conforme a imagem sugerida.
-                
-                const corEsperada = rgbToHex(modeloEsquerdo[r][c]);
-                const corAtual = rgbToHex(cell.style.backgroundColor);
-
-                if (corAtual !== corEsperada) {
-                    correto = false;
-                    cell.style.border = "2px solid red";
-                    setTimeout(() => cell.style.border = "1px solid #ccc", 1000);
-                }
+            cellsD.forEach((c, idx) => {
+                const r = Math.floor(idx / 4);
+                const col = idx % 4;
+                const corCelia = rgbToHex(c.style.backgroundColor) || '#ffffff';
+                if(corCelia !== mapa[r][col]) ganhou = false;
             });
 
-            if (correto) {
-                document.getElementById('final-panel').style.display = 'flex';
+            if(ganhou) {
+                nivelAtual++;
+                if(nivelAtual < niveis.length) {
+                    alert("Boa! Vamos para o próximo! 🌟");
+                    carregarNivel();
+                } else {
+                    document.getElementById('final-panel').style.display = 'flex';
+                }
             } else {
-                alert("Algumas cores não estão certas. Tenta outra vez! 😊");
+                alert("Ainda não está igual... tenta outra vez! 😊");
             }
         }
 
-        // Helper para converter cor do browser para Hex
         function rgbToHex(rgb) {
-            if (!rgb) return "";
-            if (rgb.startsWith('#')) return rgb;
+            if(!rgb || rgb.startsWith('#')) return rgb;
             const vals = rgb.match(/\d+/g);
-            return "#" + vals.map(x => {
-                const hex = parseInt(x).toString(16);
-                return hex.length === 1 ? "0" + hex : hex;
-            }).join("");
+            return "#" + vals.map(x => parseInt(x).toString(16).padStart(2, '0')).join("");
         }
 
-        inicializarGrids();
+        carregarNivel();
     </script>
 </body>
 </html>
