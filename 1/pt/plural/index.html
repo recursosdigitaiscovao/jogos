@@ -54,16 +54,16 @@
         .overlay.active { display: block; }
 
         /* ÁREA DE JOGO */
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 20px; }
         
         .instrucao-topo {
-            font-size: 1.4rem; font-weight: 800; color: #e67e22;
-            margin-bottom: 15px; text-align: center; text-transform: uppercase;
+            font-size: 1.3rem; font-weight: 800; color: #e67e22;
+            margin-bottom: 10px; text-align: center; text-transform: uppercase;
         }
 
         .status-container {
             width: 100%; max-width: 500px; display: flex; justify-content: space-between;
-            align-items: center; margin-bottom: 15px; background: rgba(255,255,255,0.9); 
+            align-items: center; margin-bottom: 10px; background: rgba(255,255,255,0.9); 
             padding: 10px 20px; border-radius: 12px; font-weight: bold;
         }
 
@@ -73,12 +73,13 @@
         }
 
         .card {
-            background: white; padding: 35px 20px; border-radius: 25px;
+            background: white; padding: 30px 20px; border-radius: 25px;
             width: 100%; max-width: 500px; text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 2px solid #fff;
+            margin-top: 5px;
         }
 
-        .palavra-alvo { font-size: 2.8rem; font-weight: 900; color: #2d3436; margin-bottom: 25px; letter-spacing: 2px; }
+        .palavra-alvo { font-size: 2.8rem; font-weight: 900; color: #2d3436; margin-bottom: 20px; letter-spacing: 2px; }
         
         input#resposta {
             width: 90%; font-size: 1.5rem; padding: 12px; text-align: center;
@@ -99,7 +100,7 @@
 
         @media (max-width: 480px) {
             .palavra-alvo { font-size: 2.2rem; }
-            .card { padding: 25px 15px; }
+            .card { padding: 20px 15px; }
             .instrucao-topo { font-size: 1.1rem; }
         }
     </style>
@@ -130,7 +131,7 @@
         <h2 class="instrucao-topo">Faz o plural das palavras!</h2>
 
         <div class="status-container">
-            <div>Nível: <span id="txt-nivel" style="color:#ff9f43">Fácil</span></div>
+            <div>Nível: <span id="txt-nivel" style="color:#ff9f43">1</span></div>
             <div style="display:flex; align-items:center; gap:10px;">
                 <span>⭐ <span id="pontos">0</span></span>
                 <button class="btn-info-circle" onclick="abrirModal('modal-info')">i</button>
@@ -147,19 +148,15 @@
     </main>
 
     <div id="modal-info" class="modal-custom">
-        <h2 style="color:#3498db; margin-bottom:15px;">Ajuda</h2>
-        <p style="margin-bottom:20px; line-height:1.5; color: #2d3436;">
-            Lê a palavra no cartão e escreve o seu <b>plural</b>.
-            <br><br>
-            Atenção à escrita correta!<br>
-            Exemplo: <b>MAÇÃ</b> → <b>MAÇÃS</b>
-        </p>
+        <h2 style="color:#3498db; margin-bottom:15px;">Dicas de Plural</h2>
+        <p id="info-texto" style="margin-bottom:20px; line-height:1.5; color: #2d3436; text-align: left; font-size: 0.9rem;">
+            </p>
         <button class="btn-voltar-3d" style="width:100%; justify-content:center;" onclick="fecharModal('modal-info')">ENTENDI!</button>
     </div>
 
     <div id="modal-nivel" class="modal-custom">
-        <div style="font-size:4rem; margin-bottom: 10px;">🏆</div>
-        <h2 style="margin:10px 0; color: #2d3436;">Muito Bem!</h2>
+        <div id="emoji-result" style="font-size:4rem; margin-bottom: 10px;">🏆</div>
+        <h2 id="modal-titulo" style="margin:10px 0; color: #2d3436;">Muito Bem!</h2>
         <p id="modal-msg" style="margin-bottom:20px; color: #636e72;"></p>
         <button id="btn-next" class="btn-voltar-3d" style="width:100%; justify-content:center; background:#2ecc71; border-color:#27ae60;" onclick="proximoNivel()">AVANÇAR ➜</button>
     </div>
@@ -171,20 +168,31 @@
 
     <script>
         const dados = {
-            1: [ 
-                {s:"GATO", p:"GATOS"}, {s:"MESA", p:"MESAS"}, {s:"CASA", p:"CASAS"}, 
-                {s:"BOLA", p:"BOLAS"}, {s:"PATO", p:"PATOS"}, {s:"DADO", p:"DADOS"}, 
-                {s:"COPO", p:"COPOS"}, {s:"LIVRO", p:"LIVROS"}, {s:"MAÇÃ", p:"MAÇÃS"}, 
-                {s:"CARRO", p:"CARROS"}, {s:"JANELA", p:"JANELAS"}, {s:"ESTRELA", p:"ESTRELAS"},
-                {s:"MENINA", p:"MENINAS"}, {s:"BOLO", p:"BOLOS"}, {s:"SAPATO", p:"SAPATOS"}
+            1: [ // Vogais a, e, o
+                {s:"CASA", p:"CASAS"}, {s:"CARRO", p:"CARROS"}, {s:"ÁRVORE", p:"ÁRVORES"},
+                {s:"MESA", p:"MESAS"}, {s:"BOLA", p:"BOLAS"}, {s:"LIVRO", p:"LIVROS"},
+                {s:"CHAVE", p:"CHAVES"}, {s:"ESCOLA", p:"ESCOLAS"}, {s:"MENINO", p:"MENINOS"},
+                {s:"CADERNO", p:"CADERNOS"}, {s:"PERA", p:"PERAS"}, {s:"TOMATE", p:"TOMATES"}
             ],
-            2: [ 
-                {s:"CARACOL", p:"CARACOIS"}, {s:"JARDIM", p:"JARDINS"}, {s:"ANIMAL", p:"ANIMAIS"}, 
-                {s:"FUNIL", p:"FUNIS"}, {s:"PUDIM", p:"PUDINS"}, {s:"PAPEL", p:"PAPEIS"}, 
-                {s:"BOMBOM", p:"BOMBONS"}, {s:"AZUL", p:"AZUIS"}, {s:"CÃO", p:"CÃES"}, 
-                {s:"MÃO", p:"MÃOS"}, {s:"BOTÃO", p:"BOTÕES"}, {s:"SOL", p:"SOIS"},
-                {s:"PAZ", p:"PAZES"}, {s:"COLHER", p:"COLHERES"}, {s:"NARIZ", p:"NARIZES"}
+            2: [ // Consoantes r, z, n e l
+                {s:"FLOR", p:"FLORES"}, {s:"RAPAZ", p:"RAPAZES"}, {s:"ANIMAL", p:"ANIMAIS"},
+                {s:"HOTEL", p:"HOTÉIS"}, {s:"FÁCIL", p:"FÁCEIS"}, {s:"MAR", p:"MARES"},
+                {s:"NARIZ", p:"NARIZES"}, {s:"LUZ", p:"LUZES"}, {s:"PAPEL", p:"PAPÉIS"},
+                {s:"PAREDE", p:"PAREDES"}, {s:"COLHER", p:"COLHERES"}, {s:"PINCEL", p:"PINCÉIS"},
+                {s:"PAZ", p:"PAZES"}, {s:"AZUL", p:"AZUIS"}, {s:"COR", p:"CORES"}
+            ],
+            3: [ // Terminados em -ão
+                {s:"BALÃO", p:"BALÕES"}, {s:"PÃO", p:"PÃES"}, {s:"CÃO", p:"CÃES"},
+                {s:"MÃO", p:"MÃOS"}, {s:"BOTÃO", p:"BOTÕES"}, {s:"CIDADÃO", p:"CIDADÃOS"},
+                {s:"AVIÃO", p:"AVIÕES"}, {s:"REFRÃO", p:"REFRÃOS"}, {s:"CORAÇÃO", p:"CORAÇÕES"},
+                {s:"CAPITÃO", p:"CAPITÃES"}, {s:"GRÃO", p:"GRÃOS"}, {s:"LEÃO", p:"LEÕES"}
             ]
+        };
+
+        const dicas = {
+            1: "<b>Regra:</b> Para palavras terminadas em vogal (a, e, o), basta adicionar um <b>-s</b> no final.<br><br>Ex: Casa → Casas",
+            2: "<b>Regra:</b> Para palavras com <b>-r</b> ou <b>-z</b>, junta <b>-es</b>. Se terminar em <b>-l</b>, troca por <b>-is</b> ou <b>-éis</b>.<br><br>Ex: Flor → Flores",
+            3: "<b>Regra:</b> Palavras com <b>-ão</b> podem mudar para <b>-ões</b>, <b>-ães</b> ou apenas <b>-ãos</b>.<br><br>Ex: Pão → Pães"
         };
 
         let nivel = 1, indice = 0, pontos = 0, lista = [];
@@ -195,6 +203,7 @@
         }
 
         function abrirModal(id) { 
+            document.getElementById('info-texto').innerHTML = dicas[nivel];
             document.getElementById(id).style.display = 'block'; 
             document.getElementById('overlay').classList.add('active'); 
         }
@@ -216,7 +225,7 @@
             document.getElementById('resposta').value = "";
             document.getElementById('resposta').className = "";
             document.getElementById('progresso-txt').innerText = `Palavra ${indice + 1} de 10`;
-            document.getElementById('txt-nivel').innerText = nivel === 1 ? "Fácil" : "Médio";
+            document.getElementById('txt-nivel').innerText = nivel;
             document.getElementById('resposta').focus();
         }
 
@@ -233,7 +242,11 @@
                 setTimeout(() => {
                     indice++;
                     if(indice >= 10) {
-                        document.getElementById('modal-msg').innerText = `Fizeste ${pontos} pontos no Nível ${nivel}!`;
+                        document.getElementById('modal-msg').innerText = `Concluíste o Nível ${nivel} com sucesso!`;
+                        if(nivel === 3) {
+                            document.getElementById('modal-titulo').innerText = "Super Campeão!";
+                            document.getElementById('btn-next').innerText = "RECOMEÇAR JOGO";
+                        }
                         abrirModal('modal-nivel');
                     } else carregar();
                 }, 1000);
@@ -246,11 +259,11 @@
 
         function proximoNivel() {
             fecharModal('modal-nivel');
-            if(nivel < 2) { 
+            if(nivel < 3) { 
                 nivel++; 
                 iniciar(); 
             } else { 
-                window.location.href = "/jogos/1/pt"; 
+                window.location.reload(); 
             }
         }
 
