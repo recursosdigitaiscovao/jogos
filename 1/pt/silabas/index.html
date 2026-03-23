@@ -1,1 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>1º Ano - Quantas Sílabas?</title>
+    <style>
+        /* Reset e Estilo Geral - Template_1 */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
+        body {
+            background-color: #fff4e6;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh; height: 100svh;
+            display: flex; flex-direction: column;
+            overflow: hidden; touch-action: manipulation;
+        }
+
+        /* HEADER */
+        header {
+            width: 100%; background: white; padding: 12px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; z-index: 100;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; }
+        header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; }
+
+        .btn-voltar-3d {
+            text-decoration: none; color: #000; background-color: #ff9f43;
+            font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
+            border-radius: 8px; border: 1px solid #e67e22; box-shadow: 0 3px 0 #e67e22;
+            cursor: pointer; display: flex; align-items: center; gap: 8px;
+            transition: all 0.1s;
+        }
+        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
+            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+            transition: 0.3s ease; z-index: 200; padding: 25px;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-item {
+            text-decoration: none; color: #636e72; font-weight: 600;
+            padding: 14px; border-radius: 15px; background: #fdfdfd;
+            display: flex; align-items: center; gap: 15px; margin-bottom: 8px; 
+            border: 1px solid #eee; transition: all 0.2s;
+        }
+        .sidebar-item:hover { background-color: #ff9f43; color: #000; border-color: #e67e22; }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3); display: none; z-index: 150;
+        }
+        .overlay.active { display: block; }
+
+        /* CONTEÚDO PRINCIPAL */
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+
+        /* ÁREA DO CARD (ESTILO DA TUA IMAGEM) */
+        .game-card {
+            background: white; width: 100%; max-width: 380px;
+            border-radius: 20px; border: 2px solid #333;
+            overflow: hidden; display: flex; flex-direction: column;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .card-word {
+            background: white; padding: 15px; text-align: center;
+            font-size: 2.2rem; font-weight: 900; letter-spacing: 2px;
+            border-bottom: 2px solid #333; text-transform: uppercase;
+        }
+
+        .card-visual {
+            height: 200px; display: flex; align-items: center; justify-content: center;
+            font-size: 7rem; background: #fff;
+        }
+
+        .options-row {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            border-top: 2px solid #333;
+        }
+
+        .opt-btn {
+            padding: 20px 0; font-size: 1.8rem; font-weight: 900;
+            background: white; border: none; cursor: pointer;
+            border-right: 2px solid #333; transition: background 0.2s;
+        }
+        .opt-btn:last-child { border-right: none; }
+        .opt-btn:active { background: #ff9f43; color: white; }
+        
+        /* Cores de feedback */
+        .opt-btn.correct { background: #2ecc71 !important; color: white; }
+        .opt-btn.wrong { background: #e74c3c !important; color: white; }
+
+        /* MENSAGEM DE TOPO */
+        .instruction {
+            color: #d35400; font-size: 1.4rem; font-weight: 800;
+            margin-bottom: 20px; text-align: center;
+        }
+
+        /* MODAL FINAL */
+        .modal-custom {
+            display: none; position: fixed; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); width: 85%; max-width: 350px;
+            background: white; padding: 30px; border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 400; text-align: center;
+        }
+
+        footer { width: 100%; padding: 10px; background: white; text-align: center; color: #95a5a6; font-size: 0.75rem; border-top: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay"></div>
+    
+    <div id="end-modal" class="modal-custom">
+        <div style="font-size: 4rem;">⭐</div>
+        <h2 style="margin: 15px 0;">Parabéns!</h2>
+        <p style="color: #636e72; font-weight: bold; margin-bottom: 25px;">Completaste todos os desafios!</p>
+        <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="location.reload()">JOGAR DE NOVO</button>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <h3 style="margin-bottom: 15px; color: #e67e22;">Menu</h3>
+        <nav>
+            <a href="../../../" class="sidebar-item">🏠 Início</a>
+            <a href="../../../1" class="sidebar-item">🐥 1º Ano</a>
+        </nav>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <span class="menu-icon" onclick="toggleMenu()">☰</span>
+            <span style="font-size:1.4rem">👄</span>
+            <h1>Quantos Pedaços?</h1>
+        </div>
+        <button class="btn-voltar-3d" onclick="window.location.href='../'">⬅ VOLTAR</button>
+    </header>
+
+    <main>
+        <div class="instruction">Quantos pedaços tem a palavra?</div>
+
+        <div class="game-card">
+            <div class="card-word" id="display-word">LEÃO</div>
+            <div class="card-visual" id="display-icon">🦁</div>
+            <div class="options-row">
+                <button class="opt-btn" onclick="checkAnswer(1)">1</button>
+                <button class="opt-btn" onclick="checkAnswer(2)">2</button>
+                <button class="opt-btn" onclick="checkAnswer(3)">3</button>
+                <button class="opt-btn" onclick="checkAnswer(4)">4</button>
+            </div>
+        </div>
+        
+        <div id="progress" style="margin-top: 20px; color: #7f8c8d; font-weight: bold;">
+            Desafio <span id="current-idx">1</span> de 5
+        </div>
+    </main>
+
+    <footer>Recursos Digitais Covão • Professor Luís</footer>
+
+    <script>
+        const challenges = [
+            { word: "LEÃO", icon: "🦁", syllables: 2 },
+            { word: "BONECA", icon: "🪆", syllables: 3 },
+            { word: "SOL", icon: "☀️", syllables: 1 },
+            { word: "TELEFONE", icon: "📞", syllables: 4 },
+            { word: "PATO", icon: "🦆", syllables: 2 },
+            { word: "SAPATO", icon: "👟", syllables: 3 },
+            { word: "GATO", icon: "🐱", syllables: 2 },
+            { word: "BORBOLETA", icon: "🦋", syllables: 4 }
+        ].sort(() => 0.5 - Math.random()); // Baralha os desafios
+
+        let currentIndex = 0;
+        const totalChallenges = 5; // Vamos jogar 5 de cada vez
+        let canClick = true;
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function loadChallenge() {
+            canClick = true;
+            const item = challenges[currentIndex];
+            document.getElementById('display-word').innerText = item.word;
+            document.getElementById('display-icon').innerText = item.icon;
+            document.getElementById('current-idx').innerText = currentIndex + 1;
+            
+            // Limpa estilos dos botões
+            document.querySelectorAll('.opt-btn').forEach(btn => {
+                btn.classList.remove('correct', 'wrong');
+            });
+        }
+
+        function checkAnswer(num) {
+            if (!canClick) return;
+            
+            const correctAnswer = challenges[currentIndex].syllables;
+            const buttons = document.querySelectorAll('.opt-btn');
+            const clickedBtn = buttons[num - 1];
+
+            if (num === correctAnswer) {
+                canClick = false;
+                clickedBtn.classList.add('correct');
+                
+                setTimeout(() => {
+                    currentIndex++;
+                    if (currentIndex < totalChallenges) {
+                        loadChallenge();
+                    } else {
+                        showFinalModal();
+                    }
+                }, 1000);
+            } else {
+                clickedBtn.classList.add('wrong');
+                // Pequena vibração ou efeito visual de erro pode ser adicionado aqui
+                setTimeout(() => {
+                    clickedBtn.classList.remove('wrong');
+                }, 500);
+            }
+        }
+
+        function showFinalModal() {
+            document.getElementById('end-modal').style.display = 'block';
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        // Iniciar
+        loadChallenge();
+    </script>
+</body>
+</html>
