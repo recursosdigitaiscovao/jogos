@@ -92,7 +92,6 @@
 
         footer { padding: 10px; text-align: center; font-size: 0.8rem; color: #95a5a6; background: white; border-top: 1px solid #eee; }
 
-        /* RESPONSIVIDADE */
         @media (max-width: 480px) {
             .palavra-alvo { font-size: 2.2rem; }
             .card { padding: 25px 15px; }
@@ -107,7 +106,7 @@
         <div class="sidebar-header">MENU ESCOLAR</div>
         <a href="/jogos" class="sidebar-item">🏠 Início</a>
         <a href="/jogos/pre" class="sidebar-item">🎒 Pré-Escolar</a>
-        <a href="/Jogos/1" class="sidebar-item">🐥 1º Ano</a>
+        <a href="/jogos/1" class="sidebar-item">🐥 1º Ano</a>
         <a href="/jogos/2" class="sidebar-item">🦁 2º Ano</a>
         <a href="/jogos/3" class="sidebar-item">🐘 3º Ano</a>
         <a href="/jogos/4" class="sidebar-item">🦒 4º Ano</a>
@@ -118,7 +117,7 @@
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
             <h1>Plural</h1>
         </div>
-        <a href="jogos//1/pt" class="btn-voltar-3d">⬅ VOLTAR</a>
+        <a href="/jogos/1/pt" class="btn-voltar-3d">⬅ VOLTAR</a>
     </header>
 
     <main>
@@ -144,7 +143,7 @@
         <p style="margin-bottom:20px; line-height:1.5; color: #2d3436;">
             Lê a palavra no cartão e escreve o seu <b>plural</b> (quando existem dois ou mais).
             <br><br>
-            Exemplo: <b>GATO</b> → <b>GATOS</b>
+            Atenção aos acentos! Exemplo: <b>CÃO</b> → <b>CÃES</b>
         </p>
         <button class="btn-voltar-3d" style="width:100%; justify-content:center;" onclick="fecharModal('modal-info')">ENTENDI!</button>
     </div>
@@ -163,8 +162,18 @@
 
     <script>
         const dados = {
-            1: [ {s:"GATO", p:"GATOS"}, {s:"MESA", p:"MESAS"}, {s:"CASA", p:"CASAS"}, {s:"BOLA", p:"BOLAS"}, {s:"PATO", p:"PATOS"}, {s:"DADO", p:"DADOS"}, {s:"COPO", p:"COPOS"}, {s:"LIVRO", p:"LIVROS"}, {s:"BOLO", p:"BOLOS"}, {s:"CARRO", p:"CARROS"} ],
-            2: [ {s:"CARACOL", p:"CARACOIS"}, {s:"JARDIM", p:"JARDINS"}, {s:"ANIMAL", p:"ANIMAIS"}, {s:"FUNIL", p:"FUNIS"}, {s:"PUDIM", p:"PUDINS"}, {s:"PAPEL", p:"PAPEIS"}, {s:"BOMBOM", p:"BOMBONS"}, {s:"AZUL", p:"AZUIS"}, {s:"PASTEL", p:"PASTEIS"}, {s:"SOL", p:"SOIS"} ]
+            1: [ 
+                {s:"GATO", p:"GATOS"}, {s:"MESA", p:"MESAS"}, {s:"CASA", p:"CASAS"}, 
+                {s:"BOLA", p:"BOLAS"}, {s:"PATO", p:"PATOS"}, {s:"DADO", p:"DADOS"}, 
+                {s:"COPO", p:"COPOS"}, {s:"LIVRO", p:"LIVROS"}, {s:"MAÇÃ", p:"MAÇÃS"}, 
+                {s:"CARRO", p:"CARROS"}, {s:"CHÁVEO", p:"CHÁVEOS"}, {s:"JANELA", p:"JANELAS"}
+            ],
+            2: [ 
+                {s:"CARACOL", p:"CARACOIS"}, {s:"JARDIM", p:"JARDINS"}, {s:"ANIMAL", p:"ANIMAIS"}, 
+                {s:"FUNIL", p:"FUNIS"}, {s:"PUDIM", p:"PUDINS"}, {s:"PAPEL", p:"PAPEIS"}, 
+                {s:"BOMBOM", p:"BOMBONS"}, {s:"AZUL", p:"AZUIS"}, {s:"CÃO", p:"CÃES"}, 
+                {s:"MÃO", p:"MÃOS"}, {s:"BOTÃO", p:"BOTÕES"}, {s:"SOL", p:"SOIS"}
+            ]
         };
 
         let nivel = 1, indice = 0, pontos = 0, lista = [];
@@ -185,7 +194,9 @@
         }
 
         function iniciar() {
-            lista = [...dados[nivel]].sort(() => Math.random() - 0.5);
+            // Escolhe 10 palavras aleatórias do banco de dados do nível
+            let banco = [...dados[nivel]];
+            lista = banco.sort(() => Math.random() - 0.5).slice(0, 10);
             indice = 0;
             carregar();
         }
@@ -201,7 +212,10 @@
 
         function verificar() {
             const input = document.getElementById('resposta');
-            if(input.value.trim().toUpperCase() === lista[indice].p) {
+            const respostaUtilizador = input.value.trim().toUpperCase();
+            const respostaCorreta = lista[indice].p.toUpperCase();
+
+            if(respostaUtilizador === respostaCorreta) {
                 input.className = "correto";
                 document.getElementById('som-acerto').play();
                 pontos += 10; 
@@ -226,11 +240,10 @@
                 nivel++; 
                 iniciar(); 
             } else { 
-                window.location.href = "/1/pt"; // Volta ao menu após terminar tudo
+                window.location.href = "/jogos/1/pt"; 
             }
         }
 
-        // Enter no teclado
         document.getElementById('resposta').addEventListener('keypress', (e) => {
             if(e.key === 'Enter') verificar();
         });
