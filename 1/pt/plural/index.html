@@ -1,1 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>1º Ano - Jogo do Plural</title>
+    <style>
+        /* Reset e Estilo Geral - Template_1 */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
+        body {
+            background-color: #f0f4f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        header {
+            width: 100%; background: white; padding: 12px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid rgba(0,0,0,0.1); z-index: 100;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; }
+
+        .btn-voltar-3d {
+            text-decoration: none; color: #000; background-color: #ff9f43;
+            font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
+            border-radius: 8px; border: 1px solid #e67e22; box-shadow: 0 3px 0 #e67e22;
+            cursor: pointer;
+        }
+
+        /* ÁREA DO JOGO */
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px; overflow-y: auto; }
+        
+        .instrucao {
+            background: #fff; padding: 15px; border-radius: 15px; border-left: 5px solid #ff9f43;
+            margin-bottom: 25px; width: 100%; max-width: 600px; font-weight: 600; color: #2d3436;
+        }
+
+        .exercicio-card {
+            background: white; width: 100%; max-width: 600px;
+            padding: 30px; border-radius: 20px; border: 1px dashed #b2bec3;
+            display: flex; flex-direction: column; gap: 25px;
+        }
+
+        .linha-frase { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; font-size: 1.2rem; }
+        
+        .imagem-suporte { width: 80px; height: 80px; object-fit: contain; }
+
+        /* INPUTS */
+        .input-plural {
+            border: 2px solid #dfe6e9; border-radius: 8px; padding: 8px 12px;
+            font-size: 1.1rem; font-weight: bold; width: 140px; text-align: center;
+            outline: none; transition: 0.3s;
+        }
+        .input-plural:focus { border-color: #ff9f43; background: #fffaf5; }
+        .input-plural.correto { border-color: #2ecc71; background-color: #eafaf1; color: #27ae60; }
+        .input-plural.errado { border-color: #ff7675; background-color: #fff5f5; }
+
+        .btn-verificar {
+            margin-top: 20px; background: #2ecc71; color: white; border: none;
+            padding: 12px 30px; border-radius: 10px; font-weight: bold;
+            box-shadow: 0 4px 0 #27ae60; cursor: pointer; font-size: 1rem;
+        }
+        .btn-verificar:active { transform: translateY(2px); box-shadow: 0 2px 0 #27ae60; }
+
+        footer { width: 100%; padding: 10px; text-align: center; color: #95a5a6; font-size: 0.75rem; background: white; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <span style="font-size:1.4rem">✏️</span>
+            <h1>Desafio do Plural</h1>
+        </div>
+        <a href="../" class="btn-voltar-3d">⬅ VOLTAR</a>
+    </header>
+
+    <main>
+        <div class="instrucao">
+            Completa a frase com o plural das palavras assinaladas.
+        </div>
+
+        <div class="exercicio-card" id="jogo-container">
+            <div class="linha-frase">
+                <img src="patim.png" class="imagem-suporte" alt="item">
+                <p>O <strong>patim</strong> pertence a este jovem.</p>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #eee;">
+
+            <div class="linha-frase">
+                <img src="patins.png" class="imagem-suporte" alt="itens">
+                <span>Os</span>
+                <input type="text" class="input-plural" id="resp1" placeholder="palavra..." autocomplete="off">
+                <span>pertencem a estes</span>
+                <input type="text" class="input-plural" id="resp2" placeholder="palavra..." autocomplete="off">
+            </div>
+
+            <button class="btn-verificar" onclick="validar()">VERIFICAR RESPOSTA</button>
+        </div>
+    </main>
+
+    <footer>Recursos Digitais Covão • Professor Luís</footer>
+
+    <script>
+        // Configuração das respostas corretas
+        const solucoes = {
+            resp1: "patins",
+            resp2: "jovens"
+        };
+
+        function validar() {
+            let todosCertos = true;
+
+            for (let id in solucoes) {
+                const input = document.getElementById(id);
+                const tentativa = input.value.trim().toLowerCase();
+
+                if (tentativa === solucoes[id]) {
+                    input.classList.remove('errado');
+                    input.classList.add('correto');
+                } else {
+                    input.classList.remove('correto');
+                    input.classList.add('errado');
+                    todosCertos = false;
+                }
+            }
+
+            if (todosCertos) {
+                alert("Muito bem! Completaste a frase corretamente. 🎉");
+                // Aqui podias carregar uma nova frase se tivesses uma lista
+            }
+        }
+
+        // Permitir que o "Enter" também verifique
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') validar();
+        });
+    </script>
+</body>
+</html>
