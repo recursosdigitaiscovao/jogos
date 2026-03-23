@@ -2,138 +2,81 @@
 <html lang="pt-pt">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>1º Ano - Jogo do Plural</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jogo do Plural</title>
 
 <style>
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
     background-color: #fff4e6;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    height: 100vh;
 }
 
-/* HEADER */
 header {
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.95);
-    padding: 12px 20px;
+    background: white;
+    padding: 12px;
     display: flex;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
-.header-left { display: flex; align-items: center; gap: 12px; }
-.menu-icon { font-size: 1.6rem; cursor: pointer; }
-header h1 { font-size: 1.1rem; }
-
-.btn-voltar-3d {
-    background-color: #e67e22;
-    color: white;
-    padding: 8px 18px;
-    border-radius: 8px;
-    border: 1px solid #d35400;
-    box-shadow: 0 3px 0 #d35400;
-    text-decoration: none;
-}
-
-/* SIDEBAR */
-.sidebar {
-    position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
-    background: white; transition: 0.3s; z-index: 200; padding: 25px;
-}
-.sidebar.active { left: 0; }
-
-.overlay {
-    position: fixed; top:0; left:0; width:100%; height:100%;
-    background: rgba(0,0,0,0.3); display:none;
-}
-.overlay.active { display:block; }
-
-/* MAIN */
 main {
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
-/* JOGO */
-.card-jogo {
-    background:white;
-    padding:25px;
-    border-radius:20px;
-    width:100%;
-    max-width:500px;
-    text-align:center;
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
 }
 
 .frase {
-    font-size:1.5rem;
-    margin-bottom:20px;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
 }
 
 input {
-    font-size:1.4rem;
-    padding:10px;
-    width:180px;
-    text-align:center;
+    font-size: 1.3rem;
+    padding: 10px;
+    width: 180px;
+    text-align: center;
 }
 
-.correto { background:#eafaf1; border:2px solid green; }
-.errado { background:#fff5f5; border:2px solid red; }
-
 button {
-    margin-top:15px;
-    padding:12px 25px;
-    background:#2ecc71;
-    border:none;
-    color:white;
-    border-radius:10px;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #2ecc71;
+    border: none;
+    color: white;
+    border-radius: 10px;
 }
 
 .topo {
-    margin-bottom:15px;
-    display:flex;
-    gap:10px;
-    align-items:center;
+    margin-bottom: 15px;
 }
 
-.mensagem {
-    margin-top:10px;
-    font-weight:bold;
-}
+.mensagem { margin-top: 10px; font-weight: bold; }
 
-/* FOOTER */
-footer {
-    padding:10px;
-    text-align:center;
-    font-size:0.8rem;
-    background:white;
-}
+.correto { border: 2px solid green; background:#eafaf1; }
+.errado { border: 2px solid red; background:#fff5f5; }
+
 </style>
 </head>
 
 <body>
 
-<div class="overlay" id="overlay" onclick="fecharMenu()"></div>
-
-<div class="sidebar" id="sidebar">
-    <h3>Menu</h3>
-</div>
-
 <header>
-    <div class="header-left">
-        <div class="menu-icon" onclick="toggleMenu()">☰</div>
-        <h1>✍️ Jogo do Plural</h1>
-    </div>
-    <a href="#" class="btn-voltar-3d">⬅ VOLTAR</a>
+<h2>✍️ Jogo do Plural</h2>
 </header>
 
 <main>
@@ -148,51 +91,101 @@ footer {
 </select>
 </div>
 
-<div class="card-jogo">
+<div class="card">
 <div id="frase" class="frase"></div>
 
 <input id="resposta">
 
 <br>
-<button onclick="verificar()">VERIFICAR</button>
+<button onclick="verificar()">Verificar</button>
 
 <div id="mensagem" class="mensagem"></div>
 </div>
 
-<div style="margin-top:15px;">
-<span id="progresso">1</span>
-</div>
+<div id="progresso"></div>
 
 </main>
-
-<footer>Recursos Digitais Covão • Professor Luís</footer>
 
 <audio id="som-acerto" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9b6b1d.mp3"></audio>
 <audio id="som-erro" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3"></audio>
 
 <script>
 
-// BASE
+// -------- FRASES --------
+
 const facil = [
 { frase:"O gato", correta:"gatos" },
 { frase:"A bola", correta:"bolas" },
-{ frase:"O cão", correta:"cães" }
+{ frase:"O pato", correta:"patos" },
+{ frase:"A casa", correta:"casas" },
+{ frase:"O menino", correta:"meninos" },
+{ frase:"A menina", correta:"meninas" },
+{ frase:"O livro", correta:"livros" },
+{ frase:"A mesa", correta:"mesas" },
+{ frase:"O sapato", correta:"sapatos" },
+{ frase:"A flor", correta:"flores" },
+{ frase:"O carro", correta:"carros" },
+{ frase:"A porta", correta:"portas" },
+{ frase:"O copo", correta:"copos" },
+{ frase:"A cadeira", correta:"cadeiras" },
+{ frase:"O urso", correta:"ursos" },
+{ frase:"A janela", correta:"janelas" },
+{ frase:"O peixe", correta:"peixes" },
+{ frase:"A estrela", correta:"estrelas" },
+{ frase:"O cão", correta:"cães" },
+{ frase:"A mala", correta:"malas" }
 ];
 
 const medio = [
 { frase:"O caracol", correta:"caracóis" },
-{ frase:"O papel", correta:"papéis" }
+{ frase:"O papel", correta:"papéis" },
+{ frase:"O animal", correta:"animais" },
+{ frase:"O farol", correta:"faróis" },
+{ frase:"O lençol", correta:"lençóis" },
+{ frase:"O anzol", correta:"anzóis" },
+{ frase:"O girassol", correta:"girassóis" },
+{ frase:"O funil", correta:"funis" },
+{ frase:"O fóssil", correta:"fósseis" },
+{ frase:"O perfil", correta:"perfis" },
+{ frase:"O hotel", correta:"hotéis" },
+{ frase:"O jornal", correta:"jornais" },
+{ frase:"O canal", correta:"canais" },
+{ frase:"O animal", correta:"animais" },
+{ frase:"O farol", correta:"faróis" },
+{ frase:"O hotel", correta:"hotéis" },
+{ frase:"O funil", correta:"funis" },
+{ frase:"O papel", correta:"papéis" },
+{ frase:"O lençol", correta:"lençóis" },
+{ frase:"O girassol", correta:"girassóis" }
 ];
 
 const dificil = [
 { frase:"O pão", correta:"pães" },
-{ frase:"O capitão", correta:"capitães" }
+{ frase:"O alemão", correta:"alemães" },
+{ frase:"O capitão", correta:"capitães" },
+{ frase:"O coração", correta:"corações" },
+{ frase:"O leão", correta:"leões" },
+{ frase:"O avião", correta:"aviões" },
+{ frase:"O irmão", correta:"irmãos" },
+{ frase:"O cidadão", correta:"cidadãos" },
+{ frase:"O trovão", correta:"trovões" },
+{ frase:"O balão", correta:"balões" },
+{ frase:"O fogão", correta:"fogões" },
+{ frase:"O verão", correta:"verões" },
+{ frase:"O leão", correta:"leões" },
+{ frase:"O avião", correta:"aviões" },
+{ frase:"O capitão", correta:"capitães" },
+{ frase:"O irmão", correta:"irmãos" },
+{ frase:"O balão", correta:"balões" },
+{ frase:"O fogão", correta:"fogões" },
+{ frase:"O coração", correta:"corações" },
+{ frase:"O trovão", correta:"trovões" }
 ];
 
-// baralhar
+// -------- LÓGICA --------
+
 function baralhar(a){ return a.sort(()=>Math.random()-0.5); }
 
-// níveis progressivos
 function obterLista(n){
 if(n==="facil") return baralhar([...facil]);
 if(n==="medio") return baralhar([...facil,...medio]);
@@ -203,15 +196,13 @@ let lista = obterLista("facil");
 let i=0;
 let pontos=0;
 
-// carregar
 function carregar(){
-document.getElementById("frase").innerHTML = "Plural: <b>"+lista[i].frase+"</b>";
+document.getElementById("frase").innerHTML="Plural: <b>"+lista[i].frase+"</b>";
 document.getElementById("resposta").value="";
 document.getElementById("mensagem").innerText="";
-document.getElementById("progresso").innerText = (i+1)+" / "+lista.length;
+document.getElementById("progresso").innerText=(i+1)+" / "+lista.length;
 }
 
-// verificar
 function verificar(){
 let r=document.getElementById("resposta").value.trim();
 let c=lista[i].correta;
@@ -220,10 +211,8 @@ if(r===c){
 document.getElementById("resposta").className="correto";
 document.getElementById("mensagem").innerText="Muito bem!";
 document.getElementById("som-acerto").play();
-
 pontos++;
 document.getElementById("pontos").innerText=pontos;
-
 setTimeout(proximo,1000);
 }else{
 document.getElementById("resposta").className="errado";
@@ -232,7 +221,6 @@ document.getElementById("som-erro").play();
 }
 }
 
-// próximo
 function proximo(){
 i++;
 if(i>=lista.length){
@@ -242,7 +230,6 @@ i=0;
 carregar();
 }
 
-// mudar nível
 function mudarNivel(){
 let n=document.getElementById("nivel").value;
 lista=obterLista(n);
@@ -250,17 +237,6 @@ i=0;
 carregar();
 }
 
-// menu
-function toggleMenu(){
-document.getElementById("sidebar").classList.toggle("active");
-document.getElementById("overlay").classList.toggle("active");
-}
-function fecharMenu(){
-document.getElementById("sidebar").classList.remove("active");
-document.getElementById("overlay").classList.remove("active");
-}
-
-// iniciar
 carregar();
 
 </script>
