@@ -33,7 +33,7 @@
         }
         .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 2px 0 #e67e22; }
 
-        /* SIDEBAR (LIGAÇÕES CORRIGIDAS) */
+        /* SIDEBAR */
         .sidebar {
             position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
             background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1);
@@ -56,6 +56,11 @@
         /* ÁREA DE JOGO */
         main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         
+        .instrucao-topo {
+            font-size: 1.4rem; font-weight: 800; color: #e67e22;
+            margin-bottom: 15px; text-align: center; text-transform: uppercase;
+        }
+
         .status-container {
             width: 100%; max-width: 500px; display: flex; justify-content: space-between;
             align-items: center; margin-bottom: 15px; background: rgba(255,255,255,0.9); 
@@ -95,6 +100,7 @@
         @media (max-width: 480px) {
             .palavra-alvo { font-size: 2.2rem; }
             .card { padding: 25px 15px; }
+            .instrucao-topo { font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -121,6 +127,8 @@
     </header>
 
     <main>
+        <h2 class="instrucao-topo">Faz o plural das palavras!</h2>
+
         <div class="status-container">
             <div>Nível: <span id="txt-nivel" style="color:#ff9f43">Fácil</span></div>
             <div style="display:flex; align-items:center; gap:10px;">
@@ -141,9 +149,10 @@
     <div id="modal-info" class="modal-custom">
         <h2 style="color:#3498db; margin-bottom:15px;">Ajuda</h2>
         <p style="margin-bottom:20px; line-height:1.5; color: #2d3436;">
-            Lê a palavra no cartão e escreve o seu <b>plural</b> (quando existem dois ou mais).
+            Lê a palavra no cartão e escreve o seu <b>plural</b>.
             <br><br>
-            Atenção aos acentos! Exemplo: <b>CÃO</b> → <b>CÃES</b>
+            Atenção à escrita correta!<br>
+            Exemplo: <b>MAÇÃ</b> → <b>MAÇÃS</b>
         </p>
         <button class="btn-voltar-3d" style="width:100%; justify-content:center;" onclick="fecharModal('modal-info')">ENTENDI!</button>
     </div>
@@ -166,13 +175,15 @@
                 {s:"GATO", p:"GATOS"}, {s:"MESA", p:"MESAS"}, {s:"CASA", p:"CASAS"}, 
                 {s:"BOLA", p:"BOLAS"}, {s:"PATO", p:"PATOS"}, {s:"DADO", p:"DADOS"}, 
                 {s:"COPO", p:"COPOS"}, {s:"LIVRO", p:"LIVROS"}, {s:"MAÇÃ", p:"MAÇÃS"}, 
-                {s:"CARRO", p:"CARROS"}, {s:"CHÁVEO", p:"CHÁVEOS"}, {s:"JANELA", p:"JANELAS"}
+                {s:"CARRO", p:"CARROS"}, {s:"JANELA", p:"JANELAS"}, {s:"ESTRELA", p:"ESTRELAS"},
+                {s:"MENINA", p:"MENINAS"}, {s:"BOLO", p:"BOLOS"}, {s:"SAPATO", p:"SAPATOS"}
             ],
             2: [ 
                 {s:"CARACOL", p:"CARACOIS"}, {s:"JARDIM", p:"JARDINS"}, {s:"ANIMAL", p:"ANIMAIS"}, 
                 {s:"FUNIL", p:"FUNIS"}, {s:"PUDIM", p:"PUDINS"}, {s:"PAPEL", p:"PAPEIS"}, 
                 {s:"BOMBOM", p:"BOMBONS"}, {s:"AZUL", p:"AZUIS"}, {s:"CÃO", p:"CÃES"}, 
-                {s:"MÃO", p:"MÃOS"}, {s:"BOTÃO", p:"BOTÕES"}, {s:"SOL", p:"SOIS"}
+                {s:"MÃO", p:"MÃOS"}, {s:"BOTÃO", p:"BOTÕES"}, {s:"SOL", p:"SOIS"},
+                {s:"PAZ", p:"PAZES"}, {s:"COLHER", p:"COLHERES"}, {s:"NARIZ", p:"NARIZES"}
             ]
         };
 
@@ -194,7 +205,6 @@
         }
 
         function iniciar() {
-            // Escolhe 10 palavras aleatórias do banco de dados do nível
             let banco = [...dados[nivel]];
             lista = banco.sort(() => Math.random() - 0.5).slice(0, 10);
             indice = 0;
@@ -212,10 +222,10 @@
 
         function verificar() {
             const input = document.getElementById('resposta');
-            const respostaUtilizador = input.value.trim().toUpperCase();
-            const respostaCorreta = lista[indice].p.toUpperCase();
+            const resUtilizador = input.value.trim().toUpperCase();
+            const resCorreta = lista[indice].p.toUpperCase();
 
-            if(respostaUtilizador === respostaCorreta) {
+            if(resUtilizador === resCorreta) {
                 input.className = "correto";
                 document.getElementById('som-acerto').play();
                 pontos += 10; 
@@ -223,7 +233,7 @@
                 setTimeout(() => {
                     indice++;
                     if(indice >= 10) {
-                        document.getElementById('modal-msg').innerText = `Completaste o Nível ${nivel} com ${pontos} pontos!`;
+                        document.getElementById('modal-msg').innerText = `Fizeste ${pontos} pontos no Nível ${nivel}!`;
                         abrirModal('modal-nivel');
                     } else carregar();
                 }, 1000);
