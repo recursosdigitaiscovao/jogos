@@ -56,16 +56,30 @@
         }
         .overlay.active { display: block; }
 
-        /* CONTEÚDO */
+        /* CONTEÚDO PRINCIPAL */
         main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
 
-        /* CATEGORIAS ESTILO FORCA */
-        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 400px; padding: 0 20px; }
+        /* BOTÕES DE CATEGORIA EXTENSÍVEIS */
+        #menu-container { width: 100%; max-width: 450px; padding: 0 20px; }
+        
+        .theme-list { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+        
         .theme-card {
-            background: white; padding: 20px; border-radius: 20px; border: 1px solid #ddd;
-            box-shadow: 0 5px 0 #ddd; cursor: pointer; text-align: center; transition: 0.1s;
+            background: white; 
+            padding: 18px 25px; 
+            border-radius: 15px; 
+            border: 1px solid #ddd;
+            box-shadow: 0 5px 0 #ddd; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 20px;
+            transition: 0.1s;
+            width: 100%;
         }
         .theme-card:active { transform: translateY(3px); box-shadow: 0 2px 0 #ddd; }
+        .theme-card span { font-size: 1.8rem; }
+        .theme-card p { font-weight: bold; color: black; font-size: 1.1rem; }
 
         /* BOTÃO INFO REDONDO */
         .btn-info-round {
@@ -75,7 +89,7 @@
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* GRELHA */
+        /* GRELHA DO JOGO */
         .grid { 
             display: grid; gap: 4px; background: white; padding: 10px; 
             border-radius: 15px; border: 3px solid #ff9f43; 
@@ -145,11 +159,11 @@
 
     <main>
         <div id="menu-container">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 25px;">
-                <h2 style="color: #e67e22;">Escolhe um tema</h2>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px;">
+                <h2 style="color: #e67e22; font-size: 1.3rem;">Escolhe um tema</h2>
                 <button class="btn-info-round" onclick="abrirAjuda()">i</button>
             </div>
-            <div class="theme-grid" id="theme-grid"></div>
+            <div class="theme-list" id="theme-list"></div>
         </div>
 
         <div id="game-area" style="display: none; flex-direction: column; align-items: center;">
@@ -162,9 +176,9 @@
 
     <script>
         const themes = {
-            "Escola": { icon: "🎒", pool: ["LÁPIS", "COLA", "LIVRO", "PASTA", "MESA", "GIZ", "MAPA", "AULA"] },
-            "Frutas": { icon: "🍎", pool: ["MAÇÃ", "PERA", "UVA", "FIGO", "KIWI", "COCO", "BANANA", "PERA"] },
-            "Animais": { icon: "🐶", pool: ["GATO", "CÃO", "PATO", "LEÃO", "RATO", "VACA", "SAPO", "ZEBRA"] }
+            "Escola": { icon: "🎒", pool: ["LÁPIS", "COLA", "LIVRO", "PASTA", "MESA", "GIZ", "MAPA", "AULA", "RÉGUA", "CANETA"] },
+            "Frutas": { icon: "🍎", pool: ["MAÇÃ", "PERA", "UVA", "FIGO", "KIWI", "COCO", "BANANA", "MELÃO", "AMORA", "LIMÃO"] },
+            "Animais": { icon: "🐶", pool: ["GATO", "CÃO", "PATO", "LEÃO", "RATO", "VACA", "SAPO", "ZEBRA", "URSO", "LOBO"] }
         };
 
         let activeCategory = "";
@@ -204,14 +218,14 @@
         }
 
         function initThemes() {
-            const grid = document.getElementById('theme-grid');
-            grid.innerHTML = '';
+            const list = document.getElementById('theme-list');
+            list.innerHTML = '';
             Object.keys(themes).forEach(key => {
                 const card = document.createElement('div');
                 card.className = 'theme-card';
                 card.onclick = () => startGame(key);
-                card.innerHTML = `<span style="font-size:2.2rem">${themes[key].icon}</span><p style="font-weight:bold; color:black; margin-top:5px; font-size:0.9rem;">${key}</p>`;
-                grid.appendChild(card);
+                card.innerHTML = `<span>${themes[key].icon}</span><p>${key}</p>`;
+                list.appendChild(card);
             });
         }
 
@@ -225,7 +239,6 @@
             foundWords = [];
             selectedCells = [];
             
-            // Sorteia 4 palavras aleatórias do "pool" para garantir que muda
             const pool = [...themes[key].pool];
             currentWords = pool.sort(() => 0.5 - Math.random()).slice(0, 4);
 
