@@ -26,7 +26,6 @@
         .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; }
         header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; }
 
-        /* BOTÃO VOLTAR - TEXTO PRETO */
         .btn-voltar-3d {
             text-decoration: none; color: #000000; background-color: #ff9f43;
             font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
@@ -36,7 +35,7 @@
         }
         .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
 
-        /* SIDEBAR COM HOVER */
+        /* SIDEBAR */
         .sidebar {
             position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
             background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
@@ -58,15 +57,25 @@
         .overlay.active { display: block; }
 
         /* CONTEÚDO */
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; overflow-y: auto; }
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
 
-        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 400px; padding: 20px; }
+        /* CATEGORIAS ESTILO FORCA */
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 400px; padding: 0 20px; }
         .theme-card {
             background: white; padding: 20px; border-radius: 20px; border: 1px solid #ddd;
-            box-shadow: 0 5px 0 #ddd; cursor: pointer; text-align: center;
+            box-shadow: 0 5px 0 #ddd; cursor: pointer; text-align: center; transition: 0.1s;
+        }
+        .theme-card:active { transform: translateY(3px); box-shadow: 0 2px 0 #ddd; }
+
+        /* BOTÃO INFO REDONDO */
+        .btn-info-round {
+            background-color: #ff9f43; color: #000000; width: 32px; height: 32px;
+            border-radius: 50%; border: none; font-weight: bold; font-size: 1.1rem;
+            box-shadow: 0 2px 0 #e67e22; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center;
         }
 
-        /* GRELHA SOPA LETRAS */
+        /* GRELHA */
         .grid { 
             display: grid; gap: 4px; background: white; padding: 10px; 
             border-radius: 15px; border: 3px solid #ff9f43; 
@@ -75,14 +84,14 @@
         .cell {
             width: 35px; height: 35px; background: #f9f9f9; border: 1px solid #eee;
             display: flex; align-items: center; justify-content: center;
-            font-weight: 800; font-size: 1.1rem; border-radius: 6px; cursor: pointer;
+            font-weight: 800; font-size: 1.1rem; border-radius: 6px;
         }
         .cell.selected { background: #ff9f43; color: white; }
         .cell.found { background: #2ecc71 !important; color: white !important; }
 
         .word-tag {
-            background: white; padding: 5px 12px; border-radius: 10px;
-            font-weight: bold; border: 1px solid #ddd; color: #7f8c8d;
+            background: white; padding: 6px 14px; border-radius: 10px;
+            font-weight: bold; border: 1px solid #ddd; color: #7f8c8d; font-size: 0.85rem;
         }
         .word-tag.done { background: #2ecc71; color: white; border-color: #27ae60; text-decoration: line-through; }
 
@@ -103,16 +112,16 @@
     
     <div id="modal-info" class="modal-custom">
         <h2 style="color: #e67e22; margin-bottom: 10px;">Como Jogar</h2>
-        <p style="color: #636e72;">Encontra as palavras escondidas na grelha! Clica nas letras para formar a palavra.</p>
-        <button class="btn-voltar-3d" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="fecharModais()">VAMOS A ISSO!</button>
+        <p style="color: #636e72;">Encontra as palavras escondidas na horizontal e vertical! Clica nas letras para marcar a palavra.</p>
+        <button class="btn-voltar-3d" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="fecharModais()">ENTENDI!</button>
     </div>
 
     <div id="end-modal" class="modal-custom">
         <div style="font-size: 3.5rem;">🏆</div>
         <h2 style="margin: 10px 0;">Muito bem!</h2>
-        <p style="margin-bottom: 20px; color: #636e72; font-weight: bold;">Acertaste em todas as palavras!</p>
+        <p style="margin-bottom: 20px; color: #636e72; font-weight: bold;">Encontraste todas as palavras!</p>
         <div style="display: flex; gap: 10px;">
-            <button class="btn-voltar-3d" style="flex: 1; justify-content: center;" onclick="startGame(activeCategory)">DE NOVO</button>
+            <button class="btn-voltar-3d" style="flex: 1; justify-content: center;" onclick="restartLevel()">DE NOVO</button>
             <button class="btn-voltar-3d" style="flex: 1; justify-content: center; background-color: #bdc3c7; border-color: #7f8c8d; box-shadow: 0 3px 0 #7f8c8d;" onclick="showMenu()">MENU</button>
         </div>
     </div>
@@ -136,9 +145,9 @@
 
     <main>
         <div id="menu-container">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 25px;">
                 <h2 style="color: #e67e22;">Escolhe um tema</h2>
-                <button class="btn-voltar-3d" style="padding: 5px 10px; min-width: auto;" onclick="abrirAjuda()">i</button>
+                <button class="btn-info-round" onclick="abrirAjuda()">i</button>
             </div>
             <div class="theme-grid" id="theme-grid"></div>
         </div>
@@ -153,14 +162,15 @@
 
     <script>
         const themes = {
-            "Escola": { icon: "🎒", words: ["LÁPIS", "COLA", "LIVRO", "PASTA"] },
-            "Frutas": { icon: "🍎", words: ["MAÇÃ", "PERA", "UVA", "FIGO"] },
-            "Animais": { icon: "🐶", words: ["GATO", "CÃO", "PATO", "LEÃO"] }
+            "Escola": { icon: "🎒", pool: ["LÁPIS", "COLA", "LIVRO", "PASTA", "MESA", "GIZ", "MAPA", "AULA"] },
+            "Frutas": { icon: "🍎", pool: ["MAÇÃ", "PERA", "UVA", "FIGO", "KIWI", "COCO", "BANANA", "PERA"] },
+            "Animais": { icon: "🐶", pool: ["GATO", "CÃO", "PATO", "LEÃO", "RATO", "VACA", "SAPO", "ZEBRA"] }
         };
 
         let activeCategory = "";
         let selectedCells = [];
         let foundWords = [];
+        let currentWords = [];
         let gridData = [];
         const gridSize = 9;
 
@@ -187,6 +197,7 @@
         }
 
         function showMenu() {
+            fecharModais();
             document.getElementById('menu-container').style.display = 'block';
             document.getElementById('game-area').style.display = 'none';
             document.getElementById('header-title').innerText = "Sopa de Letras";
@@ -199,15 +210,25 @@
                 const card = document.createElement('div');
                 card.className = 'theme-card';
                 card.onclick = () => startGame(key);
-                card.innerHTML = `<span style="font-size:2.5rem">${themes[key].icon}</span><p style="font-weight:bold; color:black; margin-top:5px;">${key}</p>`;
+                card.innerHTML = `<span style="font-size:2.2rem">${themes[key].icon}</span><p style="font-weight:bold; color:black; margin-top:5px; font-size:0.9rem;">${key}</p>`;
                 grid.appendChild(card);
             });
+        }
+
+        function restartLevel() {
+            fecharModais();
+            startGame(activeCategory);
         }
 
         function startGame(key) {
             activeCategory = key;
             foundWords = [];
             selectedCells = [];
+            
+            // Sorteia 4 palavras aleatórias do "pool" para garantir que muda
+            const pool = [...themes[key].pool];
+            currentWords = pool.sort(() => 0.5 - Math.random()).slice(0, 4);
+
             document.getElementById('menu-container').style.display = 'none';
             document.getElementById('game-area').style.display = 'flex';
             document.getElementById('header-title').innerText = key;
@@ -221,28 +242,26 @@
             gridEl.innerHTML = '';
             gridData = Array(gridSize * gridSize).fill(null);
 
-            const words = themes[activeCategory].words;
-
-            words.forEach(word => {
+            currentWords.forEach(word => {
                 let placed = false;
-                while (!placed) {
-                    const direction = Math.random() > 0.5 ? 1 : gridSize; // 1: Horizontal, gridSize: Vertical
+                let attempts = 0;
+                while (!placed && attempts < 100) {
+                    const direction = Math.random() > 0.5 ? 1 : gridSize; 
                     const start = Math.floor(Math.random() * gridData.length);
-                    
                     if (canPlace(word, start, direction)) {
                         for (let i = 0; i < word.length; i++) {
                             gridData[start + i * direction] = { letter: word[i], word: word };
                         }
                         placed = true;
                     }
+                    attempts++;
                 }
             });
 
             for (let i = 0; i < gridData.length; i++) {
                 const cell = document.createElement('div');
                 cell.className = 'cell';
-                const char = gridData[i] ? gridData[i].letter : String.fromCharCode(65 + Math.floor(Math.random() * 26));
-                cell.innerText = char;
+                cell.innerText = gridData[i] ? gridData[i].letter : String.fromCharCode(65 + Math.floor(Math.random() * 26));
                 cell.dataset.index = i;
                 cell.onclick = () => selectCell(cell, i);
                 gridEl.appendChild(cell);
@@ -261,7 +280,7 @@
         function renderWordList() {
             const list = document.getElementById('word-list');
             list.innerHTML = '';
-            themes[activeCategory].words.forEach(w => {
+            currentWords.forEach(w => {
                 const span = document.createElement('span');
                 span.className = 'word-tag';
                 span.id = 'word-' + w;
@@ -280,28 +299,24 @@
                 el.classList.add('selected');
                 selectedCells.push(idx);
             }
-
             checkSelection();
         }
 
         function checkSelection() {
-            const currentString = selectedCells.map(idx => {
-                const cell = document.querySelector(`.cell[data-index='${idx}']`);
-                return cell.innerText;
-            }).join('');
-
+            const currentString = selectedCells.map(idx => document.querySelector(`.cell[data-index='${idx}']`).innerText).join('');
             const reversedString = currentString.split('').reverse().join('');
 
-            themes[activeCategory].words.forEach(word => {
+            currentWords.forEach(word => {
                 if ((currentString === word || reversedString === word) && !foundWords.includes(word)) {
                     foundWords.push(word);
                     selectedCells.forEach(idx => {
                         document.querySelector(`.cell[data-index='${idx}']`).classList.add('found');
+                        document.querySelector(`.cell[data-index='${idx}']`).classList.remove('selected');
                     });
                     document.getElementById('word-' + word).classList.add('done');
                     selectedCells = [];
                     
-                    if (foundWords.length === themes[activeCategory].words.length) {
+                    if (foundWords.length === currentWords.length) {
                         setTimeout(() => {
                             document.getElementById('end-modal').style.display = 'block';
                             document.getElementById('overlay').classList.add('active');
