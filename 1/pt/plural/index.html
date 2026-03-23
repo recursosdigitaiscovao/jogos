@@ -3,80 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jogo do Plural</title>
+<title>1º Ano - Jogo do Plural</title>
 
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-    font-family: Arial, sans-serif;
-    background: #f0f7ff;
+    background-color: #f0f7ff;
+    font-family: 'Segoe UI', sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* HEADER */
+header {
+    background: white;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #ddd;
+}
+
+main {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
 }
 
-h1 { margin-bottom: 10px; }
+.card-exercicio {
+    background: white;
+    width: 100%;
+    max-width: 600px;
+    padding: 25px;
+    border-radius: 20px;
+    border: 2px solid #dfe6e9;
+}
+
+.zona-frase {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+}
+
+.input-plural {
+    font-size: 1.3rem;
+    padding: 10px;
+    width: 180px;
+    text-align: center;
+}
+
+.correto {
+    border-color: green;
+    background: #eafaf1;
+}
+
+.errado {
+    border-color: red;
+    background: #fff5f5;
+}
+
+.btn-proximo {
+    margin-top: 20px;
+    padding: 15px;
+    width: 100%;
+    background: #2ecc71;
+    color: white;
+    border: none;
+}
 
 .topo {
     margin-bottom: 15px;
     display: flex;
     gap: 15px;
     align-items: center;
-}
-
-select {
-    padding: 8px;
-    font-size: 1rem;
-}
-
-.pontos {
-    font-weight: bold;
-}
-
-.card {
-    background: white;
-    padding: 25px;
-    border-radius: 20px;
-    width: 100%;
-    max-width: 500px;
-    text-align: center;
-}
-
-.zona {
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-}
-
-input {
-    font-size: 1.4rem;
-    padding: 10px;
-    width: 180px;
-    text-align: center;
-    border-radius: 10px;
-    border: 2px solid #ccc;
-}
-
-input.correto {
-    border-color: green;
-    background: #eafaf1;
-}
-
-input.errado {
-    border-color: red;
-    background: #fff5f5;
-}
-
-button {
-    margin-top: 20px;
-    padding: 12px 30px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 10px;
-    background: #2ecc71;
-    color: white;
-    cursor: pointer;
 }
 
 .mensagem {
@@ -88,10 +89,14 @@ button {
 
 <body>
 
-<h1>✍️ Jogo do Plural</h1>
+<header>
+    <h1>✍️ Passe para o Plural</h1>
+</header>
+
+<main>
 
 <div class="topo">
-    <div class="pontos">⭐ Pontos: <span id="pontos">0</span></div>
+    ⭐ Pontos: <span id="pontos">0</span>
 
     <select id="nivel" onchange="mudarNivel()">
         <option value="facil">Fácil</option>
@@ -100,16 +105,21 @@ button {
     </select>
 </div>
 
-<div class="card">
-    <div class="zona" id="frase"></div>
+<div class="card-exercicio">
 
-    <input type="text" id="resposta" placeholder="..." autocomplete="off">
+    <div class="zona-frase">
+        <p id="frase-singular"></p>
+    </div>
 
-    <br>
-    <button onclick="verificar()">Verificar</button>
+    <div class="zona-frase" id="content-plural"></div>
+
+    <button class="btn-proximo" onclick="verificar()">VERIFICAR</button>
 
     <div class="mensagem" id="mensagem"></div>
+
 </div>
+
+</main>
 
 <!-- Sons -->
 <audio id="som-acerto" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9b6b1d.mp3"></audio>
@@ -120,45 +130,77 @@ button {
 // NÍVEIS
 const niveis = {
 
-    facil: [
-        { frase: "O patim", correta: "patins" },
-        { frase: "O gato", correta: "gatos" },
-        { frase: "A bola", correta: "bolas" }
-    ],
+facil: [
+    {
+        singText: "O <b>gato</b> corre.",
+        pluInicio: "Os ",
+        pluFim: " correm.",
+        correto: "gatos"
+    },
+    {
+        singText: "A <b>bola</b> rola.",
+        pluInicio: "As ",
+        pluFim: " rolam.",
+        correto: "bolas"
+    }
+],
 
-    medio: [
-        { frase: "O caracol", correta: "caracóis" },
-        { frase: "O papel", correta: "papéis" },
-        { frase: "O animal", correta: "animais" }
-    ],
+medio: [
+    {
+        singText: "O <b>caracol</b> é lento.",
+        pluInicio: "Os ",
+        pluFim: " são lentos.",
+        correto: "caracóis"
+    },
+    {
+        singText: "O <b>papel</b> voa.",
+        pluInicio: "Os ",
+        pluFim: " voam.",
+        correto: "papéis"
+    }
+],
 
-    dificil: [
-        { frase: "O pão", correta: "pães" },
-        { frase: "O alemão", correta: "alemães" },
-        { frase: "O capitão", correta: "capitães" }
-    ]
+dificil: [
+    {
+        singText: "O <b>pão</b> é fresco.",
+        pluInicio: "Os ",
+        pluFim: " são frescos.",
+        correto: "pães"
+    },
+    {
+        singText: "O <b>alemão</b> fala.",
+        pluInicio: "Os ",
+        pluFim: " falam.",
+        correto: "alemães"
+    }
+]
+
 };
 
 let nivelAtual = "facil";
 let indice = 0;
 let pontos = 0;
 
-// carregar exercício
+// carregar
 function carregar() {
     const d = niveis[nivelAtual][indice];
-    document.getElementById("frase").innerHTML =
-        `Escreve no plural: <b>${d.frase}</b> →`;
 
-    document.getElementById("resposta").value = "";
+    document.getElementById('frase-singular').innerHTML = d.singText;
+
+    document.getElementById('content-plural').innerHTML =
+        `${d.pluInicio}
+        <input id="input-resp" class="input-plural">
+        ${d.pluFim}`;
+
     document.getElementById("mensagem").innerText = "";
 }
 
-// verificar resposta
+// verificar
 function verificar() {
 
-    const input = document.getElementById("resposta");
+    const input = document.getElementById("input-resp");
     const tentativa = input.value.trim();
-    const correta = niveis[nivelAtual][indice].correta;
+    const correta = niveis[nivelAtual][indice].correto;
 
     if (tentativa === correta) {
 
@@ -182,14 +224,10 @@ function verificar() {
     }
 }
 
-// próximo exercício
+// próximo
 function proximo() {
     indice++;
-
-    if (indice >= niveis[nivelAtual].length) {
-        indice = 0;
-    }
-
+    if (indice >= niveis[nivelAtual].length) indice = 0;
     carregar();
 }
 
