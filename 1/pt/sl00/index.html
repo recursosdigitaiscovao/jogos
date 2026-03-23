@@ -57,10 +57,23 @@
         .overlay.active { display: block; }
 
         /* CONTEÚDO PRINCIPAL */
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 20px 15px; overflow-y: auto; }
 
-        /* GRELHA DE CATEGORIAS: 2 POR LINHA, IMAGEM CIMA, TEXTO BAIXO */
-        #menu-container { width: 100%; max-width: 450px; padding: 0 10px; }
+        /* TITULO E INFO */
+        .menu-header {
+            display: flex; align-items: center; justify-content: center; 
+            gap: 10px; margin-bottom: 30px; width: 100%;
+        }
+        .menu-header h2 { color: #e67e22; font-size: 1.4rem; font-weight: 800; }
+        
+        .btn-info-round {
+            background-color: #ff9f43; color: white; width: 28px; height: 28px;
+            border-radius: 50%; border: none; font-weight: bold; font-size: 1rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* GRELHA DE CATEGORIAS - IGUAL À IMAGEM */
+        #menu-container { width: 100%; max-width: 800px; }
         
         .theme-grid { 
             display: grid; 
@@ -71,35 +84,28 @@
         
         .theme-card {
             background: white; 
-            padding: 25px 10px; 
-            border-radius: 20px; 
-            border: 1px solid #ddd;
-            box-shadow: 0 6px 0 #ddd; 
+            padding: 25px 15px; 
+            border-radius: 25px; /* Bordas bem redondas como na imagem */
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 0 #e0e0e0; /* Sombra 3D cinza suave */
             cursor: pointer; 
             display: flex; 
-            flex-direction: column; /* Imagem em cima, texto em baixo */
+            flex-direction: column;
             align-items: center; 
             justify-content: center;
-            gap: 12px;
-            transition: 0.1s;
+            gap: 10px;
+            transition: transform 0.1s, box-shadow 0.1s;
         }
-        .theme-card:active { transform: translateY(3px); box-shadow: 0 2px 0 #ddd; }
-        .theme-card span { font-size: 2.8rem; } 
-        .theme-card p { font-weight: 800; color: black; font-size: 0.95rem; text-transform: uppercase; }
-
-        /* BOTÃO INFO REDONDO */
-        .btn-info-round {
-            background-color: #ff9f43; color: #000000; width: 32px; height: 32px;
-            border-radius: 50%; border: none; font-weight: bold; font-size: 1.1rem;
-            box-shadow: 0 2px 0 #e67e22; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center;
-        }
+        .theme-card:active { transform: translateY(3px); box-shadow: 0 1px 0 #e0e0e0; }
+        .theme-card span { font-size: 2.2rem; } 
+        .theme-card p { font-weight: 800; color: #000; font-size: 1rem; }
 
         /* GRELHA DO JOGO */
+        #game-area { width: 100%; max-width: 400px; margin: 0 auto; }
         .grid { 
             display: grid; gap: 4px; background: white; padding: 10px; 
             border-radius: 15px; border: 3px solid #ff9f43; 
-            user-select: none; touch-action: none;
+            user-select: none; touch-action: none; margin: 0 auto;
         }
         .cell {
             width: 35px; height: 35px; background: #f9f9f9; border: 1px solid #eee;
@@ -123,7 +129,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 400; text-align: center;
         }
 
-        footer { width: 100%; padding: 10px; background: white; text-align: center; color: #95a5a6; font-size: 0.75rem; border-top: 1px solid #eee; }
+        footer { width: 100%; padding: 10px; background: white; text-align: center; color: #95a5a6; font-size: 0.75rem; border-top: 1px solid #eee; margin-top: auto;}
     </style>
 </head>
 <body>
@@ -165,8 +171,8 @@
 
     <main>
         <div id="menu-container">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; padding: 0 5px;">
-                <h2 style="color: #e67e22; font-size: 1.3rem;">Escolhe um tema</h2>
+            <div class="menu-header">
+                <h2>Escolhe um tema</h2>
                 <button class="btn-info-round" onclick="abrirAjuda()">i</button>
             </div>
             <div class="theme-grid" id="theme-grid"></div>
@@ -182,10 +188,10 @@
 
     <script>
         const themes = {
-            "Escola": { icon: "🎒", pool: ["LÁPIS", "COLA", "LIVRO", "PASTA", "MESA", "GIZ", "MAPA", "AULA", "RÉGUA", "CANETA"] },
-            "Frutas": { icon: "🍎", pool: ["MAÇÃ", "PERA", "UVA", "FIGO", "KIWI", "COCO", "BANANA", "MELÃO", "AMORA", "LIMÃO"] },
             "Animais": { icon: "🐶", pool: ["GATO", "CÃO", "PATO", "LEÃO", "RATO", "VACA", "SAPO", "ZEBRA", "URSO", "LOBO"] },
-            "Cores": { icon: "🎨", pool: ["AZUL", "ROSA", "VERDE", "PRETO", "ROXO", "BEGE"] }
+            "Cores": { icon: "🎨", pool: ["AZUL", "ROSA", "VERDE", "PRETO", "ROXO", "BEGE", "AMARELO", "BRANCO"] },
+            "Escola": { icon: "🎒", pool: ["LÁPIS", "COLA", "LIVRO", "PASTA", "MESA", "GIZ", "MAPA", "AULA", "RÉGUA", "CANETA"] },
+            "Frutas": { icon: "🍎", pool: ["MAÇÃ", "PERA", "UVA", "FIGO", "KIWI", "COCO", "BANANA", "MELÃO", "AMORA", "LIMÃO"] }
         };
 
         let activeCategory = "";
