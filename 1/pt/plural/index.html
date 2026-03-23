@@ -5,139 +5,231 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>1º Ano - Jogo do Plural</title>
     <style>
-        /* Reset e Estilo Geral - Template_1 */
+        /* Estilo Geral - Template_1 */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
-            background-color: #f0f4f8;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+            background-color: #f0f7ff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh; height: 100svh;
+            display: flex; flex-direction: column;
+            overflow: hidden; touch-action: manipulation;
         }
 
+        /* HEADER */
         header {
             width: 100%; background: white; padding: 12px 20px;
             display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid rgba(0,0,0,0.1); z-index: 100;
+            border-bottom: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; z-index: 100;
         }
         .header-left { display: flex; align-items: center; gap: 12px; }
+        .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; }
         header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; }
 
         .btn-voltar-3d {
             text-decoration: none; color: #000; background-color: #ff9f43;
             font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
             border-radius: 8px; border: 1px solid #e67e22; box-shadow: 0 3px 0 #e67e22;
-            cursor: pointer;
+            cursor: pointer; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
+            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+            transition: 0.3s ease; z-index: 200; padding: 25px;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-item {
+            text-decoration: none; color: #636e72; font-weight: 600;
+            padding: 14px; border-radius: 15px; background: #fdfdfd;
+            display: flex; align-items: center; gap: 15px; margin-bottom: 8px; 
+            border: 1px solid #eee;
         }
 
-        /* ÁREA DO JOGO */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3); display: none; z-index: 150;
+        }
+        .overlay.active { display: block; }
+
+        /* ÁREA DE JOGO */
         main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px; overflow-y: auto; }
-        
+
         .instrucao {
             background: #fff; padding: 15px; border-radius: 15px; border-left: 5px solid #ff9f43;
-            margin-bottom: 25px; width: 100%; max-width: 600px; font-weight: 600; color: #2d3436;
+            margin-bottom: 25px; width: 100%; max-width: 600px; font-weight: 600;
         }
 
-        .exercicio-card {
+        .card-exercicio {
             background: white; width: 100%; max-width: 600px;
-            padding: 30px; border-radius: 20px; border: 1px dashed #b2bec3;
-            display: flex; flex-direction: column; gap: 25px;
+            padding: 25px; border-radius: 20px; border: 2px solid #dfe6e9;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
-        .linha-frase { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; font-size: 1.2rem; }
+        .zona-frase { margin-bottom: 20px; display: flex; align-items: center; gap: 15px; font-size: 1.2rem; }
+        .zona-frase img { width: 70px; height: 70px; object-fit: contain; }
         
-        .imagem-suporte { width: 80px; height: 80px; object-fit: contain; }
+        .destaque { color: #e67e22; font-weight: 800; text-decoration: underline; }
 
-        /* INPUTS */
         .input-plural {
-            border: 2px solid #dfe6e9; border-radius: 8px; padding: 8px 12px;
-            font-size: 1.1rem; font-weight: bold; width: 140px; text-align: center;
-            outline: none; transition: 0.3s;
+            border: 2px solid #bdc3c7; border-radius: 10px; padding: 10px;
+            font-size: 1.2rem; font-weight: bold; width: 150px; text-align: center;
+            outline: none; margin: 0 5px;
         }
-        .input-plural:focus { border-color: #ff9f43; background: #fffaf5; }
+        .input-plural:focus { border-color: #ff9f43; }
         .input-plural.correto { border-color: #2ecc71; background-color: #eafaf1; color: #27ae60; }
         .input-plural.errado { border-color: #ff7675; background-color: #fff5f5; }
 
-        .btn-verificar {
+        .btn-proximo {
             margin-top: 20px; background: #2ecc71; color: white; border: none;
-            padding: 12px 30px; border-radius: 10px; font-weight: bold;
-            box-shadow: 0 4px 0 #27ae60; cursor: pointer; font-size: 1rem;
+            padding: 15px 40px; border-radius: 12px; font-weight: bold;
+            box-shadow: 0 4px 0 #27ae60; cursor: pointer; font-size: 1rem; width: 100%;
         }
-        .btn-verificar:active { transform: translateY(2px); box-shadow: 0 2px 0 #27ae60; }
 
-        footer { width: 100%; padding: 10px; text-align: center; color: #95a5a6; font-size: 0.75rem; background: white; }
+        footer { width: 100%; padding: 10px; text-align: center; color: #95a5a6; font-size: 0.75rem; background: white; border-top: 1px solid #eee; }
     </style>
 </head>
 <body>
 
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <div class="sidebar" id="sidebar">
+        <h3 style="margin-bottom: 15px; color: #e67e22;">Menu</h3>
+        <nav>
+            <a href="../../../" class="sidebar-item">🏠 Início</a>
+            <a href="../../../1" class="sidebar-item">🐥 1º Ano</a>
+        </nav>
+    </div>
+
     <header>
         <div class="header-left">
-            <span style="font-size:1.4rem">✏️</span>
-            <h1>Desafio do Plural</h1>
+            <span class="menu-icon" onclick="toggleMenu()">☰</span>
+            <span style="font-size:1.4rem">✍️</span>
+            <h1>Passe para o Plural</h1>
         </div>
-        <a href="../" class="btn-voltar-3d">⬅ VOLTAR</a>
+        <button class="btn-voltar-3d" onclick="window.history.back()">⬅ VOLTAR</button>
     </header>
 
     <main>
         <div class="instrucao">
-            Completa a frase com o plural das palavras assinaladas.
+            Escreve no plural a palavra que está destacada.
         </div>
 
-        <div class="exercicio-card" id="jogo-container">
-            <div class="linha-frase">
-                <img src="patim.png" class="imagem-suporte" alt="item">
-                <p>O <strong>patim</strong> pertence a este jovem.</p>
+        <div class="card-exercicio">
+            <div class="zona-frase">
+                <img id="img-singular" src="" alt="Singular">
+                <p id="frase-singular"></p>
             </div>
 
-            <hr style="border: 0; border-top: 1px solid #eee;">
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
 
-            <div class="linha-frase">
-                <img src="patins.png" class="imagem-suporte" alt="itens">
-                <span>Os</span>
-                <input type="text" class="input-plural" id="resp1" placeholder="palavra..." autocomplete="off">
-                <span>pertencem a estes</span>
-                <input type="text" class="input-plural" id="resp2" placeholder="palavra..." autocomplete="off">
+            <div class="zona-frase">
+                <img id="img-plural" src="" alt="Plural">
+                <div id="content-plural" style="line-height: 2.5;">
+                    </div>
             </div>
 
-            <button class="btn-verificar" onclick="validar()">VERIFICAR RESPOSTA</button>
+            <button class="btn-proximo" id="btn-check" onclick="verificar()">VERIFICAR</button>
         </div>
     </main>
 
     <footer>Recursos Digitais Covão • Professor Luís</footer>
 
     <script>
-        // Configuração das respostas corretas
-        const solucoes = {
-            resp1: "patins",
-            resp2: "jovens"
-        };
+        const desafios = [
+            {
+                singText: "O <span class='destaque'>patim</span> é azul.",
+                pluInicio: "Os ",
+                pluFim: " são azuis.",
+                correto: "patins",
+                imgS: "patim.png",
+                imgP: "patins.png"
+            },
+            {
+                singText: "O <span class='destaque'>caracol</span> é lento.",
+                pluInicio: "Os ",
+                pluFim: " são lentos.",
+                correto: "caracois",
+                imgS: "caracol.png",
+                imgP: "caracois.png"
+            },
+            {
+                singText: "O <span class='destaque'>jovem</span> corre.",
+                pluInicio: "Os ",
+                pluFim: " correm.",
+                correto: "jovens",
+                imgS: "jovem.png",
+                imgP: "jovens.png"
+            },
+            {
+                singText: "A <span class='destaque'>nuvem</span> é branca.",
+                pluInicio: "As ",
+                pluFim: " são brancas.",
+                correto: "nuvens",
+                imgS: "nuvem.png",
+                imgP: "nuvens.png"
+            }
+        ];
 
-        function validar() {
-            let todosCertos = true;
+        let indice = 0;
+        let faseValidada = false;
 
-            for (let id in solucoes) {
-                const input = document.getElementById(id);
-                const tentativa = input.value.trim().toLowerCase();
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
 
-                if (tentativa === solucoes[id]) {
-                    input.classList.remove('errado');
-                    input.classList.add('correto');
-                } else {
-                    input.classList.remove('correto');
-                    input.classList.add('errado');
-                    todosCertos = false;
-                }
+        function carregar() {
+            const d = desafios[indice];
+            faseValidada = false;
+            
+            document.getElementById('frase-singular').innerHTML = d.singText;
+            document.getElementById('img-singular').src = d.imgS;
+            document.getElementById('img-plural').src = d.imgP;
+            
+            const contentP = document.getElementById('content-plural');
+            contentP.innerHTML = `${d.pluInicio} <input type="text" id="input-resp" class="input-plural" placeholder="..." autocomplete="off"> ${d.pluFim}`;
+            
+            const btn = document.getElementById('btn-check');
+            btn.innerText = "VERIFICAR";
+            btn.style.backgroundColor = "#2ecc71";
+            btn.style.boxShadow = "0 4px 0 #27ae60";
+        }
+
+        function verificar() {
+            if (faseValidada) {
+                proximo();
+                return;
             }
 
-            if (todosCertos) {
-                alert("Muito bem! Completaste a frase corretamente. 🎉");
-                // Aqui podias carregar uma nova frase se tivesses uma lista
+            const input = document.getElementById('input-resp');
+            const tentativa = input.value.trim().toLowerCase();
+            const correta = desafios[indice].correto;
+
+            if (tentativa === correta) {
+                input.classList.add('correto');
+                input.disabled = true;
+                faseValidada = true;
+                const btn = document.getElementById('btn-check');
+                btn.innerText = "PRÓXIMO ➜";
+                btn.style.backgroundColor = "#3498db";
+                btn.style.boxShadow = "0 4px 0 #2980b9";
+            } else {
+                input.classList.add('errado');
+                setTimeout(() => input.classList.remove('errado'), 500);
             }
         }
 
-        // Permitir que o "Enter" também verifique
-        document.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') validar();
-        });
+        function proximo() {
+            indice++;
+            if (indice >= desafios.length) indice = 0;
+            carregar();
+        }
+
+        // Inicia o jogo
+        carregar();
     </script>
 </body>
 </html>
