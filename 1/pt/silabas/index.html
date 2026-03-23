@@ -59,7 +59,15 @@
         /* CONTEÚDO PRINCIPAL */
         main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
 
-        /* ÁREA DO CARD (ESTILO DA TUA IMAGEM) */
+        .instruction-container { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .instruction { color: #d35400; font-size: 1.3rem; font-weight: 800; text-align: center; }
+        
+        .btn-info-circle {
+            background: #ff9f43; color: white; border: none; width: 25px; height: 25px;
+            border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* ÁREA DO CARD */
         .game-card {
             background: white; width: 100%; max-width: 380px;
             border-radius: 20px; border: 2px solid #333;
@@ -73,35 +81,20 @@
             border-bottom: 2px solid #333; text-transform: uppercase;
         }
 
-        .card-visual {
-            height: 200px; display: flex; align-items: center; justify-content: center;
-            font-size: 7rem; background: #fff;
-        }
+        .card-visual { height: 200px; display: flex; align-items: center; justify-content: center; font-size: 7rem; background: #fff; }
 
-        .options-row {
-            display: grid; grid-template-columns: repeat(4, 1fr);
-            border-top: 2px solid #333;
-        }
+        .options-row { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 2px solid #333; }
 
         .opt-btn {
             padding: 20px 0; font-size: 1.8rem; font-weight: 900;
             background: white; border: none; cursor: pointer;
-            border-right: 2px solid #333; transition: background 0.2s;
+            border-right: 2px solid #333; transition: 0.2s;
         }
         .opt-btn:last-child { border-right: none; }
-        .opt-btn:active { background: #ff9f43; color: white; }
-        
-        /* Cores de feedback */
         .opt-btn.correct { background: #2ecc71 !important; color: white; }
         .opt-btn.wrong { background: #e74c3c !important; color: white; }
 
-        /* MENSAGEM DE TOPO */
-        .instruction {
-            color: #d35400; font-size: 1.4rem; font-weight: 800;
-            margin-bottom: 20px; text-align: center;
-        }
-
-        /* MODAL FINAL */
+        /* MODAIS */
         .modal-custom {
             display: none; position: fixed; top: 50%; left: 50%; 
             transform: translate(-50%, -50%); width: 85%; max-width: 350px;
@@ -114,13 +107,19 @@
 </head>
 <body>
 
-    <div class="overlay" id="overlay"></div>
+    <div class="overlay" id="overlay" onclick="fecharModais()"></div>
     
+    <div id="modal-info" class="modal-custom">
+        <h2 style="color: #e67e22; margin-bottom: 10px;">Como Jogar</h2>
+        <p style="color: #636e72;">Lê a palavra ou vê a imagem e conta quantos "pedaços" (sílabas) ela tem. Clica no número certo para avançar!</p>
+        <button class="btn-voltar-3d" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="fecharModais()">ENTENDI!</button>
+    </div>
+
     <div id="end-modal" class="modal-custom">
-        <div style="font-size: 4rem;">⭐</div>
-        <h2 style="margin: 15px 0;">Parabéns!</h2>
-        <p style="color: #636e72; font-weight: bold; margin-bottom: 25px;">Completaste todos os desafios!</p>
-        <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="location.reload()">JOGAR DE NOVO</button>
+        <div style="font-size: 4rem;">🏆</div>
+        <h2 style="margin: 15px 0;">Incrível!</h2>
+        <p style="color: #636e72; font-weight: bold; margin-bottom: 25px;">Completaste as 10 rondas dos animais!</p>
+        <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="reiniciarJogo()">JOGAR DE NOVO</button>
     </div>
 
     <div class="sidebar" id="sidebar">
@@ -128,24 +127,28 @@
         <nav>
             <a href="../../../" class="sidebar-item">🏠 Início</a>
             <a href="../../../1" class="sidebar-item">🐥 1º Ano</a>
+            <a href="#" class="sidebar-item" onclick="abrirInfo()">ℹ️ Ajuda</a>
         </nav>
     </div>
 
     <header>
         <div class="header-left">
             <span class="menu-icon" onclick="toggleMenu()">☰</span>
-            <span style="font-size:1.4rem">👄</span>
-            <h1>Quantos Pedaços?</h1>
+            <span style="font-size:1.4rem">🐶</span>
+            <h1>Quantas Sílabas?</h1>
         </div>
         <button class="btn-voltar-3d" onclick="window.location.href='../'">⬅ VOLTAR</button>
     </header>
 
     <main>
-        <div class="instruction">Quantos pedaços tem a palavra?</div>
+        <div class="instruction-container">
+            <div class="instruction">Quantos pedaços tem?</div>
+            <button class="btn-info-circle" onclick="abrirInfo()">i</button>
+        </div>
 
         <div class="game-card">
-            <div class="card-word" id="display-word">LEÃO</div>
-            <div class="card-visual" id="display-icon">🦁</div>
+            <div class="card-word" id="display-word">...</div>
+            <div class="card-visual" id="display-icon">...</div>
             <div class="options-row">
                 <button class="opt-btn" onclick="checkAnswer(1)">1</button>
                 <button class="opt-btn" onclick="checkAnswer(2)">2</button>
@@ -155,26 +158,28 @@
         </div>
         
         <div id="progress" style="margin-top: 20px; color: #7f8c8d; font-weight: bold;">
-            Desafio <span id="current-idx">1</span> de 5
+            Ronda <span id="current-idx">1</span> de 10
         </div>
     </main>
 
     <footer>Recursos Digitais Covão • Professor Luís</footer>
 
     <script>
-        const challenges = [
-            { word: "LEÃO", icon: "🦁", syllables: 2 },
-            { word: "BONECA", icon: "🪆", syllables: 3 },
-            { word: "SOL", icon: "☀️", syllables: 1 },
-            { word: "TELEFONE", icon: "📞", syllables: 4 },
-            { word: "PATO", icon: "🦆", syllables: 2 },
-            { word: "SAPATO", icon: "👟", syllables: 3 },
-            { word: "GATO", icon: "🐱", syllables: 2 },
-            { word: "BORBOLETA", icon: "🦋", syllables: 4 }
-        ].sort(() => 0.5 - Math.random()); // Baralha os desafios
+        const animais = [
+            { w: "CÃO", i: "🐶", s: 1 }, { w: "GATO", i: "🐱", s: 2 }, { w: "RATO", i: "🐭", s: 2 },
+            { w: "PATO", i: "🦆", s: 2 }, { w: "LEÃO", i: "🦁", s: 2 }, { w: "SAPO", i: "🐸", s: 2 },
+            { w: "VACA", i: "🐮", s: 2 }, { w: "ZEBRA", i: "🦓", s: 2 }, { w: "TIGRE", i: "🐯", s: 2 },
+            { w: "MACACO", i: "🐒", s: 3 }, { w: "COELHO", i: "🐰", s: 3 }, { w: "CAVALO", i: "🐴", s: 3 },
+            { w: "GIRAFA", i: "🦒", s: 3 }, { w: "OVELHA", i: "🐑", s: 3 }, { w: "GALINHA", i: "🐔", s: 3 },
+            { w: "BALEIA", i: "🐳", s: 3 }, { w: "CORUJA", i: "🦉", s: 3 }, { w: "RAPOSA", i: "🦊", s: 3 },
+            { w: "Panda", i: "🐼", s: 2 }, { w: "ELEFANTE", i: "🐘", s: 4 }, { w: "TARTARUGA", i: "🐢", s: 4 },
+            { w: "HIPOPÓTAMO", i: "🦛", s: 5 }, { w: "BORBOLETA", i: "🦋", s: 4 }, { w: "CROCODILO", i: "🐊", s: 4 },
+            { w: "RINOCERONTE", i: "🦏", s: 5 }, { w: "CARANGUEJO", i: "🦀", s: 4 }, { w: "FORMIGA", i: "🐜", s: 3 },
+            { w: "ABELHA", i: "🐝", s: 3 }, { w: "ARANHA", i: "🕷️", s: 3 }, { w: "PEIXE", i: "🐟", s: 2 }
+        ];
 
+        let jogoAtual = [];
         let currentIndex = 0;
-        const totalChallenges = 5; // Vamos jogar 5 de cada vez
         let canClick = true;
 
         function toggleMenu() {
@@ -182,44 +187,58 @@
             document.getElementById('overlay').classList.toggle('active');
         }
 
+        function abrirInfo() {
+            fecharModais();
+            document.getElementById('modal-info').style.display = 'block';
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        function fecharModais() {
+            document.getElementById('modal-info').style.display = 'none';
+            document.getElementById('end-modal').style.display = 'none';
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('sidebar').classList.remove('active');
+        }
+
+        function prepararJogo() {
+            // Baralha e seleciona 10
+            jogoAtual = [...animais].sort(() => 0.5 - Math.random()).slice(0, 10);
+            currentIndex = 0;
+            loadChallenge();
+        }
+
         function loadChallenge() {
             canClick = true;
-            const item = challenges[currentIndex];
-            document.getElementById('display-word').innerText = item.word;
-            document.getElementById('display-icon').innerText = item.icon;
+            const item = jogoAtual[currentIndex];
+            document.getElementById('display-word').innerText = item.w;
+            document.getElementById('display-icon').innerText = item.i;
             document.getElementById('current-idx').innerText = currentIndex + 1;
             
-            // Limpa estilos dos botões
-            document.querySelectorAll('.opt-btn').forEach(btn => {
-                btn.classList.remove('correct', 'wrong');
-            });
+            document.querySelectorAll('.opt-btn').forEach(btn => btn.classList.remove('correct', 'wrong'));
         }
 
         function checkAnswer(num) {
             if (!canClick) return;
-            
-            const correctAnswer = challenges[currentIndex].syllables;
+            const correct = jogoAtual[currentIndex].s;
             const buttons = document.querySelectorAll('.opt-btn');
-            const clickedBtn = buttons[num - 1];
+            
+            // Lógica para sílabas > 4 (como hipopótamo) - para este jogo simplificado, 
+            // se for 4 ou mais e clicar no 4, aceitamos ou ajustamos a palavra.
+            // Neste código, as palavras de 5 sílabas vão exigir o botão 4 (como "4 ou +") 
+            // ou podes ajustar a lista. Ajustei para que o limite visual seja 4.
+            const target = correct > 4 ? 4 : correct;
 
-            if (num === correctAnswer) {
+            if (num === target) {
                 canClick = false;
-                clickedBtn.classList.add('correct');
-                
+                buttons[num - 1].classList.add('correct');
                 setTimeout(() => {
                     currentIndex++;
-                    if (currentIndex < totalChallenges) {
-                        loadChallenge();
-                    } else {
-                        showFinalModal();
-                    }
-                }, 1000);
+                    if (currentIndex < 10) loadChallenge();
+                    else showFinalModal();
+                }, 800);
             } else {
-                clickedBtn.classList.add('wrong');
-                // Pequena vibração ou efeito visual de erro pode ser adicionado aqui
-                setTimeout(() => {
-                    clickedBtn.classList.remove('wrong');
-                }, 500);
+                buttons[num - 1].classList.add('wrong');
+                setTimeout(() => buttons[num - 1].classList.remove('wrong'), 500);
             }
         }
 
@@ -228,8 +247,12 @@
             document.getElementById('overlay').classList.add('active');
         }
 
-        // Iniciar
-        loadChallenge();
+        function reiniciarJogo() {
+            fecharModais();
+            prepararJogo();
+        }
+
+        prepararJogo();
     </script>
 </body>
 </html>
