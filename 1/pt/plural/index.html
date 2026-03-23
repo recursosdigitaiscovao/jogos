@@ -3,38 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>1º Ano - Jogo do Plural</title>
+    <title>1º Ano - Plural de Palavras</title>
     <style>
-        /* RESET E BASE TEMPLATE_1 */
+        /* BASE E LAYOUT - TEMPLATE_1 */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-
         body {
-            background-color: #fff4e6;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            height: 100vh; height: 100svh;
-            display: flex; flex-direction: column;
-            overflow: hidden; touch-action: manipulation;
+            background-color: #f8f9fa; font-family: 'Segoe UI', Roboto, sans-serif;
+            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
         }
 
         /* HEADER */
         header {
             width: 100%; background: white; padding: 12px 20px;
             display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; z-index: 100;
+            border-bottom: 2px solid #eee; flex-shrink: 0; z-index: 100;
         }
         .header-left { display: flex; align-items: center; gap: 12px; }
-        .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; padding: 5px; }
+        .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; }
         header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; }
 
         .btn-voltar-3d {
             text-decoration: none; color: #000; background-color: #ff9f43;
             font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
-            border-radius: 8px; border: 1px solid #e67e22; box-shadow: 0 3px 0 #e67e22;
-            cursor: pointer; display: flex; align-items: center; gap: 8px;
+            border-radius: 8px; border: 1px solid #e67e22; box-shadow: 0 4px 0 #e67e22;
+            cursor: pointer; display: flex; align-items: center; gap: 5px;
         }
-        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
+        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 2px 0 #e67e22; }
 
-        /* SIDEBAR (MENU HAMBÚRGUER) */
+        /* SIDEBAR */
         .sidebar {
             position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
             background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
@@ -45,9 +41,8 @@
             text-decoration: none; color: #636e72; font-weight: 600;
             padding: 14px; border-radius: 12px; background: #fdfdfd;
             display: flex; align-items: center; gap: 15px; margin-bottom: 10px; 
-            border: 1px solid #eee; cursor: pointer;
+            border: 1px solid #eee;
         }
-        .sidebar-item:hover { background: #fff4e6; color: #ff9f43; }
 
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -55,178 +50,169 @@
         }
         .overlay.active { display: block; }
 
-        /* CONTEÚDO PRINCIPAL */
-        main { 
-            flex: 1; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; padding: 20px; 
-            overflow-y: auto; 
-        }
-
-        .topo { margin-bottom: 20px; width: 100%; max-width: 550px; display: flex; justify-content: space-between; align-items: center; }
-        select { padding: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 0.9rem; }
+        /* JOGO */
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px; justify-content: center; }
+        
+        .info-bar { width: 100%; max-width: 500px; display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold; color: #2d3436; }
 
         .card {
-            background: white; padding: 30px; border-radius: 20px;
-            width: 100%; max-width: 550px; text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            border: 2px solid #fff;
+            background: white; padding: 40px 20px; border-radius: 25px;
+            width: 100%; max-width: 500px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 2px solid #ff9f43;
         }
 
-        .frase { font-size: 1.4rem; margin-bottom: 20px; line-height: 1.6; color: #2d3436; }
+        .palavra-singular { font-size: 2.5rem; font-weight: 900; color: #2d3436; margin-bottom: 20px; text-transform: uppercase; }
         
         input#resposta {
-            font-size: 1.2rem; padding: 8px; width: 160px;
-            text-align: center; border: 2px solid #dfe6e9;
-            border-radius: 10px; outline: none; margin: 0 5px;
+            width: 80%; font-size: 1.5rem; padding: 12px; text-align: center;
+            border: 3px solid #dfe6e9; border-radius: 15px; outline: none; text-transform: uppercase;
         }
-        input#resposta:focus { border-color: #ff9f43; }
+        input#resposta.correto { border-color: #2ecc71; background: #eafaf1; }
+        input#resposta.errado { border-color: #ff7675; background: #fff5f5; }
 
-        button#btn-verificar {
-            margin-top: 20px; padding: 15px 40px; background: #2ecc71;
-            border: none; color: white; border-radius: 12px;
-            font-size: 1.1rem; font-weight: bold; cursor: pointer;
-            box-shadow: 0 4px 0 #27ae60; width: 100%;
+        .btn-info {
+            background: #3498db; color: white; border: none; width: 40px; height: 40px;
+            border-radius: 50%; font-weight: bold; cursor: pointer; margin-top: 15px;
         }
-        button#btn-verificar:active { transform: translateY(2px); box-shadow: 0 2px 0 #27ae60; }
 
-        .correto { border-color: #2ecc71 !important; background:#eafaf1; color: #27ae60; }
-        .errado { border-color: #ff7675 !important; background:#fff5f5; }
-
-        #progresso { margin-top: 15px; font-weight: bold; color: #636e72; font-size: 0.9rem; }
-        
-        /* FOOTER CUSTOMIZADO */
-        footer { width: 100%; padding: 12px; text-align: center; background: white; border-top: 1px solid #eee; font-size: 0.8rem; color: #95a5a6; }
-
-        /* RESPONSIVIDADE ADAPTATIVA */
-        @media (max-width: 600px) {
-            .frase { font-size: 1.2rem; }
-            input#resposta { width: 120px; }
-            .card { padding: 20px; }
+        /* POPUP PERSONALIZADO */
+        .popup {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 30px; border-radius: 20px; z-index: 300;
+            text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.2); width: 80%; max-width: 350px;
         }
+
+        footer { padding: 10px; text-align: center; font-size: 0.8rem; color: #95a5a6; background: white; }
     </style>
 </head>
-
 <body>
 
-<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
-<div class="sidebar" id="sidebar">
-    <div style="margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px;">
-        <h2 style="color: #ff9f43; font-size: 1.2rem;">Anos Escolares</h2>
-    </div>
-    <a href="#" class="sidebar-item">🐥 1º Ano</a>
-    <a href="#" class="sidebar-item">🦁 2º Ano</a>
-    <a href="#" class="sidebar-item">🐘 3º Ano</a>
-    <a href="#" class="sidebar-item">🦒 4º Ano</a>
-</div>
-
-<header>
-    <div class="header-left">
-        <span class="menu-icon" onclick="toggleMenu()">☰</span>
-        <span style="font-size: 1.3rem;">✍️</span>
-        <h1>Passe para o Plural</h1>
-    </div>
-    <div style="display: flex; align-items: center; gap: 15px;">
-        <span style="font-weight: bold; font-size: 0.9rem;">⭐ <span id="pontos">0</span></span>
-        <a href="#" class="btn-voltar-3d">VOLTAR</a>
-    </div>
-</header>
-
-<main>
-    <div class="topo">
-        <select id="nivel" onchange="mudarNivel()">
-            <option value="facil">Nível: Fácil</option>
-            <option value="medio">Nível: Médio</option>
-            <option value="dificil">Nível: Difícil</option>
-        </select>
-        <div id="progresso">1 / 10</div>
+    <div class="sidebar" id="sidebar">
+        <h2 style="margin-bottom: 20px; color: #ff9f43;">Menu</h2>
+        <a href="../" class="sidebar-item">🏠 Início</a>
+        <a href="../pre" class="sidebar-item">🎒 Pré-Escolar</a>
+        <a href="#" class="sidebar-item">🐥 1º Ano</a>
     </div>
 
-    <div class="card">
-        <div id="frase" class="frase"></div>
-        <div id="resposta-container" class="frase"></div>
-        <button id="btn-verificar" onclick="verificar()">VERIFICAR</button>
-        <div id="mensagem" style="margin-top: 15px; font-weight: bold; min-height: 24px;"></div>
+    <header>
+        <div class="header-left">
+            <span class="menu-icon" onclick="toggleMenu()">☰</span>
+            <span>⭐</span>
+            <h1>Plural de Palavras</h1>
+        </div>
+        <button class="btn-voltar-3d" onclick="window.history.back()">⬅ VOLTAR</button>
+    </header>
+
+    <main>
+        <div class="info-bar">
+            <span>Nível: <span id="txt-nivel">Fácil</span></span>
+            <span>Pontos: <span id="pontos">0</span></span>
+        </div>
+
+        <div class="card">
+            <div class="palavra-singular" id="display-singular">GATO</div>
+            <input type="text" id="resposta" placeholder="ESCREVE AQUI..." autocomplete="off">
+            <br>
+            <button class="btn-voltar-3d" style="width:100%; margin-top:20px; justify-content:center; background:#2ecc71; border-color:#27ae60; box-shadow: 0 4px 0 #27ae60; color:white;" onclick="verificar()">VERIFICAR</button>
+            <button class="btn-info" onclick="alert('Escreve o plural da palavra que aparece no cartão!')">?</button>
+        </div>
+        
+        <div id="progresso-txt" style="margin-top: 15px; color: #95a5a6;">Palavra 1 de 10</div>
+    </main>
+
+    <div id="popup-nivel" class="popup">
+        <h2 style="color: #2ecc71;">Parabéns! 🎉</h2>
+        <p id="popup-msg" style="margin: 15px 0;">Terminaste o nível 1.</p>
+        <button class="btn-voltar-3d" style="width:100%; justify-content:center;" onclick="proximoNivel()">IR PARA O PRÓXIMO NÍVEL</button>
     </div>
-</main>
 
-<footer>Recursos Digitais • Professor Luís</footer>
+    <footer>Recursos Digitais • Professor Luís</footer>
 
-<audio id="som-acerto" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9b6b1d.mp3"></audio>
-<audio id="som-erro" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3"></audio>
+    <audio id="som-acerto" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9b6b1d.mp3"></audio>
+    <audio id="som-erro" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3"></audio>
 
-<script>
-// FRASES (Exemplos reduzidos para brevidade)
-const facil = [
-    { frase:"O <b>gato</b> dorme no sofá.", inicio:"Os ", fim:" dormem no sofá.", correta:"gatos" },
-    { frase:"A <b>bola</b> rola no chão.", inicio:"As ", fim:" rolam no chão.", correta:"bolas" }
-];
-const medio = [{ frase:"O <b>caracol</b> anda devagar.", inicio:"Os ", fim:" andam devagar.", correta:"caracóis" }];
-const dificil = [{ frase:"O <b>pão</b> está quente.", inicio:"Os ", fim:" estão quentes.", correta:"pães" }];
+    <script>
+        const dados = {
+            1: [
+                {s: "GATO", p: "GATOS"}, {s: "BOLA", p: "BOLAS"}, {s: "CASA", s: "CASAS"}, {s: "MESA", p: "MESAS"},
+                {s: "PATO", p: "PATOS"}, {s: "LOBO", p: "LOBOS"}, {s: "RATO", p: "RATOS"}, {s: "DADO", p: "DADOS"},
+                {s: "COPO", p: "COPOS"}, {s: "MENINO", p: "MENINOS"}
+            ],
+            2: [
+                {s: "CARACOL", p: "CARACOIS"}, {s: "PASTEL", p: "PASTEIS"}, {s: "ANIMAL", p: "ANIMAIS"}, {s: "JARDIM", p: "JARDINS"},
+                {s: "PUDIM", p: "PUDINS"}, {s: "BOMBOM", p: "BOMBONS"}, {s: "FUNIL", p: "FUNIS"}, {s: "PAPEL", p: "PAPEIS"},
+                {s: "SOL", p: "SOIS"}, {s: "AZUL", p: "AZUIS"}
+            ]
+        };
 
-function toggleMenu() {
-    document.getElementById('sidebar').classList.toggle('active');
-    document.getElementById('overlay').classList.toggle('active');
-}
+        let nivelAtual = 1;
+        let indicePalavra = 0;
+        let pontos = 0;
+        let listaAtual = [...dados[1]].sort(() => Math.random() - 0.5);
 
-function baralhar(a){ return a.sort(()=>Math.random()-0.5); }
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
 
-function obterLista(n){
-    if(n==="facil") return baralhar([...facil]);
-    if(n==="medio") return baralhar([...facil,...medio]);
-    return baralhar([...facil,...medio,...dificil]);
-}
+        function carregar() {
+            const item = listaAtual[indicePalavra];
+            document.getElementById('display-singular').innerText = item.s;
+            document.getElementById('resposta').value = "";
+            document.getElementById('resposta').className = "";
+            document.getElementById('progresso-txt').innerText = `Palavra ${indicePalavra + 1} de 10`;
+            document.getElementById('txt-nivel').innerText = nivelAtual === 1 ? "Fácil" : "Médio";
+        }
 
-let lista = obterLista("facil");
-let i=0;
-let pontos=0;
+        function verificar() {
+            const input = document.getElementById('resposta');
+            const tentativa = input.value.trim().toUpperCase();
+            const correta = listaAtual[indicePalavra].p;
 
-function carregar(){
-    let d = lista[i];
-    document.getElementById("frase").innerHTML = d.frase;
-    document.getElementById("resposta-container").innerHTML = d.inicio +
-        "<input type='text' id='resposta' autocomplete='off' placeholder='...'>" +
-        d.fim;
-    document.getElementById("mensagem").innerText="";
-    document.getElementById("progresso").innerText=(i+1)+" / "+lista.length;
-}
+            if (tentativa === correta) {
+                input.className = "correto";
+                document.getElementById('som-acerto').play();
+                pontos += 10;
+                document.getElementById('pontos').innerText = pontos;
+                
+                setTimeout(() => {
+                    indicePalavra++;
+                    if (indicePalavra >= 10) {
+                        mostrarPopup();
+                    } else {
+                        carregar();
+                    }
+                }, 1000);
+            } else {
+                input.className = "errado";
+                document.getElementById('som-erro').play();
+                setTimeout(() => input.className = "", 800);
+            }
+        }
 
-function verificar(){
-    let input = document.getElementById("resposta");
-    let r = input.value.trim().toLowerCase();
-    let c = lista[i].correta.toLowerCase();
-    
-    if(r === c){
-        input.className = "correto";
-        document.getElementById("mensagem").innerText = "Muito bem! 🎉";
-        document.getElementById("mensagem").style.color = "#27ae60";
-        document.getElementById("som-acerto").play();
-        pontos++;
-        document.getElementById("pontos").innerText = pontos;
-        setTimeout(proximo, 1200);
-    } else {
-        input.className = "errado";
-        document.getElementById("mensagem").innerText = "Tenta outra vez! 🧐";
-        document.getElementById("mensagem").style.color = "#e74c3c";
-        document.getElementById("som-erro").play();
-        setTimeout(() => input.className = "", 800);
-    }
-}
+        function mostrarPopup() {
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('popup-nivel').style.display = 'block';
+            document.getElementById('popup-msg').innerText = `Terminaste o Nível ${nivelAtual}!`;
+        }
 
-function proximo(){
-    i++;
-    if(i >= lista.length) i = 0;
-    carregar();
-}
+        function proximoNivel() {
+            nivelAtual++;
+            if (!dados[nivelAtual]) {
+                alert("Jogo Terminado! Parabéns!");
+                window.location.reload();
+                return;
+            }
+            indicePalavra = 0;
+            listaAtual = [...dados[nivelAtual]].sort(() => Math.random() - 0.5);
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('popup-nivel').style.display = 'none';
+            carregar();
+        }
 
-function mudarNivel(){
-    lista = obterLista(document.getElementById("nivel").value);
-    i = 0;
-    carregar();
-}
-
-carregar();
-</script>
-
+        carregar();
+    </script>
 </body>
 </html>
