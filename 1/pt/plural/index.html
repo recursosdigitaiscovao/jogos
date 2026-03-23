@@ -1,166 +1,180 @@
 <!DOCTYPE html>
 <html lang="pt-pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Jogo do Plural Responsivo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>1º Ano - Jogo do Plural</title>
+    <style>
+        /* RESET E BASE TEMPLATE_1 */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #fff4e6;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh; height: 100svh;
+            display: flex; flex-direction: column;
+            overflow: hidden; touch-action: manipulation;
+        }
 
-body {
-    background-color: #fff4e6;
-    font-family: 'Segoe UI', sans-serif;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
+        /* HEADER */
+        header {
+            width: 100%; background: white; padding: 12px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; z-index: 100;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; padding: 5px; }
+        header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; }
 
-header {
-    background: white;
-    padding: 12px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1.2rem;
-}
+        .btn-voltar-3d {
+            text-decoration: none; color: #000; background-color: #ff9f43;
+            font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
+            border-radius: 8px; border: 1px solid #e67e22; box-shadow: 0 3px 0 #e67e22;
+            cursor: pointer; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
 
-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 15px;
-}
+        /* SIDEBAR (MENU HAMBÚRGUER) */
+        .sidebar {
+            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
+            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+            transition: 0.3s ease; z-index: 200; padding: 25px;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-item {
+            text-decoration: none; color: #636e72; font-weight: 600;
+            padding: 14px; border-radius: 12px; background: #fdfdfd;
+            display: flex; align-items: center; gap: 15px; margin-bottom: 10px; 
+            border: 1px solid #eee; cursor: pointer;
+        }
+        .sidebar-item:hover { background: #fff4e6; color: #ff9f43; }
 
-.card {
-    background: white;
-    padding: 20px;
-    border-radius: 18px;
-    width: 95%;
-    max-width: 550px;
-    text-align: center;
-    margin-bottom: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3); display: none; z-index: 150;
+        }
+        .overlay.active { display: block; }
 
-.frase {
-    font-size: 1.4rem;
-    margin-bottom: 15px;
-    line-height: 1.6;
-}
+        /* CONTEÚDO PRINCIPAL */
+        main { 
+            flex: 1; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; padding: 20px; 
+            overflow-y: auto; 
+        }
 
-#resposta {
-    font-size: 1.2rem;
-    padding: 10px;
-    width: 80%;
-    max-width: 250px;
-    text-align: center;
-}
+        .topo { margin-bottom: 20px; width: 100%; max-width: 550px; display: flex; justify-content: space-between; align-items: center; }
+        select { padding: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 0.9rem; }
 
-button {
-    margin-top: 15px;
-    padding: 12px 25px;
-    background: #2ecc71;
-    border: none;
-    color: white;
-    border-radius: 12px;
-    font-size: 1rem;
-    cursor: pointer;
-}
+        .card {
+            background: white; padding: 30px; border-radius: 20px;
+            width: 100%; max-width: 550px; text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 2px solid #fff;
+        }
 
-.topo {
-    margin-bottom: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-}
+        .frase { font-size: 1.4rem; margin-bottom: 20px; line-height: 1.6; color: #2d3436; }
+        
+        input#resposta {
+            font-size: 1.2rem; padding: 8px; width: 160px;
+            text-align: center; border: 2px solid #dfe6e9;
+            border-radius: 10px; outline: none; margin: 0 5px;
+        }
+        input#resposta:focus { border-color: #ff9f43; }
 
-.topo select {
-    padding: 8px;
-    font-size: 1rem;
-}
+        button#btn-verificar {
+            margin-top: 20px; padding: 15px 40px; background: #2ecc71;
+            border: none; color: white; border-radius: 12px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 0 #27ae60; width: 100%;
+        }
+        button#btn-verificar:active { transform: translateY(2px); box-shadow: 0 2px 0 #27ae60; }
 
-.mensagem { margin-top: 10px; font-weight: bold; font-size: 1.1rem; }
+        .correto { border-color: #2ecc71 !important; background:#eafaf1; color: #27ae60; }
+        .errado { border-color: #ff7675 !important; background:#fff5f5; }
 
-.correto { border: 2px solid green; background:#eafaf1; }
-.errado { border: 2px solid red; background:#fff5f5; }
+        #progresso { margin-top: 15px; font-weight: bold; color: #636e72; font-size: 0.9rem; }
+        
+        /* FOOTER CUSTOMIZADO */
+        footer { width: 100%; padding: 12px; text-align: center; background: white; border-top: 1px solid #eee; font-size: 0.8rem; color: #95a5a6; }
 
-/* PROGRESSO */
-#progresso {
-    margin-top: 10px;
-    font-weight: bold;
-    color: #34495e;
-}
-
-/* RESPONSIVO */
-@media (max-width: 600px) {
-    .frase { font-size: 1.2rem; }
-    #resposta { width: 100%; font-size: 1.1rem; }
-    button { width: 100%; font-size: 1.1rem; }
-    header { font-size: 1rem; flex-direction: column; gap: 5px; }
-}
-</style>
+        /* RESPONSIVIDADE ADAPTATIVA */
+        @media (max-width: 600px) {
+            .frase { font-size: 1.2rem; }
+            input#resposta { width: 120px; }
+            .card { padding: 20px; }
+        }
+    </style>
 </head>
 
 <body>
 
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<div class="sidebar" id="sidebar">
+    <div style="margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px;">
+        <h2 style="color: #ff9f43; font-size: 1.2rem;">Anos Escolares</h2>
+    </div>
+    <a href="#" class="sidebar-item">🐥 1º Ano</a>
+    <a href="#" class="sidebar-item">🦁 2º Ano</a>
+    <a href="#" class="sidebar-item">🐘 3º Ano</a>
+    <a href="#" class="sidebar-item">🦒 4º Ano</a>
+</div>
+
 <header>
-<h2>✍️ Passe para o Plural</h2>
-<span>⭐ Pontos: <span id="pontos">0</span></span>
+    <div class="header-left">
+        <span class="menu-icon" onclick="toggleMenu()">☰</span>
+        <span style="font-size: 1.3rem;">✍️</span>
+        <h1>Passe para o Plural</h1>
+    </div>
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <span style="font-weight: bold; font-size: 0.9rem;">⭐ <span id="pontos">0</span></span>
+        <a href="#" class="btn-voltar-3d">VOLTAR</a>
+    </div>
 </header>
 
 <main>
+    <div class="topo">
+        <select id="nivel" onchange="mudarNivel()">
+            <option value="facil">Nível: Fácil</option>
+            <option value="medio">Nível: Médio</option>
+            <option value="dificil">Nível: Difícil</option>
+        </select>
+        <div id="progresso">1 / 10</div>
+    </div>
 
-<div class="topo">
-<select id="nivel" onchange="mudarNivel()">
-<option value="facil">Fácil</option>
-<option value="medio">Médio</option>
-<option value="dificil">Difícil</option>
-</select>
-</div>
-
-<div class="card">
-<div id="frase" class="frase"></div>
-<div id="resposta-container" class="frase"></div>
-<button onclick="verificar()">VERIFICAR</button>
-<div id="mensagem" class="mensagem"></div>
-</div>
-
-<div id="progresso"></div>
-
+    <div class="card">
+        <div id="frase" class="frase"></div>
+        <div id="resposta-container" class="frase"></div>
+        <button id="btn-verificar" onclick="verificar()">VERIFICAR</button>
+        <div id="mensagem" style="margin-top: 15px; font-weight: bold; min-height: 24px;"></div>
+    </div>
 </main>
+
+<footer>Recursos Digitais • Professor Luís</footer>
 
 <audio id="som-acerto" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_115b9b6b1d.mp3"></audio>
 <audio id="som-erro" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3"></audio>
 
 <script>
-// ---------------- FRASES ----------------
+// FRASES (Exemplos reduzidos para brevidade)
 const facil = [
-{ frase:"O <b>gato</b> dorme no sofá.", inicio:"Os ", fim:" dormem no sofá.", correta:"gatos" },
-{ frase:"A <b>bola</b> rola no chão.", inicio:"As ", fim:" rolam no chão.", correta:"bolas" },
-// ... (continua com as 20 frases do nível fácil)
+    { frase:"O <b>gato</b> dorme no sofá.", inicio:"Os ", fim:" dormem no sofá.", correta:"gatos" },
+    { frase:"A <b>bola</b> rola no chão.", inicio:"As ", fim:" rolam no chão.", correta:"bolas" }
 ];
+const medio = [{ frase:"O <b>caracol</b> anda devagar.", inicio:"Os ", fim:" andam devagar.", correta:"caracóis" }];
+const dificil = [{ frase:"O <b>pão</b> está quente.", inicio:"Os ", fim:" estão quentes.", correta:"pães" }];
 
-const medio = [
-{ frase:"O <b>caracol</b> anda devagar.", inicio:"Os ", fim:" andam devagar.", correta:"caracóis" },
-// ... (continua com as 20 frases do nível médio)
-];
+function toggleMenu() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.getElementById('overlay').classList.toggle('active');
+}
 
-const dificil = [
-{ frase:"O <b>pão</b> está quente.", inicio:"Os ", fim:" estão quentes.", correta:"pães" },
-// ... (continua com as 20 frases do nível difícil)
-];
-
-// ---------------- LÓGICA ----------------
 function baralhar(a){ return a.sort(()=>Math.random()-0.5); }
 
 function obterLista(n){
     if(n==="facil") return baralhar([...facil]);
     if(n==="medio") return baralhar([...facil,...medio]);
-    if(n==="dificil") return baralhar([...facil,...medio,...dificil]);
+    return baralhar([...facil,...medio,...dificil]);
 }
 
 let lista = obterLista("facil");
@@ -171,42 +185,43 @@ function carregar(){
     let d = lista[i];
     document.getElementById("frase").innerHTML = d.frase;
     document.getElementById("resposta-container").innerHTML = d.inicio +
-        "<input id='resposta'>" +
+        "<input type='text' id='resposta' autocomplete='off' placeholder='...'>" +
         d.fim;
     document.getElementById("mensagem").innerText="";
     document.getElementById("progresso").innerText=(i+1)+" / "+lista.length;
 }
 
 function verificar(){
-    let r=document.getElementById("resposta").value.trim();
-    let c=lista[i].correta;
-    if(r===c){
-        document.getElementById("resposta").className="correto";
-        document.getElementById("mensagem").innerText="Muito bem!";
+    let input = document.getElementById("resposta");
+    let r = input.value.trim().toLowerCase();
+    let c = lista[i].correta.toLowerCase();
+    
+    if(r === c){
+        input.className = "correto";
+        document.getElementById("mensagem").innerText = "Muito bem! 🎉";
+        document.getElementById("mensagem").style.color = "#27ae60";
         document.getElementById("som-acerto").play();
         pontos++;
-        document.getElementById("pontos").innerText=pontos;
-        setTimeout(proximo,1000);
+        document.getElementById("pontos").innerText = pontos;
+        setTimeout(proximo, 1200);
     } else {
-        document.getElementById("resposta").className="errado";
-        document.getElementById("mensagem").innerText="Tenta outra vez!";
+        input.className = "errado";
+        document.getElementById("mensagem").innerText = "Tenta outra vez! 🧐";
+        document.getElementById("mensagem").style.color = "#e74c3c";
         document.getElementById("som-erro").play();
+        setTimeout(() => input.className = "", 800);
     }
 }
 
 function proximo(){
     i++;
-    if(i>=lista.length){
-        lista=baralhar(lista);
-        i=0;
-    }
+    if(i >= lista.length) i = 0;
     carregar();
 }
 
 function mudarNivel(){
-    let n=document.getElementById("nivel").value;
-    lista=obterLista(n);
-    i=0;
+    lista = obterLista(document.getElementById("nivel").value);
+    i = 0;
     carregar();
 }
 
