@@ -39,7 +39,7 @@
         
         .icon-abc { color: #0984e3; font-weight: 900; font-size: 1.1rem; letter-spacing: -1px; }
 
-        /* Botão Padronizado (Rosa) */
+        /* Botão Rosa 3D solicitado */
         .btn-rosa-3d {
             text-decoration: none;
             color: #2d3436;
@@ -86,7 +86,7 @@
             justify-content: center; padding: 10px; overflow-y: auto;
         }
 
-        /* INSTRUÇÃO E BOTÃO INFO */
+        /* TEXTO ENCONTRA A LETRA + INFO */
         .corpo-instrucao {
             display: flex;
             align-items: center;
@@ -104,35 +104,20 @@
         }
 
         .cartao-letra {
-            background: white;
-            width: 140px;
-            height: 160px;
-            border: 6px dashed #ffdae3;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            position: relative;
+            background: white; width: 140px; height: 160px;
+            border: 6px dashed #ffdae3; border-radius: 30px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1); margin-bottom: 20px;
             background-image: radial-gradient(#fff5f7 2px, transparent 2px);
-            background-size: 15px 15px;
-            flex-shrink: 0;
+            background-size: 15px 15px; flex-shrink: 0;
         }
 
-        #letra-alvo {
-            font-size: 6rem;
-            font-weight: 900;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        #letra-alvo { font-size: 6rem; font-weight: 900; transition: 0.4s; }
 
         /* TECLADO */
         .teclado-container {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-            width: 100%;
-            max-width: 450px;
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;
+            width: 100%; max-width: 450px;
         }
         .tecla {
             background: white; border: 1px solid #f0f0f0; border-radius: 10px;
@@ -153,12 +138,7 @@
         }
         .modal-custom.active { display: block; }
 
-        .modal-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 20px;
-        }
+        .modal-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
 
         footer {
             width: 100%; padding: 12px; background-color: white;
@@ -171,6 +151,11 @@
 
     <div class="overlay" id="overlay" onclick="fecharModais()"></div>
     
+    <!-- AUDIO ELEMENTS -->
+    <audio id="snd-acerto" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+    <audio id="snd-erro" src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"></audio>
+    <audio id="snd-final" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
+
     <!-- MODAL INFO -->
     <div id="modal-info" class="modal-custom">
         <h2 style="color: #ff6b81; margin-bottom: 15px;">Como Jogar? 🎈</h2>
@@ -211,7 +196,6 @@
     </header>
 
     <main id="jogo-main">
-        <!-- Texto Encontra a Letra e Botão Info (Mesma cor do Voltar) -->
         <div class="corpo-instrucao">
             <span class="texto-encontra">Encontra a letra</span>
             <button class="btn-rosa-3d btn-info-corpo" onclick="mostrarInfo()">i</button>
@@ -228,15 +212,18 @@
         </p>
     </main>
 
-    <footer>
-        Recursos Digitais Covão • Professor Luís
-    </footer>
+    <footer>Recursos Digitais Covão • Professor Luís</footer>
 
     <script>
         const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
         const coresEngracadas = ["#ff6b81", "#4834d4", "#6ab04c", "#f0932b", "#eb4d4b", "#be2edd", "#22a6b3"];
         let ronda = 1;
         let letraCorreta = "";
+
+        // Elementos de som
+        const sndAcerto = document.getElementById('snd-acerto');
+        const sndErro = document.getElementById('snd-erro');
+        const sndFinal = document.getElementById('snd-final');
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -269,6 +256,7 @@
 
         function novaRonda() {
             if (ronda > 10) {
+                sndFinal.play(); // Som de Vitória
                 document.getElementById('overlay').classList.add('active');
                 document.getElementById('modal-final').classList.add('active');
                 return;
@@ -281,10 +269,12 @@
             const corAleatoria = coresEngracadas[Math.floor(Math.random() * coresEngracadas.length)];
             
             spanLetra.style.opacity = "0";
+            spanLetra.style.transform = "scale(0.5)";
             setTimeout(() => {
                 spanLetra.innerText = letraCorreta;
                 spanLetra.style.color = corAleatoria;
                 spanLetra.style.opacity = "1";
+                spanLetra.style.transform = "scale(1)";
             }, 100);
             
             document.querySelectorAll('.tecla').forEach(t => t.classList.remove('correto', 'errado'));
@@ -294,12 +284,16 @@
             if (document.querySelector('.tecla.correto')) return;
 
             if (letra === letraCorreta) {
+                sndAcerto.currentTime = 0;
+                sndAcerto.play(); // Som de Acerto
                 elemento.classList.add('correto');
                 setTimeout(() => {
                     ronda++;
                     novaRonda();
                 }, 800);
             } else {
+                sndErro.currentTime = 0;
+                sndErro.play(); // Som de Erro
                 elemento.classList.add('errado');
                 setTimeout(() => elemento.classList.remove('errado'), 500);
             }
