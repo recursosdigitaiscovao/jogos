@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>4º Ano - Quiz União Europeia</title>
+    <title>4º Ano - Estudo do Meio</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
@@ -12,29 +12,27 @@
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             height: 100vh; height: 100svh;
             display: flex; flex-direction: column; overflow: hidden;
+            color: #2c3e50;
         }
 
+        /* HEADER */
         header {
             width: 100%; background: #fff; padding: 15px 20px;
             display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid #ddd; z-index: 100;
+            border-bottom: 1px solid #ddd; z-index: 100; flex-shrink: 0;
         }
 
         .header-left { display: flex; align-items: center; gap: 12px; }
-        header h1 { font-size: 0.9rem; color: #2c3e50; font-weight: 800; text-transform: uppercase; }
+        header h1 { font-size: 0.9rem; color: #2c3e50; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        
+        .eu-icon { width: 24px; height: 16px; object-fit: cover; border-radius: 2px; }
 
-        .btn-nav-container { display: flex; gap: 10px; }
-
-        .btn-voltar-3d, .btn-info-purp {
+        .btn-voltar-3d {
             text-decoration: none; color: #ffffff; background-color: #9b59b6;
             font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
             border-radius: 8px; display: flex; align-items: center; gap: 8px;
             border: 1px solid #8e44ad; box-shadow: 0 2px 0 #8e44ad; cursor: pointer;
         }
-        
-        .eu-icon { width: 18px; height: 12px; object-fit: cover; border-radius: 2px; }
-
-        .btn-info-purp { width: 28px; height: 28px; padding: 0; justify-content: center; border-radius: 50%; font-style: italic; font-family: serif; }
 
         /* SIDEBAR */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
@@ -42,88 +40,96 @@
         .sidebar-item { text-decoration: none; color: #444; font-weight: bold; padding: 14px; border-radius: 12px; background: #f8f9fa; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
+        .menu-icon { font-size: 1.5rem; cursor: pointer; }
 
-        /* JOGO QUIZ */
-        main { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        
-        .instrucao-container { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-        .instrucao-container h3 { color: #2c3e50; font-size: 1.1rem; }
-
-        .quiz-card {
-            background: white;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            width: 100%;
-            max-width: 420px;
+        /* CONTEÚDO */
+        main {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-        }
-
-        .flag-container {
-            width: 100%;
-            height: 180px;
-            background: #fdfdfd;
-            border-radius: 12px;
-            border: 2px solid #eee;
-            display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            padding: 10px;
+            padding: 20px;
         }
 
-        .flag-display {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        .emoji-principal {
+            font-size: 4rem;
+            margin-bottom: 10px;
         }
 
-        .options-container {
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            color: #8e44ad;
+            text-align: center;
+        }
+
+        .subtitulo {
+            font-size: 1rem;
+            margin-bottom: 30px;
+            opacity: 0.8;
+            text-align: center;
+        }
+
+        .menu-jogos {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .btn-jogo {
+            background-color: white;
+            text-decoration: none;
+            color: #2c3e50;
+            padding: 25px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1rem;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            align-items: center;
+            text-align: center;
+            gap: 15px;
+            border: 2px solid #9b59b6;
+            box-shadow: 0 6px 0 #9b59b6;
+            transition: all 0.2s;
         }
 
-        .option-btn {
-            background: #f8f9fa;
-            border: 2px solid #dee2e6;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: 800;
-            color: #2c3e50;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 0.95rem;
+        .btn-jogo span { font-size: 2.5rem; }
+
+        .btn-jogo:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #9b59b6;
         }
-        .option-btn:active { transform: scale(0.97); }
-        .option-btn.correct { background: #2ecc71 !important; color: white !important; border-color: #27ae60 !important; }
-        .option-btn.wrong { background: #e74c3c !important; color: white !important; border-color: #c0392b !important; }
 
-        .control-area { margin-top: 25px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .ronda-txt { font-weight: 800; color: #9b59b6; background: white; padding: 6px 20px; border-radius: 20px; border: 2px solid #9b59b6; font-size: 0.9rem; }
+        /* FOOTER */
+        footer {
+            width: 100%; padding: 15px; background: #fff; text-align: center; 
+            color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.8rem; flex-shrink: 0;
+        }
 
-        /* MODAIS & CERTIFICADO */
-        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 20px; z-index: 1000; width: 90%; max-width: 400px; text-align: center; border: 4px solid #9b59b6; }
-        #certificado-container { display: none; flex: 1; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
-        #certificado { background: #fff; padding: 40px; border: 15px double #9b59b6; text-align: center; max-width: 600px; width: 100%; }
-        .nome-aluno { font-family: 'Georgia', serif; font-size: 2rem; border-bottom: 2px solid #000; padding: 5px; margin: 20px 0; display: inline-block; min-width: 250px; }
-        .btn-acao { background: #27ae60; color: white; padding: 14px 40px; border-radius: 12px; border: none; font-weight: bold; box-shadow: 0 4px 0 #219150; cursor: pointer; }
-
-        footer { width: 100%; padding: 10px; background: #fff; text-align: center; color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.8rem; }
+        @media (max-width: 450px) {
+            .menu-jogos { grid-template-columns: 1fr; }
+            .btn-jogo { flex-direction: row; padding: 20px; gap: 20px; }
+            .btn-jogo span { font-size: 2rem; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="fecharModais()"></div>
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     
     <div class="sidebar" id="sidebar">
         <h3>Navegação</h3>
         <nav class="sidebar-menu">
-            <a href="../../../" class="sidebar-item">🏠 Início</a>
-            <a href="../../../4" class="sidebar-item">👨‍🚀 4º Ano</a>
+            <a href="../../" class="sidebar-item">🏠 Início</a>
+            <a href="../../pre" class="sidebar-item">🦒 Pré-Escolar</a>
+            <a href="../../1" class="sidebar-item">🐥 1º Ano</a>
+            <a href="../../2" class="sidebar-item">🐢 2º Ano</a>
+            <a href="../../3" class="sidebar-item">Fox 3º Ano</a>
+            <a href="../../4" class="sidebar-item">👨‍🚀 4º Ano</a>
         </nav>
         <button onclick="toggleMenu()" style="margin-top:auto; padding:10px; border:none; background:#eee; cursor:pointer; font-weight:bold; border-radius:8px;">Fechar ×</button>
     </div>
@@ -131,139 +137,39 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <h1>Estudo do Meio</h1>
+            <h1>
+                <img src="https://flagcdn.com/w40/eu.png" class="eu-icon" alt="UE">
+                Estudo do Meio
+            </h1>
         </div>
-        <div class="btn-nav-container">
-            <a href="../" class="btn-voltar-3d">
-                <img src="https://flagcdn.com/w40/eu.png" class="eu-icon" alt="EU"> Associa as bandeiras
-            </a>
-            <a href="../../europa1" class="btn-voltar-3d">
-                <img src="https://flagcdn.com/w40/eu.png" class="eu-icon" alt="EU"> Que bandeira é esta
-            </a>
-        </div>
+        <a href="../" class="btn-voltar-3d">⬅ Voltar</a>
     </header>
 
-    <main id="game-main">
-        <div class="instrucao-container">
-            <h3>De que país é esta bandeira?</h3>
-            <button class="btn-info-purp" onclick="abrirModal('modal-info')">i</button>
-        </div>
+    <main>
+        <div class="emoji-principal">🌍</div>
+        <h2>União Europeia</h2>
+        <p class="subtitulo">Escolhe a tua missão geográfica:</p>
 
-        <div class="quiz-card">
-            <div class="flag-container">
-                <img id="flag-img" src="" class="flag-display" alt="Bandeira">
-            </div>
-            <div class="options-container" id="options-box">
-                </div>
-        </div>
+        <nav class="menu-jogos">
+            <a href="europa/" class="btn-jogo">
+                <span>🇪🇺</span>
+                Missão Europa
+            </a>
 
-        <div class="control-area">
-            <div class="ronda-txt">Pergunta <span id="num-pergunta">1</span>/10</div>
-        </div>
+            <a href="europa1/" class="btn-jogo">
+                <span>🗺️</span>
+                Mapa da União
+            </a>
+        </nav>
     </main>
-
-    <div id="certificado-container">
-        <div id="certificado">
-            <h1 style="color:#9b59b6; font-size: 2.5rem;">DIPLOMA</h1>
-            <p style="margin-top:15px; font-size: 1.1rem;">Certificamos que o(a) aluno(a):</p>
-            <div class="nome-aluno" id="display-nome">_________</div>
-            <p style="font-size: 1.1rem; line-height: 1.6;">Concluiu com distinção o Quiz das<br><strong>Bandeiras da União Europeia</strong>.</p>
-            <div style="margin-top:40px; font-size:0.9rem; border-top:1px dashed #9b59b6; padding-top:15px;">
-                Professor Luís • Recursos Digitais Covão
-            </div>
-            <button class="btn-acao" onclick="window.print()" style="background:#34495e; box-shadow:0 4px 0 #2c3e50; margin-top:20px;">IMPRIMIR DIPLOMA</button>
-        </div>
-    </div>
-
-    <div id="modal-info" class="modal">
-        <h2 style="color:#9b59b6;">Como Jogar</h2>
-        <p style="margin:15px 0;">Observa a bandeira atentamente e escolhe a opção correta. Responde a 10 desafios para ganhar o teu diploma!</p>
-        <button class="btn-acao" style="background:#9b59b6; box-shadow: 0 4px 0 #8e44ad;" onclick="fecharModais()">ESTOU PRONTO!</button>
-    </div>
-
-    <div id="modal-nome" class="modal">
-        <h2 style="color:#2ecc71;">Parabéns! 🇪🇺</h2>
-        <p style="margin:15px 0;">Completaste o quiz com sucesso! Escreve o teu nome para o diploma:</p>
-        <input type="text" id="input-nome" placeholder="Nome do Aluno" style="width:100%; padding:12px; border-radius:10px; border:2px solid #ddd; margin-bottom:15px; text-align:center; font-size: 1.1rem;">
-        <button class="btn-acao" onclick="gerarCertificado()">VER DIPLOMA</button>
-    </div>
 
     <footer>Professor Luís - Recursos Digitais Covão</footer>
 
     <script>
-        const paises = [
-            { n: "PORTUGAL", id: "pt" }, { n: "ESPANHA", id: "es" }, { n: "FRANÇA", id: "fr" },
-            { n: "ALEMANHA", id: "de" }, { n: "ITÁLIA", id: "it" }, { n: "BÉLGICA", id: "be" },
-            { n: "ÁUSTRIA", id: "at" }, { n: "GRÉCIA", id: "gr" }, { n: "PAÍSES BAIXOS", id: "nl" },
-            { n: "SUÉCIA", id: "se" }, { n: "DINAMARCA", id: "dk" }, { n: "FINLÂNDIA", id: "fi" },
-            { n: "IRLANDA", id: "ie" }, { n: "LUXEMBURGO", id: "lu" }, { n: "POLÓNIA", id: "pl" },
-            { n: "BULGÁRIA", id: "bg" }, { n: "CROÁCIA", id: "hr" }, { n: "CHIPRE", id: "cy" },
-            { n: "CHÉQUIA", id: "cz" }, { n: "ESTÓNIA", id: "ee" }, { n: "HUNGRIA", id: "hu" },
-            { n: "LETÓNIA", id: "lv" }, { n: "LITUÂNIA", id: "lt" }, { n: "MALTA", id: "mt" },
-            { n: "ROMÉNIA", id: "ro" }, { n: "ESLOVÁQUIA", id: "sk" }, { n: "ESLOVÉNIA", id: "si" }
-        ];
-
-        let perguntaAtual = 1;
-        let pool = [...paises].sort(() => Math.random() - 0.5);
-        let correta = null;
-
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
-        function abrirModal(id) { document.getElementById(id).style.display = 'block'; document.getElementById('overlay').classList.add('active'); }
-        function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
-
-        function carregarPergunta() {
-            if (perguntaAtual > 10) { 
-                abrirModal('modal-nome'); 
-                return; 
-            }
-            
-            document.getElementById('num-pergunta').innerText = perguntaAtual;
-            correta = pool.pop();
-            const imgEl = document.getElementById('flag-img');
-            imgEl.src = `https://flagcdn.com/w320/${correta.id}.png`;
-
-            let erradas = paises.filter(p => p.id !== correta.id).sort(() => Math.random() - 0.5).slice(0, 2);
-            let opcoes = [correta, ...erradas].sort(() => Math.random() - 0.5);
-
-            const box = document.getElementById('options-box');
-            box.innerHTML = '';
-            opcoes.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerText = opt.n;
-                btn.onclick = () => verificarResposta(opt.id, btn);
-                box.appendChild(btn);
-            });
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
         }
-
-        function verificarResposta(id, btn) {
-            const botoes = document.querySelectorAll('.option-btn');
-            botoes.forEach(b => b.style.pointerEvents = 'none');
-
-            if (id === correta.id) {
-                btn.classList.add('correct');
-                perguntaAtual++;
-                setTimeout(carregarPergunta, 1000);
-            } else {
-                btn.classList.add('wrong');
-                botoes.forEach(b => { 
-                    if(b.innerText === correta.n) b.classList.add('correct'); 
-                });
-                perguntaAtual++;
-                setTimeout(carregarPergunta, 1800);
-            }
-        }
-
-        function gerarCertificado() {
-            const nome = document.getElementById('input-nome').value;
-            if(!nome) return alert("Por favor, escreve o teu nome!");
-            document.getElementById('display-nome').innerText = nome;
-            document.getElementById('game-main').style.display = 'none';
-            document.getElementById('certificado-container').style.display = 'flex';
-            fecharModais();
-        }
-
-        carregarPergunta();
     </script>
 </body>
 </html>
