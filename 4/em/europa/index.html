@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>4º Ano - Missão União Europeia</title>
+    <title>4º Ano - Membros da UE</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
@@ -21,7 +21,9 @@
         }
 
         .header-left { display: flex; align-items: center; gap: 12px; }
-        header h1 { font-size: 0.9rem; color: #2c3e50; font-weight: 800; text-transform: uppercase; }
+        header h1 { font-size: 0.9rem; color: #2c3e50; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        
+        .eu-icon { width: 24px; height: 16px; object-fit: cover; border-radius: 2px; }
 
         .btn-voltar-3d, .btn-info-purp {
             text-decoration: none; color: #ffffff; background-color: #9b59b6;
@@ -56,10 +58,9 @@
 
         .column { display: flex; flex-direction: column; gap: 12px; }
 
-        /* Estilo para alinhar verticalmente as bandeiras com as dropzones */
         .flag-card { 
             width: 80px; 
-            height: 55px; /* Mesma altura da dropzone para alinhar */
+            height: 55px; 
             background: white; 
             border-radius: 6px; 
             border: 2px solid white; 
@@ -86,7 +87,6 @@
             transition: 0.2s; 
         }
         .dropzone.correct { background: #eafaf1; border: 2px solid #2ecc71; }
-        .dropzone.wrong { background: #fff5f5; border: 2px solid #e74c3c; }
         .pais-txt { font-weight: 800; font-size: 0.8rem; color: #2c3e50; pointer-events: none; }
 
         /* ÁREA DE CONTROLO INFERIOR */
@@ -95,20 +95,17 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
         }
 
         .ronda-txt { 
             font-weight: 800; 
             color: #9b59b6; 
             background: white; 
-            padding: 6px 20px; 
+            padding: 8px 25px; 
             border-radius: 20px; 
             border: 2px solid #9b59b6;
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
-
-        .btn-acao { background: #27ae60; color: white; padding: 14px 40px; border-radius: 12px; border: none; font-weight: bold; box-shadow: 0 4px 0 #219150; cursor: pointer; font-size: 1rem; }
 
         /* MODAIS */
         .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 20px; z-index: 1000; width: 90%; max-width: 400px; text-align: center; border: 4px solid #9b59b6; }
@@ -117,6 +114,7 @@
         #certificado-container { display: none; flex: 1; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
         #certificado { background: #fff; padding: 40px; border: 15px double #9b59b6; text-align: center; max-width: 600px; width: 100%; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
         .nome-aluno { font-family: 'Georgia', serif; font-size: 2rem; border-bottom: 2px solid #000; padding: 5px; margin: 20px 0; display: inline-block; min-width: 250px; color: #2c3e50; }
+        .btn-acao { background: #27ae60; color: white; padding: 14px 40px; border-radius: 12px; border: none; font-weight: bold; box-shadow: 0 4px 0 #219150; cursor: pointer; font-size: 1rem; }
 
         footer { width: 100%; padding: 10px; background: #fff; text-align: center; color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.8rem; flex-shrink: 0; }
 
@@ -143,7 +141,10 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <h1>Estudo do Meio</h1>
+            <h1>
+                <img src="https://flagcdn.com/w40/eu.png" class="eu-icon" alt="UE">
+                Membros da UE
+            </h1>
         </div>
         <a href="../" class="btn-voltar-3d">⬅ Voltar</a>
     </header>
@@ -161,7 +162,6 @@
 
         <div class="control-area">
             <div class="ronda-txt">Ronda <span id="num-ronda">1</span>/6</div>
-            <button class="btn-acao" id="btn-verificar" onclick="verificarRonda()">VERIFICAR</button>
         </div>
     </main>
 
@@ -180,14 +180,8 @@
 
     <div id="modal-info" class="modal">
         <h2 style="color:#9b59b6;">Como Jogar</h2>
-        <p style="margin:15px 0;">Arrasta as bandeiras para os nomes corretos. Acerta em todas para avançar nas 6 rondas e ganhar o teu diploma!</p>
+        <p style="margin:15px 0;">Arrasta as bandeiras para os nomes corretos. O jogo avança sozinho quando todas as bandeiras da ronda estiverem certas!</p>
         <button class="btn-acao" style="background:#9b59b6; box-shadow:0 4px 0 #8e44ad;" onclick="fecharModais()">ENTENDIDO!</button>
-    </div>
-
-    <div id="modal-erro" class="modal" style="border-color:#e74c3c;">
-        <h2 style="color:#e74c3c;">Tenta de novo!</h2>
-        <p style="margin:15px 0;">Algumas bandeiras não estão no sítio certo.</p>
-        <button class="btn-acao" style="background:#e74c3c; box-shadow:0 4px 0 #c0392b;" onclick="corrigirErros()">CORRIGIR</button>
     </div>
 
     <div id="modal-nome" class="modal">
@@ -220,19 +214,18 @@
         let pool = [...paises].sort(() => Math.random() - 0.5);
         let ronda = 1;
         let draggedEl = null;
+        let totalNaRonda = 0;
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function abrirModal(id) { document.getElementById(id).style.display = 'block'; document.getElementById('overlay').classList.add('active'); }
         function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
 
         function novaRonda() {
-            if (ronda > 6) { 
-                abrirModal('modal-nome'); 
-                return; 
-            }
+            if (ronda > 6) { abrirModal('modal-nome'); return; }
             document.getElementById('num-ronda').innerText = ronda;
             
             const qtd = pool.length >= 5 ? 5 : pool.length;
+            totalNaRonda = qtd;
             const selecionados = pool.splice(0, qtd);
             
             const flagsCol = document.getElementById('col-bandeiras');
@@ -255,41 +248,30 @@
                 div.className = 'dropzone'; div.dataset.id = p.id;
                 div.innerHTML = `<span class="pais-txt">${p.nome}</span>`;
                 div.addEventListener('dragover', e => e.preventDefault());
-                div.addEventListener('drop', e => { 
-                    if(!e.currentTarget.querySelector('.flag-card')) e.currentTarget.appendChild(draggedEl); 
-                });
+                div.addEventListener('drop', e => { handleDrop(e.currentTarget); });
                 namesCol.appendChild(div);
             });
         }
 
-        function verificarRonda() {
-            const zonas = document.querySelectorAll('.dropzone');
-            let erros = 0;
-            zonas.forEach(z => {
-                const flag = z.querySelector('.flag-card');
-                if(!flag || flag.dataset.id !== z.dataset.id) {
-                    z.className = 'dropzone wrong';
-                    erros++;
-                } else {
-                    z.className = 'dropzone correct';
-                }
-            });
-
-            if(erros === 0) {
-                ronda++;
-                setTimeout(novaRonda, 800);
+        function handleDrop(zone) {
+            if(!zone.querySelector('.flag-card') && draggedEl.dataset.id === zone.dataset.id) {
+                zone.appendChild(draggedEl);
+                zone.classList.add('correct');
+                verificarProgresso();
             } else {
-                abrirModal('modal-erro');
+                // Se estiver errado, a bandeira volta para a coluna original
+                document.getElementById('col-bandeiras').appendChild(draggedEl);
             }
         }
 
-        function corrigirErros() {
-            document.querySelectorAll('.dropzone.wrong').forEach(z => {
-                const f = z.querySelector('.flag-card');
-                if(f) document.getElementById('col-bandeiras').appendChild(f);
-                z.className = 'dropzone';
-            });
-            fecharModais();
+        function verificarProgresso() {
+            const certas = document.querySelectorAll('.dropzone.correct').length;
+            if(certas === totalNaRonda) {
+                setTimeout(() => {
+                    ronda++;
+                    novaRonda();
+                }, 600);
+            }
         }
 
         function gerarCertificado() {
@@ -317,7 +299,7 @@
             draggedEl.style.display = 'flex'; 
             draggedEl.style.position = 'static';
             const zone = target ? target.closest('.dropzone') : null;
-            if(zone && !zone.querySelector('.flag-card')) zone.appendChild(draggedEl);
+            if(zone) handleDrop(zone);
             else document.getElementById('col-bandeiras').appendChild(draggedEl);
         }
 
