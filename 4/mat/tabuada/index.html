@@ -1,70 +1,305 @@
-body {
-        background-color: rgba(155, 89, 182, 0.15); 
-        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        height: 100vh; height: 100svh;
-        display: flex; flex-direction: column; overflow: hidden;
-        color: #2c3e50;
-    }
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>4º Ano - Jogo das Tabuadas</title>
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
-    /* HEADER */
-    header {
-        width: 100%; background: #fff; padding: 15px 20px;
-        display: flex; align-items: center; justify-content: space-between;
-        border-bottom: 1px solid #ddd; z-index: 100; flex-shrink: 0;
-    }
+        body {
+            background-color: rgba(155, 89, 182, 0.15); 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh; height: 100svh;
+            display: flex; flex-direction: column; overflow: hidden;
+            color: #2c3e50;
+        }
 
-    .header-left { display: flex; align-items: center; gap: 12px; }
-    header h1 { font-size: 0.9rem; color: #2c3e50; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        /* HEADER */
+        header {
+            width: 100%; background: #fff; padding: 15px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid #ddd; z-index: 100; flex-shrink: 0;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        header h1 { font-size: 0.9rem; color: #2c3e50; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        
+        .header-icon { font-size: 1.2rem; }
+
+        .btn-voltar-3d {
+            text-decoration: none; color: #ffffff; background-color: #9b59b6;
+            font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
+            border-radius: 8px; display: flex; align-items: center; gap: 8px;
+            border: 1px solid #8e44ad; box-shadow: 0 2px 0 #8e44ad; cursor: pointer;
+        }
+
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
+        .sidebar.active { left: 0; }
+        .sidebar-item { text-decoration: none; color: #444; font-weight: bold; padding: 14px; border-radius: 12px; background: #f8f9fa; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+        .menu-icon { font-size: 1.5rem; cursor: pointer; }
+
+        /* CONTEÚDO PRINCIPAL */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            overflow-y: auto;
+        }
+
+        /* ECRÃ INICIAL */
+        .game-card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .tabuadas-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-tabuada {
+            background: #f0f3f5;
+            border: 2px solid #9b59b6;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-tabuada:hover { background: #9b59b6; color: white; }
+
+        /* JOGO */
+        .hidden { display: none !important; }
+
+        .pergunta { font-size: 2.5rem; font-weight: 800; margin: 20px 0; color: #2c3e50; }
+        
+        .opcoes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+        }
+
+        .btn-opcao {
+            background: #fff;
+            border: 3px solid #ddd;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-opcao:active { transform: scale(0.95); }
+
+        .feedback-pontos { font-weight: bold; color: #9b59b6; margin-bottom: 10px; }
+
+        /* FOOTER */
+        footer {
+            width: 100%; padding: 15px; background: #fff; text-align: center; 
+            color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.8rem; flex-shrink: 0;
+        }
+
+        /* ANIMAÇÕES */
+        @keyframes correct {
+            0% { background-color: #fff; }
+            50% { background-color: #2ecc71; color: white; border-color: #27ae60; }
+            100% { background-color: #fff; }
+        }
+
+        @keyframes wrong {
+            0% { background-color: #fff; }
+            50% { background-color: #e74c3c; color: white; border-color: #c0392b; }
+            100% { background-color: #fff; }
+        }
+
+        .correct { animation: correct 0.6s ease; }
+        .wrong { animation: wrong 0.6s ease; }
+
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     
-    .header-icon { font-size: 1.2rem; }
+    <div class="sidebar" id="sidebar">
+        <h3>Navegação</h3>
+        <nav class="sidebar-menu">
+            <a href="../../" class="sidebar-item">🏠 Início</a>
+            <a href="../../pre" class="sidebar-item">🦒 Pré-Escolar</a>
+            <a href="../../1" class="sidebar-item">🐥 1º Ano</a>
+            <a href="../../2" class="sidebar-item">🐢 2º Ano</a>
+            <a href="../../3" class="sidebar-item">🦊 3º Ano</a>
+            <a href="../../4" class="sidebar-item">👨‍🚀 4º Ano</a>
+        </nav>
+        <button onclick="toggleMenu()" style="margin-top:auto; padding:10px; border:none; background:#eee; cursor:pointer; font-weight:bold; border-radius:8px;">Fechar ×</button>
+    </div>
 
-    .btn-voltar-3d {
-        text-decoration: none; color: #ffffff; background-color: #9b59b6;
-        font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
-        border-radius: 8px; display: flex; align-items: center; gap: 8px;
-        border: 1px solid #8e44ad; box-shadow: 0 2px 0 #8e44ad; cursor: pointer;
-    }
+    <header>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <h1>
+                <span class="header-icon">🧮</span>
+                Desafio das Tabuadas
+            </h1>
+        </div>
+        <a href="javascript:location.reload()" class="btn-voltar-3d">🔄 Reiniciar</a>
+    </header>
 
-    /* SIDEBAR */
-    .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
-    .sidebar.active { left: 0; }
-    .sidebar-item { text-decoration: none; color: #444; font-weight: bold; padding: 14px; border-radius: 12px; background: #f8f9fa; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
-    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
-    .overlay.active { display: block; }
-    .menu-icon { font-size: 1.5rem; cursor: pointer; }
+    <main>
+        <!-- ECRÃ INICIAL -->
+        <div id="screen-start" class="game-card">
+            <div style="font-size: 3rem;">🚀</div>
+            <h2>Qual tabuada queres treinar?</h2>
+            <div class="tabuadas-grid">
+                <button class="btn-tabuada" onclick="startGame(1)">1</button>
+                <button class="btn-tabuada" onclick="startGame(2)">2</button>
+                <button class="btn-tabuada" onclick="startGame(3)">3</button>
+                <button class="btn-tabuada" onclick="startGame(4)">4</button>
+                <button class="btn-tabuada" onclick="startGame(5)">5</button>
+                <button class="btn-tabuada" onclick="startGame(6)">6</button>
+                <button class="btn-tabuada" onclick="startGame(7)">7</button>
+                <button class="btn-tabuada" onclick="startGame(8)">8</button>
+                <button class="btn-tabuada" onclick="startGame(9)">9</button>
+                <button class="btn-tabuada" onclick="startGame(10)">10</button>
+                <button class="btn-tabuada" style="grid-column: span 2; background: #9b59b6; color: white;" onclick="startGame('mix')">MISTURADO</button>
+            </div>
+        </div>
 
-    /* CONTEÚDO */
-    main {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
+        <!-- ECRÃ DE JOGO -->
+        <div id="screen-game" class="game-card hidden">
+            <div class="feedback-pontos">Pontos: <span id="score">0</span> | Questão: <span id="q-count">1</span>/10</div>
+            <div class="pergunta" id="question">2 x 2</div>
+            <div class="opcoes-grid">
+                <button class="btn-opcao" onclick="checkAnswer(this)"></button>
+                <button class="btn-opcao" onclick="checkAnswer(this)"></button>
+                <button class="btn-opcao" onclick="checkAnswer(this)"></button>
+                <button class="btn-opcao" onclick="checkAnswer(this)"></button>
+            </div>
+        </div>
 
-    .emoji-principal {
-        font-size: 4rem;
-        margin-bottom: 10px;
-    }
+        <!-- ECRÃ FINAL -->
+        <div id="screen-result" class="game-card hidden">
+            <div id="result-emoji" style="font-size: 4rem;">🎉</div>
+            <h2 id="result-title">Incrível!</h2>
+            <p class="subtitulo" id="result-text">Acertaste todas as perguntas.</p>
+            <button class="btn-voltar-3d" style="width:100%; justify-content: center; margin-top:20px;" onclick="location.reload()">Jogar Novamente</button>
+        </div>
+    </main>
 
-    h2 {
-        font-size: 1.8rem;
-        margin-bottom: 5px;
-        color: #8e44ad;
-        text-align: center;
-    }
+    <footer>Recursos Digitais Covão - Professor Luís</footer>
 
-    .subtitulo {
-        font-size: 1rem;
-        margin-bottom: 30px;
-        opacity: 0.8;
-        text-align: center;
-    }
+    <script>
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
 
-    /* FOOTER */
-    footer {
-        width: 100%; padding: 15px; background: #fff; text-align: center; 
-        color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.8rem; flex-shrink: 0;
-    }
-</style>
+        let currentTable = 1;
+        let score = 0;
+        let questionNumber = 1;
+        let correctAnswer = 0;
+
+        function startGame(table) {
+            currentTable = table;
+            score = 0;
+            questionNumber = 1;
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            if (questionNumber > 10) {
+                showResults();
+                return;
+            }
+
+            document.getElementById('score').innerText = score;
+            document.getElementById('q-count').innerText = questionNumber;
+
+            let num1 = currentTable === 'mix' ? Math.floor(Math.random() * 10) + 1 : currentTable;
+            let num2 = Math.floor(Math.random() * 10) + 1;
+            correctAnswer = num1 * num2;
+
+            document.getElementById('question').innerText = `${num1} x ${num2}`;
+
+            // Gerar opções
+            let choices = [correctAnswer];
+            while (choices.length < 4) {
+                let wrong = (num1 * (Math.floor(Math.random() * 10) + 1)) + (Math.floor(Math.random() * 3) - 1);
+                if (wrong < 0) wrong = Math.floor(Math.random() * 100);
+                if (!choices.includes(wrong)) choices.push(wrong);
+            }
+
+            // Baralhar opções
+            choices.sort(() => Math.random() - 0.5);
+
+            const buttons = document.querySelectorAll('.btn-opcao');
+            buttons.forEach((btn, index) => {
+                btn.innerText = choices[index];
+                btn.className = 'btn-opcao'; // reset classes
+            });
+        }
+
+        function checkAnswer(btn) {
+            const selected = parseInt(btn.innerText);
+            
+            if (selected === correctAnswer) {
+                score += 10;
+                btn.classList.add('correct');
+                setTimeout(() => {
+                    questionNumber++;
+                    nextQuestion();
+                }, 600);
+            } else {
+                btn.classList.add('wrong');
+                // Pequena penalização ou apenas avançar
+                setTimeout(() => {
+                    questionNumber++;
+                    nextQuestion();
+                }, 600);
+            }
+        }
+
+        function showResults() {
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+            
+            const title = document.getElementById('result-title');
+            const text = document.getElementById('result-text');
+            const emoji = document.getElementById('result-emoji');
+
+            if (score >= 80) {
+                title.innerText = "Excelente!";
+                text.innerText = `És um mestre da tabuada! Pontuação: ${score}`;
+                emoji.innerText = "🏆";
+            } else if (score >= 50) {
+                title.innerText = "Bom trabalho!";
+                text.innerText = `Estás no bom caminho. Pontuação: ${score}`;
+                emoji.innerText = "⭐";
+            } else {
+                title.innerText = "Continua a praticar!";
+                text.innerText = `Tenta outra vez para melhorares. Pontuação: ${score}`;
+                emoji.innerText = "📚";
+            }
+        }
+    </script>
+</body>
+</html>
