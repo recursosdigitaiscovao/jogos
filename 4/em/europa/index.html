@@ -3,411 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>4º Ano - Estados-Membros UE</title>
+    <title>4º Ano - Missão União Europeia</title>
     <style>
         /* BASE TEMPLATE 4º ANO */
-        * {
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent;
-            margin: 0; padding: 0;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
             background-color: rgba(155, 89, 182, 0.15); 
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            height: 100vh;
-            height: 100svh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            touch-action: manipulation;
+            height: 100vh; height: 100svh;
+            display: flex; flex-direction: column; overflow: hidden;
         }
 
         header {
-            width: 100%;
-            background-color: #ffffff;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #ddd;
-            flex-shrink: 0;
-            z-index: 100;
+            width: 100%; background: #fff; padding: 15px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid #ddd; z-index: 100;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .menu-icon { font-size: 1.8rem; cursor: pointer; color: #2c3e50; }
+        header h1 { font-size: 1rem; color: #2c3e50; font-weight: 800; }
 
-        .menu-icon {
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: #2c3e50;
+        .btn-voltar-3d, .btn-info-purp {
+            text-decoration: none; color: #ffffff; background-color: #9b59b6;
+            font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
+            border-radius: 8px; display: flex; align-items: center; gap: 8px;
+            border: 1px solid #8e44ad; box-shadow: 0 2px 0 #8e44ad; cursor: pointer;
         }
-
-        .game-icon {
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-        }
-
-        header h1 {
-            font-size: 1.1rem;
-            color: #2c3e50;
-            font-weight: 800;
-        }
-
-        .btn-voltar-3d {
-            text-decoration: none;
-            color: #ffffff;
-            background-color: #9b59b6;
-            font-weight: bold;
-            font-size: 0.8rem;
-            padding: 8px 18px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid #8e44ad;
-            box-shadow: 0 2px 0 #8e44ad;
-            transition: all 0.1s ease;
-        }
-
-        .btn-voltar-3d:active {
-            transform: translateY(1px);
-            box-shadow: 0 1px 0 #8e44ad;
-        }
+        .btn-info-purp { width: 35px; height: 35px; padding: 0; justify-content: center; border-radius: 50%; }
 
         /* SIDEBAR */
-        .sidebar {
-            position: fixed;
-            left: -280px;
-            top: 0;
-            width: 280px;
-            height: 100%;
-            background: white;
-            box-shadow: 2px 0 15px rgba(0,0,0,0.2);
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 200;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
-
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
         .sidebar.active { left: 0; }
-        .sidebar h3 { 
-            color: #2c3e50; 
-            margin-bottom: 20px; 
-            padding-bottom: 10px; 
-            border-bottom: 2px solid #9b59b6; 
-        }
-
-        .sidebar-menu { display: flex; flex-direction: column; gap: 10px; }
-        .sidebar-item {
-            text-decoration: none; color: #444; font-weight: bold;
-            padding: 14px; border-radius: 12px; background: #f8f9fa;
-            display: flex; align-items: center; gap: 15px;
-        }
-        .sidebar-item:hover { background: #9b59b6; color: white; }
-
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); display: none; z-index: 150;
-        }
+        .sidebar-item { text-decoration: none; color: #444; font-weight: bold; padding: 14px; border-radius: 12px; background: #f8f9fa; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
 
-        /* JOGO - CONTEÚDO */
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 20px;
-            overflow-y: auto;
-        }
+        /* JOGO */
+        main { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .ronda-txt { position: absolute; top: 10px; right: 20px; font-weight: 800; color: #9b59b6; background: white; padding: 5px 15px; border-radius: 20px; border: 1px solid #9b59b6; }
+        
+        .game-area { display: flex; gap: 20px; width: 100%; max-width: 600px; justify-content: center; margin-top: 20px; }
+        .column { display: flex; flex-direction: column; gap: 10px; }
 
-        .instrucao-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .btn-info-circle {
-            background: #3498db;
-            color: white;
-            border: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .game-area {
-            display: flex;
-            gap: 20px;
-            width: 100%;
-            max-width: 600px;
-            justify-content: center;
-        }
-
-        .column { display: flex; flex-direction: column; gap: 12px; }
-
-        .flag-card {
-            width: 85px; height: 55px;
-            background: white; border-radius: 8px;
-            border: 2px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            cursor: grab; display: flex; overflow: hidden;
-            touch-action: none;
-        }
+        .flag-card { width: 80px; height: 50px; background: white; border-radius: 6px; border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.1); cursor: grab; touch-action: none; overflow: hidden; }
         .flag-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
-        .dropzone {
-            width: 160px; height: 60px;
-            background: #ffffff; border: 2px dashed #bdc3c7;
-            border-radius: 12px; display: flex; align-items: center;
-            justify-content: center; padding: 5px; text-align: center;
-            transition: 0.3s;
-        }
+        .dropzone { width: 160px; height: 55px; background: #fff; border: 2px dashed #bdc3c7; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 5px; transition: 0.2s; }
         .dropzone.correct { background: #eafaf1; border: 2px solid #2ecc71; }
         .dropzone.wrong { background: #fff5f5; border: 2px solid #e74c3c; }
+        .pais-txt { font-weight: 800; font-size: 0.75rem; color: #2c3e50; pointer-events: none; }
 
-        .pais-txt { font-weight: 800; font-size: 0.8rem; color: #2c3e50; pointer-events: none; }
-
-        .btn-acao {
-            margin-top: 25px;
-            background-color: #27ae60;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 10px;
-            border: none;
-            font-weight: bold;
-            box-shadow: 0 4px 0 #219150;
-            cursor: pointer;
-        }
-        .btn-acao:active { transform: translateY(2px); box-shadow: 0 2px 0 #219150; }
+        .btn-acao { margin-top: 20px; background: #27ae60; color: white; padding: 12px 30px; border-radius: 10px; border: none; font-weight: bold; box-shadow: 0 4px 0 #219150; cursor: pointer; }
 
         /* MODAIS */
-        .modal {
-            display: none; position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); background: white;
-            padding: 25px; border-radius: 20px; z-index: 1000;
-            width: 85%; max-width: 350px; text-align: center;
-            border: 4px solid #9b59b6;
-        }
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 20px; z-index: 1000; width: 90%; max-width: 400px; text-align: center; border: 4px solid #9b59b6; }
+        
+        /* CERTIFICADO */
+        #certificado { display: none; background: #fff; padding: 30px; border: 10px double #9b59b6; border-radius: 0; text-align: center; max-width: 500px; width: 95%; margin: auto; }
+        .nome-aluno { font-family: 'Georgia', serif; font-size: 1.5rem; border-bottom: 2px solid #000; padding: 5px; margin: 20px 0; display: inline-block; min-width: 200px; }
 
-        footer {
-            width: 100%; padding: 12px; background-color: #ffffff;
-            text-align: center; color: #7f8c8d; border-top: 1px solid #ddd;
-            font-size: 0.9rem; flex-shrink: 0;
-        }
+        footer { width: 100%; padding: 10px; background: #fff; text-align: center; color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="overlay" id="overlay" onclick="fecharModais()"></div>
     
     <div class="sidebar" id="sidebar">
         <h3>Navegação</h3>
         <nav class="sidebar-menu">
-            <a href="../../../" class="sidebar-item"><span>🏠</span> Início</a>
-            <a href="../../../pre" class="sidebar-item"><span>🦒</span> Pré-Escolar</a>
-            <a href="../../../1" class="sidebar-item"><span>🐥</span> 1º Ano</a>
-            <a href="../../../2" class="sidebar-item"><span>🐢</span> 2º Ano</a>
-            <a href="../../../3" class="sidebar-item"><span>🦊</span> 3º Ano</a>
-            <a href="../../../4" class="sidebar-item"><span>👨‍🚀</span> 4º Ano</a>
+            <a href="../../../" class="sidebar-item">🏠 Início</a>
+            <a href="../../../4" class="sidebar-item">👨‍🚀 4º Ano</a>
         </nav>
-        <button onclick="toggleMenu()" style="margin-top:auto; padding:12px; border:none; background:#f0f0f0; cursor:pointer; font-weight:bold; border-radius:10px;">Fechar ×</button>
+        <button onclick="toggleMenu()" style="margin-top:auto; padding:10px; border:none; background:#eee; cursor:pointer; font-weight:bold; border-radius:8px;">Fechar ×</button>
     </div>
 
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <span class="game-icon">🇪🇺</span>
-            <h1>União Europeia</h1>
+            <h1>ESTADOS-MEMBROS UE</h1>
         </div>
-        <a href="../" class="btn-voltar-3d">
-            <span>⬅</span> Voltar
-        </a>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-info-purp" onclick="abrirModal('modal-info')">i</button>
+            <a href="../" class="btn-voltar-3d">⬅ Voltar</a>
+        </div>
     </header>
 
-    <main>
-        <div class="instrucao-container">
-            <p style="font-weight: bold; color: #2c3e50;">Arrasta as bandeiras para os países!</p>
-            <button class="btn-info-circle" onclick="abrirModal('modal-info')">i</button>
-        </div>
-
+    <main id="game-main">
+        <div class="ronda-txt">Ronda <span id="num-ronda">1</span>/6</div>
+        
         <div class="game-area">
             <div class="column" id="col-bandeiras"></div>
             <div class="column" id="col-nomes"></div>
         </div>
 
-        <button class="btn-acao" onclick="verificarRonda()">VERIFICAR RESPOSTAS</button>
+        <button class="btn-acao" id="btn-verificar" onclick="verificarRonda()">VERIFICAR</button>
     </main>
 
+    <div id="certificado-container" style="display:none; flex:1; align-items:center; justify-content:center; padding:20px;">
+        <div id="certificado">
+            <h1 style="color:#9b59b6;">DIPLOMA</h1>
+            <p style="margin-top:10px;">Certificamos que o(a) aluno(a):</p>
+            <div class="nome-aluno" id="display-nome">_________</div>
+            <p>Concluiu com sucesso o desafio dos 27 países da UE!</p>
+            <div style="margin-top:30px; font-size:0.8rem; border-top:1px dashed #ccc; padding-top:10px;">
+                Professor Luís • Recursos Digitais Covão
+            </div>
+            <button class="btn-acao" onclick="window.print()" style="background:#34495e; box-shadow:0 4px 0 #2c3e50; margin-top:20px;">IMPRIMIR</button>
+        </div>
+    </div>
+
     <div id="modal-info" class="modal">
-        <h2 style="color: #9b59b6;">Como jogar?</h2>
-        <p style="margin: 15px 0; color: #444;">Arrasta cada bandeira para o retângulo que tem o nome do país correspondente. No final, clica em verificar!</p>
-        <button class="btn-acao" style="background:#9b59b6; box-shadow: 0 4px 0 #8e44ad;" onclick="fecharModais()">ENTENDI!</button>
+        <h2 style="color:#9b59b6;">Informação</h2>
+        <p style="margin:15px 0;">Arrasta as 5 bandeiras para os nomes corretos e clica em verificar. Precisas de acertar em todas para passar à próxima ronda!</p>
+        <button class="btn-acao" style="background:#9b59b6; box-shadow:0 4px 0 #8e44ad;" onclick="fecharModais()">VAMOS LÁ!</button>
     </div>
 
-    <div id="modal-erro" class="modal" style="border-color: #e74c3c;">
-        <h2 style="color: #e74c3c;">Tenta de novo!</h2>
-        <p style="margin: 15px 0; color: #444;">Algumas bandeiras não estão no sítio correto. As erradas voltaram para a lista.</p>
-        <button class="btn-acao" style="background:#e74c3c; box-shadow: 0 4px 0 #c0392b;" onclick="corrigirErros()">VOLTA A TENTAR</button>
+    <div id="modal-erro" class="modal" style="border-color:#e74c3c;">
+        <h2 style="color:#e74c3c;">Oops!</h2>
+        <p style="margin:15px 0;">Algumas não estão certas. Tenta corrigir!</p>
+        <button class="btn-acao" style="background:#e74c3c; box-shadow:0 4px 0 #c0392b;" onclick="corrigirErros()">VOLTAR</button>
     </div>
 
-    <div id="modal-ganhou" class="modal">
-        <h2 style="color: #27ae60;">Parabéns! 🏆</h2>
-        <p style="margin: 15px 0; color: #444;">Concluíste todos os 27 Estados-Membros da União Europeia com sucesso!</p>
-        <button class="btn-acao" onclick="location.reload()">RECOMEÇAR</button>
+    <div id="modal-nome" class="modal">
+        <h2 style="color:#2ecc71;">Missão Cumprida!</h2>
+        <p style="margin:15px 0;">Escreve o teu nome para o certificado:</p>
+        <input type="text" id="input-nome" placeholder="Teu nome aqui" style="width:100%; padding:12px; border-radius:10px; border:2px solid #ddd; margin-bottom:15px; font-size:1.1rem; text-align:center;">
+        <button class="btn-acao" onclick="gerarCertificado()">GERAR DIPLOMA</button>
     </div>
 
-    <footer>
-        Recursos Digitais Covão - <strong>Professor Luís</strong>
-    </footer>
+    <footer>Professor Luís - 4º Ano</footer>
 
     <script>
         const paises = [
-            { id: "at", nome: "ÁUSTRIA", img: "https://flagcdn.com/w160/at.png" },
-            { id: "be", nome: "BÉLGICA", img: "https://flagcdn.com/w160/be.png" },
-            { id: "bg", nome: "BULGÁRIA", img: "https://flagcdn.com/w160/bg.png" },
-            { id: "hr", nome: "CROÁCIA", img: "https://flagcdn.com/w160/hr.png" },
-            { id: "cy", nome: "CHIPRE", img: "https://flagcdn.com/w160/cy.png" },
-            { id: "cz", nome: "CHÉQUIA", img: "https://flagcdn.com/w160/cz.png" },
-            { id: "dk", nome: "DINAMARCA", img: "https://flagcdn.com/w160/dk.png" },
-            { id: "ee", nome: "ESTÓNIA", img: "https://flagcdn.com/w160/ee.png" },
-            { id: "fi", nome: "FINLÂNDIA", img: "https://flagcdn.com/w160/fi.png" },
-            { id: "fr", nome: "FRANÇA", img: "https://flagcdn.com/w160/fr.png" },
-            { id: "de", nome: "ALEMANHA", img: "https://flagcdn.com/w160/de.png" },
-            { id: "gr", nome: "GRÉCIA", img: "https://flagcdn.com/w160/gr.png" },
-            { id: "hu", nome: "HUNGRIA", img: "https://flagcdn.com/w160/hu.png" },
-            { id: "ie", nome: "IRLANDA", img: "https://flagcdn.com/w160/ie.png" },
-            { id: "it", nome: "ITÁLIA", img: "https://flagcdn.com/w160/it.png" },
-            { id: "lv", nome: "LETÓNIA", img: "https://flagcdn.com/w160/lv.png" },
-            { id: "lt", nome: "LITUÂNIA", img: "https://flagcdn.com/w160/lt.png" },
-            { id: "lu", nome: "LUXEMBURGO", img: "https://flagcdn.com/w160/lu.png" },
-            { id: "mt", nome: "MALTA", img: "https://flagcdn.com/w160/mt.png" },
-            { id: "nl", nome: "PAÍSES BAIXOS", img: "https://flagcdn.com/w160/nl.png" },
-            { id: "pl", nome: "POLÓNIA", img: "https://flagcdn.com/w160/pl.png" },
-            { id: "pt", nome: "PORTUGAL", img: "https://flagcdn.com/w160/pt.png" },
-            { id: "ro", nome: "ROMÉNIA", img: "https://flagcdn.com/w160/ro.png" },
-            { id: "sk", nome: "ESLOVÁQUIA", img: "https://flagcdn.com/w160/sk.png" },
-            { id: "si", nome: "ESLOVÉNIA", img: "https://flagcdn.com/w160/si.png" },
-            { id: "es", nome: "ESPANHA", img: "https://flagcdn.com/w160/es.png" },
+            { id: "at", nome: "ÁUSTRIA", img: "https://flagcdn.com/w160/at.png" }, { id: "be", nome: "BÉLGICA", img: "https://flagcdn.com/w160/be.png" },
+            { id: "bg", nome: "BULGÁRIA", img: "https://flagcdn.com/w160/bg.png" }, { id: "hr", nome: "CROÁCIA", img: "https://flagcdn.com/w160/hr.png" },
+            { id: "cy", nome: "CHIPRE", img: "https://flagcdn.com/w160/cy.png" }, { id: "cz", nome: "CHÉQUIA", img: "https://flagcdn.com/w160/cz.png" },
+            { id: "dk", nome: "DINAMARCA", img: "https://flagcdn.com/w160/dk.png" }, { id: "ee", nome: "ESTÓNIA", img: "https://flagcdn.com/w160/ee.png" },
+            { id: "fi", nome: "FINLÂNDIA", img: "https://flagcdn.com/w160/fi.png" }, { id: "fr", nome: "FRANÇA", img: "https://flagcdn.com/w160/fr.png" },
+            { id: "de", nome: "ALEMANHA", img: "https://flagcdn.com/w160/de.png" }, { id: "gr", nome: "GRÉCIA", img: "https://flagcdn.com/w160/gr.png" },
+            { id: "hu", nome: "HUNGRIA", img: "https://flagcdn.com/w160/hu.png" }, { id: "ie", nome: "IRLANDA", img: "https://flagcdn.com/w160/ie.png" },
+            { id: "it", nome: "ITÁLIA", img: "https://flagcdn.com/w160/it.png" }, { id: "lv", nome: "LETÓNIA", img: "https://flagcdn.com/w160/lv.png" },
+            { id: "lt", nome: "LITUÂNIA", img: "https://flagcdn.com/w160/lt.png" }, { id: "lu", nome: "LUXEMBURGO", img: "https://flagcdn.com/w160/lu.png" },
+            { id: "mt", nome: "MALTA", img: "https://flagcdn.com/w160/mt.png" }, { id: "nl", nome: "PAÍSES BAIXOS", img: "https://flagcdn.com/w160/nl.png" },
+            { id: "pl", nome: "POLÓNIA", img: "https://flagcdn.com/w160/pl.png" }, { id: "pt", nome: "PORTUGAL", img: "https://flagcdn.com/w160/pt.png" },
+            { id: "ro", nome: "ROMÉNIA", img: "https://flagcdn.com/w160/ro.png" }, { id: "sk", nome: "ESLOVÁQUIA", img: "https://flagcdn.com/w160/sk.png" },
+            { id: "si", nome: "ESLOVÉNIA", img: "https://flagcdn.com/w160/si.png" }, { id: "es", nome: "ESPANHA", img: "https://flagcdn.com/w160/es.png" },
             { id: "se", nome: "SUÉCIA", img: "https://flagcdn.com/w160/se.png" }
         ];
 
-        let banco = [...paises];
+        let pool = [...paises];
+        let ronda = 1;
         let draggedEl = null;
 
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        function abrirModal(id) {
-            document.getElementById(id).style.display = 'block';
-            document.getElementById('overlay').classList.add('active');
-        }
-
-        function fecharModais() {
-            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-            document.getElementById('sidebar').classList.remove('active');
-            document.getElementById('overlay').classList.remove('active');
-        }
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function abrirModal(id) { document.getElementById(id).style.display = 'block'; document.getElementById('overlay').classList.add('active'); }
+        function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
 
         function novaRonda() {
-            if (banco.length < 5) {
-                abrirModal('modal-ganhou');
-                return;
-            }
-
-            banco.sort(() => Math.random() - 0.5);
-            const selecionados = banco.splice(0, 5);
-
+            if (pool.length < 2 && ronda > 5) { abrirModal('modal-nome'); return; }
+            document.getElementById('num-ronda').innerText = ronda;
+            const qtd = pool.length >= 5 ? 5 : pool.length;
+            pool.sort(() => Math.random() - 0.5);
+            const selecionados = pool.splice(0, qtd);
+            
             const flagsCol = document.getElementById('col-bandeiras');
             const namesCol = document.getElementById('col-nomes');
-            flagsCol.innerHTML = '';
-            namesCol.innerHTML = '';
+            flagsCol.innerHTML = ''; namesCol.innerHTML = '';
 
-            // Bandeiras (Baralhadas)
             [...selecionados].sort(() => Math.random() - 0.5).forEach(p => {
                 const div = document.createElement('div');
-                div.className = 'flag-card';
-                div.draggable = true;
-                div.dataset.id = p.id;
+                div.className = 'flag-card'; div.draggable = true; div.dataset.id = p.id;
                 div.innerHTML = `<img src="${p.img}">`;
-                
-                div.addEventListener('dragstart', (e) => draggedEl = e.target);
-                div.addEventListener('touchstart', touchStart, {passive: false});
-                div.addEventListener('touchmove', touchMove, {passive: false});
-                div.addEventListener('touchend', touchEnd);
+                div.addEventListener('dragstart', e => draggedEl = e.target);
+                div.addEventListener('touchstart', tStart, {passive:false});
+                div.addEventListener('touchmove', tMove, {passive:false});
+                div.addEventListener('touchend', tEnd);
                 flagsCol.appendChild(div);
             });
 
-            // Nomes
             [...selecionados].sort(() => Math.random() - 0.5).forEach(p => {
                 const div = document.createElement('div');
-                div.className = 'dropzone';
-                div.dataset.id = p.id;
+                div.className = 'dropzone'; div.dataset.id = p.id;
                 div.innerHTML = `<span class="pais-txt">${p.nome}</span>`;
-                div.addEventListener('dragover', (e) => e.preventDefault());
-                div.addEventListener('drop', (e) => {
-                    if(!e.currentTarget.querySelector('.flag-card')) e.currentTarget.appendChild(draggedEl);
-                });
+                div.addEventListener('dragover', e => e.preventDefault());
+                div.addEventListener('drop', e => { if(!e.currentTarget.querySelector('.flag-card')) e.currentTarget.appendChild(draggedEl); });
                 namesCol.appendChild(div);
             });
         }
 
         function verificarRonda() {
             const zonas = document.querySelectorAll('.dropzone');
-            let erros = 0;
-            let preenchidos = 0;
-
+            let erros = 0, total = zonas.length;
             zonas.forEach(z => {
                 const flag = z.querySelector('.flag-card');
-                if(flag) {
-                    preenchidos++;
-                    if(flag.dataset.id === z.dataset.id) z.className = 'dropzone correct';
-                    else { z.className = 'dropzone wrong'; erros++; }
-                }
+                if(!flag) erros++;
+                else if(flag.dataset.id === z.dataset.id) z.className = 'dropzone correct';
+                else { z.className = 'dropzone wrong'; erros++; }
             });
-
-            if(preenchidos < 5) return alert("Preenche todos os espaços!");
-            if(erros === 0) setTimeout(novaRonda, 1000);
+            if(erros === 0) { ronda++; setTimeout(novaRonda, 800); }
             else abrirModal('modal-erro');
         }
 
         function corrigirErros() {
             document.querySelectorAll('.dropzone.wrong').forEach(z => {
-                const flag = z.querySelector('.flag-card');
-                document.getElementById('col-bandeiras').appendChild(flag);
+                const f = z.querySelector('.flag-card');
+                document.getElementById('col-bandeiras').appendChild(f);
                 z.className = 'dropzone';
             });
             fecharModais();
         }
 
-        // TOUCH LOGIC
-        function touchStart(e) { draggedEl = e.target; }
-        function touchMove(e) {
-            e.preventDefault();
-            const touch = e.touches[0];
-            draggedEl.style.position = 'fixed';
-            draggedEl.style.left = touch.clientX - 40 + 'px';
-            draggedEl.style.top = touch.clientY - 30 + 'px';
-            draggedEl.style.zIndex = 1000;
+        function gerarCertificado() {
+            const nome = document.getElementById('input-nome').value;
+            if(!nome) return alert("Escreve o teu nome!");
+            document.getElementById('display-nome').innerText = nome;
+            document.getElementById('game-main').style.display = 'none';
+            document.getElementById('certificado-container').style.display = 'flex';
+            fecharModais();
         }
-        function touchEnd(e) {
-            draggedEl.style.display = 'none';
-            const touch = e.changedTouches[0];
-            const target = document.elementFromPoint(touch.clientX, touch.clientY);
-            draggedEl.style.display = 'flex';
-            draggedEl.style.position = 'static';
+
+        // TOUCH LOGIC
+        function tStart(e) { draggedEl = e.target; }
+        function tMove(e) { e.preventDefault(); const t = e.touches[0]; draggedEl.style.position = 'fixed'; draggedEl.style.left = t.clientX - 40 + 'px'; draggedEl.style.top = t.clientY - 25 + 'px'; draggedEl.style.zIndex = 1000; }
+        function tEnd(e) {
+            draggedEl.style.display = 'none'; const t = e.changedTouches[0];
+            const target = document.elementFromPoint(t.clientX, t.clientY);
+            draggedEl.style.display = 'flex'; draggedEl.style.position = 'static';
             const zone = target ? target.closest('.dropzone') : null;
             if(zone && !zone.querySelector('.flag-card')) zone.appendChild(draggedEl);
             else document.getElementById('col-bandeiras').appendChild(draggedEl);
