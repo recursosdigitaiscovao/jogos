@@ -1,1 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>4º Ano - Quiz União Europeia</title>
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
+        body {
+            background-color: rgba(155, 89, 182, 0.15); 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh; height: 100svh;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        header {
+            width: 100%; background: #fff; padding: 15px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid #ddd; z-index: 100;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        header h1 { font-size: 0.9rem; color: #2c3e50; font-weight: 800; text-transform: uppercase; }
+
+        .btn-voltar-3d, .btn-info-purp {
+            text-decoration: none; color: #ffffff; background-color: #9b59b6;
+            font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
+            border-radius: 8px; display: flex; align-items: center; gap: 8px;
+            border: 1px solid #8e44ad; box-shadow: 0 2px 0 #8e44ad; cursor: pointer;
+        }
+        .btn-info-purp { width: 28px; height: 28px; padding: 0; justify-content: center; border-radius: 50%; font-style: italic; font-family: serif; }
+
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
+        .sidebar.active { left: 0; }
+        .sidebar-item { text-decoration: none; color: #444; font-weight: bold; padding: 14px; border-radius: 12px; background: #f8f9fa; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        /* JOGO QUIZ */
+        main { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        
+        .instrucao-container { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .instrucao-container h3 { color: #2c3e50; font-size: 1.1rem; }
+
+        .quiz-card {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .flag-display {
+            width: 100%;
+            height: 150px;
+            border-radius: 12px;
+            border: 4px solid #f0f0f0;
+            object-fit: cover;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 800;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1rem;
+        }
+        .option-btn:active { transform: scale(0.98); }
+        .option-btn.correct { background: #2ecc71; color: white; border-color: #27ae60; }
+        .option-btn.wrong { background: #e74c3c; color: white; border-color: #c0392b; }
+
+        .control-area { margin-top: 25px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .ronda-txt { font-weight: 800; color: #9b59b6; background: white; padding: 6px 20px; border-radius: 20px; border: 2px solid #9b59b6; font-size: 0.9rem; }
+
+        /* MODAIS & CERTIFICADO */
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 20px; z-index: 1000; width: 90%; max-width: 400px; text-align: center; border: 4px solid #9b59b6; }
+        #certificado-container { display: none; flex: 1; align-items: center; justify-content: center; padding: 20px; }
+        #certificado { background: #fff; padding: 40px; border: 15px double #9b59b6; text-align: center; max-width: 600px; width: 100%; }
+        .nome-aluno { font-family: 'Georgia', serif; font-size: 2rem; border-bottom: 2px solid #000; padding: 5px; margin: 20px 0; display: inline-block; min-width: 250px; }
+        .btn-acao { background: #27ae60; color: white; padding: 14px 40px; border-radius: 12px; border: none; font-weight: bold; box-shadow: 0 4px 0 #219150; cursor: pointer; }
+
+        footer { width: 100%; padding: 10px; background: #fff; text-align: center; color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="fecharModais()"></div>
+    
+    <div class="sidebar" id="sidebar">
+        <h3>Navegação</h3>
+        <nav class="sidebar-menu">
+            <a href="../../../" class="sidebar-item">🏠 Início</a>
+            <a href="../../../4" class="sidebar-item">👨‍🚀 4º Ano</a>
+        </nav>
+        <button onclick="toggleMenu()" style="margin-top:auto; padding:10px; border:none; background:#eee; cursor:pointer; font-weight:bold; border-radius:8px;">Fechar ×</button>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <h1>Estudo do Meio</h1>
+        </div>
+        <a href="../" class="btn-voltar-3d">⬅ Voltar</a>
+    </header>
+
+    <main id="game-main">
+        <div class="instrucao-container">
+            <h3>De que país é esta bandeira?</h3>
+            <button class="btn-info-purp" onclick="abrirModal('modal-info')">i</button>
+        </div>
+
+        <div class="quiz-card">
+            <img id="flag-img" src="" class="flag-display" alt="Bandeira">
+            <div class="options-container" id="options-box">
+                </div>
+        </div>
+
+        <div class="control-area">
+            <div class="ronda-txt">Pergunta <span id="num-pergunta">1</span>/10</div>
+        </div>
+    </main>
+
+    <div id="certificado-container">
+        <div id="certificado">
+            <h1 style="color:#9b59b6; font-size: 2.5rem;">DIPLOMA</h1>
+            <p style="margin-top:15px;">Certificamos que o(a) aluno(a):</p>
+            <div class="nome-aluno" id="display-nome">_________</div>
+            <p>Concluiu com sucesso o Quiz das Bandeiras da União Europeia!</p>
+            <div style="margin-top:40px; font-size:0.9rem; border-top:1px dashed #9b59b6; padding-top:15px;">
+                Professor Luís • Recursos Digitais Covão
+            </div>
+            <button class="btn-acao" onclick="window.print()" style="background:#34495e; box-shadow:0 4px 0 #2c3e50; margin-top:20px;">IMPRIMIR</button>
+        </div>
+    </div>
+
+    <div id="modal-info" class="modal">
+        <h2 style="color:#9b59b6;">Como Jogar</h2>
+        <p style="margin:15px 0;">Observa a bandeira e clica no nome do país correto. Tens 10 perguntas para responder!</p>
+        <button class="btn-acao" style="background:#9b59b6;" onclick="fecharModais()">VAMOS A ISSO!</button>
+    </div>
+
+    <div id="modal-nome" class="modal">
+        <h2 style="color:#2ecc71;">Incrível!</h2>
+        <p style="margin:15px 0;">Terminaste o quiz. Escreve o teu nome:</p>
+        <input type="text" id="input-nome" placeholder="Teu nome" style="width:100%; padding:12px; border-radius:10px; border:2px solid #ddd; margin-bottom:15px; text-align:center;">
+        <button class="btn-acao" onclick="gerarCertificado()">GERAR DIPLOMA</button>
+    </div>
+
+    <footer>Professor Luís - Recursos Digitais Covão</footer>
+
+    <script>
+        const paises = [
+            { n: "PORTUGAL", id: "pt" }, { n: "ESPANHA", id: "es" }, { n: "FRANÇA", id: "fr" },
+            { n: "ALEMANHA", id: "de" }, { n: "ITÁLIA", id: "it" }, { n: "BÉLGICA", id: "be" },
+            { n: "ÁUSTRIA", id: "at" }, { n: "GRÉCIA", id: "gr" }, { n: "PAÍSES BAIXOS", id: "nl" },
+            { n: "SUÉCIA", id: "se" }, { n: "DINAMARCA", id: "dk" }, { n: "FINLÂNDIA", id: "fi" },
+            { n: "IRLANDA", id: "ie" }, { n: "LUXEMBURGO", id: "lu" }, { n: "POLÓNIA", id: "pl" }
+        ];
+
+        let perguntaAtual = 1;
+        let pool = [...paises].sort(() => Math.random() - 0.5);
+        let correta = null;
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function abrirModal(id) { document.getElementById(id).style.display = 'block'; document.getElementById('overlay').classList.add('active'); }
+        function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
+
+        function carregarPergunta() {
+            if (perguntaAtual > 10) { abrirModal('modal-nome'); return; }
+            
+            document.getElementById('num-pergunta').innerText = perguntaAtual;
+            correta = pool.pop();
+            document.getElementById('flag-img').src = `https://flagcdn.com/w320/${correta.id}.png`;
+
+            // Gerar 2 opções erradas
+            let erradas = paises.filter(p => p.id !== correta.id).sort(() => Math.random() - 0.5).slice(0, 2);
+            let opcoes = [correta, ...erradas].sort(() => Math.random() - 0.5);
+
+            const box = document.getElementById('options-box');
+            box.innerHTML = '';
+            opcoes.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt.n;
+                btn.onclick = () => verificarResposta(opt.id, btn);
+                box.appendChild(btn);
+            });
+        }
+
+        function verificarResposta(id, btn) {
+            const botoes = document.querySelectorAll('.option-btn');
+            botoes.forEach(b => b.style.pointerEvents = 'none');
+
+            if (id === correta.id) {
+                btn.classList.add('correct');
+                perguntaAtual++;
+                setTimeout(carregarPergunta, 1000);
+            } else {
+                btn.classList.add('wrong');
+                // Mostrar a correta
+                botoes.forEach(b => { if(b.innerText === correta.n) b.classList.add('correct'); });
+                setTimeout(carregarPergunta, 1500);
+            }
+        }
+
+        function gerarCertificado() {
+            const nome = document.getElementById('input-nome').value;
+            if(!nome) return alert("Escreve o teu nome!");
+            document.getElementById('display-nome').innerText = nome;
+            document.getElementById('game-main').style.display = 'none';
+            document.getElementById('certificado-container').style.display = 'flex';
+            fecharModais();
+        }
+
+        carregarPergunta();
+    </script>
+</body>
+</html>
