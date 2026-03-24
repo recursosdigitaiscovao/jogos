@@ -121,3 +121,224 @@
         #letra-alvo {
             font-size: 7rem;
             font-weight: 900;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* ANIMAÇÃO DE PULO */
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3) rotate(10deg); }
+        }
+        .animar-acerto { animation: bounce 0.6s ease; }
+
+        /* TECLADO */
+        .teclado-container {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .tecla {
+            background: white;
+            border-radius: 12px;
+            padding: 12px 2px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #2d3436;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #eee;
+            border: 1px solid #f0f0f0;
+            display: flex; align-items: center; justify-content: center;
+            aspect-ratio: 1/1;
+        }
+        .tecla:active { transform: translateY(2px); box-shadow: 0 2px 0 #eee; }
+        .tecla.correto { background-color: #7bed9f !important; color: white; box-shadow: 0 4px 0 #2ed573 !important; border: none; }
+        .tecla.errado { background-color: #ff7675 !important; color: white; box-shadow: 0 4px 0 #d63031 !important; border: none; }
+
+        /* MODAIS */
+        .modal-custom {
+            display: none; position: fixed; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); width: 85%; max-width: 320px;
+            background: white; padding: 25px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 400;
+            text-align: center; border: 4px solid #ffb3c6;
+        }
+        .modal-custom.active { display: block; }
+
+        #final-panel {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 179, 198, 0.98); z-index: 300;
+            flex-direction: column; align-items: center; justify-content: center;
+            color: white; text-align: center;
+        }
+
+        footer {
+            width: 100%; padding: 12px; background-color: white;
+            text-align: center; color: #95a5a6; font-size: 0.8rem;
+            border-top: 1px solid #eee; flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="fecharModais()"></div>
+    
+    <!-- MODAL INFO -->
+    <div id="modal-info" class="modal-custom">
+        <h2 style="color: #ff6b81; margin-bottom: 15px;">Ajuda 💡</h2>
+        <p style="margin-bottom: 20px; font-size: 1.1rem;">Olha para a letra grande e tenta encontrar a letra igual no teclado em baixo!</p>
+        <button class="btn-voltar-3d" style="width: 100%; justify-content: center; padding: 12px;" onclick="fecharModais()">ENTENDI!</button>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <h3 style="margin-bottom: 20px; border-bottom: 2px solid #ffb3c6; color: #ff6b81;">Menu Escolar</h3>
+        <nav>
+            <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+            <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
+            <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
+            <a href="/jogos/2/" class="sidebar-item">🐢 2º Ano</a>
+            <a href="/jogos/3/" class="sidebar-item">🦁 3º Ano</a>
+            <a href="/jogos/4/" class="sidebar-item">🐘 4º Ano</a>
+        </nav>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <span class="icon-abc">ABC</span>
+            <h1>Letras Coloridas</h1>
+        </div>
+        <a href="/jogos/pre/" class="btn-voltar-3d">⬅ VOLTAR</a>
+    </header>
+
+    <main id="jogo-main">
+        <!-- Texto e Botão Info Solicitados -->
+        <div class="instrucao-container">
+            <span class="instrucao-texto">Encontra a letra</span>
+            <button class="btn-info-circular" onclick="mostrarInfo()">i</button>
+        </div>
+
+        <div class="cartao-letra">
+            <span id="letra-alvo">?</span>
+        </div>
+        
+        <div class="teclado-container" id="teclado"></div>
+
+        <div style="margin-top: 20px; font-weight: bold; color: #7f8c8d;">
+            Estrela <span id="ronda-atual">1</span> de 10 ⭐
+        </div>
+    </main>
+
+    <div id="final-panel">
+        <div style="font-size: 5rem; animation: bounce 1s infinite;">🌟</div>
+        <h1 style="font-size: 2.5rem; margin-bottom: 10px;">MUITO BEM!</h1>
+        <p style="font-size: 1.2rem; margin-bottom: 25px;">És um campeão das letras!</p>
+        <button class="btn-voltar-3d" style="background: white; color: #ff6b81; padding: 15px 40px; margin-bottom: 10px; justify-content: center; font-size: 1rem;" onclick="reiniciarJogo()">REPETIR 🔄</button>
+        <a href="/jogos/pre/" class="btn-voltar-3d" style="padding: 15px 40px; border-color: white; justify-content: center; font-size: 1rem;">SAIR ⬅️</a>
+    </div>
+
+    <footer>
+        Recursos Digitais Covão • Professor Luís
+    </footer>
+
+    <script>
+        const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+        const coresEngracadas = ["#ff6b81", "#4834d4", "#6ab04c", "#f0932b", "#eb4d4b", "#be2edd", "#22a6b3"];
+        let ronda = 1;
+        let letraCorreta = "";
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function fecharModais() {
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('modal-info').classList.remove('active');
+            document.getElementById('sidebar').classList.remove('active');
+        }
+
+        function mostrarInfo() {
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('modal-info').classList.add('active');
+        }
+
+        // Sugestão: Voz para ajudar no pré-escolar
+        function falarLetra(l) {
+            if ('speechSynthesis' in window) {
+                const msg = new SpeechSynthesisUtterance();
+                msg.text = "Encontra a letra " + l;
+                msg.lang = 'pt-PT';
+                window.speechSynthesis.speak(msg);
+            }
+        }
+
+        function criarTeclado() {
+            const container = document.getElementById('teclado');
+            container.innerHTML = '';
+            letras.forEach(letra => {
+                const btn = document.createElement('div');
+                btn.className = 'tecla';
+                btn.innerText = letra;
+                btn.onclick = () => verificarLetra(letra, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function novaRonda() {
+            if (ronda > 10) {
+                document.getElementById('jogo-main').style.display = 'none';
+                document.getElementById('final-panel').style.display = 'flex';
+                return;
+            }
+
+            document.getElementById('ronda-atual').innerText = ronda;
+            letraCorreta = letras[Math.floor(Math.random() * letras.length)];
+            
+            const spanLetra = document.getElementById('letra-alvo');
+            spanLetra.classList.remove('animar-acerto');
+            
+            const corAleatoria = coresEngracadas[Math.floor(Math.random() * coresEngracadas.length)];
+            
+            spanLetra.style.opacity = "0";
+            setTimeout(() => {
+                spanLetra.innerText = letraCorreta;
+                spanLetra.style.color = corAleatoria;
+                spanLetra.style.opacity = "1";
+                falarLetra(letraCorreta); // Chama a voz
+            }, 100);
+            
+            document.querySelectorAll('.tecla').forEach(t => t.classList.remove('correto', 'errado'));
+        }
+
+        function verificarLetra(letra, elemento) {
+            if (document.querySelector('.tecla.correto')) return;
+
+            if (letra === letraCorreta) {
+                elemento.classList.add('correto');
+                document.getElementById('letra-alvo').classList.add('animar-acerto');
+                
+                setTimeout(() => {
+                    ronda++;
+                    novaRonda();
+                }, 1000);
+            } else {
+                elemento.classList.add('errado');
+                setTimeout(() => elemento.classList.remove('errado'), 400);
+            }
+        }
+
+        function reiniciarJogo() {
+            ronda = 1;
+            document.getElementById('jogo-main').style.display = 'flex';
+            document.getElementById('final-panel').style.display = 'none';
+            novaRonda();
+        }
+
+        criarTeclado();
+        window.onload = novaRonda;
+    </script>
+</body>
+</html>
