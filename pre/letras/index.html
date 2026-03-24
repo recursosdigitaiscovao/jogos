@@ -3,339 +3,329 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar - Jogo das Letras</title>
+    <title>4º Ano - Matemática</title>
     <style>
-        /* Reset e Estilo Geral */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
-            background-color: rgba(255, 179, 198, 0.4); 
-            color: #2c3e50;
+            background-color: rgba(155, 89, 182, 0.15); 
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            height: 100vh;
-            height: 100svh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            touch-action: manipulation;
+            height: 100vh; height: 100svh;
+            display: flex; flex-direction: column; overflow: hidden;
+            color: #2c3e50;
         }
 
-        /* HEADER PADRONIZADO */
+        /* HEADER */
         header {
-            width: 100%;
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            flex-shrink: 0;
-            z-index: 100;
+            width: 100%; background: #fff; padding: 15px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid #ddd; z-index: 100; flex-shrink: 0;
         }
 
-        .header-left { display: flex; align-items: center; gap: 10px; }
-        .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; padding: 5px; }
-        header h1 { font-size: 1rem; color: #2d3436; font-weight: 700; }
-        
-        /* Ícone ABC Azul */
-        .icon-abc { color: #0984e3; font-weight: 900; font-size: 1.1rem; letter-spacing: -1px; }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        header h1 { font-size: 0.9rem; color: #2c3e50; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        .header-icon { font-size: 1.2rem; }
 
+        /* Botão Voltar Preto solicitado */
         .btn-voltar-3d {
-            text-decoration: none;
-            color: #2d3436;
-            background-color: #ffb3c6;
-            font-weight: bold;
-            font-size: 0.75rem;
-            padding: 8px 14px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            border: 1px solid #ef87a1;
-            box-shadow: 0 3px 0 #ef87a1; 
-            transition: all 0.1s ease;
-            cursor: pointer;
+            text-decoration: none; color: #000000; background-color: #ffffff;
+            font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
+            border-radius: 8px; display: flex; align-items: center; gap: 8px;
+            border: 1px solid #000000; box-shadow: 0 2px 0 #000000; cursor: pointer;
         }
-        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #ef87a1; }
 
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed; left: -280px; top: 0; width: 260px; height: 100%;
-            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200;
-            padding: 20px; display: flex; flex-direction: column;
-        }
+        /* SIDEBAR ORIGINAL */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
         .sidebar.active { left: 0; }
-        
-        .sidebar-item {
-            text-decoration: none; color: #636e72; font-weight: 600;
-            padding: 12px; border-radius: 12px; background: #fdfdfd;
-            display: flex; align-items: center; gap: 12px; margin-bottom: 6px;
-            border: 1px solid #eee; transition: all 0.2s ease;
-        }
-        .sidebar-item:hover { background-color: #ffb3c6; color: white; border-color: #ef87a1; transform: translateX(5px); }
-
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); display: none; z-index: 150;
-        }
+        .sidebar-item { text-decoration: none; color: #444; font-weight: bold; padding: 14px; border-radius: 12px; background: #f8f9fa; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
+        .menu-icon { font-size: 1.5rem; cursor: pointer; }
 
-        /* ÁREA DO JOGO */
+        /* CONTEÚDO */
         main {
-            flex: 1; display: flex; flex-direction: column; align-items: center;
-            justify-content: center; padding: 10px; overflow-y: auto;
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 20px;
+            overflow-y: auto;
         }
 
-        /* CARTÃO E LETRA ENGRAÇADA */
-        .cartao-letra {
-            background: white;
-            width: 140px;
-            height: 160px;
-            border: 6px dashed #ffdae3;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            position: relative;
-            background-image: radial-gradient(#fff5f7 2px, transparent 2px);
-            background-size: 15px 15px;
-            flex-shrink: 0;
+        .titulo-jogo-container {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
         }
 
-        #letra-alvo {
-            font-size: 6rem;
-            font-weight: 900;
-            filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.1));
-            -webkit-text-stroke: 3px white;
-            paint-order: stroke fill;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: inline-block;
+        .titulo-jogo { font-size: 1.8rem; color: #8e44ad; font-weight: 800; }
+
+        .btn-info {
+            background: #2c3e50; color: white; border: none; width: 25px; height: 25px;
+            border-radius: 50%; font-weight: bold; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; font-size: 0.9rem;
         }
 
-        /* TECLADO */
-        .teclado-container {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-            width: 100%;
-            max-width: 450px;
-            padding: 5px;
+        .game-card {
+            background: white; padding: 25px; border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center;
         }
 
-        .tecla {
-            background: white;
-            border: 1px solid #f0f0f0;
-            border-radius: 10px;
-            padding: 10px 2px;
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: #2d3436;
-            cursor: pointer;
-            box-shadow: 0 3px 0 #eee;
-            transition: all 0.1s;
-            display: flex; align-items: center; justify-content: center;
-            aspect-ratio: 1/1;
+        /* PROGRESSO DA PALAVRA MISTERIOSA */
+        .word-display {
+            display: flex; gap: 5px; justify-content: center; margin-bottom: 20px;
+        }
+        .letter-slot {
+            width: 30px; height: 35px; border-bottom: 3px solid #9b59b6;
+            font-size: 1.5rem; font-weight: bold; color: #8e44ad; display: flex;
+            align-items: center; justify-content: center; background: #f9f9f9;
         }
 
-        .tecla:active { transform: translateY(2px); box-shadow: 0 1px 0 #eee; }
-        .tecla.correto { background-color: #7bed9f !important; border-color: #2ed573 !important; color: white; box-shadow: 0 3px 0 #2ed573 !important; }
-        .tecla.errado { background-color: #ff7675 !important; border-color: #d63031 !important; color: white; box-shadow: 0 3px 0 #d63031 !important; }
-
-        /* BARRA INFERIOR */
-        .barra-progresso-info {
-            display: flex; align-items: center; justify-content: center;
-            gap: 15px; margin-top: 15px;
-        }
-
-        .progresso { color: #7f8c8d; font-weight: 700; font-size: 0.9rem; }
-
-        .btn-info-mini {
-            width: 28px; height: 28px; background-color: #ffb3c6;
-            border: 1px solid #ef87a1; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.9rem; color: #2d3436; font-weight: bold; cursor: pointer;
-            box-shadow: 0 2px 0 #ef87a1;
-        }
+        .tabuadas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .btn-tabuada { background: #f0f3f5; border: 2px solid #9b59b6; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-tabuada:hover { background: #9b59b6; color: white; }
+        
+        .pergunta { font-size: 2.8rem; font-weight: 800; margin: 15px 0; color: #2c3e50; }
+        .opcoes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; }
+        .btn-opcao { background: #fff; border: 2px solid #ddd; padding: 15px; border-radius: 15px; font-size: 1.3rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        
+        .hidden { display: none !important; }
 
         /* MODAIS */
-        .modal-custom {
-            display: none; position: fixed; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); width: 85%; max-width: 320px;
-            background: white; padding: 25px; border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 400;
-            text-align: center; border: 3px solid #ffb3c6;
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center;
+            z-index: 1000; padding: 20px;
         }
-        .modal-custom.active { display: block; }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 20px; text-align: center; width: 100%; max-width: 350px;
+        }
+        .modal-content input {
+            width: 100%; padding: 12px; margin: 15px 0; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; text-align: center;
+        }
+        .btn-imprimir {
+            background: #27ae60; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem;
+        }
 
-        #final-panel {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 179, 198, 0.98); z-index: 300;
-            flex-direction: column; align-items: center; justify-content: center;
-            color: white; text-align: center;
+        /* CERTIFICADO IMPRESSÃO */
+        #printable-certificate { display: none; }
+        @media print {
+            body * { visibility: hidden; }
+            #printable-certificate, #printable-certificate * { visibility: visible; }
+            #printable-certificate {
+                display: block !important; position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+                border: 15px double #9b59b6; padding: 60px; text-align: center;
+            }
+            .cert-title { font-size: 45px; color: #8e44ad; font-weight: bold; margin-bottom: 40px; }
+            .cert-name { font-size: 38px; font-style: italic; border-bottom: 2px solid #000; display: inline-block; margin: 20px 0; min-width: 300px; }
+            .cert-text { font-size: 22px; line-height: 1.6; margin-top: 20px; }
         }
 
-        /* FOOTER CINZENTO E SEM BOLD */
-        footer {
-            width: 100%; 
-            padding: 12px; 
-            background-color: white;
-            text-align: center; 
-            color: #95a5a6; 
-            font-size: 0.8rem;
-            border-top: 1px solid #eee;
-            flex-shrink: 0;
-        }
+        footer { width: 100%; padding: 15px; background: #fff; text-align: center; color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.8rem; flex-shrink: 0; }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="fecharModais()"></div>
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     
-    <div id="modal-info" class="modal-custom">
-        <h2 style="color: #ff6b81; margin-bottom: 15px;">Como Jogar? 🎈</h2>
-        <p style="margin-bottom: 20px;">Vê a letra que aparece no cartão e clica na letra igual no teclado! 🔠</p>
-        <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="fecharModais()">VAMOS LÁ!</button>
-    </div>
-
     <div class="sidebar" id="sidebar">
-        <h3 style="margin-bottom: 20px; border-bottom: 2px solid #ffb3c6; color: #ff6b81;">Menu Escolar</h3>
-        <nav>
-            <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-            <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
-            <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
-            <a href="/jogos/2/" class="sidebar-item">🐢 2º Ano</a>
-            <a href="/jogos/3/" class="sidebar-item">🦁 3º Ano</a>
-            <a href="/jogos/4/" class="sidebar-item">🐘 4º Ano</a>
+        <h3>Navegação</h3>
+        <nav class="sidebar-menu">
+            <a href="../../" class="sidebar-item">🏠 Início</a>
+            <a href="../../pre" class="sidebar-item">🦒 Pré-Escolar</a>
+            <a href="../../1" class="sidebar-item">🐥 1º Ano</a>
+            <a href="../../2" class="sidebar-item">🐢 2º Ano</a>
+            <a href="../../3" class="sidebar-item">🦊 3º Ano</a>
+            <a href="../../4" class="sidebar-item">👨‍🚀 4º Ano</a>
         </nav>
+        <button onclick="toggleMenu()" style="margin-top:auto; padding:10px; border:none; background:#eee; cursor:pointer; font-weight:bold; border-radius:8px;">Fechar ×</button>
     </div>
 
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <span class="icon-abc">ABC</span>
-            <h1>Letras Coloridas</h1>
+            <h1>
+                <span class="header-icon">✖</span>
+                Menu Matemática
+            </h1>
         </div>
-        <a href="/jogos/pre/" class="btn-voltar-3d">⬅ VOLTAR</a>
+        <a href="../" class="btn-voltar-3d">⬅ Voltar</a>
     </header>
 
-    <main id="jogo-main">
-        <div class="cartao-letra">
-            <span id="letra-alvo">?</span>
+    <main>
+        <div class="titulo-jogo-container">
+            <h2 class="titulo-jogo">Encontra a letra</h2>
+            <button class="btn-info" onclick="showInfo()">i</button>
         </div>
-        
-        <div class="teclado-container" id="teclado"></div>
 
-        <div class="barra-progresso-info">
-            <p class="progresso">Letra <span id="ronda-atual">1</span> / 10</p>
-            <div class="btn-info-mini" onclick="mostrarInfo()">i</div>
+        <!-- ECRÃ INICIAL -->
+        <div id="screen-start" class="game-card">
+            <p style="margin-bottom: 15px; opacity: 0.8;">Resolve os cálculos para revelar a palavra secreta!</p>
+            <div class="tabuadas-grid">
+                <script>
+                    for(let i=1; i<=10; i++) {
+                        document.write(`<button class="btn-tabuada" onclick="startGame(${i})">${i}</button>`);
+                    }
+                </script>
+                <button class="btn-tabuada" style="grid-column: span 2; background: #9b59b6; color: white;" onclick="startGame('mix')">MISTURADO</button>
+            </div>
+        </div>
+
+        <!-- ECRÃ DE JOGO -->
+        <div id="screen-game" class="game-card hidden">
+            <!-- Palavra secreta sendo preenchida -->
+            <div class="word-display" id="word-container">
+                <!-- Slots gerados por JS -->
+            </div>
+            
+            <div class="pergunta" id="question">? x ?</div>
+            
+            <div class="opcoes-grid">
+                <button class="btn-opcao" onclick="checkAnswer(this)"></button>
+                <button class="btn-opcao" onclick="checkAnswer(this)"></button>
+                <button class="btn-opcao" onclick="checkAnswer(this)"></button>
+                <button class="btn-opcao" onclick="checkAnswer(this)"></button>
+            </div>
         </div>
     </main>
 
-    <div id="final-panel">
-        <div style="font-size: 5rem;">🌟</div>
-        <h1 style="font-size: 2.5rem; margin-bottom: 10px;">PARABÉNS!</h1>
-        <p style="font-size: 1.2rem; margin-bottom: 25px;">Conheces muito bem o abecedário!</p>
-        <button class="btn-voltar-3d" style="background: white; color: #ff6b81; padding: 15px 40px; margin-bottom: 10px; justify-content: center;" onclick="reiniciarJogo()">REPETIR 🔄</button>
-        <a href="/jogos/pre/" class="btn-voltar-3d" style="padding: 15px 40px; border-color: white; justify-content: center;">SAIR ⬅️</a>
+    <!-- MODAL INFORMAÇÃO -->
+    <div id="modal-info" class="modal" onclick="this.style.display='none'">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3>Como Jogar? 💡</h3>
+            <p style="text-align: left; margin-top: 15px; line-height: 1.5;">
+                1. Escolhe uma tabuada.<br>
+                2. Resolve as 10 contas de multiplicar.<br>
+                3. Por cada acerto, vais revelar uma letra da <b>Palavra Mistério</b>.<br>
+                4. No final, escreve o teu nome para ganhar o certificado!
+            </p>
+            <button class="btn-imprimir" style="margin-top:20px; background: #9b59b6;" onclick="document.getElementById('modal-info').style.display='none'">Entendido!</button>
+        </div>
     </div>
 
-    <footer>
-        Recursos Digitais Covão • Professor Luís
-    </footer>
+    <!-- MODAL FINAL -->
+    <div id="modal-cert" class="modal">
+        <div class="modal-content">
+            <div style="font-size: 3rem;">🌟</div>
+            <h2>Conseguiste!</h2>
+            <p>A palavra era: <b id="secret-word-revealed" style="color:#8e44ad"></b></p>
+            <input type="text" id="student-name" placeholder="Teu nome completo">
+            <button class="btn-imprimir" onclick="imprimirCertificado()">🖨️ Imprimir Certificado</button>
+            <p style="margin-top: 15px; font-size: 0.8rem; cursor: pointer; color: #7f8c8d;" onclick="location.reload()">Jogar novamente</p>
+        </div>
+    </div>
+
+    <!-- ZONA DE IMPRESSÃO -->
+    <div id="printable-certificate">
+        <div class="cert-title">Diploma de Mérito</div>
+        <div class="cert-text">Parabéns pelo teu excelente desempenho escolar!</div>
+        <div class="cert-text">O aluno(a):</div>
+        <div class="cert-name" id="display-name"></div>
+        <div class="cert-text">
+            Demonstrou ser um especialista em <b>Cálculo Mental</b>,<br>
+            resolvendo com sucesso o desafio das Tabuadas do 4º Ano.
+        </div>
+        <div style="margin-top: 60px;">
+            <p>__________________________________________</p>
+            <p>Professor Luís - Recursos Digitais</p>
+            <p id="cert-date" style="font-size: 0.9rem; margin-top: 10px;"></p>
+        </div>
+    </div>
+
+    <footer>Recursos Digitais Covão - Professor Luís</footer>
 
     <script>
-        const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-        const coresEngracadas = ["#ff6b81", "#4834d4", "#6ab04c", "#f0932b", "#eb4d4b", "#be2edd", "#22a6b3"];
-        let ronda = 1;
-        let letraCorreta = "";
+        const secretWords = ["FANTASTICO", "MATEMATICA", "BRILHANTE", "EXCELENTE", "CAMPEOES"];
+        let chosenWord = "";
+        let currentTable = 1;
+        let questionNumber = 0;
+        let correctAnswer = 0;
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        function fecharModais() {
-            document.getElementById('sidebar').classList.remove('active');
-            document.getElementById('overlay').classList.remove('active');
-            document.getElementById('modal-info').classList.remove('active');
+        function showInfo() {
+            document.getElementById('modal-info').style.display = 'flex';
         }
 
-        function mostrarInfo() {
-            document.getElementById('overlay').classList.add('active');
-            document.getElementById('modal-info').classList.add('active');
+        function startGame(table) {
+            currentTable = table;
+            questionNumber = 0;
+            chosenWord = secretWords[Math.floor(Math.random() * secretWords.length)];
+            
+            // Gerar slots da palavra
+            const container = document.getElementById('word-container');
+            container.innerHTML = "";
+            for(let i=0; i<chosenWord.length; i++) {
+                container.innerHTML += `<div class="letter-slot" id="slot-${i}">?</div>`;
+            }
+
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+            nextQuestion();
         }
 
-        function criarTeclado() {
-            const container = document.getElementById('teclado');
-            container.innerHTML = '';
-            letras.forEach(letra => {
-                const btn = document.createElement('div');
-                btn.className = 'tecla';
-                btn.innerText = letra;
-                btn.onclick = () => verificarLetra(letra, btn);
-                container.appendChild(btn);
-            });
-        }
-
-        function novaRonda() {
-            if (ronda > 10) {
-                document.getElementById('jogo-main').style.display = 'none';
-                document.getElementById('final-panel').style.display = 'flex';
+        function nextQuestion() {
+            if (questionNumber >= chosenWord.length) {
+                setTimeout(showFinalModal, 500);
                 return;
             }
 
-            document.getElementById('ronda-atual').innerText = ronda;
-            letraCorreta = letras[Math.floor(Math.random() * letras.length)];
-            
-            const spanLetra = document.getElementById('letra-alvo');
-            
-            const corAleatoria = coresEngracadas[Math.floor(Math.random() * coresEngracadas.length)];
-            const anguloAleatorio = Math.floor(Math.random() * 20) - 10; 
-            
-            spanLetra.style.opacity = "0";
-            spanLetra.style.transform = "scale(0.5)";
+            let num1 = currentTable === 'mix' ? Math.floor(Math.random() * 9) + 2 : currentTable;
+            let num2 = Math.floor(Math.random() * 10) + 1;
+            correctAnswer = num1 * num2;
+            document.getElementById('question').innerText = `${num1} x ${num2}`;
 
-            setTimeout(() => {
-                spanLetra.innerText = letraCorreta;
-                spanLetra.style.color = corAleatoria;
-                spanLetra.style.transform = `scale(1) rotate(${anguloAleatorio}deg)`;
-                spanLetra.style.opacity = "1";
-            }, 100);
-            
-            document.querySelectorAll('.tecla').forEach(t => {
-                t.classList.remove('correto', 'errado');
+            let choices = [correctAnswer];
+            while (choices.length < 4) {
+                let wrong = (num1 * (Math.floor(Math.random() * 10) + 1)) + (Math.floor(Math.random() * 2));
+                if (!choices.includes(wrong) && wrong >= 0) choices.push(wrong);
+            }
+            choices.sort(() => Math.random() - 0.5);
+
+            const buttons = document.querySelectorAll('.btn-opcao');
+            buttons.forEach((btn, index) => {
+                btn.innerText = choices[index];
+                btn.style.borderColor = "#ddd";
+                btn.style.backgroundColor = "white";
+                btn.disabled = false;
             });
         }
 
-        function verificarLetra(letra, elemento) {
-            if (document.querySelector('.tecla.correto')) return;
+        function checkAnswer(btn) {
+            const selected = parseInt(btn.innerText);
+            const buttons = document.querySelectorAll('.btn-opcao');
+            buttons.forEach(b => b.disabled = true);
 
-            if (letra === letraCorreta) {
-                elemento.classList.add('correto');
-                document.getElementById('letra-alvo').style.transform += " scale(1.2)";
-                
-                setTimeout(() => {
-                    ronda++;
-                    novaRonda();
-                }, 800);
+            if (selected === correctAnswer) {
+                btn.style.backgroundColor = "#2ecc71";
+                btn.style.borderColor = "#27ae60";
+                btn.style.color = "white";
+                // Revelar letra
+                document.getElementById(`slot-${questionNumber}`).innerText = chosenWord[questionNumber];
+                document.getElementById(`slot-${questionNumber}`).style.background = "#e8f5e9";
             } else {
-                elemento.classList.add('errado');
-                setTimeout(() => elemento.classList.remove('errado'), 500);
+                btn.style.backgroundColor = "#e74c3c";
+                btn.style.borderColor = "#c0392b";
+                btn.style.color = "white";
+                // Não revela a letra (fica ?)
             }
+
+            setTimeout(() => {
+                questionNumber++;
+                nextQuestion();
+            }, 800);
         }
 
-        function reiniciarJogo() {
-            ronda = 1;
-            document.getElementById('jogo-main').style.display = 'flex';
-            document.getElementById('final-panel').style.display = 'none';
-            novaRonda();
+        function showFinalModal() {
+            document.getElementById('modal-cert').style.display = 'flex';
+            document.getElementById('secret-word-revealed').innerText = chosenWord;
         }
 
-        criarTeclado();
-        novaRonda();
+        function imprimirCertificado() {
+            const name = document.getElementById('student-name').value;
+            if (!name) { alert("Escreve o teu nome primeiro!"); return; }
+            document.getElementById('display-name').innerText = name;
+            document.getElementById('cert-date').innerText = new Date().toLocaleDateString('pt-PT');
+            window.print();
+        }
     </script>
 </body>
 </html>
