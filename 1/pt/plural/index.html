@@ -15,7 +15,6 @@
             display: flex; flex-direction: column; overflow: hidden;
         }
 
-        /* HEADER */
         header {
             width: 100%; background: white; padding: 12px 20px;
             display: flex; align-items: center; justify-content: space-between;
@@ -53,12 +52,11 @@
         }
         .overlay.active { display: block; }
 
-        /* ÁREA DE JOGO */
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 20px; }
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 5px 20px; }
         
         .instrucao-topo {
-            font-size: 1.3rem; font-weight: 800; color: #e67e22;
-            margin-bottom: 10px; text-align: center; text-transform: uppercase;
+            font-size: 1.2rem; font-weight: 800; color: #e67e22;
+            margin-bottom: 8px; text-align: center; text-transform: uppercase;
         }
 
         .status-container {
@@ -76,7 +74,6 @@
             background: white; padding: 30px 20px; border-radius: 25px;
             width: 100%; max-width: 500px; text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 2px solid #fff;
-            margin-top: 5px;
         }
 
         .palavra-alvo { font-size: 2.8rem; font-weight: 900; color: #2d3436; margin-bottom: 20px; letter-spacing: 2px; }
@@ -100,14 +97,13 @@
 
         @media (max-width: 480px) {
             .palavra-alvo { font-size: 2.2rem; }
-            .card { padding: 20px 15px; }
-            .instrucao-topo { font-size: 1.1rem; }
+            .instrucao-topo { font-size: 1rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="overlay" id="overlay" onclick="fecharTodosModais()"></div>
 
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">MENU ESCOLAR</div>
@@ -149,13 +145,20 @@
 
     <div id="modal-info" class="modal-custom">
         <h2 style="color:#3498db; margin-bottom:15px;">Dicas de Plural</h2>
-        <p id="info-texto" style="margin-bottom:20px; line-height:1.5; color: #2d3436; text-align: left; font-size: 0.9rem;">
-            </p>
+        <p id="info-texto" style="margin-bottom:20px; line-height:1.5; color: #2d3436; text-align: left; font-size: 0.9rem;"></p>
         <button class="btn-voltar-3d" style="width:100%; justify-content:center;" onclick="fecharModal('modal-info')">ENTENDI!</button>
     </div>
 
+    <div id="modal-erro" class="modal-custom" style="border-color: #ff7675;">
+        <div style="font-size:3rem; margin-bottom: 10px;">💡</div>
+        <h2 style="color:#d63031; margin-bottom:10px;">Quase lá!</h2>
+        <p style="margin-bottom:5px; color:#636e72;">O plural de <b id="err-singular" style="color:#2d3436">---</b> é:</p>
+        <p id="err-correto" style="font-size:2rem; font-weight:900; color:#2ecc71; margin-bottom:20px;">---</p>
+        <button class="btn-voltar-3d" style="width:100%; justify-content:center; background:#ff7675; border-color:#d63031; box-shadow: 0 4px 0 #d63031; color:white;" onclick="proximaAposErro()">CONTINUAR</button>
+    </div>
+
     <div id="modal-nivel" class="modal-custom">
-        <div id="emoji-result" style="font-size:4rem; margin-bottom: 10px;">🏆</div>
+        <div style="font-size:4rem; margin-bottom: 10px;">🏆</div>
         <h2 id="modal-titulo" style="margin:10px 0; color: #2d3436;">Muito Bem!</h2>
         <p id="modal-msg" style="margin-bottom:20px; color: #636e72;"></p>
         <button id="btn-next" class="btn-voltar-3d" style="width:100%; justify-content:center; background:#2ecc71; border-color:#27ae60;" onclick="proximoNivel()">AVANÇAR ➜</button>
@@ -167,32 +170,30 @@
     <audio id="som-erro" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3"></audio>
 
     <script>
-        const dados = {
-            1: [ // Vogais a, e, o
+        const dadosNiveis = {
+            1: [ 
                 {s:"CASA", p:"CASAS"}, {s:"CARRO", p:"CARROS"}, {s:"ÁRVORE", p:"ÁRVORES"},
                 {s:"MESA", p:"MESAS"}, {s:"BOLA", p:"BOLAS"}, {s:"LIVRO", p:"LIVROS"},
                 {s:"CHAVE", p:"CHAVES"}, {s:"ESCOLA", p:"ESCOLAS"}, {s:"MENINO", p:"MENINOS"},
                 {s:"CADERNO", p:"CADERNOS"}, {s:"PERA", p:"PERAS"}, {s:"TOMATE", p:"TOMATES"}
             ],
-            2: [ // Consoantes r, z, n e l
+            2: [ 
                 {s:"FLOR", p:"FLORES"}, {s:"RAPAZ", p:"RAPAZES"}, {s:"ANIMAL", p:"ANIMAIS"},
                 {s:"HOTEL", p:"HOTÉIS"}, {s:"FÁCIL", p:"FÁCEIS"}, {s:"MAR", p:"MARES"},
                 {s:"NARIZ", p:"NARIZES"}, {s:"LUZ", p:"LUZES"}, {s:"PAPEL", p:"PAPÉIS"},
-                {s:"PAREDE", p:"PAREDES"}, {s:"COLHER", p:"COLHERES"}, {s:"PINCEL", p:"PINCÉIS"},
-                {s:"PAZ", p:"PAZES"}, {s:"AZUL", p:"AZUIS"}, {s:"COR", p:"CORES"}
+                {s:"COLHER", p:"COLHERES"}, {s:"PINCEL", p:"PINCÉIS"}, {s:"AZUL", p:"AZUIS"}
             ],
-            3: [ // Terminados em -ão
+            3: [ 
                 {s:"BALÃO", p:"BALÕES"}, {s:"PÃO", p:"PÃES"}, {s:"CÃO", p:"CÃES"},
                 {s:"MÃO", p:"MÃOS"}, {s:"BOTÃO", p:"BOTÕES"}, {s:"CIDADÃO", p:"CIDADÃOS"},
-                {s:"AVIÃO", p:"AVIÕES"}, {s:"REFRÃO", p:"REFRÃOS"}, {s:"CORAÇÃO", p:"CORAÇÕES"},
-                {s:"CAPITÃO", p:"CAPITÃES"}, {s:"GRÃO", p:"GRÃOS"}, {s:"LEÃO", p:"LEÕES"}
+                {s:"AVIÃO", p:"AVIÕES"}, {s:"CORAÇÃO", p:"CORAÇÕES"}, {s:"CAPITÃO", p:"CAPITÃES"}
             ]
         };
 
         const dicas = {
-            1: "<b>Regra:</b> Para palavras terminadas em vogal (a, e, o), basta adicionar um <b>-s</b> no final.<br><br>Ex: Casa → Casas",
-            2: "<b>Regra:</b> Para palavras com <b>-r</b> ou <b>-z</b>, junta <b>-es</b>. Se terminar em <b>-l</b>, troca por <b>-is</b> ou <b>-éis</b>.<br><br>Ex: Flor → Flores",
-            3: "<b>Regra:</b> Palavras com <b>-ão</b> podem mudar para <b>-ões</b>, <b>-ães</b> ou apenas <b>-ãos</b>.<br><br>Ex: Pão → Pães"
+            1: "<b>Nível 1:</b> Vogais (a, e, o) -> Adiciona <b>-s</b>.<br>Ex: Casa → Casas",
+            2: "<b>Nível 2:</b> Consoantes r, z -> Adiciona <b>-es</b>. Se terminar em l -> <b>-is</b>.<br>Ex: Flor → Flores",
+            3: "<b>Nível 3:</b> Desafio do <b>-ão</b> -> Pode ser -ões, -ães ou -ãos.<br>Ex: Pão → Pães"
         };
 
         let nivel = 1, indice = 0, pontos = 0, lista = [];
@@ -213,9 +214,20 @@
             document.getElementById('overlay').classList.remove('active'); 
         }
 
+        function fecharTodosModais() {
+            document.querySelectorAll('.modal-custom').forEach(m => m.style.display = 'none');
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('sidebar').classList.remove('active');
+        }
+
         function iniciar() {
-            let banco = [...dados[nivel]];
-            lista = banco.sort(() => Math.random() - 0.5).slice(0, 10);
+            let pool = [];
+            // Lógica de acumulação de palavras
+            if (nivel === 1) pool = [...dadosNiveis[1]];
+            if (nivel === 2) pool = [...dadosNiveis[1], ...dadosNiveis[2]];
+            if (nivel === 3) pool = [...dadosNiveis[1], ...dadosNiveis[2], ...dadosNiveis[3]];
+
+            lista = pool.sort(() => Math.random() - 0.5).slice(0, 10);
             indice = 0;
             carregar();
         }
@@ -231,45 +243,52 @@
 
         function verificar() {
             const input = document.getElementById('resposta');
-            const resUtilizador = input.value.trim().toUpperCase();
-            const resCorreta = lista[indice].p.toUpperCase();
+            const resU = input.value.trim().toUpperCase();
+            const resC = lista[indice].p.toUpperCase();
 
-            if(resUtilizador === resCorreta) {
+            if(resU === resC) {
                 input.className = "correto";
                 document.getElementById('som-acerto').play();
                 pontos += 10; 
                 document.getElementById('pontos').innerText = pontos;
                 setTimeout(() => {
                     indice++;
-                    if(indice >= 10) {
-                        document.getElementById('modal-msg').innerText = `Concluíste o Nível ${nivel} com sucesso!`;
-                        if(nivel === 3) {
-                            document.getElementById('modal-titulo').innerText = "Super Campeão!";
-                            document.getElementById('btn-next').innerText = "RECOMEÇAR JOGO";
-                        }
-                        abrirModal('modal-nivel');
-                    } else carregar();
-                }, 1000);
+                    if(indice >= 10) finalizarNivel();
+                    else carregar();
+                }, 800);
             } else {
                 input.className = "errado";
                 document.getElementById('som-erro').play();
-                setTimeout(() => input.className = "", 800);
+                // Mostrar correção
+                document.getElementById('err-singular').innerText = lista[indice].s;
+                document.getElementById('err-correto').innerText = lista[indice].p;
+                abrirModal('modal-erro');
             }
+        }
+
+        function proximaAposErro() {
+            fecharModal('modal-erro');
+            indice++;
+            if(indice >= 10) finalizarNivel();
+            else carregar();
+        }
+
+        function finalizarNivel() {
+            document.getElementById('modal-msg').innerText = `Terminaste com ${pontos} pontos!`;
+            if(nivel === 3) {
+                document.getElementById('modal-titulo').innerText = "Super Especialista!";
+                document.getElementById('btn-next').innerText = "RECOMEÇAR TUDO";
+            }
+            abrirModal('modal-nivel');
         }
 
         function proximoNivel() {
             fecharModal('modal-nivel');
-            if(nivel < 3) { 
-                nivel++; 
-                iniciar(); 
-            } else { 
-                window.location.reload(); 
-            }
+            if(nivel < 3) { nivel++; iniciar(); }
+            else { nivel = 1; pontos = 0; document.getElementById('pontos').innerText = 0; iniciar(); }
         }
 
-        document.getElementById('resposta').addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') verificar();
-        });
+        document.getElementById('resposta').addEventListener('keypress', (e) => { if(e.key === 'Enter') verificar(); });
 
         iniciar();
     </script>
