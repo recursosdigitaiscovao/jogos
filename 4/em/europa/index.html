@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>4º Ano - Missão União Europeia</title>
     <style>
-        /* BASE TEMPLATE 4º ANO */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
@@ -22,16 +21,7 @@
         }
 
         .header-left { display: flex; align-items: center; gap: 12px; }
-        .menu-icon { font-size: 1.8rem; cursor: pointer; color: #2c3e50; }
         header h1 { font-size: 0.9rem; color: #2c3e50; font-weight: 800; text-transform: uppercase; }
-
-        /* ICON BANDEIRA NO HEADER */
-        .icon-ue-header {
-            width: 30px;
-            height: auto;
-            border-radius: 3px;
-            vertical-align: middle;
-        }
 
         .btn-voltar-3d, .btn-info-purp {
             text-decoration: none; color: #ffffff; background-color: #9b59b6;
@@ -40,16 +30,7 @@
             border: 1px solid #8e44ad; box-shadow: 0 2px 0 #8e44ad; cursor: pointer;
         }
 
-        /* BOTÃO DE INFO COM A BANDEIRA */
-        .btn-info-purp { 
-            width: 45px; 
-            height: 32px; 
-            padding: 0; 
-            justify-content: center; 
-            overflow: hidden;
-            background-color: #f0f0f0;
-        }
-        .btn-info-purp img { width: 100%; height: 100%; object-fit: cover; }
+        .btn-info-purp { width: 28px; height: 28px; padding: 0; justify-content: center; border-radius: 50%; font-style: italic; font-family: serif; }
 
         /* SIDEBAR */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
@@ -59,13 +40,17 @@
         .overlay.active { display: block; }
 
         /* JOGO */
-        main { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        main { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative; }
+        
+        .instrucao-container { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; margin-top: 10px; }
+        .instrucao-container h3 { color: #2c3e50; font-size: 1rem; }
+
         .ronda-txt { position: absolute; top: 10px; right: 20px; font-weight: 800; color: #9b59b6; background: white; padding: 5px 15px; border-radius: 20px; border: 1px solid #9b59b6; }
         
-        .game-area { display: flex; gap: 20px; width: 100%; max-width: 600px; justify-content: center; margin-top: 20px; }
+        .game-area { display: flex; gap: 20px; width: 100%; max-width: 600px; justify-content: center; }
         .column { display: flex; flex-direction: column; gap: 10px; }
 
-        .flag-card { width: 80px; height: 50px; background: white; border-radius: 6px; border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.1); cursor: grab; touch-action: none; overflow: hidden; }
+        .flag-card { width: 80px; height: 50px; background: white; border-radius: 6px; border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.1); cursor: grab; touch-action: none; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .flag-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
         .dropzone { width: 160px; height: 55px; background: #fff; border: 2px dashed #bdc3c7; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 5px; transition: 0.2s; }
@@ -79,10 +64,17 @@
         .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 20px; z-index: 1000; width: 90%; max-width: 400px; text-align: center; border: 4px solid #9b59b6; }
         
         /* CERTIFICADO */
-        #certificado { display: none; background: #fff; padding: 30px; border: 10px double #9b59b6; border-radius: 0; text-align: center; max-width: 500px; width: 95%; margin: auto; }
-        .nome-aluno { font-family: 'Georgia', serif; font-size: 1.5rem; border-bottom: 2px solid #000; padding: 5px; margin: 20px 0; display: inline-block; min-width: 200px; }
+        #certificado-container { display: none; flex: 1; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        #certificado { background: #fff; padding: 40px; border: 15px double #9b59b6; text-align: center; max-width: 600px; width: 100%; box-shadow: 0 0 20px rgba(0,0,0,0.1); position: relative; }
+        .nome-aluno { font-family: 'Georgia', serif; font-size: 2rem; border-bottom: 2px solid #000; padding: 5px; margin: 20px 0; display: inline-block; min-width: 250px; color: #2c3e50; }
 
-        footer { width: 100%; padding: 10px; background: #fff; text-align: center; color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.8rem; }
+        footer { width: 100%; padding: 10px; background: #fff; text-align: center; color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.8rem; flex-shrink: 0; }
+
+        @media (max-width: 450px) {
+            .game-area { gap: 10px; }
+            .dropzone { width: 140px; }
+            .flag-card { width: 70px; height: 45px; }
+        }
     </style>
 </head>
 <body>
@@ -101,20 +93,19 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Flag_of_Europe.svg" class="icon-ue-header" alt="UE">
-            <h1>Missão União Europeia</h1>
+            <h1>Estudo do Meio</h1>
         </div>
-        <div style="display:flex; gap:10px; align-items: center;">
-            <button class="btn-info-purp" onclick="abrirModal('modal-info')" title="Instruções">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Flag_of_Europe.svg" alt="Info">
-            </button>
-            <a href="../" class="btn-voltar-3d">⬅ Voltar</a>
-        </div>
+        <a href="../" class="btn-voltar-3d">⬅ Voltar</a>
     </header>
 
     <main id="game-main">
         <div class="ronda-txt">Ronda <span id="num-ronda">1</span>/6</div>
         
+        <div class="instrucao-container">
+            <h3>Associa as bandeiras aos Países</h3>
+            <button class="btn-info-purp" onclick="abrirModal('modal-info')">i</button>
+        </div>
+
         <div class="game-area">
             <div class="column" id="col-bandeiras"></div>
             <div class="column" id="col-nomes"></div>
@@ -123,39 +114,39 @@
         <button class="btn-acao" id="btn-verificar" onclick="verificarRonda()">VERIFICAR</button>
     </main>
 
-    <div id="certificado-container" style="display:none; flex:1; align-items:center; justify-content:center; padding:20px;">
+    <div id="certificado-container">
         <div id="certificado">
-            <h1 style="color:#9b59b6;">DIPLOMA</h1>
-            <p style="margin-top:10px;">Certificamos que o(a) aluno(a):</p>
+            <h1 style="color:#9b59b6; font-size: 2.5rem;">DIPLOMA</h1>
+            <p style="margin-top:15px; font-size: 1.1rem;">Certificamos que o(a) aluno(a):</p>
             <div class="nome-aluno" id="display-nome">_________</div>
-            <p>Concluiu com sucesso o desafio dos 27 países da UE!</p>
-            <div style="margin-top:30px; font-size:0.8rem; border-top:1px dashed #ccc; padding-top:10px;">
+            <p style="font-size: 1.1rem; line-height: 1.6;">Concluiu com distinção o desafio educativo sobre os<br><strong>27 Estados-Membros da União Europeia</strong>.</p>
+            <div style="margin-top:40px; font-size:0.9rem; border-top:1px dashed #9b59b6; padding-top:15px;">
                 Professor Luís • Recursos Digitais Covão
             </div>
-            <button class="btn-acao" onclick="window.print()" style="background:#34495e; box-shadow:0 4px 0 #2c3e50; margin-top:20px;">IMPRIMIR</button>
+            <button class="btn-acao" onclick="window.print()" style="background:#34495e; box-shadow:0 4px 0 #2c3e50; margin-top:20px;">IMPRIMIR DIPLOMA</button>
         </div>
     </div>
 
     <div id="modal-info" class="modal">
-        <h2 style="color:#9b59b6;">Informação</h2>
-        <p style="margin:15px 0;">Arrasta as 5 bandeiras para os nomes corretos e clica em verificar. Precisas de acertar em todas para passar à próxima ronda!</p>
-        <button class="btn-acao" style="background:#9b59b6; box-shadow:0 4px 0 #8e44ad;" onclick="fecharModais()">VAMOS LÁ!</button>
+        <h2 style="color:#9b59b6;">Como Jogar</h2>
+        <p style="margin:15px 0;">Arrasta as bandeiras para os nomes corretos. Acerta em todas para avançar nas 6 rondas e ganhar o teu diploma!</p>
+        <button class="btn-acao" style="background:#9b59b6; box-shadow:0 4px 0 #8e44ad;" onclick="fecharModais()">ENTENDIDO!</button>
     </div>
 
     <div id="modal-erro" class="modal" style="border-color:#e74c3c;">
-        <h2 style="color:#e74c3c;">Oops!</h2>
-        <p style="margin:15px 0;">Algumas não estão certas. Tenta corrigir!</p>
-        <button class="btn-acao" style="background:#e74c3c; box-shadow:0 4px 0 #c0392b;" onclick="corrigirErros()">VOLTAR</button>
+        <h2 style="color:#e74c3c;">Tenta de novo!</h2>
+        <p style="margin:15px 0;">Algumas bandeiras não estão no sítio certo.</p>
+        <button class="btn-acao" style="background:#e74c3c; box-shadow:0 4px 0 #c0392b;" onclick="corrigirErros()">CORRIGIR</button>
     </div>
 
     <div id="modal-nome" class="modal">
-        <h2 style="color:#2ecc71;">Missão Cumprida!</h2>
-        <p style="margin:15px 0;">Escreve o teu nome para o certificado:</p>
-        <input type="text" id="input-nome" placeholder="Teu nome aqui" style="width:100%; padding:12px; border-radius:10px; border:2px solid #ddd; margin-bottom:15px; font-size:1.1rem; text-align:center;">
-        <button class="btn-acao" onclick="gerarCertificado()">GERAR DIPLOMA</button>
+        <h2 style="color:#2ecc71;">Parabéns! 🇪🇺</h2>
+        <p style="margin:15px 0;">Completaste o desafio! Escreve o teu nome para o diploma:</p>
+        <input type="text" id="input-nome" placeholder="Nome do Aluno" style="width:100%; padding:12px; border-radius:10px; border:2px solid #ddd; margin-bottom:15px; font-size:1.1rem; text-align:center;">
+        <button class="btn-acao" onclick="gerarCertificado()">VER DIPLOMA</button>
     </div>
 
-    <footer>Professor Luís - 4º Ano</footer>
+    <footer>Professor Luís - Recursos Digitais Covão</footer>
 
     <script>
         const paises = [
@@ -175,7 +166,7 @@
             { id: "se", nome: "SUÉCIA", img: "https://flagcdn.com/w160/se.png" }
         ];
 
-        let pool = [...paises];
+        let pool = [...paises].sort(() => Math.random() - 0.5);
         let ronda = 1;
         let draggedEl = null;
 
@@ -184,54 +175,67 @@
         function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); document.getElementById('sidebar').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
 
         function novaRonda() {
-            if (pool.length < 2 && ronda > 5) { abrirModal('modal-nome'); return; }
+            if (ronda > 6) { abrirModal('modal-nome'); return; }
             document.getElementById('num-ronda').innerText = ronda;
+            
+            // Garantir que a última ronda pegue os países restantes (2 países na ronda 6)
             const qtd = pool.length >= 5 ? 5 : pool.length;
-            pool.sort(() => Math.random() - 0.5);
             const selecionados = pool.splice(0, qtd);
             
             const flagsCol = document.getElementById('col-bandeiras');
             const namesCol = document.getElementById('col-nomes');
             flagsCol.innerHTML = ''; namesCol.innerHTML = '';
 
+            // Renderizar Bandeiras (embaralhadas)
             [...selecionados].sort(() => Math.random() - 0.5).forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'flag-card'; div.draggable = true; div.dataset.id = p.id;
                 div.innerHTML = `<img src="${p.img}">`;
-                div.addEventListener('dragstart', e => draggedEl = e.target);
+                div.addEventListener('dragstart', e => { draggedEl = e.currentTarget; });
                 div.addEventListener('touchstart', tStart, {passive:false});
                 div.addEventListener('touchmove', tMove, {passive:false});
                 div.addEventListener('touchend', tEnd);
                 flagsCol.appendChild(div);
             });
 
+            // Renderizar Dropzones (embaralhadas)
             [...selecionados].sort(() => Math.random() - 0.5).forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'dropzone'; div.dataset.id = p.id;
                 div.innerHTML = `<span class="pais-txt">${p.nome}</span>`;
                 div.addEventListener('dragover', e => e.preventDefault());
-                div.addEventListener('drop', e => { if(!e.currentTarget.querySelector('.flag-card')) e.currentTarget.appendChild(draggedEl); });
+                div.addEventListener('drop', e => { 
+                    if(!e.currentTarget.querySelector('.flag-card')) e.currentTarget.appendChild(draggedEl); 
+                });
                 namesCol.appendChild(div);
             });
         }
 
         function verificarRonda() {
             const zonas = document.querySelectorAll('.dropzone');
-            let erros = 0, total = zonas.length;
+            let erros = 0;
             zonas.forEach(z => {
                 const flag = z.querySelector('.flag-card');
-                if(!flag) erros++;
-                else if(flag.dataset.id === z.dataset.id) z.className = 'dropzone correct';
-                else { z.className = 'dropzone wrong'; erros++; }
+                if(!flag || flag.dataset.id !== z.dataset.id) {
+                    z.className = 'dropzone wrong';
+                    erros++;
+                } else {
+                    z.className = 'dropzone correct';
+                }
             });
-            if(erros === 0) { ronda++; setTimeout(novaRonda, 800); }
-            else abrirModal('modal-erro');
+
+            if(erros === 0) {
+                ronda++;
+                setTimeout(novaRonda, 800);
+            } else {
+                abrirModal('modal-erro');
+            }
         }
 
         function corrigirErros() {
             document.querySelectorAll('.dropzone.wrong').forEach(z => {
                 const f = z.querySelector('.flag-card');
-                document.getElementById('col-bandeiras').appendChild(f);
+                if(f) document.getElementById('col-bandeiras').appendChild(f);
                 z.className = 'dropzone';
             });
             fecharModais();
@@ -239,19 +243,28 @@
 
         function gerarCertificado() {
             const nome = document.getElementById('input-nome').value;
-            if(!nome) return alert("Escreve o teu nome!");
+            if(!nome) return alert("Por favor, escreve o teu nome!");
             document.getElementById('display-nome').innerText = nome;
             document.getElementById('game-main').style.display = 'none';
             document.getElementById('certificado-container').style.display = 'flex';
             fecharModais();
         }
 
-        function tStart(e) { draggedEl = e.target; }
-        function tMove(e) { e.preventDefault(); const t = e.touches[0]; draggedEl.style.position = 'fixed'; draggedEl.style.left = t.clientX - 40 + 'px'; draggedEl.style.top = t.clientY - 25 + 'px'; draggedEl.style.zIndex = 1000; }
+        function tStart(e) { draggedEl = e.currentTarget; }
+        function tMove(e) { 
+            e.preventDefault(); 
+            const t = e.touches[0]; 
+            draggedEl.style.position = 'fixed'; 
+            draggedEl.style.left = t.clientX - 40 + 'px'; 
+            draggedEl.style.top = t.clientY - 25 + 'px'; 
+            draggedEl.style.zIndex = 1000; 
+        }
         function tEnd(e) {
-            draggedEl.style.display = 'none'; const t = e.changedTouches[0];
+            draggedEl.style.display = 'none'; 
+            const t = e.changedTouches[0];
             const target = document.elementFromPoint(t.clientX, t.clientY);
-            draggedEl.style.display = 'flex'; draggedEl.style.position = 'static';
+            draggedEl.style.display = 'flex'; 
+            draggedEl.style.position = 'static';
             const zone = target ? target.closest('.dropzone') : null;
             if(zone && !zone.querySelector('.flag-card')) zone.appendChild(draggedEl);
             else document.getElementById('col-bandeiras').appendChild(draggedEl);
