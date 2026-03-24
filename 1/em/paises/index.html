@@ -1,1 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>1º Ano - Bandeiras da UE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        /* ESTILO BASE TEMPLATE_1 */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        
+        body {
+            background-color: #eef2f7;
+            font-family: 'Quicksand', sans-serif;
+            min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden;
+        }
 
+        header {
+            width: 100%; background: white; padding: 12px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 2px solid rgba(0,0,0,0.05); flex-shrink: 0; z-index: 100;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .menu-icon { font-size: 1.8rem; cursor: pointer; color: #2d3436; }
+        header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+
+        .btn-voltar-3d {
+            text-decoration: none; color: #000; background-color: #ff9f43;
+            font-weight: bold; font-size: 0.8rem; padding: 8px 15px;
+            border-radius: 12px; border: 1px solid #e67e22; box-shadow: 0 4px 0 #e67e22;
+            cursor: pointer; display: flex; align-items: center; gap: 5px; border-style: solid;
+        }
+
+        /* SIDEBAR & OVERLAY */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 500; transition: 0.3s; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
+        .sidebar.active { left: 0; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 400; }
+        .overlay.active { display: block; }
+
+        /* JOGO DE ARRASTAR */
+        main { flex: 1; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .instrucao { font-size: 1.4rem; color: #2d3436; font-weight: 700; margin-bottom: 20px; text-align: center; }
+
+        .game-container {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;
+            max-width: 900px; width: 100%; margin-top: 10px;
+        }
+
+        /* Colunas */
+        .column { display: flex; flex-direction: column; gap: 15px; min-width: 140px; }
+
+        /* Bandeiras (Draggable) */
+        .flag {
+            width: 100px; height: 60px; background: white; border-radius: 8px;
+            cursor: grab; display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border: 2px solid white; transition: transform 0.2s;
+            touch-action: none; /* Importante para mobile */
+        }
+        .flag:active { cursor: grabbing; transform: scale(1.1); }
+
+        /* Alvos (Dropzones) */
+        .dropzone {
+            width: 160px; height: 70px; background: #dfe6e9;
+            border: 2px dashed #b2bec3; border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 5px; position: relative;
+        }
+        .dropzone.hover { background: #dff9fb; border-color: #3498db; }
+        .dropzone.correct { background: #c7ecee; border: 2px solid #2ecc71; }
+        .dropzone-label { font-weight: 700; font-size: 0.9rem; color: #2d3436; pointer-events: none; }
+
+        .btn-verificar {
+            margin-top: 30px; padding: 15px 40px; background: #2ecc71; color: white;
+            border-radius: 20px; font-weight: 700; border: none; font-size: 1.2rem;
+            box-shadow: 0 6px 0 #27ae60; cursor: pointer;
+        }
+        .btn-verificar:active { transform: translateY(3px); box-shadow: 0 3px 0 #27ae60; }
+
+        /* MODAL FINAL */
+        .modal-custom {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 30px; border-radius: 30px; z-index: 1000;
+            text-align: center; width: 90%; max-width: 400px; border: 5px solid #ff9f43;
+        }
+
+        footer { padding: 10px; text-align: center; font-size: 0.8rem; color: #95a5a6; background: white; border-top: 1px solid #eee; margin-top: auto; }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="fecharMenu()"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">MENU ESCOLAR</div>
+        <a href="#" class="sidebar-item">🏠 Início</a>
+        <a href="#" class="sidebar-item">🇪🇺 União Europeia</a>
+        <a href="#" class="sidebar-item">✍️ Plural de Palavras</a>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <h1><span>🇪🇺</span> Países da UE</h1>
+        </div>
+        <button class="btn-voltar-3d" onclick="location.reload()">🔄 REINICIAR</button>
+    </header>
+
+    <main>
+        <h2 class="instrucao">Arrasta cada bandeira para o nome do país correto!</h2>
+
+        <div class="game-container">
+            <div class="column" id="flags-column">
+                </div>
+
+            <div class="column" id="names-column">
+                </div>
+        </div>
+
+        <button class="btn-verificar" onclick="checkWin()">VERIFICAR RESULTADO</button>
+    </main>
+
+    <div id="modal-ganhou" class="modal-custom">
+        <div style="font-size:4rem;">🎉</div>
+        <h2>Excelente!</h2>
+        <p>Conheces muito bem as bandeiras da União Europeia!</p>
+        <button class="btn-voltar-3d" style="width:100%; margin-top:20px; justify-content:center;" onclick="location.reload()">JOGAR NOVAMENTE</button>
+    </div>
+
+    <footer>Recursos Digitais • Professor Luís</footer>
+
+    <script>
+        const paises = [
+            { id: "pt", nome: "PORTUGAL", emoji: "🇵🇹" },
+            { id: "es", nome: "ESPANHA", emoji: "🇪🇸" },
+            { id: "fr", nome: "FRANÇA", emoji: "🇫🇷" },
+            { id: "it", nome: "ITÁLIA", emoji: "🇮🇹" },
+            { id: "de", nome: "ALEMANHA", emoji: "🇩🇪" },
+            { id: "be", nome: "BÉLGICA", emoji: "🇧🇪" },
+            { id: "nl", nome: "HOLANDA", emoji: "🇳🇱" },
+            { id: "gr", nome: "GRÉCIA", emoji: "🇬🇷" }
+        ];
+
+        let draggedElement = null;
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function fecharMenu() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        function initGame() {
+            const flagsCol = document.getElementById('flags-column');
+            const namesCol = document.getElementById('names-column');
+
+            // Baralhar as bandeiras
+            const paisesBaralhados = [...paises].sort(() => Math.random() - 0.5);
+            // Baralhar os nomes (separadamente)
+            const nomesBaralhados = [...paises].sort(() => Math.random() - 0.5);
+
+            paisesBaralhados.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'flag';
+                div.id = `flag-${p.id}`;
+                div.draggable = true;
+                div.innerText = p.emoji;
+                div.dataset.countryId = p.id;
+                
+                // Eventos Mouse
+                div.addEventListener('dragstart', dragStart);
+                
+                // Eventos Touch (Mobile)
+                div.addEventListener('touchstart', touchStart, {passive: false});
+                div.addEventListener('touchmove', touchMove, {passive: false});
+                div.addEventListener('touchend', touchEnd);
+
+                flagsCol.appendChild(div);
+            });
+
+            nomesBaralhados.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'dropzone';
+                div.dataset.countryId = p.id;
+                div.innerHTML = `<span class="dropzone-label">${p.nome}</span>`;
+                
+                div.addEventListener('dragover', dragOver);
+                div.addEventListener('dragleave', dragLeave);
+                div.addEventListener('drop', drop);
+
+                namesCol.appendChild(div);
+            });
+        }
+
+        // --- LÓGICA DRAG & DROP (DESKTOP) ---
+        function dragStart(e) { draggedElement = e.target; }
+        function dragOver(e) { e.preventDefault(); e.target.classList.add('hover'); }
+        function dragLeave(e) { e.target.classList.remove('hover'); }
+        function drop(e) {
+            e.preventDefault();
+            const target = e.target.closest('.dropzone');
+            target.classList.remove('hover');
+            if (target && !target.querySelector('.flag')) {
+                target.appendChild(draggedElement);
+            }
+        }
+
+        // --- LÓGICA TOUCH (MOBILE) ---
+        let touchElement = null;
+
+        function touchStart(e) {
+            touchElement = e.target;
+            const touch = e.touches[0];
+            touchElement.style.position = 'fixed';
+            touchElement.style.zIndex = '1000';
+            moveAt(touch.pageX, touch.pageY);
+        }
+
+        function touchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            moveAt(touch.pageX, touch.pageY);
+        }
+
+        function moveAt(x, y) {
+            touchElement.style.left = x - touchElement.offsetWidth / 2 + 'px';
+            touchElement.style.top = y - touchElement.offsetHeight / 2 + 'px';
+        }
+
+        function touchEnd(e) {
+            touchElement.style.display = 'none';
+            const touch = e.changedTouches[0];
+            const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+            touchElement.style.display = 'flex';
+            touchElement.style.position = 'static';
+
+            const zone = dropTarget ? dropTarget.closest('.dropzone') : null;
+
+            if (zone && !zone.querySelector('.flag')) {
+                zone.appendChild(touchElement);
+            } else {
+                document.getElementById('flags-column').appendChild(touchElement);
+            }
+            touchElement = null;
+        }
+
+        // --- VERIFICAÇÃO ---
+        function checkWin() {
+            const zones = document.querySelectorAll('.dropzone');
+            let correctCount = 0;
+
+            zones.forEach(zone => {
+                const flag = zone.querySelector('.flag');
+                if (flag && flag.dataset.countryId === zone.dataset.countryId) {
+                    zone.classList.add('correct');
+                    correctCount++;
+                } else {
+                    zone.classList.remove('correct');
+                }
+            });
+
+            if (correctCount === paises.length) {
+                document.getElementById('modal-ganhou').style.display = 'block';
+                document.getElementById('overlay').classList.add('active');
+            }
+        }
+
+        initGame();
+    </script>
+</body>
+</html>
