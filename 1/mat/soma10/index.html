@@ -1,249 +1,370 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soma10 - 1º Ano</title>
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
-    
-    <!-- React & Babel (para processar JSX no browser) -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <!-- Framer Motion (Animações) -->
-    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
-    
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>1º Ano - Somar10 com Balões</title>
     <style>
+        /* Reset e Estilo Geral - Mantendo Template_1 */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+
         body {
-            background-color: #fff4e6;
-            font-family: 'Segoe UI', Roboto, 'Inter', sans-serif;
-            margin: 0;
+            background-color: #fff4e6; /* Laranja Suave */
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            height: 100svh;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
-            user-select: none;
+            touch-action: manipulation;
         }
 
-        /* Animação de erro */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
-        }
-        .animate-shake { animation: shake 0.4s ease-in-out; }
-
-        /* Estilo 3D dos botões */
-        .btn-3d {
-            transition: all 0.1s;
-            box-shadow: 0 4px 0 #e67e22;
-        }
-        .btn-3d:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #e67e22;
-        }
-        
-        .btn-3d-dark {
-            box-shadow: 0 4px 0 #1a252f;
-        }
-        .btn-3d-dark:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #1a252f;
+        /* HEADER */
+        header {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            flex-shrink: 0;
+            z-index: 100;
         }
 
-        /* Balão */
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; }
+        header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; }
+        .icon-header { font-size: 1.4rem; }
+
+        .btn-voltar-3d {
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #ff9f43;
+            font-weight: bold;
+            font-size: 0.8rem;
+            padding: 8px 18px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #e67e22;
+            box-shadow: 0 3px 0 #e67e22;
+            transition: all 0.1s ease;
+            cursor: pointer;
+        }
+        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
+            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200;
+            padding: 25px; display: flex; flex-direction: column;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar h3 { color: #e67e22; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #ffcc80; }
+        .sidebar-item {
+            text-decoration: none; color: #636e72; font-weight: 600;
+            padding: 14px; border-radius: 15px; background: #fdfdfd;
+            display: flex; align-items: center; gap: 15px; margin-bottom: 8px;
+            border: 1px solid #eee; transition: all 0.2s ease;
+        }
+        .sidebar-item:hover { background-color: #fff4e6; color: #e67e22; border-color: #ffcc80; transform: translateX(5px); }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3); display: none; z-index: 150;
+        }
+        .overlay.active { display: block; }
+
+        /* ÁREA PRINCIPAL */
+        main {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: flex-start; padding: 20px;
+            position: relative;
+        }
+
+        .pontuacao-container {
+            display: flex; align-items: center; gap: 15px; margin-bottom: 20px; z-index: 10;
+        }
+
+        #score {
+            font-size: 1.1rem; font-weight: bold; color: #e67e22;
+            background: white; padding: 8px 25px; border-radius: 50px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        #question-box {
+            font-size: clamp(2.2rem, 12vw, 3.5rem); font-weight: bold;
+            color: #2c3e50; border: 6px solid #ff9f43; padding: 20px;
+            width: 95%; max-width: 450px; border-radius: 30px;
+            background: white; text-align: center;
+            box-shadow: 0 15px 35px rgba(230,126,34,0.15);
+            z-index: 10;
+        }
+
+        /* CONTENTOR DE BALÕES */
+        #balloon-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; /* Deixa clicar através do container */
+            overflow: hidden;
+        }
+
         .balloon {
+            position: absolute;
+            bottom: -150px;
+            width: 80px;
+            height: 100px;
+            background-color: #ff9f43;
             border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            pointer-events: auto;
+            box-shadow: inset -5px -10px rgba(0,0,0,0.1);
+            animation: float Up 8s linear infinite;
         }
+
+        /* Fio do balão */
+        .balloon::after {
+            content: "";
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            width: 2px;
+            height: 25px;
+            background: #e67e22;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-120vh) rotate(10deg); opacity: 0.8; }
+        }
+
+        /* MODAIS */
+        .modal-custom {
+            display: none; position: fixed; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); width: 85%; max-width: 320px;
+            background: white; padding: 25px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 400;
+            text-align: center; border: 3px solid #ff9f43;
+        }
+
+        .btn-info {
+            background-color: #ff9f43; color: white; width: 38px; height: 38px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 1.2rem; border: 1px solid #e67e22;
+            box-shadow: 0 3px 0 #e67e22; cursor: pointer;
+        }
+
+        footer {
+            width: 100%; padding: 12px; background-color: white;
+            text-align: center; color: #95a5a6; font-size: 0.8rem;
+            border-top: 1px solid #eee; flex-shrink: 0; z-index: 100;
+        }
+
+        /* ANIMAÇÕES DE FEEDBACK */
+        .wrong-anim { color: #e74c3c !important; border-color: #e74c3c !important; animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
+        .correct-anim { border-color: #2ecc71 !important; }
+        .fill-number { color: #2ecc71; text-decoration: underline; }
     </style>
 </head>
 <body>
-    <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState, useEffect, useMemo } = React;
-        const { motion, AnimatePresence } = FramerMotion;
+    <div class="overlay" id="overlay" onclick="fecharMenu()"></div>
+    
+    <div id="modal-info" class="modal-custom">
+        <h2 style="color: #e67e22; margin-bottom: 15px;">Como Jogar</h2>
+        <p style="color: #636e72; margin-bottom: 20px; font-weight: 500;">
+            Resolve a soma! <br><br>
+            Toca no <strong>balão voador</strong> que tem o número certo! <br><br>
+            <strong>Nível 1:</strong> Descobre o resultado.<br>
+            <strong>Nível 2:</strong> Descobre a parcela que falta.
+        </p>
+        <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="fecharMenu()">ENTENDI!</button>
+    </div>
 
-        // Componente de Ícone Simples (já que Lucide-React é complexo via CDN)
-        const Icon = ({ name, className }) => {
-            useEffect(() => {
-                lucide.createIcons();
-            }, []);
-            return <i data-lucide={name} className={className}></i>;
-        };
+    <div id="final-modal" class="modal-custom" style="display: none;">
+        <h2 style="color: #2ecc71; margin-bottom: 15px;">🏆 EXCELENTE!</h2>
+        <div style="background:#f9f9f9; padding:15px; border-radius:15px; margin-bottom: 20px;">
+            <p>Nível 1: <span id="s1"></span>✅ | <span id="e1"></span>❌</p>
+            <p>Nível 2: <span id="s2"></span>✅ | <span id="e2"></span>❌</p>
+        </div>
+        <button class="btn-voltar-3d" style="width: 100%; justify-content: center; background-color: #2c3e50; border-color: #1a252f; box-shadow: 0 3px 0 #1a252f;" onclick="location.reload()">REPETIR 🔄</button>
+    </div>
 
-        function App() {
-            const [level, setLevel] = useState(1);
-            const [score, setScore] = useState(0);
-            const [question, setQuestion] = useState(null);
-            const [options, setOptions] = useState([]);
-            const [feedback, setFeedback] = useState(null);
-            const [showSidebar, setShowSidebar] = useState(false);
-            const [showInfo, setShowInfo] = useState(false);
-            const [isGameOver, setIsGameOver] = useState(false);
-            const [stats, setStats] = useState({ l1_hits: 0, l1_errors: 0, l2_hits: 0, l2_errors: 0 });
+    <div class="sidebar" id="sidebar">
+        <h3>Menu Escolar</h3>
+        <nav>
+            <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+            <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
+            <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
+            <a href="/jogos/2/" class="sidebar-item">🐢 2º Ano</a>
+            <a href="/jogos/3/" class="sidebar-item">🦊 3º Ano</a>
+            <a href="/jogos/4/" class="sidebar-item">👨‍🚀 4º Ano</a>
+        </nav>
+    </div>
 
-            const generateQuestion = () => {
-                const target = 10;
-                const n1 = Math.floor(Math.random() * 11);
-                const n2 = target - n1;
-                const missing = level === 1 ? 'target' : (Math.random() > 0.5 ? 'n1' : 'n2');
-                const correctAnswer = missing === 'target' ? target : (missing === 'n1' ? n1 : n2);
+    <header>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <div class="icon-header">➕</div> 
+            <h1>Somar10 - 1º Ano</h1>
+        </div>
+        <a href="/jogos/1/mat/" class="btn-voltar-3d">⬅ VOLTAR</a>
+    </header>
 
-                const wrongOptions = new Set();
-                while (wrongOptions.size < 3) {
-                    const val = Math.floor(Math.random() * 11);
-                    if (val !== correctAnswer) wrongOptions.add(val);
-                }
+    <main>
+        <div class="pontuacao-container">
+            <div id="score">Pontos: 0</div>
+            <button class="btn-info" onclick="mostrarInfo()">i</button>
+        </div>
 
-                const allOptions = Array.from(wrongOptions);
-                allOptions.push(correctAnswer);
-                
-                setQuestion({ n1, n2, target, missing });
-                setOptions(allOptions.sort(() => Math.random() - 0.5));
-                setFeedback(null);
-            };
+        <div id="question-box"></div>
+        <div id="balloon-container"></div>
+    </main>
 
-            useEffect(() => { generateQuestion(); }, [level]);
+    <footer>
+        Recursos Digitais Covão • Professor Luís
+    </footer>
 
-            const handleAnswer = (answer) => {
-                if (feedback) return;
-                const correctAnswer = question.missing === 'target' ? question.target : (question.missing === 'n1' ? question.n1 : question.n2);
+    <script>
+        let score = 0;
+        let correctAnswer = 0;
+        let canClick = true;
+        let currentLevel = 1;
+        let stats = { l1_hits: 0, l1_errors: 0, l2_hits: 0, l2_errors: 0 };
+        const colors = ['#ff9f43', '#ee5253', '#10ac84', '#5f27cd', '#2e86de'];
 
-                if (answer === correctAnswer) {
-                    setFeedback('correct');
-                    setScore(s => s + 10);
-                    setStats(p => ({ ...p, [level === 1 ? 'l1_hits' : 'l2_hits']: p[level === 1 ? 'l1_hits' : 'l2_hits'] + 1 }));
-                    setTimeout(() => {
-                        if (score + 10 >= 100 && level === 1) setLevel(2);
-                        else if (score + 10 >= 200) setIsGameOver(true);
-                        else generateQuestion();
-                    }, 2000);
-                } else {
-                    setFeedback('incorrect');
-                    setStats(p => ({ ...p, [level === 1 ? 'l1_errors' : 'l2_errors']: p[level === 1 ? 'l1_errors' : 'l2_errors'] + 1 }));
-                    setTimeout(() => setFeedback(null), 1500);
-                }
-            };
-
-            const balloonColors = ['#ff7675', '#74b9ff', '#55efc4', '#ffeaa7', '#a29bfe', '#fab1a0'];
-
-            return (
-                <div className="flex flex-col h-screen overflow-hidden">
-                    {/* Sidebar */}
-                    <AnimatePresence>
-                        {showSidebar && (
-                            <>
-                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowSidebar(false)} className="fixed inset-0 bg-black/30 z-50" />
-                                <motion.aside initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} className="fixed left-0 top-0 bottom-0 w-64 bg-white z-[60] p-6 shadow-xl">
-                                    <h3 className="text-xl font-bold text-orange-500 mb-6 border-b-2 border-orange-100 pb-2">Menu Escolar</h3>
-                                    <div className="space-y-3">
-                                        {['Início', 'Pré-Escolar', '1º Ano', '2º Ano', '3º Ano', '4º Ano'].map((label, i) => (
-                                            <div key={i} className={`p-3 rounded-xl font-bold cursor-pointer transition-all ${label === '1º Ano' ? 'bg-orange-50 text-orange-600 border border-orange-200' : 'text-gray-500 hover:bg-orange-50'}`}>
-                                                {label}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </motion.aside>
-                            </>
-                        )}
-                    </AnimatePresence>
-
-                    {/* Header */}
-                    <header className="bg-white px-5 py-3 flex items-center justify-between border-b border-gray-100 shrink-0 z-40">
-                        <div className="flex items-center gap-3">
-                            <div className="text-2xl cursor-pointer text-gray-800" onClick={() => setShowSidebar(true)}>☰</div>
-                            <span className="text-xl grayscale opacity-70">➕</span>
-                            <h1 className="text-lg font-bold text-gray-800">Soma10 - 1º Ano</h1>
-                        </div>
-                        <button className="btn-3d bg-[#ff9f43] text-white font-bold text-xs px-5 py-2 rounded-lg border border-[#e67e22] uppercase">
-                            ⬅ VOLTAR
-                        </button>
-                    </header>
-
-                    {/* Jogo */}
-                    <main className="flex-1 flex flex-col items-center justify-evenly p-5">
-                        <div className="flex items-center gap-4">
-                            <div className="bg-white px-6 py-2 rounded-full shadow-sm font-bold text-orange-600">Pontos: {score}</div>
-                            <button onClick={() => setShowInfo(true)} className="btn-3d bg-[#ff9f43] text-white w-10 h-10 rounded-full font-bold text-xl border border-[#e67e22]">i</button>
-                        </div>
-
-                        <motion.div className="bg-white p-10 rounded-[40px] shadow-lg border-b-8 border-orange-100 text-center">
-                            <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Nível {level}</div>
-                            <div className="text-6xl font-black text-gray-800 flex items-center gap-4">
-                                <span>{question?.missing === 'n1' ? '?' : question?.n1}</span>
-                                <span className="text-orange-400">+</span>
-                                <span>{question?.missing === 'n2' ? '?' : question?.n2}</span>
-                                <span className="text-orange-400">=</span>
-                                <span>{question?.missing === 'target' ? '?' : question?.target}</span>
-                            </div>
-                        </motion.div>
-
-                        <div className="relative w-full max-w-2xl h-72 bg-sky-50/50 rounded-[40px] border-2 border-white overflow-hidden shadow-inner flex items-center justify-center gap-6">
-                            <AnimatePresence mode="wait">
-                                {!feedback && options.map((opt, i) => (
-                                    <motion.div
-                                        key={opt}
-                                        initial={{ y: 200, opacity: 0 }}
-                                        animate={{ y: [0, -15, 0], opacity: 1 }}
-                                        transition={{ y: { duration: 2 + i * 0.5, repeat: Infinity, ease: "easeInOut" } }}
-                                        onClick={() => handleAnswer(opt)}
-                                        className="relative cursor-pointer"
-                                    >
-                                        <div className="w-20 h-24 balloon flex items-center justify-center text-3xl font-black text-white shadow-lg" style={{ backgroundColor: balloonColors[i % balloonColors.length] }}>
-                                            {opt}
-                                        </div>
-                                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3 h-2 bg-black/10 rounded-sm"></div>
-                                        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-0.5 h-8 bg-gray-300"></div>
-                                    </motion.div>
-                                ))}
-                            </AnimatePresence>
-
-                            {feedback && (
-                                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className={`absolute inset-0 flex flex-col items-center justify-center gap-2 ${feedback === 'correct' ? 'text-green-500' : 'text-red-500'}`}>
-                                    <Icon name={feedback === 'correct' ? 'check-circle' : 'x-circle'} className="w-24 h-24" />
-                                    <span className="text-2xl font-black uppercase">{feedback === 'correct' ? 'Boa!' : 'Tenta de novo'}</span>
-                                </motion.div>
-                            )}
-                        </div>
-                    </main>
-
-                    <footer className="bg-white p-3 text-center text-gray-400 text-xs border-t border-gray-50">
-                        Recursos Digitais Covão • Professor Luís
-                    </footer>
-
-                    {/* Modais */}
-                    {showInfo && (
-                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/20 backdrop-blur-sm">
-                            <div className="bg-white p-8 rounded-3xl shadow-2xl border-4 border-orange-400 text-center max-w-xs">
-                                <h2 className="text-2xl font-bold text-orange-500 mb-4">Como Jogar</h2>
-                                <p className="text-gray-600 mb-6">Resolve a conta para somar 10! <br/> Clica no balão correto.</p>
-                                <button onClick={() => setShowInfo(false)} className="btn-3d w-full bg-orange-400 text-white py-3 rounded-xl font-bold">OK!</button>
-                            </div>
-                        </div>
-                    )}
-
-                    {isGameOver && (
-                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/20 backdrop-blur-sm">
-                            <div className="bg-white p-8 rounded-3xl shadow-2xl border-4 border-green-400 text-center max-w-xs">
-                                <h2 className="text-2xl font-bold text-green-600 mb-4">🏆 Parabéns!</h2>
-                                <p className="text-gray-600 mb-6">Completaste todos os desafios da Soma 10!</p>
-                                <button onClick={() => window.location.reload()} className="btn-3d-dark w-full bg-[#2c3e50] text-white py-3 rounded-xl font-bold">REPETIR 🔄</button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            );
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
         }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        function fecharMenu() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('modal-info').style.display = 'none';
+        }
+
+        function mostrarInfo() {
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('modal-info').style.display = 'block';
+        }
+
+        function createBalloon(value) {
+            const container = document.getElementById('balloon-container');
+            const balloon = document.createElement('div');
+            balloon.className = 'balloon';
+            balloon.innerText = value;
+            
+            // Posição horizontal aleatória
+            balloon.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+            
+            // Velocidade e atraso aleatórios
+            const duration = 6 + Math.random() * 4;
+            balloon.style.animationDuration = duration + 's';
+            balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+            balloon.onclick = () => check(value, balloon);
+            container.appendChild(balloon);
+
+            // Remover balão quando sair do ecrã
+            setTimeout(() => {
+                if (balloon.parentElement) balloon.remove();
+            }, duration * 1000);
+        }
+
+        function nextQuestion() {
+            if (score >= 10 && currentLevel === 1) {
+                currentLevel = 2;
+                alert("🌟 BOA! Agora descobre o número que falta na conta!");
+            }
+            if (score >= 20) {
+                showFinalReport();
+                return;
+            }
+
+            canClick = true;
+            const qBox = document.getElementById('question-box');
+            const container = document.getElementById('balloon-container');
+            container.innerHTML = ''; 
+            qBox.classList.remove('correct-anim', 'wrong-anim');
+
+            let n1, n2, res;
+
+            if (currentLevel === 1) {
+                n1 = Math.floor(Math.random() * 11); 
+                n2 = Math.floor(Math.random() * (11 - n1)); // Garante soma até 10
+                correctAnswer = n1 + n2;
+                qBox.innerHTML = `${n1} + ${n2} = <span id="gap">?</span>`;
+            } else {
+                res = Math.floor(Math.random() * 11);
+                n1 = Math.floor(Math.random() * (res + 1));
+                correctAnswer = res - n1;
+                qBox.innerHTML = `${n1} + <span id="gap">__</span> = ${res}`;
+            }
+
+            // Gerar balões
+            let choices = [correctAnswer];
+            while(choices.length < 4) {
+                let r = Math.floor(Math.random() * 11);
+                if(!choices.includes(r)) choices.push(r);
+            }
+            
+            choices.forEach((val, index) => {
+                setTimeout(() => createBalloon(val), index * 800);
+            });
+        }
+
+        function check(selected, balloonEl) {
+            if (!canClick) return;
+            const qBox = document.getElementById('question-box');
+            const gap = document.getElementById('gap');
+
+            if(selected === correctAnswer) {
+                canClick = false;
+                score++;
+                currentLevel === 1 ? stats.l1_hits++ : stats.l2_hits++;
+                document.getElementById('score').innerText = `Pontos: ${score}`;
+                gap.innerHTML = selected;
+                gap.className = "fill-number";
+                qBox.classList.add('correct-anim');
+                
+                // Efeito de rebentar
+                balloonEl.style.transform = "scale(1.5)";
+                balloonEl.style.opacity = "0";
+                
+                setTimeout(nextQuestion, 1200);
+            } else {
+                if(score > 0) score--; 
+                currentLevel === 1 ? stats.l1_errors++ : stats.l2_errors++;
+                document.getElementById('score').innerText = `Pontos: ${score}`;
+                qBox.classList.add('wrong-anim');
+                
+                // Balão errado "cai" ou desaparece
+                balloonEl.style.backgroundColor = "#e74c3c";
+                setTimeout(() => qBox.classList.remove('wrong-anim'), 500);
+            }
+        }
+
+        function showFinalReport() {
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('s1').innerText = stats.l1_hits;
+            document.getElementById('e1').innerText = stats.l1_errors;
+            document.getElementById('s2').innerText = stats.l2_hits;
+            document.getElementById('e2').innerText = stats.l2_errors;
+            document.getElementById('final-modal').style.display = 'block';
+        }
+
+        nextQuestion();
     </script>
 </body>
 </html>
