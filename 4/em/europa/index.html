@@ -105,4 +105,227 @@
         
         #certificado-container { display: none; position: absolute; top:0; left:0; width:100%; height:100%; background:#fff; z-index:500; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
         #certificado { background: #fff; padding: 20px; border: 10px double var(--primary); text-align: center; width: 100%; max-width: 450px; }
-        .nome-aluno { font-family: 'Georgia', serif; font-size: 1.8rem; border-bottom: 2px
+        .nome-aluno { font-family: 'Georgia', serif; font-size: 1.8rem; border-bottom: 2px solid #333; margin: 10px 0; display: inline-block; min-width: 180px; }
+        
+        .area-final-botoes { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; }
+        .btn-final { padding: 10px 15px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; color: white; font-size: 0.8rem; }
+        .btn-print { background: #34495e; }
+        .btn-restart { background: var(--primary); }
+        .btn-exit { background: #e74c3c; }
+
+        footer { 
+            padding: 13px; /* +5px em relação ao original de 8px */
+            background: #fff; text-align: center; color: #7f8c8d; 
+            font-size: 0.7rem; border-top: 1px solid #eee; flex-shrink: 0;
+        }
+
+        /* AJUSTE PARA ECRÃS MUITO PEQUENOS */
+        @media (max-height: 600px) {
+            #game-board { gap: 5px; }
+            .dropzone { height: 48px; }
+            .flag-slot, .flag-card { height: 42px; width: 65px; }
+            .stars-container .star { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="fecharModais()"></div>
+    
+    <nav class="sidebar" id="sidebar">
+        <h3>Navegação</h3>
+        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+        <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
+        <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item">🐢 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item">🦊 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item">👨‍🚀 4º Ano</a>
+    </nav>
+
+    <header>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleSidebar()">☰</div>
+            <img src="https://flagcdn.com/w40/eu.png" style="width:22px;">
+            <h1>Associa Bandeiras</h1>
+        </div>
+        <a href="../" class="btn-voltar">⬅ VOLTAR</a>
+    </header>
+
+    <main id="game-main">
+        <div class="instrucao-topo">
+            <h2>Associa as bandeiras aos Países</h2>
+            <button class="btn-info" onclick="toggleInfo()">i</button>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-box">⏱️ <span id="timer">00:00</span></div>
+            <div class="stars-container" id="stars-box">
+                <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+            </div>
+            <div class="stat-box">❌ <span id="error-count">0</span></div>
+        </div>
+
+        <div id="game-board"></div>
+
+        <div class="control-area">
+            <button class="btn-check" onclick="verificarRonda()">Verificar</button>
+        </div>
+    </main>
+
+    <div id="modal-info" class="modal">
+        <h3 style="color:var(--primary); margin-bottom:10px;">Como Jogar</h3>
+        <p style="font-size: 0.85rem; line-height: 1.4; text-align: left;">• Arrasta as bandeiras para as caixas.<br>• Podes trocar as bandeiras se te enganares.<br>• Ganha 5 estrelas para o diploma!</p>
+        <button class="btn-check" style="margin-top:15px;" onclick="toggleInfo()">Entendido</button>
+    </div>
+
+    <div id="modal-nome" class="modal">
+        <h3 style="color:var(--primary);">Parabéns! 🇪🇺</h3>
+        <p>Escreve o teu nome:</p>
+        <input type="text" id="input-nome" placeholder="Teu nome aqui" style="width:95%; padding:10px; margin:15px 0; border-radius:10px; border:2px solid #ddd; text-align:center;">
+        <button class="btn-check" onclick="gerarCertificado()">Ver Diploma</button>
+    </div>
+
+    <div id="certificado-container">
+        <div id="certificado">
+            <h2 style="color:var(--primary); font-size: 1.8rem;">DIPLOMA</h2>
+            <div id="medalha-display" style="font-size: 3rem; margin: 5px 0;">🥇</div>
+            <p style="font-size: 0.9rem;">Certificamos que:</p>
+            <div class="nome-aluno" id="display-nome">_________</div>
+            <p style="font-size: 0.9rem;">Concluiu com sucesso o desafio sobre os símbolos da <strong>União Europeia</strong>.</p>
+        </div>
+        <div class="area-final-botoes">
+            <button class="btn-final btn-print" onclick="window.print()">🖨️ IMPRIMIR</button>
+            <button class="btn-final btn-restart" onclick="reiniciarJogo()">🔄 REPETIR</button>
+            <button class="btn-final btn-exit" onclick="window.location.href='/jogos/'">🏠 SAIR</button>
+        </div>
+    </div>
+
+    <footer>Professor Luís - Recursos Digitais Covão</footer>
+
+    <script>
+        let pool, ronda, errosTotais, tempoSegundos, draggedEl, cronometroInterval;
+
+        function iniciarValores() {
+            pool = [...paises].sort(() => Math.random() - 0.5);
+            ronda = 0;
+            errosTotais = 0;
+            tempoSegundos = 0;
+            document.getElementById('error-count').innerText = "0";
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('filled'));
+        }
+
+        function tocarSom(sucesso) {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator(); const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            if(sucesso) { osc.frequency.setValueAtTime(800, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1); }
+            else { osc.frequency.setValueAtTime(200, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.2); }
+            osc.start(); gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.3); osc.stop(ctx.currentTime + 0.3);
+        }
+
+        function iniciarCronometro() {
+            clearInterval(cronometroInterval);
+            cronometroInterval = setInterval(() => {
+                tempoSegundos++;
+                const min = Math.floor(tempoSegundos / 60).toString().padStart(2,'0');
+                const seg = (tempoSegundos % 60).toString().padStart(2,'0');
+                document.getElementById('timer').innerText = `${min}:${seg}`;
+            }, 1000);
+        }
+
+        function toggleSidebar() {
+            const sb = document.getElementById('sidebar'); const ov = document.getElementById('overlay');
+            sb.classList.toggle('active'); ov.style.display = sb.classList.contains('active') ? 'block' : 'none';
+        }
+
+        function toggleInfo() {
+            const m = document.getElementById('modal-info'); const ov = document.getElementById('overlay');
+            const vis = m.style.display === 'block'; m.style.display = vis ? 'none' : 'block'; ov.style.display = vis ? 'none' : 'block';
+        }
+
+        function fecharModais() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function novaRonda() {
+            if (ronda >= 5) { 
+                clearInterval(cronometroInterval); 
+                document.getElementById('modal-nome').style.display = 'block'; 
+                document.getElementById('overlay').style.display = 'block'; 
+                return; 
+            }
+            const board = document.getElementById('game-board'); board.innerHTML = '';
+            const selecionados = pool.splice(0, 5);
+            const nomesEmbaralhados = [...selecionados].sort(() => Math.random() - 0.5);
+
+            selecionados.forEach((p, index) => {
+                const slot = document.createElement('div'); slot.className = 'flag-slot'; slot.id = 'slot-' + index;
+                const card = document.createElement('div'); card.className = 'flag-card'; card.draggable = true;
+                card.dataset.id = p.id; card.dataset.home = 'slot-' + index;
+                card.innerHTML = `<img src="imagens/${p.img}" onerror="this.src='https://flagcdn.com/w160/${p.id}.png'">`;
+
+                const drop = document.createElement('div'); drop.className = 'dropzone'; drop.dataset.id = nomesEmbaralhados[index].id;
+                drop.innerHTML = `<span class="pais-txt">${nomesEmbaralhados[index].nome}</span>`;
+
+                card.addEventListener('dragstart', e => draggedEl = e.currentTarget);
+                card.addEventListener('touchstart', tStart, {passive:false});
+                card.addEventListener('touchmove', tMove, {passive:false});
+                card.addEventListener('touchend', tEnd);
+                drop.addEventListener('dragover', e => e.preventDefault());
+                drop.addEventListener('drop', e => handlePlace(e.currentTarget));
+
+                slot.appendChild(card); board.appendChild(slot); board.appendChild(drop);
+            });
+        }
+
+        function handlePlace(zone) {
+            if(zone.classList.contains('correct')) return;
+            const existing = zone.querySelector('.flag-card');
+            if(existing) { document.getElementById(existing.dataset.home).appendChild(existing); }
+            zone.prepend(draggedEl);
+            zone.classList.remove('wrong');
+        }
+
+        function verificarRonda() {
+            const zones = document.querySelectorAll('.dropzone');
+            let certas = 0; let erroRonda = false;
+            zones.forEach(zone => {
+                const flag = zone.querySelector('.flag-card');
+                if(flag && flag.dataset.id === zone.dataset.id) { zone.classList.add('correct'); certas++; }
+                else if(flag) {
+                    zone.classList.add('wrong'); erroRonda = true; errosTotais++;
+                    document.getElementById('error-count').innerText = errosTotais;
+                    setTimeout(() => { const home = document.getElementById(flag.dataset.home); if(home) home.appendChild(flag); zone.classList.remove('wrong'); }, 600);
+                }
+            });
+            if(certas === 5) { tocarSom(true); const stars = document.querySelectorAll('.star'); stars[ronda].classList.add('filled'); ronda++; setTimeout(novaRonda, 1000); }
+            else if(erroRonda) { tocarSom(false); }
+        }
+
+        function gerarCertificado() {
+            const nome = document.getElementById('input-nome').value; if(!nome) return alert("Escreve o teu nome!");
+            let med = "🥇"; if(errosTotais > 3 && errosTotais <= 8) med = "🥈"; else if(errosTotais > 8) med = "🥉";
+            document.getElementById('display-nome').innerText = nome; document.getElementById('medalha-display').innerText = med;
+            document.getElementById('game-main').style.display = 'none'; fecharModais(); document.getElementById('certificado-container').style.display = 'flex';
+        }
+
+        function reiniciarJogo() {
+            document.getElementById('certificado-container').style.display = 'none';
+            document.getElementById('game-main').style.display = 'flex';
+            iniciarValores();
+            novaRonda();
+            iniciarCronometro();
+        }
+
+        function tStart(e) { draggedEl = e.currentTarget; }
+        function tMove(e) { e.preventDefault(); const t = e.touches[0]; draggedEl.style.position = 'fixed'; draggedEl.style.left = t.clientX - 35 + 'px'; draggedEl.style.top = t.clientY - 25 + 'px'; draggedEl.style.zIndex = 1000; }
+        function tEnd(e) { draggedEl.style.display = 'none'; const t = e.changedTouches[0]; const target = document.elementFromPoint(t.clientX, t.clientY); draggedEl.style.display = 'flex'; draggedEl.style.position = 'static'; const zone = target ? target.closest('.dropzone') : null; if(zone) handlePlace(zone); else document.getElementById(draggedEl.dataset.home).appendChild(draggedEl); }
+
+        iniciarValores();
+        novaRonda(); 
+        iniciarCronometro();
+    </script>
+</body>
+</html>
