@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>4º Ano - Quiz Bandeiras</title>
+    <title>4º Ano - Quiz Bandeiras UE</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
@@ -52,21 +52,22 @@
         
         .instrucao-topo { 
             display: flex; align-items: center; gap: 10px; 
-            margin-top: 25px; 
-            margin-bottom: 20px; 
+            margin-top: 20px; margin-bottom: 15px;
         }
         .instrucao-topo h2 { color: #2c3e50; font-size: 1.1rem; font-weight: 700; }
 
-        .btn-info-purp, .icon-info-circular { 
-            background: #9b59b6; color: white; width: 24px; height: 24px; 
-            border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; 
-            border: none; font-weight: bold; font-size: 0.85rem;
-            box-shadow: 0 2px 0 #8e44ad;
+        /* PAINEL DE STATUS (Tempo, Estrelas, Erros) */
+        .status-panel {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; max-width: 400px; margin-bottom: 15px;
+            background: white; padding: 10px 15px; border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-        .btn-info-purp { cursor: pointer; }
+        .stat-box { font-weight: 800; color: #2c3e50; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; min-width: 70px; }
+        .stat-box.timer { color: #9b59b6; }
+        .stat-box.errors { color: #e74c3c; justify-content: flex-end; }
 
-        /* ESTRELAS DE PROGRESSO */
-        .stars-container { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+        .stars-container { display: flex; gap: 4px; }
         .star { font-size: 1.4rem; color: transparent; -webkit-text-stroke: 2px #9b59b6; transition: 0.3s; }
         .star.filled { color: #9b59b6; }
 
@@ -75,6 +76,12 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.05);
             width: 100%; max-width: 380px;
             display: flex; flex-direction: column; gap: 15px;
+        }
+
+        .level-badge {
+            align-self: center; background: #9b59b6; color: white;
+            padding: 4px 12px; border-radius: 20px; font-size: 0.75rem;
+            font-weight: bold; text-transform: uppercase;
         }
 
         .flag-container {
@@ -133,16 +140,20 @@
 
     <main id="game-main">
         <div class="instrucao-topo">
-            <h2>De que país é esta bandeira?</h2>
+            <h2>Qual é este país?</h2>
             <button class="btn-info-purp" onclick="abrirModal('modal-info')">i</button>
         </div>
 
-        <div class="stars-container" id="stars-box">
-            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        <div class="status-panel">
+            <div class="stat-box timer">⏱️ <span id="timer-val">00:00</span></div>
+            <div class="stars-container" id="stars-box">
+                <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+            </div>
+            <div class="stat-box errors">❌ <span id="errors-val">0</span></div>
         </div>
 
         <div class="quiz-card">
+            <div class="level-badge" id="level-display">Nível 1</div>
             <div class="flag-container">
                 <img id="flag-img" src="" class="flag-display" alt="Bandeira">
             </div>
@@ -155,7 +166,8 @@
             <h1 style="color:#9b59b6; font-size: 2.5rem;">DIPLOMA</h1>
             <p>Certificamos que o(a) aluno(a):</p>
             <div class="nome-aluno" id="display-nome">_________</div>
-            <p>Concluiu com sucesso o Quiz das<br><strong>Bandeiras da União Europeia</strong>.</p>
+            <p>Concluiu com sucesso os 5 níveis do Quiz das<br><strong>Bandeiras da União Europeia</strong>.</p>
+            <p style="margin-top:10px; font-size: 0.8rem; color: #7f8c8d;">Tempo total: <span id="final-time"></span> | Erros: <span id="final-errors"></span></p>
             <button class="btn-acao" onclick="window.print()" style="background:#34495e; box-shadow:0 4px 0 #2c3e50; margin-top:30px;">IMPRIMIR</button>
         </div>
     </div>
@@ -165,30 +177,53 @@
             <span class="icon-info-circular">i</span>
             <h2 style="color:#9b59b6; display: inline-block; margin-left: 10px; vertical-align: middle;">Como Jogar</h2>
         </div>
-        <p style="margin:20px 0; line-height: 1.5;">Observa a bandeira e escolhe o país correto. <br>Ganha as <b>10 estrelas</b> para receberes o teu diploma!</p>
+        <p style="margin:20px 0; line-height: 1.5;">Observa a bandeira e escolhe o país correto. <br>São <b>5 níveis</b> de 5 rondas cada. <br>No nível 5 a dificuldade aumenta!</p>
         <button class="btn-acao" onclick="fecharModais()">Vamos lá!</button>
     </div>
 
+    <div id="modal-level" class="modal">
+        <h2 style="color:#9b59b6;">Nível Concluído! 🌟</h2>
+        <p id="level-msg" style="margin:20px 0;"></p>
+        <button class="btn-acao" onclick="proximoNivel()">Continuar</button>
+    </div>
+
     <div id="modal-nome" class="modal">
-        <h2 style="color:#2ecc71;">Parabéns! 🇪🇺</h2>
-        <p style="margin:15px 0;">Completaste o desafio com sucesso! Escreve o teu nome para o diploma:</p>
+        <h2 style="color:#2ecc71;">Parabéns! Mestre da UE 🇪🇺</h2>
+        <p style="margin:15px 0;">Completaste todos os níveis! Escreve o teu nome para o diploma:</p>
         <input type="text" id="input-nome" placeholder="Teu nome aqui" style="width:100%; padding:12px; border-radius:10px; border:2px solid #ddd; margin-bottom:20px; text-align:center;">
         <button class="btn-acao" onclick="gerarCertificado()">Ver Diploma</button>
     </div>
 
     <footer>Professor Luís - Recursos Digitais Covão</footer>
 
-    <!-- IMPORTANTE: Carrega os dados antes da lógica -->
     <script src="dados.js"></script>
 
     <script>
-        let acertos = 0;
+        let nivel = 1;
+        let ronda = 0; // 0 a 4 por nível
+        let totalAcertos = 0;
+        let erros = 0;
+        let tempoSegundos = 0;
+        let timerInterval = null;
         let pool = [];
         let correta = null;
 
-        // Inicializa o pool de perguntas
         function inicializarPool() {
             pool = [...paises].sort(() => Math.random() - 0.5);
+        }
+
+        function formatarTempo(s) {
+            const min = Math.floor(s / 60).toString().padStart(2, '0');
+            const seg = (s % 60).toString().padStart(2, '0');
+            return `${min}:${seg}`;
+        }
+
+        function iniciarTimer() {
+            if (timerInterval) return;
+            timerInterval = setInterval(() => {
+                tempoSegundos++;
+                document.getElementById('timer-val').innerText = formatarTempo(tempoSegundos);
+            }, 1000);
         }
 
         function toggleMenu() { 
@@ -210,26 +245,34 @@
         }
 
         function carregarPergunta() {
-            if (acertos >= 10) { 
-                abrirModal('modal-nome'); 
-                return; 
+            iniciarTimer();
+            
+            if (ronda >= 5) {
+                if (nivel < 5) {
+                    document.getElementById('level-msg').innerText = `Estás pronto para o Nível ${nivel + 1}?`;
+                    abrirModal('modal-level');
+                } else {
+                    clearInterval(timerInterval);
+                    abrirModal('modal-nome');
+                }
+                return;
             }
-            
-            // Se o pool acabar antes dos 10 acertos (improvável na UE), reinicia
-            if (pool.length === 0) inicializarPool();
 
-            correta = pool.pop();
-            const imgEl = document.getElementById('flag-img');
+            document.getElementById('level-display').innerText = `Nível ${nivel} - Ronda ${ronda + 1}/5`;
             
-            // Tenta carregar imagem local, se falhar usa a CDN
+            if (pool.length === 0) inicializarPool();
+            correta = pool.pop();
+
+            const imgEl = document.getElementById('flag-img');
             imgEl.src = `imagens/${correta.img}`;
             imgEl.onerror = function() { 
-                this.onerror = null; // Evita loop infinito
+                this.onerror = null;
                 this.src = `https://flagcdn.com/w320/${correta.id}.png`; 
             };
 
-            // Gera opções erradas
-            let erradas = paises.filter(p => p.id !== correta.id).sort(() => Math.random() - 0.5).slice(0, 2);
+            // Dificuldade: Nível 5 tem 4 opções, os outros têm 3
+            const numOpcoes = (nivel === 5) ? 4 : 3;
+            let erradas = paises.filter(p => p.id !== correta.id).sort(() => Math.random() - 0.5).slice(0, numOpcoes - 1);
             let opcoes = [correta, ...erradas].sort(() => Math.random() - 0.5);
 
             const box = document.getElementById('options-box');
@@ -250,31 +293,40 @@
 
             if (id === correta.id) {
                 btn.classList.add('correct');
-                if (acertos < 10) {
-                    estrelas[acertos].classList.add('filled');
-                }
-                acertos++;
+                estrelas[ronda].classList.add('filled');
+                ronda++;
+                totalAcertos++;
                 setTimeout(carregarPergunta, 1000);
             } else {
                 btn.classList.add('wrong');
-                // Mostra a correta
-                botoes.forEach(b => { 
-                    if(b.innerText === correta.n) b.classList.add('correct'); 
-                });
+                erros++;
+                document.getElementById('errors-val').innerText = erros;
+                botoes.forEach(b => { if(b.innerText === correta.n) b.classList.add('correct'); });
                 setTimeout(carregarPergunta, 1800);
             }
+        }
+
+        function proximoNivel() {
+            nivel++;
+            ronda = 0;
+            // Limpa as estrelas para o novo nível
+            document.querySelectorAll('.star').forEach(s => s.classList.remove('filled'));
+            fecharModais();
+            carregarPergunta();
         }
 
         function gerarCertificado() {
             const nome = document.getElementById('input-nome').value;
             if(!nome) return alert("Por favor, escreve o teu nome!");
             document.getElementById('display-nome').innerText = nome;
+            document.getElementById('final-time').innerText = formatarTempo(tempoSegundos);
+            document.getElementById('final-errors').innerText = erros;
+            
             document.getElementById('game-main').style.display = 'none';
             document.getElementById('certificado-container').style.display = 'flex';
             fecharModais();
         }
 
-        // Início do jogo
         inicializarPool();
         carregarPergunta();
     </script>
