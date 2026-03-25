@@ -48,27 +48,32 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
 
         /* JOGO QUIZ */
-        main { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        main { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; }
         
-        .instrucao-container { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-        .instrucao-container h3 { color: #2c3e50; font-size: 1rem; }
+        .instrucao-topo { display: flex; align-items: center; gap: 10px; margin: 10px 0 10px 0; }
+        .instrucao-topo h2 { color: #2c3e50; font-size: 1rem; font-weight: 700; }
 
         .btn-info-purp { 
-            background: #9b59b6; color: white; width: 24px; height: 24px; 
+            background: #9b59b6; color: white; width: 22px; height: 22px; 
             border-radius: 50%; display: flex; align-items: center; justify-content: center; 
             border: none; cursor: pointer; font-weight: bold; font-size: 0.8rem;
             box-shadow: 0 2px 0 #8e44ad;
         }
 
+        /* ESTRELAS DE PROGRESSO (10 ESTRELAS) */
+        .stars-container { display: flex; gap: 4px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center; }
+        .star { font-size: 1.4rem; color: transparent; -webkit-text-stroke: 2px #9b59b6; transition: 0.3s; }
+        .star.filled { color: #9b59b6; }
+
         .quiz-card {
             background: white; padding: 20px; border-radius: 20px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-            width: 100%; max-width: 400px;
+            width: 100%; max-width: 380px;
             display: flex; flex-direction: column; gap: 15px;
         }
 
         .flag-container {
-            width: 100%; height: 160px; background: #fdfdfd;
+            width: 100%; height: 140px; background: #fdfdfd;
             border-radius: 12px; border: 1px solid #eee;
             display: flex; align-items: center; justify-content: center;
             overflow: hidden; padding: 5px;
@@ -85,9 +90,6 @@
         }
         .option-btn.correct { background: #2ecc71 !important; color: white !important; border-color: #27ae60 !important; }
         .option-btn.wrong { background: #e74c3c !important; color: white !important; border-color: #c0392b !important; }
-
-        .control-area { margin-top: 20px; }
-        .ronda-txt { font-weight: 800; color: #9b59b6; background: white; padding: 6px 20px; border-radius: 20px; border: 2px solid #9b59b6; font-size: 0.85rem; }
 
         .btn-acao { 
             background: #9b59b6; color: white; padding: 12px 30px; 
@@ -125,9 +127,14 @@
     </header>
 
     <main id="game-main">
-        <div class="instrucao-container">
-            <h3>De que país é esta bandeira?</h3>
+        <div class="instrucao-topo">
+            <h2>De que país é esta bandeira?</h2>
             <button class="btn-info-purp" onclick="abrirModal('modal-info')">i</button>
+        </div>
+
+        <div class="stars-container" id="stars-box">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
         </div>
 
         <div class="quiz-card">
@@ -135,10 +142,6 @@
                 <img id="flag-img" src="" class="flag-display" alt="Bandeira">
             </div>
             <div class="options-container" id="options-box"></div>
-        </div>
-
-        <div class="control-area">
-            <div class="ronda-txt">Pergunta <span id="num-pergunta">1</span>/10</div>
         </div>
     </main>
 
@@ -154,21 +157,20 @@
 
     <div id="modal-info" class="modal">
         <h2 style="color:#9b59b6;">Como Jogar ℹ️</h2>
-        <p style="margin:20px 0; line-height: 1.5;">Observa a bandeira e escolhe o país correto. <br>Precisas de responder a <b>10 perguntas</b> para ganhar o teu diploma!</p>
+        <p style="margin:20px 0; line-height: 1.5;">Observa a bandeira e escolhe o país correto. <br>Ganha as <b>10 estrelas</b> para receberes o teu diploma!</p>
         <button class="btn-acao" onclick="fecharModais()">Vamos lá!</button>
     </div>
 
     <div id="modal-nome" class="modal">
-        <h2 style="color:#2ecc71;">Incrível! 🇪🇺</h2>
-        <p style="margin:15px 0;">Escreve o teu nome para o diploma:</p>
+        <h2 style="color:#2ecc71;">Parabéns! 🇪🇺</h2>
+        <p style="margin:15px 0;">Completaste o desafio com sucesso! Escreve o teu nome para o diploma:</p>
         <input type="text" id="input-nome" placeholder="Teu nome aqui" style="width:100%; padding:12px; border-radius:10px; border:2px solid #ddd; margin-bottom:20px; text-align:center;">
-        <button class="btn-acao" onclick="gerarCertificado()">Gerar Diploma</button>
+        <button class="btn-acao" onclick="gerarCertificado()">Ver Diploma</button>
     </div>
 
     <footer>Professor Luís - Recursos Digitais Covão</footer>
 
     <script>
-        // Array atualizado com os nomes dos ficheiros locais (mesma lógica do jogo 1)
         const paises = [
             { n: "ÁUSTRIA", id: "at", img: "austria_m.png" }, { n: "BÉLGICA", id: "be", img: "belgica_m.png" },
             { n: "BULGÁRIA", id: "bg", img: "bulgaria_m.png" }, { n: "CROÁCIA", id: "hr", img: "croacia_m.png" },
@@ -186,7 +188,7 @@
             { n: "SUÉCIA", id: "se", img: "suecia_m.png" }
         ];
 
-        let perguntaAtual = 1;
+        let acertos = 0;
         let pool = [...paises].sort(() => Math.random() - 0.5);
         let correta = null;
 
@@ -209,20 +211,15 @@
         }
 
         function carregarPergunta() {
-            if (perguntaAtual > 10) { 
+            if (acertos >= 10) { 
                 abrirModal('modal-nome'); 
                 return; 
             }
             
-            document.getElementById('num-pergunta').innerText = perguntaAtual;
             correta = pool.pop();
-            
             const imgEl = document.getElementById('flag-img');
-            // Tenta carregar localmente, se falhar usa CDN (sistema de segurança)
             imgEl.src = `imagens/${correta.img}`;
-            imgEl.onerror = function() {
-                this.src = `https://flagcdn.com/w320/${correta.id}.png`;
-            };
+            imgEl.onerror = function() { this.src = `https://flagcdn.com/w320/${correta.id}.png`; };
 
             let erradas = paises.filter(p => p.id !== correta.id).sort(() => Math.random() - 0.5).slice(0, 2);
             let opcoes = [correta, ...erradas].sort(() => Math.random() - 0.5);
@@ -240,18 +237,21 @@
 
         function verificarResposta(id, btn) {
             const botoes = document.querySelectorAll('.option-btn');
+            const estrelas = document.querySelectorAll('.star');
             botoes.forEach(b => b.style.pointerEvents = 'none');
 
             if (id === correta.id) {
                 btn.classList.add('correct');
-                perguntaAtual++;
+                // Preenche a estrela correspondente ao acerto atual
+                if (acertos < 10) {
+                    estrelas[acertos].classList.add('filled');
+                }
+                acertos++;
                 setTimeout(carregarPergunta, 1000);
             } else {
                 btn.classList.add('wrong');
-                botoes.forEach(b => { 
-                    if(b.innerText === correta.n) b.classList.add('correct'); 
-                });
-                perguntaAtual++;
+                botoes.forEach(b => { if(b.innerText === correta.n) b.classList.add('correct'); });
+                // Em caso de erro, apenas recarrega sem ganhar estrela
                 setTimeout(carregarPergunta, 1800);
             }
         }
