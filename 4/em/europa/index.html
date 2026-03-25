@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>4º Ano - Associar Bandeiras</title>
+    <title>4º Ano - Membros da UE</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
@@ -14,100 +14,111 @@
             display: flex; flex-direction: column; overflow: hidden;
         }
 
-        /* HEADER & MENU */
         header {
             width: 100%; background: #fff; padding: 10px 20px;
             display: flex; align-items: center; justify-content: space-between;
             border-bottom: 1px solid #ddd; z-index: 100;
         }
 
-        .header-left { display: flex; align-items: center; gap: 15px; }
+        .header-left { display: flex; align-items: center; gap: 10px; }
         header h1 { font-size: 1rem; color: #2c3e50; font-weight: 800; text-transform: uppercase; }
-
-        .menu-icon { font-size: 1.5rem; cursor: pointer; color: #2c3e50; }
-
+        
         .btn-voltar {
-            text-decoration: none; color: #000; background: #9b59b6;
+            text-decoration: none; color: #fff; background: #9b59b6;
             font-weight: bold; font-size: 0.75rem; padding: 6px 12px;
             border-radius: 6px; border: 1px solid #8e44ad;
         }
 
-        /* SIDEBAR MENU */
-        .sidebar {
-            position: fixed; left: -250px; top: 0; width: 250px; height: 100%;
-            background: #fff; box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            transition: 0.3s; z-index: 200; padding: 20px;
-        }
-        .sidebar.active { left: 0; }
-        .sidebar h3 { color: #9b59b6; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .sidebar-item { padding: 12px 0; border-bottom: 1px solid #eee; cursor: pointer; color: #2c3e50; font-weight: 600; text-decoration: none; display: block; }
-
-        /* JOGO */
         main { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; }
+        
+        .instrucao-topo {
+            display: flex; align-items: center; gap: 10px;
+            margin: 15px 0 20px 0;
+        }
+        /* Estilo base para os textos de instrução e rondas */
+        .instrucao-topo h2, .ronda-txt { 
+            color: #2c3e50; 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+        }
 
-        .instrucao-topo { display: flex; align-items: center; gap: 10px; margin: 10px 0 15px 0; }
-        .instrucao-topo h2 { color: #2c3e50; font-size: 1.1rem; font-weight: 700; }
+        .btn-info {
+            width: 24px; height: 24px; background: #9b59b6;
+            color: white; border: none; border-radius: 50%;
+            font-weight: bold; font-style: italic; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
 
-        /* BARRA DE PROGRESSO */
-        .progress-container { width: 100%; max-width: 400px; height: 12px; background: #ddd; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
-        .progress-bar { width: 20%; height: 100%; background: #9b59b6; transition: 0.5s; }
+        .game-area { 
+            display: flex; gap: 20px; width: 100%; 
+            max-width: 650px; justify-content: center; align-items: flex-start;
+        }
 
-        /* AREA DE JOGO COM ALINHAMENTO POR LINHA */
-        #game-board { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 350px; }
-        .game-row { display: flex; align-items: center; gap: 15px; justify-content: space-between; }
+        .column { display: flex; flex-direction: column; gap: 10px; }
+        
+        /* ALINHAMENTO CENTRADO: As bandeiras têm 55px e as zonas 65px. 
+           O padding de 5px no topo da coluna centra-as verticalmente. */
+        #col-bandeiras { width: 80px; padding-top: 5px; } 
 
         .flag-card { 
-            width: 80px; height: 55px; background: white; border-radius: 6px; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15); cursor: grab; touch-action: none;
+            width: 80px; height: 55px; 
+            background: white; border-radius: 6px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15); 
+            cursor: grab; touch-action: none;
             display: flex; align-items: center; justify-content: center;
             overflow: hidden; border: 1px solid #ddd;
         }
         .flag-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
         .dropzone { 
-            width: 210px; height: 65px; background: #fff; border: 2px dashed #bdc3c7; 
-            border-radius: 12px; display: flex; align-items: center; justify-content: center; 
-            padding: 4px; gap: 8px; transition: 0.3s;
+            width: 230px; height: 65px; 
+            background: #fff; border: 2px dashed #bdc3c7; 
+            border-radius: 12px; display: flex; 
+            align-items: center; justify-content: flex-start; 
+            padding: 4px; gap: 10px; transition: 0.3s;
         }
+        
         .dropzone.correct { background: #eafaf1 !important; border-color: #2ecc71 !important; pointer-events: none; }
         .dropzone.wrong { background: #fdedec; border-color: #e74c3c; }
-        .pais-txt { font-weight: 800; font-size: 0.8rem; color: #2c3e50; text-align: center; }
+        
+        .pais-txt { font-weight: 800; font-size: 0.85rem; color: #2c3e50; flex: 1; }
 
-        /* BOTÃO VERIFICAR */
-        .control-area { margin-top: 20px; width: 100%; display: flex; justify-content: center; }
-        .btn-check { 
-            background: #2ecc71; color: white; border: none; padding: 12px 50px; 
-            border-radius: 12px; font-weight: bold; cursor: pointer; 
-            box-shadow: 0 4px 0 #27ae60; font-size: 1.1rem;
+        .control-area { 
+            margin-top: 25px; 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
         }
 
-        /* MODAIS */
+        /* Aplicação do mesmo tipo de letra do topo */
+        .ronda-txt { 
+            text-transform: none; /* Removido uppercase para igualar ao topo se preferires */
+        }
+
+        .btn-check { 
+            background: #2ecc71; color: white; border: none; padding: 12px 30px; 
+            border-radius: 12px; font-weight: bold; cursor: pointer; 
+            box-shadow: 0 4px 0 #27ae60; font-size: 1rem;
+        }
+        .btn-check:active { transform: translateY(2px); box-shadow: 0 2px 0 #27ae60; }
+
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 150; }
         .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 20px; z-index: 1000; width: 85%; max-width: 350px; text-align: center; border: 4px solid #9b59b6; }
 
-        /* CERTIFICADO */
-        #certificado-container { display: none; flex: 1; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
-        #certificado { background: #fff; padding: 30px; border: 12px double #9b59b6; text-align: center; width: 100%; max-width: 500px; }
-        .nome-aluno { font-family: 'Georgia', serif; font-size: 1.8rem; border-bottom: 2px solid #333; margin: 15px 0; display: inline-block; min-width: 200px; }
+        #certificado-container { display: none; flex: 1; align-items: center; justify-content: center; padding: 20px; }
+        #certificado { background: #fff; padding: 35px; border: 12px double #9b59b6; text-align: center; width: 100%; max-width: 550px; }
+        .nome-aluno { font-family: 'Georgia', serif; font-size: 2rem; border-bottom: 2px solid #333; margin: 20px 0; display: inline-block; min-width: 220px; }
 
-        footer { padding: 8px; background: #fff; text-align: center; color: #7f8c8d; font-size: 0.7rem; border-top: 1px solid #eee; }
+        footer { padding: 10px; background: #fff; text-align: center; color: #7f8c8d; font-size: 0.75rem; border-top: 1px solid #eee; }
     </style>
 </head>
 <body>
 
     <div class="overlay" id="overlay" onclick="fecharModais()"></div>
     
-    <div class="sidebar" id="sidebar">
-        <h3>Menu</h3>
-        <a href="javascript:location.reload()" class="sidebar-item">Reiniciar Jogo</a>
-        <a href="../" class="sidebar-item">Página Principal</a>
-        <div class="sidebar-item" onclick="abrirModal('modal-info')">Instruções</div>
-        <div class="sidebar-item" style="color:#e74c3c" onclick="toggleSidebar()">Fechar</div>
-    </div>
-
     <header>
         <div class="header-left">
-            <div class="menu-icon" onclick="toggleSidebar()">☰</div>
+            <img src="https://flagcdn.com/w40/eu.png" style="width:24px; border-radius:2px;">
             <h1>Associar Bandeiras</h1>
         </div>
         <a href="../" class="btn-voltar">⬅ Voltar</a>
@@ -115,41 +126,41 @@
 
     <main id="game-main">
         <div class="instrucao-topo">
-            <h2>Associa as bandeiras</h2>
+            <h2>Associa as bandeiras aos Países</h2>
+            <button class="btn-info" onclick="abrirModal('modal-info')">i</button>
         </div>
 
-        <div class="progress-container">
-            <div class="progress-bar" id="progress-bar"></div>
+        <div class="game-area">
+            <div class="column" id="col-bandeiras"></div>
+            <div class="column" id="col-nomes"></div>
         </div>
-
-        <div id="game-board">
-            </div>
 
         <div class="control-area">
+            <div class="ronda-txt">Ronda <span id="num-ronda">1</span> / 5</div>
             <button class="btn-check" onclick="verificarRonda()">VERIFICAR ✅</button>
         </div>
     </main>
 
     <div id="certificado-container">
         <div id="certificado">
-            <h2 style="color:#9b59b6; font-size: 2rem;">DIPLOMA</h2>
-            <p>Certificamos que:</p>
+            <h2 style="color:#9b59b6; font-size: 2.5rem;">DIPLOMA</h2>
+            <p style="margin-top:15px;">Certificamos que:</p>
             <div class="nome-aluno" id="display-nome">_________</div>
-            <p>Concluiu com sucesso o desafio sobre os<br><strong>Estados-Membros da União Europeia</strong>.</p>
-            <button class="btn-check" onclick="window.print()" style="margin-top:20px; background:#34495e; box-shadow:0 4px 0 #2c3e50;">IMPRIMIR</button>
+            <p>Concluiu com sucesso o desafio educativo sobre os<br><strong>Estados-Membros da União Europeia</strong>.</p>
+            <button class="btn-check" onclick="window.print()" style="margin-top:30px; background:#34495e; box-shadow:0 4px 0 #2c3e50;">IMPRIMIR</button>
         </div>
     </div>
 
     <div id="modal-info" class="modal">
-        <h3>Como Jogar</h3>
-        <p>Arrasta a bandeira da esquerda para a caixa do país correspondente à direita.</p>
-        <button class="btn-check" style="margin-top:15px" onclick="fecharModais()">OK</button>
+        <h3 style="color:#9b59b6; margin-bottom: 10px;">Como Jogar</h3>
+        <p style="margin-bottom:20px; font-size: 0.95rem; line-height: 1.4;">Leva as 5 bandeiras para os nomes corretos e clica em <b>Verificar</b>.<br><br>As que estiverem no sítio certo ficam verdes. As erradas voltam para o lado esquerdo.</p>
+        <button class="btn-check" style="padding:10px 25px;" onclick="fecharModais()">ENTENDIDO</button>
     </div>
 
     <div id="modal-nome" class="modal">
-        <h3 style="color:#2ecc71;">Parabéns!</h3>
-        <p>Escreve o teu nome para o diploma:</p>
-        <input type="text" id="input-nome" placeholder="Teu nome" style="width:100%; padding:10px; margin:15px 0; border-radius:8px; border:1px solid #ddd; text-align:center;">
+        <h3 style="color:#2ecc71;">Parabéns! 🇪🇺</h3>
+        <p style="margin:15px 0;">Completaste o desafio! Escreve o teu nome para o diploma:</p>
+        <input type="text" id="input-nome" placeholder="Teu nome aqui" style="width:95%; padding:12px; margin-bottom:20px; border-radius:10px; border:2px solid #ddd; text-align:center;">
         <button class="btn-check" onclick="gerarCertificado()">GERAR DIPLOMA</button>
     </div>
 
@@ -177,81 +188,72 @@
         let ronda = 1;
         let draggedEl = null;
 
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').style.display = document.getElementById('sidebar').classList.contains('active') ? 'block' : 'none'; }
         function abrirModal(id) { document.getElementById(id).style.display = 'block'; document.getElementById('overlay').style.display = 'block'; }
-        function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); document.getElementById('overlay').style.display = 'none'; document.getElementById('sidebar').classList.remove('active'); }
+        function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); document.getElementById('overlay').style.display = 'none'; }
 
         function novaRonda() {
             if (ronda > 5) { abrirModal('modal-nome'); return; }
-            
-            // Atualizar Barra
-            document.getElementById('progress-bar').style.width = (ronda * 20) + "%";
+            document.getElementById('num-ronda').innerText = ronda;
             
             const selecionados = pool.splice(0, 5);
-            const board = document.getElementById('game-board');
-            board.innerHTML = '';
+            const flagsCol = document.getElementById('col-bandeiras');
+            const namesCol = document.getElementById('col-nomes');
+            flagsCol.innerHTML = ''; namesCol.innerHTML = '';
 
-            // Criar nomes embaralhados para as zonas de drop
-            const nomesEmbaralhados = [...selecionados].sort(() => Math.random() - 0.5);
+            selecionados.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'flag-card'; div.draggable = true; div.dataset.id = p.id;
+                div.innerHTML = `<img src="imagens/${p.img}" onerror="this.src='data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27 width%3D%2730%27 height%3D%2730%27%3E%3Ctext x%3D%2750%25%27 y%3D%2750%25%27 font-size%3D%2712%27 text-anchor%3D%27middle%27 dy%3D%27.3em%27%3E%3F%3C%2Ftext%3E%3C%2Fsvg%3E';">`;
+                div.addEventListener('dragstart', e => draggedEl = e.currentTarget);
+                div.addEventListener('touchstart', tStart, {passive:false});
+                div.addEventListener('touchmove', tMove, {passive:false});
+                div.addEventListener('touchend', tEnd);
+                flagsCol.appendChild(div);
+            });
 
-            selecionados.forEach((p, index) => {
-                const row = document.createElement('div');
-                row.className = 'game-row';
-                
-                // Bandeira (Origem)
-                const flagDiv = document.createElement('div');
-                flagDiv.className = 'flag-card'; flagDiv.draggable = true; flagDiv.dataset.id = p.id;
-                flagDiv.innerHTML = `<img src="imagens/${p.img}" onerror="this.src='data:image/svg+xml;%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2730%27 height=%2730%27%3E%3Ctext x=%2750%25%27 y=%2750%25%27 font-size=%2712%27 text-anchor=%27middle%27 dy=%3D%27.3em%27%3E%3F%3C/text%3E%3C/svg%3E';">`;
-                
-                // Zona de Drop (Destino)
-                const dropDiv = document.createElement('div');
-                dropDiv.className = 'dropzone'; dropDiv.dataset.id = nomesEmbaralhados[index].id;
-                dropDiv.innerHTML = `<span class="pais-txt">${nomesEmbaralhados[index].nome}</span>`;
-
-                // Eventos
-                flagDiv.addEventListener('dragstart', e => draggedEl = e.currentTarget);
-                flagDiv.addEventListener('touchstart', tStart, {passive:false});
-                flagDiv.addEventListener('touchmove', tMove, {passive:false});
-                flagDiv.addEventListener('touchend', tEnd);
-                dropDiv.addEventListener('dragover', e => e.preventDefault());
-                dropDiv.addEventListener('drop', e => handlePlace(e.currentTarget));
-
-                row.appendChild(flagDiv);
-                row.appendChild(dropDiv);
-                board.appendChild(row);
+            [...selecionados].sort(() => Math.random() - 0.5).forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'dropzone'; div.dataset.id = p.id;
+                div.innerHTML = `<span class="pais-txt">${p.nome}</span>`;
+                div.addEventListener('dragover', e => e.preventDefault());
+                div.addEventListener('drop', e => handlePlace(e.currentTarget));
+                namesCol.appendChild(div);
             });
         }
 
         function handlePlace(zone) {
             if(zone.classList.contains('correct')) return;
             const existing = zone.querySelector('.flag-card');
-            if(existing) {
-                // Se já houver uma, devolve-a para a sua linha original (o que é complexo, então apenas impede ou troca)
-                return; 
-            }
+            if(existing) document.getElementById('col-bandeiras').appendChild(existing);
             zone.prepend(draggedEl);
             zone.classList.remove('wrong');
         }
 
         function verificarRonda() {
             const zones = document.querySelectorAll('.dropzone');
-            let certas = 0;
+            let certasNestaRonda = 0;
+
             zones.forEach(zone => {
                 const flag = zone.querySelector('.flag-card');
-                if(flag && flag.dataset.id === zone.dataset.id) {
-                    zone.classList.add('correct');
-                    certas++;
-                } else if (flag) {
-                    zone.classList.add('wrong');
-                    setTimeout(() => {
-                        // Devolve a bandeira para a primeira linha que estiver vazia no lado esquerdo
-                        const emptyRow = [...document.querySelectorAll('.game-row')].find(r => r.children.length === 1);
-                        if(emptyRow) emptyRow.prepend(flag);
-                        zone.classList.remove('wrong');
-                    }, 800);
+                if(flag) {
+                    if(flag.dataset.id === zone.dataset.id) {
+                        zone.classList.add('correct');
+                        certasNestaRonda++;
+                    } else {
+                        zone.classList.add('wrong');
+                        setTimeout(() => {
+                            if(!zone.classList.contains('correct')) {
+                                document.getElementById('col-bandeiras').appendChild(flag);
+                                zone.classList.remove('wrong');
+                            }
+                        }, 800);
+                    }
                 }
             });
-            if(certas === 5) setTimeout(() => { ronda++; novaRonda(); }, 1000);
+
+            if(certasNestaRonda === 5) {
+                setTimeout(() => { ronda++; novaRonda(); }, 1000);
+            }
         }
 
         function gerarCertificado() {
@@ -263,12 +265,11 @@
             document.getElementById('certificado-container').style.display = 'flex';
         }
 
-        // TOUCH LOGIC
         function tStart(e) { draggedEl = e.currentTarget; }
         function tMove(e) { 
             e.preventDefault(); const t = e.touches[0]; 
-            draggedEl.style.position = 'fixed'; draggedEl.style.left = (t.clientX - 40) + 'px'; 
-            draggedEl.style.top = (t.clientY - 27) + 'px'; draggedEl.style.zIndex = 1000; 
+            draggedEl.style.position = 'fixed'; draggedEl.style.left = t.clientX - 40 + 'px'; 
+            draggedEl.style.top = t.clientY - 27 + 'px'; draggedEl.style.zIndex = 1000; 
         }
         function tEnd(e) {
             draggedEl.style.display = 'none'; 
@@ -277,6 +278,7 @@
             draggedEl.style.display = 'flex'; draggedEl.style.position = 'static';
             const zone = target ? target.closest('.dropzone') : null;
             if(zone) handlePlace(zone);
+            else document.getElementById('col-bandeiras').appendChild(draggedEl);
         }
 
         novaRonda();
