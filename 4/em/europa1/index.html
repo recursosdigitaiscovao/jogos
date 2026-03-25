@@ -12,23 +12,26 @@
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             height: 100vh; height: 100svh;
             display: flex; flex-direction: column; overflow: hidden;
+            color: #2c3e50;
         }
 
         /* HEADER */
         header {
-            width: 100%; background: #fff; padding: 10px 20px;
+            width: 100%; background: #fff; padding: 15px 20px;
             display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid #ddd; z-index: 100;
+            border-bottom: 1px solid #ddd; z-index: 100; flex-shrink: 0;
         }
+
         .header-left { display: flex; align-items: center; gap: 12px; }
-        .menu-icon { font-size: 1.5rem; cursor: pointer; color: #2c3e50; }
-        .header-icon-ue { width: 24px; height: 16px; object-fit: cover; border-radius: 2px; }
-        header h1 { font-size: 0.9rem; color: #2c3e50; font-weight: 800; text-transform: uppercase; }
+        header h1 { font-size: 0.9rem; color: #2c3e50; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        
+        .header-icon { font-size: 1.2rem; }
 
         .btn-voltar-3d {
-            text-decoration: none; color: #fff; background: #9b59b6;
-            font-weight: bold; font-size: 0.75rem; padding: 6px 12px;
-            border-radius: 6px; border: 1px solid #8e44ad; box-shadow: 0 2px 0 #8e44ad;
+            text-decoration: none; color: #ffffff; background-color: #9b59b6;
+            font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
+            border-radius: 8px; display: flex; align-items: center; gap: 8px;
+            border: 1px solid #8e44ad; box-shadow: 0 2px 0 #8e44ad; cursor: pointer;
         }
 
         /* SIDEBAR */
@@ -39,16 +42,25 @@
         }
         .sidebar.active { left: 0; }
         .sidebar h3 { color: #9b59b6; margin-bottom: 15px; border-bottom: 2px solid #f5f5f5; padding-bottom: 10px; }
-        .sidebar-item { 
-            text-decoration: none; color: #2c3e50; font-weight: bold; padding: 14px; 
-            border-radius: 12px; display: block; transition: 0.2s; margin-bottom: 5px;
-        }
-        .sidebar-item:hover { background-color: #9b59b6; color: #fff; }
         
+        .sidebar-item { 
+            text-decoration: none; color: #444; font-weight: bold; padding: 14px; 
+            border-radius: 12px; background: #f8f9fa; display: flex; align-items: center; 
+            gap: 15px; margin-bottom: 10px; transition: 0.2s;
+        }
+        
+        /* Efeito Hover com a cor do botão voltar */
+        .sidebar-item:hover { 
+            background-color: #9b59b6; 
+            color: #ffffff; 
+        }
+
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+        .menu-icon { font-size: 1.5rem; cursor: pointer; }
 
         /* JOGO QUIZ */
-        main { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; }
+        main { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; overflow-y: auto; }
         
         .instrucao-topo { 
             display: flex; align-items: center; gap: 10px; 
@@ -116,24 +128,50 @@
         #certificado { background: #fff; padding: 30px; border: 12px double #9b59b6; text-align: center; width: 100%; max-width: 500px; }
         .nome-aluno { font-family: 'Georgia', serif; font-size: 2rem; border-bottom: 2px solid #333; margin: 20px 0; display: inline-block; min-width: 220px; }
 
-        footer { padding: 8px; background: #fff; text-align: center; color: #7f8c8d; font-size: 0.7rem; border-top: 1px solid #eee; }
+        /* FOOTER */
+        footer {
+            width: 100%; padding: 15px; background: #fff; text-align: center; 
+            color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.8rem; flex-shrink: 0;
+        }
+
+        .icon-info-circular { 
+            background: #9b59b6; color: white; width: 24px; height: 24px; 
+            border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; 
+            border: none; font-weight: bold; font-size: 0.85rem;
+            box-shadow: 0 2px 0 #8e44ad;
+        }
+        .btn-info-purp { 
+            background: #9b59b6; color: white; width: 24px; height: 24px; 
+            border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; 
+            border: none; font-weight: bold; font-size: 0.85rem;
+            box-shadow: 0 2px 0 #8e44ad; cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="fecharModais()"></div>
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     
     <div class="sidebar" id="sidebar">
         <h3>Navegação</h3>
-        <a href="../../../" class="sidebar-item">🏠 Início</a>
-        <a href="../../../4" class="sidebar-item">👨🚀 4º Ano</a>
+        <nav class="sidebar-menu">
+            <a href="../../" class="sidebar-item">🏠 Início</a>
+            <a href="../../pre" class="sidebar-item">🦒 Pré-Escolar</a>
+            <a href="../../1" class="sidebar-item">🐥 1º Ano</a>
+            <a href="../../2" class="sidebar-item">🐢 2º Ano</a>
+            <a href="../../3" class="sidebar-item">🦊 3º Ano</a>
+            <a href="../../4" class="sidebar-item">👨🚀 4º Ano</a>
+        </nav>
+        <button onclick="toggleMenu()" style="margin-top:auto; padding:10px; border:none; background:#eee; cursor:pointer; font-weight:bold; border-radius:8px;">Fechar ×</button>
     </div>
 
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <img src="https://flagcdn.com/w40/eu.png" class="header-icon-ue" alt="UE">
-            <h1>Quiz Bandeiras</h1>
+            <h1>
+                <span class="header-icon">👨🚀</span>
+                Quiz Bandeiras
+            </h1>
         </div>
         <a href="../" class="btn-voltar-3d">⬅ Voltar</a>
     </header>
@@ -194,13 +232,14 @@
         <button class="btn-acao" onclick="gerarCertificado()">Ver Diploma</button>
     </div>
 
-    <footer>Professor Luís - Recursos Digitais Covão</footer>
+    <footer>Recursos Digitais Covão - Professor Luís</footer>
 
+    <!-- Carrega a base de dados externa -->
     <script src="dados.js"></script>
 
     <script>
         let nivel = 1;
-        let ronda = 0; // 0 a 4 por nível
+        let ronda = 0; 
         let totalAcertos = 0;
         let erros = 0;
         let tempoSegundos = 0;
@@ -226,22 +265,20 @@
             }, 1000);
         }
 
-        function toggleMenu() { 
-            const sb = document.getElementById('sidebar');
-            const ov = document.getElementById('overlay');
-            sb.classList.toggle('active');
-            ov.style.display = sb.classList.contains('active') ? 'block' : 'none';
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
         }
 
         function abrirModal(id) { 
             document.getElementById(id).style.display = 'block'; 
-            document.getElementById('overlay').style.display = 'block'; 
+            document.getElementById('overlay').classList.add('active'); 
         }
 
         function fecharModais() { 
             document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); 
             document.getElementById('sidebar').classList.remove('active'); 
-            document.getElementById('overlay').style.display = 'none'; 
+            document.getElementById('overlay').classList.remove('active'); 
         }
 
         function carregarPergunta() {
@@ -270,7 +307,6 @@
                 this.src = `https://flagcdn.com/w320/${correta.id}.png`; 
             };
 
-            // Dificuldade: Nível 5 tem 4 opções, os outros têm 3
             const numOpcoes = (nivel === 5) ? 4 : 3;
             let erradas = paises.filter(p => p.id !== correta.id).sort(() => Math.random() - 0.5).slice(0, numOpcoes - 1);
             let opcoes = [correta, ...erradas].sort(() => Math.random() - 0.5);
@@ -309,7 +345,6 @@
         function proximoNivel() {
             nivel++;
             ronda = 0;
-            // Limpa as estrelas para o novo nível
             document.querySelectorAll('.star').forEach(s => s.classList.remove('filled'));
             fecharModais();
             carregarPergunta();
