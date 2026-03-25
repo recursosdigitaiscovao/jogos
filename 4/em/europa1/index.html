@@ -50,15 +50,13 @@
         /* JOGO QUIZ */
         main { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; }
         
-        /* Ajuste de pixeis do topo até ao texto */
         .instrucao-topo { 
             display: flex; align-items: center; gap: 10px; 
-            margin-top: 25px; /* Espaço do topo */
-            margin-bottom: 20px; /* Espaço até às estrelas */
+            margin-top: 25px; 
+            margin-bottom: 20px; 
         }
         .instrucao-topo h2 { color: #2c3e50; font-size: 1.1rem; font-weight: 700; }
 
-        /* Icone de Informação Estilizado */
         .btn-info-purp, .icon-info-circular { 
             background: #9b59b6; color: white; width: 24px; height: 24px; 
             border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; 
@@ -121,7 +119,7 @@
     <div class="sidebar" id="sidebar">
         <h3>Navegação</h3>
         <a href="../../../" class="sidebar-item">🏠 Início</a>
-        <a href="../../../4" class="sidebar-item">👨‍🚀 4º Ano</a>
+        <a href="../../../4" class="sidebar-item">👨🚀 4º Ano</a>
     </div>
 
     <header>
@@ -180,27 +178,18 @@
 
     <footer>Professor Luís - Recursos Digitais Covão</footer>
 
-    <script>
-        const paises = [
-            { n: "ÁUSTRIA", id: "at", img: "austria_m.png" }, { n: "BÉLGICA", id: "be", img: "belgica_m.png" },
-            { n: "BULGÁRIA", id: "bg", img: "bulgaria_m.png" }, { n: "CROÁCIA", id: "hr", img: "croacia_m.png" },
-            { n: "CHIPRE", id: "cy", img: "chipre_m.png" }, { n: "CHÉQUIA", id: "cz", img: "chequia_m.png" },
-            { n: "DINAMARCA", id: "dk", img: "dinamarca_m.png" }, { n: "ESTÓNIA", id: "ee", img: "estonia_m.png" },
-            { n: "FINLÂNDIA", id: "fi", img: "finlandia_m.png" }, { n: "FRANÇA", id: "fr", img: "franca_m.png" },
-            { n: "ALEMANHA", id: "de", img: "alemanha_m.png" }, { n: "GRÉCIA", id: "gr", img: "grecia_m.png" },
-            { n: "HUNGRIA", id: "hu", img: "hungria_m.png" }, { n: "IRLANDA", id: "ie", img: "irlanda_m.png" },
-            { n: "ITÁLIA", id: "it", img: "italia_m.png" }, { n: "LETÓNIA", id: "lv", img: "letonia_m.png" },
-            { n: "LITUÂNIA", id: "lt", img: "lituania_m.png" }, { n: "LUXEMBURGO", id: "lu", img: "luxemburgo_m.png" },
-            { n: "MALTA", id: "mt", img: "malta_m.png" }, { n: "PAÍSES BAIXOS", id: "nl", img: "paisesbaixos_m.png" },
-            { n: "POLÓNIA", id: "pl", img: "polonia_m.png" }, { n: "PORTUGAL", id: "pt", img: "portugal_m.png" },
-            { n: "ROMÉNIA", id: "ro", img: "romenia_m.png" }, { n: "ESLOVÁQUIA", id: "sk", img: "eslovaquia_m.png" },
-            { n: "ESLOVÉNIA", id: "si", img: "eslovenia_m.png" }, { n: "ESPANHA", id: "es", img: "espanha_m.png" },
-            { n: "SUÉCIA", id: "se", img: "suecia_m.png" }
-        ];
+    <!-- IMPORTANTE: Carrega os dados antes da lógica -->
+    <script src="dados.js"></script>
 
+    <script>
         let acertos = 0;
-        let pool = [...paises].sort(() => Math.random() - 0.5);
+        let pool = [];
         let correta = null;
+
+        // Inicializa o pool de perguntas
+        function inicializarPool() {
+            pool = [...paises].sort(() => Math.random() - 0.5);
+        }
 
         function toggleMenu() { 
             const sb = document.getElementById('sidebar');
@@ -226,11 +215,20 @@
                 return; 
             }
             
+            // Se o pool acabar antes dos 10 acertos (improvável na UE), reinicia
+            if (pool.length === 0) inicializarPool();
+
             correta = pool.pop();
             const imgEl = document.getElementById('flag-img');
+            
+            // Tenta carregar imagem local, se falhar usa a CDN
             imgEl.src = `imagens/${correta.img}`;
-            imgEl.onerror = function() { this.src = `https://flagcdn.com/w320/${correta.id}.png`; };
+            imgEl.onerror = function() { 
+                this.onerror = null; // Evita loop infinito
+                this.src = `https://flagcdn.com/w320/${correta.id}.png`; 
+            };
 
+            // Gera opções erradas
             let erradas = paises.filter(p => p.id !== correta.id).sort(() => Math.random() - 0.5).slice(0, 2);
             let opcoes = [correta, ...erradas].sort(() => Math.random() - 0.5);
 
@@ -259,7 +257,10 @@
                 setTimeout(carregarPergunta, 1000);
             } else {
                 btn.classList.add('wrong');
-                botoes.forEach(b => { if(b.innerText === correta.n) b.classList.add('correct'); });
+                // Mostra a correta
+                botoes.forEach(b => { 
+                    if(b.innerText === correta.n) b.classList.add('correct'); 
+                });
                 setTimeout(carregarPergunta, 1800);
             }
         }
@@ -273,6 +274,8 @@
             fecharModais();
         }
 
+        // Início do jogo
+        inicializarPool();
         carregarPergunta();
     </script>
 </body>
