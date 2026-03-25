@@ -1,1 +1,30 @@
-
+// dados.js
+const paises = [
+    { id: "at", nome: "ÁUSTRIA", img: "austria_m.png" },
+    { id: "be", nome: "BÉLGICA", img: "belgica_m.png" },
+    { id: "bg", nome: "BULGÁRIA", img: "bulgaria_m.png" },
+    { id: "hr", nome: "CROÁCIA", img: "croacia_m.png" },
+    { id: "cy", nome: "CHIPRE", img: "chipre_m.png" },
+    { id: "cz", nome: "CHÉQUIA", img: "chequia_m.png" },
+    { id: "dk", nome: "DINAMARCA", img: "dinamarca_m.png" },
+    { id: "ee", nome: "ESTÓNIA", img: "estonia_m.png" },
+    { id: "fi", nome: "FINLÂNDIA", img: "finlandia_m.png" },
+    { id: "fr", nome: "FRANÇA", img: "franca_m.png" },
+    { id: "de", nome: "ALEMANHA", img: "alemanha_m.png" },
+    { id: "gr", nome: "GRÉCIA", img: "grecia_m.png" },
+    { id: "hu", nome: "HUNGRIA", img: "hungria_m.png" },
+    { id: "ie", nome: "IRLANDA", img: "irlanda_m.png" },
+    { id: "it", nome: "ITÁLIA", img: "italia_m.png" },
+    { id: "lv", nome: "LETÓNIA", img: "letonia_m.png" },
+    { id: "lt", nome: "LITUÂNIA", img: "lituania_m.png" },
+    { id: "lu", nome: "LUXEMBURGO", img: "luxemburgo_m.png" },
+    { id: "mt", nome: "MALTA", img: "malta_m.png" },
+    { id: "nl", nome: "PAÍSES BAIXOS", img: "paisesbaixos_m.png" },
+    { id: "pl", nome: "POLÓNIA", img: "polonia_m.png" },
+    { id: "pt", nome: "PORTUGAL", img: "portugal_m.png" },
+    { id: "ro", nome: "ROMÉNIA", img: "romenia_m.png" },
+    { id: "sk", nome: "ESLOVÁQUIA", img: "eslovaquia_m.png" },
+    { id: "si", nome: "ESLOVÉNIA", img: "eslovenia_m.png" },
+    { id: "es", nome: "ESPANHA", img: "espanha_m.png" },
+    { id: "se", nome: "SUÉCIA", img: "suecia_m.png" }
+];
