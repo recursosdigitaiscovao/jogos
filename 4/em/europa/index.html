@@ -44,48 +44,55 @@
 
         /* JOGO */
         main { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; }
-        .instrucao-topo { display: flex; align-items: center; gap: 10px; margin: 10px 0 15px 0; }
-        .instrucao-topo h2 { color: #2c3e50; font-size: 1.1rem; font-weight: 700; }
+        .instrucao-topo { display: flex; align-items: center; gap: 10px; margin: 5px 0 10px 0; }
+        .instrucao-topo h2 { color: #2c3e50; font-size: 1rem; font-weight: 700; }
 
-        /* SISTEMA DE ESTRELAS */
-        .stars-container { display: flex; gap: 8px; margin-bottom: 15px; }
-        .star { 
-            font-size: 2rem; 
-            color: transparent; 
-            -webkit-text-stroke: 2px #9b59b6; 
-            transition: 0.3s;
-        }
-        .star.filled { 
-            color: #9b59b6; 
+        /* ESTRELAS */
+        .stars-container { display: flex; gap: 8px; margin-bottom: 10px; }
+        .star { font-size: 1.8rem; color: transparent; -webkit-text-stroke: 2px #9b59b6; transition: 0.3s; }
+        .star.filled { color: #9b59b6; }
+
+        /* ESTRUTURA DE TABELA FIXA (GRID) */
+        #game-board { 
+            display: grid; 
+            grid-template-columns: 85px 220px; /* Colunas fixas: Bandeira | Dropzone */
+            gap: 10px; 
+            width: fit-content;
+            align-items: center;
         }
 
-        /* ÁREA DE JOGO ALINHADA */
-        #game-board { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 380px; }
-        .game-row { display: flex; align-items: center; gap: 15px; justify-content: space-between; height: 65px; }
+        /* Contentor para a bandeira não "dançar" quando sai */
+        .flag-slot {
+            width: 80px; height: 55px;
+            display: flex; align-items: center; justify-content: center;
+        }
 
         .flag-card { 
             width: 80px; height: 55px; background: white; border-radius: 6px; 
             box-shadow: 0 4px 8px rgba(0,0,0,0.15); cursor: grab; touch-action: none;
             display: flex; align-items: center; justify-content: center;
-            overflow: hidden; border: 1px solid #ddd;
+            overflow: hidden; border: 1px solid #ddd; z-index: 10;
         }
         .flag-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
         .dropzone { 
-            width: 240px; height: 65px; background: #fff; border: 2px dashed #bdc3c7; 
-            border-radius: 12px; display: flex; align-items: center; justify-content: center; 
-            padding: 4px; position: relative; transition: 0.3s;
+            width: 220px; height: 60px; background: #fff; border: 2px dashed #bdc3c7; 
+            border-radius: 12px; display: flex; align-items: center; justify-content: flex-start; 
+            padding-left: 5px; position: relative; transition: 0.3s;
         }
         .dropzone.correct { background: #eafaf1 !important; border-color: #2ecc71 !important; pointer-events: none; }
         .dropzone.wrong { background: #fdedec; border-color: #e74c3c; }
-        .pais-txt { font-weight: 800; font-size: 0.85rem; color: #2c3e50; text-align: center; pointer-events: none; }
+        
+        .pais-txt { 
+            font-weight: 800; font-size: 0.8rem; color: #2c3e50; 
+            flex: 1; text-align: center; pointer-events: none;
+        }
 
-        /* BOTÃO VERIFICAR */
-        .control-area { margin-top: 20px; }
+        .control-area { margin-top: 15px; }
         .btn-check { 
-            background: #2ecc71; color: white; border: none; padding: 12px 50px; 
+            background: #2ecc71; color: white; border: none; padding: 10px 40px; 
             border-radius: 12px; font-weight: bold; cursor: pointer; 
-            box-shadow: 0 4px 0 #27ae60; font-size: 1.1rem;
+            box-shadow: 0 4px 0 #27ae60; font-size: 1rem;
         }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 150; }
@@ -95,7 +102,7 @@
         #certificado { background: #fff; padding: 30px; border: 12px double #9b59b6; text-align: center; width: 100%; max-width: 500px; }
         .nome-aluno { font-family: 'Georgia', serif; font-size: 2rem; border-bottom: 2px solid #333; margin: 20px 0; display: inline-block; min-width: 220px; }
 
-        footer { padding: 10px; background: #fff; text-align: center; color: #7f8c8d; font-size: 0.75rem; border-top: 1px solid #eee; }
+        footer { padding: 8px; background: #fff; text-align: center; color: #7f8c8d; font-size: 0.7rem; border-top: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -128,15 +135,10 @@
         </div>
 
         <div class="stars-container" id="stars-box">
-            <span class="star">★</span>
-            <span class="star">★</span>
-            <span class="star">★</span>
-            <span class="star">★</span>
-            <span class="star">★</span>
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
         </div>
 
-        <div id="game-board">
-            </div>
+        <div id="game-board"></div>
 
         <div class="control-area">
             <button class="btn-check" onclick="verificarRonda()">VERIFICAR ✅</button>
@@ -205,20 +207,22 @@
             const nomesEmbaralhados = [...selecionados].sort(() => Math.random() - 0.5);
 
             selecionados.forEach((p, index) => {
-                const row = document.createElement('div');
-                row.className = 'game-row';
+                // Criar o slot da bandeira (Coluna 1)
+                const flagSlot = document.createElement('div');
+                flagSlot.className = 'flag-slot';
+                flagSlot.id = 'slot-' + index;
 
-                // Criar Bandeira
                 const flagDiv = document.createElement('div');
                 flagDiv.className = 'flag-card'; flagDiv.draggable = true; flagDiv.dataset.id = p.id;
+                flagDiv.dataset.home = 'slot-' + index; // Guarda onde deve voltar se errar
                 flagDiv.innerHTML = `<img src="imagens/${p.img}" onerror="this.src='https://flagcdn.com/w80/${p.id}.png'">`;
 
-                // Criar Zona de Drop
+                // Criar a dropzone (Coluna 2)
                 const dropDiv = document.createElement('div');
                 dropDiv.className = 'dropzone'; dropDiv.dataset.id = nomesEmbaralhados[index].id;
                 dropDiv.innerHTML = `<span class="pais-txt">${nomesEmbaralhados[index].nome}</span>`;
 
-                // Eventos Drag
+                // Eventos
                 flagDiv.addEventListener('dragstart', e => draggedEl = e.currentTarget);
                 flagDiv.addEventListener('touchstart', tStart, {passive:false});
                 flagDiv.addEventListener('touchmove', tMove, {passive:false});
@@ -227,9 +231,9 @@
                 dropDiv.addEventListener('dragover', e => e.preventDefault());
                 dropDiv.addEventListener('drop', e => handlePlace(e.currentTarget));
 
-                row.appendChild(flagDiv);
-                row.appendChild(dropDiv);
-                board.appendChild(row);
+                flagSlot.appendChild(flagDiv);
+                board.appendChild(flagSlot);
+                board.appendChild(dropDiv);
             });
         }
 
@@ -251,10 +255,11 @@
                 } else if(flag) {
                     zone.classList.add('wrong');
                     setTimeout(() => {
-                        const originalRow = Array.from(document.querySelectorAll('.game-row')).find(row => row.children.length < 2);
-                        if(originalRow) originalRow.prepend(flag);
+                        // Faz a bandeira voltar para o seu slot original na coluna da esquerda
+                        const homeSlot = document.getElementById(flag.dataset.home);
+                        homeSlot.appendChild(flag);
                         zone.classList.remove('wrong');
-                    }, 800);
+                    }, 600);
                 }
             });
 
@@ -276,7 +281,6 @@
             document.getElementById('certificado-container').style.display = 'flex';
         }
 
-        // Touch Functions (Mobile)
         function tStart(e) { draggedEl = e.currentTarget; }
         function tMove(e) { 
             e.preventDefault(); const t = e.touches[0]; 
@@ -290,6 +294,7 @@
             draggedEl.style.display = 'flex'; draggedEl.style.position = 'static';
             const zone = target ? target.closest('.dropzone') : null;
             if(zone) handlePlace(zone);
+            else document.getElementById(draggedEl.dataset.home).appendChild(draggedEl);
         }
 
         novaRonda();
