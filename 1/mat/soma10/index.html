@@ -5,146 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>1º Ano - Somar10 com Balões</title>
     <style>
-        /* Reset e Estilo Geral - Mantendo Template_1 */
+        /* Reset e Estilo Geral - Template_1 */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
-            background-color: #fff4e6; /* Laranja Suave */
+            background-color: #fff4e6;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            height: 100vh;
-            height: 100svh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            touch-action: manipulation;
+            height: 100vh; height: 100svh;
+            display: flex; flex-direction: column;
+            overflow: hidden; touch-action: manipulation;
         }
 
-        /* HEADER */
         header {
-            width: 100%;
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            flex-shrink: 0;
-            z-index: 100;
+            width: 100%; background-color: white; padding: 12px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid rgba(0,0,0,0.05); z-index: 100;
         }
 
         .header-left { display: flex; align-items: center; gap: 12px; }
-        .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; }
         header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; }
-        .icon-header { font-size: 1.4rem; }
 
         .btn-voltar-3d {
-            text-decoration: none;
-            color: #ffffff;
-            background-color: #ff9f43;
-            font-weight: bold;
-            font-size: 0.8rem;
-            padding: 8px 18px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid #e67e22;
-            box-shadow: 0 3px 0 #e67e22;
-            transition: all 0.1s ease;
-            cursor: pointer;
+            text-decoration: none; color: #ffffff; background-color: #ff9f43;
+            font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
+            border-radius: 8px; border: 1px solid #e67e22;
+            box-shadow: 0 3px 0 #e67e22; cursor: pointer;
         }
-        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
 
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
-            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200;
-            padding: 25px; display: flex; flex-direction: column;
-        }
-        .sidebar.active { left: 0; }
-        .sidebar h3 { color: #e67e22; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #ffcc80; }
-        .sidebar-item {
-            text-decoration: none; color: #636e72; font-weight: 600;
-            padding: 14px; border-radius: 15px; background: #fdfdfd;
-            display: flex; align-items: center; gap: 15px; margin-bottom: 8px;
-            border: 1px solid #eee; transition: all 0.2s ease;
-        }
-        .sidebar-item:hover { background-color: #fff4e6; color: #e67e22; border-color: #ffcc80; transform: translateX(5px); }
-
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.3); display: none; z-index: 150;
-        }
-        .overlay.active { display: block; }
-
-        /* ÁREA PRINCIPAL */
+        /* ÁREA DO JOGO */
         main {
             flex: 1; display: flex; flex-direction: column;
-            align-items: center; justify-content: flex-start; padding: 20px;
-            position: relative;
-        }
-
-        .pontuacao-container {
-            display: flex; align-items: center; gap: 15px; margin-bottom: 20px; z-index: 10;
+            align-items: center; position: relative; padding: 20px;
+            z-index: 5;
         }
 
         #score {
             font-size: 1.1rem; font-weight: bold; color: #e67e22;
             background: white; padding: 8px 25px; border-radius: 50px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px;
         }
 
         #question-box {
-            font-size: clamp(2.2rem, 12vw, 3.5rem); font-weight: bold;
-            color: #2c3e50; border: 6px solid #ff9f43; padding: 20px;
-            width: 95%; max-width: 450px; border-radius: 30px;
-            background: white; text-align: center;
-            box-shadow: 0 15px 35px rgba(230,126,34,0.15);
-            z-index: 10;
+            font-size: 2.5rem; font-weight: bold; color: #2c3e50;
+            border: 6px solid #ff9f43; padding: 20px; width: 90%;
+            max-width: 400px; border-radius: 25px; background: white;
+            text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            z-index: 20; position: relative;
         }
 
-        /* CONTENTOR DE BALÕES */
-        #balloon-container {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; /* Deixa clicar através do container */
-            overflow: hidden;
+        /* CONTENTOR DE BALÕES - Ocupa todo o ecrã abaixo do header */
+        #balloon-area {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; pointer-events: none; z-index: 10;
         }
 
         .balloon {
-            position: absolute;
-            bottom: -150px;
-            width: 80px;
-            height: 100px;
+            position: absolute; bottom: -120px;
+            width: 75px; height: 95px;
             background-color: #ff9f43;
-            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2rem;
-            font-weight: bold;
-            cursor: pointer;
-            pointer-events: auto;
-            box-shadow: inset -5px -10px rgba(0,0,0,0.1);
-            animation: float Up 8s linear infinite;
+            border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.8rem; font-weight: bold;
+            cursor: pointer; pointer-events: auto;
+            box-shadow: inset -5px -8px rgba(0,0,0,0.15);
+            animation: floatUp 7s linear forwards;
         }
 
-        /* Fio do balão */
+        /* O "nó" do balão */
         .balloon::after {
-            content: "";
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            width: 2px;
-            height: 25px;
-            background: #e67e22;
+            content: "▼"; position: absolute; bottom: -10px;
+            left: 50%; transform: translateX(-50%);
+            color: inherit; font-size: 12px;
         }
 
         @keyframes floatUp {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-120vh) rotate(10deg); opacity: 0.8; }
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-110vh) rotate(15deg); }
         }
 
         /* MODAIS */
@@ -152,219 +88,146 @@
             display: none; position: fixed; top: 50%; left: 50%; 
             transform: translate(-50%, -50%); width: 85%; max-width: 320px;
             background: white; padding: 25px; border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 400;
-            text-align: center; border: 3px solid #ff9f43;
-        }
-
-        .btn-info {
-            background-color: #ff9f43; color: white; width: 38px; height: 38px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 1.2rem; border: 1px solid #e67e22;
-            box-shadow: 0 3px 0 #e67e22; cursor: pointer;
+            z-index: 400; text-align: center; border: 3px solid #ff9f43;
         }
 
         footer {
             width: 100%; padding: 12px; background-color: white;
             text-align: center; color: #95a5a6; font-size: 0.8rem;
-            border-top: 1px solid #eee; flex-shrink: 0; z-index: 100;
+            border-top: 1px solid #eee; z-index: 100;
         }
 
-        /* ANIMAÇÕES DE FEEDBACK */
-        .wrong-anim { color: #e74c3c !important; border-color: #e74c3c !important; animation: shake 0.4s; }
-        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
-        .correct-anim { border-color: #2ecc71 !important; }
-        .fill-number { color: #2ecc71; text-decoration: underline; }
+        .correct-anim { border-color: #2ecc71 !important; transform: scale(1.05); transition: 0.3s; }
+        .wrong-anim { border-color: #e74c3c !important; animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-8px);} 75% {transform: translateX(8px);} }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="fecharMenu()"></div>
-    
-    <div id="modal-info" class="modal-custom">
-        <h2 style="color: #e67e22; margin-bottom: 15px;">Como Jogar</h2>
-        <p style="color: #636e72; margin-bottom: 20px; font-weight: 500;">
-            Resolve a soma! <br><br>
-            Toca no <strong>balão voador</strong> que tem o número certo! <br><br>
-            <strong>Nível 1:</strong> Descobre o resultado.<br>
-            <strong>Nível 2:</strong> Descobre a parcela que falta.
-        </p>
-        <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="fecharMenu()">ENTENDI!</button>
-    </div>
-
-    <div id="final-modal" class="modal-custom" style="display: none;">
-        <h2 style="color: #2ecc71; margin-bottom: 15px;">🏆 EXCELENTE!</h2>
-        <div style="background:#f9f9f9; padding:15px; border-radius:15px; margin-bottom: 20px;">
-            <p>Nível 1: <span id="s1"></span>✅ | <span id="e1"></span>❌</p>
-            <p>Nível 2: <span id="s2"></span>✅ | <span id="e2"></span>❌</p>
-        </div>
-        <button class="btn-voltar-3d" style="width: 100%; justify-content: center; background-color: #2c3e50; border-color: #1a252f; box-shadow: 0 3px 0 #1a252f;" onclick="location.reload()">REPETIR 🔄</button>
-    </div>
-
-    <div class="sidebar" id="sidebar">
-        <h3>Menu Escolar</h3>
-        <nav>
-            <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-            <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
-            <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
-            <a href="/jogos/2/" class="sidebar-item">🐢 2º Ano</a>
-            <a href="/jogos/3/" class="sidebar-item">🦊 3º Ano</a>
-            <a href="/jogos/4/" class="sidebar-item">👨‍🚀 4º Ano</a>
-        </nav>
-    </div>
-
     <header>
         <div class="header-left">
-            <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <div class="icon-header">➕</div> 
+            <div style="font-size: 1.4rem;">🎈</div>
             <h1>Somar10 - 1º Ano</h1>
         </div>
-        <a href="/jogos/1/mat/" class="btn-voltar-3d">⬅ VOLTAR</a>
+        <a href="#" class="btn-voltar-3d" onclick="location.reload()">🔄 REINICIAR</a>
     </header>
 
     <main>
-        <div class="pontuacao-container">
-            <div id="score">Pontos: 0</div>
-            <button class="btn-info" onclick="mostrarInfo()">i</button>
-        </div>
-
-        <div id="question-box"></div>
-        <div id="balloon-container"></div>
+        <div id="score">Pontos: 0</div>
+        <div id="question-box">A carregar...</div>
+        <div id="balloon-area"></div>
     </main>
 
-    <footer>
-        Recursos Digitais Covão • Professor Luís
-    </footer>
+    <div id="final-modal" class="modal-custom">
+        <h2 style="color: #2ecc71;">🏆 EXCELENTE!</h2>
+        <p style="margin: 15px 0;">Completaste o desafio das somas!</p>
+        <button class="btn-voltar-3d" style="width: 100%;" onclick="location.reload()">JOGAR NOVO</button>
+    </div>
+
+    <footer>Recursos Digitais Covão • Professor Luís</footer>
 
     <script>
         let score = 0;
         let correctAnswer = 0;
         let canClick = true;
         let currentLevel = 1;
-        let stats = { l1_hits: 0, l1_errors: 0, l2_hits: 0, l2_errors: 0 };
-        const colors = ['#ff9f43', '#ee5253', '#10ac84', '#5f27cd', '#2e86de'];
-
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        function fecharMenu() {
-            document.getElementById('sidebar').classList.remove('active');
-            document.getElementById('overlay').classList.remove('active');
-            document.getElementById('modal-info').style.display = 'none';
-        }
-
-        function mostrarInfo() {
-            document.getElementById('overlay').classList.add('active');
-            document.getElementById('modal-info').style.display = 'block';
-        }
+        const colors = ['#ff9f43', '#ee5253', '#10ac84', '#5f27cd', '#2e86de', '#f368e0'];
 
         function createBalloon(value) {
-            const container = document.getElementById('balloon-container');
+            const area = document.getElementById('balloon-area');
             const balloon = document.createElement('div');
             balloon.className = 'balloon';
             balloon.innerText = value;
             
-            // Posição horizontal aleatória
-            balloon.style.left = Math.random() * (window.innerWidth - 100) + 'px';
-            
-            // Velocidade e atraso aleatórios
-            const duration = 6 + Math.random() * 4;
-            balloon.style.animationDuration = duration + 's';
+            // Cor aleatória
             balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Posição horizontal aleatória (entre 5% e 85% da largura)
+            const randomX = 5 + (Math.random() * 80);
+            balloon.style.left = randomX + '%';
+            
+            // Velocidade aleatória
+            const duration = 6 + Math.random() * 3;
+            balloon.style.animationDuration = duration + 's';
 
-            balloon.onclick = () => check(value, balloon);
-            container.appendChild(balloon);
+            balloon.onclick = (e) => {
+                e.stopPropagation();
+                checkAnswer(value, balloon);
+            };
 
-            // Remover balão quando sair do ecrã
-            setTimeout(() => {
-                if (balloon.parentElement) balloon.remove();
-            }, duration * 1000);
+            area.appendChild(balloon);
+
+            // Remove do DOM quando a animação acaba
+            balloon.addEventListener('animationend', () => {
+                balloon.remove();
+            });
         }
 
         function nextQuestion() {
-            if (score >= 10 && currentLevel === 1) {
-                currentLevel = 2;
-                alert("🌟 BOA! Agora descobre o número que falta na conta!");
-            }
             if (score >= 20) {
-                showFinalReport();
+                document.getElementById('final-modal').style.display = 'block';
                 return;
             }
 
             canClick = true;
             const qBox = document.getElementById('question-box');
-            const container = document.getElementById('balloon-container');
-            container.innerHTML = ''; 
             qBox.classList.remove('correct-anim', 'wrong-anim');
 
             let n1, n2, res;
-
-            if (currentLevel === 1) {
-                n1 = Math.floor(Math.random() * 11); 
-                n2 = Math.floor(Math.random() * (11 - n1)); // Garante soma até 10
+            if (score < 10) {
+                // Nível 1: Soma simples
+                n1 = Math.floor(Math.random() * 8); 
+                n2 = Math.floor(Math.random() * (11 - n1));
                 correctAnswer = n1 + n2;
-                qBox.innerHTML = `${n1} + ${n2} = <span id="gap">?</span>`;
+                qBox.innerHTML = `${n1} + ${n2} = ?`;
             } else {
-                res = Math.floor(Math.random() * 11);
-                n1 = Math.floor(Math.random() * (res + 1));
+                // Nível 2: Parcela em falta
+                res = Math.floor(Math.random() * 8) + 2;
+                n1 = Math.floor(Math.random() * res);
                 correctAnswer = res - n1;
-                qBox.innerHTML = `${n1} + <span id="gap">__</span> = ${res}`;
+                qBox.innerHTML = `${n1} + __ = ${res}`;
             }
 
-            // Gerar balões
+            // Criar opções (balões)
             let choices = [correctAnswer];
             while(choices.length < 4) {
                 let r = Math.floor(Math.random() * 11);
                 if(!choices.includes(r)) choices.push(r);
             }
             
-            choices.forEach((val, index) => {
-                setTimeout(() => createBalloon(val), index * 800);
+            // Baralhar e lançar balões com pequenos atrasos
+            choices.sort(() => Math.random() - 0.5);
+            choices.forEach((val, i) => {
+                setTimeout(() => {
+                    if (canClick) createBalloon(val);
+                }, i * 1200);
             });
         }
 
-        function check(selected, balloonEl) {
+        function checkAnswer(selected, balloonEl) {
             if (!canClick) return;
             const qBox = document.getElementById('question-box');
-            const gap = document.getElementById('gap');
 
-            if(selected === correctAnswer) {
+            if (selected === correctAnswer) {
                 canClick = false;
                 score++;
-                currentLevel === 1 ? stats.l1_hits++ : stats.l2_hits++;
                 document.getElementById('score').innerText = `Pontos: ${score}`;
-                gap.innerHTML = selected;
-                gap.className = "fill-number";
                 qBox.classList.add('correct-anim');
+                qBox.innerText = "MUITO BEM!";
                 
-                // Efeito de rebentar
-                balloonEl.style.transform = "scale(1.5)";
-                balloonEl.style.opacity = "0";
+                // Remove todos os balões da área
+                document.getElementById('balloon-area').innerHTML = '';
                 
-                setTimeout(nextQuestion, 1200);
+                setTimeout(nextQuestion, 1500);
             } else {
-                if(score > 0) score--; 
-                currentLevel === 1 ? stats.l1_errors++ : stats.l2_errors++;
-                document.getElementById('score').innerText = `Pontos: ${score}`;
                 qBox.classList.add('wrong-anim');
-                
-                // Balão errado "cai" ou desaparece
-                balloonEl.style.backgroundColor = "#e74c3c";
+                balloonEl.style.backgroundColor = '#e74c3c';
                 setTimeout(() => qBox.classList.remove('wrong-anim'), 500);
             }
         }
 
-        function showFinalReport() {
-            document.getElementById('overlay').classList.add('active');
-            document.getElementById('s1').innerText = stats.l1_hits;
-            document.getElementById('e1').innerText = stats.l1_errors;
-            document.getElementById('s2').innerText = stats.l2_hits;
-            document.getElementById('e2').innerText = stats.l2_errors;
-            document.getElementById('final-modal').style.display = 'block';
-        }
-
-        nextQuestion();
+        // Iniciar
+        window.onload = nextQuestion;
     </script>
 </body>
 </html>
