@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>4º Ano - Associa Bandeiras PRO</title>
+    <title>4º Ano - Associa Bandeiras</title>
     <script src="dados.js"></script>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -11,9 +11,6 @@
         :root {
             --primary: #9b59b6;
             --primary-dark: #8e44ad;
-            --gold: #f1c40f;
-            --silver: #bdc3c7;
-            --bronze: #cd7f32;
         }
 
         body {
@@ -23,6 +20,7 @@
             display: flex; flex-direction: column; overflow: hidden;
         }
 
+        /* HEADER */
         header {
             width: 100%; background: #fff; padding: 10px 20px;
             display: flex; align-items: center; justify-content: space-between;
@@ -36,72 +34,79 @@
             text-decoration: none; color: #fff; background: var(--primary);
             font-weight: bold; font-size: 0.75rem; padding: 7px 14px;
             border-radius: 8px; border: 1px solid var(--primary-dark);
+            box-shadow: 0 2px 0 var(--primary-dark);
         }
 
-        /* SIDEBAR */
+        /* SIDEBAR (Menu Hamburger) */
         .sidebar {
             position: fixed; left: -260px; top: 0; width: 260px; height: 100%;
             background: #fff; box-shadow: 2px 0 10px rgba(0,0,0,0.2);
             transition: 0.3s ease; z-index: 200; padding: 20px;
         }
         .sidebar.active { left: 0; }
-        .sidebar-item { padding: 12px 15px; border-bottom: 1px solid #f5f5f5; cursor: pointer; color: #2c3e50; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 10px; border-radius: 8px; }
+        .sidebar h3 { color: var(--primary); margin-bottom: 15px; border-bottom: 2px solid #f5f5f5; padding-bottom: 10px; }
+        .sidebar-item { 
+            padding: 12px 15px; border-bottom: 1px solid #f5f5f5; cursor: pointer; 
+            color: #2c3e50; font-weight: 600; text-decoration: none; 
+            display: flex; align-items: center; gap: 10px; border-radius: 8px; transition: 0.2s;
+        }
         .sidebar-item:hover { background-color: var(--primary); color: #fff; }
 
-        /* CRONÓMETRO */
-        .game-stats { display: flex; gap: 20px; margin-bottom: 10px; font-weight: bold; color: var(--primary-dark); font-size: 1.1rem; }
+        /* BARRA DE ESTATÍSTICAS (Tempo - Estrelas - Erros) */
+        .stats-bar {
+            display: flex; align-items: center; justify-content: center;
+            gap: 25px; margin: 15px 0 10px 0;
+            font-weight: 800; color: var(--primary-dark);
+        }
+        .stat-box { font-size: 1rem; min-width: 80px; text-align: center; }
 
         main { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; }
         
-        .instrucao-topo { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
+        .instrucao-topo { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .instrucao-topo h2 { color: #2c3e50; font-size: 1.1rem; font-weight: 700; }
 
         .btn-info {
-            background: var(--primary); color: #fff; width: 24px; height: 24px;
-            border-radius: 50%; border: none; font-weight: bold; font-style: italic; cursor: pointer;
+            background: var(--primary); color: #fff; width: 22px; height: 22px;
+            border-radius: 50%; border: none; font-weight: bold; font-style: italic;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; box-shadow: 0 2px 0 var(--primary-dark);
         }
 
         /* ESTRELAS */
-        .stars-container { display: flex; gap: 10px; margin-bottom: 15px; }
-        .star { font-size: 2rem; color: transparent; -webkit-text-stroke: 2px var(--primary); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .star.filled { color: var(--primary); transform: scale(1.2); }
+        .stars-container { display: flex; gap: 8px; }
+        .star { font-size: 1.8rem; color: transparent; -webkit-text-stroke: 2px var(--primary); transition: 0.3s; }
+        .star.filled { color: var(--primary); }
 
         /* TABULEIRO */
         #game-board { display: grid; grid-template-columns: 85px 220px; gap: 12px; width: fit-content; align-items: center; }
         .flag-slot { width: 80px; height: 55px; border: 2px dashed #ccc; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
-        .flag-card { width: 80px; height: 55px; background: white; border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.15); cursor: grab; touch-action: none; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid #ddd; }
+        .flag-card { width: 80px; height: 55px; background: white; border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.15); cursor: grab; touch-action: none; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid #ddd; z-index: 10; }
         .flag-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
         .dropzone { width: 220px; height: 60px; background: #fff; border: 2px dashed #bdc3c7; border-radius: 12px; display: flex; align-items: center; padding-left: 5px; transition: 0.3s; }
         .dropzone.correct { background: #eafaf1 !important; border-color: #2ecc71 !important; pointer-events: none; }
         .dropzone.wrong { background: #fdedec; border-color: #e74c3c; animation: shake 0.4s; }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
         .pais-txt { font-weight: 800; font-size: 0.85rem; color: #2c3e50; flex: 1; text-align: center; }
 
-        /* BOTÃO VERIFICAR */
+        /* BOTÃO VERIFICAR ROXO E PEQUENO */
+        .control-area { margin-top: 20px; }
         .btn-check { 
-            background: var(--primary); color: #fff; border: none; padding: 12px 35px; 
-            border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1rem;
-            box-shadow: 0 4px 0 var(--primary-dark); margin-top: 20px;
+            background: var(--primary); color: #fff; border: none; 
+            padding: 10px 30px; border-radius: 10px; font-weight: bold; 
+            cursor: pointer; font-size: 0.95rem; text-transform: uppercase;
+            box-shadow: 0 4px 0 var(--primary-dark); transition: 0.1s;
         }
         .btn-check:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--primary-dark); }
 
-        /* CONFETIS */
-        .confetti { position: fixed; width: 10px; height: 10px; background: red; z-index: 999; pointer-events: none; }
-
-        /* DIPLOMA E MODAIS */
+        /* OVERLAY E MODAIS */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 150; }
         .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 20px; z-index: 1000; width: 85%; max-width: 350px; text-align: center; border: 4px solid var(--primary); }
-        
-        #certificado-container { display: none; flex: 1; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
-        #certificado { background: #fff; padding: 30px; border: 12px double var(--primary); text-align: center; width: 100%; max-width: 500px; position: relative; }
-        .medalha-img { font-size: 4rem; display: block; margin: 10px auto; }
+        #certificado-container { display: none; flex: 1; align-items: center; justify-content: center; padding: 20px; }
+        #certificado { background: #fff; padding: 30px; border: 12px double var(--primary); text-align: center; width: 100%; max-width: 500px; }
         .nome-aluno { font-family: 'Georgia', serif; font-size: 2rem; border-bottom: 2px solid #333; margin: 15px 0; display: inline-block; min-width: 220px; }
+        .confetti { position: fixed; width: 8px; height: 8px; z-index: 999; pointer-events: none; }
 
         footer { padding: 8px; background: #fff; text-align: center; color: #7f8c8d; font-size: 0.7rem; border-top: 1px solid #eee; }
     </style>
@@ -111,7 +116,7 @@
     <div class="overlay" id="overlay" onclick="fecharModais()"></div>
     
     <nav class="sidebar" id="sidebar">
-        <h3 style="padding:15px; color:var(--primary);">Navegação</h3>
+        <h3>Menu</h3>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
         <a href="/jogos/pre/" class="sidebar-item">🎨 Pré-Escolar</a>
         <a href="/jogos/1/" class="sidebar-item">❶ 1º Ano</a>
@@ -130,48 +135,48 @@
     </header>
 
     <main id="game-main">
-        <div class="game-stats">
-            Tempo: <span id="timer">00:00</span> | Erros: <span id="error-count">0</span>
+        <!-- Barra de Estatísticas: Tempo - Estrelas - Erros -->
+        <div class="stats-bar">
+            <div class="stat-box" title="Tempo de Jogo">⏱️ <span id="timer">00:00</span></div>
+            <div class="stars-container" id="stars-box">
+                <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+            </div>
+            <div class="stat-box" title="Total de Erros">❌ <span id="error-count">0</span></div>
         </div>
 
         <div class="instrucao-topo">
-            <h2>Estados-Membros da União Europeia</h2>
+            <h2>Associa as bandeiras aos Países</h2>
             <button class="btn-info" onclick="toggleInfo()">i</button>
-        </div>
-
-        <div class="stars-container" id="stars-box">
-            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
         </div>
 
         <div id="game-board"></div>
 
         <div class="control-area">
-            <button class="btn-check" onclick="verificarRonda()">Verificar ✅</button>
+            <button class="btn-check" onclick="verificarRonda()">Verificar</button>
         </div>
     </main>
 
     <div id="modal-info" class="modal">
-        <h3 style="color:var(--primary);">Como Jogar</h3>
-        <p style="text-align:left; margin-top:10px;">• Arrasta a bandeira para o país.<br>• Ganha 5 estrelas para o teu diploma.<br>• Se clicares na bandeira, eu digo o nome!</p>
-        <button class="btn-check" onclick="toggleInfo()">Vamos a isso!</button>
+        <h3 style="color:var(--primary); margin-bottom:15px;">Como Jogar</h3>
+        <p style="font-size: 0.9rem; line-height: 1.4; text-align: left;">Arrasta as 5 bandeiras para os nomes corretos e clica em Verificar.<br><br>• Se clicares na bandeira, ouves o nome!<br>• Ganha 5 estrelas para o diploma!</p>
+        <button class="btn-check" style="margin-top:20px;" onclick="toggleInfo()">Entendido</button>
     </div>
 
     <div id="modal-nome" class="modal">
-        <h3 style="color:var(--primary);">🎉 VITÓRIA! 🎉</h3>
-        <p>Completaste o desafio! Escreve o teu nome:</p>
-        <input type="text" id="input-nome" placeholder="Teu nome aqui" style="width:95%; padding:12px; margin:15px 0; border-radius:10px; border:2px solid #ddd; text-align:center;">
-        <button class="btn-check" onclick="gerarCertificado()">RECEBER DIPLOMA</button>
+        <h3 style="color:var(--primary);">🎉 Parabéns! 🎉</h3>
+        <p style="margin:15px 0;">Completaste o desafio das bandeiras! Escreve o teu nome:</p>
+        <input type="text" id="input-nome" placeholder="Teu nome aqui" style="width:95%; padding:12px; margin-bottom:20px; border-radius:10px; border:2px solid #ddd; text-align:center;">
+        <button class="btn-check" onclick="gerarCertificado()">Gerar Diploma</button>
     </div>
 
     <div id="certificado-container">
         <div id="certificado">
-            <h2 style="color:var(--primary); font-size: 2.2rem;">DIPLOMA DE MÉRITO</h2>
-            <div id="medalha-display" class="medalha-img">🥇</div>
-            <p>Certificamos que</p>
+            <h2 style="color:var(--primary); font-size: 2.2rem;">DIPLOMA</h2>
+            <div id="medalha-display" style="font-size: 3.5rem; margin: 10px 0;">🥇</div>
+            <p>Certificamos que:</p>
             <div class="nome-aluno" id="display-nome">_________</div>
-            <p>superou com distinção o desafio educativo sobre as bandeiras da <strong>União Europeia</strong>.</p>
-            <p style="margin-top:15px; font-size: 0.8rem; color: #666;" id="data-conclusao"></p>
-            <button class="btn-check" onclick="window.print()" style="margin-top:20px; background:#34495e;">IMPRIMIR</button>
+            <p>Concluiu com sucesso o desafio sobre os símbolos da <strong>União Europeia</strong>.</p>
+            <button class="btn-check" onclick="window.print()" style="margin-top:25px; background:#34495e; box-shadow:0 4px 0 #2c3e50;">IMPRIMIR</button>
         </div>
     </div>
 
@@ -181,116 +186,73 @@
         let pool = [...paises].sort(() => Math.random() - 0.5);
         let ronda = 0;
         let errosTotais = 0;
-        let draggedEl = null;
         let tempoSegundos = 0;
+        let draggedEl = null;
         let cronometroInterval;
 
-        // --- SISTEMA DE SOM (Fabricado via Código) ---
+        // Sons fabricados
         function tocarSom(sucesso) {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
+            const osc = ctx.createOscillator(); const gain = ctx.createGain();
             osc.connect(gain); gain.connect(ctx.destination);
-            
-            if(sucesso) {
-                osc.frequency.setValueAtTime(800, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
-            } else {
-                osc.frequency.setValueAtTime(200, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.2);
-            }
-            osc.start();
-            gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.3);
-            osc.stop(ctx.currentTime + 0.3);
+            if(sucesso) { osc.frequency.setValueAtTime(800, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1); }
+            else { osc.frequency.setValueAtTime(200, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.2); }
+            osc.start(); gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.3); osc.stop(ctx.currentTime + 0.3);
         }
 
-        // --- SÍNTESE DE VOZ ---
-        function falar(texto) {
-            if ('speechSynthesis' in window) {
-                const msg = new SpeechSynthesisUtterance(texto);
-                msg.lang = 'pt-PT';
-                window.speechSynthesis.speak(msg);
-            }
-        }
+        // Voz
+        function falar(texto) { if ('speechSynthesis' in window) { const msg = new SpeechSynthesisUtterance(texto); msg.lang = 'pt-PT'; window.speechSynthesis.speak(msg); } }
 
-        // --- CONFETIS ---
+        // Confetis
         function lancarConfetis() {
-            for(let i=0; i<50; i++) {
-                const c = document.createElement('div');
-                c.className = 'confetti';
-                c.style.left = Math.random() * 100 + 'vw';
-                c.style.top = '-10px';
-                c.style.backgroundColor = ['#9b59b6','#2ecc71','#f1c40f','#e74c3c','#3498db'][Math.floor(Math.random()*5)];
-                c.style.transform = `rotate(${Math.random()*360}deg)`;
+            for(let i=0; i<40; i++) {
+                const c = document.createElement('div'); c.className = 'confetti';
+                c.style.left = Math.random() * 100 + 'vw'; c.style.top = '-10px';
+                c.style.backgroundColor = ['#9b59b6','#2ecc71','#f1c40f','#3498db'][Math.floor(Math.random()*4)];
                 document.body.appendChild(c);
-                
-                const anim = c.animate([
-                    { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
-                    { transform: `translateY(100vh) rotate(${Math.random()*720}deg)`, opacity: 0 }
-                ], { duration: 2000 + Math.random()*3000, easing: 'cubic-bezier(0,.59,1,.53)' });
-                
-                anim.onfinish = () => c.remove();
+                c.animate([{ transform: 'translateY(0) rotate(0deg)', opacity: 1 }, { transform: 'translateY(100vh) rotate(720deg)', opacity: 0 }], { duration: 2000 + Math.random()*2000 }).onfinish = () => c.remove();
             }
         }
 
-        // --- CRONÓMETRO ---
         function iniciarCronometro() {
             cronometroInterval = setInterval(() => {
                 tempoSegundos++;
-                let min = Math.floor(tempoSegundos / 60);
-                let seg = tempoSegundos % 60;
-                document.getElementById('timer').innerText = 
-                    `${min.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
+                const min = Math.floor(tempoSegundos / 60).toString().padStart(2,'0');
+                const seg = (tempoSegundos % 60).toString().padStart(2,'0');
+                document.getElementById('timer').innerText = `${min}:${seg}`;
             }, 1000);
         }
 
         function toggleSidebar() {
-            const sb = document.getElementById('sidebar');
-            const ov = document.getElementById('overlay');
-            sb.classList.toggle('active');
-            ov.style.display = sb.classList.contains('active') ? 'block' : 'none';
+            const sb = document.getElementById('sidebar'); const ov = document.getElementById('overlay');
+            sb.classList.toggle('active'); ov.style.display = sb.classList.contains('active') ? 'block' : 'none';
         }
 
         function toggleInfo() {
-            const m = document.getElementById('modal-info');
-            const ov = document.getElementById('overlay');
-            const vis = m.style.display === 'block';
-            m.style.display = vis ? 'none' : 'block';
-            ov.style.display = vis ? 'none' : 'block';
+            const m = document.getElementById('modal-info'); const ov = document.getElementById('overlay');
+            const vis = m.style.display === 'block'; m.style.display = vis ? 'none' : 'block'; ov.style.display = vis ? 'none' : 'block';
         }
 
         function fecharModais() {
-            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
             document.getElementById('sidebar').classList.remove('active');
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
             document.getElementById('overlay').style.display = 'none';
         }
 
         function novaRonda() {
-            if (ronda >= 5) {
-                clearInterval(cronometroInterval);
-                lancarConfetis();
-                document.getElementById('modal-nome').style.display = 'block';
-                document.getElementById('overlay').style.display = 'block';
-                return;
-            }
-            const board = document.getElementById('game-board');
-            board.innerHTML = '';
+            if (ronda >= 5) { clearInterval(cronometroInterval); lancarConfetis(); document.getElementById('modal-nome').style.display = 'block'; document.getElementById('overlay').style.display = 'block'; return; }
+            const board = document.getElementById('game-board'); board.innerHTML = '';
             const selecionados = pool.splice(0, 5);
             const nomesEmbaralhados = [...selecionados].sort(() => Math.random() - 0.5);
 
             selecionados.forEach((p, index) => {
-                const slot = document.createElement('div');
-                slot.className = 'flag-slot'; slot.id = 'slot-' + index;
-
-                const card = document.createElement('div');
-                card.className = 'flag-card'; card.draggable = true; card.dataset.id = p.id;
-                card.dataset.nome = p.nome; card.dataset.home = 'slot-' + index;
+                const slot = document.createElement('div'); slot.className = 'flag-slot'; slot.id = 'slot-' + index;
+                const card = document.createElement('div'); card.className = 'flag-card'; card.draggable = true;
+                card.dataset.id = p.id; card.dataset.home = 'slot-' + index;
                 card.innerHTML = `<img src="imagens/${p.img}" onerror="this.src='https://flagcdn.com/w160/${p.id}.png'">`;
-                
                 card.onclick = () => falar(p.nome);
 
-                const drop = document.createElement('div');
-                drop.className = 'dropzone'; drop.dataset.id = nomesEmbaralhados[index].id;
+                const drop = document.createElement('div'); drop.className = 'dropzone'; drop.dataset.id = nomesEmbaralhados[index].id;
                 drop.innerHTML = `<span class="pais-txt">${nomesEmbaralhados[index].nome}</span>`;
 
                 card.addEventListener('dragstart', e => draggedEl = e.currentTarget);
@@ -300,89 +262,40 @@
                 drop.addEventListener('dragover', e => e.preventDefault());
                 drop.addEventListener('drop', e => handlePlace(e.currentTarget));
 
-                slot.appendChild(card);
-                board.appendChild(slot);
-                board.appendChild(drop);
+                slot.appendChild(card); board.appendChild(slot); board.appendChild(drop);
             });
         }
 
-        function handlePlace(zone) {
-            if(zone.classList.contains('correct') || zone.querySelector('.flag-card')) return;
-            zone.prepend(draggedEl);
-            zone.classList.remove('wrong');
-        }
+        function handlePlace(zone) { if(zone.classList.contains('correct') || zone.querySelector('.flag-card')) return; zone.prepend(draggedEl); zone.classList.remove('wrong'); }
 
         function verificarRonda() {
             const zones = document.querySelectorAll('.dropzone');
-            let certas = 0;
-            let erroNaRonda = false;
-
+            let certas = 0; let erroRonda = false;
             zones.forEach(zone => {
                 const flag = zone.querySelector('.flag-card');
-                if(flag && flag.dataset.id === zone.dataset.id) {
-                    zone.classList.add('correct');
-                    certas++;
-                } else if(flag) {
-                    zone.classList.add('wrong');
-                    erroNaRonda = true;
-                    errosTotais++;
+                if(flag && flag.dataset.id === zone.dataset.id) { zone.classList.add('correct'); certas++; }
+                else if(flag) {
+                    zone.classList.add('wrong'); erroRonda = true; errosTotais++;
                     document.getElementById('error-count').innerText = errosTotais;
-                    setTimeout(() => {
-                        const home = document.getElementById(flag.dataset.home);
-                        if(home) home.appendChild(flag);
-                        zone.classList.remove('wrong');
-                    }, 600);
+                    setTimeout(() => { const home = document.getElementById(flag.dataset.home); if(home) home.appendChild(flag); zone.classList.remove('wrong'); }, 600);
                 }
             });
-
-            if(certas === 5) {
-                tocarSom(true);
-                const stars = document.querySelectorAll('.star');
-                if(stars[ronda]) stars[ronda].classList.add('filled');
-                ronda++;
-                setTimeout(novaRonda, 1000);
-            } else if(erroNaRonda) {
-                tocarSom(false);
-            }
+            if(certas === 5) { tocarSom(true); const stars = document.querySelectorAll('.star'); stars[ronda].classList.add('filled'); ronda++; setTimeout(novaRonda, 1000); }
+            else if(erroRonda) { tocarSom(false); }
         }
 
         function gerarCertificado() {
-            const nome = document.getElementById('input-nome').value;
-            if(!nome) return alert("Escreve o teu nome!");
-            
-            // Lógica de Medalhas
-            let medalha = "🥇";
-            if(errosTotais > 3 && errosTotais <= 7) medalha = "🥈";
-            if(errosTotais > 7) medalha = "🥉";
-
-            document.getElementById('display-nome').innerText = nome;
-            document.getElementById('medalha-display').innerText = medalha;
-            document.getElementById('data-conclusao').innerText = "Concluído em: " + new Date().toLocaleDateString();
-            
-            document.getElementById('game-main').style.display = 'none';
-            fecharModais();
-            document.getElementById('certificado-container').style.display = 'flex';
+            const nome = document.getElementById('input-nome').value; if(!nome) return alert("Escreve o teu nome!");
+            let med = "🥇"; if(errosTotais > 3 && errosTotais <= 8) med = "🥈"; else if(errosTotais > 8) med = "🥉";
+            document.getElementById('display-nome').innerText = nome; document.getElementById('medalha-display').innerText = med;
+            document.getElementById('game-main').style.display = 'none'; fecharModais(); document.getElementById('certificado-container').style.display = 'flex';
         }
 
-        // Touch Mobile
         function tStart(e) { draggedEl = e.currentTarget; }
-        function tMove(e) { 
-            e.preventDefault(); const t = e.touches[0]; 
-            draggedEl.style.position = 'fixed'; draggedEl.style.left = t.clientX - 40 + 'px'; 
-            draggedEl.style.top = t.clientY - 27 + 'px'; draggedEl.style.zIndex = 1000; 
-        }
-        function tEnd(e) {
-            draggedEl.style.display = 'none'; 
-            const t = e.changedTouches[0];
-            const target = document.elementFromPoint(t.clientX, t.clientY);
-            draggedEl.style.display = 'flex'; draggedEl.style.position = 'static';
-            const zone = target ? target.closest('.dropzone') : null;
-            if(zone) handlePlace(zone);
-            else document.getElementById(draggedEl.dataset.home).appendChild(draggedEl);
-        }
+        function tMove(e) { e.preventDefault(); const t = e.touches[0]; draggedEl.style.position = 'fixed'; draggedEl.style.left = t.clientX - 40 + 'px'; draggedEl.style.top = t.clientY - 27 + 'px'; draggedEl.style.zIndex = 1000; }
+        function tEnd(e) { draggedEl.style.display = 'none'; const t = e.changedTouches[0]; const target = document.elementFromPoint(t.clientX, t.clientY); draggedEl.style.display = 'flex'; draggedEl.style.position = 'static'; const zone = target ? target.closest('.dropzone') : null; if(zone) handlePlace(zone); else document.getElementById(draggedEl.dataset.home).appendChild(draggedEl); }
 
-        novaRonda();
-        iniciarCronometro();
+        novaRonda(); iniciarCronometro();
     </script>
 </body>
 </html>
