@@ -109,4 +109,188 @@
         <h3>Menu</h3>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
         <a href="/jogos/pre/" class="sidebar-item">🎨 Pré-Escolar</a>
-        <a href="/jogos
+        <a href="/jogos/1/" class="sidebar-item">❶ 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item">❷ 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item">❸ 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item">❹ 4º Ano</a>
+    </nav>
+
+    <header>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleSidebar()">☰</div>
+            <img src="https://flagcdn.com/w40/eu.png" style="width:24px;">
+            <h1>Associa Bandeiras</h1>
+        </div>
+        <a href="../" class="btn-voltar">⬅ VOLTAR</a>
+    </header>
+
+    <main id="game-main">
+        <div class="instrucao-topo">
+            <h2>Associa as bandeiras aos Países</h2>
+            <button class="btn-info" onclick="toggleInfo()">i</button>
+        </div>
+
+        <div class="stars-container" id="stars-box">
+            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+
+        <div id="game-board"></div>
+
+        <div class="control-area">
+            <button class="btn-check" onclick="verificarRonda()">Verificar ✅</button>
+        </div>
+    </main>
+
+    <!-- Modal Informação -->
+    <div id="modal-info" class="modal">
+        <h3 style="color:var(--primary); margin-bottom:15px;">Como Jogar</h3>
+        <p style="font-size: 0.9rem; line-height: 1.4; text-align: left;">Arrasta as 5 bandeiras para os nomes corretos e clica em <b>Verificar</b>.<br><br>Ganha 5 estrelas para obter o teu diploma!</p>
+        <button class="btn-check" style="margin-top:20px;" onclick="toggleInfo()">Entendido</button>
+    </div>
+
+    <!-- Modal Nome -->
+    <div id="modal-nome" class="modal">
+        <h3 style="color:var(--primary);">Parabéns! 🇪🇺</h3>
+        <p style="margin:15px 0;">Escreve o teu nome para o diploma:</p>
+        <input type="text" id="input-nome" placeholder="Teu nome aqui" style="width:95%; padding:12px; margin-bottom:20px; border-radius:10px; border:2px solid #ddd; text-align:center;">
+        <button class="btn-check" style="margin: 0 auto;" onclick="gerarCertificado()">Gerar Diploma</button>
+    </div>
+
+    <!-- Certificado -->
+    <div id="certificado-container">
+        <div id="certificado">
+            <h2 style="color:var(--primary); font-size: 2.5rem;">DIPLOMA</h2>
+            <p>Certificamos que:</p>
+            <div class="nome-aluno" id="display-nome">_________</div>
+            <p>Concluiu com sucesso o desafio sobre os<br><strong>Estados-Membros da União Europeia</strong>.</p>
+            <button class="btn-check" onclick="window.print()" style="margin-top:30px; background:#34495e; box-shadow:0 4px 0 #2c3e50;">IMPRIMIR</button>
+        </div>
+    </div>
+
+    <footer>Professor Luís - Recursos Digitais Covão</footer>
+
+    <script>
+        let pool = [...paises].sort(() => Math.random() - 0.5);
+        let ronda = 0;
+        let draggedEl = null;
+
+        function toggleSidebar() {
+            const sb = document.getElementById('sidebar');
+            const ov = document.getElementById('overlay');
+            sb.classList.toggle('active');
+            ov.style.display = sb.classList.contains('active') ? 'block' : 'none';
+        }
+
+        function toggleInfo() {
+            const m = document.getElementById('modal-info');
+            const ov = document.getElementById('overlay');
+            const isVis = m.style.display === 'block';
+            m.style.display = isVis ? 'none' : 'block';
+            ov.style.display = isVis ? 'none' : 'block';
+        }
+
+        function fecharModais() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('modal-info').style.display = 'none';
+            document.getElementById('modal-nome').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function novaRonda() {
+            if (ronda >= 5) {
+                document.getElementById('modal-nome').style.display = 'block';
+                document.getElementById('overlay').style.display = 'block';
+                return;
+            }
+            const board = document.getElementById('game-board');
+            board.innerHTML = '';
+            const selecionados = pool.splice(0, 5);
+            const nomesEmbaralhados = [...selecionados].sort(() => Math.random() - 0.5);
+
+            selecionados.forEach((p, index) => {
+                const flagSlot = document.createElement('div');
+                flagSlot.className = 'flag-slot';
+                flagSlot.id = 'slot-' + index;
+
+                const flagDiv = document.createElement('div');
+                flagDiv.className = 'flag-card'; flagDiv.draggable = true; flagDiv.dataset.id = p.id;
+                flagDiv.dataset.home = 'slot-' + index;
+                flagDiv.innerHTML = `<img src="imagens/${p.img}" onerror="this.src='https://flagcdn.com/w80/${p.id}.png'">`;
+
+                const dropDiv = document.createElement('div');
+                dropDiv.className = 'dropzone'; dropDiv.dataset.id = nomesEmbaralhados[index].id;
+                dropDiv.innerHTML = `<span class="pais-txt">${nomesEmbaralhados[index].nome}</span>`;
+
+                flagDiv.addEventListener('dragstart', e => draggedEl = e.currentTarget);
+                flagDiv.addEventListener('touchstart', tStart, {passive:false});
+                flagDiv.addEventListener('touchmove', tMove, {passive:false});
+                flagDiv.addEventListener('touchend', tEnd);
+                dropDiv.addEventListener('dragover', e => e.preventDefault());
+                dropDiv.addEventListener('drop', e => handlePlace(e.currentTarget));
+
+                flagSlot.appendChild(flagDiv);
+                board.appendChild(flagSlot);
+                board.appendChild(dropDiv);
+            });
+        }
+
+        function handlePlace(zone) {
+            if(zone.classList.contains('correct') || zone.querySelector('.flag-card')) return;
+            zone.prepend(draggedEl);
+            zone.classList.remove('wrong');
+        }
+
+        function verificarRonda() {
+            const zones = document.querySelectorAll('.dropzone');
+            let certas = 0;
+            zones.forEach(zone => {
+                const flag = zone.querySelector('.flag-card');
+                if(flag && flag.dataset.id === zone.dataset.id) {
+                    zone.classList.add('correct');
+                    certas++;
+                } else if(flag) {
+                    zone.classList.add('wrong');
+                    setTimeout(() => {
+                        const homeSlot = document.getElementById(flag.dataset.home);
+                        if(homeSlot) homeSlot.appendChild(flag);
+                        zone.classList.remove('wrong');
+                    }, 600);
+                }
+            });
+            if(certas === 5) {
+                const stars = document.querySelectorAll('.star');
+                if(stars[ronda]) stars[ronda].classList.add('filled');
+                ronda++;
+                setTimeout(novaRonda, 1000);
+            }
+        }
+
+        function gerarCertificado() {
+            const nome = document.getElementById('input-nome').value;
+            if(!nome) return alert("Escreve o teu nome!");
+            document.getElementById('display-nome').innerText = nome;
+            document.getElementById('game-main').style.display = 'none';
+            fecharModais();
+            document.getElementById('certificado-container').style.display = 'flex';
+        }
+
+        function tStart(e) { draggedEl = e.currentTarget; }
+        function tMove(e) { 
+            e.preventDefault(); const t = e.touches[0]; 
+            draggedEl.style.position = 'fixed'; draggedEl.style.left = t.clientX - 40 + 'px'; 
+            draggedEl.style.top = t.clientY - 27 + 'px'; draggedEl.style.zIndex = 1000; 
+        }
+        function tEnd(e) {
+            draggedEl.style.display = 'none'; 
+            const t = e.changedTouches[0];
+            const target = document.elementFromPoint(t.clientX, t.clientY);
+            draggedEl.style.display = 'flex'; draggedEl.style.position = 'static';
+            const zone = target ? target.closest('.dropzone') : null;
+            if(zone) handlePlace(zone);
+            else document.getElementById(draggedEl.dataset.home).appendChild(draggedEl);
+        }
+
+        novaRonda();
+    </script>
+</body>
+</html>
