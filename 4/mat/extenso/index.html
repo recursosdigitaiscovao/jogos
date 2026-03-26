@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escrever por Extenso</title>
+    <title>Escrita por Extenso</title>
     <style>
-        /* === ESTILOS GLOBAIS === */
+        /* === ESTILOS GLOBAIS (Mantidos do Teu Template) === */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
@@ -16,7 +16,7 @@
             color: #2c3e50;
         }
 
-        /* === CABEÇALHO === */
+        /* === CABEÇALHO (HEADER) === */
         header {
             width: 100%; background: #fff; padding: 15px 20px;
             display: flex; align-items: center; justify-content: space-between;
@@ -25,7 +25,8 @@
 
         .header-left { display: flex; align-items: center; gap: 12px; }
         header h1 { font-size: 0.9rem; color: #2c3e50; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
-        
+        .header-icon { font-size: 1.2rem; }
+
         .btn-voltar-3d {
             text-decoration: none; color: #ffffff; background-color: #9b59b6;
             font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
@@ -34,142 +35,182 @@
         }
         .btn-voltar-3d:active { transform: translateY(3px); box-shadow: 0 0 0 #732d91; }
 
-        /* === SIDEBAR === */
+        /* === SIDEBAR / MENU HAMBURGER === */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
         .sidebar.active { left: 0; }
-        .sidebar-item { text-decoration: none; color: #444; font-weight: bold; padding: 14px; border-radius: 12px; background: #f8f9fa; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+        
+        .sidebar-item { 
+            text-decoration: none; color: #444; font-weight: bold; padding: 14px; 
+            border-radius: 12px; background: #f8f9fa; display: flex; align-items: center; 
+            gap: 15px; margin-bottom: 10px; transition: all 0.2s ease;
+        }
+        .sidebar-item:hover { background-color: #9b59b6; color: #ffffff; }
+
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
+        .menu-icon { font-size: 1.5rem; cursor: pointer; }
 
         /* === ÁREA PRINCIPAL === */
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        main {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 20px;
+            overflow-y: auto;
+        }
+
         .screen-container { display: flex; flex-direction: column; align-items: center; width: 100%; }
         
         .main-title { text-align: center; margin-bottom: 20px; }
         .title-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 5px 0; }
-        .title-row h2 { color: #2c3e50; font-size: 1.8rem; font-weight: 900; text-transform: uppercase; margin: 0; }
+        .title-row h2 { color: #2c3e50; font-size: 1.8rem; font-weight: 900; text-transform: uppercase; margin: 0; text-shadow: 1px 1px 0px #fff; }
+        .main-title p { color: #555; font-size: 1rem; font-weight: bold; }
         
-        .btn-info { width: 32px; height: 32px; border-radius: 50%; background-color: #9b59b6; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #732d91; box-shadow: 0 3px 0 #732d91; cursor: pointer; }
+        .btn-info {
+            width: 32px; height: 32px; border-radius: 50%;
+            background-color: #9b59b6; color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-style: normal; font-weight: bold; font-size: 1.2rem;
+            border: 2px solid #732d91; box-shadow: 0 3px 0 #732d91;
+            cursor: pointer; transition: 0.1s; padding-bottom: 2px;
+        }
+        .btn-info:active { transform: translateY(3px); box-shadow: 0 0 0 #732d91; }
 
-        /* JOGO */
+        /* ÁREA DO JOGO */
         .game-card {
-            background: white; padding: 30px 20px; border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center;
-            min-height: 300px; display: flex; flex-direction: column; justify-content: center;
+            background: white; padding: 30px 25px; border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 250px;
         }
 
-        /* Menu de Seleção */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
-        .btn-range { 
-            padding: 15px; border-radius: 12px; border: 2px solid #9b59b6; background: #fff; 
-            color: #9b59b6; font-weight: bold; cursor: pointer; transition: 0.2s;
+        /* Estilos específicos do Jogo */
+        .grid-niveis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        .btn-nivel { 
+            padding: 15px 10px; border-radius: 12px; border: 2px solid #9b59b6; background: #fff; 
+            color: #9b59b6; font-weight: 800; cursor: pointer; transition: 0.2s; font-size: 0.9rem;
         }
-        .btn-range:hover { background: #9b59b6; color: #fff; }
+        .btn-nivel:hover { background: #9b59b6; color: #fff; }
 
-        /* Área do Jogo Ativo */
-        #display-number { font-size: 3.5rem; font-weight: 900; color: #2c3e50; margin-bottom: 20px; letter-spacing: 2px; }
+        #numero-pergunta { font-size: 3rem; font-weight: 900; color: #2c3e50; margin-bottom: 15px; letter-spacing: 1px; }
         .input-extenso {
-            width: 100%; padding: 15px; font-size: 1.1rem; border: 2px solid #ddd; border-radius: 10px;
-            margin-bottom: 15px; outline: none; text-align: center;
+            width: 100%; padding: 15px; font-size: 1.1rem; border: 2px solid #ddd; border-radius: 12px;
+            margin-bottom: 15px; text-align: center; outline: none; transition: 0.3s;
         }
-        .input-extenso:focus { border-color: #9b59b6; }
-        .btn-check { 
-            width: 100%; padding: 15px; background: #27ae60; color: white; border: none; 
-            border-radius: 10px; font-weight: bold; font-size: 1.1rem; cursor: pointer;
-            box-shadow: 0 4px 0 #1e8449;
-        }
-        .btn-check:active { transform: translateY(2px); box-shadow: 0 2px 0 #1e8449; }
+        .input-extenso:focus { border-color: #9b59b6; box-shadow: 0 0 8px rgba(155,89,182,0.2); }
 
-        /* Modal Customizado */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(3px); }
-        .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; }
+        .btn-verificar {
+            width: 100%; padding: 15px; background-color: #27ae60; color: white; border-radius: 12px;
+            border: none; font-weight: bold; font-size: 1rem; cursor: pointer; border-bottom: 4px solid #1e8449;
+        }
+        .btn-verificar:active { transform: translateY(2px); border-bottom-width: 2px; }
+
         .hidden { display: none !important; }
 
-        footer { width: 100%; padding: 15px; background: #fff; text-align: center; color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.8rem; }
+        /* === MODAIS === */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center;
+            z-index: 1000; backdrop-filter: blur(3px);
+        }
+        .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; }
+        .btn-modal { padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; border: none; font-size: 1rem; color: white; width: 100%; }
+
+        footer { width: 100%; padding: 15px; background: #fff; text-align: center; color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.8rem; flex-shrink: 0; }
     </style>
 </head>
 <body>
 
+    <!-- OVERLAY DO MENU -->
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     
+    <!-- MENU HAMBURGER (Corrigido conforme solicitado) -->
     <div class="sidebar" id="sidebar">
         <h3>Navegação</h3>
         <nav class="sidebar-menu">
-            <a href="#" class="sidebar-item">🏠 Início</a>
-            <a href="#" class="sidebar-item">🔢 Matemática</a>
+            <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+            <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
+            <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
+            <a href="/jogos/2/" class="sidebar-item">🐢 2º Ano</a>
+            <a href="/jogos/3/" class="sidebar-item">🦊 3º Ano</a>
+            <a href="/jogos/4/" class="sidebar-item">👨‍🚀 4º Ano</a>
         </nav>
         <button onclick="toggleMenu()" style="margin-top:auto; padding:10px; border:none; background:#eee; cursor:pointer; font-weight:bold; border-radius:8px;">Fechar ×</button>
     </div>
 
+    <!-- CABEÇALHO -->
     <header>
         <div class="header-left">
-            <div class="menu-icon" onclick="toggleMenu()" style="cursor:pointer; font-size: 1.5rem;">☰</div>
-            <h1><span class="header-icon">✍️</span> Escrita por Extenso</h1>
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <h1><span class="header-icon">✍️</span> Escrita de Números</h1>
         </div>
-        <button onclick="handleVoltar()" class="btn-voltar-3d">⬅ Sair</button>
+        <button onclick="handleVoltar()" class="btn-voltar-3d">⬅ Voltar</button>
     </header>
 
     <main>
         <div class="screen-container">
             
             <div class="main-title">
-                <div style="font-size: 3.5rem; margin-bottom: -10px;">📝</div>
+                <div id="icon-container" style="font-size: 4rem; margin-bottom: -10px;">🔢</div>
+                
                 <div class="title-row">
-                    <h2 id="game-title">Escolhe o Nível</h2>
+                    <h2 id="titulo-ecra">Escolher Nível</h2>
                     <button class="btn-info" onclick="openInfo()">i</button>
                 </div>
-                <p id="game-subtitle">Até que número queres praticar?</p>
+                
+                <p id="subtitulo-ecra">Até que número queres treinar?</p>
             </div>
             
             <div class="game-card" id="game-area">
-                <!-- ECRÃ DE SELEÇÃO -->
-                <div id="menu-selecao" class="menu-grid">
-                    <button class="btn-range" onclick="startGame(100)">Até 100</button>
-                    <button class="btn-range" onclick="startGame(1000)">Até 1 000</button>
-                    <button class="btn-range" onclick="startGame(10000)">Até 10 000</button>
-                    <button class="btn-range" onclick="startGame(100000)">Até 100 000</button>
-                    <button class="btn-range" onclick="startGame(200000)">Até 200 000</button>
-                    <button class="btn-range" onclick="startGame(1000000)">Até 1 000 000</button>
+                
+                <!-- MENU DE SELEÇÃO -->
+                <div id="ecra-selecao" class="grid-niveis">
+                    <button class="btn-nivel" onclick="iniciarJogo(100)">ATÉ 100</button>
+                    <button class="btn-nivel" onclick="iniciarJogo(1000)">ATÉ 1 000</button>
+                    <button class="btn-nivel" onclick="iniciarJogo(10000)">ATÉ 10 000</button>
+                    <button class="btn-nivel" onclick="iniciarJogo(100000)">ATÉ 100 000</button>
+                    <button class="btn-nivel" onclick="iniciarJogo(200000)">ATÉ 200 000</button>
+                    <button class="btn-nivel" onclick="iniciarJogo(500000)">ATÉ 500 000</button>
                 </div>
 
-                <!-- ECRÃ DE JOGO ATIVO -->
-                <div id="jogo-ativo" class="hidden">
-                    <div id="display-number">0</div>
-                    <input type="text" id="input-resposta" class="input-extenso" placeholder="Escreve aqui..." autocomplete="off">
-                    <button class="btn-check" onclick="checkAnswer()">Verificar Resposta</button>
+                <!-- ÁREA DE JOGO ATIVO -->
+                <div id="ecra-jogo" class="hidden" style="width: 100%;">
+                    <div id="numero-pergunta">0</div>
+                    <input type="text" id="input-resposta" class="input-extenso" placeholder="Escreve aqui..." autocomplete="off" spellcheck="false">
+                    <button class="btn-verificar" onclick="verificarResposta()">VERIFICAR</button>
                 </div>
+
             </div>
         </div>
     </main>
 
-    <!-- MODAL DE INFO -->
+    <!-- POPUP DE INFORMAÇÃO -->
     <div id="modal-info" class="modal">
         <div class="modal-content">
+            <div style="width: 70px; height: 70px; background-color: #9b59b6; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; margin: 0 auto 15px auto; border: 3px solid #732d91;">i</div>
             <h2 style="color: #8e44ad; margin-bottom: 15px;">Como Jogar</h2>
-            <p style="text-align: left; color: #444; font-size: 0.95rem; line-height: 1.5;">
+            <p style="text-align: left; color: #444; font-size: 0.95rem; margin-bottom: 10px; line-height: 1.5;">
                 <b>1.</b> Observa o número que aparece no ecrã.<br><br>
-                <b>2.</b> Escreve o número por extenso (ex: 125 -> cento e vinte e cinco).<br><br>
-                <b>3.</b> Tem atenção aos "e" de ligação e à ortografia correta!
+                <b>2.</b> Escreve esse número por extenso (em palavras).<br><br>
+                <b>3.</b> Usa vírgula para separar os milhares das centenas (ex: 1 200 é "mil, duzentos").
             </p>
-            <button class="btn-voltar-3d" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="closeInfo()">Entendido!</button>
+            <button class="btn-modal" style="background: #9b59b6;" onclick="closeInfo()">Estou pronto.</button>
         </div>
     </div>
 
-    <!-- MODAL DE FEEDBACK (ACERTOU/ERROU) -->
+    <!-- MODAL FEEDBACK -->
     <div id="modal-feedback" class="modal">
         <div class="modal-content">
-            <div id="feedback-icon" style="font-size: 4rem; margin-bottom: 10px;">✅</div>
-            <h2 id="feedback-title">Boa!</h2>
-            <p id="feedback-text" style="margin: 15px 0; color: #555;"></p>
-            <button id="btn-next" class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="nextQuestion()">Próximo Número</button>
+            <div id="feedback-emoji" style="font-size: 4rem; margin-bottom: 10px;">✅</div>
+            <h2 id="feedback-titulo" style="margin-bottom: 10px;">Boa!</h2>
+            <p id="feedback-msg" style="color: #555; font-size: 0.9rem; margin-bottom: 20px;"></p>
+            <button id="btn-feedback" class="btn-modal" style="background: #9b59b6;" onclick="proximoDesafio()">Continuar</button>
         </div>
     </div>
 
     <footer>Recursos Digitais Covão - Professor Luís</footer>
 
     <script>
-        let currentNumber = 0;
-        let currentMax = 0;
+        let numeroAtual = 0;
+        let limiteAtual = 0;
+        let noJogo = false;
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -179,115 +220,131 @@
         function openInfo() { document.getElementById('modal-info').style.display = 'flex'; }
         function closeInfo() { document.getElementById('modal-info').style.display = 'none'; }
 
+        // Função do Botão Voltar (Lógica melhorada)
         function handleVoltar() {
-            if (!document.getElementById('jogo-ativo').classList.contains('hidden')) {
-                // Se estiver no jogo, volta ao menu de seleção
-                document.getElementById('jogo-ativo').classList.add('hidden');
-                document.getElementById('menu-selecao').classList.remove('hidden');
-                document.getElementById('game-title').innerText = "Escolhe o Nível";
-                document.getElementById('game-subtitle').innerText = "Até que número queres praticar?";
+            if (noJogo) {
+                // Se estiver no jogo, volta para a seleção de nível
+                document.getElementById('ecra-jogo').classList.add('hidden');
+                document.getElementById('ecra-selecao').classList.remove('hidden');
+                document.getElementById('titulo-ecra').innerText = "Escolher Nível";
+                document.getElementById('subtitulo-ecra').innerText = "Até que número queres treinar?";
+                document.getElementById('icon-container').innerText = "🔢";
+                noJogo = false;
             } else {
+                // Se já estiver no menu, vai para a página anterior
                 window.location.href = '../';
             }
         }
 
-        function startGame(max) {
-            currentMax = max;
-            document.getElementById('menu-selecao').classList.add('hidden');
-            document.getElementById('jogo-ativo').classList.remove('hidden');
-            document.getElementById('game-title').innerText = "Que número é este?";
-            document.getElementById('game-subtitle').innerText = "Escreve por extenso:";
-            nextQuestion();
+        function iniciarJogo(limite) {
+            limiteAtual = limite;
+            noJogo = true;
+            document.getElementById('ecra-selecao').classList.add('hidden');
+            document.getElementById('ecra-jogo').classList.remove('hidden');
+            document.getElementById('titulo-ecra').innerText = "Escreve por Extenso";
+            document.getElementById('subtitulo-ecra').innerText = "Atenção à ortografia e vírgulas!";
+            document.getElementById('icon-container').innerText = "✍️";
+            proximoDesafio();
         }
 
-        function nextQuestion() {
+        function proximoDesafio() {
             document.getElementById('modal-feedback').style.display = 'none';
             document.getElementById('input-resposta').value = "";
-            currentNumber = Math.floor(Math.random() * currentMax) + 1;
-            document.getElementById('display-number').innerText = currentNumber.toLocaleString('pt-PT');
+            
+            // Gera um número aleatório. Se o limite for alto, tenta evitar números muito pequenos
+            numeroAtual = Math.floor(Math.random() * (limiteAtual - (limiteAtual/10))) + Math.floor(limiteAtual/10);
+            if(limiteAtual <= 100) numeroAtual = Math.floor(Math.random() * 100) + 1;
+            
+            // Exibe o número com espaço nos milhares (ex: 43 726)
+            document.getElementById('numero-pergunta').innerText = numeroAtual.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
             document.getElementById('input-resposta').focus();
         }
 
-        function checkAnswer() {
-            const userAns = document.getElementById('input-resposta').value.trim().toLowerCase();
-            const correctAns = numeroParaExtenso(currentNumber).toLowerCase();
+        function verificarResposta() {
+            const tentativa = document.getElementById('input-resposta').value.trim().toLowerCase().replace(/\s+/g, ' ');
+            const correto = converterParaExtenso(numeroAtual).toLowerCase();
 
             const modal = document.getElementById('modal-feedback');
-            const icon = document.getElementById('feedback-icon');
-            const title = document.getElementById('feedback-title');
-            const text = document.getElementById('feedback-text');
+            const emoji = document.getElementById('feedback-emoji');
+            const titulo = document.getElementById('feedback-titulo');
+            const msg = document.getElementById('feedback-msg');
 
-            if (userAns === correctAns) {
-                icon.innerText = "🌟";
-                title.innerText = "Excelente!";
-                text.innerText = `Acertaste: ${correctAns}`;
-                modal.style.display = 'flex';
+            if (tentativa === correto) {
+                emoji.innerText = "🌟";
+                titulo.innerText = "Excelente!";
+                titulo.style.color = "#27ae60";
+                msg.innerHTML = `Acertaste em cheio!<br><b>${correto}</b>`;
             } else {
-                icon.innerText = "❌";
-                title.innerText = "Quase lá...";
-                text.innerHTML = `Escreveste: <span style="color:red">${userAns || 'nada'}</span><br>O correto era: <br><b>${correctAns}</b>`;
-                modal.style.display = 'flex';
+                emoji.innerText = "❌";
+                titulo.innerText = "Tenta outra vez";
+                titulo.style.color = "#e74c3c";
+                msg.innerHTML = `A resposta correta era:<br><b style="color:#2c3e50">${correto}</b>`;
             }
+            modal.style.display = 'flex';
         }
 
-        // LÓGICA DE CONVERSÃO (PT-PT)
-        function numeroParaExtenso(n) {
+        // LÓGICA DE CONVERSÃO PT-PT RIGOROSA
+        function converterParaExtenso(n) {
             if (n === 0) return "zero";
             if (n === 100) return "cem";
             if (n === 1000) return "mil";
-            if (n === 1000000) return "um milhão";
 
             const unidades = ["", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove"];
-            const dezenas10 = ["dez", "onze", "doze", "treze", "catorze", "quinze", "dezasseis", "dezassete", "dezoito", "dezanove"];
+            const especiais = ["dez", "onze", "doze", "treze", "catorze", "quinze", "dezasseis", "dezassete", "dezoito", "dezanove"];
             const dezenas = ["", "", "vinte", "trinta", "quarenta", "cinquenta", "sessenta", "setenta", "oitenta", "noventa"];
             const centenas = ["", "cento", "duzentos", "trezentos", "quatrocentos", "quinhentos", "seiscentos", "setecentos", "oitocentos", "novecentos"];
 
-            function converter(num) {
-                let partes = [];
-
+            function converter999(num) {
+                if (num === 0) return "";
+                if (num === 100) return "cem";
+                
+                let res = "";
+                // Centenas
                 if (num >= 100) {
-                    partes.push(centenas[Math.floor(num / 100)]);
+                    res += centenas[Math.floor(num / 100)];
                     num %= 100;
+                    if (num > 0) res += " e ";
                 }
-
-                if (num >= 10 && num < 20) {
-                    partes.push(dezenas10[num - 10]);
+                // Dezenas
+                if (num >= 10 && num <= 19) {
+                    res += especiais[num - 10];
                     num = 0;
                 } else if (num >= 20) {
-                    partes.push(dezenas[Math.floor(num / 10)]);
+                    res += dezenas[Math.floor(num / 10)];
                     num %= 10;
+                    if (num > 0) res += " e ";
                 }
-
+                // Unidades
                 if (num > 0) {
-                    partes.push(unidades[num]);
+                    res += unidades[num];
                 }
-
-                return partes.filter(x => x !== "").join(" e ");
+                return res;
             }
 
-            if (n < 1000) return converter(n);
+            if (n < 1000) return converter999(n);
 
             if (n < 1000000) {
                 let milhar = Math.floor(n / 1000);
                 let resto = n % 1000;
-                let resMilhar = "";
-
-                if (milhar === 1) resMilhar = "mil";
-                else resMilhar = converter(milhar) + " mil";
-
-                if (resto === 0) return resMilhar;
+                let parteMil = (milhar === 1) ? "mil" : converter999(milhar) + " mil";
                 
-                // Regra do "e" no milhar em PT-PT: usa-se "e" se o resto for < 100 ou múltiplo de 100
-                let separador = (resto < 100 || resto % 100 === 0) ? " e " : " ";
-                return resMilhar + separador + converter(resto);
-            }
+                if (resto === 0) return parteMil;
 
-            return n; // Fallback
+                // REGRA DA VÍRGULA SOLICITADA:
+                // Em PT-PT usa-se "e" se o resto for < 100 ou múltiplo de 100 (ex: mil e cem)
+                // Caso contrário, usa-se vírgula conforme pedido (ex: mil, duzentos e vinte)
+                if (resto < 100 || resto % 100 === 0) {
+                    return parteMil + " e " + converter999(resto);
+                } else {
+                    return parteMil + ", " + converter999(resto);
+                }
+            }
+            return n.toString(); // Fallback para números acima de 1 milhão
         }
 
-        // Permitir Enter para verificar
-        document.getElementById('input-resposta').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') checkAnswer();
+        // Atalho Teclado
+        document.getElementById('input-resposta').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verificarResposta();
         });
     </script>
 </body>
