@@ -46,7 +46,7 @@
         .star-box.correct { color: #9b59b6; -webkit-text-stroke: 1px #732d91; }
         .star-box.wrong { color: #e74c3c; -webkit-text-stroke: 1px #c0392b; }
 
-        .combo-group { font-weight: 800; color: #9b59b6; font-size: 0.85rem; min-width: 100px; text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+        .combo-group { font-weight: 800; color: #9b59b6; font-size: 0.85rem; min-width: 110px; text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
 
         /* === MENU DE CATEGORIAS === */
         .category-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
@@ -215,7 +215,7 @@
 
             <div id="f-buttons" style="display:flex; flex-direction:column; gap:10px;">
                 <button id="btn-next" class="btn-roxo-3d" style="width: 100%;" onclick="proxima()">CONTINUAR</button>
-                <button id="btn-mudar" class="btn-roxo-3d hidden" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5;" onclick="handleVoltar()">MUDAR DE CATEGORIA</button>
+                <button id="btn-mudar" class="btn-roxo-3d hidden" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5;" onclick="fecharModalEVoltar()">MUDAR DE CATEGORIA</button>
             </div>
         </div>
     </div>
@@ -235,15 +235,25 @@
         function openInfo() { document.getElementById('modal-info').style.display = 'flex'; }
         function closeInfo() { document.getElementById('modal-info').style.display = 'none'; }
 
+        // Função para garantir que o modal fecha ao mudar de categoria
+        function fecharModalEVoltar() {
+            document.getElementById('modal-feedback').style.display = 'none';
+            handleVoltar();
+        }
+
         function handleVoltar() {
             if (emJogo) {
-                emJogo = false; clearInterval(timer);
+                emJogo = false; 
+                clearInterval(timer);
                 document.getElementById('menu-categorias').classList.remove('hidden');
                 document.getElementById('jogo-container').classList.add('hidden');
                 document.getElementById('game-status').classList.add('hidden');
                 document.getElementById('view-title').innerText = "Números por Extenso";
                 document.getElementById('view-desc').innerText = "Domina a escrita dos números!";
-            } else { window.location.href = '../'; }
+                document.getElementById('modal-feedback').style.display = 'none';
+            } else { 
+                window.location.href = '../'; 
+            }
         }
 
         function startChallenge(max) {
@@ -340,7 +350,6 @@
             document.getElementById('f-titulo').innerText = "Fim do Desafio!";
             document.getElementById('f-texto').innerHTML = `${feedbackFinal}<br>Tempo: ${tempoFinal}`;
             
-            // Mostrar Detalhes por Nível
             document.getElementById('final-results').classList.remove('hidden');
             document.getElementById('res-l1').innerText = `${acertosL1} de 5 certas`;
             document.getElementById('res-l2').innerText = `${acertosL2} de 5 certas`;
