@@ -269,4 +269,72 @@
             const modal = document.getElementById('modal-feedback');
             if (userText === correctText) {
                 document.getElementById('feedback-emoji').innerText = "🌟";
-                document.ge
+                document.getElementById('feedback-titulo').innerText = "Excelente!";
+                document.getElementById('feedback-msg').innerHTML = `Acertaste:<br><b>${correctText}</b>`;
+            } else {
+                document.getElementById('feedback-emoji').innerText = "❌";
+                document.getElementById('feedback-titulo').innerText = "Tenta de novo";
+                document.getElementById('feedback-msg').innerHTML = `A resposta era:<br><b>${correctText}</b>`;
+            }
+            modal.style.display = 'flex';
+        }
+
+        // LÓGICA PT-PT COM VÍRGULA NOS MILHARES
+        function converterParaExtenso(n) {
+            if (n === 0) return "zero";
+            if (n === 100) return "cem";
+            if (n === 1000) return "mil";
+            if (n === 1000000) return "um milhão";
+
+            const unidades = ["", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove"];
+            const dezenas10 = ["dez", "onze", "doze", "treze", "catorze", "quinze", "dezasseis", "dezassete", "dezoito", "dezanove"];
+            const dezenas = ["", "", "vinte", "trinta", "quarenta", "cinquenta", "sessenta", "setenta", "oitenta", "noventa"];
+            const centenas = ["", "cento", "duzentos", "trezentos", "quatrocentos", "quinhentos", "seiscentos", "setecentos", "oitocentos", "novecentos"];
+
+            function converterSub1000(num) {
+                if (num === 0) return "";
+                if (num === 100) return "cem";
+                let s = "";
+                if (num >= 100) {
+                    s += centenas[Math.floor(num / 100)];
+                    num %= 100;
+                    if (num > 0) s += " e ";
+                }
+                if (num >= 10 && num < 20) {
+                    s += dezenas10[num - 10];
+                } else {
+                    if (num >= 20) {
+                        s += dezenas[Math.floor(num / 10)];
+                        num %= 10;
+                        if (num > 0) s += " e ";
+                    }
+                    if (num > 0) s += unidades[num];
+                }
+                return s;
+            }
+
+            if (n < 1000) return converterSub1000(n);
+
+            if (n < 1000000) {
+                let milhar = Math.floor(n / 1000);
+                let resto = n % 1000;
+                let txtMilhar = (milhar === 1) ? "mil" : converterSub1000(milhar) + " mil";
+
+                if (resto === 0) return txtMilhar;
+                
+                // REGRA SOLICITADA: Vírgula para separar milhares (exceto se for < 100 ou centenas exatas)
+                if (resto < 100 || resto % 100 === 0) {
+                    return txtMilhar + " e " + converterSub1000(resto);
+                } else {
+                    return txtMilhar + ", " + converterSub1000(resto);
+                }
+            }
+        }
+
+        // Enter para verificar
+        document.getElementById('input-resposta').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verificarResposta();
+        });
+    </script>
+</body>
+</html>
