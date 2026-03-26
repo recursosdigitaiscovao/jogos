@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Números por Extenso</title>
+    <title>Escreve por Extenso</title>
     <style>
         /* === ESTILOS GLOBAIS === */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -46,7 +46,7 @@
         .star-box.correct { color: #9b59b6; -webkit-text-stroke: 1px #732d91; }
         .star-box.wrong { color: #e74c3c; -webkit-text-stroke: 1px #c0392b; }
 
-        .combo-group { font-weight: 800; color: #9b59b6; font-size: 0.9rem; min-width: 85px; text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+        .combo-group { font-weight: 800; color: #9b59b6; font-size: 0.85rem; min-width: 100px; text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
 
         /* === MENU DE CATEGORIAS === */
         .category-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
@@ -88,6 +88,10 @@
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
         .modal-content { background: white; padding: 30px; border-radius: 25px; text-align: center; width: 90%; max-width: 350px; }
 
+        /* Resumo de Níveis no Popup */
+        .summary-box { background: #fdfaff; border-radius: 15px; padding: 15px; margin: 15px 0; border: 1px dashed #9b59b6; }
+        .summary-line { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem; font-weight: bold; }
+
         /* SIDEBAR */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
         .sidebar.active { left: 0; }
@@ -118,7 +122,7 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()" style="cursor:pointer; font-size: 1.5rem;">☰</div>
-            <h1><span class="header-icon">👨‍🚀</span> Menu Matemática</h1>
+            <h1><span class="header-icon">👨‍🚀</span> Escreve por Extenso</h1>
         </div>
         <button onclick="handleVoltar()" class="btn-roxo-3d">⬅ Voltar</button>
     </header>
@@ -143,12 +147,12 @@
                     <span class="star-box">★</span><span class="star-box">★</span><span class="star-box">★</span><span class="star-box">★</span><span class="star-box">★</span>
                 </div>
                 <div class="combo-group">
-                    <span>🔥</span><span id="combo-display">0</span>
+                    <span>🔥</span><span id="combo-display">0</span><span>seguidas</span>
                 </div>
             </div>
             
             <div class="game-card">
-                <!-- MENU INICIAL -->
+                <!-- MENU INICIAL CATEGORIAS -->
                 <div id="menu-categorias" class="category-container">
                     <div class="cat-card" onclick="startChallenge(100)">
                         <span>Números até</span>
@@ -168,7 +172,7 @@
                     </div>
                 </div>
 
-                <!-- ÁREA DE JOGO -->
+                <!-- JOGO -->
                 <div id="jogo-container" class="hidden" style="width: 100%; display: flex; flex-direction: column;">
                     <div id="display-num">0</div>
                     <input type="text" id="input-resp" class="input-box" placeholder="Escreve aqui..." spellcheck="false" autocomplete="off">
@@ -202,7 +206,13 @@
         <div class="modal-content">
             <div id="f-emoji" style="font-size: 4rem; margin-bottom: 10px;"></div>
             <h2 id="f-titulo"></h2>
-            <p id="f-texto" style="margin: 15px 0; color: #555;"></p>
+            <p id="f-texto" style="margin: 10px 0; color: #555;"></p>
+            
+            <div id="final-results" class="summary-box hidden">
+                <div class="summary-line"><span>Nível 1:</span> <span id="res-l1" style="color:#9b59b6">0 certas</span></div>
+                <div class="summary-line"><span>Nível 2:</span> <span id="res-l2" style="color:#9b59b6">0 certas</span></div>
+            </div>
+
             <div id="f-buttons" style="display:flex; flex-direction:column; gap:10px;">
                 <button id="btn-next" class="btn-roxo-3d" style="width: 100%;" onclick="proxima()">CONTINUAR</button>
                 <button id="btn-mudar" class="btn-roxo-3d hidden" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5;" onclick="handleVoltar()">MUDAR DE CATEGORIA</button>
@@ -215,7 +225,8 @@
     <script>
         let nAtual = 0, limiteCat = 0, emJogo = false;
         let combo = 0, nivelAtivo = 1, perguntaAtual = 0;
-        let segs = 0, timer, resultados = [];
+        let segs = 0, timer;
+        let resultadosL1 = [], resultadosL2 = [];
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -237,7 +248,7 @@
 
         function startChallenge(max) {
             limiteCat = max; emJogo = true; nivelAtivo = 1; combo = 0; segs = 0;
-            perguntaAtual = 0; resultados = [];
+            perguntaAtual = 0; resultadosL1 = []; resultadosL2 = [];
             updateUI();
             document.getElementById('menu-categorias').classList.add('hidden');
             document.getElementById('jogo-container').classList.remove('hidden');
@@ -261,34 +272,30 @@
             document.getElementById('view-title').innerText = "Nível " + nivelAtivo;
             document.getElementById('combo-display').innerText = combo;
             const stars = document.querySelectorAll('.star-box');
+            const resAtual = (nivelAtivo === 1) ? resultadosL1 : resultadosL2;
             stars.forEach((s, i) => {
                 s.className = 'star-box';
-                if (resultados[i] === 'correct') s.classList.add('correct');
-                if (resultados[i] === 'wrong') s.classList.add('wrong');
+                if (resAtual[i] === 'correct') s.classList.add('correct');
+                if (resAtual[i] === 'wrong') s.classList.add('wrong');
             });
         }
 
         function proxima() {
             if (perguntaAtual === 5) {
                 if (nivelAtivo === 1) {
-                    nivelAtivo = 2; perguntaAtual = 0; resultados = [];
-                    updateUI();
-                    proxima();
-                    return;
-                } else {
-                    finalizar();
-                    return;
-                }
+                    nivelAtivo = 2; perguntaAtual = 0; updateUI(); proxima(); return;
+                } else { finalizar(); return; }
             }
             document.getElementById('modal-feedback').style.display = 'none';
+            document.getElementById('final-results').classList.add('hidden');
             document.getElementById('btn-mudar').classList.add('hidden');
             document.getElementById('input-resp').value = "";
             
-            let min = (nivelAtivo === 1) ? 1 : (limiteCat / 2) + 1;
-            let max = (nivelAtivo === 1) ? (limiteCat / 2) : limiteCat;
+            let min, max;
+            if (nivelAtivo === 1) { min = 1; max = limiteCat / 2; }
+            else { min = (limiteCat / 2) + 1; max = limiteCat; }
             
             nAtual = Math.floor(Math.random() * (max - min + 1)) + min;
-            
             document.getElementById('display-num').innerText = nAtual.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
             document.getElementById('input-resp').focus();
         }
@@ -297,14 +304,15 @@
             const escritaRaw = document.getElementById('input-resp').value.trim();
             const tentativa = escritaRaw.toLowerCase().replace(/\s+/g, ' ');
             const correto = converterParaExtenso(nAtual).toLowerCase();
+            const resArray = (nivelAtivo === 1) ? resultadosL1 : resultadosL2;
 
             if (tentativa === correto) {
                 combo++;
-                resultados.push('correct');
+                resArray.push('correct');
                 showFeedback("🌟", "Certíssimo!", `Muito bem!<br><small>Resposta: ${correto}</small>`, "CONTINUAR");
             } else {
                 combo = 0;
-                resultados.push('wrong');
+                resArray.push('wrong');
                 showFeedback("❌", "Não foi desta...", `Escreveste: <span style="color:#e74c3c">${escritaRaw || 'nada'}</span><br>O correto era:<br><b>${correto}</b>`, "CONTINUAR");
             }
             perguntaAtual++;
@@ -321,15 +329,22 @@
         }
 
         function finalizar() {
-            const acertos = resultados.filter(r => r === 'correct').length;
+            const acertosL1 = resultadosL1.filter(r => r === 'correct').length;
+            const acertosL2 = resultadosL2.filter(r => r === 'correct').length;
+            const totalAcertos = acertosL1 + acertosL2;
             const tempoFinal = document.getElementById('timer-display').innerText;
             
-            let msg = (acertos >= 4) ? "Parabéns! Tens um excelente domínio!" : "Bom esforço, mas deves praticar mais a escrita!";
+            let feedbackFinal = (totalAcertos >= 8) ? "Parabéns! Tens um excelente domínio!" : "Bom esforço, mas deves praticar mais a escrita!";
             
-            document.getElementById('f-emoji').innerText = acertos >= 4 ? "🏆" : "💪";
+            document.getElementById('f-emoji').innerText = totalAcertos >= 8 ? "🏆" : "💪";
             document.getElementById('f-titulo').innerText = "Fim do Desafio!";
-            document.getElementById('f-texto').innerHTML = `Acertaste ${acertos} de 5 no último nível.<br>Tempo: ${tempoFinal}<br><br>${msg}`;
+            document.getElementById('f-texto').innerHTML = `${feedbackFinal}<br>Tempo: ${tempoFinal}`;
             
+            // Mostrar Detalhes por Nível
+            document.getElementById('final-results').classList.remove('hidden');
+            document.getElementById('res-l1').innerText = `${acertosL1} de 5 certas`;
+            document.getElementById('res-l2').innerText = `${acertosL2} de 5 certas`;
+
             const btnNext = document.getElementById('btn-next');
             btnNext.innerText = "JOGAR DE NOVO";
             btnNext.onclick = () => startChallenge(limiteCat);
