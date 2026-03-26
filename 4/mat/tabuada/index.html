@@ -55,11 +55,26 @@
             overflow-y: auto;
         }
 
-        /* Estrutura de Ecrãs e Títulos (Fora do Quadrado) */
+        /* Estrutura de Ecrãs e Títulos */
         .screen-container { display: flex; flex-direction: column; align-items: center; width: 100%; }
         
         .main-title { text-align: center; margin-bottom: 20px; }
-        .main-title h2 { color: #2c3e50; font-size: 2rem; font-weight: 900; text-transform: uppercase; margin: 5px 0; text-shadow: 1px 1px 0px #fff; }
+        
+        /* Layout flexível para alinhar o Título com o Botão de Informação */
+        .title-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 5px 0; }
+        .title-row h2 { color: #2c3e50; font-size: 2rem; font-weight: 900; text-transform: uppercase; margin: 0; text-shadow: 1px 1px 0px #fff; }
+        
+        /* NOVO: Botão de Informação (i) */
+        .btn-info {
+            width: 32px; height: 32px; border-radius: 50%;
+            background-color: #9b59b6; color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Times New Roman', Times, serif; font-style: italic; font-weight: bold; font-size: 1.2rem;
+            border: 2px solid #732d91; box-shadow: 0 3px 0 #732d91;
+            cursor: pointer; transition: 0.1s; padding-bottom: 2px;
+        }
+        .btn-info:active { transform: translateY(3px); box-shadow: 0 0 0 #732d91; }
+
         .main-title p { color: #555; font-size: 1rem; font-weight: bold; }
 
         .game-card {
@@ -86,7 +101,6 @@
         .stars-container { display: flex; gap: 2px; justify-content: center; flex: 1; margin: 0 10px; }
         .star-icon { width: 18px; height: 18px; transition: 0.3s; }
         
-        /* Ajuste do Combo para não quebrar linha: white-space: nowrap; */
         .streak-text { color: #e67e22; font-size: 0.85rem; font-weight: bold; opacity: 0; transition: opacity 0.3s; white-space: nowrap; text-align: right; }
         .streak-text.show { opacity: 1; }
 
@@ -99,7 +113,7 @@
         
         .hidden { display: none !important; }
 
-        /* MODAL POPUP */
+        /* MODAIS POPUP */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center;
@@ -166,7 +180,13 @@
         <div id="screen-start" class="screen-container">
             <div class="main-title">
                 <div style="font-size: 4rem; margin-bottom: -10px;">👑</div>
-                <h2>Rei das Tabuadas</h2>
+                
+                <!-- Título alinhado com o botão de Informação (i) -->
+                <div class="title-row">
+                    <h2>Rei das Tabuadas</h2>
+                    <button class="btn-info" onclick="openInfo()">i</button>
+                </div>
+                
                 <p>Escolhe a tua Tabuada!</p>
             </div>
             
@@ -184,7 +204,6 @@
 
         <!-- ECRÃ DE JOGO -->
         <div id="screen-game" class="screen-container hidden">
-            <!-- Título Dinâmico agora FORA do quadrado branco -->
             <div class="main-title">
                 <h2 id="dynamic-title" style="font-size: 1.8rem;">Tabuada do 2</h2>
             </div>
@@ -193,7 +212,6 @@
                 <div class="game-top-bar">
                     <div class="timer-box">⏱️ <span id="timer-display">00:00</span></div>
                     <div class="stars-container" id="stars-container"></div>
-                    <!-- Texto Seguidas forçado a não quebrar de linha -->
                     <div id="streak-display" class="streak-text">🔥 2 Seguidas!</div>
                 </div>
                 
@@ -208,7 +226,22 @@
         </div>
     </main>
 
-    <!-- POPUP FINAL -->
+    <!-- POPUP DE INFORMAÇÃO -->
+    <div id="modal-info" class="modal">
+        <div class="modal-content">
+            <div style="font-size: 3rem; margin-bottom: 10px;">ℹ️</div>
+            <h2 style="color: #8e44ad; margin-bottom: 15px;">Como Jogar</h2>
+            <p style="text-align: left; color: #444; font-size: 0.95rem; margin-bottom: 10px; line-height: 1.5;">
+                <b>1.</b> Escolhe a tabuada que queres treinar (1 a 10) ou o modo Misturada.<br><br>
+                <b>2.</b> Ganhas estrelas (⭐) por cada resposta certa. Se errares, a estrela fica vermelha.<br><br>
+                <b>3.</b> Tenta acertar sem errar para ganhares a chama do Combo (🔥).<br><br>
+                <b>4.</b> No fim, podes imprimir o teu certificado de mérito!
+            </p>
+            <button class="btn-modal btn-play-again" style="width: 100%; margin-top: 15px;" onclick="closeInfo()">Entendido!</button>
+        </div>
+    </div>
+
+    <!-- POPUP FINAL DO CERTIFICADO -->
     <div id="modal-cert" class="modal">
         <div class="modal-content">
             <div id="stars-display-final" style="font-size: 3rem; margin-bottom: 10px;">⭐⭐⭐</div>
@@ -252,6 +285,14 @@
 
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx;
+
+        // Funções do Modal de Informação
+        function openInfo() {
+            document.getElementById('modal-info').style.display = 'flex';
+        }
+        function closeInfo() {
+            document.getElementById('modal-info').style.display = 'none';
+        }
 
         function handleVoltar() {
             const gameScreen = document.getElementById('screen-game');
