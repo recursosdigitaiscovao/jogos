@@ -90,7 +90,8 @@
 
         /* Resumo de Níveis no Popup */
         .summary-box { background: #fdfaff; border-radius: 15px; padding: 15px; margin: 15px 0; border: 1px dashed #9b59b6; }
-        .summary-line { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem; font-weight: bold; }
+        .summary-line { display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; font-size: 0.85rem; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .summary-line:last-child { border-bottom: none; margin-bottom: 0; }
 
         /* SIDEBAR */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
@@ -208,9 +209,16 @@
             <h2 id="f-titulo"></h2>
             <p id="f-texto" style="margin: 10px 0; color: #555;"></p>
             
+            <!-- Resumo Detalhado -->
             <div id="final-results" class="summary-box hidden">
-                <div class="summary-line"><span>Nível 1:</span> <span id="res-l1" style="color:#9b59b6">0 certas</span></div>
-                <div class="summary-line"><span>Nível 2:</span> <span id="res-l2" style="color:#9b59b6">0 certas</span></div>
+                <div class="summary-line">
+                    <span style="margin-bottom:2px">Nível 1</span>
+                    <span id="res-l1">0 certas | 0 erradas</span>
+                </div>
+                <div class="summary-line">
+                    <span style="margin-bottom:2px">Nível 2</span>
+                    <span id="res-l2">0 certas | 0 erradas</span>
+                </div>
             </div>
 
             <div id="f-buttons" style="display:flex; flex-direction:column; gap:10px;">
@@ -235,7 +243,6 @@
         function openInfo() { document.getElementById('modal-info').style.display = 'flex'; }
         function closeInfo() { document.getElementById('modal-info').style.display = 'none'; }
 
-        // Função para garantir que o modal fecha ao mudar de categoria
         function fecharModalEVoltar() {
             document.getElementById('modal-feedback').style.display = 'none';
             handleVoltar();
@@ -340,7 +347,11 @@
 
         function finalizar() {
             const acertosL1 = resultadosL1.filter(r => r === 'correct').length;
+            const errosL1 = resultadosL1.length - acertosL1;
+            
             const acertosL2 = resultadosL2.filter(r => r === 'correct').length;
+            const errosL2 = resultadosL2.length - acertosL2;
+            
             const totalAcertos = acertosL1 + acertosL2;
             const tempoFinal = document.getElementById('timer-display').innerText;
             
@@ -350,9 +361,14 @@
             document.getElementById('f-titulo').innerText = "Fim do Desafio!";
             document.getElementById('f-texto').innerHTML = `${feedbackFinal}<br>Tempo: ${tempoFinal}`;
             
+            // Mostrar Detalhes Detalhados
             document.getElementById('final-results').classList.remove('hidden');
-            document.getElementById('res-l1').innerText = `${acertosL1} de 5 certas`;
-            document.getElementById('res-l2').innerText = `${acertosL2} de 5 certas`;
+            
+            document.getElementById('res-l1').innerHTML = 
+                `<span style="color:#27ae60">${acertosL1} certas</span> | <span style="color:#e74c3c">${errosL1} erradas</span>`;
+            
+            document.getElementById('res-l2').innerHTML = 
+                `<span style="color:#27ae60">${acertosL2} certas</span> | <span style="color:#e74c3c">${errosL2} erradas</span>`;
 
             const btnNext = document.getElementById('btn-next');
             btnNext.innerText = "JOGAR DE NOVO";
