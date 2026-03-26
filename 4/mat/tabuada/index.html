@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>4º Ano - Tabuadas</title>
     <style>
-        /* MANTIDO TODO O SEU CSS ORIGINAL */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
@@ -24,7 +23,6 @@
 
         .header-left { display: flex; align-items: center; gap: 12px; }
         header h1 { font-size: 0.9rem; color: #2c3e50; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
-        
         .header-icon { font-size: 1.2rem; }
 
         .btn-voltar-3d {
@@ -49,56 +47,61 @@
 
         .game-card {
             background: white; padding: 25px; border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; text-align: center;
         }
 
-        .tabuadas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
-        .btn-tabuada { background: #f0f3f5; border: 2px solid #9b59b6; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-tabuada:active { transform: scale(0.95); }
+        /* MENU INICIAL MELHORADO (EFEITO 3D) */
+        .tabuadas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 25px; }
+        .btn-tabuada { 
+            background: #fdfbfd; color: #8e44ad; font-size: 1.2rem;
+            border: 2px solid #9b59b6; border-bottom: 5px solid #8e44ad; 
+            padding: 12px; border-radius: 12px; font-weight: 900; 
+            cursor: pointer; transition: all 0.1s; display: flex; align-items: center; justify-content: center;
+        }
+        .btn-tabuada:active { transform: translateY(3px); border-bottom: 2px solid #8e44ad; }
+        .btn-mix { grid-column: span 3; background: #9b59b6; color: white; border-color: #8e44ad; border-bottom-color: #732d91; letter-spacing: 2px;}
+
+        /* ÁREA DE JOGO NO TOPO */
+        .game-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; width: 100%; }
         
-        .pergunta { font-size: 3rem; font-weight: 800; margin: 10px 0 20px 0; color: #8e44ad; }
+        .timer-box { font-weight: bold; color: #2c3e50; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; background: #ecf0f1; padding: 5px 10px; border-radius: 20px; }
+        
+        .stars-container { display: flex; gap: 2px; justify-content: center; flex: 1; margin: 0 10px; }
+        .star-icon { width: 18px; height: 18px; transition: 0.3s; }
+        
+        .streak-text { color: #e67e22; font-size: 0.85rem; font-weight: bold; opacity: 0; transition: opacity 0.3s; width: 85px; text-align: right; }
+        .streak-text.show { opacity: 1; }
+
+        .pergunta { font-size: 3.5rem; font-weight: 800; margin: 15px 0 25px 0; color: #8e44ad; text-shadow: 2px 2px 0px #ecf0f1; }
+        
         .opcoes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; }
-        .btn-opcao { background: #fff; border: 2px solid #ddd; padding: 15px; border-radius: 15px; font-size: 1.5rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-opcao:disabled { cursor: not-allowed; }
+        .btn-opcao { background: #fff; border: 2px solid #ddd; border-bottom: 5px solid #ccc; padding: 15px; border-radius: 15px; font-size: 1.5rem; font-weight: bold; cursor: pointer; transition: 0.1s; }
+        .btn-opcao:active { transform: translateY(3px); border-bottom: 2px solid #ccc; }
+        .btn-opcao:disabled { cursor: not-allowed; transform: none; border-bottom: 2px solid #ccc; }
         
         .hidden { display: none !important; }
 
+        /* MODAL POPUP (3 BOTÕES) */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center;
-            z-index: 1000; display: none;
+            z-index: 1000; display: none; backdrop-filter: blur(3px);
         }
-        .modal-content {
-            background: white; padding: 30px; border-radius: 15px; text-align: center; width: 90%; max-width: 350px;
-        }
-        .modal-content input {
-            width: 100%; padding: 12px; margin: 15px 0; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; text-align: center;
-        }
-        .btn-imprimir {
-            background: #27ae60; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1.1rem;
-        }
-
-        /* --- NOVAS ADIÇÕES PARA O JOGO --- */
+        .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; box-shadow: 0 15px 30px rgba(0,0,0,0.3); }
         
-        /* Barra de Progresso */
-        .progress-container { width: 100%; height: 10px; background: #eee; border-radius: 5px; margin-bottom: 15px; overflow: hidden; }
-        .progress-bar { height: 100%; background: #9b59b6; width: 0%; transition: width 0.3s ease; }
+        .modal-content input { width: 100%; padding: 12px; margin: 15px 0; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; text-align: center; }
         
-        /* Info de Topo (Questão e Combo) */
-        .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 0.9rem; font-weight: bold; }
-        .q-count { color: #7f8c8d; }
-        .streak-text { color: #e67e22; min-width: 90px; text-align: right; opacity: 0; transition: opacity 0.3s; }
-        .streak-text.show { opacity: 1; }
+        .modal-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .btn-modal { padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; border: none; font-size: 1rem; color: white; transition: 0.2s; }
+        .btn-modal:active { transform: scale(0.97); }
+        .btn-play-again { background: #3498db; }
+        .btn-menu { background: #95a5a6; }
+        .btn-imprimir { background: #27ae60; font-size: 1.1rem; }
 
-        /* Animações */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
-        }
+        /* Animações Jogo */
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } }
         .shake { animation: shake 0.4s; }
-        .correct-anim { transform: scale(1.05); box-shadow: 0 0 15px rgba(46, 204, 113, 0.5); border-color: #2ecc71; color: white; }
+        .correct-anim { transform: scale(1.05); box-shadow: 0 0 15px rgba(46, 204, 113, 0.5); border-color: #2ecc71; border-bottom-color: #27ae60; color: white; }
 
         /* ZONA DE IMPRESSÃO */
         #printable-certificate { display: none; }
@@ -108,7 +111,7 @@
             #printable-certificate, #printable-certificate * { visibility: visible; }
             #printable-certificate {
                 display: block !important; position: absolute; left: 0; top: 0; width: 100%; height: 100%;
-                border: 20px solid #9b59b6; padding: 50px; text-align: center; display: flex; flex-direction: column; justify-content: center;
+                border: 20px solid #9b59b6; padding: 50px; text-align: center; display: flex; flex-direction: column; justify-content: center; background: white;
             }
             .cert-title { font-size: 50px; color: #8e44ad; margin-bottom: 20px; }
             .cert-name { font-size: 40px; text-decoration: underline; margin: 30px 0; }
@@ -146,26 +149,28 @@
     <main>
         <!-- ECRÃ INICIAL -->
         <div id="screen-start" class="game-card">
-            <div style="font-size: 3rem;">🧮</div>
-            <h2>Qual tabuada queres treinar?</h2>
+            <div style="font-size: 3.5rem; margin-bottom: 10px;">🧮</div>
+            <h2 style="color: #2c3e50;">Escolhe a tua Tabuada!</h2>
             <div class="tabuadas-grid">
                 <script>
                     for(let i=1; i<=10; i++) {
                         document.write(`<button class="btn-tabuada" onclick="startGame(${i})">${i}</button>`);
                     }
                 </script>
-                <button class="btn-tabuada" style="grid-column: span 2; background: #9b59b6; color: white;" onclick="startGame('mix')">MISTURADA</button>
+                <button class="btn-tabuada btn-mix" onclick="startGame('mix')">MISTURADA</button>
             </div>
         </div>
 
         <!-- ECRÃ DE JOGO -->
         <div id="screen-game" class="game-card hidden">
-            <!-- Nova Área de Topo do Jogo -->
-            <div class="game-header">
-                <span class="q-count">Questão: <span id="q-count">1</span>/10</span>
-                <span class="streak-text" id="streak-display">🔥 2 Seguidas!</span>
+            <!-- Barra de Topo: Timer -> Estrelas -> Streak -->
+            <div class="game-top-bar">
+                <div class="timer-box">⏱️ <span id="timer-display">00:00</span></div>
+                <div class="stars-container" id="stars-container">
+                    <!-- As estrelas são geradas por JavaScript -->
+                </div>
+                <div id="streak-display" class="streak-text">🔥 2 Seguidas!</div>
             </div>
-            <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
             
             <div class="pergunta" id="question">2 x 2</div>
             <div class="opcoes-grid">
@@ -177,15 +182,21 @@
         </div>
     </main>
 
-    <!-- POPUP CERTIFICADO -->
+    <!-- POPUP FINAL -->
     <div id="modal-cert" class="modal">
         <div class="modal-content">
-            <div id="stars-display" style="font-size: 3rem; margin-bottom: 10px;">⭐⭐⭐</div>
+            <div id="stars-display-final" style="font-size: 3rem; margin-bottom: 10px;">⭐⭐⭐</div>
             <h2 id="final-message">Parabéns!</h2>
-            <p style="margin-bottom: 20px;">Pontuação final: <strong style="color:#9b59b6; font-size:1.2rem;" id="final-score">0</strong> / 100</p>
+            <p style="margin-bottom: 5px;">Pontuação: <strong style="color:#9b59b6; font-size:1.2rem;" id="final-score">0</strong>/100</p>
+            <p style="margin-bottom: 15px; font-size: 0.9rem; color: #7f8c8d;">Tempo: <strong id="final-time">00:00</strong></p>
+            
             <input type="text" id="student-name" placeholder="Escreve o teu primeiro nome">
-            <button class="btn-imprimir" onclick="imprimirCertificado()">🖨️ Imprimir Certificado</button>
-            <p style="margin-top: 15px; font-size: 0.8rem; cursor: pointer; text-decoration: underline; color: #7f8c8d;" onclick="location.reload()">Jogar de novo</p>
+            
+            <div class="modal-buttons">
+                <button class="btn-modal btn-imprimir" onclick="imprimirCertificado()">🖨️ Imprimir Certificado</button>
+                <button class="btn-modal btn-play-again" onclick="playAgain()">🔄 Jogar Novamente</button>
+                <button class="btn-modal btn-menu" onclick="goToMenu()">📋 Escolher outra tabuada</button>
+            </div>
         </div>
     </div>
 
@@ -194,7 +205,7 @@
         <div class="cert-title">Certificado de Mérito</div>
         <div class="cert-text">Certificamos que o aluno(a):</div>
         <div class="cert-name" id="display-name">Nome do Aluno</div>
-        <div class="cert-text">Superou o desafio de <b>Matemática (Tabuadas)</b><br>do 4º Ano com sucesso!</div>
+        <div class="cert-text" id="cert-score-text">Superou o desafio de <b>Matemática (Tabuadas)</b><br>do 4º Ano com sucesso!</div>
         <div style="margin-top: 50px;">
             <p>_________________________________</p>
             <p>Professor Luís</p>
@@ -209,22 +220,118 @@
         let score = 0;
         let questionNumber = 1;
         let correctAnswer = 0;
-        let currentStreak = 0; // Combo de acertos
+        let currentStreak = 0;
+        
+        // Timer variáveis
+        let timerInterval;
+        let secondsElapsed = 0;
+
+        // Gerador de Som (Sem precisar de ficheiros)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime); // Nota alta
+                osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.2);
+            } else {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime); // Nota grave
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            }
+        }
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
         }
 
+        function setupStars() {
+            const container = document.getElementById('stars-container');
+            container.innerHTML = '';
+            for(let i = 0; i < 10; i++) {
+                // SVG de uma estrela (fundo branco, borda roxa)
+                container.innerHTML += `
+                <svg id="star-${i}" class="star-icon" viewBox="0 0 24 24" fill="white" stroke="#9b59b6" stroke-width="2" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>`;
+            }
+        }
+
+        function updateStar(index, isCorrect) {
+            const star = document.getElementById(`star-${index}`);
+            if(star) {
+                if(isCorrect) {
+                    star.setAttribute('fill', '#9b59b6'); // Roxa se acertar
+                } else {
+                    star.setAttribute('fill', '#e74c3c'); // Vermelha se errar
+                    star.setAttribute('stroke', '#e74c3c');
+                }
+            }
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            secondsElapsed = 0;
+            document.getElementById('timer-display').innerText = "00:00";
+            timerInterval = setInterval(() => {
+                secondsElapsed++;
+                let m = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+                let s = (secondsElapsed % 60).toString().padStart(2, '0');
+                document.getElementById('timer-display').innerText = `${m}:${s}`;
+            }, 1000);
+        }
+
         function startGame(table) {
+            initAudio(); // Inicializa o som ao clicar no botão
             currentTable = table;
             score = 0;
             questionNumber = 1;
             currentStreak = 0;
+            
             document.getElementById('screen-start').classList.add('hidden');
             document.getElementById('screen-game').classList.remove('hidden');
             document.getElementById('streak-display').classList.remove('show');
+            
+            setupStars();
+            startTimer();
             nextQuestion();
+        }
+
+        function playAgain() {
+            document.getElementById('modal-cert').style.display = 'none';
+            document.getElementById('student-name').value = '';
+            startGame(currentTable);
+        }
+
+        function goToMenu() {
+            document.getElementById('modal-cert').style.display = 'none';
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-start').classList.remove('hidden');
         }
 
         function nextQuestion() {
@@ -233,106 +340,94 @@
                 return;
             }
             
-            // Atualiza UI
-            document.getElementById('q-count').innerText = questionNumber;
-            document.getElementById('progress-bar').style.width = ((questionNumber - 1) * 10) + "%";
-            
-            // Gera Pergunta
             let num1 = currentTable === 'mix' ? Math.floor(Math.random() * 9) + 2 : currentTable;
-            let num2 = Math.floor(Math.random() * 9) + 2; // Evita tabuada do 1 para ser mais desafiante no 4º ano
+            let num2 = Math.floor(Math.random() * 9) + 2; 
             correctAnswer = num1 * num2;
             document.getElementById('question').innerText = `${num1} x ${num2}`;
 
-            // Lógica Inteligente de Respostas Erradas
             let choices = [correctAnswer];
             while (choices.length < 4) {
-                // Gera erros comuns (somar em vez de multiplicar, errar por 1 na tabuada)
                 let errorType = Math.floor(Math.random() * 3);
                 let wrong = 0;
-                
-                if (errorType === 0) wrong = correctAnswer + num1; // Um passo acima na tabuada
-                else if (errorType === 1) wrong = correctAnswer - num1; // Um passo abaixo
-                else wrong = correctAnswer + (Math.floor(Math.random() * 5) + 1) * (Math.random() > 0.5 ? 1 : -1); // Erro aleatório pequeno
+                if (errorType === 0) wrong = correctAnswer + num1;
+                else if (errorType === 1) wrong = correctAnswer - num1;
+                else wrong = correctAnswer + (Math.floor(Math.random() * 5) + 1) * (Math.random() > 0.5 ? 1 : -1);
 
                 if (wrong > 0 && !choices.includes(wrong) && wrong !== correctAnswer) {
                     choices.push(wrong);
                 }
             }
-            
-            // Baralha as opções
             choices.sort(() => Math.random() - 0.5);
 
-            // Aplica aos botões e limpa estilos antigos
             const buttons = document.querySelectorAll('.btn-opcao');
             buttons.forEach((btn, index) => {
                 btn.innerText = choices[index];
                 btn.style.backgroundColor = "white";
                 btn.style.color = "#2c3e50";
                 btn.style.borderColor = "#ddd";
+                btn.style.borderBottomColor = "#ccc";
                 btn.classList.remove('shake', 'correct-anim');
-                btn.disabled = false; // Reativa botões
+                btn.disabled = false;
             });
         }
 
         function checkAnswer(btnClicked) {
             const buttons = document.querySelectorAll('.btn-opcao');
-            // Desativa todos os botões temporariamente
-            buttons.forEach(b => b.disabled = true);
+            buttons.forEach(b => b.disabled = true); // Bloqueia spam de cliques
 
             let isCorrect = parseInt(btnClicked.innerText) === correctAnswer;
+            let starIndex = questionNumber - 1;
 
             if (isCorrect) {
+                playSound('correct');
                 score += 10;
                 currentStreak++;
+                updateStar(starIndex, true);
+
                 btnClicked.style.backgroundColor = "#2ecc71";
+                btnClicked.style.borderBottomColor = "#27ae60";
                 btnClicked.classList.add('correct-anim');
                 
-                // Mostrar Combo
                 if (currentStreak >= 2) {
                     let streakEl = document.getElementById('streak-display');
                     streakEl.innerText = `🔥 ${currentStreak} Seguidas!`;
                     streakEl.classList.add('show');
                 }
                 
-                setTimeout(() => {
-                    questionNumber++;
-                    nextQuestion();
-                }, 800); // Rápido se acertar
+                setTimeout(() => { questionNumber++; nextQuestion(); }, 700);
 
             } else {
+                playSound('wrong');
                 currentStreak = 0;
                 document.getElementById('streak-display').classList.remove('show');
+                updateStar(starIndex, false);
                 
                 btnClicked.style.backgroundColor = "#e74c3c";
+                btnClicked.style.borderBottomColor = "#c0392b";
                 btnClicked.style.color = "white";
                 btnClicked.classList.add('shake');
 
-                // Mostra a resposta certa a verde para o aluno aprender
                 buttons.forEach(b => {
                     if (parseInt(b.innerText) === correctAnswer) {
                         b.style.backgroundColor = "#2ecc71";
+                        b.style.borderBottomColor = "#27ae60";
                         b.style.color = "white";
-                        b.style.borderColor = "#2ecc71";
                     }
                 });
 
-                setTimeout(() => {
-                    questionNumber++;
-                    nextQuestion();
-                }, 1800); // Demora mais se errar para o aluno processar a resposta correta
+                setTimeout(() => { questionNumber++; nextQuestion(); }, 1800);
             }
         }
 
         function showModal() {
-            document.getElementById('screen-game').classList.add('hidden');
-            document.getElementById('progress-bar').style.width = "100%";
+            clearInterval(timerInterval); // Para o relógio
+            document.getElementById('final-time').innerText = document.getElementById('timer-display').innerText;
             
             let modal = document.getElementById('modal-cert');
             modal.style.display = 'flex';
             document.getElementById('final-score').innerText = score;
 
-            // Sistema de Estrelas e Mensagem
-            let starsEl = document.getElementById('stars-display');
+            let starsEl = document.getElementById('stars-display-final');
             let msgEl = document.getElementById('final-message');
             
             if (score === 100) {
@@ -358,12 +453,14 @@
             }
             document.getElementById('display-name').innerText = name;
             
-            // Adiciona a pontuação no certificado
-            let certText = document.querySelectorAll('.cert-text')[1];
-            certText.innerHTML = `Superou o desafio de <b>Matemática (Tabuadas)</b><br>do 4º Ano com a pontuação de <b>${score}/100</b>!`;
+            let timeTxt = document.getElementById('final-time').innerText;
+            document.getElementById('cert-score-text').innerHTML = `Superou o desafio de <b>Matemática (Tabuadas)</b><br>do 4º Ano com <b>${score} pontos</b> em <b>${timeTxt}</b> minutos!`;
             
             document.getElementById('cert-date').innerText = new Date().toLocaleDateString('pt-PT');
+            
+            document.getElementById('modal-cert').style.display = 'none'; // Esconde modal para evitar bugs visuais
             window.print();
+            setTimeout(() => { document.getElementById('modal-cert').style.display = 'flex'; }, 1000); // Mostra de volta após impressão
         }
     </script>
 </body>
