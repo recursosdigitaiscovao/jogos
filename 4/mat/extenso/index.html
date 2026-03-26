@@ -39,21 +39,22 @@
             justify-content: space-between; align-items: center; 
             margin-bottom: 12px; padding: 0 5px;
         }
-        .timer-group { display: flex; align-items: center; gap: 5px; color: #9b59b6; font-weight: 900; font-size: 0.9rem; min-width: 70px; }
+        .timer-group { display: flex; align-items: center; gap: 5px; color: #9b59b6; font-weight: 900; font-size: 0.9rem; min-width: 75px; }
         
         .stars-row { display: flex; gap: 4px; }
-        .star-box { font-size: 1.3rem; color: white; -webkit-text-stroke: 1.5px #9b59b6; transition: 0.3s; }
+        .star-box { font-size: 1.4rem; color: white; -webkit-text-stroke: 1.5px #9b59b6; transition: 0.3s; }
         .star-box.correct { color: #9b59b6; -webkit-text-stroke: 1px #732d91; }
 
-        .combo-text { font-weight: 800; color: #9b59b6; font-size: 0.85rem; min-width: 80px; text-align: right; }
+        .combo-text { font-weight: 800; color: #9b59b6; font-size: 0.85rem; min-width: 85px; text-align: right; }
 
-        /* === CATEGORIAS === */
+        /* === MENU DE CATEGORIAS === */
         .category-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
         .cat-card {
-            background: #fff; border: 2px solid #ecdff5; border-radius: 18px; padding: 20px 10px;
+            background: #fff; border: 2px solid #ecdff5; border-radius: 18px; padding: 22px 10px;
             cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center;
+            box-shadow: 0 4px 0 #ecdff5;
         }
-        .cat-card:hover { transform: translateY(-3px); border-color: #9b59b6; box-shadow: 0 5px 15px rgba(155,89,182,0.1); }
+        .cat-card:hover { transform: translateY(-2px); border-color: #9b59b6; box-shadow: 0 6px 0 #ecdff5; }
         .cat-title { font-weight: 900; font-size: 1rem; color: #2c3e50; margin-bottom: 4px; }
         .cat-range { font-size: 0.7rem; font-weight: 700; color: #9b59b6; text-transform: uppercase; }
 
@@ -67,10 +68,12 @@
         
         .btn-info { width: 30px; height: 30px; border-radius: 50%; background-color: #9b59b6; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #732d91; cursor: pointer; }
 
+        /* CARD DO JOGO */
         .game-card {
             background: white; padding: 25px; border-radius: 25px;
             box-shadow: 0 12px 30px rgba(0,0,0,0.1); width: 100%;
             display: flex; flex-direction: column; min-height: 300px; justify-content: center;
+            position: relative;
         }
 
         #display-num { font-size: 3.5rem; font-weight: 900; color: #2c3e50; margin-bottom: 25px; text-align: center; letter-spacing: 2px; }
@@ -78,6 +81,7 @@
             width: 100%; padding: 15px; font-size: 1.1rem; border: 2.5px solid #eee; border-radius: 12px;
             margin-bottom: 15px; text-align: center; outline: none; transition: 0.3s;
         }
+        .input-box:focus { border-color: #9b59b6; }
 
         .hidden { display: none !important; }
 
@@ -128,10 +132,10 @@
                     <h2 id="view-title">Escrita</h2>
                     <button class="btn-info" onclick="openInfo()">i</button>
                 </div>
-                <p id="view-desc">Acerta 5 seguidas para subir de nível!</p>
+                <p id="view-desc">Acerta 5 seguidas para passar!</p>
             </div>
 
-            <!-- STATUS EM LINHA ÚNICA -->
+            <!-- STATUS BAR LINE -->
             <div id="game-status" class="status-bar-line hidden">
                 <div class="timer-group">
                     <span>⏱️</span><span id="timer-display">00:00</span>
@@ -145,35 +149,35 @@
             </div>
             
             <div class="game-card">
-                <!-- SELEÇÃO INICIAL -->
+                <!-- MENU INICIAL -->
                 <div id="menu-categorias" class="category-container">
-                    <div class="cat-card" onclick="initGame(100)">
+                    <div class="cat-card" onclick="startChallenge(100)">
                         <span class="cat-title">Até 100</span>
-                        <span class="cat-range">Níveis 1 e 2</span>
+                        <span class="cat-range">Números Pequenos</span>
                     </div>
-                    <div class="cat-card" onclick="initGame(1000)">
+                    <div class="cat-card" onclick="startChallenge(1000)">
                         <span class="cat-title">Até 1 000</span>
-                        <span class="cat-range">Níveis 1 e 2</span>
+                        <span class="cat-range">Centenas</span>
                     </div>
-                    <div class="cat-card" onclick="initGame(10000)">
+                    <div class="cat-card" onclick="startChallenge(10000)">
                         <span class="cat-title">Até 10 000</span>
-                        <span class="cat-range">Níveis 1 e 2</span>
+                        <span class="cat-range">Milhares</span>
                     </div>
-                    <div class="cat-card" onclick="initGame(1000000)">
+                    <div class="cat-card" onclick="startChallenge(1000000)">
                         <span class="cat-title">Até 1 Milhão</span>
-                        <span class="cat-range">Níveis 1 e 2</span>
+                        <span class="cat-range">Grandes Números</span>
                     </div>
                 </div>
 
-                <!-- JOGO -->
+                <!-- ÁREA DE JOGO -->
                 <div id="jogo-container" class="hidden" style="width: 100%; display: flex; flex-direction: column;">
                     <div id="display-num">0</div>
-                    <input type="text" id="input-resp" class="input-box" placeholder="Escreve aqui..." spellcheck="false" autocomplete="off">
+                    <input type="text" id="input-resp" class="input-box" placeholder="Escreve por extenso..." spellcheck="false" autocomplete="off">
                     
-                    <button class="btn-roxo-3d" style="width: 100%; font-size: 1.1rem; padding: 15px;" onclick="validar()">VERIFICAR</button>
+                    <button class="btn-roxo-3d" style="width: 100%; font-size: 1.1rem; padding: 15px;" onclick="verificar()">VERIFICAR</button>
                     
-                    <button class="btn-roxo-3d" style="background:#f3ebf7; color:#9b59b6; border-color:#d1b8e0; box-shadow:0 4px 0 #d1b8e0; margin-top:15px; width:100%;" onclick="handleVoltar()">
-                        ⬅ SAIR DO NÍVEL
+                    <button class="btn-roxo-3d" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5; box-shadow:0 4px 0 #ecdff5; margin-top:15px; width:100%;" onclick="handleVoltar()">
+                        ⬅ SAIR DO JOGO
                     </button>
                 </div>
             </div>
@@ -185,11 +189,11 @@
         <div class="modal-content">
             <h2 style="color: #8e44ad; margin-bottom: 15px;">Como Jogar</h2>
             <p style="text-align: left; font-size: 0.9rem; line-height: 1.5;">
-                • Escreve o número por extenso.<br>
-                • Precisas de <b>5 certas seguidas</b> para passar.<br>
-                • Se errares, as estrelas voltam ao início!<br>
-                • Nível 1: Metade do intervalo.<br>
-                • Nível 2: Intervalo completo.
+                • Escreve o número por extenso (em palavras).<br>
+                • Deves acertar <b>5 seguidas</b> para completar o nível.<br>
+                • Se errares, o teu progresso volta a 0!<br>
+                • <b>Nível 1:</b> Números mais baixos.<br>
+                • <b>Nível 2:</b> Números em todo o intervalo.
             </p>
             <button class="btn-roxo-3d" style="width: 100%; margin-top: 20px;" onclick="closeInfo()">ENTENDIDO!</button>
         </div>
@@ -200,16 +204,16 @@
             <div id="f-emoji" style="font-size: 4rem; margin-bottom: 10px;"></div>
             <h2 id="f-titulo"></h2>
             <p id="f-texto" style="margin: 15px 0; color: #555;"></p>
-            <button id="btn-next" class="btn-roxo-3d" style="width: 100%;" onclick="nextQuestion()">CONTINUAR</button>
+            <button id="btn-next" class="btn-roxo-3d" style="width: 100%;" onclick="proxima()">CONTINUAR</button>
         </div>
     </div>
 
     <footer>Recursos Digitais Covão - Professor Luís</footer>
 
     <script>
-        let nAtual = 0, maxCategoria = 0, emJogo = false;
+        let nAtual = 0, limiteCat = 0, emJogo = false;
         let combo = 0, nivelAtivo = 1;
-        let segundos = 0, timerInterval;
+        let segs = 0, timer;
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -220,51 +224,146 @@
 
         function handleVoltar() {
             if (emJogo) {
-                emJogo = false; clearInterval(timerInterval);
+                emJogo = false; clearInterval(timer);
                 document.getElementById('menu-categorias').classList.remove('hidden');
                 document.getElementById('jogo-container').classList.add('hidden');
                 document.getElementById('game-status').classList.add('hidden');
                 document.getElementById('view-title').innerText = "Escrita";
+                document.getElementById('view-desc').innerText = "Acerta 5 seguidas para passar!";
             } else { window.location.href = '../'; }
         }
 
-        function initGame(max) {
-            maxCategoria = max; emJogo = true; nivelAtivo = 1; combo = 0; segundos = 0;
-            updateStars(); updateTimerUI();
+        function startChallenge(max) {
+            limiteCat = max; emJogo = true; nivelAtivo = 1; combo = 0; segs = 0;
+            updateUI();
             document.getElementById('menu-categorias').classList.add('hidden');
             document.getElementById('jogo-container').classList.remove('hidden');
             document.getElementById('game-status').classList.remove('hidden');
-            startTimer(); nextQuestion();
+            startTimer(); proxima();
         }
 
         function startTimer() {
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => { segundos++; updateTimerUI(); }, 1000);
+            clearInterval(timer);
+            timer = setInterval(() => { segs++; updateTimerUI(); }, 1000);
         }
 
         function updateTimerUI() {
-            const m = Math.floor(segundos / 60).toString().padStart(2, '0');
-            const s = (segundos % 60).toString().padStart(2, '0');
+            const m = Math.floor(segs / 60).toString().padStart(2, '0');
+            const s = (segs % 60).toString().padStart(2, '0');
             document.getElementById('timer-display').innerText = `${m}:${s}`;
         }
 
-        function nextQuestion() {
+        function updateUI() {
+            document.getElementById('view-title').innerText = "Nível " + nivelAtivo;
+            document.getElementById('combo-display').innerText = combo + " seguidas";
+            const stars = document.querySelectorAll('.star-box');
+            stars.forEach((s, i) => {
+                s.classList.toggle('correct', i < combo);
+            });
+        }
+
+        function proxima() {
             document.getElementById('modal-feedback').style.display = 'none';
             document.getElementById('input-resp').value = "";
-            document.getElementById('view-title').innerText = "Nível " + nivelAtivo;
             
-            // Lógica de intervalo: Nível 1 é metade, Nível 2 é tudo
-            let limiteSuperior = (nivelAtivo === 1) ? maxCategoria / 2 : maxCategoria;
-            nAtual = Math.floor(Math.random() * (limiteSuperior - 1)) + 1;
+            // Lógica de intervalo: Nível 1 (1 até Metade), Nível 2 (1 até Max)
+            let maxRange = (nivelAtivo === 1) ? limiteCat / 2 : limiteCat;
+            nAtual = Math.floor(Math.random() * (maxRange - 1)) + 1;
             
+            // Formatação com espaço nos milhares
             document.getElementById('display-num').innerText = nAtual.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
             document.getElementById('input-resp').focus();
         }
 
-        function validar() {
-            const inputVal = document.getElementById('input-resp').value.trim();
-            const user = inputVal.toLowerCase().replace(/\s+/g, ' ');
-            const correct = converter(nAtual).toLowerCase();
+        function verificar() {
+            const escritaOriginal = document.getElementById('input-resp').value.trim();
+            const tentativa = escritaOriginal.toLowerCase().replace(/\s+/g, ' ');
+            const correto = converterParaExtenso(nAtual).toLowerCase();
+
+            if (tentativa === correto) {
+                combo++;
+                if (combo === 5) {
+                    if (nivelAtivo === 1) {
+                        nivelAtivo = 2; combo = 0;
+                        showModal("🚀", "Nível 1 Completo!", "Boa! Agora vamos para o <b>Nível 2</b> com números maiores.", true);
+                    } else {
+                        showModal("🏆", "Mestre!", `Completaste o desafio final em <b>${document.getElementById('timer-display').innerText}</b>!`, false, true);
+                    }
+                } else {
+                    showModal("🌟", "Certíssimo!", `Muito bem! Continua assim.<br><small>Número: ${correto}</small>`, true);
+                }
+            } else {
+                combo = 0;
+                showModal("❌", "Tenta de novo", `Escreveste: <span style="color:#e74c3c">${escritaOriginal || 'nada'}</span><br>O correto era:<br><b>${correto}</b>`, true);
+            }
+            updateUI();
+        }
+
+        function showModal(emoji, titulo, msg, continua, fim = false) {
+            document.getElementById('f-emoji').innerText = emoji;
+            document.getElementById('f-titulo').innerText = titulo;
+            document.getElementById('f-texto').innerHTML = msg;
+            document.getElementById('modal-feedback').style.display = 'flex';
             
-            if (user === correct) {
-                combo+
+            const btn = document.getElementById('btn-next');
+            if (fim) {
+                btn.innerText = "VOLTAR AO MENU";
+                btn.onclick = handleVoltar;
+            } else {
+                btn.innerText = "CONTINUAR";
+                btn.onclick = proxima;
+            }
+        }
+
+        // LÓGICA DE CONVERSÃO PT-PT (Sem vírgulas)
+        function converterParaExtenso(n) {
+            if (n === 0) return "zero";
+            if (n === 100) return "cem";
+            if (n === 1000) return "mil";
+            if (n === 1000000) return "um milhão";
+
+            const und = ["", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove"];
+            const esp = ["dez", "onze", "doze", "treze", "catorze", "quinze", "dezasseis", "dezassete", "dezoito", "dezanove"];
+            const dez = ["", "", "vinte", "trinta", "quarenta", "cinquenta", "sessenta", "setenta", "oitenta", "noventa"];
+            const cen = ["", "cento", "duzentos", "trezentos", "quatrocentos", "quinhentos", "seiscentos", "setecentos", "oitocentos", "novecentos"];
+
+            function converter999(num) {
+                if (num === 0) return "";
+                if (num === 100) return "cem";
+                let partes = [];
+                if (num >= 100) {
+                    partes.push(cen[Math.floor(num / 100)]);
+                    num %= 100;
+                    if (num > 0) partes.push("e");
+                }
+                if (num >= 10 && num < 20) {
+                    partes.push(esp[num - 10]);
+                } else {
+                    if (num >= 20) {
+                        partes.push(dez[Math.floor(num / 10)]);
+                        num %= 10;
+                        if (num > 0) partes.push("e");
+                    }
+                    if (num > 0) partes.push(und[num]);
+                }
+                return partes.join(" ");
+            }
+
+            if (n < 1000) return converter999(n);
+            if (n < 1000000) {
+                let mil = Math.floor(n / 1000), resto = n % 1000;
+                let textoMil = (mil === 1) ? "mil" : converter999(mil) + " mil";
+                if (resto === 0) return textoMil;
+                // Em PT-PT sem vírgulas, usamos "e" em quase tudo ou apenas espaço
+                let ligacao = (resto < 100 || resto % 100 === 0) ? " e " : " ";
+                return textoMil + ligacao + converter999(resto);
+            }
+            return n.toString();
+        }
+
+        document.getElementById('input-resp').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verificar();
+        });
+    </script>
+</body>
+</html>
