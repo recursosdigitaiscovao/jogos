@@ -44,10 +44,11 @@
         .stars-row { display: flex; gap: 4px; }
         .star-box { font-size: 1.4rem; color: white; -webkit-text-stroke: 1.5px #9b59b6; transition: 0.3s; }
         .star-box.correct { color: #9b59b6; -webkit-text-stroke: 1px #732d91; }
+        .star-box.wrong { color: #e74c3c; -webkit-text-stroke: 1px #c0392b; }
 
-        .combo-text { font-weight: 800; color: #9b59b6; font-size: 0.85rem; min-width: 85px; text-align: right; }
+        .combo-group { font-weight: 800; color: #9b59b6; font-size: 0.9rem; min-width: 85px; text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
 
-        /* === MENU DE CATEGORIAS (Design Solicitado) === */
+        /* === MENU DE CATEGORIAS === */
         .category-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
         .cat-card {
             background: #fff; border: 2px solid #ecdff5; border-radius: 18px; padding: 22px 10px;
@@ -55,8 +56,8 @@
             box-shadow: 0 4px 0 #ecdff5;
         }
         .cat-card:hover { transform: translateY(-2px); border-color: #9b59b6; }
-        .cat-card span:first-child { color: black; font-weight: normal; font-size: 0.9rem; margin-bottom: 4px; }
-        .cat-card span:last-child { color: #9b59b6; font-weight: 900; font-size: 1.1rem; }
+        .cat-card span:first-child { color: black; font-weight: normal; font-size: 0.85rem; margin-bottom: 2px; }
+        .cat-card span:last-child { color: #9b59b6; font-weight: 900; font-size: 1.2rem; }
 
         /* === ÁREA PRINCIPAL === */
         main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; overflow: hidden; }
@@ -68,7 +69,6 @@
         
         .btn-info { width: 30px; height: 30px; border-radius: 50%; background-color: #9b59b6; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #732d91; cursor: pointer; }
 
-        /* CARD DO JOGO */
         .game-card {
             background: white; padding: 25px; border-radius: 25px;
             box-shadow: 0 12px 30px rgba(0,0,0,0.1); width: 100%;
@@ -142,8 +142,8 @@
                 <div class="stars-row" id="stars-row">
                     <span class="star-box">★</span><span class="star-box">★</span><span class="star-box">★</span><span class="star-box">★</span><span class="star-box">★</span>
                 </div>
-                <div id="combo-display" class="combo-text">
-                    0 seguidas
+                <div class="combo-group">
+                    <span>🔥</span><span id="combo-display">0</span>
                 </div>
             </div>
             
@@ -189,10 +189,10 @@
             <h2 style="color: #8e44ad; margin-bottom: 15px;">Como Jogar</h2>
             <p style="text-align: left; font-size: 0.9rem; line-height: 1.5;">
                 • Escreve o número que vês por extenso.<br>
-                • Precisas de <b>5 seguidas</b> para subir de nível.<br>
-                • <b>Nível 1:</b> Números até metade da categoria.<br>
-                • <b>Nível 2:</b> Números até ao limite total.<br>
-                • Se errares, as estrelas voltam ao início.
+                • Responde a <b>5 números</b> por nível.<br>
+                • Estrela <b style="color:#9b59b6">Roxa</b> = Acerto | <b style="color:#e74c3c">Vermelha</b> = Erro.<br>
+                • <b>Nível 1:</b> Até metade da categoria.<br>
+                • <b>Nível 2:</b> De metade até ao fim.
             </p>
             <button class="btn-roxo-3d" style="width: 100%; margin-top: 20px;" onclick="closeInfo()">ENTENDIDO!</button>
         </div>
@@ -205,7 +205,7 @@
             <p id="f-texto" style="margin: 15px 0; color: #555;"></p>
             <div id="f-buttons" style="display:flex; flex-direction:column; gap:10px;">
                 <button id="btn-next" class="btn-roxo-3d" style="width: 100%;" onclick="proxima()">CONTINUAR</button>
-                <button id="btn-mudar" class="btn-roxo-3d hidden" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5;" onclick="handleVoltar()">MUDAR DE NÍVEL</button>
+                <button id="btn-mudar" class="btn-roxo-3d hidden" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5;" onclick="handleVoltar()">MUDAR DE CATEGORIA</button>
             </div>
         </div>
     </div>
@@ -214,7 +214,8 @@
 
     <script>
         let nAtual = 0, limiteCat = 0, emJogo = false;
-        let combo = 0, nivelAtivo = 1, segs = 0, timer;
+        let combo = 0, nivelAtivo = 1, perguntaAtual = 0;
+        let segs = 0, timer, resultados = [];
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -236,6 +237,7 @@
 
         function startChallenge(max) {
             limiteCat = max; emJogo = true; nivelAtivo = 1; combo = 0; segs = 0;
+            perguntaAtual = 0; resultados = [];
             updateUI();
             document.getElementById('menu-categorias').classList.add('hidden');
             document.getElementById('jogo-container').classList.remove('hidden');
@@ -257,18 +259,35 @@
 
         function updateUI() {
             document.getElementById('view-title').innerText = "Nível " + nivelAtivo;
-            document.getElementById('combo-display').innerText = combo + " seguidas";
+            document.getElementById('combo-display').innerText = combo;
             const stars = document.querySelectorAll('.star-box');
-            stars.forEach((s, i) => { s.classList.toggle('correct', i < combo); });
+            stars.forEach((s, i) => {
+                s.className = 'star-box';
+                if (resultados[i] === 'correct') s.classList.add('correct');
+                if (resultados[i] === 'wrong') s.classList.add('wrong');
+            });
         }
 
         function proxima() {
+            if (perguntaAtual === 5) {
+                if (nivelAtivo === 1) {
+                    nivelAtivo = 2; perguntaAtual = 0; resultados = [];
+                    updateUI();
+                    proxima();
+                    return;
+                } else {
+                    finalizar();
+                    return;
+                }
+            }
             document.getElementById('modal-feedback').style.display = 'none';
             document.getElementById('btn-mudar').classList.add('hidden');
             document.getElementById('input-resp').value = "";
             
-            let maxRange = (nivelAtivo === 1) ? limiteCat / 2 : limiteCat;
-            nAtual = Math.floor(Math.random() * (maxRange - 1)) + 1;
+            let min = (nivelAtivo === 1) ? 1 : (limiteCat / 2) + 1;
+            let max = (nivelAtivo === 1) ? (limiteCat / 2) : limiteCat;
+            
+            nAtual = Math.floor(Math.random() * (max - min + 1)) + min;
             
             document.getElementById('display-num').innerText = nAtual.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
             document.getElementById('input-resp').focus();
@@ -281,20 +300,14 @@
 
             if (tentativa === correto) {
                 combo++;
-                if (combo === 5) {
-                    if (nivelAtivo === 1) {
-                        nivelAtivo = 2; combo = 0;
-                        showFeedback("🚀", "Nível 1 Completo!", "Boa! Conseguiste 5 seguidas. Vamos para o <b>Nível 2</b> com números maiores.", "PROXIMO NÍVEL");
-                    } else {
-                        finalizarCategoria();
-                    }
-                } else {
-                    showFeedback("🌟", "Certíssimo!", `Muito bem! Continua focado.<br><small>Resposta: ${correto}</small>`, "CONTINUAR");
-                }
+                resultados.push('correct');
+                showFeedback("🌟", "Certíssimo!", `Muito bem!<br><small>Resposta: ${correto}</small>`, "CONTINUAR");
             } else {
                 combo = 0;
-                showFeedback("❌", "Tenta de novo", `Escreveste: <span style="color:#e74c3c">${escritaRaw || 'nada'}</span><br>O correto era:<br><b>${correto}</b>`, "TENTAR OUTRO");
+                resultados.push('wrong');
+                showFeedback("❌", "Não foi desta...", `Escreveste: <span style="color:#e74c3c">${escritaRaw || 'nada'}</span><br>O correto era:<br><b>${correto}</b>`, "CONTINUAR");
             }
+            perguntaAtual++;
             updateUI();
         }
 
@@ -307,13 +320,15 @@
             document.getElementById('modal-feedback').style.display = 'flex';
         }
 
-        function finalizarCategoria() {
+        function finalizar() {
+            const acertos = resultados.filter(r => r === 'correct').length;
             const tempoFinal = document.getElementById('timer-display').innerText;
-            const feedbackFinal = (segs < 120) ? "Parabéns! És um mestre dos números!" : "Bom trabalho, mas deves praticar mais para seres mais rápido!";
             
-            document.getElementById('f-emoji').innerText = "🏆";
-            document.getElementById('f-titulo').innerText = "Categoria Concluída!";
-            document.getElementById('f-texto').innerHTML = `Terminaste o desafio em ${tempoFinal}.<br><br>${feedbackFinal}`;
+            let msg = (acertos >= 4) ? "Parabéns! Tens um excelente domínio!" : "Bom esforço, mas deves praticar mais a escrita!";
+            
+            document.getElementById('f-emoji').innerText = acertos >= 4 ? "🏆" : "💪";
+            document.getElementById('f-titulo').innerText = "Fim do Desafio!";
+            document.getElementById('f-texto').innerHTML = `Acertaste ${acertos} de 5 no último nível.<br>Tempo: ${tempoFinal}<br><br>${msg}`;
             
             const btnNext = document.getElementById('btn-next');
             btnNext.innerText = "JOGAR DE NOVO";
