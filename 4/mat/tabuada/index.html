@@ -34,7 +34,7 @@
         }
         .btn-voltar-3d:active { transform: translateY(3px); box-shadow: 0 0 0 #732d91; }
 
-        /* SIDEBAR / MENU HAMBURGER COM EFEITO HOVER ROXO */
+        /* SIDEBAR / MENU HAMBURGER */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
         .sidebar.active { left: 0; }
         
@@ -43,11 +43,7 @@
             border-radius: 12px; background: #f8f9fa; display: flex; align-items: center; 
             gap: 15px; margin-bottom: 10px; transition: all 0.2s ease;
         }
-        /* Efeito roxo ao passar o rato (hover) */
-        .sidebar-item:hover {
-            background-color: #9b59b6;
-            color: #ffffff;
-        }
+        .sidebar-item:hover { background-color: #9b59b6; color: #ffffff; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
         .overlay.active { display: block; }
@@ -59,7 +55,7 @@
             overflow-y: auto;
         }
 
-        /* Estrutura do Título Fora do Quadrado */
+        /* Estrutura de Ecrãs e Títulos (Fora do Quadrado) */
         .screen-container { display: flex; flex-direction: column; align-items: center; width: 100%; }
         
         .main-title { text-align: center; margin-bottom: 20px; }
@@ -80,8 +76,6 @@
             cursor: pointer; transition: all 0.1s; display: flex; align-items: center; justify-content: center;
         }
         .btn-tabuada:active { transform: translateY(3px); border-bottom: 2px solid #8e44ad; }
-        
-        /* Botão Misturada agora ocupa 2 colunas em vez de 3 */
         .btn-mix { grid-column: span 2; background: #9b59b6; color: white; border-color: #8e44ad; border-bottom-color: #732d91; letter-spacing: 1px; font-size: 1.1rem;}
 
         /* ÁREA DE JOGO NO TOPO */
@@ -92,11 +86,10 @@
         .stars-container { display: flex; gap: 2px; justify-content: center; flex: 1; margin: 0 10px; }
         .star-icon { width: 18px; height: 18px; transition: 0.3s; }
         
-        .streak-text { color: #e67e22; font-size: 0.85rem; font-weight: bold; opacity: 0; transition: opacity 0.3s; width: 85px; text-align: right; }
+        /* Ajuste do Combo para não quebrar linha: white-space: nowrap; */
+        .streak-text { color: #e67e22; font-size: 0.85rem; font-weight: bold; opacity: 0; transition: opacity 0.3s; white-space: nowrap; text-align: right; }
         .streak-text.show { opacity: 1; }
 
-        .game-title { color: #8e44ad; font-size: 1.3rem; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; border-bottom: 2px dashed #eee; padding-bottom: 10px; }
-        
         .pergunta { font-size: 3.5rem; font-weight: 800; margin: 5px 0 25px 0; color: #8e44ad; text-shadow: 2px 2px 0px #ecf0f1; }
         
         .opcoes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; }
@@ -171,7 +164,6 @@
     <main>
         <!-- ECRÃ INICIAL -->
         <div id="screen-start" class="screen-container">
-            <!-- Título e Ícone agora FORA do quadrado branco -->
             <div class="main-title">
                 <div style="font-size: 4rem; margin-bottom: -10px;">👑</div>
                 <h2>Rei das Tabuadas</h2>
@@ -181,33 +173,37 @@
             <div class="game-card">
                 <div class="tabuadas-grid">
                     <script>
-                        // Os botões de 1 a 10 ocupam os seus respetivos quadrados
                         for(let i=1; i<=10; i++) {
                             document.write(`<button class="btn-tabuada" onclick="startGame(${i})">${i}</button>`);
                         }
                     </script>
-                    <!-- O botão Misturada ocupa exatamente o espaço restante ao lado do 10 -->
                     <button class="btn-tabuada btn-mix" onclick="startGame('mix')">MISTURADA</button>
                 </div>
             </div>
         </div>
 
         <!-- ECRÃ DE JOGO -->
-        <div id="screen-game" class="game-card hidden">
-            <div id="dynamic-title" class="game-title">Tabuada do 2</div>
-            
-            <div class="game-top-bar">
-                <div class="timer-box">⏱️ <span id="timer-display">00:00</span></div>
-                <div class="stars-container" id="stars-container"></div>
-                <div id="streak-display" class="streak-text">🔥 2 Seguidas!</div>
+        <div id="screen-game" class="screen-container hidden">
+            <!-- Título Dinâmico agora FORA do quadrado branco -->
+            <div class="main-title">
+                <h2 id="dynamic-title" style="font-size: 1.8rem;">Tabuada do 2</h2>
             </div>
             
-            <div class="pergunta" id="question">2 x 2</div>
-            <div class="opcoes-grid">
-                <button class="btn-opcao" onclick="checkAnswer(this)"></button>
-                <button class="btn-opcao" onclick="checkAnswer(this)"></button>
-                <button class="btn-opcao" onclick="checkAnswer(this)"></button>
-                <button class="btn-opcao" onclick="checkAnswer(this)"></button>
+            <div class="game-card">
+                <div class="game-top-bar">
+                    <div class="timer-box">⏱️ <span id="timer-display">00:00</span></div>
+                    <div class="stars-container" id="stars-container"></div>
+                    <!-- Texto Seguidas forçado a não quebrar de linha -->
+                    <div id="streak-display" class="streak-text">🔥 2 Seguidas!</div>
+                </div>
+                
+                <div class="pergunta" id="question">2 x 2</div>
+                <div class="opcoes-grid">
+                    <button class="btn-opcao" onclick="checkAnswer(this)"></button>
+                    <button class="btn-opcao" onclick="checkAnswer(this)"></button>
+                    <button class="btn-opcao" onclick="checkAnswer(this)"></button>
+                    <button class="btn-opcao" onclick="checkAnswer(this)"></button>
+                </div>
             </div>
         </div>
     </main>
