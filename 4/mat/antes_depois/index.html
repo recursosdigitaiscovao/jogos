@@ -1,1 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Novo Jogo Matemática</title>
+    <style>
+        /* === ESTILOS GLOBAIS === */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
+        body {
+            background-color: rgba(155, 89, 182, 0.15); 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh; height: 100svh;
+            display: flex; flex-direction: column; overflow: hidden;
+            color: #2c3e50;
+        }
+
+        /* === CABEÇALHO === */
+        header {
+            width: 100%; background: #fff; padding: 12px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid #ddd; z-index: 100; flex-shrink: 0;
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        header h1 { font-size: 0.85rem; color: #2c3e50; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+
+        .btn-roxo-3d {
+            text-decoration: none; color: #ffffff; background-color: #9b59b6;
+            font-weight: bold; font-size: 0.75rem; padding: 10px 18px;
+            border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 8px;
+            border: 1px solid #732d91; box-shadow: 0 4px 0 #732d91; cursor: pointer; transition: 0.1s;
+        }
+        .btn-roxo-3d:active { transform: translateY(3px); box-shadow: 0 0 0 #732d91; }
+
+        /* === ÁREA DE STATUS (Relógio, Estrelas, Combo) === */
+        .status-bar-line {
+            width: 100%; max-width: 450px; display: flex; 
+            justify-content: space-between; align-items: center; 
+            margin-bottom: 12px; padding: 0 5px;
+        }
+        .timer-group { display: flex; align-items: center; gap: 5px; color: #9b59b6; font-weight: 900; font-size: 0.9rem; min-width: 75px; }
+        
+        .stars-row { display: flex; gap: 4px; }
+        .star-box { font-size: 1.4rem; color: white; -webkit-text-stroke: 1.5px #9b59b6; transition: 0.3s; }
+        .star-box.correct { color: #9b59b6; -webkit-text-stroke: 1px #732d91; }
+        .star-box.wrong { color: #e74c3c; -webkit-text-stroke: 1px #c0392b; }
+
+        .combo-group { font-weight: 800; color: #9b59b6; font-size: 0.85rem; min-width: 110px; text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+
+        /* === MENU DE CATEGORIAS === */
+        .category-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+        .cat-card {
+            background: #fff; border: 2px solid #ecdff5; border-radius: 18px; padding: 22px 10px;
+            cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center;
+            box-shadow: 0 4px 0 #ecdff5;
+        }
+        .cat-card:hover { transform: translateY(-2px); border-color: #9b59b6; }
+        .cat-card span:first-child { color: black; font-weight: normal; font-size: 0.85rem; margin-bottom: 2px; }
+        .cat-card span:last-child { color: #9b59b6; font-weight: 900; font-size: 1.2rem; }
+
+        /* === ÁREA PRINCIPAL === */
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; overflow: hidden; }
+        .screen-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 450px; }
+        
+        .main-title { text-align: center; margin-bottom: 15px; }
+        .title-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .title-row h2 { color: #2c3e50; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; }
+        
+        .btn-info { width: 30px; height: 30px; border-radius: 50%; background-color: #9b59b6; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #732d91; cursor: pointer; }
+
+        /* CARD DO JOGO */
+        .game-card {
+            background: white; padding: 25px; border-radius: 25px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1); width: 100%;
+            display: flex; flex-direction: column; min-height: 280px; justify-content: center;
+        }
+
+        .hidden { display: none !important; }
+
+        /* MODAIS */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
+        .modal-content { background: white; padding: 30px; border-radius: 25px; text-align: center; width: 90%; max-width: 350px; }
+        .summary-box { background: #fdfaff; border-radius: 15px; padding: 15px; margin: 15px 0; border: 1px dashed #9b59b6; }
+        .summary-line { display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; font-size: 0.85rem; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
+        .sidebar.active { left: 0; }
+        .sidebar-item { text-decoration: none; color: #444; font-weight: bold; padding: 14px; border-radius: 12px; background: #f8f9fa; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 150; }
+        .overlay.active { display: block; }
+
+        footer { width: 100%; padding: 15px; background: #fff; text-align: center; color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.8rem; flex-shrink: 0; }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    
+    <div class="sidebar" id="sidebar">
+        <h3>Navegação</h3>
+        <nav class="sidebar-menu">
+            <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+            <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
+            <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
+            <a href="/jogos/2/" class="sidebar-item">🐢 2º Ano</a>
+            <a href="/jogos/3/" class="sidebar-item">🦊 3º Ano</a>
+            <a href="/jogos/4/" class="sidebar-item">👨‍🚀 4º Ano</a>
+        </nav>
+        <button onclick="toggleMenu()" style="margin-top:auto; padding:10px; border:none; background:#eee; cursor:pointer; border-radius:8px;">Fechar ×</button>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()" style="cursor:pointer; font-size: 1.5rem;">☰</div>
+            <h1><span class="header-icon">👨‍🚀</span> NOME DO JOGO</h1>
+        </div>
+        <button onclick="handleVoltar()" class="btn-roxo-3d">⬅ Voltar</button>
+    </header>
+
+    <main>
+        <div class="screen-container">
+            <div class="main-title">
+                <div style="font-size: 3.5rem;">✍️</div> <!-- ÍCONE DO JOGO -->
+                <div class="title-row">
+                    <h2 id="view-title">TÍTULO INICIAL</h2>
+                    <button class="btn-info" onclick="openInfo()">i</button>
+                </div>
+                <p id="view-desc">Instrução inicial do jogo aqui.</p>
+            </div>
+
+            <div id="game-status" class="status-bar-line hidden">
+                <div class="timer-group">
+                    <span>⏱️</span><span id="timer-display">00:00</span>
+                </div>
+                <div class="stars-row" id="stars-row">
+                    <span class="star-box">★</span><span class="star-box">★</span><span class="star-box">★</span><span class="star-box">★</span><span class="star-box">★</span>
+                </div>
+                <div class="combo-group">
+                    <span>🔥</span><span id="combo-display">0</span><span>seguidas</span>
+                </div>
+            </div>
+            
+            <div class="game-card" id="game-area">
+                <!-- CONTEÚDO DO NOVO JOGO VAI AQUI -->
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAIS -->
+    <div id="modal-info" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #8e44ad; margin-bottom: 15px;">Como Jogar</h2>
+            <p style="text-align: left; font-size: 0.9rem; line-height: 1.5;">
+                • Regra 1...<br>
+                • Regra 2...
+            </p>
+            <button class="btn-roxo-3d" style="width: 100%; margin-top: 20px;" onclick="closeInfo()">ENTENDIDO!</button>
+        </div>
+    </div>
+
+    <div id="modal-feedback" class="modal">
+        <div class="modal-content">
+            <div id="f-emoji" style="font-size: 4rem; margin-bottom: 10px;"></div>
+            <h2 id="f-titulo"></h2>
+            <p id="f-texto" style="margin: 10px 0; color: #555;"></p>
+            
+            <div id="final-results" class="summary-box hidden">
+                <div class="summary-line">
+                    <span style="margin-bottom:2px">Nível 1</span>
+                    <span id="res-l1">0 certas | 0 erradas</span>
+                </div>
+                <div class="summary-line">
+                    <span style="margin-bottom:2px">Nível 2</span>
+                    <span id="res-l2">0 certas | 0 erradas</span>
+                </div>
+            </div>
+
+            <div id="f-buttons" style="display:flex; flex-direction:column; gap:10px;">
+                <button id="btn-next" class="btn-roxo-3d" style="width: 100%;">CONTINUAR</button>
+                <button id="btn-mudar" class="btn-roxo-3d hidden" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5;" onclick="fecharModalEVoltar()">MUDAR DE CATEGORIA</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>Recursos Digitais Covão - Professor Luís</footer>
+
+    <script>
+        // LÓGICA DE NAVEGAÇÃO
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+        function openInfo() { document.getElementById('modal-info').style.display = 'flex'; }
+        function closeInfo() { document.getElementById('modal-info').style.display = 'none'; }
+        function fecharModalEVoltar() {
+            document.getElementById('modal-feedback').style.display = 'none';
+            handleVoltar();
+        }
+        function handleVoltar() {
+            window.location.href = '../';
+        }
+
+        // PROGRAMA AQUI A LÓGICA DO NOVO JOGO
+    </script>
+</body>
+</html>
