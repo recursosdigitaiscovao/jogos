@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Novo Jogo Matemática</title>
+    <title>Antes e Depois - Matemática</title>
     <style>
         /* === ESTILOS GLOBAIS === */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -33,7 +33,7 @@
         }
         .btn-roxo-3d:active { transform: translateY(3px); box-shadow: 0 0 0 #732d91; }
 
-        /* === ÁREA DE STATUS (Relógio, Estrelas, Combo) === */
+        /* === ÁREA DE STATUS (Linha Única) === */
         .status-bar-line {
             width: 100%; max-width: 450px; display: flex; 
             justify-content: space-between; align-items: center; 
@@ -49,40 +49,59 @@
         .combo-group { font-weight: 800; color: #9b59b6; font-size: 0.85rem; min-width: 110px; text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
 
         /* === MENU DE CATEGORIAS === */
-        .category-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+        .category-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; overflow-y: auto; padding: 5px; }
         .cat-card {
-            background: #fff; border: 2px solid #ecdff5; border-radius: 18px; padding: 22px 10px;
+            background: #fff; border: 2px solid #ecdff5; border-radius: 15px; padding: 15px 10px;
             cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center;
             box-shadow: 0 4px 0 #ecdff5;
         }
         .cat-card:hover { transform: translateY(-2px); border-color: #9b59b6; }
-        .cat-card span:first-child { color: black; font-weight: normal; font-size: 0.85rem; margin-bottom: 2px; }
-        .cat-card span:last-child { color: #9b59b6; font-weight: 900; font-size: 1.2rem; }
+        .cat-card span:first-child { color: black; font-weight: normal; font-size: 0.8rem; margin-bottom: 2px; }
+        .cat-card span:last-child { color: #9b59b6; font-weight: 900; font-size: 1.1rem; }
 
         /* === ÁREA PRINCIPAL === */
         main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; overflow: hidden; }
         .screen-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 450px; }
         
-        .main-title { text-align: center; margin-bottom: 15px; }
+        .main-title { text-align: center; margin-bottom: 10px; }
         .title-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .title-row h2 { color: #2c3e50; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; }
+        .title-row h2 { color: #2c3e50; font-size: 1.5rem; font-weight: 900; text-transform: uppercase; }
         
         .btn-info { width: 30px; height: 30px; border-radius: 50%; background-color: #9b59b6; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #732d91; cursor: pointer; }
 
         /* CARD DO JOGO */
         .game-card {
-            background: white; padding: 25px; border-radius: 25px;
+            background: white; padding: 20px; border-radius: 25px;
             box-shadow: 0 12px 30px rgba(0,0,0,0.1); width: 100%;
             display: flex; flex-direction: column; min-height: 280px; justify-content: center;
         }
+
+        /* Lógica do Antes e Depois */
+        .game-layout { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        
+        .display-center {
+            background: #fdfaff; border: 3px solid #9b59b6; border-radius: 15px;
+            min-width: 100px; padding: 15px 10px; font-size: 1.8rem; font-weight: 900;
+            color: #2c3e50; text-align: center; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .input-neighbor {
+            width: 85px; padding: 12px; font-size: 1.2rem; border: 2px solid #eee; 
+            border-radius: 12px; text-align: center; outline: none; transition: 0.3s;
+            background: #fdfdfd; font-weight: bold;
+        }
+        .input-neighbor:focus { border-color: #9b59b6; background: #fff; }
+        .input-label { font-size: 0.7rem; font-weight: 800; color: #9b59b6; text-transform: uppercase; margin-bottom: 5px; }
+        .input-wrap { display: flex; flex-direction: column; align-items: center; }
 
         .hidden { display: none !important; }
 
         /* MODAIS */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
-        .modal-content { background: white; padding: 30px; border-radius: 25px; text-align: center; width: 90%; max-width: 350px; }
+        .modal-content { background: white; padding: 25px; border-radius: 25px; text-align: center; width: 90%; max-width: 350px; }
         .summary-box { background: #fdfaff; border-radius: 15px; padding: 15px; margin: 15px 0; border: 1px dashed #9b59b6; }
         .summary-line { display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; font-size: 0.85rem; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .summary-line:last-child { border-bottom: none; }
 
         /* SIDEBAR */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
@@ -114,7 +133,7 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()" style="cursor:pointer; font-size: 1.5rem;">☰</div>
-            <h1><span class="header-icon">👨‍🚀</span> NOME DO JOGO</h1>
+            <h1><span class="header-icon">👨‍🚀</span> Antes e Depois</h1>
         </div>
         <button onclick="handleVoltar()" class="btn-roxo-3d">⬅ Voltar</button>
     </header>
@@ -122,14 +141,15 @@
     <main>
         <div class="screen-container">
             <div class="main-title">
-                <div style="font-size: 3.5rem;">✍️</div> <!-- ÍCONE DO JOGO -->
+                <div style="font-size: 3.5rem;">✍️</div>
                 <div class="title-row">
-                    <h2 id="view-title">TÍTULO INICIAL</h2>
+                    <h2 id="view-title">Antes e Depois</h2>
                     <button class="btn-info" onclick="openInfo()">i</button>
                 </div>
-                <p id="view-desc">Instrução inicial do jogo aqui.</p>
+                <p id="view-desc">Quem são os vizinhos do número?</p>
             </div>
 
+            <!-- STATUS BAR LINE -->
             <div id="game-status" class="status-bar-line hidden">
                 <div class="timer-group">
                     <span>⏱️</span><span id="timer-display">00:00</span>
@@ -142,8 +162,41 @@
                 </div>
             </div>
             
-            <div class="game-card" id="game-area">
-                <!-- CONTEÚDO DO NOVO JOGO VAI AQUI -->
+            <div class="game-card">
+                <!-- MENU INICIAL -->
+                <div id="menu-categorias" class="category-container">
+                    <div class="cat-card" onclick="startChallenge(100)"><span>Números até</span><span>100</span></div>
+                    <div class="cat-card" onclick="startChallenge(200)"><span>Números até</span><span>200</span></div>
+                    <div class="cat-card" onclick="startChallenge(400)"><span>Números até</span><span>400</span></div>
+                    <div class="cat-card" onclick="startChallenge(600)"><span>Números até</span><span>600</span></div>
+                    <div class="cat-card" onclick="startChallenge(1000)"><span>Números até</span><span>1 000</span></div>
+                    <div class="cat-card" onclick="startChallenge(10000)"><span>Números até</span><span>10 000</span></div>
+                    <div class="cat-card" onclick="startChallenge(100000)"><span>Números até</span><span>100 000</span></div>
+                    <div class="cat-card" onclick="startChallenge(1000000)"><span>Números até</span><span>1 000 000</span></div>
+                </div>
+
+                <!-- ÁREA DE JOGO -->
+                <div id="jogo-container" class="hidden" style="width: 100%; display: flex; flex-direction: column;">
+                    <div class="game-layout">
+                        <div class="input-wrap">
+                            <span class="input-label">Antes</span>
+                            <input type="number" id="input-before" class="input-neighbor" placeholder="?">
+                        </div>
+                        
+                        <div id="display-num" class="display-center">0</div>
+                        
+                        <div class="input-wrap">
+                            <span class="input-label">Depois</span>
+                            <input type="number" id="input-after" class="input-neighbor" placeholder="?">
+                        </div>
+                    </div>
+                    
+                    <button class="btn-roxo-3d" style="width: 100%; font-size: 1.1rem; padding: 15px;" onclick="verificar()">VERIFICAR</button>
+                    
+                    <button class="btn-roxo-3d" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5; box-shadow:0 4px 0 #ecdff5; margin-top:15px; width:100%;" onclick="fecharModalEVoltar()">
+                        ⬅ OUTRA CATEGORIA
+                    </button>
+                </div>
             </div>
         </div>
     </main>
@@ -153,8 +206,11 @@
         <div class="modal-content">
             <h2 style="color: #8e44ad; margin-bottom: 15px;">Como Jogar</h2>
             <p style="text-align: left; font-size: 0.9rem; line-height: 1.5;">
-                • Regra 1...<br>
-                • Regra 2...
+                • Vê o número que aparece no centro.<br>
+                • À esquerda, escreve o número <b>imediatamente antes</b>.<br>
+                • À direita, escreve o número <b>imediatamente depois</b>.<br>
+                • Responde a 5 números por nível.<br>
+                • Estrela <b style="color:#9b59b6">Roxa</b> = Acerto | <b style="color:#e74c3c">Vermelha</b> = Erro.
             </p>
             <button class="btn-roxo-3d" style="width: 100%; margin-top: 20px;" onclick="closeInfo()">ENTENDIDO!</button>
         </div>
@@ -178,7 +234,7 @@
             </div>
 
             <div id="f-buttons" style="display:flex; flex-direction:column; gap:10px;">
-                <button id="btn-next" class="btn-roxo-3d" style="width: 100%;">CONTINUAR</button>
+                <button id="btn-next" class="btn-roxo-3d" style="width: 100%;" onclick="proxima()">CONTINUAR</button>
                 <button id="btn-mudar" class="btn-roxo-3d hidden" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5;" onclick="fecharModalEVoltar()">MUDAR DE CATEGORIA</button>
             </div>
         </div>
@@ -187,22 +243,148 @@
     <footer>Recursos Digitais Covão - Professor Luís</footer>
 
     <script>
-        // LÓGICA DE NAVEGAÇÃO
+        let nAtual = 0, limiteCat = 0, emJogo = false;
+        let combo = 0, nivelAtivo = 1, perguntaAtual = 0;
+        let segs = 0, timer;
+        let resultadosL1 = [], resultadosL2 = [];
+
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
         }
         function openInfo() { document.getElementById('modal-info').style.display = 'flex'; }
         function closeInfo() { document.getElementById('modal-info').style.display = 'none'; }
+
         function fecharModalEVoltar() {
             document.getElementById('modal-feedback').style.display = 'none';
             handleVoltar();
         }
+
         function handleVoltar() {
-            window.location.href = '../';
+            if (emJogo) {
+                emJogo = false; clearInterval(timer);
+                document.getElementById('menu-categorias').classList.remove('hidden');
+                document.getElementById('jogo-container').classList.add('hidden');
+                document.getElementById('game-status').classList.add('hidden');
+                document.getElementById('view-title').innerText = "Antes e Depois";
+                document.getElementById('view-desc').innerText = "Quem são os vizinhos do número?";
+                document.getElementById('modal-feedback').style.display = 'none';
+            } else { window.location.href = '../'; }
         }
 
-        // PROGRAMA AQUI A LÓGICA DO NOVO JOGO
+        function startChallenge(max) {
+            limiteCat = max; emJogo = true; nivelAtivo = 1; combo = 0; segs = 0;
+            perguntaAtual = 0; resultadosL1 = []; resultadosL2 = [];
+            updateUI();
+            document.getElementById('menu-categorias').classList.add('hidden');
+            document.getElementById('jogo-container').classList.remove('hidden');
+            document.getElementById('game-status').classList.remove('hidden');
+            startTimer(); proxima();
+        }
+
+        function startTimer() {
+            clearInterval(timer);
+            timer = setInterval(() => { segs++; updateTimerUI(); }, 1000);
+        }
+
+        function updateTimerUI() {
+            const m = Math.floor(segs / 60).toString().padStart(2, '0');
+            const s = (segs % 60).toString().padStart(2, '0');
+            document.getElementById('timer-display').innerText = `${m}:${s}`;
+        }
+
+        function updateUI() {
+            document.getElementById('view-title').innerText = "Nível " + nivelAtivo;
+            document.getElementById('combo-display').innerText = combo;
+            const stars = document.querySelectorAll('.star-box');
+            const resAtual = (nivelAtivo === 1) ? resultadosL1 : resultadosL2;
+            stars.forEach((s, i) => {
+                s.className = 'star-box';
+                if (resAtual[i] === 'correct') s.classList.add('correct');
+                if (resAtual[i] === 'wrong') s.classList.add('wrong');
+            });
+        }
+
+        function proxima() {
+            if (perguntaAtual === 5) {
+                if (nivelAtivo === 1) {
+                    nivelAtivo = 2; perguntaAtual = 0; updateUI(); proxima(); return;
+                } else { finalizar(); return; }
+            }
+            document.getElementById('modal-feedback').style.display = 'none';
+            document.getElementById('final-results').classList.add('hidden');
+            document.getElementById('btn-mudar').classList.add('hidden');
+            document.getElementById('input-before').value = "";
+            document.getElementById('input-after').value = "";
+            
+            let min, max;
+            // Garante que o antes e depois não saiam do intervalo 1-Limite
+            if (nivelAtivo === 1) { min = 2; max = limiteCat / 2; }
+            else { min = (limiteCat / 2) + 1; max = limiteCat - 1; }
+            
+            nAtual = Math.floor(Math.random() * (max - min + 1)) + min;
+            document.getElementById('display-num').innerText = nAtual.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+            document.getElementById('input-before').focus();
+        }
+
+        function verificar() {
+            const valBefore = parseInt(document.getElementById('input-before').value);
+            const valAfter = parseInt(document.getElementById('input-after').value);
+            
+            const isCorrect = (valBefore === nAtual - 1) && (valAfter === nAtual + 1);
+            const resArray = (nivelAtivo === 1) ? resultadosL1 : resultadosL2;
+
+            if (isCorrect) {
+                combo++;
+                resArray.push('correct');
+                showFeedback("🌟", "Certíssimo!", `Vizinhos perfeitos! <br><b>${nAtual-1}</b> < ${nAtual} < <b>${nAtual+1}</b>`, "CONTINUAR");
+            } else {
+                combo = 0;
+                resArray.push('wrong');
+                showFeedback("❌", "Ups!", `Os vizinhos de ${nAtual} são:<br><b>${nAtual-1}</b> e <b>${nAtual+1}</b>`, "CONTINUAR");
+            }
+            perguntaAtual++;
+            updateUI();
+        }
+
+        function showFeedback(emoji, titulo, msg, btnText) {
+            document.getElementById('f-emoji').innerText = emoji;
+            document.getElementById('f-titulo').innerText = titulo;
+            document.getElementById('f-texto').innerHTML = msg;
+            document.getElementById('btn-next').innerText = btnText;
+            document.getElementById('btn-next').onclick = proxima;
+            document.getElementById('modal-feedback').style.display = 'flex';
+        }
+
+        function finalizar() {
+            const acertosL1 = resultadosL1.filter(r => r === 'correct').length;
+            const errosL1 = 5 - acertosL1;
+            const acertosL2 = resultadosL2.filter(r => r === 'correct').length;
+            const errosL2 = 5 - acertosL2;
+            const totalAcertos = acertosL1 + acertosL2;
+            
+            document.getElementById('f-emoji').innerText = totalAcertos >= 8 ? "🏆" : "💪";
+            document.getElementById('f-titulo').innerText = "Fim do Desafio!";
+            document.getElementById('f-texto').innerHTML = `Desafio concluído em ${document.getElementById('timer-display').innerText}`;
+            
+            document.getElementById('final-results').classList.remove('hidden');
+            document.getElementById('res-l1').innerHTML = `<span style="color:#27ae60">${acertosL1} certas</span> | <span style="color:#e74c3c">${errosL1} erradas</span>`;
+            document.getElementById('res-l2').innerHTML = `<span style="color:#27ae60">${acertosL2} certas</span> | <span style="color:#e74c3c">${errosL2} erradas</span>`;
+
+            const btnNext = document.getElementById('btn-next');
+            btnNext.innerText = "JOGAR DE NOVO";
+            btnNext.onclick = () => startChallenge(limiteCat);
+            
+            document.getElementById('btn-mudar').classList.remove('hidden');
+            document.getElementById('modal-feedback').style.display = 'flex';
+        }
+
+        // Enter para verificar
+        window.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && emJogo && document.getElementById('modal-feedback').style.display !== 'flex') {
+                verificar();
+            }
+        });
     </script>
 </body>
 </html>
