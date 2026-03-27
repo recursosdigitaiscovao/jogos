@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Compara os Números - Matemática</title>
+    <title>Compara os Números</title>
     <style>
         /* === ESTILOS GLOBAIS === */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -73,16 +73,24 @@
         .game-card {
             background: white; padding: 25px; border-radius: 25px;
             box-shadow: 0 12px 30px rgba(0,0,0,0.1); width: 100%;
-            display: flex; flex-direction: column; min-height: 300px; justify-content: center;
+            display: flex; flex-direction: column; min-height: 280px; justify-content: center;
         }
 
         /* Lógica Comparação */
-        .comparison-layout { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 30px; }
-        .num-box { font-size: 2.2rem; font-weight: 900; color: #2c3e50; min-width: 120px; text-align: center; }
-        .symbol-box { font-size: 2.5rem; font-weight: 900; color: #9b59b6; background: #fdfaff; border: 2px dashed #d1b8e0; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
+        .comparison-layout { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 25px; }
+        .num-box { font-size: 2rem; font-weight: 900; color: #2c3e50; min-width: 110px; text-align: center; }
+        .symbol-box { 
+            font-size: 2.5rem; font-weight: 900; color: #9b59b6; 
+            background: #fdfaff; border: 3px solid #d1b8e0; 
+            width: 70px; height: 70px; display: flex; align-items: center; 
+            justify-content: center; border-radius: 15px; transition: 0.2s;
+        }
+        /* Estados de Feedback */
+        .symbol-box.correct-blink { background: #d4edda; border-color: #28a745; color: #155724; transform: scale(1.1); }
+        .symbol-box.wrong-blink { background: #f8d7da; border-color: #dc3545; color: #721c24; transform: scale(1.1); }
 
-        .btn-grid-symbols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; width: 100%; }
-        .btn-symbol { font-size: 1.8rem; padding: 10px; }
+        .btn-grid-symbols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; width: 100%; }
+        .btn-symbol { font-size: 2rem; padding: 12px; height: 65px; }
 
         .hidden { display: none !important; }
 
@@ -134,249 +142,4 @@
                 <div style="font-size: 3.5rem;">⚖️</div>
                 <div class="title-row">
                     <h2 id="view-title">Qual é o sinal?</h2>
-                    <button class="btn-info" onclick="openInfo()">i</button>
-                </div>
-                <p id="view-desc">Usa os sinais <, = ou > para comparar.</p>
-            </div>
-
-            <!-- STATUS BAR LINE -->
-            <div id="game-status" class="status-bar-line hidden">
-                <div class="timer-group">
-                    <span>⏱️</span><span id="timer-display">00:00</span>
-                </div>
-                <div class="stars-row" id="stars-row">
-                    <span class="star-box">★</span><span class="star-box">★</span><span class="star-box">★</span><span class="star-box">★</span><span class="star-box">★</span>
-                </div>
-                <div class="combo-group">
-                    <span>🔥</span><span id="combo-display">0</span><span>seguidas</span>
-                </div>
-            </div>
-            
-            <div class="game-card">
-                <!-- MENU INICIAL -->
-                <div id="menu-categorias" class="category-container">
-                    <div class="cat-card" onclick="startChallenge(100)"><span>Números até</span><span>100</span></div>
-                    <div class="cat-card" onclick="startChallenge(200)"><span>Números até</span><span>200</span></div>
-                    <div class="cat-card" onclick="startChallenge(400)"><span>Números até</span><span>400</span></div>
-                    <div class="cat-card" onclick="startChallenge(600)"><span>Números até</span><span>600</span></div>
-                    <div class="cat-card" onclick="startChallenge(1000)"><span>Números até</span><span>1 000</span></div>
-                    <div class="cat-card" onclick="startChallenge(10000)"><span>Números até</span><span>10 000</span></div>
-                    <div class="cat-card" onclick="startChallenge(100000)"><span>Números até</span><span>100 000</span></div>
-                    <div class="cat-card" onclick="startChallenge(1000000)"><span>Números até</span><span>1 000 000</span></div>
-                </div>
-
-                <!-- ÁREA DE JOGO -->
-                <div id="jogo-container" class="hidden" style="width: 100%; display: flex; flex-direction: column;">
-                    <div class="comparison-layout">
-                        <div id="num-left" class="num-box">0</div>
-                        <div id="symbol-display" class="symbol-box">?</div>
-                        <div id="num-right" class="num-box">0</div>
-                    </div>
-                    
-                    <div class="btn-grid-symbols">
-                        <button class="btn-roxo-3d btn-symbol" onclick="checkAnswer('<')"><</button>
-                        <button class="btn-roxo-3d btn-symbol" onclick="checkAnswer('=')">=</button>
-                        <button class="btn-roxo-3d btn-symbol" onclick="checkAnswer('>')">></button>
-                    </div>
-                    
-                    <button class="btn-roxo-3d" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5; box-shadow:0 4px 0 #ecdff5; margin-top:20px; width:100%;" onclick="fecharModalEVoltar()">
-                        ⬅ OUTRA CATEGORIA
-                    </button>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- MODAIS -->
-    <div id="modal-info" class="modal">
-        <div class="modal-content">
-            <h2 style="color: #8e44ad; margin-bottom: 15px;">Como Jogar</h2>
-            <p style="text-align: left; font-size: 0.9rem; line-height: 1.5;">
-                • Observa os dois números no ecrã.<br>
-                • Escolhe o sinal correto:<br>
-                &nbsp;&nbsp;<b><</b> (Menor que)<br>
-                &nbsp;&nbsp;<b>=</b> (Igual a)<br>
-                &nbsp;&nbsp;<b>></b> (Maior que)<br>
-                • Responde a 5 números por nível.<br>
-                • Estrela <b style="color:#9b59b6">Roxa</b> = Acerto | <b style="color:#e74c3c">Vermelha</b> = Erro.
-            </p>
-            <button class="btn-roxo-3d" style="width: 100%; margin-top: 20px;" onclick="closeInfo()">ENTENDIDO!</button>
-        </div>
-    </div>
-
-    <div id="modal-feedback" class="modal">
-        <div class="modal-content">
-            <div id="f-emoji" style="font-size: 4rem; margin-bottom: 10px;"></div>
-            <h2 id="f-titulo"></h2>
-            <p id="f-texto" style="margin: 10px 0; color: #555;"></p>
-            
-            <div id="final-results" class="summary-box hidden">
-                <div class="summary-line">
-                    <span style="margin-bottom:2px">Nível 1</span>
-                    <span id="res-l1">0 certas | 0 erradas</span>
-                </div>
-                <div class="summary-line">
-                    <span style="margin-bottom:2px">Nível 2</span>
-                    <span id="res-l2">0 certas | 0 erradas</span>
-                </div>
-            </div>
-
-            <div id="f-buttons" style="display:flex; flex-direction:column; gap:10px;">
-                <button id="btn-next" class="btn-roxo-3d" style="width: 100%;" onclick="proxima()">CONTINUAR</button>
-                <button id="btn-mudar" class="btn-roxo-3d hidden" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5;" onclick="fecharModalEVoltar()">MUDAR DE CATEGORIA</button>
-            </div>
-        </div>
-    </div>
-
-    <footer>Recursos Digitais Covão - Professor Luís</footer>
-
-    <script>
-        let nLeft = 0, nRight = 0, limiteCat = 0, emJogo = false;
-        let combo = 0, nivelAtivo = 1, perguntaAtual = 0;
-        let segs = 0, timer;
-        let resultadosL1 = [], resultadosL2 = [];
-
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-        function openInfo() { document.getElementById('modal-info').style.display = 'flex'; }
-        function closeInfo() { document.getElementById('modal-info').style.display = 'none'; }
-
-        function fecharModalEVoltar() {
-            document.getElementById('modal-feedback').style.display = 'none';
-            handleVoltar();
-        }
-
-        function handleVoltar() {
-            if (emJogo) {
-                emJogo = false; clearInterval(timer);
-                document.getElementById('menu-categorias').classList.remove('hidden');
-                document.getElementById('jogo-container').classList.add('hidden');
-                document.getElementById('game-status').classList.add('hidden');
-                document.getElementById('view-title').innerText = "Compara os Números";
-                document.getElementById('view-desc').innerText = "Usa os sinais <, = ou > para comparar.";
-                document.getElementById('modal-feedback').style.display = 'none';
-            } else { window.location.href = '../'; }
-        }
-
-        function startChallenge(max) {
-            limiteCat = max; emJogo = true; nivelAtivo = 1; combo = 0; segs = 0;
-            perguntaAtual = 0; resultadosL1 = []; resultadosL2 = [];
-            updateUI();
-            document.getElementById('menu-categorias').classList.add('hidden');
-            document.getElementById('jogo-container').classList.remove('hidden');
-            document.getElementById('game-status').classList.remove('hidden');
-            startTimer(); proxima();
-        }
-
-        function startTimer() {
-            clearInterval(timer);
-            timer = setInterval(() => { segs++; updateTimerUI(); }, 1000);
-        }
-
-        function updateTimerUI() {
-            const m = Math.floor(segs / 60).toString().padStart(2, '0');
-            const s = (segs % 60).toString().padStart(2, '0');
-            document.getElementById('timer-display').innerText = `${m}:${s}`;
-        }
-
-        function updateUI() {
-            document.getElementById('view-title').innerText = "Nível " + nivelAtivo;
-            document.getElementById('combo-display').innerText = combo;
-            const stars = document.querySelectorAll('.star-box');
-            const resAtual = (nivelAtivo === 1) ? resultadosL1 : resultadosL2;
-            stars.forEach((s, i) => {
-                s.className = 'star-box';
-                if (resAtual[i] === 'correct') s.classList.add('correct');
-                if (resAtual[i] === 'wrong') s.classList.add('wrong');
-            });
-        }
-
-        function proxima() {
-            if (perguntaAtual === 5) {
-                if (nivelAtivo === 1) {
-                    nivelAtivo = 2; perguntaAtual = 0; updateUI(); proxima(); return;
-                } else { finalizar(); return; }
-            }
-            document.getElementById('modal-feedback').style.display = 'none';
-            document.getElementById('final-results').classList.add('hidden');
-            document.getElementById('btn-mudar').classList.add('hidden');
-            document.getElementById('symbol-display').innerText = "?";
-
-            let min, max;
-            if (nivelAtivo === 1) { min = 1; max = limiteCat / 2; }
-            else { min = (limiteCat / 2) + 1; max = limiteCat; }
-
-            // Lógica para gerar números interessantes
-            let decisao = Math.random();
-            if (decisao < 0.2) { // 20% hipótese de serem iguais
-                nLeft = Math.floor(Math.random() * (max - min + 1)) + min;
-                nRight = nLeft;
-            } else {
-                nLeft = Math.floor(Math.random() * (max - min + 1)) + min;
-                nRight = Math.floor(Math.random() * (max - min + 1)) + min;
-                // Evitar igualdade não planeada
-                if (nLeft === nRight) nRight += 1;
-            }
-
-            document.getElementById('num-left').innerText = nLeft.toLocaleString('pt-PT');
-            document.getElementById('num-right').innerText = nRight.toLocaleString('pt-PT');
-        }
-
-        function checkAnswer(playerChoice) {
-            let correctSymbol = "=";
-            if (nLeft < nRight) correctSymbol = "<";
-            else if (nLeft > nRight) correctSymbol = ">";
-
-            const resArray = (nivelAtivo === 1) ? resultadosL1 : resultadosL2;
-
-            if (playerChoice === correctSymbol) {
-                combo++;
-                resArray.push('correct');
-                document.getElementById('symbol-display').innerText = correctSymbol;
-                showFeedback("🌟", "Certíssimo!", `Boa comparação!<br><b>${nLeft.toLocaleString('pt-PT')} ${correctSymbol} ${nRight.toLocaleString('pt-PT')}</b>`, "CONTINUAR");
-            } else {
-                combo = 0;
-                resArray.push('wrong');
-                document.getElementById('symbol-display').innerText = correctSymbol;
-                showFeedback("❌", "Não foi desta...", `A resposta correta era:<br><b>${nLeft.toLocaleString('pt-PT')} ${correctSymbol} ${nRight.toLocaleString('pt-PT')}</b>`, "CONTINUAR");
-            }
-            perguntaAtual++;
-            updateUI();
-        }
-
-        function showFeedback(emoji, titulo, msg, btnText) {
-            document.getElementById('f-emoji').innerText = emoji;
-            document.getElementById('f-titulo').innerText = titulo;
-            document.getElementById('f-texto').innerHTML = msg;
-            document.getElementById('btn-next').innerText = btnText;
-            document.getElementById('btn-next').onclick = proxima;
-            document.getElementById('modal-feedback').style.display = 'flex';
-        }
-
-        function finalizar() {
-            const acertosL1 = resultadosL1.filter(r => r === 'correct').length;
-            const errosL1 = 5 - acertosL1;
-            const acertosL2 = resultadosL2.filter(r => r === 'correct').length;
-            const errosL2 = 5 - acertosL2;
-            const totalAcertos = acertosL1 + acertosL2;
-            
-            document.getElementById('f-emoji').innerText = totalAcertos >= 8 ? "🏆" : "💪";
-            document.getElementById('f-titulo').innerText = "Fim do Desafio!";
-            document.getElementById('f-texto').innerHTML = `Desafio concluído em ${document.getElementById('timer-display').innerText}`;
-            
-            document.getElementById('final-results').classList.remove('hidden');
-            document.getElementById('res-l1').innerHTML = `<span style="color:#27ae60">${acertosL1} certas</span> | <span style="color:#e74c3c">${errosL1} erradas</span>`;
-            document.getElementById('res-l2').innerHTML = `<span style="color:#27ae60">${acertosL2} certas</span> | <span style="color:#e74c3c">${errosL2} erradas</span>`;
-
-            const btnNext = document.getElementById('btn-next');
-            btnNext.innerText = "JOGAR DE NOVO";
-            btnNext.onclick = () => startChallenge(limiteCat);
-            
-            document.getElementById('btn-mudar').classList.remove('hidden');
-            document.getElementById('modal-feedback').style.display = 'flex';
-        }
-    </script>
-</body>
-</html>
+                    <button class="btn-info" onclick="openInfo()">i</
