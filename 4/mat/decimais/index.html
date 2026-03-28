@@ -75,17 +75,24 @@
         .pergunta-box { text-align: center; margin-bottom: 15px; width: 100%; }
         .pergunta-texto { font-size: clamp(1rem, 4vw, 1.4rem); font-weight: 700; color: #34495e; margin-bottom: 10px; }
         .numero-display { 
-            font-size: clamp(1.8rem, 8vw, 3rem); font-weight: 900; color: #9b59b6; 
-            background: #fdfaff; padding: 20px; border-radius: 20px; border: 3px solid #eee; 
-            display: inline-block; min-width: 250px; transition: 0.3s;
+            font-size: clamp(2rem, 8vw, 3.5rem); font-weight: 900; color: #9b59b6; 
+            background: #fdfaff; padding: 20px 40px; border-radius: 20px; border: 3px solid #eee; 
+            display: inline-block; min-width: 200px; transition: 0.3s;
         }
 
-        /* OPÇÕES */
-        .opcoes-grid { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 650px; }
+        /* OPÇÕES GRID 2x2 */
+        .opcoes-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 15px; 
+            width: 100%; 
+            max-width: 600px; 
+        }
         .btn-opcao {
             background: white; border: 3px solid #9b59b6; border-radius: 15px;
-            padding: clamp(10px, 2.5vh, 18px); font-size: clamp(0.85rem, 3vw, 1.05rem); font-weight: 800; color: #9b59b6;
+            padding: 15px; font-size: clamp(0.9rem, 2.5vw, 1.1rem); font-weight: 800; color: #9b59b6;
             cursor: pointer; box-shadow: 0 4px 0 #ecdff5; transition: 0.1s; text-align: center;
+            display: flex; align-items: center; justify-content: center; min-height: 60px;
         }
         .btn-opcao:active { transform: translateY(3px); box-shadow: 0 0 0 #ecdff5; }
 
@@ -127,7 +134,7 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()" style="cursor:pointer; font-size: 1.5rem;">☰</div>
-            <h1><span class="header-icon">👨‍🚀</span> Mestre das Ordens</h1>
+            <h1><span class="header-icon">👨‍🚀</span> Mestre dos Decimais</h1>
         </div>
         <button onclick="handleVoltar()" class="btn-voltar-3d">⬅ Voltar</button>
     </header>
@@ -171,9 +178,9 @@
         <div class="modal-content">
             <h2 style="color: #9b59b6;">Como Jogar</h2>
             <p style="text-align: left; font-size: 0.9rem; margin: 15px 0;">
-                • <b>Nível 1:</b> Identifica o algarismo em todas as ordens (unidades de milhar, centenas, dezenas, unidades, décimas, centésimas e milésimas).<br>
-                • <b>Nível 2:</b> Escolhe a leitura total do número decimal pela ordem inferior.<br>
-                São 10 desafios emocionantes!
+                • <b>Nível 1:</b> Identifica o algarismo na ordem correta (Dezenas a Milésimas).<br>
+                • <b>Nível 2:</b> Escolhe a leitura correta. Números inteiros lêem-se como "unidades". Decimais lêem-se pela ordem inferior.<br>
+                Resolve 10 desafios!
             </p>
             <button class="btn-voltar-3d" style="width:100%" onclick="closeInfo()">Entendido!</button>
         </div>
@@ -216,7 +223,6 @@
             }, 1000);
         }
 
-        // Função de leitura por extenso (ajustada para feminino nas ordens decimais)
         function numberToWords(n) {
             const units = ["", "uma", "duas", "três", "quatro", "cinco", "seis", "sete", "oito", "nove"];
             const teens = ["dez", "onze", "doze", "treze", "catorze", "quinze", "dezasseis", "dezassete", "dezoito", "dezanove"];
@@ -228,19 +234,16 @@
             if (n === 1000) return "mil";
 
             let words = "";
-
             if (n >= 1000) {
                 let m = Math.floor(n / 1000);
                 words += (m === 1 ? "" : units[m]) + " mil ";
                 n %= 1000;
             }
-
             if (n >= 100) {
                 words += hundreds[Math.floor(n / 100)];
                 n %= 100;
                 if (n > 0) words += " e ";
             }
-
             if (n >= 20) {
                 words += tens[Math.floor(n / 10)];
                 n %= 10;
@@ -250,20 +253,14 @@
             } else if (n > 0) {
                 words += units[n];
             }
-
             return words.trim();
         }
 
         function proximaPergunta() {
             if (perguntaAtual === 10) { finalizar(); return; }
-            
             const nivel = Math.floor(perguntaAtual / 5) + 1;
             document.getElementById('lvl-txt').innerText = "Nível " + nivel;
-            
-            if (perguntaAtual % 5 === 0) {
-                document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
-            }
-
+            if (perguntaAtual % 5 === 0) document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
             document.getElementById('num-display').className = "numero-display";
             gerarPergunta(nivel);
         }
@@ -275,64 +272,67 @@
             box.innerHTML = "";
 
             if (nivel === 1) {
-                // NIVEL 1: Todas as Ordens
-                const ordensDisponiveis = [
-                    { nome: "unidades de milhar", val: 0 },
-                    { nome: "centenas", val: 0 },
-                    { nome: "dezenas", val: 0 },
-                    { nome: "unidades", val: 0 },
-                    { nome: "décimas", val: 0 },
-                    { nome: "centésimas", val: 0 },
-                    { nome: "milésimas", val: 0 }
-                ];
+                const dzn = Math.floor(Math.random() * 9) + 1;
+                const uni = Math.floor(Math.random() * 10);
+                const dec = Math.floor(Math.random() * 10);
+                const cen = Math.floor(Math.random() * 10);
+                const mil = Math.floor(Math.random() * 10);
+                
+                display.innerText = `${dzn}${uni},${dec}${cen}${mil}`;
+                const ordens = ["dezenas", "unidades", "décimas", "centésimas", "milésimas"];
+                const ord = ordens[Math.floor(Math.random() * 5)];
+                texto.innerText = `Qual é o algarismo das ${ord}?`;
+                
+                if(ord=="dezenas") respostaCorreta = dzn.toString();
+                if(ord=="unidades") respostaCorreta = uni.toString();
+                if(ord=="décimas") respostaCorreta = dec.toString();
+                if(ord=="centésimas") respostaCorreta = cen.toString();
+                if(ord=="milésimas") respostaCorreta = mil.toString();
 
-                // Gerar algarismos
-                ordensDisponiveis.forEach(o => o.val = Math.floor(Math.random() * 10));
-                if(ordensDisponiveis[0].val === 0) ordensDisponiveis[0].val = 1; // Unidade de Milhar não pode ser 0
-
-                const numFormatado = `${ordensDisponiveis[0].val}${ordensDisponiveis[1].val}${ordensDisponiveis[2].val}${ordensDisponiveis[3].val},${ordensDisponiveis[4].val}${ordensDisponiveis[5].val}${ordensDisponiveis[6].val}`;
-                display.innerText = numFormatado;
-
-                const ordemSorteada = ordensDisponiveis[Math.floor(Math.random() * ordensDisponiveis.length)];
-                texto.innerText = `Qual é o algarismo das ${ordemSorteada.nome}?`;
-                respostaCorreta = ordemSorteada.val.toString();
-
-                // Gerar opções únicas
-                const opcoes = [respostaCorreta];
-                while(opcoes.length < 4) {
-                    let r = Math.floor(Math.random() * 10).toString();
-                    if(!opcoes.includes(r)) opcoes.push(r);
+                let opts = [respostaCorreta];
+                while(opts.length < 4) {
+                    let r = Math.floor(Math.random()*10).toString();
+                    if(!opts.includes(r)) opts.push(r);
                 }
-                opcoes.sort().forEach(v => criarBotao(v));
+                opts.sort().forEach(v => criarBotao(v));
             } 
             else {
-                // NIVEL 2: Leitura Total (até 1000 unidades)
-                const casas = Math.floor(Math.random() * 3) + 1;
-                let numRaw;
-                let sufixo;
+                const tipo = Math.random() > 0.3; // 70% decimal, 30% inteiro
+                let numRaw, sufixo, numFormatado;
 
-                if (casas === 1) {
-                    numRaw = Math.floor(Math.random() * 90) + 11; 
-                    sufixo = "décimas";
-                    display.innerText = (numRaw / 10).toString().replace(".", ",");
-                } else if (casas === 2) {
-                    numRaw = Math.floor(Math.random() * 900) + 101; 
-                    sufixo = "centésimas";
-                    display.innerText = (numRaw / 100).toString().replace(".", ",");
+                if (tipo) {
+                    const casas = Math.floor(Math.random() * 3) + 1;
+                    if (casas === 1) {
+                        numRaw = Math.floor(Math.random() * 90) + 11;
+                        sufixo = "décimas";
+                        numFormatado = (numRaw / 10).toString().replace(".", ",");
+                    } else if (casas === 2) {
+                        numRaw = Math.floor(Math.random() * 900) + 101;
+                        sufixo = "centésimas";
+                        numFormatado = (numRaw / 100).toString().replace(".", ",");
+                    } else {
+                        numRaw = Math.floor(Math.random() * 9000) + 1001;
+                        sufixo = "milésimas";
+                        numFormatado = (numRaw / 1000).toString().replace(".", ",");
+                    }
+                    respostaCorreta = `${numberToWords(numRaw)} ${sufixo}`;
                 } else {
-                    numRaw = Math.floor(Math.random() * 8000) + 1001; 
-                    sufixo = "milésimas";
-                    display.innerText = (numRaw / 1000).toString().replace(".", ",");
+                    numRaw = Math.floor(Math.random() * 90) + 2;
+                    numFormatado = numRaw.toString();
+                    respostaCorreta = `${numberToWords(numRaw)} unidades`;
                 }
 
-                texto.innerText = "Qual é a leitura total deste número?";
-                respostaCorreta = `${numberToWords(numRaw)} ${sufixo}`;
+                display.innerText = numFormatado;
+                texto.innerText = "Qual é a leitura deste número?";
                 
-                const errada1 = `${numberToWords(numRaw + 12)} ${sufixo}`;
-                const ordensErradas = ["unidades", "décimas", "centésimas", "milésimas"].filter(o => o !== sufixo);
-                const errada2 = `${numberToWords(numRaw)} ${ordensErradas[0]}`;
-
-                [respostaCorreta, errada1, errada2].sort(() => Math.random() - 0.5).forEach(v => criarBotao(v));
+                let opts = [respostaCorreta];
+                while(opts.length < 4) {
+                    let fakeNum = numRaw + (Math.random() > 0.5 ? 5 : -1);
+                    let fakeSuf = ["unidades", "décimas", "centésimas", "milésimas"][Math.floor(Math.random()*4)];
+                    let f = `${numberToWords(Math.abs(fakeNum))} ${fakeSuf}`;
+                    if(!opts.includes(f)) opts.push(f);
+                }
+                opts.sort(() => Math.random() - 0.5).forEach(v => criarBotao(v));
             }
         }
 
@@ -347,25 +347,21 @@
         function verificar(escolha, btn) {
             const btns = document.querySelectorAll('.btn-opcao');
             btns.forEach(b => b.disabled = true);
-            
             const nivelIndex = Math.floor(perguntaAtual / 5) + 1;
-            const key = 'l' + nivelIndex;
             const star = document.getElementById('star-' + (perguntaAtual % 5));
 
             if (escolha === respostaCorreta) {
-                stats[key].c++;
-                pontos += nivelIndex * 10;
+                stats['l'+nivelIndex].c++; pontos += nivelIndex * 10;
                 btn.classList.add('correct');
                 document.getElementById('num-display').classList.add('correct');
                 star.classList.add('win');
             } else {
-                stats[key].w++;
+                stats['l'+nivelIndex].w++;
                 btn.classList.add('wrong');
                 document.getElementById('num-display').classList.add('wrong');
                 star.classList.add('lose');
                 btns.forEach(b => { if(b.innerText === respostaCorreta) b.classList.add('correct'); });
             }
-
             document.getElementById('score').innerText = pontos;
             perguntaAtual++;
             setTimeout(proximaPergunta, 2000);
@@ -375,25 +371,21 @@
             clearInterval(timer);
             const totalC = stats.l1.c + stats.l2.c;
             let emoji, titulo, texto;
-
-            if (totalC < 5) { emoji = "💪"; titulo = "Quase lá!"; texto = "Continua a praticar as ordens decimais!"; }
-            else if (totalC <= 8) { emoji = "👏"; titulo = "Bom trabalho!"; texto = "Já dominas muito bem as ordens e a leitura total."; }
-            else { emoji = "🏆"; titulo = "Incrível!"; texto = "És um mestre absoluto das ordens decimais!"; }
+            if (totalC < 5) { emoji = "💪"; titulo = "Quase lá!"; texto = "Continua a praticar!"; }
+            else if (totalC <= 8) { emoji = "👏"; titulo = "Bom trabalho!"; texto = "Estás no bom caminho."; }
+            else { emoji = "🏆"; titulo = "Incrível!"; texto = "És um mestre dos decimais!"; }
 
             document.getElementById('f-emoji').innerText = emoji;
             document.getElementById('f-titulo').innerText = titulo;
             document.getElementById('f-texto').innerText = texto;
             document.getElementById('stats-body').innerHTML = `
                 <tr><td>Nível 1 (Posicional)</td><td>${stats.l1.c}</td><td>${stats.l1.w}</td></tr>
-                <tr><td>Nível 2 (Leitura Total)</td><td>${stats.l2.c}</td><td>${stats.l2.w}</td></tr>
+                <tr><td>Nível 2 (Leitura)</td><td>${stats.l2.c}</td><td>${stats.l2.w}</td></tr>
             `;
             document.getElementById('modal-feedback').style.display = 'flex';
         }
 
-        window.onload = () => {
-            startTimer();
-            proximaPergunta();
-        };
+        window.onload = () => { startTimer(); proximaPergunta(); };
     </script>
 </body>
 </html>
