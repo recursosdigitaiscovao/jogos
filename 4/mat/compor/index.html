@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Composição de Números - Matemática</title>
+    <title>Compor Números - Matemática</title>
     <style>
         /* === ESTILOS GLOBAIS (TEMPLATE RIGOROSO) === */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -69,19 +69,22 @@
         }
 
         /* CONTEÚDO DO JOGO */
-        #jogo-container { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 20px; }
+        #jogo-container { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 15px; }
         .level-indicator { font-weight: 900; color: #9b59b6; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
 
-        .pergunta-box { text-align: center; margin-bottom: 15px; width: 100%; }
-        .pergunta-texto { font-size: clamp(1rem, 4vw, 1.3rem); font-weight: 700; color: #34495e; margin-bottom: 15px; }
+        .pergunta-box { text-align: center; margin-bottom: 10px; width: 100%; }
+        .pergunta-texto { font-size: clamp(1rem, 4vw, 1.3rem); font-weight: 700; color: #34495e; margin-bottom: 10px; }
         
-        .calc-display { font-size: clamp(1.8rem, 6vw, 3rem); font-weight: 900; color: #9b59b6; margin: 15px 0; letter-spacing: 2px; }
+        .calc-display { font-size: clamp(2rem, 8vw, 3.5rem); font-weight: 900; color: #9b59b6; margin: 10px 0; letter-spacing: 2px; }
 
-        /* OPÇÕES GRID 2x2 */
-        .opcoes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 600px; }
+        /* OPÇÕES GRID */
+        .opcoes-grid { display: grid; gap: 12px; width: 100%; max-width: 550px; }
+        .grid-2x2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-vertical { grid-template-columns: 1fr; }
+
         .btn-opcao {
             background: white; border: 3px solid #9b59b6; border-radius: 15px;
-            padding: 20px 10px; font-size: clamp(1rem, 3vw, 1.3rem); font-weight: 800; color: #9b59b6;
+            padding: 15px; font-size: clamp(1.1rem, 3.5vw, 1.4rem); font-weight: 800; color: #9b59b6;
             cursor: pointer; box-shadow: 0 4px 0 #ecdff5; transition: 0.1s;
             display: flex; align-items: center; justify-content: center;
         }
@@ -123,7 +126,7 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()" style="cursor:pointer; font-size: 1.5rem;">☰</div>
-            <h1><span class="header-icon">🏗️</span> Menu Matemática</h1>
+            <h1><span class="header-icon">👨‍🚀</span> Menu Matemática</h1>
         </div>
         <button onclick="handleVoltar()" class="btn-voltar-3d">⬅ Voltar</button>
     </header>
@@ -133,8 +136,8 @@
             
             <div class="main-title">
                 <div class="title-row">
-                    <span style="font-size: 2rem;">🧩</span>
-                    <h2 id="display-title">Composição de Números</h2>
+                    <span style="font-size: 2.2rem;">🔢</span>
+                    <h2 id="display-title">Compor Números</h2>
                     <button class="btn-info" onclick="openInfo()">💡</button>
                 </div>
                 <p style="margin-top: 2px; margin-bottom: 10px; font-weight: bold; color: #555; font-size: 0.95rem;">Compõe e decompõe os números corretamente.</p>
@@ -167,8 +170,8 @@
         <div class="modal-content">
             <h2 style="color: #9b59b6;">Como Jogar</h2>
             <p style="text-align: left; font-size: 0.9rem; margin: 15px 0;">
-                • <b>Nível 1 (Composição):</b> Vês a soma das partes (milhares, centenas, dezenas e unidades) e deves escolher o número completo.<br><br>
-                • <b>Nível 2 (Decomposição):</b> Vês o número completo e deves escolher a soma correta das suas partes.
+                • <b>Nível 1 (Composição):</b> Escolhe o número que se forma com a soma apresentada.<br><br>
+                • <b>Nível 2 (Decomposição):</b> Vê o número completo e escolhe a sua decomposição correta em ordens.
             </p>
             <button class="btn-voltar-3d" style="width:100%" onclick="closeInfo()">Entendido!</button>
         </div>
@@ -239,13 +242,12 @@
             const box = document.getElementById('opcoes-box');
             box.innerHTML = ""; visualArea.innerHTML = "";
 
-            // Gerar número aleatório entre 10 e 9999
             let num = Math.floor(Math.random() * 9980) + 11;
             let parts = getParts(num);
             let decomposicaoString = parts.join(" + ");
 
             if (nivel === 1) {
-                // NIVEL 1: Composição (Soma -> Número)
+                box.className = "opcoes-grid grid-2x2";
                 texto.innerText = "Qual é o número composto?";
                 visualArea.innerText = decomposicaoString;
                 respostaCorreta = num.toString();
@@ -255,32 +257,35 @@
                     let fake = (num + (Math.random() < 0.5 ? 10 : -10) * Math.floor(Math.random()*5+1)).toString();
                     if(!opts.includes(fake) && fake > 0) opts.push(fake);
                 }
-                opts.sort(() => Math.random() - 0.5).forEach(o => criarBotao(o, o));
+                opts.sort(() => Math.random() - 0.5).forEach(o => criarBotao(o));
             } 
             else {
-                // NIVEL 2: Decomposição (Número -> Soma)
+                box.className = "opcoes-grid grid-vertical";
                 texto.innerText = "Qual é a decomposição correta?";
                 visualArea.innerText = num;
                 respostaCorreta = decomposicaoString;
 
                 let opts = [respostaCorreta];
-                while(opts.length < 4) {
-                    // Criar decomposição errada mudando uma das ordens
+                while(opts.length < 3) {
                     let fakeParts = [...parts];
                     let idx = Math.floor(Math.random() * fakeParts.length);
-                    fakeParts[idx] = fakeParts[idx] / 10; 
-                    if (fakeParts[idx] === 0) fakeParts[idx] = 5;
+                    // Criar erro comum: trocar 100 por 10 ou 1000 por 100
+                    if (fakeParts[idx] >= 10) {
+                        fakeParts[idx] = Math.random() < 0.5 ? fakeParts[idx] / 10 : fakeParts[idx] * 10;
+                    } else {
+                        fakeParts[idx] = 5;
+                    }
                     let fakeStr = fakeParts.join(" + ");
                     if(!opts.includes(fakeStr)) opts.push(fakeStr);
                 }
-                opts.sort(() => Math.random() - 0.5).forEach(o => criarBotao(o, o));
+                opts.sort(() => Math.random() - 0.5).forEach(o => criarBotao(o));
             }
         }
 
-        function criarBotao(label, valor) {
+        function criarBotao(valor) {
             const btn = document.createElement('button');
             btn.className = "btn-opcao";
-            btn.innerText = label;
+            btn.innerText = valor;
             btn.onclick = () => verificar(valor, btn);
             document.getElementById('opcoes-box').appendChild(btn);
         }
@@ -310,9 +315,9 @@
             clearInterval(timer);
             const totalC = stats.l1.c + stats.l2.c;
             let emoji, titulo, texto;
-            if (totalC < 5) { emoji = "⚙️"; titulo = "Continua a treinar!"; texto = "A composição de números requer prática."; }
-            else if (totalC <= 8) { emoji = "🏗️"; titulo = "Bom trabalho!"; texto = "Consegues construir números muito bem!"; }
-            else { emoji = "🏆"; titulo = "Mestre Construtor!"; texto = "Dominas as ordens dos números na perfeição!"; }
+            if (totalC < 5) { emoji = "⚙️"; titulo = "Continua a treinar!"; texto = "Pratica mais para dominares as ordens."; }
+            else if (totalC <= 8) { emoji = "🏗️"; titulo = "Bom trabalho!"; texto = "Consegues compor números com facilidade!"; }
+            else { emoji = "🏆"; titulo = "Mestre dos Números!"; texto = "Dominas a composição e decomposição!"; }
 
             document.getElementById('f-emoji').innerText = emoji;
             document.getElementById('f-titulo').innerText = titulo;
