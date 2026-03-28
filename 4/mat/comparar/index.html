@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Compara os Números</title>
+    <title>Compara os Números - Matemática</title>
     <style>
         /* === ESTILOS GLOBAIS === */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -33,32 +33,31 @@
         }
         .btn-roxo-3d:active { transform: translateY(3px); box-shadow: 0 0 0 #732d91; }
 
-        /* === STATUS BAR === */
+        /* === ÁREA DE STATUS (Relógio, Estrelas, Combo) === */
         .status-bar-line {
             width: 100%; max-width: 450px; display: flex; 
             justify-content: space-between; align-items: center; 
             margin-bottom: 12px; padding: 0 5px;
         }
         .timer-group { display: flex; align-items: center; gap: 5px; color: #9b59b6; font-weight: 900; font-size: 0.9rem; min-width: 75px; }
+        
         .stars-row { display: flex; gap: 4px; }
         .star-box { font-size: 1.4rem; color: white; -webkit-text-stroke: 1.5px #9b59b6; transition: 0.3s; }
         .star-box.correct { color: #9b59b6; -webkit-text-stroke: 1px #732d91; }
         .star-box.wrong { color: #e74c3c; -webkit-text-stroke: 1px #c0392b; }
-        .combo-group { font-weight: 800; color: #9b59b6; font-size: 0.85rem; min-width: 100px; text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
 
-        /* === MENU CATEGORIAS === */
-        .category-container { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; 
-            padding: 5px;
-        }
+        .combo-group { font-weight: 800; color: #9b59b6; font-size: 0.85rem; min-width: 110px; text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+
+        /* === MENU DE CATEGORIAS === */
+        .category-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; overflow-y: auto; padding: 5px; }
         .cat-card {
-            background: #fdfaff; border: 2px solid #9b59b6; border-radius: 15px; padding: 20px 5px;
+            background: #fff; border: 2px solid #ecdff5; border-radius: 15px; padding: 18px 10px;
             cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center;
-            box-shadow: 0 4px 0 #d1b8e0;
+            box-shadow: 0 4px 0 #ecdff5;
         }
-        .cat-card:hover { transform: translateY(-2px); background: #f5ebff; box-shadow: 0 6px 0 #d1b8e0; }
-        .cat-card span:first-child { color: #2c3e50; font-weight: normal; font-size: 0.85rem; margin-bottom: 4px; pointer-events: none; }
-        .cat-card span:last-child { color: #9b59b6; font-weight: 900; font-size: 1.1rem; pointer-events: none; }
+        .cat-card:hover { transform: translateY(-2px); border-color: #9b59b6; }
+        .cat-card span:first-child { color: black; font-weight: normal; font-size: 0.8rem; margin-bottom: 2px; }
+        .cat-card span:last-child { color: #9b59b6; font-weight: 900; font-size: 1.1rem; }
 
         /* === ÁREA PRINCIPAL === */
         main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; overflow: hidden; }
@@ -66,48 +65,33 @@
         
         .main-title { text-align: center; margin-bottom: 15px; }
         .title-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .title-row h2 { color: #2c3e50; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; }
+        .title-row h2 { color: #2c3e50; font-size: 1.5rem; font-weight: 900; text-transform: uppercase; }
         
-        .btn-info { width: 30px; height: 30px; border-radius: 50%; background-color: #9b59b6; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #732d91; box-shadow: 0 3px 0 #732d91; cursor: pointer; }
+        .btn-info { width: 30px; height: 30px; border-radius: 50%; background-color: #9b59b6; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #732d91; cursor: pointer; }
 
         /* CARD DO JOGO */
         .game-card {
             background: white; padding: 25px; border-radius: 25px;
             box-shadow: 0 12px 30px rgba(0,0,0,0.1); width: 100%;
-            display: flex; flex-direction: column; min-height: 290px; justify-content: center;
+            display: flex; flex-direction: column; min-height: 300px; justify-content: center;
         }
 
-        .comparison-layout { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 25px; width: 100%; }
-        .num-box { font-size: 1.6rem; font-weight: 900; color: #2c3e50; flex: 1; text-align: center; line-height: 1.2; }
-        
-        .symbol-box { 
-            font-size: 2.8rem; font-weight: 900; color: #9b59b6; 
-            background: #fdfaff; border: 3px solid #d1b8e0; 
-            width: 80px; height: 80px; 
-            display: flex; align-items: center; justify-content: center; 
-            border-radius: 20px; transition: 0.2s; flex-shrink: 0;
-        }
-        
-        .correct-anim { animation: successJump 0.4s ease; background: #d4edda !important; border-color: #28a745 !important; color: #155724 !important; }
-        .wrong-anim { animation: errorShake 0.4s ease; background: #f8d7da !important; border-color: #dc3545 !important; color: #721c24 !important; }
+        /* Lógica Comparação */
+        .comparison-layout { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 30px; }
+        .num-box { font-size: 2.2rem; font-weight: 900; color: #2c3e50; min-width: 120px; text-align: center; }
+        .symbol-box { font-size: 2.5rem; font-weight: 900; color: #9b59b6; background: #fdfaff; border: 2px dashed #d1b8e0; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
 
-        @keyframes successJump { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
-        @keyframes errorShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
-
-        .btn-grid-symbols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; width: 100%; }
-        .btn-symbol { font-size: 2rem; padding: 12px; height: 65px; }
+        .btn-grid-symbols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; width: 100%; }
+        .btn-symbol { font-size: 1.8rem; padding: 10px; }
 
         .hidden { display: none !important; }
 
         /* MODAIS */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
-        .modal-content { background: white; padding: 25px; border-radius: 25px; text-align: center; width: 90%; max-width: 350px; position: relative; }
-        .summary-box { background: #fdfaff; border-radius: 15px; padding: 12px; margin: 12px 0; border: 1px dashed #9b59b6; }
-        .summary-line { display: flex; flex-direction: column; align-items: center; margin-bottom: 8px; font-size: 0.85rem; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+        .modal-content { background: white; padding: 25px; border-radius: 25px; text-align: center; width: 90%; max-width: 350px; }
+        .summary-box { background: #fdfaff; border-radius: 15px; padding: 15px; margin: 15px 0; border: 1px dashed #9b59b6; }
+        .summary-line { display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; font-size: 0.85rem; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 5px; }
         .summary-line:last-child { border-bottom: none; }
-
-        /* CONFETTI CANVAS */
-        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2000; }
 
         /* SIDEBAR */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
@@ -121,7 +105,6 @@
 </head>
 <body>
 
-    <canvas id="confetti-canvas"></canvas>
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     
     <div class="sidebar" id="sidebar">
@@ -139,8 +122,8 @@
 
     <header>
         <div class="header-left">
-            <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <h1><span class="header-icon">⚖️</span> Compara os Números</h1>
+            <div class="menu-icon" onclick="toggleMenu()" style="cursor:pointer; font-size: 1.5rem;">☰</div>
+            <h1><span class="header-icon">👨‍🚀</span> Compara os Números</h1>
         </div>
         <button onclick="handleVoltar()" class="btn-roxo-3d">⬅ Voltar</button>
     </header>
@@ -148,14 +131,15 @@
     <main>
         <div class="screen-container">
             <div class="main-title">
+                <div style="font-size: 3.5rem;">⚖️</div>
                 <div class="title-row">
-                    <!-- ADICIONADO ID "view-title" AQUI PARA O JS FUNCIONAR -->
-                    <h2 id="view-title"><span>🧐</span> Qual é o sinal?</h2>
+                    <h2 id="view-title">Qual é o sinal?</h2>
                     <button class="btn-info" onclick="openInfo()">i</button>
                 </div>
-                <p id="view-desc">Domina os sinais maior, menor ou igual.</p>
+                <p id="view-desc">Usa os sinais <, = ou > para comparar.</p>
             </div>
 
+            <!-- STATUS BAR LINE -->
             <div id="game-status" class="status-bar-line hidden">
                 <div class="timer-group">
                     <span>⏱️</span><span id="timer-display">00:00</span>
@@ -169,6 +153,7 @@
             </div>
             
             <div class="game-card">
+                <!-- MENU INICIAL -->
                 <div id="menu-categorias" class="category-container">
                     <div class="cat-card" onclick="startChallenge(100)"><span>Números até</span><span>100</span></div>
                     <div class="cat-card" onclick="startChallenge(200)"><span>Números até</span><span>200</span></div>
@@ -180,18 +165,21 @@
                     <div class="cat-card" onclick="startChallenge(1000000)"><span>Números até</span><span>1 000 000</span></div>
                 </div>
 
+                <!-- ÁREA DE JOGO -->
                 <div id="jogo-container" class="hidden" style="width: 100%; display: flex; flex-direction: column;">
                     <div class="comparison-layout">
-                        <div id="txt-left" class="num-box">0</div>
+                        <div id="num-left" class="num-box">0</div>
                         <div id="symbol-display" class="symbol-box">?</div>
-                        <div id="txt-right" class="num-box">0</div>
+                        <div id="num-right" class="num-box">0</div>
                     </div>
+                    
                     <div class="btn-grid-symbols">
-                        <button class="btn-roxo-3d btn-symbol" onclick="checkAnswer('>')">></button>
-                        <button class="btn-roxo-3d btn-symbol" onclick="checkAnswer('=')">=</button>
                         <button class="btn-roxo-3d btn-symbol" onclick="checkAnswer('<')"><</button>
+                        <button class="btn-roxo-3d btn-symbol" onclick="checkAnswer('=')">=</button>
+                        <button class="btn-roxo-3d btn-symbol" onclick="checkAnswer('>')">></button>
                     </div>
-                    <button class="btn-roxo-3d" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5; box-shadow:0 4px 0 #ecdff5; margin-top:20px; width:100%;" onclick="handleVoltar()">
+                    
+                    <button class="btn-roxo-3d" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5; box-shadow:0 4px 0 #ecdff5; margin-top:20px; width:100%;" onclick="fecharModalEVoltar()">
                         ⬅ OUTRA CATEGORIA
                     </button>
                 </div>
@@ -199,234 +187,196 @@
         </div>
     </main>
 
-    <!-- MODAL INFORMAÇÃO -->
+    <!-- MODAIS -->
     <div id="modal-info" class="modal">
         <div class="modal-content">
-            <div style="width: 70px; height: 70px; background-color: #9b59b6; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; margin: 0 auto 15px auto; border: 3px solid #732d91;">i</div>
             <h2 style="color: #8e44ad; margin-bottom: 15px;">Como Jogar</h2>
-            <p style="text-align: left; color: #444; font-size: 0.95rem; margin-bottom: 10px; line-height: 1.5;">
-                <b>1.</b> Compara o lado esquerdo com o direito.<br><br>
-                <b>2.</b> Escolhe o sinal correto: > (Maior), < (Menor) ou = (Igual).<br><br>
-                <b>3.</b> No Nível 3, resolve a conta primeiro!<br><br>
-                <b>4.</b> Atalhos: ← (>), ↓ (=), → (<).
+            <p style="text-align: left; font-size: 0.9rem; line-height: 1.5;">
+                • Observa os dois números no ecrã.<br>
+                • Escolhe o sinal correto:<br>
+                &nbsp;&nbsp;<b><</b> (Menor que)<br>
+                &nbsp;&nbsp;<b>=</b> (Igual a)<br>
+                &nbsp;&nbsp;<b>></b> (Maior que)<br>
+                • Responde a 5 números por nível.<br>
+                • Estrela <b style="color:#9b59b6">Roxa</b> = Acerto | <b style="color:#e74c3c">Vermelha</b> = Erro.
             </p>
-            <button class="btn-roxo-3d" style="width: 100%; margin-top: 15px;" onclick="closeInfo()">Estou pronto.</button>
+            <button class="btn-roxo-3d" style="width: 100%; margin-top: 20px;" onclick="closeInfo()">ENTENDIDO!</button>
         </div>
     </div>
 
-    <!-- MODAL FEEDBACK FINAL -->
     <div id="modal-feedback" class="modal">
         <div class="modal-content">
-            <div id="f-emoji" style="font-size: 4rem; margin-bottom: 10px;">🏆</div>
-            <h2 id="f-titulo">Excelente!</h2>
-            <p id="f-texto" style="margin: 5px 0; color: #555;"></p>
-            <div id="final-results" class="summary-box">
-                <div class="summary-line"><span>Nível 1 🧐</span><span id="res-l1" style="color:#27ae60">0 certas</span></div>
-                <div class="summary-line"><span>Nível 2 🧐</span><span id="res-l2" style="color:#27ae60">0 certas</span></div>
-                <div class="summary-line"><span>Nível 3 🧐</span><span id="res-l3" style="color:#27ae60">0 certas</span></div>
+            <div id="f-emoji" style="font-size: 4rem; margin-bottom: 10px;"></div>
+            <h2 id="f-titulo"></h2>
+            <p id="f-texto" style="margin: 10px 0; color: #555;"></p>
+            
+            <div id="final-results" class="summary-box hidden">
+                <div class="summary-line">
+                    <span style="margin-bottom:2px">Nível 1</span>
+                    <span id="res-l1">0 certas | 0 erradas</span>
+                </div>
+                <div class="summary-line">
+                    <span style="margin-bottom:2px">Nível 2</span>
+                    <span id="res-l2">0 certas | 0 erradas</span>
+                </div>
             </div>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-                <button class="btn-roxo-3d" style="width: 100%;" onclick="reiniciarJogo()">JOGAR DE NOVO</button>
-                <button class="btn-roxo-3d" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5;" onclick="fecharModalEVoltar()">MUDAR DE CATEGORIA</button>
+
+            <div id="f-buttons" style="display:flex; flex-direction:column; gap:10px;">
+                <button id="btn-next" class="btn-roxo-3d" style="width: 100%;" onclick="proxima()">CONTINUAR</button>
+                <button id="btn-mudar" class="btn-roxo-3d hidden" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5;" onclick="fecharModalEVoltar()">MUDAR DE CATEGORIA</button>
             </div>
         </div>
     </div>
-
-    <!-- AUDIO -->
-    <audio id="snd-correct" src="https://actions.google.com/sounds/v1/cartoon/clink_clack.ogg"></audio>
-    <audio id="snd-wrong" src="https://actions.google.com/sounds/v1/cartoon/boing.ogg"></audio>
 
     <footer>Recursos Digitais Covão - Professor Luís</footer>
 
     <script>
-        let valL = 0, valR = 0, limiteCat = 0, emJogo = false;
-        let combo = 0, nivelAtivo = 1, perguntaAt = 0, interactable = true;
-        let segs = 0, timer, resL1 = [], resL2 = [], resL3 = [];
-        let confettiActive = false;
+        let nLeft = 0, nRight = 0, limiteCat = 0, emJogo = false;
+        let combo = 0, nivelAtivo = 1, perguntaAtual = 0;
+        let segs = 0, timer;
+        let resultadosL1 = [], resultadosL2 = [];
 
-        function toggleMenu() { 
-            document.getElementById('sidebar').classList.toggle('active'); 
-            document.getElementById('overlay').classList.toggle('active'); 
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
         }
         function openInfo() { document.getElementById('modal-info').style.display = 'flex'; }
         function closeInfo() { document.getElementById('modal-info').style.display = 'none'; }
-        function fecharModalEVoltar() { document.getElementById('modal-feedback').style.display = 'none'; handleVoltar(); }
+
+        function fecharModalEVoltar() {
+            document.getElementById('modal-feedback').style.display = 'none';
+            handleVoltar();
+        }
 
         function handleVoltar() {
-            clearConfetti();
             if (emJogo) {
                 emJogo = false; clearInterval(timer);
                 document.getElementById('menu-categorias').classList.remove('hidden');
                 document.getElementById('jogo-container').classList.add('hidden');
                 document.getElementById('game-status').classList.add('hidden');
+                document.getElementById('view-title').innerText = "Compara os Números";
+                document.getElementById('view-desc').innerText = "Usa os sinais <, = ou > para comparar.";
                 document.getElementById('modal-feedback').style.display = 'none';
-                document.getElementById('view-title').innerHTML = "<span>🧐</span> Qual é o sinal?";
-                document.getElementById('view-desc').innerText = "Domina os sinais maior, menor ou igual.";
             } else { window.location.href = '../'; }
         }
 
-        function reiniciarJogo() {
-            document.getElementById('modal-feedback').style.display = 'none';
-            startChallenge(limiteCat);
-        }
-
         function startChallenge(max) {
-            clearConfetti();
-            limiteCat = max; 
-            emJogo = true; 
-            nivelAtivo = 1; 
-            combo = 0; 
-            segs = 0;
-            perguntaAt = 0; 
-            resL1 = []; resL2 = []; resL3 = [];
-            
+            limiteCat = max; emJogo = true; nivelAtivo = 1; combo = 0; segs = 0;
+            perguntaAtual = 0; resultadosL1 = []; resultadosL2 = [];
             updateUI();
-            
             document.getElementById('menu-categorias').classList.add('hidden');
             document.getElementById('jogo-container').classList.remove('hidden');
             document.getElementById('game-status').classList.remove('hidden');
-            
-            clearInterval(timer); 
+            startTimer(); proxima();
+        }
+
+        function startTimer() {
+            clearInterval(timer);
             timer = setInterval(() => { segs++; updateTimerUI(); }, 1000);
-            updateTimerUI();
-            proxima();
         }
 
         function updateTimerUI() {
-            const m = Math.floor(segs/60).toString().padStart(2,'0');
-            const s = (segs%60).toString().padStart(2,'0');
+            const m = Math.floor(segs / 60).toString().padStart(2, '0');
+            const s = (segs % 60).toString().padStart(2, '0');
             document.getElementById('timer-display').innerText = `${m}:${s}`;
         }
 
         function updateUI() {
-            const titleEl = document.getElementById('view-title');
-            if(titleEl) titleEl.innerHTML = `🧐 Nível ${nivelAtivo}`;
-            
+            document.getElementById('view-title').innerText = "Nível " + nivelAtivo;
             document.getElementById('combo-display').innerText = combo;
-            
             const stars = document.querySelectorAll('.star-box');
-            const resAtual = (nivelAtivo === 1) ? resL1 : (nivelAtivo === 2 ? resL2 : resL3);
-            
+            const resAtual = (nivelAtivo === 1) ? resultadosL1 : resultadosL2;
             stars.forEach((s, i) => {
                 s.className = 'star-box';
                 if (resAtual[i] === 'correct') s.classList.add('correct');
-                else if (resAtual[i] === 'wrong') s.classList.add('wrong');
+                if (resAtual[i] === 'wrong') s.classList.add('wrong');
             });
         }
 
         function proxima() {
-            if (perguntaAt === 5) {
-                if (nivelAtivo < 3) { 
-                    nivelAtivo++; 
-                    perguntaAt = 0; 
-                    updateUI(); 
-                    proxima(); 
-                    return; 
-                }
-                else { 
-                    finalizar(); 
-                    return; 
-                }
+            if (perguntaAtual === 5) {
+                if (nivelAtivo === 1) {
+                    nivelAtivo = 2; perguntaAtual = 0; updateUI(); proxima(); return;
+                } else { finalizar(); return; }
             }
-            const display = document.getElementById('symbol-display');
-            display.innerText = "?"; 
-            display.className = "symbol-box";
-            interactable = true;
+            document.getElementById('modal-feedback').style.display = 'none';
+            document.getElementById('final-results').classList.add('hidden');
+            document.getElementById('btn-mudar').classList.add('hidden');
+            document.getElementById('symbol-display').innerText = "?";
 
             let min, max;
             if (nivelAtivo === 1) { min = 1; max = limiteCat / 2; }
-            else if (nivelAtivo === 2) { min = Math.floor(limiteCat / 2); max = limiteCat; }
-            else { min = 1; max = limiteCat; }
+            else { min = (limiteCat / 2) + 1; max = limiteCat; }
 
-            valL = Math.floor(Math.random() * (max - min + 1)) + min;
-            valR = Math.floor(Math.random() * (max - min + 1)) + min;
-            if (Math.random() < 0.2) valR = valL;
-
-            if (nivelAtivo < 3) {
-                document.getElementById('txt-left').innerText = valL.toLocaleString('pt-PT');
-                document.getElementById('txt-right').innerText = valR.toLocaleString('pt-PT');
+            // Lógica para gerar números interessantes
+            let decisao = Math.random();
+            if (decisao < 0.2) { // 20% hipótese de serem iguais
+                nLeft = Math.floor(Math.random() * (max - min + 1)) + min;
+                nRight = nLeft;
             } else {
-                // Nível 3: Contas simples
-                if (Math.random() > 0.5) {
-                    let d = Math.floor(Math.random() * 9) + 1;
-                    if (Math.random() > 0.5) {
-                        document.getElementById('txt-left').innerText = `${valL + d} - ${d}`;
-                    } else {
-                        document.getElementById('txt-left').innerText = `${valL - d} + ${d}`;
-                    }
-                    document.getElementById('txt-right').innerText = valR.toLocaleString('pt-PT');
-                } else {
-                    let d = Math.floor(Math.random() * 9) + 1;
-                    document.getElementById('txt-left').innerText = valL.toLocaleString('pt-PT');
-                    if (Math.random() > 0.5) {
-                        document.getElementById('txt-right').innerText = `${valR + d} - ${d}`;
-                    } else {
-                        document.getElementById('txt-right').innerText = `${valR - d} + ${d}`;
-                    }
-                }
+                nLeft = Math.floor(Math.random() * (max - min + 1)) + min;
+                nRight = Math.floor(Math.random() * (max - min + 1)) + min;
+                // Evitar igualdade não planeada
+                if (nLeft === nRight) nRight += 1;
             }
+
+            document.getElementById('num-left').innerText = nLeft.toLocaleString('pt-PT');
+            document.getElementById('num-right').innerText = nRight.toLocaleString('pt-PT');
         }
 
-        function checkAnswer(choice) {
-            if (!interactable) return;
-            interactable = false;
-            
-            let correct = "=";
-            if (valL < valR) correct = "<"; 
-            else if (valL > valR) correct = ">";
+        function checkAnswer(playerChoice) {
+            let correctSymbol = "=";
+            if (nLeft < nRight) correctSymbol = "<";
+            else if (nLeft > nRight) correctSymbol = ">";
 
-            const resAtual = (nivelAtivo === 1) ? resL1 : (nivelAtivo === 2 ? resL2 : resL3);
-            const display = document.getElementById('symbol-display');
-            display.innerText = choice;
+            const resArray = (nivelAtivo === 1) ? resultadosL1 : resultadosL2;
 
-            if (choice === correct) {
-                combo++; 
-                resAtual.push('correct');
-                display.classList.add('correct-anim');
-                document.getElementById('snd-correct').play();
+            if (playerChoice === correctSymbol) {
+                combo++;
+                resArray.push('correct');
+                document.getElementById('symbol-display').innerText = correctSymbol;
+                showFeedback("🌟", "Certíssimo!", `Boa comparação!<br><b>${nLeft.toLocaleString('pt-PT')} ${correctSymbol} ${nRight.toLocaleString('pt-PT')}</b>`, "CONTINUAR");
             } else {
-                combo = 0; 
-                resAtual.push('wrong');
-                display.classList.add('wrong-anim');
-                document.getElementById('snd-wrong').play();
+                combo = 0;
+                resArray.push('wrong');
+                document.getElementById('symbol-display').innerText = correctSymbol;
+                showFeedback("❌", "Não foi desta...", `A resposta correta era:<br><b>${nLeft.toLocaleString('pt-PT')} ${correctSymbol} ${nRight.toLocaleString('pt-PT')}</b>`, "CONTINUAR");
             }
-            perguntaAt++; 
+            perguntaAtual++;
             updateUI();
-            setTimeout(proxima, 1200);
+        }
+
+        function showFeedback(emoji, titulo, msg, btnText) {
+            document.getElementById('f-emoji').innerText = emoji;
+            document.getElementById('f-titulo').innerText = titulo;
+            document.getElementById('f-texto').innerHTML = msg;
+            document.getElementById('btn-next').innerText = btnText;
+            document.getElementById('btn-next').onclick = proxima;
+            document.getElementById('modal-feedback').style.display = 'flex';
         }
 
         function finalizar() {
-            clearInterval(timer);
-            const a1 = resL1.filter(r => r === 'correct').length;
-            const a2 = resL2.filter(r => r === 'correct').length;
-            const a3 = resL3.filter(r => r === 'correct').length;
-            const total = a1 + a2 + a3;
+            const acertosL1 = resultadosL1.filter(r => r === 'correct').length;
+            const errosL1 = 5 - acertosL1;
+            const acertosL2 = resultadosL2.filter(r => r === 'correct').length;
+            const errosL2 = 5 - acertosL2;
+            const totalAcertos = acertosL1 + acertosL2;
             
-            document.getElementById('f-emoji').innerText = total >= 12 ? "🏆" : "💪";
-            document.getElementById('f-titulo').innerText = total >= 12 ? "Excelente!" : "Bom esforço!";
-            document.getElementById('f-texto').innerHTML = `Tempo total: ${document.getElementById('timer-display').innerText}`;
+            document.getElementById('f-emoji').innerText = totalAcertos >= 8 ? "🏆" : "💪";
+            document.getElementById('f-titulo').innerText = "Fim do Desafio!";
+            document.getElementById('f-texto').innerHTML = `Desafio concluído em ${document.getElementById('timer-display').innerText}`;
             
-            document.getElementById('res-l1').innerHTML = `<span style="color:#27ae60">${a1} certas</span> | <span style="color:#dc3545">${5-a1} erradas</span>`;
-            document.getElementById('res-l2').innerHTML = `<span style="color:#27ae60">${a2} certas</span> | <span style="color:#dc3545">${5-a2} erradas</span>`;
-            document.getElementById('res-l3').innerHTML = `<span style="color:#27ae60">${a3} certas</span> | <span style="color:#dc3545">${5-a3} erradas</span>`;
+            document.getElementById('final-results').classList.remove('hidden');
+            document.getElementById('res-l1').innerHTML = `<span style="color:#27ae60">${acertosL1} certas</span> | <span style="color:#e74c3c">${errosL1} erradas</span>`;
+            document.getElementById('res-l2').innerHTML = `<span style="color:#27ae60">${acertosL2} certas</span> | <span style="color:#e74c3c">${errosL2} erradas</span>`;
+
+            const btnNext = document.getElementById('btn-next');
+            btnNext.innerText = "JOGAR DE NOVO";
+            btnNext.onclick = () => startChallenge(limiteCat);
             
+            document.getElementById('btn-mudar').classList.remove('hidden');
             document.getElementById('modal-feedback').style.display = 'flex';
-            if (total >= 12) launchConfetti();
         }
-
-        window.addEventListener('keydown', (e) => {
-            if (!emJogo || !interactable) return;
-            if (e.key === "ArrowLeft") checkAnswer('>');
-            if (e.key === "ArrowRight") checkAnswer('<');
-            if (e.key === "ArrowDown") checkAnswer('=');
-        });
-
-        function clearConfetti() {
-            confettiActive = false;
-            const canvas = document.getElementById('confetti-canvas');
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        function launchConfetti() {
-            const canvas = document.getElementById('confetti-canvas'
+    </script>
+</body>
+</html>
