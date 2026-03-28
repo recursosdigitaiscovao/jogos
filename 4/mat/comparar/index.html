@@ -81,4 +81,351 @@
         /* NAVEGAÇÃO INTERNA */
         .mini-nav-container {
             width: 100%; padding: 10px; display: flex; justify-content: center; gap: 8px; 
-            border-bottom: 2px solid #f0f0f0; background: #
+            border-bottom: 2px solid #f0f0f0; background: #fafafa; flex-shrink: 0;
+            position: absolute; top: 0; left: 0;
+        }
+        .btn-mini-cat {
+            flex: 1; max-width: 160px; padding: 8px 2px; font-size: 0.75rem; font-weight: 800;
+            background: white; border: 1px solid #ddd; border-radius: 10px; cursor: pointer; color: #7f8c8d;
+        }
+        .btn-mini-cat.active { background: #9b59b6; color: white; border-color: #9b59b6; }
+
+        /* ÁREA DE JOGO */
+        #jogo-container { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 60px 20px 20px 20px; }
+        .level-indicator { font-weight: 900; color: #9b59b6; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        .game-layout { display: flex; align-items: center; justify-content: center; gap: 2vw; width: 100%; }
+        
+        .box-compare {
+            background: #fdfaff; border: 4px solid #9b59b6; border-radius: 20px;
+            min-width: 150px; padding: clamp(20px, 5vh, 40px) 15px; 
+            font-size: clamp(1.2rem, 5vw, 2.5rem); font-weight: 900;
+            color: #2c3e50; text-align: center; box-shadow: 0 5px 0 #ecdff5; flex: 1;
+            display: flex; flex-direction: column; justify-content: center; transition: 0.3s;
+        }
+        .op-text { font-size: 0.8em; color: #9b59b6; margin-bottom: 5px; }
+
+        /* BOTÕES DE COMPARAÇÃO */
+        .symbols-wrap { display: flex; gap: 15px; align-items: center; justify-content: center; }
+        .btn-symbol {
+            width: clamp(60px, 10vw, 90px); height: clamp(60px, 10vw, 90px);
+            background: white; border: 3px solid #9b59b6; border-radius: 50%;
+            font-size: 2rem; font-weight: 900; color: #9b59b6; cursor: pointer;
+            box-shadow: 0 4px 0 #ecdff5; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-symbol:hover { background: #fdfaff; }
+        .btn-symbol:active { transform: translateY(3px); box-shadow: 0 0 0 #ecdff5; }
+
+        /* FEEDBACK VISUAL */
+        .correct { border-color: #2ecc71 !important; background-color: #eafaf1 !important; color: #2ecc71 !important; }
+        .wrong { border-color: #e74c3c !important; background-color: #fdeaeb !important; color: #e74c3c !important; animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+        .hidden { display: none !important; }
+
+        /* MODAIS */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(3px); }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; text-align: center; width: 90%; max-width: 450px; }
+        
+        .stats-table { width: 100%; margin: 15px 0; border-collapse: collapse; }
+        .stats-table th { padding: 8px; color: #7f8c8d; border-bottom: 2px solid #eee; font-size: 0.8rem; }
+        .stats-table td { padding: 10px; font-weight: bold; border-bottom: 1px solid #eee; font-size: 1rem; }
+
+        footer { width: 100%; padding: 10px; background: #fff; text-align: center; color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.75rem; flex-shrink: 0; }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    
+    <div class="sidebar" id="sidebar">
+        <h3 style="margin-bottom: 15px;">Navegação</h3>
+        <nav class="sidebar-menu">
+            <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+            <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
+            <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
+            <a href="/jogos/2/" class="sidebar-item">🐢 2º Ano</a>
+            <a href="/jogos/3/" class="sidebar-item">🦊 3º Ano</a>
+            <a href="/jogos/4/" class="sidebar-item">👨‍🚀 4º Ano</a>
+        </nav>
+        <button onclick="toggleMenu()" style="margin-top:auto; padding:10px; border:none; background:#eee; cursor:pointer; font-weight:bold; border-radius:8px;">Fechar ×</button>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <div class="menu-icon" onclick="toggleMenu()" style="cursor:pointer; font-size: 1.5rem;">☰</div>
+            <h1><span class="header-icon">👨‍🚀</span> Comparação de Números</h1>
+        </div>
+        <button onclick="handleVoltar()" class="btn-voltar-3d">⬅ Voltar</button>
+    </header>
+
+    <main>
+        <div class="screen-container">
+            
+            <div class="main-title">
+                <div class="title-row">
+                    <span style="font-size: 2rem;">⚖️</span>
+                    <h2 id="display-title">Maior, Menor ou Igual</h2>
+                    <button class="btn-info" onclick="openInfo()">💡</button>
+                </div>
+                <p style="margin-top: 2px; margin-bottom: 20px; font-weight: bold; color: #555; font-size: 0.95rem;">Compara os números ou operações usando os sinais <span style="color:#9b59b6">&lt;, = ou &gt;</span>.</p>
+            </div>
+
+            <!-- PAINEL DE STATUS -->
+            <div class="stats-panel hidden" id="status-panel">
+                <div class="stat-item">⏱️ <span id="timer">00:00</span></div>
+                <div class="stars-container" id="stars-row">
+                    <script>for(let i=0; i<5; i++) document.write('<svg class="star-svg" id="star-'+i+'" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>');</script>
+                </div>
+                <div class="stat-item">Pontos: <span id="score">0</span></div>
+            </div>
+            
+            <div class="game-card">
+                <!-- MENU INICIAL -->
+                <div id="menu-categorias" class="category-grid">
+                    <div class="cat-card" onclick="startChallenge(1000)"><span>Números até</span><span>1 000</span></div>
+                    <div class="cat-card" onclick="startChallenge(10000)"><span>Números até</span><span>10 000</span></div>
+                    <div class="cat-card" onclick="startChallenge(100000)"><span>Números até</span><span>100 000</span></div>
+                    <div class="cat-card" onclick="startChallenge(1000000)"><span>Números até</span><span>1 000 000</span></div>
+                </div>
+
+                <!-- ÁREA DE JOGO -->
+                <div id="jogo-container" class="hidden">
+                    <div class="mini-nav-container">
+                        <button class="btn-mini-cat" id="btn-1000" onclick="startChallenge(1000)">1 000</button>
+                        <button class="btn-mini-cat" id="btn-10000" onclick="startChallenge(10000)">10 000</button>
+                        <button class="btn-mini-cat" id="btn-100000" onclick="startChallenge(100000)">100 000</button>
+                        <button class="btn-mini-cat" id="btn-1000000" onclick="startChallenge(1000000)">1 000 000</button>
+                    </div>
+
+                    <div class="level-indicator" id="lvl-txt">Nível 1</div>
+
+                    <div class="game-layout">
+                        <div id="box-left" class="box-compare">
+                            <span id="op-left" class="op-text"></span>
+                            <span id="val-left">0</span>
+                        </div>
+                        
+                        <div class="symbols-wrap">
+                            <button class="btn-symbol" onclick="verificar('<')">&lt;</button>
+                            <button class="btn-symbol" onclick="verificar('=')">=</button>
+                            <button class="btn-symbol" onclick="verificar('>')">&gt;</button>
+                        </div>
+
+                        <div id="box-right" class="box-compare">
+                            <span id="op-right" class="op-text"></span>
+                            <span id="val-right">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="modal-info" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #9b59b6;">Como Jogar</h2>
+            <p style="text-align: left; font-size: 0.9rem; margin: 15px 0;">
+                • Escolhe o sinal correto para comparar os dois lados.<br>
+                • No Nível 3, resolve as operações mentalmente antes de comparar.<br>
+                • São 15 desafios (5 por nível). Boa sorte!
+            </p>
+            <button class="btn-voltar-3d" style="width:100%" onclick="closeInfo()">Entendido!</button>
+        </div>
+    </div>
+
+    <div id="modal-feedback" class="modal">
+        <div class="modal-content">
+            <div id="f-emoji" style="font-size: 3.5rem;">🏆</div>
+            <h2 id="f-titulo">Resultado Final</h2>
+            <p id="f-texto" style="margin: 10px 0; color: #9b59b6; font-weight: 900;"></p>
+            
+            <table class="stats-table">
+                <thead><tr><th>Nível</th><th>Acertos</th><th>Erros</th></tr></thead>
+                <tbody>
+                    <tr><td>Nível 1 (Simples)</td><td id="res-l1-c" style="color:green">0</td><td id="res-l1-w" style="color:red">0</td></tr>
+                    <tr><td>Nível 2 (Grandes)</td><td id="res-l2-c" style="color:green">0</td><td id="res-l2-w" style="color:red">0</td></tr>
+                    <tr><td>Nível 3 (Operações)</td><td id="res-l3-c" style="color:green">0</td><td id="res-l3-w" style="color:red">0</td></tr>
+                </tbody>
+            </table>
+            <button class="btn-voltar-3d" style="width:100%" onclick="resetToMenu()">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <footer>Recursos Digitais Covão - Professor Luís</footer>
+
+    <script>
+        let resEsquerda = 0, resDireita = 0, limiteMax = 0, emJogo = false;
+        let pontos = 0, perguntaAtual = 0, segs = 0, timer;
+        let stats = { l1: {c:0, w:0}, l2: {c:0, w:0}, l3: {c:0, w:0} };
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+        function openInfo() { document.getElementById('modal-info').style.display = 'flex'; }
+        function closeInfo() { document.getElementById('modal-info').style.display = 'none'; }
+        
+        function handleVoltar() {
+            if (emJogo) resetToMenu();
+            else window.location.href = '../';
+        }
+
+        function resetToMenu() {
+            clearInterval(timer);
+            emJogo = false;
+            document.getElementById('menu-categorias').classList.remove('hidden');
+            document.getElementById('jogo-container').classList.add('hidden');
+            document.getElementById('status-panel').classList.add('hidden');
+            document.getElementById('modal-feedback').style.display = 'none';
+        }
+
+        function startChallenge(max) {
+            limiteMax = max; 
+            emJogo = true;
+            perguntaAtual = 0;
+            pontos = 0;
+            segs = 0;
+            stats = { l1: {c:0, w:0}, l2: {c:0, w:0}, l3: {c:0, w:0} };
+
+            document.getElementById('menu-categorias').classList.add('hidden');
+            document.getElementById('jogo-container').classList.remove('hidden');
+            document.getElementById('status-panel').classList.remove('hidden');
+            document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
+            document.querySelectorAll('.btn-mini-cat').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${max}`).classList.add('active');
+            document.getElementById('score').innerText = "0";
+
+            startTimer();
+            proxima();
+        }
+
+        function startTimer() {
+            clearInterval(timer);
+            timer = setInterval(() => {
+                segs++;
+                let m = Math.floor(segs / 60).toString().padStart(2, '0');
+                let s = (segs % 60).toString().padStart(2, '0');
+                document.getElementById('timer').innerText = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function proxima() {
+            if (perguntaAtual === 15) { finalizar(); return; }
+            
+            const nivel = Math.floor(perguntaAtual / 5) + 1;
+            document.getElementById('lvl-txt').innerText = "Nível " + nivel;
+
+            if (perguntaAtual % 5 === 0) {
+                document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
+            }
+
+            document.getElementById('box-left').className = "box-compare";
+            document.getElementById('box-right').className = "box-compare";
+            document.querySelectorAll('.btn-symbol').forEach(b => { b.disabled = false; b.className = "btn-symbol"; });
+
+            gerarDesafio(nivel);
+            perguntaAtual++;
+        }
+
+        function gerarDesafio(nivel) {
+            const opL = document.getElementById('op-left');
+            const opR = document.getElementById('op-right');
+            const valL = document.getElementById('val-left');
+            const valR = document.getElementById('val-right');
+
+            opL.innerText = ""; opR.innerText = "";
+
+            if (nivel === 1) { // Simples até metade
+                resEsquerda = Math.floor(Math.random() * (limiteMax/2));
+                resDireita = Math.random() > 0.3 ? Math.floor(Math.random() * (limiteMax/2)) : resEsquerda;
+            } 
+            else if (nivel === 2) { // Grandes
+                resEsquerda = Math.floor(Math.random() * (limiteMax/2)) + (limiteMax/2);
+                resDireita = Math.random() > 0.3 ? Math.floor(Math.random() * (limiteMax/2)) + (limiteMax/2) : resEsquerda;
+            } 
+            else { // Operações
+                const objL = criarOperacao(limiteMax);
+                opL.innerText = objL.txt;
+                resEsquerda = objL.res;
+
+                const objR = Math.random() > 0.4 ? criarOperacao(limiteMax) : {txt: "", res: resEsquerda};
+                opR.innerText = objR.txt;
+                resDireita = objR.res;
+            }
+
+            valL.innerText = resEsquerda.toLocaleString('pt-PT');
+            valR.innerText = resDireita.toLocaleString('pt-PT');
+        }
+
+        function criarOperacao(max) {
+            const tipo = Math.random() > 0.5 ? '+' : '-';
+            let n1, n2, res;
+            if (tipo === '+') {
+                res = Math.floor(Math.random() * max);
+                n1 = Math.floor(Math.random() * res);
+                n2 = res - n1;
+                return { txt: `${n1.toLocaleString('pt-PT')} + ${n2.toLocaleString('pt-PT')}`, res: res };
+            } else {
+                n1 = Math.floor(Math.random() * max);
+                n2 = Math.floor(Math.random() * n1); // Garante sempre n1 > n2
+                res = n1 - n2;
+                return { txt: `${n1.toLocaleString('pt-PT')} - ${n2.toLocaleString('pt-PT')}`, res: res };
+            }
+        }
+
+        function verificar(escolha) {
+            document.querySelectorAll('.btn-symbol').forEach(b => b.disabled = true);
+            
+            let correta = '=';
+            if (resEsquerda < resDireita) correta = '<';
+            if (resEsquerda > resDireita) correta = '>';
+
+            const nivelIndex = Math.floor((perguntaAtual - 1) / 5) + 1;
+            const key = 'l' + nivelIndex;
+            const starIndex = (perguntaAtual - 1) % 5;
+            const star = document.getElementById('star-' + starIndex);
+
+            if (escolha === correta) {
+                stats[key].c++;
+                pontos += nivelIndex * 10;
+                star.classList.add('win');
+                document.getElementById('box-left').classList.add('correct');
+                document.getElementById('box-right').classList.add('correct');
+            } else {
+                stats[key].w++;
+                star.classList.add('lose');
+                document.getElementById('box-left').classList.add('wrong');
+                document.getElementById('box-right').classList.add('wrong');
+            }
+
+            document.getElementById('score').innerText = pontos;
+            setTimeout(proxima, 1500);
+        }
+
+        function finalizar() {
+            clearInterval(timer);
+            const totalC = stats.l1.c + stats.l2.c + stats.l3.c;
+            let emoji, titulo, texto;
+
+            if (totalC < 7) { emoji = "💪"; titulo = "Quase lá!"; texto = "Precisas de treinar mais."; }
+            else if (totalC <= 11) { emoji = "👏"; titulo = "Bom trabalho!"; texto = "Boa, estás no bom caminho."; }
+            else { emoji = "🏆"; titulo = "Incrível!"; texto = "Muitos parabéns, muito bem!"; }
+
+            document.getElementById('f-emoji').innerText = emoji;
+            document.getElementById('f-titulo').innerText = titulo;
+            document.getElementById('f-texto').innerText = texto;
+            
+            document.getElementById('res-l1-c').innerText = stats.l1.c;
+            document.getElementById('res-l1-w').innerText = stats.l1.w;
+            document.getElementById('res-l2-c').innerText = stats.l2.c;
+            document.getElementById('res-l2-w').innerText = stats.l2.w;
+            document.getElementById('res-l3-c').innerText = stats.l3.c;
+            document.getElementById('res-l3-w').innerText = stats.l3.w;
+
+            document.getElementById('modal-feedback').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
