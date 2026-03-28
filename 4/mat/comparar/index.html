@@ -103,7 +103,6 @@
             box-shadow: 0 4px 0 #f0f0f0; transition: 0.3s;
         }
         .val-txt { font-size: clamp(1.2rem, 4vw, 2.2rem); font-weight: 900; color: #2c3e50; }
-        /* Op-txt maior para o nível 3 */
         .op-txt { font-size: clamp(1rem, 3.5vw, 1.8rem); color: #9b59b6; font-weight: 900; text-align: center; }
 
         .center-circle {
@@ -114,7 +113,6 @@
             background: #fff; flex-shrink: 0; transition: 0.3s;
         }
 
-        /* BOTÕES DE BAIXO */
         .symbols-grid { display: flex; gap: 20px; margin-top: 20px; }
         .btn-symbol {
             width: 70px; height: 70px; background: #fff; border: 3px solid #9b59b6;
@@ -124,7 +122,6 @@
         }
         .btn-symbol:active { transform: translateY(3px); box-shadow: 0 0 0 #ecdff5; }
 
-        /* FEEDBACKS */
         .correct { border-color: #2ecc71 !important; color: #2ecc71 !important; border-style: solid !important; }
         .wrong { border-color: #e74c3c !important; color: #e74c3c !important; border-style: solid !important; animation: shake 0.4s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
@@ -212,9 +209,7 @@
                             <span id="txt-l" class="op-txt"></span>
                             <span id="val-l" class="val-txt">0</span>
                         </div>
-
                         <div id="circle-res" class="center-circle">?</div>
-
                         <div id="box-r" class="card-number">
                             <span id="txt-r" class="op-txt"></span>
                             <span id="val-r" class="val-txt">0</span>
@@ -234,11 +229,7 @@
     <div id="modal-info" class="modal">
         <div class="modal-content">
             <h2 style="color: #9b59b6;">Como Jogar</h2>
-            <p style="text-align: left; font-size: 0.9rem; margin: 15px 0;">
-                • Analisa os dois cartões.<br>
-                • No Nível 3, resolve as operações mentalmente e compara os resultados.<br>
-                • Clica no sinal que faz a comparação correta. Boa sorte!
-            </p>
+            <p style="text-align: left; font-size: 0.9rem; margin: 15px 0;">Escolhe o sinal correto. Nas categorias maiores tens 2 níveis. Nas menores tens 3 (o último com operações!).</p>
             <button class="btn-voltar-3d" style="width:100%" onclick="closeInfo()">Entendido!</button>
         </div>
     </div>
@@ -260,7 +251,7 @@
 
     <script>
         let resL = 0, resR = 0, limiteMax = 0, emJogo = false;
-        let pontos = 0, perguntaAtual = 0, segs = 0, timer;
+        let pontos = 0, perguntaAtual = 0, totalPerguntas = 15, segs = 0, timer;
         let stats = { l1: {c:0, w:0}, l2: {c:0, w:0}, l3: {c:0, w:0} };
 
         function toggleMenu() {
@@ -290,6 +281,7 @@
             perguntaAtual = 0;
             pontos = 0;
             segs = 0;
+            totalPerguntas = (max >= 100000) ? 10 : 15;
             stats = { l1: {c:0, w:0}, l2: {c:0, w:0}, l3: {c:0, w:0} };
 
             document.getElementById('menu-categorias').classList.add('hidden');
@@ -315,7 +307,7 @@
         }
 
         function proxima() {
-            if (perguntaAtual === 15) { finalizar(); return; }
+            if (perguntaAtual === totalPerguntas) { finalizar(); return; }
             
             const nivel = Math.floor(perguntaAtual / 5) + 1;
             document.getElementById('lvl-txt').innerText = "Nível " + nivel;
@@ -343,47 +335,41 @@
             txtL.innerText = ""; txtR.innerText = "";
             valL.innerText = ""; valR.innerText = "";
 
-            if (nivel === 1) { // Simples
+            if (nivel === 1) {
                 resL = Math.floor(Math.random() * (limiteMax/2)) + 1;
                 resR = Math.random() > 0.3 ? Math.floor(Math.random() * (limiteMax/2)) + 1 : resL;
                 valL.innerText = resL.toLocaleString('pt-PT');
                 valR.innerText = resR.toLocaleString('pt-PT');
             } 
-            else if (nivel === 2) { // Grandes
+            else if (nivel === 2) {
                 const metade = limiteMax / 2;
                 resL = Math.floor(Math.random() * metade) + metade;
                 resR = Math.random() > 0.3 ? Math.floor(Math.random() * metade) + metade : resL;
                 valL.innerText = resL.toLocaleString('pt-PT');
                 valR.innerText = resR.toLocaleString('pt-PT');
             } 
-            else { // NÍVEL 3: OPERAÇÕES (Oculta o número se for operação)
+            else {
                 const op1 = criarOp(limiteMax);
-                txtL.innerText = op1.txt;
-                resL = op1.res;
+                txtL.innerText = op1.txt; resL = op1.res;
                 if (op1.txt === "") valL.innerText = resL.toLocaleString('pt-PT');
 
                 const op2 = Math.random() > 0.4 ? criarOp(limiteMax) : {txt: "", res: resL};
-                txtR.innerText = op2.txt;
-                resR = op2.res;
+                txtR.innerText = op2.txt; resR = op2.res;
                 if (op2.txt === "") valR.innerText = resR.toLocaleString('pt-PT');
             }
         }
 
         function criarOp(max) {
-            // No nível 3, às vezes pode ser um número simples ou uma operação
             if (Math.random() > 0.8) return {txt: "", res: Math.floor(Math.random() * max) + 1};
-
             const tipo = Math.random() > 0.5 ? '+' : '-';
             let n1, n2, res;
             if (tipo === '+') {
                 res = Math.floor(Math.random() * max) + 1;
-                n1 = Math.floor(Math.random() * res);
-                n2 = res - n1;
+                n1 = Math.floor(Math.random() * res); n2 = res - n1;
                 return { txt: `${n1.toLocaleString('pt-PT')} + ${n2.toLocaleString('pt-PT')}`, res: res };
             } else {
                 n1 = Math.floor(Math.random() * max) + 1;
-                n2 = Math.floor(Math.random() * n1);
-                res = n1 - n2;
+                n2 = Math.floor(Math.random() * n1); res = n1 - n2;
                 return { txt: `${n1.toLocaleString('pt-PT')} - ${n2.toLocaleString('pt-PT')}`, res: res };
             }
         }
@@ -401,7 +387,7 @@
             const starIndex = (perguntaAtual-1) % 5;
             const star = document.getElementById('star-' + starIndex);
 
-            // Mostrar resultados para conferência no feedback
+            // Mostrar números ocultos para conferência
             const valL = document.getElementById('val-l');
             const valR = document.getElementById('val-r');
             if (valL.innerText === "") valL.innerText = "(" + resL.toLocaleString('pt-PT') + ")";
@@ -427,20 +413,21 @@
             const totalC = stats.l1.c + stats.l2.c + stats.l3.c;
             let emoji, titulo, texto;
 
-            if (totalC < 7) { emoji = "💪"; titulo = "Quase lá!"; texto = "Precisas de treinar mais."; }
-            else if (totalC <= 11) { emoji = "👏"; titulo = "Bom trabalho!"; texto = "Boa, estás no bom caminho."; }
+            if (totalC < (totalPerguntas/2)) { emoji = "💪"; titulo = "Quase lá!"; texto = "Precisas de treinar mais."; }
+            else if (totalC <= (totalPerguntas * 0.75)) { emoji = "👏"; titulo = "Bom trabalho!"; texto = "Boa, estás no bom caminho."; }
             else { emoji = "🏆"; titulo = "Incrível!"; texto = "Muitos parabéns, muito bem!"; }
 
             document.getElementById('f-emoji').innerText = emoji;
             document.getElementById('f-titulo').innerText = titulo;
             document.getElementById('f-texto').innerText = texto;
             
-            document.getElementById('stats-body').innerHTML = `
-                <tr><td>Nível 1</td><td>${stats.l1.c}</td><td>${stats.l1.w}</td></tr>
-                <tr><td>Nível 2</td><td>${stats.l2.c}</td><td>${stats.l2.w}</td></tr>
-                <tr><td>Nível 3</td><td>${stats.l3.c}</td><td>${stats.l3.w}</td></tr>
-            `;
+            let htmlTable = `<tr><td>Nível 1</td><td>${stats.l1.c}</td><td>${stats.l1.w}</td></tr>
+                             <tr><td>Nível 2</td><td>${stats.l2.c}</td><td>${stats.l2.w}</td></tr>`;
+            if (totalPerguntas === 15) {
+                htmlTable += `<tr><td>Nível 3</td><td>${stats.l3.c}</td><td>${stats.l3.w}</td></tr>`;
+            }
 
+            document.getElementById('stats-body').innerHTML = htmlTable;
             document.getElementById('modal-feedback').style.display = 'flex';
         }
     </script>
