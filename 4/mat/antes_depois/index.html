@@ -34,7 +34,7 @@
         }
         .btn-voltar-3d:active { transform: translateY(3px); box-shadow: 0 0 0 #732d91; }
 
-        /* === SIDEBAR === */
+        /* === SIDEBAR (MENU) === */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
         .sidebar.active { left: 0; }
         .sidebar-item { text-decoration: none; color: #444; font-weight: bold; padding: 14px; border-radius: 12px; background: #f8f9fa; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; transition: 0.2s; }
@@ -48,6 +48,7 @@
         
         .main-title { text-align: center; flex-shrink: 0; }
         .title-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .title-row .game-icon { font-size: 2rem; }
         .title-row h2 { color: #2c3e50; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; margin: 0; }
         .btn-info { background: none; border: none; font-size: 1.8rem; cursor: pointer; display: flex; align-items: center; }
 
@@ -62,7 +63,7 @@
         .star-svg.win { fill: #9b59b6; }
         .star-svg.lose { fill: #e74c3c; stroke: #e74c3c; }
 
-        /* QUADRADO BRANCO */
+        /* QUADRADO BRANCO DINÂMICO (BORDA LATERAL 10PX) */
         .game-card {
             background: white; border-radius: 20px;
             border-bottom: 6px solid #d4d4d4; box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
@@ -71,12 +72,11 @@
             align-items: center; justify-content: center; overflow: hidden; position: relative;
         }
 
-        /* GRELHA DE CATEGORIAS (MENU INICIAL) */
+        /* GRELHA DE CATEGORIAS (BORDA INTERNA 40PX) */
         .category-grid { 
             display: grid; grid-template-columns: repeat(2, 1fr); 
             gap: 15px; width: 100%; height: 100%; padding: 40px; 
         }
-        @media (min-width: 600px) { .category-grid { grid-template-columns: repeat(3, 1fr); } }
 
         .cat-card {
             background: #fdfaff; border: 2px solid #ecdff5; border-radius: 15px;
@@ -87,7 +87,7 @@
         .cat-card span:first-child { font-size: 0.7rem; color: #7f8c8d; font-weight: bold; text-transform: uppercase; }
         .cat-card span:last-child { font-size: 1.3rem; font-weight: 900; color: #9b59b6; }
 
-        /* NAVEGAÇÃO DE CATEGORIAS DENTRO DO JOGO */
+        /* NAVEGAÇÃO INTERNA */
         .mini-nav-container {
             width: 100%; padding: 10px; display: flex; justify-content: center;
             overflow-x: auto; white-space: nowrap; gap: 8px; border-bottom: 1px solid #f0f0f0;
@@ -162,7 +162,6 @@
                 <p style="margin-top: 2px; margin-bottom: 20px; font-weight: bold; color: #555; font-size: 0.95rem;">Quem são os vizinhos do número?</p>
             </div>
 
-            <!-- PAINEL DE STATUS (HIDDEN INICIALMENTE) -->
             <div class="stats-panel hidden" id="status-panel">
                 <div class="stat-item">⏱️ <span id="timer">00:00</span></div>
                 <div class="stars-container" id="stars-row">
@@ -176,10 +175,8 @@
             </div>
             
             <div class="game-card">
-                <!-- MENU INICIAL -->
+                <!-- MENU INICIAL (APENAS 4 CATEGORIAS) -->
                 <div id="menu-categorias" class="category-grid">
-                    <div class="cat-card" onclick="startChallenge(100)"><span>Números até</span><span>100</span></div>
-                    <div class="cat-card" onclick="startChallenge(500)"><span>Números até</span><span>500</span></div>
                     <div class="cat-card" onclick="startChallenge(1000)"><span>Números até</span><span>1 000</span></div>
                     <div class="cat-card" onclick="startChallenge(10000)"><span>Números até</span><span>10 000</span></div>
                     <div class="cat-card" onclick="startChallenge(100000)"><span>Números até</span><span>100 000</span></div>
@@ -189,8 +186,6 @@
                 <!-- ÁREA DE JOGO -->
                 <div id="jogo-container" class="hidden">
                     <div class="mini-nav-container">
-                        <button class="btn-mini-cat" id="btn-100" onclick="startChallenge(100)">Até 100</button>
-                        <button class="btn-mini-cat" id="btn-500" onclick="startChallenge(500)">Até 500</button>
                         <button class="btn-mini-cat" id="btn-1000" onclick="startChallenge(1000)">Até 1 000</button>
                         <button class="btn-mini-cat" id="btn-10000" onclick="startChallenge(10000)">Até 10 000</button>
                         <button class="btn-mini-cat" id="btn-100000" onclick="startChallenge(100000)">Até 100 000</button>
@@ -280,16 +275,12 @@
             acertos = 0;
             segs = 0;
 
-            // Interface
             document.getElementById('menu-categorias').classList.add('hidden');
             document.getElementById('jogo-container').classList.remove('hidden');
             document.getElementById('status-panel').classList.remove('hidden');
             document.getElementById('display-title').innerText = "A Jogar...";
 
-            // Reset estrelas se mudar de categoria a meio
             document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
-            
-            // Destacar botão ativo na mini-nav
             document.querySelectorAll('.btn-mini-cat').forEach(b => b.classList.remove('active'));
             document.getElementById(`btn-${max}`).classList.add('active');
 
@@ -313,7 +304,7 @@
             document.getElementById('input-before').value = "";
             document.getElementById('input-after').value = "";
             
-            nAtual = Math.floor(Math.random() * (limiteMax - 2)) + 2;
+            nAtual = Math.floor(Math.random() * (limiteMax - 10)) + 10;
             document.getElementById('num-central').innerText = nAtual.toLocaleString('pt-PT');
             
             if (nAtual >= 100000) {
