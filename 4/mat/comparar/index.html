@@ -51,7 +51,7 @@
         .title-row h2 { color: #2c3e50; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; margin: 0; }
         .btn-info { background: none; border: none; font-size: 1.8rem; cursor: pointer; display: flex; align-items: center; }
 
-        /* PAINEL DE STATUS (5 ESTRELAS) */
+        /* PAINEL DE STATUS */
         .stats-panel { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 10px; flex-shrink: 0; }
         .stat-item { display: flex; align-items: center; gap: 5px; font-weight: bold; color: #2c3e50; font-size: 0.9rem; }
         .stars-container { display: flex; gap: 5px; }
@@ -94,17 +94,17 @@
         #jogo-container { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 60px 20px 20px 20px; }
         .level-indicator { font-weight: 900; color: #9b59b6; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* LAYOUT COMPARATIVO */
         .compare-row { display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; }
         
         .card-number {
             background: #fdfaff; border: 3px solid #eee; border-radius: 20px;
-            min-width: 140px; padding: 25px 10px; flex: 1; max-width: 300px;
+            min-width: 140px; min-height: 150px; padding: 20px 10px; flex: 1; max-width: 320px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             box-shadow: 0 4px 0 #f0f0f0; transition: 0.3s;
         }
         .val-txt { font-size: clamp(1.2rem, 4vw, 2.2rem); font-weight: 900; color: #2c3e50; }
-        .op-txt { font-size: 0.8rem; color: #9b59b6; font-weight: bold; margin-bottom: 5px; }
+        /* Op-txt maior para o nível 3 */
+        .op-txt { font-size: clamp(1rem, 3.5vw, 1.8rem); color: #9b59b6; font-weight: 900; text-align: center; }
 
         .center-circle {
             width: clamp(60px, 12vw, 90px); height: clamp(60px, 12vw, 90px);
@@ -176,7 +176,6 @@
                     <h2 id="display-title">Maior ou Menor</h2>
                     <button class="btn-info" onclick="openInfo()">💡</button>
                 </div>
-                <!-- INSTRUÇÃO SOLICITADA -->
                 <p style="margin-top: 2px; margin-bottom: 20px; font-weight: bold; color: #555; font-size: 0.95rem;">Compara os números, usando os sinais <span style="color:#9b59b6">&lt;, = ou &gt;</span>.</p>
             </div>
 
@@ -208,7 +207,6 @@
 
                     <div class="level-indicator" id="lvl-txt">Nível 1</div>
 
-                    <!-- LAYOUT DO JOGO -->
                     <div class="compare-row">
                         <div id="box-l" class="card-number">
                             <span id="txt-l" class="op-txt"></span>
@@ -236,7 +234,11 @@
     <div id="modal-info" class="modal">
         <div class="modal-content">
             <h2 style="color: #9b59b6;">Como Jogar</h2>
-            <p style="text-align: left; font-size: 0.9rem; margin: 15px 0;">Analisa os dois cartões. Clica no sinal que faz a comparação correta. São 3 níveis de dificuldade!</p>
+            <p style="text-align: left; font-size: 0.9rem; margin: 15px 0;">
+                • Analisa os dois cartões.<br>
+                • No Nível 3, resolve as operações mentalmente e compara os resultados.<br>
+                • Clica no sinal que faz a comparação correta. Boa sorte!
+            </p>
             <button class="btn-voltar-3d" style="width:100%" onclick="closeInfo()">Entendido!</button>
         </div>
     </div>
@@ -322,7 +324,6 @@
                 document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
             }
 
-            // Reset UI
             document.getElementById('circle-res').innerText = "?";
             document.getElementById('circle-res').className = "center-circle";
             document.getElementById('box-l').className = "card-number";
@@ -340,39 +341,47 @@
             const valR = document.getElementById('val-r');
 
             txtL.innerText = ""; txtR.innerText = "";
+            valL.innerText = ""; valR.innerText = "";
 
             if (nivel === 1) { // Simples
-                resL = Math.floor(Math.random() * (limiteMax/2));
-                resR = Math.random() > 0.3 ? Math.floor(Math.random() * (limiteMax/2)) : resL;
+                resL = Math.floor(Math.random() * (limiteMax/2)) + 1;
+                resR = Math.random() > 0.3 ? Math.floor(Math.random() * (limiteMax/2)) + 1 : resL;
+                valL.innerText = resL.toLocaleString('pt-PT');
+                valR.innerText = resR.toLocaleString('pt-PT');
             } 
             else if (nivel === 2) { // Grandes
-                resL = Math.floor(Math.random() * (limiteMax/2)) + (limiteMax/2);
-                resR = Math.random() > 0.3 ? Math.floor(Math.random() * (limiteMax/2)) + (limiteMax/2) : resL;
+                const metade = limiteMax / 2;
+                resL = Math.floor(Math.random() * metade) + metade;
+                resR = Math.random() > 0.3 ? Math.floor(Math.random() * metade) + metade : resL;
+                valL.innerText = resL.toLocaleString('pt-PT');
+                valR.innerText = resR.toLocaleString('pt-PT');
             } 
-            else { // Operações
+            else { // NÍVEL 3: OPERAÇÕES (Oculta o número se for operação)
                 const op1 = criarOp(limiteMax);
                 txtL.innerText = op1.txt;
                 resL = op1.res;
+                if (op1.txt === "") valL.innerText = resL.toLocaleString('pt-PT');
 
                 const op2 = Math.random() > 0.4 ? criarOp(limiteMax) : {txt: "", res: resL};
                 txtR.innerText = op2.txt;
                 resR = op2.res;
+                if (op2.txt === "") valR.innerText = resR.toLocaleString('pt-PT');
             }
-
-            valL.innerText = resL.toLocaleString('pt-PT');
-            valR.innerText = resR.toLocaleString('pt-PT');
         }
 
         function criarOp(max) {
+            // No nível 3, às vezes pode ser um número simples ou uma operação
+            if (Math.random() > 0.8) return {txt: "", res: Math.floor(Math.random() * max) + 1};
+
             const tipo = Math.random() > 0.5 ? '+' : '-';
             let n1, n2, res;
             if (tipo === '+') {
-                res = Math.floor(Math.random() * max);
+                res = Math.floor(Math.random() * max) + 1;
                 n1 = Math.floor(Math.random() * res);
                 n2 = res - n1;
                 return { txt: `${n1.toLocaleString('pt-PT')} + ${n2.toLocaleString('pt-PT')}`, res: res };
             } else {
-                n1 = Math.floor(Math.random() * max);
+                n1 = Math.floor(Math.random() * max) + 1;
                 n2 = Math.floor(Math.random() * n1);
                 res = n1 - n2;
                 return { txt: `${n1.toLocaleString('pt-PT')} - ${n2.toLocaleString('pt-PT')}`, res: res };
@@ -392,6 +401,12 @@
             const starIndex = (perguntaAtual-1) % 5;
             const star = document.getElementById('star-' + starIndex);
 
+            // Mostrar resultados para conferência no feedback
+            const valL = document.getElementById('val-l');
+            const valR = document.getElementById('val-r');
+            if (valL.innerText === "") valL.innerText = "(" + resL.toLocaleString('pt-PT') + ")";
+            if (valR.innerText === "") valR.innerText = "(" + resR.toLocaleString('pt-PT') + ")";
+
             if (escolha === correta) {
                 stats['l'+nIndex].c++;
                 pontos += nIndex * 10;
@@ -404,7 +419,7 @@
             }
 
             document.getElementById('score').innerText = pontos;
-            setTimeout(proxima, 1500);
+            setTimeout(proxima, 1800);
         }
 
         function finalizar() {
