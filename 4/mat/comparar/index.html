@@ -36,8 +36,8 @@
         main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; overflow: hidden; }
         .screen-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 450px; }
 
-        /* TÍTULO NO TOPO */
-        .main-title { width: 100%; display: flex; flex-direction: column; align-items: center; margin-bottom: 60px; }
+        /* TÍTULO NO TOPO - ESPAÇO REDUZIDO PARA METADE */
+        .main-title { width: 100%; display: flex; flex-direction: column; align-items: center; margin-bottom: 30px; }
         .title-header-row { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; }
         
         .game-main-icon { display: flex; flex-direction: column; align-items: center; line-height: 0.5; color: #9b59b6; }
@@ -47,16 +47,15 @@
         .title-header-row h2 { color: #2c3e50; font-size: 1.1rem; font-weight: 900; text-transform: uppercase; white-space: nowrap; }
         .btn-info-minimal { font-size: 1.8rem; cursor: pointer; border: none; background: none; line-height: 1; }
 
-        /* BARRA DE STATUS ENCOSTADA AO JOGO */
+        /* BARRA DE STATUS - JUNTO AO JOGO MAS FORA DO QUADRADO */
         .status-bar-line {
             width: 100%; max-width: 450px; display: flex; 
             justify-content: space-between; align-items: center; 
-            margin-bottom: 0px; 
+            margin-bottom: 10px; 
             padding: 8px 15px;
-            background: rgba(255,255,255,0.8);
-            border-radius: 15px 15px 0 0;
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
             border: 1px solid #ddd;
-            border-bottom: none;
         }
         .timer-group { display: flex; align-items: center; gap: 5px; color: #9b59b6; font-weight: 900; font-size: 0.9rem; }
         .stars-row { display: flex; gap: 4px; }
@@ -65,15 +64,15 @@
         .star-box.wrong { color: #e74c3c; -webkit-text-stroke: 1px #c0392b; }
         .combo-group { font-weight: 800; color: #9b59b6; font-size: 0.85rem; display: flex; align-items: center; gap: 3px; }
 
-        /* CARTÃO DO JOGO */
+        /* CARTÃO DO JOGO - QUADRADO COM FORMAS REDONDAS */
         .game-card {
-            background: white; padding: 25px; border-radius: 0 0 25px 25px;
+            background: white; padding: 25px; border-radius: 25px;
             box-shadow: 0 12px 30px rgba(0,0,0,0.1); width: 100%;
             display: flex; flex-direction: column; min-height: 310px; justify-content: center;
             border: 1px solid #ddd;
         }
 
-        /* CATEGORIAS PASTEL */
+        /* CATEGORIAS */
         .category-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
         .cat-card { border-radius: 15px; padding: 18px 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; transition: 0.2s; }
         .cat-card span:first-child { font-size: 0.75rem; color: rgba(0,0,0,0.6); }
@@ -88,7 +87,7 @@
         .c7 { background: #F9FFD1; box-shadow: 0 4px 0 #DFE6A8; }
         .c8 { background: #E2E2E2; box-shadow: 0 4px 0 #BDBDBD; }
 
-        /* JOGO */
+        /* JOGO INTERNO */
         .comparison-layout { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 25px; }
         .num-box { font-size: 2.3rem; font-weight: 900; color: #000; flex: 1; text-align: center; }
         .symbol-box { 
@@ -110,10 +109,6 @@
         /* MODAIS */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
         .modal-content { background: white; padding: 25px; border-radius: 25px; text-align: center; width: 92%; max-width: 350px; }
-        .summary-box { background: #fdfaff; border-radius: 15px; padding: 12px; margin: 15px 0; border: 1px dashed #9b59b6; }
-        .summary-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 4px; }
-
-        footer { width: 100%; padding: 15px; background: #fff; text-align: center; color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.8rem; flex-shrink: 0; }
     </style>
 </head>
 <body>
@@ -137,15 +132,15 @@
                     <h2 id="view-title-main">Qual é o sinal?</h2>
                     <span class="btn-info-minimal" onclick="openInfo()">💡</span>
                 </div>
-                <p id="view-desc" style="margin-top: 5px; color: #7f8c8d; font-size: 0.9rem;">Usa os sinais <, = ou > para comparar.</p>
             </div>
 
+            <!-- STATUS BAR - SEPARADA E FORA DO QUADRADO -->
             <div id="game-status" class="status-bar-line hidden">
                 <div class="timer-group"><span>⏱️</span><span id="timer-display">00:00</span></div>
                 <div class="stars-row" id="stars-row">
                     <span class="star-box">★</span><span class="star-box">★</span><span class="star-box">★</span><span class="star-box">★</span><span class="star-box">★</span>
                 </div>
-                <div class="combo-group"><span>🔥</span><span id="combo-display">0</span><span>seguidas</span></div>
+                <div class="combo-group"><span>🔥</span><span id="combo-display">0</span></div>
             </div>
             
             <div class="game-card">
@@ -171,9 +166,6 @@
                         <button class="btn-roxo-3d btn-symbol" onclick="checkAnswer('=')">=</button>
                         <button class="btn-roxo-3d btn-symbol" onclick="checkAnswer('>')">></button>
                     </div>
-                    <button class="btn-roxo-3d" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5; box-shadow:0 4px 0 #ecdff5; margin-top:20px; width:100%;" onclick="handleVoltar()">
-                        ⬅ OUTRA CATEGORIA
-                    </button>
                 </div>
             </div>
         </div>
@@ -184,35 +176,25 @@
         <div class="modal-content">
             <h2 style="color: #8e44ad; margin-bottom: 15px;">Como Jogar</h2>
             <p style="text-align: left; font-size: 0.85rem; line-height: 1.4; color: #444;">
-                Compara os dois lados e escolhe o sinal correto.<br><br>
-                <b>Nível 1:</b> Números simples da categoria.<br>
-                <b>Nível 2:</b> Os números aumentam.<br>
-                <b>Nível 3:</b> Resolve contas antes de comparar!<br>
+                Escolhe o sinal correto para comparar os valores.<br><br>
+                <b>Nível 1 & 2:</b> Números diretos.<br>
+                <b>Nível 3:</b> Resolve a conta e compara!
             </p>
-            <button class="btn-roxo-3d" style="width: 100%; margin-top: 20px;" onclick="closeInfo()">ESTOU PRONTO</button>
+            <button class="btn-roxo-3d" style="width: 100%; margin-top: 20px;" onclick="closeInfo()">ENTENDI</button>
         </div>
     </div>
 
     <div id="modal-feedback" class="modal">
         <div class="modal-content">
-            <div id="f-emoji" style="font-size: 4rem; margin-bottom: 5px;">🏆</div>
-            <h2 id="f-titulo">Excelente!</h2>
-            <p id="f-texto" style="margin: 5px 0; color: #555; font-size: 0.95rem;"></p>
-            <div class="summary-box">
-                <div class="summary-line"><span>Nível 1</span><span id="res-l1">0</span></div>
-                <div class="summary-line"><span>Nível 2</span><span id="res-l2">0</span></div>
-                <div class="summary-line"><span>Nível 3</span><span id="res-l3">0</span></div>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-                <button class="btn-roxo-3d" style="width: 100%;" onclick="reiniciar()">JOGAR DE NOVO</button>
-                <button class="btn-roxo-3d" style="background:#fdfaff; color:#9b59b6; border-color:#ecdff5;" onclick="handleVoltar()">MUDAR DE CATEGORIA</button>
-            </div>
+            <h2 id="f-titulo">Fim de Jogo!</h2>
+            <p id="f-texto" style="margin: 15px 0; color: #555;"></p>
+            <button class="btn-roxo-3d" style="width: 100%;" onclick="handleVoltar()">VOLTAR AO MENU</button>
         </div>
     </div>
 
-    <!-- AUDIO -->
-    <audio id="snd-correct" src="https://actions.google.com/sounds/v1/ui/beep_short_on.ogg"></audio>
-    <audio id="snd-wrong" src="https://actions.google.com/sounds/v1/ui/button_click_error.ogg"></audio>
+    <!-- AUDIO - SONS CURTOS -->
+    <audio id="snd-correct" src="https://cdn.pixabay.com/audio/2022/03/10/audio_c330f6068d.mp3"></audio>
+    <audio id="snd-wrong" src="https://cdn.pixabay.com/audio/2022/03/10/audio_5e29f3f982.mp3"></audio>
 
     <script>
         let valLeft = 0, valRight = 0, limiteCat = 0, emJogo = false;
@@ -233,15 +215,12 @@
             document.getElementById('modal-feedback').style.display = 'none';
         }
 
-        function reiniciar() { startChallenge(limiteCat); }
-
         function startChallenge(max) {
             limiteCat = max; emJogo = true; nivelAtivo = 1; combo = 0; segs = 0;
             perguntaAtual = 0; stats = { l1: 0, l2: 0, l3: 0 };
             document.getElementById('menu-categorias').classList.add('hidden');
             document.getElementById('jogo-container').classList.remove('hidden');
             document.getElementById('game-status').classList.remove('hidden');
-            document.getElementById('modal-feedback').style.display = 'none';
             
             clearInterval(timer);
             timer = setInterval(() => { 
@@ -265,7 +244,6 @@
             const box = document.getElementById('symbol-display');
             box.innerText = "?"; box.className = "symbol-box";
 
-            // Estrelas
             const stars = document.getElementById('stars-row').children;
             for(let i=0; i<5; i++) {
                 stars[i].className = 'star-box';
@@ -284,15 +262,9 @@
                 document.getElementById('num-left').innerText = valLeft.toLocaleString('pt-PT');
                 document.getElementById('num-right').innerText = valRight.toLocaleString('pt-PT');
             } else {
-                if(Math.random() > 0.5) { // Soma
-                    let p1 = Math.floor(Math.random() * valLeft);
-                    document.getElementById('num-left').innerHTML = `<span style="font-size:1.6rem">${p1} + ${valLeft-p1}</span>`;
-                    document.getElementById('num-right').innerText = valRight.toLocaleString('pt-PT');
-                } else { // Subtração garantida positiva
-                    let extra = Math.floor(Math.random() * 20) + 1;
-                    document.getElementById('num-left').innerHTML = `<span style="font-size:1.6rem">${valLeft + extra} - ${extra}</span>`;
-                    document.getElementById('num-right').innerText = valRight.toLocaleString('pt-PT');
-                }
+                let p1 = Math.floor(Math.random() * valLeft);
+                document.getElementById('num-left').innerHTML = `<span style="font-size:1.5rem">${p1}+${valLeft-p1}</span>`;
+                document.getElementById('num-right').innerText = valRight.toLocaleString('pt-PT');
             }
         }
 
@@ -314,19 +286,13 @@
                 document.getElementById('snd-wrong').play();
             }
             perguntaAtual++;
-            setTimeout(proxima, 1000);
+            setTimeout(proxima, 800);
         }
 
         function finalizar() {
             clearInterval(timer);
             const total = stats.l1 + stats.l2 + stats.l3;
-            document.getElementById('f-titulo').innerText = total === 15 ? "Incrível!" : (total >= 10 ? "Muito Bem!" : "Bom esforço!");
-            document.getElementById('f-texto').innerText = "Concluíste em " + document.getElementById('timer-display').innerText;
-            
-            const fmt = (val) => `<span style="color:#27ae60">${val} certas</span> | <span style="color:#e74c3c">${5-val} erradas</span>`;
-            document.getElementById('res-l1').innerHTML = fmt(stats.l1);
-            document.getElementById('res-l2').innerHTML = fmt(stats.l2);
-            document.getElementById('res-l3').innerHTML = fmt(stats.l3);
+            document.getElementById('f-texto').innerText = `Acertaste ${total} de 15 perguntas em ${document.getElementById('timer-display').innerText}!`;
             document.getElementById('modal-feedback').style.display = 'flex';
         }
     </script>
