@@ -75,24 +75,36 @@
         .pergunta-box { text-align: center; margin-bottom: 15px; width: 100%; }
         .pergunta-texto { font-size: clamp(1rem, 4vw, 1.3rem); font-weight: 700; color: #34495e; margin-bottom: 15px; }
         
+        /* ESTILO DA FRAÇÃO MATEMÁTICA */
+        .frac {
+            display: inline-flex; flex-direction: column; align-items: center;
+            vertical-align: middle; font-weight: 900; line-height: 1.1; margin: 0 5px;
+        }
+        .frac span.top { border-bottom: 3px solid #2c3e50; padding: 0 5px; }
+        .frac span.bottom { padding: 0 5px; }
+        
         /* DESENHO DA FRAÇÃO */
         .fraction-visual {
-            display: flex; border: 4px solid #2c3e50; border-radius: 10px;
-            overflow: hidden; height: 80px; width: 100%; max-width: 400px;
-            margin: 0 auto 20px auto; background: #eee;
+            display: flex; border: 3px solid #2c3e50; border-radius: 8px;
+            overflow: hidden; height: 60px; width: 100%; max-width: 320px;
+            margin: 10px auto; background: #eee;
         }
-        .fraction-part { flex: 1; border-right: 2px solid #2c3e50; transition: 0.3s; }
+        .fraction-part { flex: 1; border-right: 1px solid #2c3e50; transition: 0.3s; }
         .fraction-part:last-child { border-right: none; }
         .fraction-part.colored { background-color: #9b59b6; }
 
-        .calc-display { font-size: 2.5rem; font-weight: 900; color: #9b59b6; margin-bottom: 20px; }
+        /* Tamanho menor para dentro dos botões */
+        .btn-opcao .fraction-visual { height: 40px; margin: 0 auto; max-width: 100%; }
+
+        .calc-display { font-size: 3rem; font-weight: 900; color: #9b59b6; margin-bottom: 20px; }
 
         /* OPÇÕES GRID 2x2 */
-        .opcoes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 500px; }
+        .opcoes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 550px; }
         .btn-opcao {
             background: white; border: 3px solid #9b59b6; border-radius: 15px;
-            padding: 15px; font-size: 1.2rem; font-weight: 800; color: #9b59b6;
+            padding: 15px; font-size: 1.4rem; font-weight: 800; color: #9b59b6;
             cursor: pointer; box-shadow: 0 4px 0 #ecdff5; transition: 0.1s;
+            display: flex; align-items: center; justify-content: center; min-height: 80px;
         }
         .btn-opcao:active { transform: translateY(3px); box-shadow: 0 0 0 #ecdff5; }
 
@@ -148,7 +160,7 @@
                     <h2 id="display-title">Desafio das Frações</h2>
                     <button class="btn-info" onclick="openInfo()">💡</button>
                 </div>
-                <p style="margin-top: 2px; margin-bottom: 20px; font-weight: bold; color: #555; font-size: 0.95rem;">Observa e resolve os desafios com frações.</p>
+                <p style="margin-top: 2px; margin-bottom: 10px; font-weight: bold; color: #555; font-size: 0.95rem;">Observa com atenção e escolhe a resposta certa.</p>
             </div>
 
             <div class="stats-panel" id="status-panel">
@@ -178,9 +190,9 @@
         <div class="modal-content">
             <h2 style="color: #9b59b6;">Como Jogar</h2>
             <p style="text-align: left; font-size: 0.9rem; margin: 15px 0;">
-                • <b>Nível 1:</b> Escolhe a fração que representa a parte colorida da barra.<br>
-                • <b>Nível 2:</b> Calcula a fração do número indicado (divide pelo de baixo, multiplica pelo de cima).<br>
-                São 10 desafios no total!
+                • <b>Nível 1:</b> Vês o desenho e escolhes a fração numérica correspondente.<br>
+                • <b>Nível 2:</b> Vês a fração numérica e escolhes o desenho correto.<br>
+                Tenta acertar as 10 perguntas!
             </p>
             <button class="btn-voltar-3d" style="width:100%" onclick="closeInfo()">Entendido!</button>
         </div>
@@ -204,7 +216,7 @@
     <script>
         let perguntaAtual = 0, pontos = 0, segs = 0, timer;
         let stats = { l1: {c:0, w:0}, l2: {c:0, w:0} };
-        let respostaCorreta = "";
+        let respostaCorretaRaw = "";
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -212,7 +224,7 @@
         }
         function openInfo() { document.getElementById('modal-info').style.display = 'flex'; }
         function closeInfo() { document.getElementById('modal-info').style.display = 'none'; }
-        function handleVoltar() { window.location.href = '../'; }
+        function handleVoltar() { window.history.back(); }
 
         function startTimer() {
             timer = setInterval(() => {
@@ -221,6 +233,21 @@
                 let s = (segs % 60).toString().padStart(2, '0');
                 document.getElementById('timer').innerText = `${m}:${s}`;
             }, 1000);
+        }
+
+        // Função para gerar o HTML da fração com traço horizontal
+        function formatFrac(num, den) {
+            return `<div class="frac"><span class="top">${num}</span><span class="bottom">${den}</span></div>`;
+        }
+
+        // Função para gerar a barra visual
+        function getVisualBar(num, den) {
+            let html = `<div class="fraction-visual">`;
+            for (let i = 0; i < den; i++) {
+                html += `<div class="fraction-part ${i < num ? 'colored' : ''}"></div>`;
+            }
+            html += `</div>`;
+            return html;
         }
 
         function proximaPergunta() {
@@ -237,51 +264,54 @@
             const visualArea = document.getElementById('visual-area');
             const texto = document.getElementById('pergunta-txt');
             const box = document.getElementById('opcoes-box');
-            box.innerHTML = "";
-            visualArea.innerHTML = "";
+            box.innerHTML = ""; visualArea.innerHTML = "";
+
+            const den = Math.floor(Math.random() * 6) + 3; // 3 a 8
+            const num = Math.floor(Math.random() * (den - 1)) + 1;
+            respostaCorretaRaw = num + "/" + den;
 
             if (nivel === 1) {
+                // NIVEL 1: Desenho -> Escolher Fração Escrita
                 texto.innerText = "Qual é a fração pintada?";
-                const denominador = Math.floor(Math.random() * 7) + 2; // 2 a 8
-                const numerador = Math.floor(Math.random() * (denominador - 1)) + 1;
-                respostaCorreta = numerador + "/" + denominador;
+                visualArea.innerHTML = getVisualBar(num, den);
 
-                // Criar Barra Visual
-                const barra = document.createElement('div');
-                barra.className = "fraction-visual";
-                for (let i = 0; i < denominador; i++) {
-                    const parte = document.createElement('div');
-                    parte.className = "fraction-part" + (i < numerador ? " colored" : "");
-                    barra.appendChild(parte);
-                }
-                visualArea.appendChild(barra);
-
-                let opts = [respostaCorreta, (numerador+1)+"/"+denominador, numerador+"/"+(denominador+1), "1/"+denominador];
-                [...new Set(opts)].sort(() => Math.random() - 0.5).slice(0, 4).forEach(v => criarBotao(v));
+                let opcoes = [
+                    respostaCorretaRaw,
+                    (num === 1 ? num + 1 : num - 1) + "/" + den,
+                    num + "/" + (den + 1),
+                    "1/" + den
+                ];
+                // Remover duplicados e baralhar
+                [...new Set(opcoes)].sort(() => Math.random() - 0.5).slice(0, 4).forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "btn-opcao";
+                    const [n, d] = opt.split('/');
+                    btn.innerHTML = formatFrac(n, d);
+                    btn.onclick = () => verificar(opt, btn);
+                    box.appendChild(btn);
+                });
             } 
             else {
-                const numBase = [12, 15, 20, 24, 30, 40, 50, 100][Math.floor(Math.random() * 8)];
-                const divisoesPosiveis = [2, 3, 4, 5, 10].filter(d => numBase % d === 0);
-                const den = divisoesPosiveis[Math.floor(Math.random() * divisoesPosiveis.length)];
-                const num = Math.floor(Math.random() * (den - 1)) + 1;
+                // NIVEL 2: Fração Escrita -> Escolher Desenho
+                texto.innerText = "Escolhe a representação correta de:";
+                visualArea.innerHTML = `<div class="calc-display">${formatFrac(num, den)}</div>`;
 
-                const resultado = (numBase / den) * num;
-                respostaCorreta = resultado.toString();
+                let opcoes = [
+                    {n: num, d: den},
+                    {n: num + 1 > den ? num - 1 : num + 1, d: den},
+                    {n: 1, d: den},
+                    {n: num, d: den - 1 < num ? den + 1 : den - 1}
+                ];
 
-                texto.innerText = "Calcula a fração do número:";
-                visualArea.innerHTML = `<div class="calc-display"><sup>${num}</sup>&frasl;<sub>${den}</sub> de ${numBase}</div>`;
-
-                let opts = [respostaCorreta, (resultado + 2).toString(), (numBase / den).toString(), (resultado * 2).toString()];
-                [...new Set(opts)].sort(() => Math.random() - 0.5).forEach(v => criarBotao(v));
+                opcoes.sort(() => Math.random() - 0.5).forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "btn-opcao";
+                    btn.innerHTML = getVisualBar(opt.n, opt.d);
+                    const valRaw = opt.n + "/" + opt.d;
+                    btn.onclick = () => verificar(valRaw, btn);
+                    box.appendChild(btn);
+                });
             }
-        }
-
-        function criarBotao(valor) {
-            const btn = document.createElement('button');
-            btn.className = "btn-opcao";
-            btn.innerHTML = valor.includes("/") ? `<sup>${valor.split('/')[0]}</sup>&frasl;<sub>${valor.split('/')[1]}</sub>` : valor;
-            btn.onclick = () => verificar(valor, btn);
-            document.getElementById('opcoes-box').appendChild(btn);
         }
 
         function verificar(escolha, btn) {
@@ -290,7 +320,7 @@
             const nivelIndex = Math.floor(perguntaAtual / 5) + 1;
             const star = document.getElementById('star-' + (perguntaAtual % 5));
 
-            if (escolha === respostaCorreta) {
+            if (escolha === respostaCorretaRaw) {
                 stats['l'+nivelIndex].c++; pontos += nivelIndex * 10;
                 btn.classList.add('correct');
                 star.classList.add('win');
@@ -298,15 +328,24 @@
                 stats['l'+nivelIndex].w++;
                 btn.classList.add('wrong');
                 star.classList.add('lose');
-                btns.forEach(b => { 
-                    // Lógica simples para achar o botão correto visualmente
-                    if(b.innerHTML.replace(/<[^>]*>/g, "").replace("&frasl;", "/") === respostaCorreta || b.innerText === respostaCorreta) 
-                        b.classList.add('correct'); 
+                // Mostrar a correta
+                btns.forEach(b => {
+                    // Lógica para marcar a correta (simples para o usuário ver)
+                    if (nivelIndex === 1) {
+                        if (b.innerHTML.includes(`>${respostaCorretaRaw.split('/')[0]}</span>`) && 
+                            b.innerHTML.includes(`>${respostaCorretaRaw.split('/')[1]}</span>`)) 
+                            b.classList.add('correct');
+                    } else {
+                        // No nível 2, contamos as partes coloridas para achar o botão correto
+                        const parts = b.querySelectorAll('.colored').length;
+                        const total = b.querySelectorAll('.fraction-part').length;
+                        if (parts + "/" + total === respostaCorretaRaw) b.classList.add('correct');
+                    }
                 });
             }
             document.getElementById('score').innerText = pontos;
             perguntaAtual++;
-            setTimeout(proximaPergunta, 1800);
+            setTimeout(proximaPergunta, 2000);
         }
 
         function finalizar() {
@@ -321,8 +360,8 @@
             document.getElementById('f-titulo').innerText = titulo;
             document.getElementById('f-texto').innerText = texto;
             document.getElementById('stats-body').innerHTML = `
-                <tr><td>Nível 1 (Visual)</td><td>${stats.l1.c}</td><td>${stats.l1.w}</td></tr>
-                <tr><td>Nível 2 (Cálculo)</td><td>${stats.l2.c}</td><td>${stats.l2.w}</td></tr>
+                <tr><td>Nível 1 (Identificar)</td><td>${stats.l1.c}</td><td>${stats.l1.w}</td></tr>
+                <tr><td>Nível 2 (Representar)</td><td>${stats.l2.c}</td><td>${stats.l2.w}</td></tr>
             `;
             document.getElementById('modal-feedback').style.display = 'flex';
         }
