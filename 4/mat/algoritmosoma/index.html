@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Algoritmo da Soma - Matemática</title>
     <style>
-        /* === ESTILOS GLOBAIS === */
+        /* === ESTILOS GLOBAIS (TEMPLATE RIGOROSO) === */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
@@ -17,7 +17,7 @@
             color: #2c3e50;
         }
 
-        /* === CABEÇALHO (RIGOROSO) === */
+        /* === CABEÇALHO === */
         header {
             width: 100%; background: #fff; padding: 12px 20px;
             display: flex; align-items: center; justify-content: space-between;
@@ -68,94 +68,133 @@
             align-items: center; justify-content: center; overflow: hidden; position: relative;
         }
 
-        /* GRELHA DE CATEGORIAS */
-        .category-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; height: 100%; padding: 40px; }
-        .cat-card {
-            background: #fdfaff; border: 2px solid #ecdff5; border-radius: 15px;
-            cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; box-shadow: 0 4px 0 #ecdff5; padding: 15px; height: 100%;
-        }
-        .cat-card:active { transform: translateY(2px); box-shadow: 0 0 0 #ecdff5; }
-        .cat-card span:last-child { font-size: 1.3rem; font-weight: 900; color: #9b59b6; }
-
-        /* NAVEGAÇÃO INTERNA */
-        .mini-nav-container {
-            width: 100%; padding: 10px; display: flex; justify-content: center; gap: 8px; 
-            border-bottom: 2px solid #f0f0f0; background: #fafafa; flex-shrink: 0;
-            position: absolute; top: 0; left: 0;
-        }
-        .btn-mini-cat {
-            flex: 1; max-width: 160px; padding: 8px 2px; font-size: 0.75rem; font-weight: 800;
-            background: white; border: 1px solid #ddd; border-radius: 10px; cursor: pointer; color: #7f8c8d;
-        }
-        .btn-mini-cat.active { background: #9b59b6; color: white; border-color: #9b59b6; }
-
-        /* ÁREA DE JOGO (ALGORITMO DA SOMA) */
-        #jogo-container { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 60px 20px 20px 20px; }
+        /* CONTEÚDO DO JOGO */
+        #jogo-container { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 15px; }
         .level-indicator { font-weight: 900; color: #9b59b6; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
 
-        .vertical-sum {
-            display: inline-flex;
+        .pergunta-box { text-align: center; margin-bottom: 10px; width: 100%; }
+        .pergunta-texto { font-size: clamp(1rem, 4vw, 1.3rem); font-weight: 700; color: #34495e; margin-bottom: 5px; }
+        
+        /* ESTILOS PARA A SOMA VERTICAL */
+        .sum-problem-container {
+            display: flex;
             flex-direction: column;
-            align-items: flex-end;
-            position: relative;
-            font-size: clamp(2.2rem, 8vw, 3.2rem);
-            font-weight: 900;
-            color: #2c3e50;
-            padding-left: 50px;
-            margin-bottom: 20px;
+            align-items: flex-end; /* Alinha os números à direita */
+            font-family: 'Consolas', 'Courier New', monospace; /* Fonte monoespaçada para alinhamento */
+            font-size: clamp(2rem, 8vw, 3rem); /* Tamanho de fonte grande para os dígitos */
+            font-weight: 800;
+            color: #34495e;
+            padding: 20px;
+            background: #fdfaff;
+            border: 3px solid #eee;
+            border-radius: 15px;
+            max-width: 350px;
+            width: 100%;
+            margin: 20px auto;
+            box-shadow: 0 4px 0 #f0f0f0;
         }
+
         .sum-row {
             display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-bottom: 5px;
-            min-height: 50px;
+            justify-content: flex-end; /* Alinha os dígitos à direita */
+            width: 100%;
+            position: relative;
         }
-        .digit {
-            width: clamp(35px, 8vw, 45px);
-            height: clamp(45px, 10vw, 55px);
+
+        .digits-container {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            justify-content: flex-end;
+            flex-grow: 1; /* Permite ocupar o espaço disponível para os dígitos */
         }
-        .digit.empty {
-            background: transparent;
+
+        .digit-cell {
+            width: 1em; /* Largura fixa para os dígitos */
+            height: 1.2em;
+            text-align: center;
+            line-height: 1.2em;
+            margin-left: 0.1em; /* Pequeno espaçamento entre dígitos */
+            box-sizing: border-box;
+            user-select: none; /* impede seleção de texto dos dígitos */
         }
-        .sum-op {
-            position: absolute;
-            left: 0;
-            bottom: 65px;
-            font-size: clamp(2.2rem, 8vw, 3.2rem);
+
+        .digit-input {
+            width: 1em;
+            height: 1.2em;
+            text-align: center;
+            font-size: inherit; /* Herda o tamanho da fonte do pai */
+            font-weight: inherit;
+            color: inherit;
+            background: rgba(155, 89, 182, 0.1); /* Cor de fundo para os inputs */
+            border: 1px solid #9b59b6;
+            border-radius: 4px;
+            margin-left: 0.1em;
+            -moz-appearance: textfield; /* Esconde botões de spin para Firefox */
+            appearance: textfield; /* Esconde botões de spin para Chrome/Safari */
         }
+
+        /* Esconde botões de spin para inputs numéricos */
+        .digit-input::-webkit-outer-spin-button,
+        .digit-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .carry-row {
+            font-size: 0.6em; /* Fonte menor para os transportes */
+            height: 0.8em; /* Reserva espaço para os transportes */
+            justify-content: flex-end;
+            margin-bottom: 5px;
+            color: #7f8c8d;
+            visibility: hidden; /* Inicialmente oculto */
+        }
+        .carry-row.active {
+            visibility: visible; /* Ativa quando necessário */
+        }
+
+        .carry-digit-input {
+            width: 0.8em;
+            height: 0.8em;
+            text-align: center;
+            font-size: 0.6em;
+            font-weight: inherit;
+            color: inherit;
+            background: rgba(155, 89, 182, 0.1);
+            border: 1px solid #9b59b6;
+            border-radius: 3px;
+            margin-left: 0.1em;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .operator {
+            margin-right: 0.5em; /* Espaço para o '+' */
+            align-self: flex-end; /* Alinha o operador ao fundo da linha */
+        }
+
         .sum-line {
             width: 100%;
-            border-top: 5px solid #2c3e50;
-            margin: 5px 0;
-        }
-        .lacuna {
-            width: clamp(35px, 8vw, 45px);
-            height: clamp(45px, 10vw, 55px);
-            border: 3px solid #9b59b6;
-            border-radius: 8px;
-            background: #fdfaff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #9b59b6;
+            border-top: 3px solid #2c3e50;
+            margin-top: 5px;
+            padding-top: 5px; /* Espaço entre a linha e o resultado */
         }
 
-        .opcoes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 500px; }
-        .btn-opcao {
-            background: white; border: 3px solid #9b59b6; border-radius: 15px;
-            padding: 15px; font-size: 1.5rem; font-weight: 800; color: #9b59b6;
-            cursor: pointer; box-shadow: 0 4px 0 #ecdff5; transition: 0.1s;
-            display: flex; align-items: center; justify-content: center;
+        .correct-digit-feedback {
+            background-color: #eafaf1;
+            border-color: #2ecc71;
+            color: #2ecc71;
         }
-        .btn-opcao:active { transform: translateY(3px); box-shadow: 0 0 0 #ecdff5; }
 
-        .correct { border-color: #2ecc71 !important; color: #2ecc71 !important; }
-        .wrong { border-color: #e74c3c !important; color: #e74c3c !important; animation: shake 0.4s; }
+        .wrong-digit-feedback {
+            background-color: #fdeaeb;
+            border-color: #e74c3c;
+            color: #e74c3c;
+            animation: shake 0.4s;
+        }
+
+        /* Classes de feedback globais (para o botão Verificar) */
+        .correct { background-color: #2ecc71 !important; color: white !important; border-color: #2ecc71 !important; }
+        .wrong { background-color: #e74c3c !important; color: white !important; border-color: #e74c3c !important; animation: shake 0.4s; }
+
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
         .hidden { display: none !important; }
@@ -191,7 +230,7 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()" style="cursor:pointer; font-size: 1.5rem;">☰</div>
-            <h1><span class="header-icon">👨‍🚀</span> Algoritmo da Soma</h1>
+            <h1><span class="header-icon">👨‍🚀</span> Menu Matemática</h1>
         </div>
         <button onclick="handleVoltar()" class="btn-voltar-3d">⬅ Voltar</button>
     </header>
@@ -201,14 +240,14 @@
             
             <div class="main-title">
                 <div class="title-row">
-                    <span style="font-size: 2rem;">🧮</span>
+                    <span style="font-size: 2.2rem;">🧮</span>
                     <h2 id="display-title">Algoritmo da Soma</h2>
                     <button class="btn-info" onclick="openInfo()">💡</button>
                 </div>
-                <p style="margin-top: 2px; margin-bottom: 20px; font-weight: bold; color: #555; font-size: 0.95rem;">Preenche as lacunas na operação vertical para completares a soma.</p>
+                <p style="margin-top: 2px; margin-bottom: 10px; font-weight: bold; color: #555; font-size: 0.95rem;">Preenche as lacunas e resolve as somas.</p>
             </div>
 
-            <div class="stats-panel hidden" id="status-panel">
+            <div class="stats-panel" id="status-panel">
                 <div class="stat-item">⏱️ <span id="timer">00:00</span></div>
                 <div class="stars-container" id="stars-row">
                     <script>for(let i=0; i<5; i++) document.write('<svg class="star-svg" id="star-'+i+'" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>');</script>
@@ -217,30 +256,36 @@
             </div>
             
             <div class="game-card">
-                <!-- MENU INICIAL -->
-                <div id="menu-categorias" class="category-grid">
-                    <div class="cat-card" onclick="startChallenge(1000)"><span>Somas até</span><span>1 000</span></div>
-                    <div class="cat-card" onclick="startChallenge(10000)"><span>Somas até</span><span>10 000</span></div>
-                    <div class="cat-card" onclick="startChallenge(100000)"><span>Somas até</span><span>100 000</span></div>
-                    <div class="cat-card" onclick="startChallenge(1000000)"><span>Somas até</span><span>1 000 000</span></div>
-                </div>
-
-                <!-- ÁREA DE JOGO -->
-                <div id="jogo-container" class="hidden">
-                    <div class="mini-nav-container">
-                        <button class="btn-mini-cat" id="btn-1000" onclick="startChallenge(1000)">1 000</button>
-                        <button class="btn-mini-cat" id="btn-10000" onclick="startChallenge(10000)">10 000</button>
-                        <button class="btn-mini-cat" id="btn-100000" onclick="startChallenge(100000)">100 000</button>
-                        <button class="btn-mini-cat" id="btn-1000000" onclick="startChallenge(1000000)">1 000 000</button>
-                    </div>
-
+                <div id="jogo-container">
                     <div class="level-indicator" id="lvl-txt">Nível 1</div>
 
-                    <!-- Representação Vertical da Operação -->
-                    <div id="operation-container"></div>
+                    <div class="pergunta-box">
+                        <p id="pergunta-txt" class="pergunta-texto">Completa a soma:</p>
+                        <div class="sum-problem-container">
+                            <!-- Linha para os transportes -->
+                            <div id="carry-row" class="sum-row carry-row"></div>
+                            
+                            <!-- Primeiro número -->
+                            <div id="num1-row" class="sum-row">
+                                <div id="num1-digits" class="digits-container"></div>
+                            </div>
+                            
+                            <!-- Operador e segundo número -->
+                            <div id="op-num2-row" class="sum-row">
+                                <span class="operator">+</span>
+                                <div id="num2-digits" class="digits-container"></div>
+                            </div>
+                            
+                            <div class="sum-line"></div>
+                            
+                            <!-- Resultado -->
+                            <div id="result-row" class="sum-row">
+                                <div id="result-digits" class="digits-container"></div>
+                            </div>
+                        </div>
+                    </div>
 
-                    <!-- Grelha com 4 Opções de Resposta -->
-                    <div class="opcoes-grid" id="opcoes-box"></div>
+                    <button class="btn-voltar-3d" style="margin-top: 20px;" onclick="checkAnswer()" id="btn-verificar">Verificar</button>
                 </div>
             </div>
         </div>
@@ -249,7 +294,11 @@
     <div id="modal-info" class="modal">
         <div class="modal-content">
             <h2 style="color: #9b59b6;">Como Jogar</h2>
-            <p style="text-align: left; font-size: 0.9rem; margin: 15px 0;">Observa a conta armada na vertical. Um dos algarismos está escondido por um ponto de interrogação. Faz as contas e descobre o número que falta!</p>
+            <p style="text-align: left; font-size: 0.9rem; margin: 15px 0;">
+                Preenche os espaços vazios (as lacunas) com os dígitos corretos para completar a soma.<br><br>
+                • <b>Nível 1:</b> Somas de até 3 dígitos, com até um transporte.<br>
+                • <b>Nível 2:</b> Somas de até 4 dígitos, com vários transportes. Terás também de preencher os "vai 1" (transportes)!
+            </p>
             <button class="btn-voltar-3d" style="width:100%" onclick="closeInfo()">Entendido!</button>
         </div>
     </div>
@@ -260,20 +309,21 @@
             <h2 id="f-titulo">Resultado Final</h2>
             <p id="f-texto" style="margin: 10px 0; color: #9b59b6; font-weight: 900;"></p>
             <table class="stats-table">
-                <thead><tr><th>Nível</th><th>Acertos</th><th>Erros</th></tr></thead>
+                <thead><tr><th>Fase</th><th>Acertos</th><th>Erros</th></tr></thead>
                 <tbody id="stats-body"></tbody>
             </table>
-            <button class="btn-voltar-3d" style="width:100%" onclick="resetToMenu()">Jogar Novamente</button>
+            <button class="btn-voltar-3d" style="width:100%" onclick="location.reload()">Jogar Novamente</button>
         </div>
     </div>
 
     <footer>Recursos Digitais Covão - Professor Luís</footer>
 
     <script>
-        let limiteMax = 0, emJogo = false;
-        let pontos = 0, perguntaAtual = 0, totalPerguntas = 15, segs = 0, timer;
-        let stats = { l1: {c:0, w:0}, l2: {c:0, w:0}, l3: {c:0, w:0} };
-        let respostaCorreta = "";
+        let perguntaAtual = 0, pontos = 0, segs = 0, timer;
+        let stats = { l1: {c:0, w:0}, l2: {c:0, w:0} };
+        let num1, num2, sum;
+        let correctCarries = [];
+        const totalPerguntas = 10;
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -281,44 +331,9 @@
         }
         function openInfo() { document.getElementById('modal-info').style.display = 'flex'; }
         function closeInfo() { document.getElementById('modal-info').style.display = 'none'; }
-        
-        function handleVoltar() {
-            if (emJogo) resetToMenu();
-            else window.location.href = '../';
-        }
-
-        function resetToMenu() {
-            clearInterval(timer);
-            emJogo = false;
-            document.getElementById('menu-categorias').classList.remove('hidden');
-            document.getElementById('jogo-container').classList.add('hidden');
-            document.getElementById('status-panel').classList.add('hidden');
-            document.getElementById('modal-feedback').style.display = 'none';
-        }
-
-        function startChallenge(max) {
-            limiteMax = max; 
-            emJogo = true;
-            perguntaAtual = 0;
-            pontos = 0;
-            segs = 0;
-            totalPerguntas = (max >= 100000) ? 10 : 15;
-            stats = { l1: {c:0, w:0}, l2: {c:0, w:0}, l3: {c:0, w:0} };
-
-            document.getElementById('menu-categorias').classList.add('hidden');
-            document.getElementById('jogo-container').classList.remove('hidden');
-            document.getElementById('status-panel').classList.remove('hidden');
-            document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
-            document.querySelectorAll('.btn-mini-cat').forEach(b => b.classList.remove('active'));
-            document.getElementById(`btn-${max}`).classList.add('active');
-            document.getElementById('score').innerText = "0";
-
-            startTimer();
-            proxima();
-        }
+        function handleVoltar() { window.history.back(); }
 
         function startTimer() {
-            clearInterval(timer);
             timer = setInterval(() => {
                 segs++;
                 let m = Math.floor(segs / 60).toString().padStart(2, '0');
@@ -327,155 +342,260 @@
             }, 1000);
         }
 
-        function proxima() {
+        function proximaPergunta() {
             if (perguntaAtual === totalPerguntas) { finalizar(); return; }
             
-            const nivel = Math.floor(perguntaAtual / 5) + 1;
+            const nivel = Math.floor(perguntaAtual / (totalPerguntas/2)) + 1; // 5 perguntas por nível
             document.getElementById('lvl-txt').innerText = "Nível " + nivel;
-
-            if (perguntaAtual % 5 === 0) {
+            if (perguntaAtual % (totalPerguntas/2) === 0) { // Reset stars for new level
                 document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
             }
 
+            document.getElementById('btn-verificar').disabled = false;
+            document.getElementById('btn-verificar').classList.remove('correct', 'wrong');
+            document.getElementById('carry-row').classList.remove('active'); // Oculta transportes por padrão
+
             gerarDesafio(nivel);
-            perguntaAtual++;
         }
 
         function gerarDesafio(nivel) {
-            const container = document.getElementById('operation-container');
-            const box = document.getElementById('opcoes-box');
+            let maxDigits;
+            let minCarryChance, maxCarryChance;
 
-            // Gerar números garantindo que a soma não ultrapasse o limite máximo
-            let maxVal = limiteMax / 2;
-            let num1 = Math.floor(Math.random() * maxVal) + 10;
-            let num2 = Math.floor(Math.random() * maxVal) + 10;
-            let res = num1 + num2;
+            if (nivel === 1) { // 2 a 3 dígitos, 0 a 1 transporte
+                maxDigits = Math.random() < 0.5 ? 2 : 3;
+                minCarryChance = 0; maxCarryChance = 0.5; // Até um transporte
+            } else { // 3 a 4 dígitos, múltiplos transportes
+                maxDigits = Math.random() < 0.5 ? 3 : 4;
+                minCarryChance = 0.6; maxCarryChance = 1; // Mais transportes
+            }
 
-            let s1 = num1.toString();
-            let s2 = num2.toString();
-            let sr = res.toString();
+            num1 = Math.floor(Math.random() * (Math.pow(10, maxDigits) - Math.pow(10, maxDigits - 1))) + Math.pow(10, maxDigits - 1);
+            num2 = Math.floor(Math.random() * (Math.pow(10, maxDigits) - Math.pow(10, maxDigits - 1))) + Math.pow(10, maxDigits - 1);
 
-            // Padronizar o tamanho das strings para alinhamento vertical perfeito
-            let maxLen = Math.max(s1.length, s2.length, sr.length);
-            s1 = s1.padStart(maxLen, ' ');
-            s2 = s2.padStart(maxLen, ' ');
-            sr = sr.padStart(maxLen, ' ');
-
-            // Escolher aleatoriamente qual linha terá a lacuna (0=num1, 1=num2, 2=res)
-            let strIdx = Math.floor(Math.random() * 3); 
-            let digitIdx;
-            
+            // Tenta forçar transportes se o nível exigir
             let attempts = 0;
-            while (attempts < 20) {
-                digitIdx = Math.floor(Math.random() * maxLen);
-                let checkStr = strIdx === 0 ? s1 : (strIdx === 1 ? s2 : sr);
-                if (checkStr[digitIdx] !== ' ') break;
-                attempts++;
+            let currentCarries = calculateSumDetails(num1, num2).carries.filter(c => c > 0).length;
+            while ((nivel === 2 && currentCarries < 1 && attempts < 10) || (nivel === 1 && currentCarries > 1 && attempts < 10)) {
+                 num1 = Math.floor(Math.random() * (Math.pow(10, maxDigits) - Math.pow(10, maxDigits - 1))) + Math.pow(10, maxDigits - 1);
+                 num2 = Math.floor(Math.random() * (Math.pow(10, maxDigits) - Math.pow(10, maxDigits - 1))) + Math.pow(10, maxDigits - 1);
+                 currentCarries = calculateSumDetails(num1, num2).carries.filter(c => c > 0).length;
+                 attempts++;
             }
+            if (nivel === 2 && currentCarries > 0) document.getElementById('carry-row').classList.add('active');
 
-            respostaCorreta = strIdx === 0 ? s1[digitIdx] : (strIdx === 1 ? s2[digitIdx] : sr[digitIdx]);
 
-            // Construir HTML da operação
-            function buildRow(str, currentStrIdx) {
-                let html = `<div class="sum-row">`;
-                for (let i = 0; i < maxLen; i++) {
-                    if (str[i] === ' ') {
-                        html += `<div class="digit empty"></div>`;
-                    } else if (currentStrIdx === strIdx && i === digitIdx) {
-                        html += `<div class="digit lacuna">?</div>`;
-                    } else {
-                        html += `<div class="digit">${str[i]}</div>`;
-                    }
+            const details = calculateSumDetails(num1, num2);
+            sum = details.sum;
+            correctCarries = details.carries; // Store for validation
+
+            displaySumProblem(num1, num2, sum, correctCarries, nivel);
+        }
+
+        // Calcula a soma e retorna os dígitos, transportes e o resultado
+        function calculateSumDetails(n1, n2) {
+            const s1 = n1.toString().split('').map(Number).reverse();
+            const s2 = n2.toString().split('').map(Number).reverse();
+            const resultDigits = [];
+            const carries = [];
+            let carry = 0;
+            const maxLength = Math.max(s1.length, s2.length);
+
+            for (let i = 0; i < maxLength || carry > 0; i++) {
+                const digit1 = s1[i] || 0;
+                const digit2 = s2[i] || 0;
+                const currentSum = digit1 + digit2 + carry;
+                resultDigits.push(currentSum % 10);
+                carry = Math.floor(currentSum / 10);
+                carries.push(carry); // Store carry AFTER calculation for this column
+            }
+            carries.pop(); // Remove the last carry as it's not "carried" to a next column within the sum structure
+            carries.unshift(0); // Add a 0 at the beginning to align with columns
+            carries.reverse(); // For display from left to right
+
+            return {
+                num1Digits: s1.reverse(),
+                num2Digits: s2.reverse(),
+                sumDigits: resultDigits.reverse(),
+                sum: n1 + n2,
+                carries: carries.slice(0, carries.length - 1) // Only carries that go *into* the next column, excluding the last one
+            };
+        }
+
+
+        function displaySumProblem(n1, n2, s, carries, nivel) {
+            const num1Container = document.getElementById('num1-digits');
+            const num2Container = document.getElementById('num2-digits');
+            const resultContainer = document.getElementById('result-digits');
+            const carryContainer = document.getElementById('carry-row');
+
+            num1Container.innerHTML = '';
+            num2Container.innerHTML = '';
+            resultContainer.innerHTML = '';
+            carryContainer.innerHTML = '';
+
+            const sN1 = n1.toString().padStart(s.toString().length, ' ').split('');
+            const sN2 = n2.toString().padStart(s.toString().length, ' ').split('');
+            const sSum = s.toString().padStart(s.toString().length, ' ').split('');
+
+            const totalCols = s.toString().length;
+
+            // Display Carries (only for Level 2)
+            if (nivel === 2) {
+                // Adjust carries array to match sum length
+                const formattedCarries = Array(totalCols).fill('');
+                for(let i = 0; i < carries.length; i++){
+                    formattedCarries[totalCols - 1 - i] = carries[carries.length - 1 - i] > 0 ? carries[carries.length - 1 - i] : '';
                 }
-                html += `</div>`;
-                return html;
+
+                for (let i = 0; i < totalCols; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'digit-cell';
+                    if (Math.random() < 0.6 && formattedCarries[i] !== '') { // Hide some carries for input
+                        const input = document.createElement('input');
+                        input.type = 'number';
+                        input.min = '0';
+                        input.max = '9';
+                        input.maxLength = '1';
+                        input.className = 'carry-digit-input';
+                        input.dataset.col = i;
+                        input.dataset.type = 'carry';
+                        cell.appendChild(input);
+                    } else {
+                        cell.innerText = formattedCarries[i];
+                    }
+                    carryContainer.appendChild(cell);
+                }
+                carryContainer.classList.add('active'); // Mostrar linha de transportes
+            } else {
+                carryContainer.classList.remove('active'); // Esconder linha de transportes
             }
 
-            let sumHtml = `
-                <div class="vertical-sum">
-                    <span class="sum-op">+</span>
-                    ${buildRow(s1, 0)}
-                    ${buildRow(s2, 1)}
-                    <div class="sum-line"></div>
-                    ${buildRow(sr, 2)}
-                </div>
-            `;
+            // Display num1, num2, sum with hidden digits
+            [sN1, sN2, sSum].forEach((numArray, rowIndex) => {
+                const container = [num1Container, num2Container, resultContainer][rowIndex];
+                numArray.forEach((digit, colIndex) => {
+                    const cell = document.createElement('div');
+                    cell.className = 'digit-cell';
 
-            container.innerHTML = sumHtml;
+                    if (digit === ' ') { // Space for padding shorter numbers
+                        cell.innerText = '';
+                    } else {
+                        let shouldHide = Math.random() < (nivel === 1 ? 0.4 : 0.5); // Hide more for nivel 2
+                        
+                        // Always show leading zeros if padding with space
+                        if (digit === '0' && colIndex === 0 && numArray.length > 1 && String(parseInt(numArray.join(''))).length < numArray.length) {
+                             shouldHide = false;
+                        }
 
-            // Gerar opções (4 escolhas do tipo 2x2)
-            let opts = [respostaCorreta];
-            while (opts.length < 4) {
-                let f = Math.floor(Math.random() * 10).toString();
-                if (!opts.includes(f)) opts.push(f);
-            }
-            opts.sort(() => Math.random() - 0.5);
-
-            box.innerHTML = "";
-            opts.forEach(opt => {
-                let btn = document.createElement('button');
-                btn.className = "btn-opcao";
-                btn.innerText = opt;
-                btn.onclick = () => verificar(opt, btn);
-                box.appendChild(btn);
+                        if (shouldHide) {
+                            const input = document.createElement('input');
+                            input.type = 'number';
+                            input.min = '0';
+                            input.max = '9';
+                            input.maxLength = '1';
+                            input.className = 'digit-input';
+                            input.dataset.row = rowIndex;
+                            input.dataset.col = colIndex;
+                            input.dataset.type = 'digit';
+                            input.addEventListener('input', function() {
+                                if (this.value.length > 1) {
+                                    this.value = this.value.slice(0, 1);
+                                }
+                            });
+                            cell.appendChild(input);
+                        } else {
+                            cell.innerText = digit;
+                        }
+                    }
+                    container.appendChild(cell);
+                });
             });
         }
 
-        function verificar(escolha, btn) {
-            const btns = document.querySelectorAll('.btn-opcao');
-            btns.forEach(b => b.disabled = true);
-
-            const circle = document.querySelector('.lacuna');
-            circle.innerText = escolha;
-
-            const nIndex = Math.floor((perguntaAtual - 1) / 5) + 1;
-            const starIndex = (perguntaAtual - 1) % 5;
+        function checkAnswer() {
+            document.getElementById('btn-verificar').disabled = true;
+            const nIndex = Math.floor(perguntaAtual / (totalPerguntas/2)) + 1;
+            const starIndex = perguntaAtual % (totalPerguntas/2);
             const star = document.getElementById('star-' + starIndex);
 
-            if (escolha === respostaCorreta) {
-                stats['l' + nIndex].c++;
-                pontos += nIndex * 10;
-                star.classList.add('win');
-                circle.classList.add('correct');
-                btn.classList.add('correct');
-            } else {
-                stats['l' + nIndex].w++;
-                star.classList.add('lose');
-                circle.classList.add('wrong');
-                btn.classList.add('wrong');
-                
-                // Mostrar a opção correta
-                btns.forEach(b => {
-                    if (b.innerText === respostaCorreta) b.classList.add('correct');
+            let allCorrect = true;
+
+            // Check carry inputs (if visible)
+            if (document.getElementById('carry-row').classList.contains('active')) {
+                document.querySelectorAll('.carry-digit-input').forEach(input => {
+                    const col = parseInt(input.dataset.col);
+                    const expectedCarry = correctCarries[col] || 0; // Carries are stored reversed, need to adjust
+                    
+                    if (parseInt(input.value) === expectedCarry) {
+                        input.classList.add('correct-digit-feedback');
+                    } else {
+                        input.classList.add('wrong-digit-feedback');
+                        allCorrect = false;
+                    }
+                    input.disabled = true;
                 });
             }
 
+            // Check digit inputs
+            const sN1 = num1.toString().padStart(sum.toString().length, ' ').split('');
+            const sN2 = num2.toString().padStart(sum.toString().length, ' ').split('');
+            const sSum = sum.toString().padStart(sum.toString().length, ' ').split('');
+
+            document.querySelectorAll('.digit-input').forEach(input => {
+                const row = parseInt(input.dataset.row);
+                const col = parseInt(input.dataset.col);
+                let expectedDigit;
+
+                if (row === 0) expectedDigit = sN1[col];
+                else if (row === 1) expectedDigit = sN2[col];
+                else expectedDigit = sSum[col];
+
+                if (input.value === expectedDigit.toString()) {
+                    input.classList.add('correct-digit-feedback');
+                } else {
+                    input.classList.add('wrong-digit-feedback');
+                    allCorrect = false;
+                }
+                input.disabled = true;
+            });
+            
+            if (allCorrect) {
+                stats['l'+nIndex].c++; pontos += nIndex * 10;
+                star.classList.add('win');
+                document.getElementById('btn-verificar').classList.add('correct');
+            } else {
+                stats['l'+nIndex].w++;
+                star.classList.add('lose');
+                document.getElementById('btn-verificar').classList.add('wrong');
+            }
+
             document.getElementById('score').innerText = pontos;
-            setTimeout(proxima, 1800);
+            perguntaAtual++;
+            setTimeout(proximaPergunta, 1800);
         }
 
         function finalizar() {
             clearInterval(timer);
-            const totalC = stats.l1.c + stats.l2.c + stats.l3.c;
+            const totalC = stats.l1.c + stats.l2.c;
             let emoji, titulo, texto;
 
-            if (totalC < (totalPerguntas / 2)) { emoji = "💪"; titulo = "Quase lá!"; texto = "Pratica mais para melhorares as contas verticais."; }
-            else if (totalC <= (totalPerguntas * 0.75)) { emoji = "👏"; titulo = "Bom trabalho!"; texto = "Estás no bom caminho, continua assim."; }
-            else { emoji = "🏆"; titulo = "Incrível!"; texto = "Muitos parabéns! Dominas o algoritmo na perfeição."; }
+            if (totalC < (totalPerguntas/2)) { emoji = "💡"; titulo = "Continua a praticar!"; texto = "O algoritmo da soma é um desafio, não desistas!"; }
+            else if (totalC <= (totalPerguntas * 0.75)) { emoji = "👏"; titulo = "Bom trabalho!"; texto = "Já dominas bem a soma, mas há espaço para mais!"; }
+            else { emoji = "🏆"; titulo = "Mestre da Soma!"; texto = "Consegues somar como um profissional, parabéns!"; }
 
             document.getElementById('f-emoji').innerText = emoji;
             document.getElementById('f-titulo').innerText = titulo;
             document.getElementById('f-texto').innerText = texto;
             
-            let htmlTable = `<tr><td>Nível 1</td><td>${stats.l1.c}</td><td>${stats.l1.w}</td></tr>
-                             <tr><td>Nível 2</td><td>${stats.l2.c}</td><td>${stats.l2.w}</td></tr>`;
-            if (totalPerguntas === 15) {
-                htmlTable += `<tr><td>Nível 3</td><td>${stats.l3.c}</td><td>${stats.l3.w}</td></tr>`;
-            }
-
-            document.getElementById('stats-body').innerHTML = htmlTable;
+            document.getElementById('stats-body').innerHTML = `
+                <tr><td>Nível 1 (Básico)</td><td>${stats.l1.c}</td><td>${stats.l1.w}</td></tr>
+                <tr><td>Nível 2 (Transportes)</td><td>${stats.l2.c}</td><td>${stats.l2.w}</td></tr>
+            `;
             document.getElementById('modal-feedback').style.display = 'flex';
         }
+
+        window.onload = () => { startTimer(); proximaPergunta(); };
     </script>
 </body>
 </html>
