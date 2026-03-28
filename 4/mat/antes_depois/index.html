@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Antes e Depois - Matemática</title>
     <style>
-        /* === ESTILOS GLOBAIS (TEMPLATE) === */
+        /* === ESTILOS GLOBAIS (TEMPLATE RIGOROSO) === */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
@@ -50,6 +50,7 @@
         .title-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
         .title-row h2 { color: #2c3e50; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; margin: 0; }
         
+        /* Botão Lâmpada (Apenas ícone) */
         .btn-info { background: none; border: none; font-size: 1.8rem; cursor: pointer; display: flex; align-items: center; transition: 0.1s; }
         .btn-info:active { transform: scale(1.2); }
 
@@ -61,36 +62,46 @@
         .star-svg.win { fill: #9b59b6; stroke: #9b59b6; }
         .star-svg.lose { fill: #e74c3c; stroke: #e74c3c; }
 
-        /* QUADRADO BRANCO (GAME CARD) */
+        /* QUADRADO BRANCO DINÂMICO */
         .game-card {
             background: white; padding: 20px; border-radius: 20px;
             border-bottom: 6px solid #d4d4d4; box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
-            width: 100%; max-width: 900px; flex: 1; margin-bottom: 5px;
+            width: 100%; max-width: 950px; flex: 1; margin-bottom: 5px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             overflow-y: auto;
         }
 
-        /* === ESTILOS ESPECÍFICOS DO JOGO "ANTES E DEPOIS" === */
-        .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; width: 100%; }
+        /* GRELHA DE CATEGORIAS AJUSTÁVEL */
+        .category-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); /* 2 colunas no telemóvel */
+            gap: 15px; 
+            width: 100%; 
+            max-width: 600px;
+        }
+        /* No PC/Tablet usa 3 colunas */
+        @media (min-width: 600px) { .category-grid { grid-template-columns: repeat(3, 1fr); } }
+
         .cat-card {
-            background: #fdfaff; border: 2px solid #ecdff5; border-radius: 15px; padding: 15px 10px;
+            background: #fdfaff; border: 2px solid #ecdff5; border-radius: 15px; padding: 20px 10px;
             cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center;
-            box-shadow: 0 4px 0 #ecdff5;
+            box-shadow: 0 4px 0 #ecdff5; text-align: center;
         }
         .cat-card:active { transform: translateY(2px); box-shadow: 0 0 0 #ecdff5; }
-        .cat-card span:first-child { font-size: 0.75rem; color: #7f8c8d; }
-        .cat-card span:last-child { font-size: 1.2rem; font-weight: 900; color: #9b59b6; }
+        .cat-card span:first-child { font-size: 0.7rem; color: #7f8c8d; text-transform: uppercase; margin-bottom: 4px; }
+        .cat-card span:last-child { font-size: 1.1rem; font-weight: 900; color: #9b59b6; white-space: nowrap; }
 
-        .game-layout { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; width: 100%; }
+        /* LAYOUT DO JOGO */
+        .game-layout { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 25px; width: 100%; }
         .display-center {
             background: #fdfaff; border: 3px solid #9b59b6; border-radius: 15px;
-            min-width: 100px; padding: 15px 10px; font-size: 1.8rem; font-weight: 900;
+            min-width: 120px; padding: 20px 10px; font-size: 1.8rem; font-weight: 900;
             color: #2c3e50; text-align: center;
         }
         .input-wrap { display: flex; flex-direction: column; align-items: center; gap: 5px; }
         .input-label { font-size: 0.7rem; font-weight: 800; color: #9b59b6; text-transform: uppercase; }
         .input-neighbor {
-            width: 80px; padding: 12px; font-size: 1.2rem; border: 2px solid #eee; 
+            width: 90px; padding: 12px; font-size: 1.2rem; border: 2px solid #eee; 
             border-radius: 12px; text-align: center; outline: none; font-weight: bold;
         }
         .input-neighbor:focus { border-color: #9b59b6; }
@@ -101,7 +112,6 @@
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(3px); }
         .modal-content { background: white; padding: 25px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; }
         .btn-modal { background: #9b59b6; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; border: none; color: white; width: 100%; margin-top: 15px; }
-        .summary-box { background: #fdfaff; border-radius: 15px; padding: 15px; margin: 15px 0; border: 1px dashed #9b59b6; font-size: 0.85rem; }
 
         footer { width: 100%; padding: 10px; background: #fff; text-align: center; color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.75rem; flex-shrink: 0; }
     </style>
@@ -157,15 +167,17 @@
             </div>
             
             <div class="game-card">
-                <!-- MENU DE CATEGORIAS -->
+                <!-- MENU DE CATEGORIAS (6 OPÇÕES) -->
                 <div id="menu-categorias" class="category-grid">
-                    <div class="cat-card" onclick="startChallenge(100)"><span>Números até</span><span>100</span></div>
-                    <div class="cat-card" onclick="startChallenge(500)"><span>Números até</span><span>500</span></div>
-                    <div class="cat-card" onclick="startChallenge(1000)"><span>Números até</span><span>1 000</span></div>
-                    <div class="cat-card" onclick="startChallenge(10000)"><span>Números até</span><span>10 000</span></div>
+                    <div class="cat-card" onclick="startChallenge(100)"><span>Até</span><span>100</span></div>
+                    <div class="cat-card" onclick="startChallenge(500)"><span>Até</span><span>500</span></div>
+                    <div class="cat-card" onclick="startChallenge(1000)"><span>Até</span><span>1 000</span></div>
+                    <div class="cat-card" onclick="startChallenge(10000)"><span>Até</span><span>10 000</span></div>
+                    <div class="cat-card" onclick="startChallenge(100000)"><span>Até</span><span>100 000</span></div>
+                    <div class="cat-card" onclick="startChallenge(1000000)"><span>Até</span><span>1 000 000</span></div>
                 </div>
 
-                <!-- ÁREA DE JOGO (HIDDEN POR PADRÃO) -->
+                <!-- JOGO -->
                 <div id="jogo-container" class="hidden" style="width: 100%;">
                     <div class="game-layout">
                         <div class="input-wrap">
@@ -178,37 +190,32 @@
                             <input type="number" id="input-after" class="input-neighbor" placeholder="?">
                         </div>
                     </div>
-                    <button class="btn-voltar-3d" style="width: 100%; padding: 15px; font-size: 1.2rem;" onclick="verificar()">VERIFICAR</button>
+                    <button class="btn-voltar-3d" style="width: 100%; padding: 18px; font-size: 1.2rem;" onclick="verificar()">VERIFICAR</button>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- MODAL INFO -->
+    <!-- MODAIS -->
     <div id="modal-info" class="modal">
         <div class="modal-content">
             <div style="font-size: 2.5rem; margin-bottom: 10px;">💡</div>
             <h2 style="color: #8e44ad; margin-bottom: 15px;">Como Jogar</h2>
             <p style="text-align: left; color: #444; font-size: 0.9rem; line-height: 1.5;">
-                • Vê o número no centro.<br>
-                • Escreve o vizinho da esquerda (antes) e o da direita (depois).<br>
-                • Completa 5 desafios para terminar o nível.
+                • Observa o número no centro.<br>
+                • Escreve o número que vem imediatamente antes e o que vem depois.<br>
+                • Acerta em 5 números para ganhar!
             </p>
-            <button class="btn-modal" onclick="closeInfo()">Estou pronto.</button>
+            <button class="btn-modal" onclick="closeInfo()">Entendido!</button>
         </div>
     </div>
 
-    <!-- MODAL FEEDBACK -->
     <div id="modal-feedback" class="modal">
         <div class="modal-content">
             <div id="f-emoji" style="font-size: 3rem; margin-bottom: 10px;"></div>
             <h2 id="f-titulo"></h2>
             <p id="f-texto" style="margin: 10px 0; color: #555;"></p>
-            <div id="final-results" class="summary-box hidden">
-                <p id="res-texto"></p>
-            </div>
-            <button id="btn-next" class="btn-modal" onclick="proxima()">CONTINUAR</button>
-            <button id="btn-restart" class="btn-modal hidden" onclick="location.reload()" style="background:#7f8c8d">SAIR</button>
+            <button class="btn-modal" onclick="proxima()">Continuar</button>
         </div>
     </div>
 
@@ -216,9 +223,8 @@
 
     <script>
         let nAtual = 0, limiteMax = 0, emJogo = false;
-        let combo = 0, perguntaAtual = 0, nivel = 1;
-        let segs = 0, timer;
-        let erros = 0, acertos = 0;
+        let combo = 0, perguntaAtual = 0, segs = 0, timer;
+        let acertos = 0;
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -236,7 +242,6 @@
             limiteMax = max; emJogo = true;
             document.getElementById('menu-categorias').classList.add('hidden');
             document.getElementById('jogo-container').classList.remove('hidden');
-            document.getElementById('display-title').innerText = "Nível " + nivel;
             startTimer();
             proxima();
         }
@@ -252,7 +257,6 @@
 
         function proxima() {
             if (perguntaAtual === 5) { finalizar(); return; }
-            
             document.getElementById('modal-feedback').style.display = 'none';
             document.getElementById('input-before').value = "";
             document.getElementById('input-after').value = "";
@@ -270,11 +274,11 @@
             if (vBefore === nAtual - 1 && vAfter === nAtual + 1) {
                 acertos++; combo++;
                 stars[perguntaAtual].classList.add('win');
-                showFeedback("🌟", "Muito bem!", "Vizinhos corretos!");
+                showFeedback("🌟", "Boa!", "Vizinhos corretos!");
             } else {
-                erros++; combo = 0;
+                combo = 0;
                 stars[perguntaAtual].classList.add('lose');
-                showFeedback("❌", "Errado!", `Os vizinhos de ${nAtual} são ${nAtual-1} e ${nAtual+1}.`);
+                showFeedback("❌", "Errado!", `Era o ${nAtual-1} e o ${nAtual+1}.`);
             }
             document.getElementById('combo').innerText = combo;
             perguntaAtual++;
@@ -290,13 +294,11 @@
         function finalizar() {
             clearInterval(timer);
             document.getElementById('f-emoji').innerText = acertos >= 4 ? "🏆" : "💪";
-            document.getElementById('f-titulo').innerText = "Fim do Jogo!";
-            document.getElementById('f-texto').innerText = `Completaste o desafio em ${document.getElementById('timer').innerText}.`;
-            document.getElementById('final-results').classList.remove('hidden');
-            document.getElementById('res-texto').innerHTML = `Acertos: <b style="color:green">${acertos}</b><br>Erros: <b style="color:red">${erros}</b>`;
-            document.getElementById('btn-next').innerText = "JOGAR DE NOVO";
-            document.getElementById('btn-next').onclick = () => location.reload();
-            document.getElementById('btn-restart').classList.remove('hidden');
+            document.getElementById('f-titulo').innerText = "Fim!";
+            document.getElementById('f-texto').innerText = `Acertaste ${acertos} em 5 desafios em ${document.getElementById('timer').innerText}.`;
+            let btn = document.querySelector('#modal-feedback .btn-modal');
+            btn.innerText = "Jogar de Novo";
+            btn.onclick = () => location.reload();
             document.getElementById('modal-feedback').style.display = 'flex';
         }
     </script>
