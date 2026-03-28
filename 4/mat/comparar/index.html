@@ -47,30 +47,29 @@
         .combo-group { font-weight: 800; color: #9b59b6; font-size: 0.85rem; min-width: 100px; text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
 
         /* === MENU CATEGORIAS === */
-        .category-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; padding: 5px; }
+        .category-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; padding: 5px; overflow-y: auto; }
         .cat-card {
-            background: #fdfaff;
-            border: 2px solid #9b59b6; border-radius: 15px; padding: 18px 5px;
+            background: #fdfaff; border: 2px solid #9b59b6; border-radius: 15px; padding: 15px 5px;
             cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center;
             box-shadow: 0 4px 0 #d1b8e0;
         }
         .cat-card:hover { transform: translateY(-2px); background: #f5ebff; box-shadow: 0 6px 0 #d1b8e0; }
-        .cat-card span:first-child { color: #2c3e50; font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; }
-        .cat-card span:last-child { color: #9b59b6; font-weight: 900; font-size: 1.1rem; }
+        .cat-card span:first-child { color: black; font-weight: normal; font-size: 0.85rem; margin-bottom: 2px; }
+        .cat-card span:last-child { color: #9b59b6; font-weight: 900; font-size: 1.2rem; }
 
         /* === ÁREA PRINCIPAL === */
         main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; overflow: hidden; }
         .screen-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 450px; }
         .main-title { text-align: center; margin-bottom: 12px; }
         .title-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .title-row h2 { color: #2c3e50; font-size: 1.5rem; font-weight: 900; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
-        .btn-info { width: 30px; height: 30px; border-radius: 50%; background-color: #9b59b6; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #732d91; cursor: pointer; }
+        .title-row h2 { color: #2c3e50; font-size: 1.6rem; font-weight: 900; text-transform: uppercase; }
+        .btn-info { width: 30px; height: 30px; border-radius: 50%; background-color: #9b59b6; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #732d91; box-shadow: 0 3px 0 #732d91; cursor: pointer; }
 
         /* CARD DO JOGO */
         .game-card {
             background: white; padding: 25px; border-radius: 25px;
             box-shadow: 0 12px 30px rgba(0,0,0,0.1); width: 100%;
-            display: flex; flex-direction: column; min-height: 290px; justify-content: center;
+            display: flex; flex-direction: column; min-height: 280px; justify-content: center;
         }
 
         .comparison-layout { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 25px; width: 100%; }
@@ -197,6 +196,21 @@
         </div>
     </main>
 
+    <!-- POPUP DE INFORMAÇÃO (Rigoroso ao Template) -->
+    <div id="modal-info" class="modal">
+        <div class="modal-content">
+            <div style="width: 70px; height: 70px; background-color: #9b59b6; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; margin: 0 auto 15px auto; border: 3px solid #732d91;">i</div>
+            <h2 style="color: #8e44ad; margin-bottom: 15px;">Como Jogar</h2>
+            <p style="text-align: left; color: #444; font-size: 0.95rem; margin-bottom: 10px; line-height: 1.5;">
+                <b>1.</b> Compara o lado esquerdo com o direito.<br><br>
+                <b>2.</b> Escolhe o sinal correto: > (Maior), < (Menor) ou = (Igual).<br><br>
+                <b>3.</b> Usa os atalhos: ← (>), ↓ (=), → (<).
+            </p>
+            <button class="btn-roxo-3d" style="width: 100%; margin-top: 15px;" onclick="closeInfo()">Estou pronto.</button>
+        </div>
+    </div>
+
+    <!-- POPUP DE FEEDBACK FINAL -->
     <div id="modal-feedback" class="modal">
         <div class="modal-content">
             <div id="f-emoji" style="font-size: 4rem; margin-bottom: 10px;">🏆</div>
@@ -227,7 +241,8 @@
         let confettiActive = false;
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
-        function openInfo() { alert("Compara os dois lados!\nNível 1 e 2: Números\nNível 3: Contas\nTeclado: ← (>), ↓ (=), → (<)"); }
+        function openInfo() { document.getElementById('modal-info').style.display = 'flex'; }
+        function closeInfo() { document.getElementById('modal-info').style.display = 'none'; }
         function fecharModalEVoltar() { document.getElementById('modal-feedback').style.display = 'none'; handleVoltar(); }
 
         function handleVoltar() {
@@ -237,6 +252,7 @@
                 document.getElementById('menu-categorias').classList.remove('hidden');
                 document.getElementById('jogo-container').classList.add('hidden');
                 document.getElementById('game-status').classList.add('hidden');
+                document.getElementById('view-title').innerHTML = "Qual é o sinal? 🧐";
                 document.getElementById('modal-feedback').style.display = 'none';
             } else { window.location.href = '../'; }
         }
@@ -294,9 +310,9 @@
                 document.getElementById('txt-left').innerText = valL.toLocaleString('pt-PT');
                 document.getElementById('txt-right').innerText = valR.toLocaleString('pt-PT');
             } else {
+                // Nível 3: Contas Uniformes
                 if (Math.random() > 0.5) {
                     let d = Math.floor(Math.random() * 9) + 1;
-                    // Garantir que a conta de subtrair é positiva (Maior - Menor)
                     if (Math.random() > 0.5) {
                         document.getElementById('txt-left').innerText = `${valL + d} - ${d}`;
                     } else {
@@ -387,9 +403,7 @@
                     angle: Math.random() * 6
                 });
             }
-            
             setTimeout(() => { confettiActive = false; }, 2000);
-
             function draw() {
                 if (!confettiActive && particles.every(p => p.y > canvas.height)) {
                     ctx.clearRect(0,0,canvas.width, canvas.height);
