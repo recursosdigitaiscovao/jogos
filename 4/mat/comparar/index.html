@@ -140,7 +140,7 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <h1><span class="header-icon">👨‍🚀</span> Escreve por Extenso</h1>
+            <h1><span class="header-icon">⚖️</span> Compara os Números</h1>
         </div>
         <button onclick="handleVoltar()" class="btn-roxo-3d">⬅ Voltar</button>
     </header>
@@ -149,7 +149,8 @@
         <div class="screen-container">
             <div class="main-title">
                 <div class="title-row">
-                    <h2><span>🧐</span> Qual é o sinal?</h2>
+                    <!-- ADICIONADO ID "view-title" AQUI PARA O JS FUNCIONAR -->
+                    <h2 id="view-title"><span>🧐</span> Qual é o sinal?</h2>
                     <button class="btn-info" onclick="openInfo()">i</button>
                 </div>
                 <p id="view-desc">Domina os sinais maior, menor ou igual.</p>
@@ -259,6 +260,8 @@
                 document.getElementById('jogo-container').classList.add('hidden');
                 document.getElementById('game-status').classList.add('hidden');
                 document.getElementById('modal-feedback').style.display = 'none';
+                document.getElementById('view-title').innerHTML = "<span>🧐</span> Qual é o sinal?";
+                document.getElementById('view-desc').innerText = "Domina os sinais maior, menor ou igual.";
             } else { window.location.href = '../'; }
         }
 
@@ -269,14 +272,23 @@
 
         function startChallenge(max) {
             clearConfetti();
-            limiteCat = max; emJogo = true; nivelAtivo = 1; combo = 0; segs = 0;
-            perguntaAt = 0; resL1 = []; resL2 = []; resL3 = [];
+            limiteCat = max; 
+            emJogo = true; 
+            nivelAtivo = 1; 
+            combo = 0; 
+            segs = 0;
+            perguntaAt = 0; 
+            resL1 = []; resL2 = []; resL3 = [];
+            
             updateUI();
+            
             document.getElementById('menu-categorias').classList.add('hidden');
             document.getElementById('jogo-container').classList.remove('hidden');
             document.getElementById('game-status').classList.remove('hidden');
+            
             clearInterval(timer); 
             timer = setInterval(() => { segs++; updateTimerUI(); }, 1000);
+            updateTimerUI();
             proxima();
         }
 
@@ -287,29 +299,43 @@
         }
 
         function updateUI() {
-            document.getElementById('view-title').innerHTML = `🧐 Nível ${nivelAtivo}`;
+            const titleEl = document.getElementById('view-title');
+            if(titleEl) titleEl.innerHTML = `🧐 Nível ${nivelAtivo}`;
+            
             document.getElementById('combo-display').innerText = combo;
+            
             const stars = document.querySelectorAll('.star-box');
             const resAtual = (nivelAtivo === 1) ? resL1 : (nivelAtivo === 2 ? resL2 : resL3);
+            
             stars.forEach((s, i) => {
                 s.className = 'star-box';
                 if (resAtual[i] === 'correct') s.classList.add('correct');
-                if (resAtual[i] === 'wrong') s.classList.add('wrong');
+                else if (resAtual[i] === 'wrong') s.classList.add('wrong');
             });
         }
 
         function proxima() {
             if (perguntaAt === 5) {
-                if (nivelAtivo < 3) { nivelAtivo++; perguntaAt = 0; updateUI(); proxima(); return; }
-                else { finalizar(); return; }
+                if (nivelAtivo < 3) { 
+                    nivelAtivo++; 
+                    perguntaAt = 0; 
+                    updateUI(); 
+                    proxima(); 
+                    return; 
+                }
+                else { 
+                    finalizar(); 
+                    return; 
+                }
             }
             const display = document.getElementById('symbol-display');
-            display.innerText = "?"; display.className = "symbol-box";
+            display.innerText = "?"; 
+            display.className = "symbol-box";
             interactable = true;
 
             let min, max;
             if (nivelAtivo === 1) { min = 1; max = limiteCat / 2; }
-            else if (nivelAtivo === 2) { min = (limiteCat / 2) + 1; max = limiteCat; }
+            else if (nivelAtivo === 2) { min = Math.floor(limiteCat / 2); max = limiteCat; }
             else { min = 1; max = limiteCat; }
 
             valL = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -320,6 +346,7 @@
                 document.getElementById('txt-left').innerText = valL.toLocaleString('pt-PT');
                 document.getElementById('txt-right').innerText = valR.toLocaleString('pt-PT');
             } else {
+                // Nível 3: Contas simples
                 if (Math.random() > 0.5) {
                     let d = Math.floor(Math.random() * 9) + 1;
                     if (Math.random() > 0.5) {
@@ -343,23 +370,28 @@
         function checkAnswer(choice) {
             if (!interactable) return;
             interactable = false;
+            
             let correct = "=";
-            if (valL < valR) correct = "<"; else if (valL > valR) correct = ">";
+            if (valL < valR) correct = "<"; 
+            else if (valL > valR) correct = ">";
 
             const resAtual = (nivelAtivo === 1) ? resL1 : (nivelAtivo === 2 ? resL2 : resL3);
             const display = document.getElementById('symbol-display');
             display.innerText = choice;
 
             if (choice === correct) {
-                combo++; resAtual.push('correct');
+                combo++; 
+                resAtual.push('correct');
                 display.classList.add('correct-anim');
                 document.getElementById('snd-correct').play();
             } else {
-                combo = 0; resAtual.push('wrong');
+                combo = 0; 
+                resAtual.push('wrong');
                 display.classList.add('wrong-anim');
                 document.getElementById('snd-wrong').play();
             }
-            perguntaAt++; updateUI();
+            perguntaAt++; 
+            updateUI();
             setTimeout(proxima, 1200);
         }
 
@@ -397,39 +429,4 @@
         }
 
         function launchConfetti() {
-            const canvas = document.getElementById('confetti-canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            confettiActive = true;
-            let particles = [];
-            for (let i = 0; i < 120; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height - canvas.height,
-                    size: Math.random() * 6 + 2,
-                    color: `hsl(${Math.random() * 360}, 70%, 60%)`,
-                    vel: Math.random() * 4 + 2,
-                    angle: Math.random() * 6
-                });
-            }
-            setTimeout(() => { confettiActive = false; }, 2000);
-            function draw() {
-                if (!confettiActive && particles.every(p => p.y > canvas.height)) {
-                    ctx.clearRect(0,0,canvas.width, canvas.height);
-                    return;
-                }
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach(p => {
-                    ctx.fillStyle = p.color;
-                    ctx.fillRect(p.x, p.y, p.size, p.size);
-                    p.y += p.vel;
-                    p.x += Math.sin(p.angle);
-                });
-                requestAnimationFrame(draw);
-            }
-            draw();
-        }
-    </script>
-</body>
-</html>
+            const canvas = document.getElementById('confetti-canvas'
