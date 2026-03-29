@@ -54,7 +54,6 @@
         .star-svg.win { fill: #9b59b6; }
         .star-svg.lose { fill: #e74c3c; stroke: #e74c3c; }
 
-        /* QUADRADO BRANCO */
         .game-card {
             background: white; border-radius: 20px;
             border-bottom: 6px solid #d4d4d4; box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
@@ -77,28 +76,28 @@
         #jogo-container { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; }
         .level-txt { font-weight: 900; color: #9b59b6; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 5px; }
 
-        .math-operation { display: flex; flex-direction: column; align-items: flex-end; position: relative; font-family: monospace; }
-        .row { display: flex; justify-content: flex-end; gap: 8px; height: 45px; align-items: center; margin-bottom: 2px; }
-        .carry-row { height: 30px; margin-bottom: 2px; }
-        .digit-box { width: 40px; text-align: center; font-size: 2rem; font-weight: 900; color: #2c3e50; display: flex; justify-content: center; }
+        .math-operation { display: flex; flex-direction: column; align-items: flex-end; position: relative; font-family: 'Courier New', monospace; padding-right: 20px; }
+        .row { display: flex; justify-content: flex-end; gap: 10px; height: 45px; align-items: center; margin-bottom: 2px; width: 100%; }
+        .carry-row { height: 35px; margin-bottom: 2px; }
+        .digit-box { width: 45px; text-align: center; font-size: 2.2rem; font-weight: 900; color: #2c3e50; display: flex; justify-content: center; }
         
-        .line { border-bottom: 4px solid #2c3e50; width: 110%; margin: 5px 0; align-self: center; }
-        .plus-sign { position: absolute; left: -40px; bottom: 65px; font-size: 2rem; color: #9b59b6; font-weight: 900; }
+        .line { border-bottom: 4px solid #2c3e50; width: 120%; margin: 5px 0; align-self: flex-end; }
+        .plus-sign { position: absolute; left: -40px; bottom: 70px; font-size: 2.2rem; color: #9b59b6; font-weight: 900; }
 
         /* INPUTS */
         .digit-input {
-            width: 40px; height: 42px; border: 2.5px solid #9b59b6; border-radius: 8px;
-            text-align: center; font-size: 1.6rem; font-weight: 900; background: #fdfaff; color: #9b59b6; outline: none;
+            width: 45px; height: 45px; border: 3px solid #9b59b6; border-radius: 8px;
+            text-align: center; font-size: 1.8rem; font-weight: 900; background: #fdfaff; color: #9b59b6; outline: none;
         }
         .carry-input {
-            width: 28px; height: 28px; border: 2px dashed #e74c3c; border-radius: 5px;
-            text-align: center; font-size: 1rem; color: #e74c3c; font-weight: 900; background: #fff1f1;
-            visibility: hidden; /* Começa escondido */
+            width: 32px; height: 32px; border: 2px dashed #e74c3c; border-radius: 5px;
+            text-align: center; font-size: 1.1rem; color: #e74c3c; font-weight: 900; background: #fff1f1;
+            visibility: hidden; opacity: 0; transition: 0.3s;
         }
-        .carry-input.visible { visibility: visible; }
+        .carry-input.visible { visibility: visible; opacity: 1; }
 
         .btn-check {
-            padding: 12px 40px; font-size: 1rem; background-color: #2ecc71; color: white; 
+            padding: 12px 45px; font-size: 1.1rem; background-color: #2ecc71; color: white; 
             border-radius: 12px; border: none; border-bottom: 4px solid #27ae60; cursor: pointer; font-weight: 800;
         }
 
@@ -122,9 +121,7 @@
     <div class="sidebar" id="sidebar">
         <h3 style="margin-bottom: 15px;">Navegação</h3>
         <nav class="sidebar-menu">
-            <a href="#" class="sidebar-item">🏠 Início</a>
-            <a href="#" class="sidebar-item">🐥 1º Ano</a>
-            <a href="#" class="sidebar-item">🐢 2º Ano</a>
+            <a href="#" class="sidebar-item" onclick="resetToMenu()">🏠 Início</a>
         </nav>
         <button onclick="toggleMenu()" style="margin-top:auto; padding:10px; border:none; background:#eee; cursor:pointer; font-weight:bold; border-radius:8px;">Fechar ×</button>
     </div>
@@ -144,13 +141,13 @@
                     <span style="font-size: 1.8rem;">➕</span>
                     <h2 id="display-title">Soma Armada</h2>
                 </div>
-                <p id="instrucao" style="margin-bottom: 10px; font-weight: bold; color: #555; font-size: 0.85rem;">Resolve o algoritmo passo a passo.</p>
+                <p id="instrucao" style="margin-bottom: 10px; font-weight: bold; color: #555; font-size: 0.85rem;">Resolve o algoritmo. O "levou um" aparece quando precisares!</p>
             </div>
 
             <div class="stats-panel hidden" id="status-panel">
                 <div class="stat-item">⏱️ <span id="timer">00:00</span></div>
                 <div class="stars-container" id="stars-row">
-                    <script>for(let i=0; i<5; i++) document.write('<svg class="star-svg" id="star-'+i+'" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>');</script>
+                    <script>for(let i=0; i<4; i++) document.write('<svg class="star-svg" id="star-'+i+'" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>');</script>
                 </div>
                 <div class="stat-item">Pontos: <span id="score">0</span></div>
             </div>
@@ -189,7 +186,6 @@
     <script>
         let perguntaAtual = 0, pontos = 0, segs = 0, timer, limiteMax = 0, emJogo = false;
         let stats = { l1: {c:0, w:0}, l2: {c:0, w:0}, l3: {c:0, w:0} };
-        let currentCarryLogic = []; // Para controlar quando mostrar carry
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -223,9 +219,9 @@
         }
 
         function proxima() {
-            if (perguntaAtual === 12) { finalizar(); return; } // 4 perguntas por nível
+            if (perguntaAtual === 12) { finalizar(); return; }
             const nivel = Math.floor(perguntaAtual / 4) + 1;
-            const nomes = ["Sem transporte", "Com transporte", "Lacunas nas parcelas"];
+            const nomes = ["Sem transporte", "Com transporte", "Lacunas lógicas"];
             document.getElementById('lvl-txt').innerText = `Nível ${nivel}: ${nomes[nivel-1]}`;
             if (perguntaAtual % 4 === 0) document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
             gerarAlgoritmo(nivel);
@@ -234,30 +230,30 @@
         function gerarAlgoritmo(nivel) {
             const container = document.getElementById('area-conta');
             container.innerHTML = "";
-            const totalD = limiteMax.toString().length;
+            const totalD = (limiteMax-1).toString().length;
             let n1, n2, res;
 
             if (nivel === 1) { // Sem transporte
                 do {
-                    n1 = Math.floor(Math.random() * (limiteMax * 0.4)) + 10;
-                    n2 = Math.floor(Math.random() * (limiteMax * 0.4)) + 10;
-                } while (hasCarry(n1, n2));
+                    n1 = Math.floor(Math.random() * (limiteMax * 0.45));
+                    n2 = Math.floor(Math.random() * (limiteMax * 0.45));
+                } while (detectCarry(n1, n2) || (n1+n2) < 10);
             } else if (nivel === 2) { // Com transporte
                 do {
-                    n1 = Math.floor(Math.random() * (limiteMax * 0.4)) + 10;
-                    n2 = Math.floor(Math.random() * (limiteMax * 0.4)) + 10;
-                } while (!hasCarry(n1, n2));
-            } else { // Nível 3: Lacunas nas parcelas (Sem transporte para ser lógico)
+                    n1 = Math.floor(Math.random() * (limiteMax * 0.45));
+                    n2 = Math.floor(Math.random() * (limiteMax * 0.45));
+                } while (!detectCarry(n1, n2));
+            } else { // Nível 3: Lacunas (Sem transporte para não confundir a lógica reversa)
                 do {
-                    n1 = Math.floor(Math.random() * (limiteMax * 0.4)) + 10;
-                    n2 = Math.floor(Math.random() * (limiteMax * 0.4)) + 10;
-                } while (hasCarry(n1, n2));
+                    n1 = Math.floor(Math.random() * (limiteMax * 0.45));
+                    n2 = Math.floor(Math.random() * (limiteMax * 0.45));
+                } while (detectCarry(n1, n2) || (n1+n2) < 10);
             }
             res = n1 + n2;
-            desenharConta(n1, n2, res, nivel, totalD);
+            renderOperacao(n1, n2, res, nivel, totalD);
         }
 
-        function hasCarry(a, b) {
+        function detectCarry(a, b) {
             let s1 = a.toString().split('').reverse(), s2 = b.toString().split('').reverse();
             for(let i=0; i<Math.max(s1.length, s2.length); i++) {
                 if(parseInt(s1[i]||0) + parseInt(s2[i]||0) >= 10) return true;
@@ -265,32 +261,40 @@
             return false;
         }
 
-        function desenharConta(n1, n2, res, nivel, totalD) {
+        function renderOperacao(n1, n2, res, nivel, totalD) {
             const container = document.getElementById('area-conta');
-            let s1 = n1.toString().padStart(totalD, ' '), s2 = n2.toString().padStart(totalD, ' '), sr = res.toString().padStart(totalD, ' ');
+            const resStr = res.toString();
+            const viewLength = resStr.length;
             
-            // Carry Row
+            let s1 = n1.toString().padStart(viewLength, ' ');
+            let s2 = n2.toString().padStart(viewLength, ' ');
+            let sr = resStr;
+
+            // 1. Linha Transportes (Invisíveis no início)
             const rowC = document.createElement('div'); rowC.className = "row carry-row";
-            for(let i=0; i<totalD; i++) {
+            for(let i=0; i < viewLength; i++) {
                 let cell = document.createElement('div'); cell.className = "digit-box";
+                let posMat = viewLength - 1 - i;
+                // O transporte aparece na coluna posMat se a soma da coluna posMat - 1 for >= 10
+                let d1_prev = parseInt(s1.split('').reverse()[posMat-1] || 0);
+                let d2_prev = parseInt(s2.split('').reverse()[posMat-1] || 0);
+                
                 let input = document.createElement('input');
-                input.className = "carry-input math-input";
-                input.type = "tel"; input.maxLength = 1; input.id = `c-${i}`;
-                // Calcular valor correto do carry para esta coluna (i)
-                let posMat = totalD - 1 - i;
-                let d1 = parseInt(s1.split('').reverse()[posMat-1] || 0);
-                let d2 = parseInt(s2.split('').reverse()[posMat-1] || 0);
-                input.dataset.correct = (d1 + d2 >= 10) ? "1" : "0";
+                input.className = "carry-input";
+                input.id = `c-${i}`;
+                input.type = "tel"; input.maxLength = 1;
+                input.dataset.correct = (d1_prev + d2_prev >= 10) ? "1" : "0";
+                
                 cell.appendChild(input);
                 rowC.appendChild(cell);
             }
             container.appendChild(rowC);
 
-            // Parcelas
+            // 2. Parcelas
             [s1, s2].forEach((s, idx) => {
                 const row = document.createElement('div'); row.className = "row";
                 if(idx === 1) row.innerHTML += '<span class="plus-sign">+</span>';
-                for(let i=0; i<totalD; i++) {
+                for(let i=0; i < viewLength; i++) {
                     let isGap = (nivel === 3 && s[i] !== ' ' && Math.random() > 0.5);
                     row.appendChild(createCell(s[i], isGap, `p${idx}-${i}`));
                 }
@@ -299,20 +303,20 @@
 
             container.appendChild(document.createElement('div')).className = "line";
 
-            // Resultado
+            // 3. Resultado (Lacunas no Nível 1 e 2)
             const rowR = document.createElement('div'); rowR.className = "row";
-            for(let i=0; i<totalD; i++) {
-                let isGap = (nivel < 3 && sr[i] !== ' ');
+            for(let i=0; i < viewLength; i++) {
+                let isGap = (nivel < 3);
                 let cell = createCell(sr[i], isGap, `r-${i}`);
                 if(isGap) {
-                    // Lógica para mostrar carry dinamicamente
+                    // EVENTO: Mostrar transporte quando o utilizador escreve o resultado da coluna
                     cell.oninput = function() {
-                        let posMat = totalD - 1 - i;
-                        let valD1 = parseInt(s1.split('').reverse()[posMat] || 0);
-                        let valD2 = parseInt(s2.split('').reverse()[posMat] || 0);
-                        if(valD1 + valD2 >= 10 && nivel === 2) {
-                            let carryInput = document.getElementById(`c-${i-1}`);
-                            if(carryInput) carryInput.classList.add('visible');
+                        let posMat = viewLength - 1 - i;
+                        let d1 = parseInt(s1.split('').reverse()[posMat] || 0);
+                        let d2 = parseInt(s2.split('').reverse()[posMat] || 0);
+                        if(d1 + d2 >= 10 && nivel === 2) {
+                            let nextCarry = document.getElementById(`c-${i-1}`);
+                            if(nextCarry) nextCarry.classList.add('visible');
                         }
                     };
                 }
@@ -324,7 +328,7 @@
 
         function createCell(val, isGap, id) {
             const cell = document.createElement('div'); cell.className = "digit-box";
-            if(val === ' ') return cell;
+            if(val === ' ' || val === undefined) return cell;
             if(isGap) {
                 const input = document.createElement('input');
                 input.className = "digit-input math-input";
@@ -337,19 +341,36 @@
         }
 
         function verificar() {
-            let inputs = document.querySelectorAll('.math-input');
+            let inputs = document.querySelectorAll('.math-input, .carry-input.visible');
             let erro = false;
+            
+            // Validar todos os campos visíveis
             inputs.forEach(input => {
-                let val = input.value.trim() || "0";
-                if(val === input.dataset.correct) input.classList.add('correct-f');
-                else { input.classList.add('wrong-f'); input.value = input.dataset.correct; erro = true; }
+                let val = input.value.trim() || (input.classList.contains('carry-input') ? "0" : "");
+                if(val === input.dataset.correct) {
+                    input.classList.add('correct-f');
+                } else {
+                    input.classList.add('wrong-f');
+                    input.value = input.dataset.correct;
+                    erro = true;
+                }
                 input.disabled = true;
             });
+
+            // Verificar se faltou ativar algum transporte obrigatório no Nível 2
+            if(Math.floor(perguntaAtual / 4) + 1 === 2) {
+                document.querySelectorAll('.carry-input').forEach(c => {
+                    if(c.dataset.correct === "1" && !c.classList.contains('visible')) erro = true;
+                });
+            }
+
             document.getElementById('btn-verificar').disabled = true;
-            const nIndex = Math.floor(perguntaAtual / 4) + 1;
+            const nIdx = Math.floor(perguntaAtual / 4) + 1;
             const star = document.getElementById('star-' + (perguntaAtual % 4));
-            if(!erro) { stats['l'+nIndex].c++; pontos += nIndex * 10; star.classList.add('win'); }
-            else { stats['l'+nIndex].w++; star.classList.add('lose'); }
+
+            if(!erro) { stats['l'+nIdx].c++; pontos += nIdx * 10; star.classList.add('win'); }
+            else { stats['l'+nIdx].w++; star.classList.add('lose'); }
+            
             document.getElementById('score').innerText = pontos;
             perguntaAtual++; setTimeout(proxima, 2500);
         }
@@ -357,12 +378,12 @@
         function finalizar() {
             clearInterval(timer);
             const totalC = stats.l1.c + stats.l2.c + stats.l3.c;
-            document.getElementById('f-texto').innerText = "Categoria: Até " + limiteMax.toLocaleString('pt-PT');
             document.getElementById('stats-body').innerHTML = `
                 <tr><td>Nível 1 (Simples)</td><td>${stats.l1.c} / 4</td></tr>
                 <tr><td>Nível 2 (Transporte)</td><td>${stats.l2.c} / 4</td></tr>
-                <tr><td>Nível 3 (Lacunas)</td><td>${stats.l3.c} / 4</td></tr>
+                <tr><td>Nível 3 (Parcelas)</td><td>${stats.l3.c} / 4</td></tr>
             `;
+            document.getElementById('f-texto').innerText = "Categoria: " + limiteMax.toLocaleString('pt-PT');
             document.getElementById('modal-feedback').style.display = 'flex';
         }
     </script>
