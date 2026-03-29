@@ -3,23 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo - Pré-Escolar</title>
+    <title>Jogo de Contar - Pré-Escolar</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --verde-floresta: #2d5a27;
-            --verde-claro: #a8e063;
+            --verde-suave: #eef9eb;
             --madeira: #795548;
+            --madeira-escura: #5d4037;
+            --primaria: #ff4757;
+            --sucesso: #2ecc71;
         }
 
         body {
             font-family: 'Fredoka', sans-serif;
-            background: #eef9eb; /* Fundo suave verde */
+            background: var(--verde-suave);
             margin: 0;
             display: flex;
             flex-direction: column;
             height: 100vh;
-            overflow: hidden; /* Evita scroll na página do jogo */
+            overflow: hidden;
+            user-select: none;
         }
 
         /* Barra Superior */
@@ -30,7 +33,6 @@
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            z-index: 10;
         }
 
         .btn-voltar {
@@ -40,65 +42,87 @@
             padding: 12px 25px;
             border-radius: 50px;
             font-weight: bold;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            transition: 0.3s;
-            border-bottom: 5px solid #3e2723;
+            border-bottom: 5px solid var(--madeira-escura);
+            transition: 0.2s;
         }
 
-        .btn-voltar:hover {
-            transform: scale(1.05);
-            background: #5d4037;
-        }
-
-        .titulo-jogo {
-            color: var(--verde-floresta);
-            font-size: 1.8rem;
-            margin: 0;
-            text-align: center;
-            flex-grow: 1;
-        }
+        .btn-voltar:hover { transform: translateY(2px); border-bottom-width: 3px; }
 
         /* Área do Jogo */
-        .game-container {
+        .game-area {
             flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .quadro-contagem {
+            width: 90%;
+            max-width: 800px;
+            height: 300px;
+            background: white;
+            border: 10px solid var(--madeira);
+            border-radius: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            position: relative;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: 0 15px 0 rgba(0,0,0,0.05);
+            margin-bottom: 40px;
         }
 
-        /* Moldura de "Madeira" para o Jogo */
-        .moldura {
-            width: 95%;
-            max-width: 1000px;
-            height: 80vh;
-            background: #fff;
-            border: 12px solid var(--madeira);
-            border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Iframe do Jogo (Onde vais meter o link do Wordwall/Genially/etc) */
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* Decoração de Folhas nos cantos */
-        .decor-folha {
-            position: absolute;
+        /* Os objetos a contar (Estrelas) */
+        .objeto {
             font-size: 5rem;
-            z-index: 5;
-            pointer-events: none; /* Não interfere no clique */
+            animation: aparecer 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .folha-1 { top: -10px; left: -10px; transform: rotate(-15deg); }
-        .folha-2 { bottom: -10px; right: -10px; transform: rotate(165deg); }
+
+        @keyframes aparecer {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        /* Painel de Números */
+        .painel-numeros {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-numero {
+            width: 80px;
+            height: 80px;
+            border: none;
+            border-radius: 20px;
+            background: #00c6ff;
+            color: white;
+            font-size: 2.5rem;
+            font-family: 'Fredoka';
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #0072ff;
+            transition: 0.1s;
+        }
+
+        .btn-numero:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #0072ff;
+        }
+
+        .btn-numero:hover { background: #33d1ff; }
+
+        /* Mensagem de Feedback */
+        #feedback {
+            margin-top: 20px;
+            font-size: 2rem;
+            font-weight: bold;
+            height: 40px;
+        }
+
+        .texto-sucesso { color: var(--sucesso); }
+        .texto-erro { color: var(--primaria); }
 
     </style>
 </head>
@@ -106,25 +130,55 @@
 
     <div class="top-nav">
         <a href="pre-escolar.html" class="btn-voltar">⬅ VOLTAR</a>
-        <h1 class="titulo-jogo">🍎 Contar as Frutas</h1>
-        <div style="width: 120px;"></div> <!-- Equilíbrio visual -->
+        <h1 style="color: var(--madeira); margin: 0;">Quantos são?</h1>
+        <div style="width: 100px;"></div>
     </div>
 
-    <div class="game-container">
-        <span class="decor-folha folha-1">🍃</span>
-        <span class="decor-folha folha-2">🌿</span>
-        
-        <div class="moldura">
-            <!-- SUBSTITUI O SRC PELO LINK DO TEU JOGO -->
-            <iframe src="https://wordwall.net/play/embed/12345/678/910" 
-                    allowfullscreen></iframe>
+    <div class="game-area">
+        <div class="quadro-contagem" id="palco">
+            <!-- Objetos aparecem aqui via JS -->
+        </div>
+
+        <div id="feedback"></div>
+
+        <div class="painel-numeros">
+            <button class="btn-numero" onclick="verificar(1)">1</button>
+            <button class="btn-numero" onclick="verificar(2)">2</button>
+            <button class="btn-numero" onclick="verificar(3)">3</button>
+            <button class="btn-numero" onclick="verificar(4)">4</button>
+            <button class="btn-numero" onclick="verificar(5)">5</button>
         </div>
     </div>
 
-    <!-- Som de clique opcional ou incentivo -->
     <script>
-        console.log("Jogo carregado! Diverte-te na floresta.");
-    </script>
+        let numeroCerto = 0;
 
-</body>
-</html>
+        function iniciarJogo() {
+            const palco = document.getElementById('palco');
+            const feedback = document.getElementById('feedback');
+            palco.innerHTML = '';
+            feedback.innerHTML = '';
+            
+            // Gera um número aleatório entre 1 e 5
+            numeroCerto = Math.floor(Math.random() * 5) + 1;
+
+            // Adiciona os objetos (Estrelas) ao palco
+            for (let i = 0; i < numeroCerto; i++) {
+                const obj = document.createElement('div');
+                obj.className = 'objeto';
+                obj.innerHTML = '⭐'; // Podes mudar para 🍎, 🐻, etc.
+                palco.appendChild(obj);
+            }
+        }
+
+        function verificar(escolha) {
+            const feedback = document.getElementById('feedback');
+            
+            if (escolha === numeroCerto) {
+                feedback.innerHTML = '<span class="texto-sucesso">Muito Bem! 🎉</span>';
+                // Espera 1.5 segundos e gera novo jogo
+                setTimeout(iniciarJogo, 1500);
+            } else {
+                feedback.innerHTML = '<span class="texto-erro">Tenta outra vez! 🤔</span>';
+            }
+        }
