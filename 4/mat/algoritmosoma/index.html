@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Soma Armada - Matemática</title>
     <style>
-        /* === ESTILOS GLOBAIS (TEMPLATE RIGOROSO) === */
+        /* === ESTILOS GLOBAIS === */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body {
             background-color: rgba(155, 89, 182, 0.15); 
@@ -43,13 +43,14 @@
         main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 0; overflow: hidden; }
         .screen-container { display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%; }
         
-        .main-title { text-align: center; flex-shrink: 0; }
+        /* ESPAÇAMENTO: Instrução -> Timer */
+        .main-title { text-align: center; flex-shrink: 0; margin-bottom: 15px; }
         .title-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
         .title-row h2 { color: #2c3e50; font-size: 1.3rem; font-weight: 900; text-transform: uppercase; margin: 0; }
         .btn-info { background: none; border: none; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; }
 
-        /* STATUS PANEL */
-        .stats-panel { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 5px; flex-shrink: 0; }
+        /* STATUS PANEL - ESPAÇAMENTO: Timer -> Jogo */
+        .stats-panel { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; flex-shrink: 0; }
         .stat-item { display: flex; align-items: center; gap: 5px; font-weight: bold; color: #2c3e50; font-size: 0.8rem; }
         .stars-container { display: flex; gap: 3px; }
         .star-svg { width: 16px; height: 16px; fill: none; stroke: #9b59b6; stroke-width: 2; }
@@ -61,36 +62,36 @@
             background: white; border-radius: 20px;
             border-bottom: 6px solid #d4d4d4; box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
             width: calc(100% - 20px); max-width: 800px; flex: 1;
-            margin-bottom: 5px; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; overflow: hidden; position: relative;
+            margin-bottom: 10px; display: flex; flex-direction: column; 
+            overflow: hidden; position: relative;
         }
 
-        /* MENU CATEGORIAS */
-        .category-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; height: 100%; padding: 25px; }
+        /* MENU CATEGORIAS - 6 CATEGORIAS */
+        .category-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; height: 100%; padding: 20px; overflow-y: auto; }
         .cat-card {
             background: #fdfaff; border: 2px solid #ecdff5; border-radius: 15px;
             cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; box-shadow: 0 4px 0 #ecdff5; padding: 10px;
+            align-items: center; justify-content: center; box-shadow: 0 4px 0 #ecdff5; padding: 15px;
         }
         .cat-card:active { transform: translateY(2px); box-shadow: 0 0 0 #ecdff5; }
-        .cat-card span:last-child { font-size: 1rem; font-weight: 900; color: #9b59b6; }
+        .cat-card span:last-child { font-size: 1.1rem; font-weight: 900; color: #9b59b6; }
 
-        /* JOGO ALGORITMO */
-        #jogo-container { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 5px; }
-        .level-txt { font-weight: 900; color: #9b59b6; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 2px; }
+        /* JOGO ALGORITMO - ALINHADO À ESQUERDA */
+        #jogo-container { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; padding: 30px; }
+        #lvl-txt { display: none; } /* Removido conforme solicitado */
 
-        .math-operation { display: flex; flex-direction: column; align-items: flex-end; position: relative; font-family: 'Courier New', monospace; padding-right: 25px; }
+        .math-operation { display: flex; flex-direction: column; align-items: flex-end; position: relative; font-family: 'Courier New', monospace; padding-right: 25px; margin-bottom: 30px; }
         .row { display: flex; justify-content: flex-end; gap: clamp(4px, 1.5vw, 10px); height: clamp(35px, 8vh, 45px); align-items: center; margin-bottom: 1px; width: 100%; }
         .carry-row { height: clamp(25px, 5vh, 32px); margin-bottom: 0; }
-        .digit-box { width: clamp(30px, 8vw, 42px); text-align: center; font-size: clamp(1.4rem, 5vw, 2rem); font-weight: 900; color: #2c3e50; display: flex; justify-content: center; }
+        .digit-box { width: clamp(30px, 8vw, 42px); text-align: center; font-size: clamp(1.4rem, 5vw, 2.2rem); font-weight: 900; color: #2c3e50; display: flex; justify-content: center; }
         
         .line { border-bottom: 4px solid #2c3e50; width: 125%; margin: 2px 0; align-self: flex-end; }
-        .plus-sign { position: absolute; left: -35px; bottom: 65px; font-size: clamp(1.5rem, 4vw, 2rem); color: #9b59b6; font-weight: 900; }
+        .plus-sign { position: absolute; left: -35px; bottom: 65px; font-size: clamp(1.5rem, 4vw, 2.5rem); color: #9b59b6; font-weight: 900; }
 
         /* INPUTS */
         .digit-input {
-            width: clamp(30px, 8vw, 42px); height: clamp(32px, 7vh, 42px); border: 2.5px solid #9b59b6; border-radius: 6px;
-            text-align: center; font-size: 1.5rem; font-weight: 900; background: #fdfaff; color: #9b59b6; outline: none;
+            width: clamp(35px, 9vw, 45px); height: clamp(35px, 8vh, 45px); border: 2.5px solid #9b59b6; border-radius: 6px;
+            text-align: center; font-size: 1.6rem; font-weight: 900; background: #fdfaff; color: #9b59b6; outline: none;
         }
         .carry-input {
             width: clamp(22px, 5vw, 28px); height: clamp(22px, 5vw, 28px); border: 1.5px dashed #e74c3c; border-radius: 4px;
@@ -99,10 +100,10 @@
         }
         .carry-input.visible { visibility: visible; opacity: 1; }
 
-        /* BOTÃO VERIFICAR ROXO */
         .btn-check {
-            padding: 10px 40px; font-size: 1rem; background-color: #9b59b6; color: white; 
-            border-radius: 12px; border: none; border-bottom: 4px solid #732d91; cursor: pointer; font-weight: 800; margin-top: 5px;
+            align-self: center; /* Centraliza apenas o botão no fundo */
+            padding: 12px 50px; font-size: 1.1rem; background-color: #9b59b6; color: white; 
+            border-radius: 12px; border: none; border-bottom: 4px solid #732d91; cursor: pointer; font-weight: 800;
         }
         .btn-check:active { transform: translateY(3px); border-bottom: 0; }
 
@@ -113,7 +114,7 @@
 
         /* MODAIS */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(3px); }
-        .modal-content { background: white; padding: 20px; border-radius: 20px; text-align: center; width: 90%; max-width: 400px; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; text-align: center; width: 90%; max-width: 400px; }
         .stats-table { width: 100%; margin: 10px 0; border-collapse: collapse; }
         .stats-table td { padding: 6px; font-weight: bold; border-bottom: 1px solid #eee; font-size: 0.9rem; }
 
@@ -152,7 +153,7 @@
                     <h2 id="display-title">Algoritmo da Soma</h2>
                     <button class="btn-info" onclick="openInfo()">💡</button>
                 </div>
-                <p id="instrucao" style="margin-bottom: 5px; font-weight: bold; color: #555; font-size: 0.8rem;">Completa a operação armada. Cuidado com o "levou um"!</p>
+                <p id="instrucao" style="font-weight: bold; color: #555; font-size: 0.85rem; margin-top: 5px;">Resolve a operação. Cuidado com o transporte!</p>
             </div>
 
             <div class="stats-panel hidden" id="status-panel">
@@ -165,10 +166,12 @@
             
             <div class="game-card">
                 <div id="menu-categorias" class="category-grid">
+                    <div class="cat-card" onclick="startChallenge(100)"><span>Até</span><span>100</span></div>
+                    <div class="cat-card" onclick="startChallenge(200)"><span>Até</span><span>200</span></div>
+                    <div class="cat-card" onclick="startChallenge(500)"><span>Até</span><span>500</span></div>
                     <div class="cat-card" onclick="startChallenge(1000)"><span>Até</span><span>1 000</span></div>
                     <div class="cat-card" onclick="startChallenge(10000)"><span>Até</span><span>10 000</span></div>
                     <div class="cat-card" onclick="startChallenge(100000)"><span>Até</span><span>100 000</span></div>
-                    <div class="cat-card" onclick="startChallenge(1000000)"><span>Até</span><span>1 000 000</span></div>
                 </div>
 
                 <div id="jogo-container" class="hidden">
@@ -180,14 +183,14 @@
         </div>
     </main>
 
+    <!-- MODAL INFO (Simplificado sem níveis) -->
     <div id="modal-info" class="modal">
         <div class="modal-content">
             <h2 style="color: #9b59b6;">Como Resolver</h2>
-            <p style="text-align: left; font-size: 0.85rem; margin: 12px 0;">
-                • Soma da direita para a esquerda.<br>
-                • <b>Nível 1:</b> Somas simples sem transporte.<br>
-                • <b>Nível 2:</b> Se a soma der 10 ou mais, aparece a lacuna vermelha para o <b>transporte (levou-um)</b>.<br>
-                • <b>Nível 3:</b> Desafio com <b>3 parcelas</b>!
+            <p style="text-align: left; font-size: 0.9rem; margin: 15px 0; line-height: 1.4;">
+                • Começa a somar sempre pela <b>direita (unidades)</b>.<br><br>
+                • Se o resultado for 10 ou mais, escreve o algarismo das unidades no resultado e coloca o <b>transporte</b> na lacuna vermelha por cima da próxima coluna.<br><br>
+                • No final, verifica se preencheste todos os campos necessários.
             </p>
             <button class="btn-voltar-3d" style="width:100%" onclick="closeInfo()">Entendido!</button>
         </div>
@@ -219,8 +222,11 @@
         function closeInfo() { document.getElementById('modal-info').style.display = 'none'; }
         
         function handleVoltar() { 
-            if (emJogo) resetToMenu(); 
-            else window.location.href = 'jogos/4/mat/'; 
+            if (emJogo) {
+                resetToMenu();
+            } else {
+                window.history.back(); // Volta para o ecrã anterior se estiver no menu
+            }
         }
 
         function resetToMenu() {
@@ -251,8 +257,6 @@
         function proxima() {
             if (perguntaAtual === 12) { finalizar(); return; }
             const nivel = Math.floor(perguntaAtual / 4) + 1;
-            const nomes = ["Sem transporte", "Com transporte", "3 Parcelas"];
-            document.getElementById('lvl-txt').innerText = `Nível ${nivel}: ${nomes[nivel-1]}`;
             if (perguntaAtual % 4 === 0) document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
             gerarAlgoritmo(nivel);
         }
@@ -277,20 +281,20 @@
             container.innerHTML = "";
             let n1, n2, n3 = 0, res;
 
-            if (nivel === 1) { // Sem transporte
+            if (nivel === 1) { 
                 do {
-                    n1 = Math.floor(Math.random() * (limiteMax * 0.4));
-                    n2 = Math.floor(Math.random() * (limiteMax * 0.4));
-                } while (hasCarry([n1, n2]) || (n1+n2) < 10);
-            } else if (nivel === 2) { // Com transporte
+                    n1 = Math.floor(Math.random() * (limiteMax * 0.45));
+                    n2 = Math.floor(Math.random() * (limiteMax * 0.45));
+                } while (hasCarry([n1, n2]) || (n1+n2) < 5);
+            } else if (nivel === 2) { 
                 do {
-                    n1 = Math.floor(Math.random() * (limiteMax * 0.4)) + 10;
-                    n2 = Math.floor(Math.random() * (limiteMax * 0.4)) + 10;
+                    n1 = Math.floor(Math.random() * (limiteMax * 0.45)) + 2;
+                    n2 = Math.floor(Math.random() * (limiteMax * 0.45)) + 2;
                 } while (!hasCarry([n1, n2]));
-            } else { // 3 Parcelas
-                n1 = Math.floor(Math.random() * (limiteMax * 0.3)) + 5;
-                n2 = Math.floor(Math.random() * (limiteMax * 0.3)) + 5;
-                n3 = Math.floor(Math.random() * (limiteMax * 0.3)) + 5;
+            } else { 
+                n1 = Math.floor(Math.random() * (limiteMax * 0.3)) + 1;
+                n2 = Math.floor(Math.random() * (limiteMax * 0.3)) + 1;
+                n3 = Math.floor(Math.random() * (limiteMax * 0.3)) + 1;
             }
             res = n1 + n2 + n3;
             renderOperacao(n1, n2, n3, res, nivel);
@@ -311,7 +315,6 @@
                 let cell = document.createElement('div'); cell.className = "digit-box";
                 let posMat = viewLength - 1 - i;
                 
-                // Calcular transporte que entra nesta coluna
                 let carry_check = 0;
                 for(let j=0; j < posMat; j++) {
                     let sumCol = carry_check;
@@ -346,7 +349,7 @@
 
             container.appendChild(document.createElement('div')).className = "line";
 
-            // Resultado
+            // Resultado (Lacunas para preencher)
             const rowR = document.createElement('div'); rowR.className = "row";
             for(let i=0; i < viewLength; i++) {
                 const input = document.createElement('input');
@@ -363,7 +366,7 @@
                         if(s3) sum += parseInt(s3.split('').reverse()[j] || 0);
                         c_check = Math.floor(sum / 10);
                     }
-                    if(c_check > 0 && nivel >= 2) {
+                    if(c_check > 0) {
                         let nextC = document.getElementById(`c-${i-1}`);
                         if(nextC) nextC.classList.add('visible');
                     }
@@ -387,11 +390,10 @@
                 input.disabled = true;
             });
 
-            if(Math.floor(perguntaAtual / 4) + 1 >= 2) {
-                document.querySelectorAll('.carry-input').forEach(c => {
-                    if(c.dataset.correct !== "0" && !c.classList.contains('visible')) erro = true;
-                });
-            }
+            // Verificar se algum transporte necessário não foi preenchido
+            document.querySelectorAll('.carry-input').forEach(c => {
+                if(c.dataset.correct !== "0" && !c.classList.contains('visible')) erro = true;
+            });
 
             document.getElementById('btn-verificar').disabled = true;
             const nIdx = Math.floor(perguntaAtual / 4) + 1;
@@ -401,15 +403,15 @@
             else { stats['l'+nIdx].w++; star.classList.add('lose'); }
             
             document.getElementById('score').innerText = pontos;
-            perguntaAtual++; setTimeout(proxima, 2500);
+            perguntaAtual++; setTimeout(proxima, 2200);
         }
 
         function finalizar() {
             clearInterval(timer);
             document.getElementById('stats-body').innerHTML = `
-                <tr><td>Nível 1 (Simples)</td><td>${stats.l1.c} / 4</td></tr>
-                <tr><td>Nível 2 (Transporte)</td><td>${stats.l2.c} / 4</td></tr>
-                <tr><td>Nível 3 (3 Parcelas)</td><td>${stats.l3.c} / 4</td></tr>
+                <tr><td>Somas Simples</td><td>${stats.l1.c} / 4</td></tr>
+                <tr><td>Com Transporte</td><td>${stats.l2.c} / 4</td></tr>
+                <tr><td>Com 3 Parcelas</td><td>${stats.l3.c} / 4</td></tr>
             `;
             document.getElementById('f-texto').innerText = "Categoria: " + limiteMax.toLocaleString('pt-PT');
             document.getElementById('modal-feedback').style.display = 'flex';
