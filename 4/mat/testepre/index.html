@@ -14,17 +14,22 @@
             --footer-height: 45px;
         }
 
+        /* Configuração para o ecrã total */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Impede que a página inteira role */
+        }
+
         body {
             background: var(--cor-fundo);
             font-family: 'Fredoka', sans-serif;
-            margin: 0;
             display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden; /* Impede scroll no fundo, apenas no conteúdo central */
+            flex-direction: column; /* Alinha Header, Main e Footer verticalmente */
         }
 
-        /* --- Header Fixo --- */
+        /* --- Header Estático --- */
         .nav-bar {
             background: white;
             padding: 0 15px;
@@ -32,56 +37,51 @@
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: fixed;
-            top: 0; left: 0; right: 0;
             height: var(--header-height);
+            flex-shrink: 0; /* Impede o header de encolher */
             z-index: 1000;
         }
 
-        /* --- Footer Fixo --- */
+        /* --- Footer Estático --- */
         .footer {
             background: white;
             height: var(--footer-height);
             display: flex;
             align-items: center;
             justify-content: center;
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
             box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
             color: var(--cor-texto);
             font-weight: bold;
             font-size: 0.85rem;
+            flex-shrink: 0; /* Impede o footer de encolher */
             z-index: 1000;
         }
 
-        /* --- Área de Conteúdo (Scrollable) --- */
+        /* --- Main - A Única Área com Scroll --- */
         .main-content {
-            flex: 1;
-            overflow-y: auto;
-            padding-top: var(--header-height);
-            padding-bottom: var(--footer-height);
-            -webkit-overflow-scrolling: touch;
+            flex: 1; /* Ocupa todo o espaço restante entre header e footer */
+            overflow-y: auto; /* Ativa o scroll vertical apenas aqui */
+            padding: 20px 15px;
+            -webkit-overflow-scrolling: touch; /* Scroll suave em iOS */
         }
 
-        /* --- Grid de Jogos Responsiva --- */
+        /* --- Grid de Jogos (2 colunas mobile, 5 colunas PC) --- */
         .games-grid {
             display: grid;
-            gap: 12px;
-            padding: 15px;
-            /* Telemóvel: 2 por linha */
-            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            grid-template-columns: repeat(2, 1fr); /* Telemóvel: 2 por linha */
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         @media (min-width: 900px) {
             .games-grid {
-                /* PC: 5 por linha */
-                grid-template-columns: repeat(5, 1fr);
+                grid-template-columns: repeat(5, 1fr); /* PC: 5 por linha */
                 gap: 20px;
-                padding: 40px 25px;
             }
         }
 
-        /* --- Cartões de Jogo --- */
+        /* --- Cartões de Jogo (Compactos) --- */
         .game-card {
             background: white;
             border-radius: 20px;
@@ -114,7 +114,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            line-height: 1.1;
+            line-height: 1.2;
         }
 
         .play-btn {
@@ -128,23 +128,27 @@
             cursor: pointer;
             font-family: 'Fredoka';
             font-weight: bold;
+            transition: 0.2s;
         }
+
+        .play-btn:hover { background: #ff6b81; transform: scale(1.05); }
 
         /* --- UI Elements --- */
         .menu-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--cor-principal); }
         .back-btn {
             background: var(--cor-principal);
             color: white;
-            padding: 6px 12px;
+            padding: 6px 15px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: bold;
-            font-size: 0.75rem;
-            white-space: nowrap;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
         }
-        h1 { color: var(--cor-principal); margin: 0; font-size: 1rem; text-align: center; flex-grow: 1; }
+        h1 { color: var(--cor-principal); margin: 0; font-size: 1.1rem; text-align: center; flex-grow: 1; }
 
-        /* Sidebar */
+        /* Sidebar & Overlay */
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         .sidebar-item { display: block; padding: 12px 20px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; }
@@ -170,14 +174,14 @@
         <a href="/jogos/4/" class="sidebar-item">👨‍🚀 4º Ano</a>
     </div>
 
-    <!-- Cabeçalho Fixo -->
+    <!-- Header Estático -->
     <header class="nav-bar">
         <button class="menu-btn" onclick="toggleMenu()">☰</button>
         <h1>🦒 Jogos da Pré</h1>
         <a href="index.html" class="back-btn">⬅ Voltar</a>
     </header>
 
-    <!-- Conteúdo com 5 Jogos -->
+    <!-- Main Scrollable -->
     <main class="main-content">
         <div class="games-grid">
             <div class="game-card">
@@ -205,10 +209,11 @@
                 <h2>Desenhar</h2>
                 <button class="play-btn">JOGAR</button>
             </div>
+            <!-- Podes adicionar mais jogos aqui para testar o scroll -->
         </div>
     </main>
 
-    <!-- Rodapé Fixo -->
+    <!-- Footer Estático -->
     <footer class="footer">
         Recursos Digitais Covão
     </footer>
