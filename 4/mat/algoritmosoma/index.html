@@ -31,7 +31,7 @@
         }
         .btn-voltar-3d:active { transform: translateY(3px); box-shadow: 0 0 0 #732d91; }
 
-        /* === SIDEBAR === */
+        /* === SIDEBAR (MENU HAMBÚRGUER COMPLETO) === */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
         .sidebar.active { left: 0; }
         .sidebar-item { text-decoration: none; color: #444; font-weight: bold; padding: 14px; border-radius: 12px; background: #f8f9fa; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; transition: 0.2s; }
@@ -47,6 +47,7 @@
         .title-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
         .title-row h2 { color: #2c3e50; font-size: 1.5rem; font-weight: 900; text-transform: uppercase; margin: 0; }
 
+        /* STATUS PANEL */
         .stats-panel { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 10px; flex-shrink: 0; }
         .stat-item { display: flex; align-items: center; gap: 5px; font-weight: bold; color: #2c3e50; font-size: 0.85rem; }
         .stars-container { display: flex; gap: 3px; }
@@ -54,6 +55,7 @@
         .star-svg.win { fill: #9b59b6; }
         .star-svg.lose { fill: #e74c3c; stroke: #e74c3c; }
 
+        /* GAME CARD */
         .game-card {
             background: white; border-radius: 20px;
             border-bottom: 6px solid #d4d4d4; box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
@@ -117,11 +119,17 @@
 </head>
 <body>
 
+    <!-- OVERLAY E SIDEBAR -->
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     <div class="sidebar" id="sidebar">
         <h3 style="margin-bottom: 15px;">Navegação</h3>
         <nav class="sidebar-menu">
-            <a href="#" class="sidebar-item" onclick="resetToMenu()">🏠 Início</a>
+            <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+            <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
+            <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
+            <a href="/jogos/2/" class="sidebar-item">🐢 2º Ano</a>
+            <a href="/jogos/3/" class="sidebar-item">🦊 3º Ano</a>
+            <a href="/jogos/4/" class="sidebar-item">👨‍🚀 4º Ano</a>
         </nav>
         <button onclick="toggleMenu()" style="margin-top:auto; padding:10px; border:none; background:#eee; cursor:pointer; font-weight:bold; border-radius:8px;">Fechar ×</button>
     </div>
@@ -141,7 +149,7 @@
                     <span style="font-size: 1.8rem;">➕</span>
                     <h2 id="display-title">Soma Armada</h2>
                 </div>
-                <p id="instrucao" style="margin-bottom: 10px; font-weight: bold; color: #555; font-size: 0.85rem;">Resolve o algoritmo. O "levou um" aparece quando precisares!</p>
+                <p id="instrucao" style="margin-bottom: 10px; font-weight: bold; color: #555; font-size: 0.85rem;">Resolve o algoritmo. O "levou um" aparece no momento certo!</p>
             </div>
 
             <div class="stats-panel hidden" id="status-panel">
@@ -153,6 +161,7 @@
             </div>
             
             <div class="game-card">
+                <!-- MENU INICIAL -->
                 <div id="menu-categorias" class="category-grid">
                     <div class="cat-card" onclick="startChallenge(1000)"><span>Até</span><span>1 000</span></div>
                     <div class="cat-card" onclick="startChallenge(10000)"><span>Até</span><span>10 000</span></div>
@@ -160,6 +169,7 @@
                     <div class="cat-card" onclick="startChallenge(1000000)"><span>Até</span><span>1 000 000</span></div>
                 </div>
 
+                <!-- ÁREA DE JOGO -->
                 <div id="jogo-container" class="hidden">
                     <div class="level-txt" id="lvl-txt">Nível 1</div>
                     <div id="area-conta" class="math-operation"></div>
@@ -169,6 +179,7 @@
         </div>
     </main>
 
+    <!-- MODAL FINAL -->
     <div id="modal-feedback" class="modal">
         <div class="modal-content">
             <div id="f-emoji" style="font-size: 3rem;">🏆</div>
@@ -191,6 +202,7 @@
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
         }
+        
         function handleVoltar() { emJogo ? resetToMenu() : window.history.back(); }
 
         function resetToMenu() {
@@ -221,36 +233,10 @@
         function proxima() {
             if (perguntaAtual === 12) { finalizar(); return; }
             const nivel = Math.floor(perguntaAtual / 4) + 1;
-            const nomes = ["Sem transporte", "Com transporte", "Lacunas lógicas"];
+            const nomes = ["Sem transporte", "Com transporte", "Parcelas Ocultas"];
             document.getElementById('lvl-txt').innerText = `Nível ${nivel}: ${nomes[nivel-1]}`;
             if (perguntaAtual % 4 === 0) document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
             gerarAlgoritmo(nivel);
-        }
-
-        function gerarAlgoritmo(nivel) {
-            const container = document.getElementById('area-conta');
-            container.innerHTML = "";
-            const totalD = (limiteMax-1).toString().length;
-            let n1, n2, res;
-
-            if (nivel === 1) { // Sem transporte
-                do {
-                    n1 = Math.floor(Math.random() * (limiteMax * 0.45));
-                    n2 = Math.floor(Math.random() * (limiteMax * 0.45));
-                } while (detectCarry(n1, n2) || (n1+n2) < 10);
-            } else if (nivel === 2) { // Com transporte
-                do {
-                    n1 = Math.floor(Math.random() * (limiteMax * 0.45));
-                    n2 = Math.floor(Math.random() * (limiteMax * 0.45));
-                } while (!detectCarry(n1, n2));
-            } else { // Nível 3: Lacunas (Sem transporte para não confundir a lógica reversa)
-                do {
-                    n1 = Math.floor(Math.random() * (limiteMax * 0.45));
-                    n2 = Math.floor(Math.random() * (limiteMax * 0.45));
-                } while (detectCarry(n1, n2) || (n1+n2) < 10);
-            }
-            res = n1 + n2;
-            renderOperacao(n1, n2, res, nivel, totalD);
         }
 
         function detectCarry(a, b) {
@@ -261,21 +247,43 @@
             return false;
         }
 
-        function renderOperacao(n1, n2, res, nivel, totalD) {
+        function gerarAlgoritmo(nivel) {
+            const container = document.getElementById('area-conta');
+            container.innerHTML = "";
+            let n1, n2, res;
+
+            if (nivel === 1) { // Simples
+                do {
+                    n1 = Math.floor(Math.random() * (limiteMax * 0.45));
+                    n2 = Math.floor(Math.random() * (limiteMax * 0.45));
+                } while (detectCarry(n1, n2) || (n1+n2) < 10);
+            } else if (nivel === 2) { // Com Transporte
+                do {
+                    n1 = Math.floor(Math.random() * (limiteMax * 0.45)) + 10;
+                    n2 = Math.floor(Math.random() * (limiteMax * 0.45)) + 10;
+                } while (!detectCarry(n1, n2));
+            } else { // Lacunas nas parcelas (Lógica reversa sem transporte para facilitar)
+                do {
+                    n1 = Math.floor(Math.random() * (limiteMax * 0.45));
+                    n2 = Math.floor(Math.random() * (limiteMax * 0.45));
+                } while (detectCarry(n1, n2) || (n1+n2) < 100);
+            }
+            res = n1 + n2;
+            renderOperacao(n1, n2, res, nivel);
+        }
+
+        function renderOperacao(n1, n2, res, nivel) {
             const container = document.getElementById('area-conta');
             const resStr = res.toString();
             const viewLength = resStr.length;
-            
             let s1 = n1.toString().padStart(viewLength, ' ');
             let s2 = n2.toString().padStart(viewLength, ' ');
-            let sr = resStr;
 
-            // 1. Linha Transportes (Invisíveis no início)
+            // 1. Linha Transportes
             const rowC = document.createElement('div'); rowC.className = "row carry-row";
             for(let i=0; i < viewLength; i++) {
                 let cell = document.createElement('div'); cell.className = "digit-box";
                 let posMat = viewLength - 1 - i;
-                // O transporte aparece na coluna posMat se a soma da coluna posMat - 1 for >= 10
                 let d1_prev = parseInt(s1.split('').reverse()[posMat-1] || 0);
                 let d2_prev = parseInt(s2.split('').reverse()[posMat-1] || 0);
                 
@@ -284,7 +292,6 @@
                 input.id = `c-${i}`;
                 input.type = "tel"; input.maxLength = 1;
                 input.dataset.correct = (d1_prev + d2_prev >= 10) ? "1" : "0";
-                
                 cell.appendChild(input);
                 rowC.appendChild(cell);
             }
@@ -295,7 +302,7 @@
                 const row = document.createElement('div'); row.className = "row";
                 if(idx === 1) row.innerHTML += '<span class="plus-sign">+</span>';
                 for(let i=0; i < viewLength; i++) {
-                    let isGap = (nivel === 3 && s[i] !== ' ' && Math.random() > 0.5);
+                    let isGap = (nivel === 3 && s[i] !== ' ' && Math.random() > 0.4);
                     row.appendChild(createCell(s[i], isGap, `p${idx}-${i}`));
                 }
                 container.appendChild(row);
@@ -303,13 +310,12 @@
 
             container.appendChild(document.createElement('div')).className = "line";
 
-            // 3. Resultado (Lacunas no Nível 1 e 2)
+            // 3. Resultado
             const rowR = document.createElement('div'); rowR.className = "row";
             for(let i=0; i < viewLength; i++) {
                 let isGap = (nivel < 3);
-                let cell = createCell(sr[i], isGap, `r-${i}`);
+                let cell = createCell(resStr[i], isGap, `r-${i}`);
                 if(isGap) {
-                    // EVENTO: Mostrar transporte quando o utilizador escreve o resultado da coluna
                     cell.oninput = function() {
                         let posMat = viewLength - 1 - i;
                         let d1 = parseInt(s1.split('').reverse()[posMat] || 0);
@@ -344,7 +350,6 @@
             let inputs = document.querySelectorAll('.math-input, .carry-input.visible');
             let erro = false;
             
-            // Validar todos os campos visíveis
             inputs.forEach(input => {
                 let val = input.value.trim() || (input.classList.contains('carry-input') ? "0" : "");
                 if(val === input.dataset.correct) {
@@ -357,7 +362,7 @@
                 input.disabled = true;
             });
 
-            // Verificar se faltou ativar algum transporte obrigatório no Nível 2
+            // Se no Nível 2 faltar um transporte obrigatório
             if(Math.floor(perguntaAtual / 4) + 1 === 2) {
                 document.querySelectorAll('.carry-input').forEach(c => {
                     if(c.dataset.correct === "1" && !c.classList.contains('visible')) erro = true;
@@ -377,13 +382,12 @@
 
         function finalizar() {
             clearInterval(timer);
-            const totalC = stats.l1.c + stats.l2.c + stats.l3.c;
             document.getElementById('stats-body').innerHTML = `
                 <tr><td>Nível 1 (Simples)</td><td>${stats.l1.c} / 4</td></tr>
                 <tr><td>Nível 2 (Transporte)</td><td>${stats.l2.c} / 4</td></tr>
                 <tr><td>Nível 3 (Parcelas)</td><td>${stats.l3.c} / 4</td></tr>
             `;
-            document.getElementById('f-texto').innerText = "Categoria: " + limiteMax.toLocaleString('pt-PT');
+            document.getElementById('f-texto').innerText = "Categoria: Até " + limiteMax.toLocaleString('pt-PT');
             document.getElementById('modal-feedback').style.display = 'flex';
         }
     </script>
