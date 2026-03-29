@@ -69,40 +69,47 @@
         }
 
         /* CONTEÚDO DO ALGORITMO */
-        #jogo-container { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 20px; }
-        .level-indicator { font-weight: 900; color: #9b59b6; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* ESTILO DA CONTA ARMADA */
+        #jogo-container { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; }
+        
         .math-operation {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 3rem; font-weight: 900; color: #2c3e50;
+            font-family: 'Segoe UI', monospace;
             display: flex; flex-direction: column; align-items: flex-end;
-            padding: 20px; position: relative;
+            padding: 10px; position: relative;
         }
-        .row { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 5px; height: 60px; align-items: center; }
-        .digit { width: 45px; text-align: center; }
-        .line { border-bottom: 5px solid #2c3e50; width: 100%; margin: 5px 0; }
-        .plus-sign { position: absolute; left: -50px; bottom: 85px; font-size: 2.5rem; color: #9b59b6; }
+        
+        .row { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 5px; height: 50px; align-items: center; }
+        .carry-row { height: 35px; margin-bottom: 0; }
 
-        /* LACUNAS (INPUTS) */
+        .digit-box { width: 45px; text-align: center; font-size: 2.2rem; font-weight: 900; color: #2c3e50; }
+        
+        /* TRANSPORTE (LEVOU UM) */
+        .carry-input {
+            width: 30px; height: 30px; border: 1.5px dashed #e74c3c; border-radius: 5px;
+            text-align: center; font-size: 1.1rem; color: #e74c3c; font-weight: bold; background: #fff1f1;
+        }
+        .carry-val { font-size: 1.1rem; color: #e74c3c; font-weight: bold; width: 30px; text-align: center; }
+
+        .line { border-bottom: 4px solid #2c3e50; width: 100%; margin: 5px 0; }
+        .plus-sign { position: absolute; left: -40px; bottom: 75px; font-size: 2rem; color: #9b59b6; font-weight: 900; }
+
+        /* LACUNAS PRINCIPAIS */
         .digit-input {
-            width: 45px; height: 55px; border: 3px solid #9b59b6; border-radius: 8px;
-            text-align: center; font-size: 2.5rem; font-family: inherit; font-weight: 900;
+            width: 45px; height: 45px; border: 2.5px solid #9b59b6; border-radius: 8px;
+            text-align: center; font-size: 1.8rem; font-weight: 900;
             background: #fdfaff; color: #9b59b6; outline: none;
         }
-        .digit-input:focus { background: #fff; border-color: #2c3e50; }
 
         .btn-check {
-            margin-top: 20px; padding: 12px 40px; font-size: 1.2rem;
+            padding: 12px 40px; font-size: 1.1rem;
             background-color: #2ecc71; color: white; border-radius: 12px;
-            border: none; border-bottom: 4px solid #27ae60; cursor: pointer; font-weight: 800;
+            border: none; border-bottom: 4px solid #27ae60; cursor: pointer; font-weight: 800; margin-bottom: 10px;
         }
-        .btn-check:active { transform: translateY(3px); border-bottom: 0; }
 
         /* FEEDBACKS */
-        .correct-bg { background-color: #eafaf1 !important; }
-        .wrong-bg { background-color: #fdeaeb !important; animation: shake 0.4s; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .correct-f { background-color: #eafaf1 !important; border-color: #2ecc71 !important; }
+        .wrong-f { background-color: #fdeaeb !important; border-color: #e74c3c !important; }
+
+        .hidden { display: none !important; }
 
         /* MODAIS */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(3px); }
@@ -146,10 +153,10 @@
             <div class="main-title">
                 <div class="title-row">
                     <span style="font-size: 2rem;">➕</span>
-                    <h2 id="display-title">A Soma Armada</h2>
+                    <h2 id="display-title">Soma Armada</h2>
                     <button class="btn-info" onclick="openInfo()">💡</button>
                 </div>
-                <p style="margin-top: 2px; margin-bottom: 15px; font-weight: bold; color: #555; font-size: 0.95rem;">Preenche os algarismos que faltam na conta.</p>
+                <p style="margin-top: 2px; margin-bottom: 10px; font-weight: bold; color: #555; font-size: 0.95rem;">Resolve o algoritmo e não esqueças o transporte!</p>
             </div>
 
             <div class="stats-panel">
@@ -162,10 +169,10 @@
             
             <div class="game-card">
                 <div id="jogo-container">
-                    <div class="level-indicator" id="lvl-txt">Nível 1</div>
+                    <div class="level-indicator" id="lvl-txt">Fase 1: Resultados</div>
 
                     <div id="area-conta" class="math-operation">
-                        <!-- Gerado via JS -->
+                        <!-- Gerado dinamicamente -->
                     </div>
 
                     <button class="btn-check" id="btn-verificar" onclick="verificar()">Verificar</button>
@@ -178,9 +185,9 @@
         <div class="modal-content">
             <h2 style="color: #9b59b6;">Como Jogar</h2>
             <p style="text-align: left; font-size: 0.9rem; margin: 15px 0;">
-                • <b>Nível 1:</b> Calcula o resultado final da soma algarismo a algarismo.<br>
-                • <b>Nível 2:</b> Descobre os números que faltam nas parcelas ou no resultado.<br>
-                Clica em verificar quando terminares!
+                • Preenche os quadrados com os algarismos em falta.<br>
+                • Os quadrados <b>pequenos e vermelhos</b> no topo servem para o <b>transporte</b> (quando a soma dá 10 ou mais).<br>
+                • No Nível 2, tens de descobrir os números que foram somados!
             </p>
             <button class="btn-voltar-3d" style="width:100%" onclick="closeInfo()">Entendido!</button>
         </div>
@@ -192,7 +199,7 @@
             <h2 id="f-titulo">Resultado Final</h2>
             <p id="f-texto" style="margin: 10px 0; color: #9b59b6; font-weight: 900;"></p>
             <table class="stats-table">
-                <thead><tr><th>Nível</th><th>Acertos</th><th>Erros</th></tr></thead>
+                <thead><tr><th>Categoria</th><th>Acertos</th><th>Erros</th></tr></thead>
                 <tbody id="stats-body"></tbody>
             </table>
             <button class="btn-voltar-3d" style="width:100%" onclick="location.reload()">Jogar Novamente</button>
@@ -204,7 +211,6 @@
     <script>
         let perguntaAtual = 0, pontos = 0, segs = 0, timer;
         let stats = { l1: {c:0, w:0}, l2: {c:0, w:0} };
-        let currentAnswers = []; // Armazena os valores corretos das lacunas
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -212,7 +218,7 @@
         }
         function openInfo() { document.getElementById('modal-info').style.display = 'flex'; }
         function closeInfo() { document.getElementById('modal-info').style.display = 'none'; }
-        function handleVoltar() { window.location.href = '../'; }
+        function handleVoltar() { window.history.back(); }
 
         function startTimer() {
             timer = setInterval(() => {
@@ -226,95 +232,110 @@
         function proximaPergunta() {
             if (perguntaAtual === 10) { finalizar(); return; }
             const nivel = Math.floor(perguntaAtual / 5) + 1;
-            document.getElementById('lvl-txt').innerText = "Nível " + nivel;
+            document.getElementById('lvl-txt').innerText = nivel === 1 ? "Fase 1: Resultados" : "Fase 2: Parcelas";
             if (perguntaAtual % 5 === 0) document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
-            
             gerarOperacao(nivel);
         }
 
         function gerarOperacao(nivel) {
             const container = document.getElementById('area-conta');
             container.innerHTML = "";
-            currentAnswers = [];
 
-            // Gerar números base
             let n1 = Math.floor(Math.random() * 800) + 100;
             let n2 = Math.floor(Math.random() * 800) + 100;
             let res = n1 + n2;
 
+            // Calcular Transportes
+            let c10 = (n1%10 + n2%10) >= 10 ? 1 : 0;
+            let c100 = (Math.floor(n1/10)%10 + Math.floor(n2/10)%10 + c10) >= 10 ? 1 : 0;
+            let c1000 = (Math.floor(n1/100)%10 + Math.floor(n2/100)%10 + c100) >= 10 ? 1 : 0;
+
             let s1 = n1.toString().padStart(4, ' ');
             let s2 = n2.toString().padStart(4, ' ');
             let sr = res.toString().padStart(4, ' ');
+            let carries = [c1000, c100, c10, 0];
 
-            // Criar Linha 1
-            const row1 = document.createElement('div'); row1.className = "row";
-            for(let i=0; i<4; i++) row1.appendChild(createCell(s1[i], i, 'p1', nivel));
-            
-            // Criar Linha 2
-            const row2 = document.createElement('div'); row2.className = "row";
-            row2.innerHTML = '<span class="plus-sign">+</span>';
-            for(let i=0; i<4; i++) row2.appendChild(createCell(s2[i], i, 'p2', nivel));
+            // 1. Linha de Transportes
+            const rowC = document.createElement('div'); rowC.className = "row carry-row";
+            for(let i=0; i<4; i++) {
+                let cell = document.createElement('div'); cell.className = "digit-box";
+                if(carries[i] === 1 || (i<3 && carries[i+1] === 1)) {
+                    let input = document.createElement('input');
+                    input.className = "carry-input math-input";
+                    input.dataset.correct = carries[i];
+                    input.type = "tel";
+                    cell.appendChild(input);
+                }
+                rowC.appendChild(cell);
+            }
+            container.appendChild(rowC);
 
-            // Criar Linha Resultado
-            const rowR = document.createElement('div'); rowR.className = "row";
-            for(let i=0; i<4; i++) rowR.appendChild(createCell(sr[i], i, 'res', nivel));
+            // 2. Linhas das Parcelas
+            const rowsP = [s1, s2];
+            rowsP.forEach((s, idx) => {
+                const row = document.createElement('div'); row.className = "row";
+                if(idx === 1) row.innerHTML += '<span class="plus-sign">+</span>';
+                for(let i=0; i<4; i++) {
+                    let isGap = (nivel === 2 && s[i] !== ' ' && Math.random() > 0.5);
+                    row.appendChild(createDigit(s[i], isGap));
+                }
+                container.appendChild(row);
+            });
 
-            container.appendChild(row1);
-            container.appendChild(row2);
             container.appendChild(document.createElement('div')).className = "line";
+
+            // 3. Linha do Resultado
+            const rowR = document.createElement('div'); rowR.className = "row";
+            for(let i=0; i<4; i++) {
+                let isGap = (nivel === 1 && sr[i] !== ' ');
+                rowR.appendChild(createDigit(sr[i], isGap));
+            }
             container.appendChild(rowR);
 
             document.getElementById('btn-verificar').disabled = false;
         }
 
-        function createCell(char, idx, tipo, nivel) {
-            const span = document.createElement('span');
-            span.className = "digit";
-            if (char === ' ') return span;
-
-            let isGap = false;
-            if (nivel === 1) {
-                if (tipo === 'res') isGap = true; // Nível 1: Lacunas só no resultado
-            } else {
-                // Nível 2: Lacunas aleatórias (parcelas ou resultado)
-                if (Math.random() > 0.6) isGap = true;
-            }
-
-            if (isGap) {
+        function createDigit(val, isGap) {
+            const cell = document.createElement('div'); cell.className = "digit-box";
+            if(val === ' ') return cell;
+            if(isGap) {
                 const input = document.createElement('input');
-                input.type = "tel"; // Abre teclado numérico no mobile
+                input.className = "digit-input math-input";
+                input.dataset.correct = val;
+                input.type = "tel";
                 input.maxLength = 1;
-                input.className = "digit-input";
-                input.dataset.correct = char;
-                currentAnswers.push(input);
-                return input;
+                cell.appendChild(input);
             } else {
-                span.innerText = char;
-                return span;
+                cell.innerText = val;
             }
+            return cell;
         }
 
         function verificar() {
-            let acertosNoInput = 0;
-            let inputs = document.querySelectorAll('.digit-input');
+            let inputs = document.querySelectorAll('.math-input');
+            let erro = false;
             
             inputs.forEach(input => {
-                if (input.value === input.dataset.correct) {
-                    input.classList.add('correct-bg');
-                    acertosNoInput++;
+                let val = input.value.trim();
+                let correct = input.dataset.correct;
+                // Considerar campo vazio como 0 para transportes
+                if(input.classList.contains('carry-input') && val === "") val = "0";
+
+                if (val === correct) {
+                    input.classList.add('correct-f');
                 } else {
-                    input.classList.add('wrong-bg');
-                    input.value = input.dataset.correct; // Mostra a correta
+                    input.classList.add('wrong-f');
+                    input.value = correct;
+                    erro = true;
                 }
                 input.disabled = true;
             });
 
             document.getElementById('btn-verificar').disabled = true;
-
             const nivelIndex = Math.floor(perguntaAtual / 5) + 1;
             const star = document.getElementById('star-' + (perguntaAtual % 5));
 
-            if (acertosNoInput === inputs.length) {
+            if (!erro) {
                 stats['l'+nivelIndex].c++; pontos += nivelIndex * 10;
                 star.classList.add('win');
             } else {
@@ -324,23 +345,23 @@
 
             document.getElementById('score').innerText = pontos;
             perguntaAtual++;
-            setTimeout(proximaPergunta, 2000);
+            setTimeout(proximaPergunta, 2500);
         }
 
         function finalizar() {
             clearInterval(timer);
             const totalC = stats.l1.c + stats.l2.c;
             let emoji, titulo, texto;
-            if (totalC < 5) { emoji = "⚙️"; titulo = "Continua a praticar!"; texto = "O algoritmo da soma requer paciência."; }
-            else if (totalC <= 8) { emoji = "💡"; titulo = "Muito bem!"; texto = "Estás a dominar bem as contas armadas."; }
-            else { emoji = "🏆"; titulo = "Incrível!"; texto = "És um mestre da calculadora humana!"; }
+            if (totalC < 5) { emoji = "⚙️"; titulo = "Continua a praticar!"; texto = "O algoritmo da soma requer atenção aos detalhes."; }
+            else if (totalC <= 8) { emoji = "💡"; titulo = "Muito bem!"; texto = "Dominas bem o processo do transporte."; }
+            else { emoji = "🏆"; titulo = "Incrível!"; texto = "És um mestre da aritmética!"; }
 
             document.getElementById('f-emoji').innerText = emoji;
             document.getElementById('f-titulo').innerText = titulo;
             document.getElementById('f-texto').innerText = texto;
             document.getElementById('stats-body').innerHTML = `
-                <tr><td>Nível 1 (Resultados)</td><td>${stats.l1.c}</td><td>${stats.l1.w}</td></tr>
-                <tr><td>Nível 2 (Misto)</td><td>${stats.l2.c}</td><td>${stats.l2.w}</td></tr>
+                <tr><td>Fase 1 (Resultados)</td><td>${stats.l1.c}</td><td>${stats.l1.w}</td></tr>
+                <tr><td>Fase 2 (Parcelas)</td><td>${stats.l2.c}</td><td>${stats.l2.w}</td></tr>
             `;
             document.getElementById('modal-feedback').style.display = 'flex';
         }
