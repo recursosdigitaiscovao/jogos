@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Algoritmo da Soma - Matemática</title>
+    <title>Soma Armada - Matemática</title>
     <style>
         /* === ESTILOS GLOBAIS (TEMPLATE RIGOROSO) === */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -68,46 +68,53 @@
             align-items: center; justify-content: center; overflow: hidden; position: relative;
         }
 
-        /* CONTEÚDO DO ALGORITMO */
+        /* MENU CATEGORIAS */
+        .category-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; height: 100%; padding: 40px; }
+        .cat-card {
+            background: #fdfaff; border: 2px solid #ecdff5; border-radius: 15px;
+            cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; box-shadow: 0 4px 0 #ecdff5; padding: 15px; height: 100%;
+        }
+        .cat-card:active { transform: translateY(2px); box-shadow: 0 0 0 #ecdff5; }
+        .cat-card span:first-child { font-size: 0.8rem; color: #7f8c8d; font-weight: bold; }
+        .cat-card span:last-child { font-size: clamp(1.1rem, 3vw, 1.4rem); font-weight: 900; color: #9b59b6; margin-top: 5px; }
+
+        /* JOGO */
         #jogo-container { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; }
-        
+        .level-indicator { font-weight: 900; color: #9b59b6; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* ALGORITMO VERTICAL */
         .math-operation {
             font-family: 'Segoe UI', monospace;
             display: flex; flex-direction: column; align-items: flex-end;
             padding: 10px; position: relative;
         }
+        .row { display: flex; justify-content: flex-end; gap: 5px; margin-bottom: 3px; height: 50px; align-items: center; }
+        .carry-row { height: 32px; margin-bottom: 0; }
+        .digit-box { width: 42px; text-align: center; font-size: 2.2rem; font-weight: 900; color: #2c3e50; }
         
-        .row { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 5px; height: 50px; align-items: center; }
-        .carry-row { height: 35px; margin-bottom: 0; }
+        .line { border-bottom: 4px solid #2c3e50; width: 100%; margin: 5px 0; }
+        .plus-sign { position: absolute; left: -45px; bottom: 70px; font-size: 2rem; color: #9b59b6; font-weight: 900; }
 
-        .digit-box { width: 45px; text-align: center; font-size: 2.2rem; font-weight: 900; color: #2c3e50; }
-        
-        /* TRANSPORTE (LEVOU UM) */
+        /* INPUTS */
+        .digit-input {
+            width: 42px; height: 45px; border: 2.5px solid #9b59b6; border-radius: 8px;
+            text-align: center; font-size: 1.8rem; font-weight: 900; background: #fdfaff; color: #9b59b6; outline: none;
+        }
         .carry-input {
             width: 30px; height: 30px; border: 1.5px dashed #e74c3c; border-radius: 5px;
             text-align: center; font-size: 1.1rem; color: #e74c3c; font-weight: bold; background: #fff1f1;
         }
-        .carry-val { font-size: 1.1rem; color: #e74c3c; font-weight: bold; width: 30px; text-align: center; }
-
-        .line { border-bottom: 4px solid #2c3e50; width: 100%; margin: 5px 0; }
-        .plus-sign { position: absolute; left: -40px; bottom: 75px; font-size: 2rem; color: #9b59b6; font-weight: 900; }
-
-        /* LACUNAS PRINCIPAIS */
-        .digit-input {
-            width: 45px; height: 45px; border: 2.5px solid #9b59b6; border-radius: 8px;
-            text-align: center; font-size: 1.8rem; font-weight: 900;
-            background: #fdfaff; color: #9b59b6; outline: none;
-        }
 
         .btn-check {
-            padding: 12px 40px; font-size: 1.1rem;
+            padding: 12px 45px; font-size: 1.1rem;
             background-color: #2ecc71; color: white; border-radius: 12px;
-            border: none; border-bottom: 4px solid #27ae60; cursor: pointer; font-weight: 800; margin-bottom: 10px;
+            border: none; border-bottom: 4px solid #27ae60; cursor: pointer; font-weight: 800; margin-top: 10px;
         }
 
-        /* FEEDBACKS */
         .correct-f { background-color: #eafaf1 !important; border-color: #2ecc71 !important; }
-        .wrong-f { background-color: #fdeaeb !important; border-color: #e74c3c !important; }
+        .wrong-f { background-color: #fdeaeb !important; border-color: #e74c3c !important; animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
         .hidden { display: none !important; }
 
@@ -142,7 +149,7 @@
     <header>
         <div class="header-left">
             <div class="menu-icon" onclick="toggleMenu()" style="cursor:pointer; font-size: 1.5rem;">☰</div>
-            <h1><span class="header-icon">👨‍🚀</span> Algoritmo da Soma</h1>
+            <h1><span class="header-icon">👨‍🚀</span> Menu Matemática</h1>
         </div>
         <button onclick="handleVoltar()" class="btn-voltar-3d">⬅ Voltar</button>
     </header>
@@ -156,10 +163,10 @@
                     <h2 id="display-title">Soma Armada</h2>
                     <button class="btn-info" onclick="openInfo()">💡</button>
                 </div>
-                <p style="margin-top: 2px; margin-bottom: 10px; font-weight: bold; color: #555; font-size: 0.95rem;">Resolve o algoritmo e não esqueças o transporte!</p>
+                <p style="margin-top: 2px; margin-bottom: 10px; font-weight: bold; color: #555; font-size: 0.95rem;">Resolve o algoritmo. Atenção ao transporte!</p>
             </div>
 
-            <div class="stats-panel">
+            <div class="stats-panel hidden" id="status-panel">
                 <div class="stat-item">⏱️ <span id="timer">00:00</span></div>
                 <div class="stars-container" id="stars-row">
                     <script>for(let i=0; i<5; i++) document.write('<svg class="star-svg" id="star-'+i+'" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>');</script>
@@ -168,13 +175,18 @@
             </div>
             
             <div class="game-card">
-                <div id="jogo-container">
-                    <div class="level-indicator" id="lvl-txt">Fase 1: Resultados</div>
+                <!-- MENU INICIAL -->
+                <div id="menu-categorias" class="category-grid">
+                    <div class="cat-card" onclick="startChallenge(1000)"><span>Números até</span><span>1 000</span></div>
+                    <div class="cat-card" onclick="startChallenge(10000)"><span>Números até</span><span>10 000</span></div>
+                    <div class="cat-card" onclick="startChallenge(100000)"><span>Números até</span><span>100 000</span></div>
+                    <div class="cat-card" onclick="startChallenge(1000000)"><span>Números até</span><span>1 000 000</span></div>
+                </div>
 
-                    <div id="area-conta" class="math-operation">
-                        <!-- Gerado dinamicamente -->
-                    </div>
-
+                <!-- JOGO -->
+                <div id="jogo-container" class="hidden">
+                    <div class="level-indicator" id="lvl-txt">Fase 1</div>
+                    <div id="area-conta" class="math-operation"></div>
                     <button class="btn-check" id="btn-verificar" onclick="verificar()">Verificar</button>
                 </div>
             </div>
@@ -185,9 +197,10 @@
         <div class="modal-content">
             <h2 style="color: #9b59b6;">Como Jogar</h2>
             <p style="text-align: left; font-size: 0.9rem; margin: 15px 0;">
-                • Preenche os quadrados com os algarismos em falta.<br>
-                • Os quadrados <b>pequenos e vermelhos</b> no topo servem para o <b>transporte</b> (quando a soma dá 10 ou mais).<br>
-                • No Nível 2, tens de descobrir os números que foram somados!
+                • Resolve a conta armada preenchendo as lacunas.<br>
+                • Os quadrados <b>pequenos a vermelho</b> surgem apenas quando o transporte é necessário.<br>
+                • <b>Fase 1:</b> Descobre o resultado.<br>
+                • <b>Fase 2:</b> Descobre a parcela em falta.
             </p>
             <button class="btn-voltar-3d" style="width:100%" onclick="closeInfo()">Entendido!</button>
         </div>
@@ -196,20 +209,20 @@
     <div id="modal-feedback" class="modal">
         <div class="modal-content">
             <div id="f-emoji" style="font-size: 3.5rem;">🏆</div>
-            <h2 id="f-titulo">Resultado Final</h2>
+            <h2 id="f-titulo">Fim do Desafio</h2>
             <p id="f-texto" style="margin: 10px 0; color: #9b59b6; font-weight: 900;"></p>
             <table class="stats-table">
-                <thead><tr><th>Categoria</th><th>Acertos</th><th>Erros</th></tr></thead>
+                <thead><tr><th>Fase</th><th>Acertos</th><th>Erros</th></tr></thead>
                 <tbody id="stats-body"></tbody>
             </table>
-            <button class="btn-voltar-3d" style="width:100%" onclick="location.reload()">Jogar Novamente</button>
+            <button class="btn-voltar-3d" style="width:100%" onclick="resetToMenu()">Jogar Novamente</button>
         </div>
     </div>
 
     <footer>Recursos Digitais Covão - Professor Luís</footer>
 
     <script>
-        let perguntaAtual = 0, pontos = 0, segs = 0, timer;
+        let perguntaAtual = 0, pontos = 0, segs = 0, timer, limiteMax = 0, emJogo = false;
         let stats = { l1: {c:0, w:0}, l2: {c:0, w:0} };
 
         function toggleMenu() {
@@ -218,9 +231,35 @@
         }
         function openInfo() { document.getElementById('modal-info').style.display = 'flex'; }
         function closeInfo() { document.getElementById('modal-info').style.display = 'none'; }
-        function handleVoltar() { window.history.back(); }
+        
+        function handleVoltar() {
+            if (emJogo) resetToMenu();
+            else window.location.href = '../';
+        }
+
+        function resetToMenu() {
+            clearInterval(timer);
+            emJogo = false;
+            document.getElementById('menu-categorias').classList.remove('hidden');
+            document.getElementById('jogo-container').classList.add('hidden');
+            document.getElementById('status-panel').classList.add('hidden');
+            document.getElementById('modal-feedback').style.display = 'none';
+        }
+
+        function startChallenge(max) {
+            limiteMax = max; emJogo = true;
+            perguntaAtual = 0; pontos = 0; segs = 0;
+            stats = { l1: {c:0, w:0}, l2: {c:0, w:0} };
+            document.getElementById('menu-categorias').classList.add('hidden');
+            document.getElementById('jogo-container').classList.remove('hidden');
+            document.getElementById('status-panel').classList.remove('hidden');
+            document.getElementById('score').innerText = "0";
+            startTimer();
+            proxima();
+        }
 
         function startTimer() {
+            clearInterval(timer);
             timer = setInterval(() => {
                 segs++;
                 let m = Math.floor(segs / 60).toString().padStart(2, '0');
@@ -229,81 +268,87 @@
             }, 1000);
         }
 
-        function proximaPergunta() {
+        function proxima() {
             if (perguntaAtual === 10) { finalizar(); return; }
-            const nivel = Math.floor(perguntaAtual / 5) + 1;
-            document.getElementById('lvl-txt').innerText = nivel === 1 ? "Fase 1: Resultados" : "Fase 2: Parcelas";
+            const fase = Math.floor(perguntaAtual / 5) + 1;
+            document.getElementById('lvl-txt').innerText = "Fase " + fase + (fase === 1 ? ": Resultado" : ": Parcelas");
             if (perguntaAtual % 5 === 0) document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
-            gerarOperacao(nivel);
+            gerarAlgoritmo(fase);
         }
 
-        function gerarOperacao(nivel) {
+        function gerarAlgoritmo(fase) {
             const container = document.getElementById('area-conta');
             container.innerHTML = "";
 
-            let n1 = Math.floor(Math.random() * 800) + 100;
-            let n2 = Math.floor(Math.random() * 800) + 100;
+            const totalDigitos = limiteMax.toString().length;
+            let n1 = Math.floor(Math.random() * (limiteMax * 0.4)) + Math.floor(limiteMax * 0.1);
+            let n2 = Math.floor(Math.random() * (limiteMax * 0.4)) + Math.floor(limiteMax * 0.1);
             let res = n1 + n2;
 
-            // Calcular Transportes
-            let c10 = (n1%10 + n2%10) >= 10 ? 1 : 0;
-            let c100 = (Math.floor(n1/10)%10 + Math.floor(n2/10)%10 + c10) >= 10 ? 1 : 0;
-            let c1000 = (Math.floor(n1/100)%10 + Math.floor(n2/100)%10 + c100) >= 10 ? 1 : 0;
+            // Logica de Transporte
+            let s1_arr = n1.toString().split('').reverse();
+            let s2_arr = n2.toString().split('').reverse();
+            let carries = []; 
+            let carry = 0;
+            for(let i=0; i<totalDigitos; i++) {
+                let d1 = parseInt(s1_arr[i] || 0);
+                let d2 = parseInt(s2_arr[i] || 0);
+                carry = (d1 + d2 + carry) >= 10 ? 1 : 0;
+                carries[i+1] = carry; 
+            }
 
-            let s1 = n1.toString().padStart(4, ' ');
-            let s2 = n2.toString().padStart(4, ' ');
-            let sr = res.toString().padStart(4, ' ');
-            let carries = [c1000, c100, c10, 0];
+            let s1 = n1.toString().padStart(totalDigitos, ' ');
+            let s2 = n2.toString().padStart(totalDigitos, ' ');
+            let sr = res.toString().padStart(totalDigitos, ' ');
 
-            // 1. Linha de Transportes
+            // Linha Transporte
             const rowC = document.createElement('div'); rowC.className = "row carry-row";
-            for(let i=0; i<4; i++) {
+            for(let i=0; i<totalDigitos; i++) {
                 let cell = document.createElement('div'); cell.className = "digit-box";
-                if(carries[i] === 1 || (i<3 && carries[i+1] === 1)) {
+                let pos = totalDigitos - 1 - i;
+                if(carries[pos+1] === 1) {
                     let input = document.createElement('input');
                     input.className = "carry-input math-input";
-                    input.dataset.correct = carries[i];
-                    input.type = "tel";
+                    input.dataset.correct = "1";
+                    input.type = "tel"; input.maxLength = 1;
                     cell.appendChild(input);
                 }
                 rowC.appendChild(cell);
             }
             container.appendChild(rowC);
 
-            // 2. Linhas das Parcelas
+            // Parcelas
             const rowsP = [s1, s2];
             rowsP.forEach((s, idx) => {
                 const row = document.createElement('div'); row.className = "row";
                 if(idx === 1) row.innerHTML += '<span class="plus-sign">+</span>';
-                for(let i=0; i<4; i++) {
-                    let isGap = (nivel === 2 && s[i] !== ' ' && Math.random() > 0.5);
-                    row.appendChild(createDigit(s[i], isGap));
+                for(let i=0; i<totalDigitos; i++) {
+                    let isGap = (fase === 2 && s[i] !== ' ' && Math.random() > 0.4);
+                    row.appendChild(createCell(s[i], isGap));
                 }
                 container.appendChild(row);
             });
 
             container.appendChild(document.createElement('div')).className = "line";
 
-            // 3. Linha do Resultado
+            // Resultado
             const rowR = document.createElement('div'); rowR.className = "row";
-            for(let i=0; i<4; i++) {
-                let isGap = (nivel === 1 && sr[i] !== ' ');
-                rowR.appendChild(createDigit(sr[i], isGap));
+            for(let i=0; i<totalDigitos; i++) {
+                let isGap = (fase === 1 && sr[i] !== ' ');
+                rowR.appendChild(createCell(sr[i], isGap));
             }
             container.appendChild(rowR);
-
             document.getElementById('btn-verificar').disabled = false;
         }
 
-        function createDigit(val, isGap) {
+        function createCell(val, isGap) {
             const cell = document.createElement('div'); cell.className = "digit-box";
             if(val === ' ') return cell;
             if(isGap) {
                 const input = document.createElement('input');
                 input.className = "digit-input math-input";
                 input.dataset.correct = val;
-                input.type = "tel";
-                input.maxLength = 1;
+                input.type = "tel"; input.maxLength = 1;
                 cell.appendChild(input);
             } else {
                 cell.innerText = val;
@@ -314,59 +359,40 @@
         function verificar() {
             let inputs = document.querySelectorAll('.math-input');
             let erro = false;
-            
             inputs.forEach(input => {
                 let val = input.value.trim();
                 let correct = input.dataset.correct;
-                // Considerar campo vazio como 0 para transportes
                 if(input.classList.contains('carry-input') && val === "") val = "0";
-
-                if (val === correct) {
-                    input.classList.add('correct-f');
-                } else {
-                    input.classList.add('wrong-f');
-                    input.value = correct;
-                    erro = true;
-                }
+                if (val === correct) input.classList.add('correct-f');
+                else { input.classList.add('wrong-f'); input.value = correct; erro = true; }
                 input.disabled = true;
             });
 
             document.getElementById('btn-verificar').disabled = true;
-            const nivelIndex = Math.floor(perguntaAtual / 5) + 1;
+            const faseIndex = Math.floor(perguntaAtual / 5) + 1;
             const star = document.getElementById('star-' + (perguntaAtual % 5));
 
-            if (!erro) {
-                stats['l'+nivelIndex].c++; pontos += nivelIndex * 10;
-                star.classList.add('win');
-            } else {
-                stats['l'+nivelIndex].w++;
-                star.classList.add('lose');
-            }
+            if (!erro) { stats['l'+faseIndex].c++; pontos += faseIndex * 10; star.classList.add('win'); }
+            else { stats['l'+faseIndex].w++; star.classList.add('lose'); }
 
             document.getElementById('score').innerText = pontos;
             perguntaAtual++;
-            setTimeout(proximaPergunta, 2500);
+            setTimeout(proxima, 2500);
         }
 
         function finalizar() {
             clearInterval(timer);
             const totalC = stats.l1.c + stats.l2.c;
-            let emoji, titulo, texto;
-            if (totalC < 5) { emoji = "⚙️"; titulo = "Continua a praticar!"; texto = "O algoritmo da soma requer atenção aos detalhes."; }
-            else if (totalC <= 8) { emoji = "💡"; titulo = "Muito bem!"; texto = "Dominas bem o processo do transporte."; }
-            else { emoji = "🏆"; titulo = "Incrível!"; texto = "És um mestre da aritmética!"; }
-
+            let emoji = totalC > 7 ? "🏆" : "👏";
             document.getElementById('f-emoji').innerText = emoji;
-            document.getElementById('f-titulo').innerText = titulo;
-            document.getElementById('f-texto').innerText = texto;
+            document.getElementById('f-titulo').innerText = "Resultado Final";
+            document.getElementById('f-texto').innerText = "Categoria: " + limiteMax.toLocaleString('pt-PT');
             document.getElementById('stats-body').innerHTML = `
                 <tr><td>Fase 1 (Resultados)</td><td>${stats.l1.c}</td><td>${stats.l1.w}</td></tr>
                 <tr><td>Fase 2 (Parcelas)</td><td>${stats.l2.c}</td><td>${stats.l2.w}</td></tr>
             `;
             document.getElementById('modal-feedback').style.display = 'flex';
         }
-
-        window.onload = () => { startTimer(); proximaPergunta(); };
     </script>
 </body>
 </html>
