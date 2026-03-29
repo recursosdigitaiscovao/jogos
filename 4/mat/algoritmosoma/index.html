@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Soma Armada Interativa - Matemática</title>
+    <title>Soma Armada - Matemática</title>
     <style>
         /* === ESTILOS GLOBAIS (TEMPLATE RIGOROSO) === */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -31,7 +31,7 @@
         }
         .btn-voltar-3d:active { transform: translateY(3px); box-shadow: 0 0 0 #732d91; }
 
-        /* === SIDEBAR (MENU HAMBÚRGUER COMPLETO) === */
+        /* === SIDEBAR === */
         .sidebar { position: fixed; left: -280px; top: 0; width: 280px; height: 100%; background: white; z-index: 200; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.2); }
         .sidebar.active { left: 0; }
         .sidebar-item { text-decoration: none; color: #444; font-weight: bold; padding: 14px; border-radius: 12px; background: #f8f9fa; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; transition: 0.2s; }
@@ -46,6 +46,7 @@
         .main-title { text-align: center; flex-shrink: 0; }
         .title-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
         .title-row h2 { color: #2c3e50; font-size: 1.5rem; font-weight: 900; text-transform: uppercase; margin: 0; }
+        .btn-info { background: none; border: none; font-size: 1.8rem; cursor: pointer; display: flex; align-items: center; }
 
         /* STATUS PANEL */
         .stats-panel { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 10px; flex-shrink: 0; }
@@ -92,16 +93,18 @@
             text-align: center; font-size: 1.8rem; font-weight: 900; background: #fdfaff; color: #9b59b6; outline: none;
         }
         .carry-input {
-            width: 32px; height: 32px; border: 2px dashed #e74c3c; border-radius: 5px;
+            width: 32px; height: 32px; border: 2.2px dashed #e74c3c; border-radius: 5px;
             text-align: center; font-size: 1.1rem; color: #e74c3c; font-weight: 900; background: #fff1f1;
-            visibility: hidden; opacity: 0; transition: 0.3s;
+            visibility: hidden; opacity: 0; transition: 0.2s;
         }
         .carry-input.visible { visibility: visible; opacity: 1; }
 
+        /* BOTÃO VERIFICAR ROXO */
         .btn-check {
-            padding: 12px 45px; font-size: 1.1rem; background-color: #2ecc71; color: white; 
-            border-radius: 12px; border: none; border-bottom: 4px solid #27ae60; cursor: pointer; font-weight: 800;
+            padding: 12px 45px; font-size: 1.1rem; background-color: #9b59b6; color: white; 
+            border-radius: 12px; border: none; border-bottom: 4px solid #732d91; cursor: pointer; font-weight: 800;
         }
+        .btn-check:active { transform: translateY(3px); border-bottom: 0; }
 
         .correct-f { background-color: #eafaf1 !important; border-color: #2ecc71 !important; }
         .wrong-f { background-color: #fdeaeb !important; border-color: #e74c3c !important; }
@@ -110,7 +113,7 @@
 
         /* MODAIS */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(3px); }
-        .modal-content { background: white; padding: 20px; border-radius: 20px; text-align: center; width: 90%; max-width: 400px; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; text-align: center; width: 90%; max-width: 400px; }
         .stats-table { width: 100%; margin: 10px 0; border-collapse: collapse; }
         .stats-table td { padding: 8px; font-weight: bold; border-bottom: 1px solid #eee; }
 
@@ -119,17 +122,11 @@
 </head>
 <body>
 
-    <!-- OVERLAY E SIDEBAR -->
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     <div class="sidebar" id="sidebar">
         <h3 style="margin-bottom: 15px;">Navegação</h3>
         <nav class="sidebar-menu">
-            <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-            <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
-            <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
-            <a href="/jogos/2/" class="sidebar-item">🐢 2º Ano</a>
-            <a href="/jogos/3/" class="sidebar-item">🦊 3º Ano</a>
-            <a href="/jogos/4/" class="sidebar-item">👨‍🚀 4º Ano</a>
+            <a href="#" class="sidebar-item" onclick="resetToMenu()">🏠 Início</a>
         </nav>
         <button onclick="toggleMenu()" style="margin-top:auto; padding:10px; border:none; background:#eee; cursor:pointer; font-weight:bold; border-radius:8px;">Fechar ×</button>
     </div>
@@ -147,21 +144,21 @@
             <div class="main-title">
                 <div class="title-row">
                     <span style="font-size: 1.8rem;">➕</span>
-                    <h2 id="display-title">Soma Armada</h2>
+                    <h2 id="display-title">Algoritmo da Soma</h2>
+                    <button class="btn-info" onclick="openInfo()">💡</button>
                 </div>
-                <p id="instrucao" style="margin-bottom: 10px; font-weight: bold; color: #555; font-size: 0.85rem;">Resolve o algoritmo. O "levou um" aparece no momento certo!</p>
+                <p id="instrucao" style="margin-bottom: 10px; font-weight: bold; color: #555; font-size: 0.85rem;">Completa a operação armada. Atenção às unidades, dezenas e centenas!</p>
             </div>
 
             <div class="stats-panel hidden" id="status-panel">
                 <div class="stat-item">⏱️ <span id="timer">00:00</span></div>
                 <div class="stars-container" id="stars-row">
-                    <script>for(let i=0; i<4; i++) document.write('<svg class="star-svg" id="star-'+i+'" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>');</script>
+                    <script>for(let i=0; i<5; i++) document.write('<svg class="star-svg" id="star-'+i+'" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>');</script>
                 </div>
                 <div class="stat-item">Pontos: <span id="score">0</span></div>
             </div>
             
             <div class="game-card">
-                <!-- MENU INICIAL -->
                 <div id="menu-categorias" class="category-grid">
                     <div class="cat-card" onclick="startChallenge(1000)"><span>Até</span><span>1 000</span></div>
                     <div class="cat-card" onclick="startChallenge(10000)"><span>Até</span><span>10 000</span></div>
@@ -169,7 +166,6 @@
                     <div class="cat-card" onclick="startChallenge(1000000)"><span>Até</span><span>1 000 000</span></div>
                 </div>
 
-                <!-- ÁREA DE JOGO -->
                 <div id="jogo-container" class="hidden">
                     <div class="level-txt" id="lvl-txt">Nível 1</div>
                     <div id="area-conta" class="math-operation"></div>
@@ -179,11 +175,22 @@
         </div>
     </main>
 
-    <!-- MODAL FINAL -->
+    <div id="modal-info" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #9b59b6;">Como Resolver</h2>
+            <p style="text-align: left; font-size: 0.9rem; margin: 15px 0;">
+                • Soma os algarismos da direita para a esquerda.<br>
+                • <b>Nível 1:</b> Somas simples sem transporte.<br>
+                • <b>Nível 2:</b> Quando a soma de uma coluna é 10 ou mais, aparece o quadradinho vermelho em cima da próxima coluna para colocares o <b>transporte (levou-um)</b>.
+            </p>
+            <button class="btn-voltar-3d" style="width:100%" onclick="closeInfo()">Entendido!</button>
+        </div>
+    </div>
+
     <div id="modal-feedback" class="modal">
         <div class="modal-content">
             <div id="f-emoji" style="font-size: 3rem;">🏆</div>
-            <h2 id="f-titulo">Fim do Desafio</h2>
+            <h2 id="f-titulo">Resultado</h2>
             <p id="f-texto" style="color: #9b59b6; font-weight: 900;"></p>
             <table class="stats-table">
                 <tbody id="stats-body"></tbody>
@@ -196,13 +203,14 @@
 
     <script>
         let perguntaAtual = 0, pontos = 0, segs = 0, timer, limiteMax = 0, emJogo = false;
-        let stats = { l1: {c:0, w:0}, l2: {c:0, w:0}, l3: {c:0, w:0} };
+        let stats = { l1: {c:0, w:0}, l2: {c:0, w:0} };
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
         }
-        
+        function openInfo() { document.getElementById('modal-info').style.display = 'flex'; }
+        function closeInfo() { document.getElementById('modal-info').style.display = 'none'; }
         function handleVoltar() { emJogo ? resetToMenu() : window.history.back(); }
 
         function resetToMenu() {
@@ -215,7 +223,7 @@
 
         function startChallenge(max) {
             limiteMax = max; emJogo = true; perguntaAtual = 0; pontos = 0; segs = 0;
-            stats = { l1: {c:0, w:0}, l2: {c:0, w:0}, l3: {c:0, w:0} };
+            stats = { l1: {c:0, w:0}, l2: {c:0, w:0} };
             document.getElementById('menu-categorias').classList.add('hidden');
             document.getElementById('jogo-container').classList.remove('hidden');
             document.getElementById('status-panel').classList.remove('hidden');
@@ -231,18 +239,19 @@
         }
 
         function proxima() {
-            if (perguntaAtual === 12) { finalizar(); return; }
-            const nivel = Math.floor(perguntaAtual / 4) + 1;
-            const nomes = ["Sem transporte", "Com transporte", "Parcelas Ocultas"];
-            document.getElementById('lvl-txt').innerText = `Nível ${nivel}: ${nomes[nivel-1]}`;
-            if (perguntaAtual % 4 === 0) document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
+            if (perguntaAtual === 10) { finalizar(); return; }
+            const nivel = Math.floor(perguntaAtual / 5) + 1;
+            document.getElementById('lvl-txt').innerText = `Nível ${nivel}: ${nivel === 1 ? 'Sem transporte' : 'Com transporte'}`;
+            if (perguntaAtual % 5 === 0) document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
             gerarAlgoritmo(nivel);
         }
 
-        function detectCarry(a, b) {
+        function hasCarry(a, b) {
             let s1 = a.toString().split('').reverse(), s2 = b.toString().split('').reverse();
+            let c = 0;
             for(let i=0; i<Math.max(s1.length, s2.length); i++) {
-                if(parseInt(s1[i]||0) + parseInt(s2[i]||0) >= 10) return true;
+                if(parseInt(s1[i]||0) + parseInt(s2[i]||0) + c >= 10) return true;
+                c = (parseInt(s1[i]||0) + parseInt(s2[i]||0) + c >= 10) ? 1 : 0;
             }
             return false;
         }
@@ -250,36 +259,27 @@
         function gerarAlgoritmo(nivel) {
             const container = document.getElementById('area-conta');
             container.innerHTML = "";
-            let n1, n2, res;
+            let n1, n2;
 
-            if (nivel === 1) { // Simples
+            if (nivel === 1) {
                 do {
                     n1 = Math.floor(Math.random() * (limiteMax * 0.45));
                     n2 = Math.floor(Math.random() * (limiteMax * 0.45));
-                } while (detectCarry(n1, n2) || (n1+n2) < 10);
-            } else if (nivel === 2) { // Com Transporte
+                } while (hasCarry(n1, n2) || (n1+n2) < 10);
+            } else {
                 do {
                     n1 = Math.floor(Math.random() * (limiteMax * 0.45)) + 10;
                     n2 = Math.floor(Math.random() * (limiteMax * 0.45)) + 10;
-                } while (!detectCarry(n1, n2));
-            } else { // Lacunas nas parcelas (Lógica reversa sem transporte para facilitar)
-                do {
-                    n1 = Math.floor(Math.random() * (limiteMax * 0.45));
-                    n2 = Math.floor(Math.random() * (limiteMax * 0.45));
-                } while (detectCarry(n1, n2) || (n1+n2) < 100);
+                } while (!hasCarry(n1, n2));
             }
-            res = n1 + n2;
-            renderOperacao(n1, n2, res, nivel);
-        }
-
-        function renderOperacao(n1, n2, res, nivel) {
-            const container = document.getElementById('area-conta');
+            
+            const res = n1 + n2;
             const resStr = res.toString();
             const viewLength = resStr.length;
             let s1 = n1.toString().padStart(viewLength, ' ');
             let s2 = n2.toString().padStart(viewLength, ' ');
 
-            // 1. Linha Transportes
+            // Row Transportes
             const rowC = document.createElement('div'); rowC.className = "row carry-row";
             for(let i=0; i < viewLength; i++) {
                 let cell = document.createElement('div'); cell.className = "digit-box";
@@ -289,61 +289,65 @@
                 
                 let input = document.createElement('input');
                 input.className = "carry-input";
-                input.id = `c-${i}`;
-                input.type = "tel"; input.maxLength = 1;
-                input.dataset.correct = (d1_prev + d2_prev >= 10) ? "1" : "0";
-                cell.appendChild(input);
+                input.id = `c-${i}`; input.type = "tel"; input.maxLength = 1;
+                input.dataset.correct = "1"; // Valor fixo porque só criamos se for 1
+                
+                // Lógica de transporte acumulado para determinar se este carry deve existir
+                let carry_in = 0;
+                for(let j=0; j < posMat; j++) {
+                    let v1 = parseInt(s1.split('').reverse()[j] || 0);
+                    let v2 = parseInt(s2.split('').reverse()[j] || 0);
+                    carry_in = (v1 + v2 + carry_in >= 10) ? 1 : 0;
+                }
+
+                if (carry_in === 1) {
+                    cell.appendChild(input);
+                }
                 rowC.appendChild(cell);
             }
             container.appendChild(rowC);
 
-            // 2. Parcelas
+            // Parcelas
             [s1, s2].forEach((s, idx) => {
                 const row = document.createElement('div'); row.className = "row";
                 if(idx === 1) row.innerHTML += '<span class="plus-sign">+</span>';
                 for(let i=0; i < viewLength; i++) {
-                    let isGap = (nivel === 3 && s[i] !== ' ' && Math.random() > 0.4);
-                    row.appendChild(createCell(s[i], isGap, `p${idx}-${i}`));
+                    let cell = document.createElement('div'); cell.className = "digit-box";
+                    cell.innerText = s[i] === ' ' ? '' : s[i];
+                    row.appendChild(cell);
                 }
                 container.appendChild(row);
             });
 
             container.appendChild(document.createElement('div')).className = "line";
 
-            // 3. Resultado
+            // Resultado
             const rowR = document.createElement('div'); rowR.className = "row";
             for(let i=0; i < viewLength; i++) {
-                let isGap = (nivel < 3);
-                let cell = createCell(resStr[i], isGap, `r-${i}`);
-                if(isGap) {
-                    cell.oninput = function() {
-                        let posMat = viewLength - 1 - i;
-                        let d1 = parseInt(s1.split('').reverse()[posMat] || 0);
-                        let d2 = parseInt(s2.split('').reverse()[posMat] || 0);
-                        if(d1 + d2 >= 10 && nivel === 2) {
-                            let nextCarry = document.getElementById(`c-${i-1}`);
-                            if(nextCarry) nextCarry.classList.add('visible');
-                        }
-                    };
-                }
+                const input = document.createElement('input');
+                input.className = "digit-input math-input";
+                input.dataset.correct = resStr[i]; input.type = "tel"; input.maxLength = 1;
+                
+                input.oninput = function() {
+                    let posMat = viewLength - 1 - i;
+                    let carry_check = 0;
+                    for(let j=0; j <= posMat; j++) {
+                        let v1 = parseInt(s1.split('').reverse()[j] || 0);
+                        let v2 = parseInt(s2.split('').reverse()[j] || 0);
+                        carry_check = (v1 + v2 + carry_check >= 10) ? 1 : 0;
+                    }
+                    if(carry_check === 1 && nivel === 2) {
+                        let nextC = document.getElementById(`c-${i-1}`);
+                        if(nextC) nextC.classList.add('visible');
+                    }
+                };
+
+                let cell = document.createElement('div'); cell.className = "digit-box";
+                cell.appendChild(input);
                 rowR.appendChild(cell);
             }
             container.appendChild(rowR);
             document.getElementById('btn-verificar').disabled = false;
-        }
-
-        function createCell(val, isGap, id) {
-            const cell = document.createElement('div'); cell.className = "digit-box";
-            if(val === ' ' || val === undefined) return cell;
-            if(isGap) {
-                const input = document.createElement('input');
-                input.className = "digit-input math-input";
-                input.dataset.correct = val; input.type = "tel"; input.maxLength = 1; input.id = id;
-                cell.appendChild(input);
-                return input;
-            } else {
-                cell.innerText = val; return cell;
-            }
         }
 
         function verificar() {
@@ -352,26 +356,21 @@
             
             inputs.forEach(input => {
                 let val = input.value.trim() || (input.classList.contains('carry-input') ? "0" : "");
-                if(val === input.dataset.correct) {
-                    input.classList.add('correct-f');
-                } else {
-                    input.classList.add('wrong-f');
-                    input.value = input.dataset.correct;
-                    erro = true;
-                }
+                if(val === input.dataset.correct) input.classList.add('correct-f');
+                else { input.classList.add('wrong-f'); input.value = input.dataset.correct; erro = true; }
                 input.disabled = true;
             });
 
-            // Se no Nível 2 faltar um transporte obrigatório
-            if(Math.floor(perguntaAtual / 4) + 1 === 2) {
+            // Verificar se faltou ativar algum transporte obrigatório
+            if(Math.floor(perguntaAtual / 5) + 1 === 2) {
                 document.querySelectorAll('.carry-input').forEach(c => {
-                    if(c.dataset.correct === "1" && !c.classList.contains('visible')) erro = true;
+                    if(!c.classList.contains('visible')) erro = true;
                 });
             }
 
             document.getElementById('btn-verificar').disabled = true;
-            const nIdx = Math.floor(perguntaAtual / 4) + 1;
-            const star = document.getElementById('star-' + (perguntaAtual % 4));
+            const nIdx = Math.floor(perguntaAtual / 5) + 1;
+            const star = document.getElementById('star-' + (perguntaAtual % 5));
 
             if(!erro) { stats['l'+nIdx].c++; pontos += nIdx * 10; star.classList.add('win'); }
             else { stats['l'+nIdx].w++; star.classList.add('lose'); }
@@ -383,9 +382,8 @@
         function finalizar() {
             clearInterval(timer);
             document.getElementById('stats-body').innerHTML = `
-                <tr><td>Nível 1 (Simples)</td><td>${stats.l1.c} / 4</td></tr>
-                <tr><td>Nível 2 (Transporte)</td><td>${stats.l2.c} / 4</td></tr>
-                <tr><td>Nível 3 (Parcelas)</td><td>${stats.l3.c} / 4</td></tr>
+                <tr><td>Nível 1 (Sem transporte)</td><td>${stats.l1.c} / 5</td></tr>
+                <tr><td>Nível 2 (Com transporte)</td><td>${stats.l2.c} / 5</td></tr>
             `;
             document.getElementById('f-texto').innerText = "Categoria: Até " + limiteMax.toLocaleString('pt-PT');
             document.getElementById('modal-feedback').style.display = 'flex';
