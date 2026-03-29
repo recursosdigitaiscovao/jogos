@@ -89,27 +89,27 @@
             display: flex; flex-direction: column; align-items: flex-end;
             padding: 10px; position: relative;
         }
-        .row { display: flex; justify-content: flex-end; gap: 5px; margin-bottom: 3px; height: 50px; align-items: center; }
-        .carry-row { height: 32px; margin-bottom: 0; }
-        .digit-box { width: 42px; text-align: center; font-size: 2.2rem; font-weight: 900; color: #2c3e50; }
+        .row { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 3px; height: 50px; align-items: center; }
+        .carry-row { height: 35px; margin-bottom: 0; }
+        .digit-box { width: 45px; text-align: center; font-size: 2.2rem; font-weight: 900; color: #2c3e50; }
         
         .line { border-bottom: 4px solid #2c3e50; width: 100%; margin: 5px 0; }
-        .plus-sign { position: absolute; left: -45px; bottom: 70px; font-size: 2rem; color: #9b59b6; font-weight: 900; }
+        .plus-sign { position: absolute; left: -50px; bottom: 80px; font-size: 2.2rem; color: #9b59b6; font-weight: 900; }
 
         /* INPUTS */
         .digit-input {
-            width: 42px; height: 45px; border: 2.5px solid #9b59b6; border-radius: 8px;
+            width: 45px; height: 48px; border: 3px solid #9b59b6; border-radius: 8px;
             text-align: center; font-size: 1.8rem; font-weight: 900; background: #fdfaff; color: #9b59b6; outline: none;
         }
         .carry-input {
-            width: 30px; height: 30px; border: 1.5px dashed #e74c3c; border-radius: 5px;
-            text-align: center; font-size: 1.1rem; color: #e74c3c; font-weight: bold; background: #fff1f1;
+            width: 30px; height: 30px; border: 1.8px dashed #e74c3c; border-radius: 5px;
+            text-align: center; font-size: 1.1rem; color: #e74c3c; font-weight: 900; background: #fff1f1;
         }
 
         .btn-check {
             padding: 12px 45px; font-size: 1.1rem;
             background-color: #2ecc71; color: white; border-radius: 12px;
-            border: none; border-bottom: 4px solid #27ae60; cursor: pointer; font-weight: 800; margin-top: 10px;
+            border: none; border-bottom: 4px solid #27ae60; cursor: pointer; font-weight: 800; margin-top: 15px;
         }
 
         .correct-f { background-color: #eafaf1 !important; border-color: #2ecc71 !important; }
@@ -163,7 +163,7 @@
                     <h2 id="display-title">Soma Armada</h2>
                     <button class="btn-info" onclick="openInfo()">💡</button>
                 </div>
-                <p style="margin-top: 2px; margin-bottom: 10px; font-weight: bold; color: #555; font-size: 0.95rem;">Resolve o algoritmo. Atenção ao transporte!</p>
+                <p style="margin-top: 2px; margin-bottom: 10px; font-weight: bold; color: #555; font-size: 0.95rem;">Completa o algoritmo. Não esqueças o "levou um"!</p>
             </div>
 
             <div class="stats-panel hidden" id="status-panel">
@@ -183,9 +183,9 @@
                     <div class="cat-card" onclick="startChallenge(1000000)"><span>Números até</span><span>1 000 000</span></div>
                 </div>
 
-                <!-- JOGO -->
+                <!-- ÁREA DE JOGO -->
                 <div id="jogo-container" class="hidden">
-                    <div class="level-indicator" id="lvl-txt">Fase 1</div>
+                    <div class="level-indicator" id="lvl-txt">Fase 1: Resultado</div>
                     <div id="area-conta" class="math-operation"></div>
                     <button class="btn-check" id="btn-verificar" onclick="verificar()">Verificar</button>
                 </div>
@@ -197,10 +197,10 @@
         <div class="modal-content">
             <h2 style="color: #9b59b6;">Como Jogar</h2>
             <p style="text-align: left; font-size: 0.9rem; margin: 15px 0;">
-                • Resolve a conta armada preenchendo as lacunas.<br>
-                • Os quadrados <b>pequenos a vermelho</b> surgem apenas quando o transporte é necessário.<br>
-                • <b>Fase 1:</b> Descobre o resultado.<br>
-                • <b>Fase 2:</b> Descobre a parcela em falta.
+                • Preenche as lacunas do algoritmo.<br>
+                • As caixas <b>vermelhas e pequenas</b> no topo são para o <b>transporte</b> (levou-um).<br>
+                • Elas aparecem na coluna da esquerda apenas se a soma da coluna anterior for 10 ou mais.<br>
+                • Se não houver transporte numa coluna, deixa o quadrado vazio ou coloca 0.
             </p>
             <button class="btn-voltar-3d" style="width:100%" onclick="closeInfo()">Entendido!</button>
         </div>
@@ -209,7 +209,7 @@
     <div id="modal-feedback" class="modal">
         <div class="modal-content">
             <div id="f-emoji" style="font-size: 3.5rem;">🏆</div>
-            <h2 id="f-titulo">Fim do Desafio</h2>
+            <h2 id="f-titulo">Desafio Concluído!</h2>
             <p id="f-texto" style="margin: 10px 0; color: #9b59b6; font-weight: 900;"></p>
             <table class="stats-table">
                 <thead><tr><th>Fase</th><th>Acertos</th><th>Erros</th></tr></thead>
@@ -271,7 +271,7 @@
         function proxima() {
             if (perguntaAtual === 10) { finalizar(); return; }
             const fase = Math.floor(perguntaAtual / 5) + 1;
-            document.getElementById('lvl-txt').innerText = "Fase " + fase + (fase === 1 ? ": Resultado" : ": Parcelas");
+            document.getElementById('lvl-txt').innerText = fase === 1 ? "Fase 1: Resultado" : "Fase 2: Parcela Oculta";
             if (perguntaAtual % 5 === 0) document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
             gerarAlgoritmo(fase);
         }
@@ -280,33 +280,37 @@
             const container = document.getElementById('area-conta');
             container.innerHTML = "";
 
-            const totalDigitos = limiteMax.toString().length;
-            let n1 = Math.floor(Math.random() * (limiteMax * 0.4)) + Math.floor(limiteMax * 0.1);
-            let n2 = Math.floor(Math.random() * (limiteMax * 0.4)) + Math.floor(limiteMax * 0.1);
+            // Gerar números garantindo que caibam no limite
+            let n1 = Math.floor(Math.random() * (limiteMax * 0.45)) + Math.floor(limiteMax * 0.05);
+            let n2 = Math.floor(Math.random() * (limiteMax * 0.45)) + Math.floor(limiteMax * 0.05);
             let res = n1 + n2;
 
-            // Logica de Transporte
-            let s1_arr = n1.toString().split('').reverse();
-            let s2_arr = n2.toString().split('').reverse();
-            let carries = []; 
-            let carry = 0;
-            for(let i=0; i<totalDigitos; i++) {
-                let d1 = parseInt(s1_arr[i] || 0);
-                let d2 = parseInt(s2_arr[i] || 0);
-                carry = (d1 + d2 + carry) >= 10 ? 1 : 0;
-                carries[i+1] = carry; 
-            }
-
+            const totalDigitos = res.toString().length;
             let s1 = n1.toString().padStart(totalDigitos, ' ');
             let s2 = n2.toString().padStart(totalDigitos, ' ');
             let sr = res.toString().padStart(totalDigitos, ' ');
 
-            // Linha Transporte
+            // Lógica de Transporte: Calcular onde o transporte APARECE
+            // Carries[i] é o transporte que entra na coluna i (contando da direita 0, 1, 2...)
+            let carries = Array(totalDigitos).fill(0);
+            let c = 0;
+            for(let i=0; i < totalDigitos; i++) {
+                let d1 = parseInt(s1.split('').reverse()[i] || 0);
+                let d2 = parseInt(s2.split('').reverse()[i] || 0);
+                let somaCol = d1 + d2 + c;
+                c = somaCol >= 10 ? 1 : 0;
+                if (i + 1 < totalDigitos) carries[i+1] = c;
+            }
+
+            // 1. Criar Linha de Transportes (vermelha)
             const rowC = document.createElement('div'); rowC.className = "row carry-row";
-            for(let i=0; i<totalDigitos; i++) {
+            for(let i=0; i < totalDigitos; i++) {
                 let cell = document.createElement('div'); cell.className = "digit-box";
-                let pos = totalDigitos - 1 - i;
-                if(carries[pos+1] === 1) {
+                // i é a posição visual da esquerda para a direita. 
+                // A posição matemática correspondente é:
+                let posMat = totalDigitos - 1 - i;
+                
+                if (carries[posMat] === 1) {
                     let input = document.createElement('input');
                     input.className = "carry-input math-input";
                     input.dataset.correct = "1";
@@ -317,13 +321,14 @@
             }
             container.appendChild(rowC);
 
-            // Parcelas
+            // 2. Criar Parcelas
             const rowsP = [s1, s2];
             rowsP.forEach((s, idx) => {
                 const row = document.createElement('div'); row.className = "row";
                 if(idx === 1) row.innerHTML += '<span class="plus-sign">+</span>';
-                for(let i=0; i<totalDigitos; i++) {
-                    let isGap = (fase === 2 && s[i] !== ' ' && Math.random() > 0.4);
+                for(let i=0; i < totalDigitos; i++) {
+                    // Na fase 2, ocultamos um dígito aleatório de uma das parcelas
+                    let isGap = (fase === 2 && s[i] !== ' ' && Math.random() > 0.5);
                     row.appendChild(createCell(s[i], isGap));
                 }
                 container.appendChild(row);
@@ -331,13 +336,14 @@
 
             container.appendChild(document.createElement('div')).className = "line";
 
-            // Resultado
+            // 3. Criar Resultado
             const rowR = document.createElement('div'); rowR.className = "row";
-            for(let i=0; i<totalDigitos; i++) {
+            for(let i=0; i < totalDigitos; i++) {
                 let isGap = (fase === 1 && sr[i] !== ' ');
                 rowR.appendChild(createCell(sr[i], isGap));
             }
             container.appendChild(rowR);
+
             document.getElementById('btn-verificar').disabled = false;
         }
 
@@ -358,22 +364,36 @@
 
         function verificar() {
             let inputs = document.querySelectorAll('.math-input');
-            let erro = false;
+            let erroDetectado = false;
+
             inputs.forEach(input => {
                 let val = input.value.trim();
                 let correct = input.dataset.correct;
+
+                // Se for transporte e estiver vazio, assumimos 0
                 if(input.classList.contains('carry-input') && val === "") val = "0";
-                if (val === correct) input.classList.add('correct-f');
-                else { input.classList.add('wrong-f'); input.value = correct; erro = true; }
+
+                if (val === correct) {
+                    input.classList.add('correct-f');
+                } else {
+                    input.classList.add('wrong-f');
+                    input.value = correct;
+                    erroDetectado = true;
+                }
                 input.disabled = true;
             });
 
             document.getElementById('btn-verificar').disabled = true;
-            const faseIndex = Math.floor(perguntaAtual / 5) + 1;
+            const faseIdx = Math.floor(perguntaAtual / 5) + 1;
             const star = document.getElementById('star-' + (perguntaAtual % 5));
 
-            if (!erro) { stats['l'+faseIndex].c++; pontos += faseIndex * 10; star.classList.add('win'); }
-            else { stats['l'+faseIndex].w++; star.classList.add('lose'); }
+            if (!erroDetectado) {
+                stats['l'+faseIdx].c++; pontos += faseIdx * 10;
+                star.classList.add('win');
+            } else {
+                stats['l'+faseIdx].w++;
+                star.classList.add('lose');
+            }
 
             document.getElementById('score').innerText = pontos;
             perguntaAtual++;
@@ -383,16 +403,17 @@
         function finalizar() {
             clearInterval(timer);
             const totalC = stats.l1.c + stats.l2.c;
-            let emoji = totalC > 7 ? "🏆" : "👏";
-            document.getElementById('f-emoji').innerText = emoji;
-            document.getElementById('f-titulo').innerText = "Resultado Final";
-            document.getElementById('f-texto').innerText = "Categoria: " + limiteMax.toLocaleString('pt-PT');
+            document.getElementById('f-emoji').innerText = totalC > 7 ? "🏆" : "👏";
+            document.getElementById('f-titulo').innerText = "Desafio Terminado";
+            document.getElementById('f-texto').innerText = "Categoria: Até " + limiteMax.toLocaleString('pt-PT');
             document.getElementById('stats-body').innerHTML = `
-                <tr><td>Fase 1 (Resultados)</td><td>${stats.l1.c}</td><td>${stats.l1.w}</td></tr>
+                <tr><td>Fase 1 (Resultado)</td><td>${stats.l1.c}</td><td>${stats.l1.w}</td></tr>
                 <tr><td>Fase 2 (Parcelas)</td><td>${stats.l2.c}</td><td>${stats.l2.w}</td></tr>
             `;
             document.getElementById('modal-feedback').style.display = 'flex';
         }
+
+        window.onload = () => { /* proxima() é chamado via menu */ };
     </script>
 </body>
 </html>
