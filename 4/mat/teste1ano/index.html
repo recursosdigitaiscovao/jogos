@@ -3,54 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo de Contar - Pré-Escolar</title>
+    <title>Contar Objetos - Pré-Escolar</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --verde-suave: #eef9eb;
-            --madeira: #795548;
-            --madeira-escura: #5d4037;
-            --primaria: #ff4757;
-            --sucesso: #2ecc71;
+            --bg-color: #f0faff;
+            --primary: #ff4757;
+            --secondary: #2196f3;
+            --success: #2ed573;
+            --wood: #795548;
+            --footer-bg: #2d3436;
         }
 
         body {
             font-family: 'Fredoka', sans-serif;
-            background: var(--verde-suave);
+            background-color: var(--bg-color);
             margin: 0;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
             user-select: none;
         }
 
-        /* Barra Superior */
-        .top-nav {
+        /* Topo */
+        .header {
             background: white;
-            padding: 15px 30px;
+            padding: 15px 25px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
         .btn-voltar {
-            background: var(--madeira);
+            background: var(--wood);
             color: white;
             text-decoration: none;
-            padding: 12px 25px;
+            padding: 10px 20px;
             border-radius: 50px;
             font-weight: bold;
-            border-bottom: 5px solid var(--madeira-escura);
-            transition: 0.2s;
+            transition: 0.3s;
         }
 
-        .btn-voltar:hover { transform: translateY(2px); border-bottom-width: 3px; }
-
         /* Área do Jogo */
-        .game-area {
-            flex-grow: 1;
+        .game-container {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -58,127 +55,150 @@
             padding: 20px;
         }
 
-        .quadro-contagem {
-            width: 90%;
-            max-width: 800px;
-            height: 300px;
+        .board {
+            width: 100%;
+            max-width: 600px;
+            min-height: 250px;
             background: white;
-            border: 10px solid var(--madeira);
-            border-radius: 40px;
+            border: 8px solid var(--wood);
+            border-radius: 30px;
             display: flex;
-            justify-content: center;
-            align-items: center;
             flex-wrap: wrap;
-            gap: 20px;
-            box-shadow: 0 15px 0 rgba(0,0,0,0.05);
-            margin-bottom: 40px;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
 
-        /* Os objetos a contar (Estrelas) */
-        .objeto {
-            font-size: 5rem;
-            animation: aparecer 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .item {
+            font-size: 4rem;
+            animation: bounceIn 0.5s ease;
         }
 
-        @keyframes aparecer {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Painel de Números */
-        .painel-numeros {
+        /* Botões de Números */
+        .number-grid {
             display: flex;
             gap: 15px;
         }
 
-        .btn-numero {
-            width: 80px;
-            height: 80px;
+        .btn-num {
+            width: 70px;
+            height: 70px;
             border: none;
-            border-radius: 20px;
-            background: #00c6ff;
+            border-radius: 15px;
+            background: var(--secondary);
             color: white;
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-family: 'Fredoka';
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 8px 0 #0072ff;
+            box-shadow: 0 6px 0 #1976d2;
             transition: 0.1s;
         }
 
-        .btn-numero:active {
+        .btn-num:active {
             transform: translateY(4px);
-            box-shadow: 0 4px 0 #0072ff;
+            box-shadow: 0 2px 0 #1976d2;
         }
 
-        .btn-numero:hover { background: #33d1ff; }
-
-        /* Mensagem de Feedback */
-        #feedback {
-            margin-top: 20px;
-            font-size: 2rem;
-            font-weight: bold;
+        #message {
             height: 40px;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-weight: bold;
         }
 
-        .texto-sucesso { color: var(--sucesso); }
-        .texto-erro { color: var(--primaria); }
+        /* Rodapé */
+        footer {
+            background: var(--footer-bg);
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .correct { color: var(--success); }
+        .wrong { color: var(--primary); }
 
     </style>
 </head>
 <body>
 
-    <div class="top-nav">
-        <a href="pre-escolar.html" class="btn-voltar">⬅ VOLTAR</a>
-        <h1 style="color: var(--madeira); margin: 0;">Quantos são?</h1>
-        <div style="width: 100px;"></div>
+    <div class="header">
+        <a href="pre-escolar.html" class="btn-voltar">⬅ Voltar</a>
+        <h2 style="margin: 0; color: var(--wood);">Quantos objetos vês?</h2>
+        <div style="width: 80px;"></div>
     </div>
 
-    <div class="game-area">
-        <div class="quadro-contagem" id="palco">
-            <!-- Objetos aparecem aqui via JS -->
+    <div class="game-container">
+        <div id="message"></div>
+        
+        <div class="board" id="gameBoard">
+            <!-- Os objetos aparecem aqui -->
         </div>
 
-        <div id="feedback"></div>
-
-        <div class="painel-numeros">
-            <button class="btn-numero" onclick="verificar(1)">1</button>
-            <button class="btn-numero" onclick="verificar(2)">2</button>
-            <button class="btn-numero" onclick="verificar(3)">3</button>
-            <button class="btn-numero" onclick="verificar(4)">4</button>
-            <button class="btn-numero" onclick="verificar(5)">5</button>
+        <div class="number-grid">
+            <button class="btn-num" onclick="check(1)">1</button>
+            <button class="btn-num" onclick="check(2)">2</button>
+            <button class="btn-num" onclick="check(3)">3</button>
+            <button class="btn-num" onclick="check(4)">4</button>
+            <button class="btn-num" onclick="check(5)">5</button>
         </div>
+        
+        <button onclick="initGame()" style="margin-top: 30px; padding: 10px 20px; cursor: pointer; border-radius: 10px; border: none; background: #ddd; font-family: 'Fredoka';">Mudar Objetos 🔄</button>
     </div>
+
+    <footer>
+        Recursos Digitais Covão
+    </footer>
 
     <script>
-        let numeroCerto = 0;
+        let targetNumber = 0;
+        const emojis = ['🍎', '🐻', '🚗', '⚽', '🍦', '🎁', '🐱'];
 
-        function iniciarJogo() {
-            const palco = document.getElementById('palco');
-            const feedback = document.getElementById('feedback');
-            palco.innerHTML = '';
-            feedback.innerHTML = '';
+        function initGame() {
+            const board = document.getElementById('gameBoard');
+            const message = document.getElementById('message');
+            board.innerHTML = '';
+            message.innerHTML = '';
             
-            // Gera um número aleatório entre 1 e 5
-            numeroCerto = Math.floor(Math.random() * 5) + 1;
+            // Define um número entre 1 e 5
+            targetNumber = Math.floor(Math.random() * 5) + 1;
+            
+            // Escolhe um emoji aleatório para esta rodada
+            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
 
-            // Adiciona os objetos (Estrelas) ao palco
-            for (let i = 0; i < numeroCerto; i++) {
-                const obj = document.createElement('div');
-                obj.className = 'objeto';
-                obj.innerHTML = '⭐'; // Podes mudar para 🍎, 🐻, etc.
-                palco.appendChild(obj);
+            // Cria os elementos no quadro
+            for (let i = 0; i < targetNumber; i++) {
+                const el = document.createElement('div');
+                el.className = 'item';
+                el.innerHTML = randomEmoji;
+                board.appendChild(el);
             }
         }
 
-        function verificar(escolha) {
-            const feedback = document.getElementById('feedback');
-            
-            if (escolha === numeroCerto) {
-                feedback.innerHTML = '<span class="texto-sucesso">Muito Bem! 🎉</span>';
-                // Espera 1.5 segundos e gera novo jogo
-                setTimeout(iniciarJogo, 1500);
+        function check(n) {
+            const message = document.getElementById('message');
+            if (n === targetNumber) {
+                message.innerHTML = '<span class="correct">Parabéns! Estás certo! 🎉</span>';
+                setTimeout(initGame, 2000); // Reinicia após 2 segundos
             } else {
-                feedback.innerHTML = '<span class="texto-erro">Tenta outra vez! 🤔</span>';
+                message.innerHTML = '<span class="wrong">Quase lá! Tenta contar outra vez. 😊</span>';
             }
         }
+
+        // Inicia o jogo assim que a página carrega
+        window.onload = initGame;
+    </script>
+
+</body>
+</html>
