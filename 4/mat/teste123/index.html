@@ -20,91 +20,96 @@
             padding: 0;
         }
 
-        /* Ocupa exatamente a altura do ecrã disponível no telemóvel */
         body {
             font-family: 'Fredoka', sans-serif;
             background: #f0faff;
             display: flex;
             flex-direction: column;
             height: 100vh;
-            height: 100dvh; /* Altura dinâmica para Safari/Chrome mobile */
+            height: 100dvh; /* Altura dinâmica para telemóveis */
             overflow: hidden; 
         }
 
-        /* Header e Footer Brancos e Fixos */
         header, footer {
             background: white;
             width: 100%;
-            flex-shrink: 0; /* Impede que o navegador os "esmague" */
+            flex-shrink: 0; /* Impede que encolham */
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             z-index: 10;
         }
 
         header {
-            padding: 10px 0;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
+            padding: 20px 0;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
         }
 
         h1 {
-            font-size: clamp(1.2rem, 4vh, 2.2rem);
+            font-size: clamp(1.5rem, 5vh, 2.5rem);
             color: #ff4757;
             text-shadow: 2px 2px 0px #ffcccb;
+            animation: bounce 2s infinite;
         }
 
         .header-text {
             color: #666;
-            font-size: clamp(0.8rem, 2vh, 1rem);
-            margin-top: 2px;
+            font-size: clamp(0.9rem, 2.5vh, 1.1rem);
+            margin-top: 5px;
         }
 
-        /* Área Principal centralizada */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Área Principal que ocupa o resto do ecrã */
         main {
             flex: 1; 
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 10px 25px; /* Padding lateral de 25px */
-            min-height: 0; /* Necessário para o flexbox permitir encolhimento interno */
+            padding: 20px 25px; /* Padding de 25px nas laterais */
         }
 
         .grid-container {
             display: grid;
             width: 100%;
-            max-width: 1200px;
-            gap: 10px;
+            height: 100%; /* Faz o grid ocupar toda a altura do main */
+            max-width: 1300px;
+            gap: 20px;
             grid-template-columns: repeat(5, 1fr); /* PC: 5 colunas */
-            max-height: 100%; /* Não deixa o grid sair do main */
+            align-items: stretch; /* Estica os botões para preencher a altura */
         }
 
         .card {
             text-decoration: none;
             color: white;
-            /* Altura adapta-se ao espaço disponível */
-            height: clamp(80px, 22vh, 250px); 
-            border-radius: 20px;
+            border-radius: 35px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: clamp(0.75rem, 1.2vw, 1.1rem);
+            font-size: clamp(1rem, 2vh, 1.4rem);
             font-weight: bold;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-            border: 4px solid white;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 6px solid white;
             text-align: center;
-            padding: 5px;
+            padding: 10px;
         }
 
-        .card:active {
-            transform: scale(0.95);
+        .card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
 
+        /* Ícones MUITO MAIORES */
         .icon { 
-            font-size: clamp(1.8rem, 6vh, 4rem); 
-            margin-bottom: 5px; 
+            font-size: clamp(3.5rem, 10vh, 7rem); 
+            margin-bottom: 15px; 
             display: block;
+            line-height: 1;
         }
         
         .pre { background-color: var(--pre); }
@@ -114,39 +119,44 @@
         .ano4 { background-color: var(--ano4); }
 
         footer {
-            padding: 10px 0;
-            font-size: 0.9rem;
+            padding: 15px 0;
+            font-size: 1.1rem;
             color: #777;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
+            font-weight: normal;
         }
 
-        /* AJUSTE PARA TELEMÓVEL (Vertical) */
-        @media (max-width: 600px) {
+        /* RESPONSIVIDADE PARA TELEMÓVEL */
+        @media (max-width: 800px) {
+            header { padding: 15px 0; }
+            
             .grid-container {
                 grid-template-columns: repeat(2, 1fr); /* 2 colunas */
-                gap: 8px;
+                grid-template-rows: repeat(3, 1fr); /* 3 linhas para ocupar o ecrã todo */
+                gap: 12px;
             }
 
-            /* Último botão (Astronauta) ocupa a largura toda para equilibrar */
+            /* O 5º botão (Astronauta) ocupa a base inteira */
             .card.ano4 {
                 grid-column: span 2;
-                height: clamp(60px, 12vh, 100px); 
             }
 
             .card {
-                height: clamp(100px, 18vh, 160px); 
-                border-width: 3px;
+                border-width: 5px;
+                padding: 5px;
             }
 
-            .icon { font-size: 2.5rem; }
+            .icon {
+                font-size: clamp(3rem, 8vh, 5rem);
+                margin-bottom: 5px;
+            }
         }
 
-        /* Se o telemóvel for muito baixo (ex: teclado aberto ou ecrã pequeno) */
-        @media (max-height: 500px) {
-            .header-text { display: none; }
-            .icon { font-size: 1.5rem; margin-bottom: 0; }
-            .card { height: 60px; flex-direction: row; gap: 10px; }
+        /* Ajuste para ecrãs muito pequenos (ex: iPhone SE ou telemóveis antigos) */
+        @media (max-height: 600px) {
+            .header-text { display: none; } /* Esconde frase para dar mais espaço aos botões */
+            header { padding: 5px 0; }
+            .icon { font-size: 2.5rem; }
+            .card { border-radius: 20px; }
         }
     </style>
 </head>
