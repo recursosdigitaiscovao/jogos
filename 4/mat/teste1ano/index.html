@@ -7,17 +7,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f0faff;
-            --primary: #ff4757;
-            --secondary: #2196f3;
-            --success: #2ed573;
-            --wood: #795548;
-            --footer-bg: #2d3436;
+            /* Paleta de Verdes */
+            --verde-escuro: #1b4332; /* Cor do Header e Footer */
+            --verde-medio: #2d6a4f;
+            --verde-principal: #409167;
+            --verde-claro: #95d5b2;
+            --verde-fundo: #f7fff7;
+            --texto-claro: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
             font-family: 'Fredoka', sans-serif;
-            background-color: var(--bg-color);
+            background-color: var(--verde-fundo);
             margin: 0;
             display: flex;
             flex-direction: column;
@@ -25,179 +30,199 @@
             user-select: none;
         }
 
-        /* Topo */
-        .header {
-            background: white;
-            padding: 15px 25px;
+        /* Header e Footer idênticos */
+        header, footer {
+            background-color: var(--verde-escuro);
+            color: var(--texto-claro);
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            padding: 15px 25px; /* Mantém alinhamento com o main */
         }
 
         .btn-voltar {
-            background: var(--wood);
+            background: var(--verde-medio);
             color: white;
             text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 50px;
+            padding: 10px 18px;
+            border-radius: 12px;
             font-weight: bold;
+            font-size: 0.9rem;
             transition: 0.3s;
+            border: 2px solid var(--verde-claro);
         }
 
-        /* Área do Jogo */
-        .game-container {
+        .btn-voltar:hover {
+            background: var(--verde-principal);
+        }
+
+        /* Main com Padding lateral de 25px sempre */
+        main {
             flex: 1;
+            width: 100%;
+            max-width: 1200px; /* Limite para ecrãs grandes */
+            margin: 0 auto;
+            padding: 40px 25px; /* 25px nas laterais como solicitado */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
         }
 
-        .board {
+        /* Quadro do Jogo */
+        .quadro {
             width: 100%;
-            max-width: 600px;
-            min-height: 250px;
+            max-width: 700px;
+            min-height: 280px;
             background: white;
-            border: 8px solid var(--wood);
+            border: 6px solid var(--verde-principal);
             border-radius: 30px;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: center;
-            gap: 15px;
-            padding: 20px;
+            gap: 20px;
+            padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
 
-        .item {
-            font-size: 4rem;
-            animation: bounceIn 0.5s ease;
+        .objeto {
+            font-size: clamp(3rem, 10vw, 5rem); /* Tamanho responsivo */
+            animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         @keyframes bounceIn {
-            0% { transform: scale(0.3); opacity: 0; }
-            70% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
         }
 
-        /* Botões de Números */
-        .number-grid {
+        /* Área de Interação */
+        #feedback {
+            height: 50px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--verde-escuro);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .botoes-numeros {
             display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
             gap: 15px;
+            width: 100%;
         }
 
         .btn-num {
-            width: 70px;
-            height: 70px;
+            width: clamp(60px, 15vw, 85px);
+            height: clamp(60px, 15vw, 85px);
             border: none;
-            border-radius: 15px;
-            background: var(--secondary);
+            border-radius: 20px;
+            background: var(--verde-principal);
             color: white;
             font-size: 2rem;
             font-family: 'Fredoka';
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 6px 0 #1976d2;
+            box-shadow: 0 6px 0 var(--verde-escuro);
             transition: 0.1s;
         }
 
         .btn-num:active {
             transform: translateY(4px);
-            box-shadow: 0 2px 0 #1976d2;
+            box-shadow: 0 2px 0 var(--verde-escuro);
         }
 
-        #message {
-            height: 40px;
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            font-weight: bold;
+        .btn-num:hover {
+            background: var(--verde-medio);
         }
 
-        /* Rodapé */
+        /* Footer */
         footer {
-            background: var(--footer-bg);
-            color: white;
-            text-align: center;
-            padding: 20px 0;
-            font-size: 1rem;
-            letter-spacing: 1px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
         }
 
-        .correct { color: var(--success); }
-        .wrong { color: var(--primary); }
-
+        /* Responsividade Extra */
+        @media (max-width: 480px) {
+            header h2 { font-size: 1.2rem; }
+            .quadro { padding: 15px; min-height: 200px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <a href="pre-escolar.html" class="btn-voltar">⬅ Voltar</a>
-        <h2 style="margin: 0; color: var(--wood);">Quantos objetos vês?</h2>
-        <div style="width: 80px;"></div>
-    </div>
+    <header>
+        <a href="pre-escolar.html" class="btn-voltar">⬅ VOLTAR</a>
+        <h2 style="margin: 0;">Quantos são?</h2>
+        <div style="width: 80px;" class="desktop-spacer"></div>
+    </header>
 
-    <div class="game-container">
-        <div id="message"></div>
+    <main>
+        <div id="feedback"></div>
         
-        <div class="board" id="gameBoard">
+        <div class="quadro" id="palco">
             <!-- Os objetos aparecem aqui -->
         </div>
 
-        <div class="number-grid">
-            <button class="btn-num" onclick="check(1)">1</button>
-            <button class="btn-num" onclick="check(2)">2</button>
-            <button class="btn-num" onclick="check(3)">3</button>
-            <button class="btn-num" onclick="check(4)">4</button>
-            <button class="btn-num" onclick="check(5)">5</button>
+        <div class="botoes-numeros">
+            <button class="btn-num" onclick="verificar(1)">1</button>
+            <button class="btn-num" onclick="verificar(2)">2</button>
+            <button class="btn-num" onclick="verificar(3)">3</button>
+            <button class="btn-num" onclick="verificar(4)">4</button>
+            <button class="btn-num" onclick="verificar(5)">5</button>
         </div>
-        
-        <button onclick="initGame()" style="margin-top: 30px; padding: 10px 20px; cursor: pointer; border-radius: 10px; border: none; background: #ddd; font-family: 'Fredoka';">Mudar Objetos 🔄</button>
-    </div>
+    </main>
 
     <footer>
         Recursos Digitais Covão
     </footer>
 
     <script>
-        let targetNumber = 0;
-        const emojis = ['🍎', '🐻', '🚗', '⚽', '🍦', '🎁', '🐱'];
+        let numeroCorreto = 0;
+        const itens = ['🍎', '⚽', '🚗', '🐱', '🍦', '🎁', '🎈'];
 
-        function initGame() {
-            const board = document.getElementById('gameBoard');
-            const message = document.getElementById('message');
-            board.innerHTML = '';
-            message.innerHTML = '';
+        function novoJogo() {
+            const palco = document.getElementById('palco');
+            const feedback = document.getElementById('feedback');
+            palco.innerHTML = '';
+            feedback.innerHTML = '';
             
-            // Define um número entre 1 e 5
-            targetNumber = Math.floor(Math.random() * 5) + 1;
+            // Gerar número de 1 a 5
+            numeroCorreto = Math.floor(Math.random() * 5) + 1;
             
-            // Escolhe um emoji aleatório para esta rodada
-            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+            // Escolher objeto aleatório
+            const emojiFase = itens[Math.floor(Math.random() * itens.length)];
 
-            // Cria os elementos no quadro
-            for (let i = 0; i < targetNumber; i++) {
-                const el = document.createElement('div');
-                el.className = 'item';
-                el.innerHTML = randomEmoji;
-                board.appendChild(el);
+            for (let i = 0; i < numeroCorreto; i++) {
+                const div = document.createElement('div');
+                div.className = 'objeto';
+                div.innerHTML = emojiFase;
+                palco.appendChild(div);
             }
         }
 
-        function check(n) {
-            const message = document.getElementById('message');
-            if (n === targetNumber) {
-                message.innerHTML = '<span class="correct">Parabéns! Estás certo! 🎉</span>';
-                setTimeout(initGame, 2000); // Reinicia após 2 segundos
+        function verificar(n) {
+            const feedback = document.getElementById('feedback');
+            if (n === numeroCorreto) {
+                feedback.innerHTML = '<span style="color: #2d6a4f">Muito bem! 🌟</span>';
+                setTimeout(novoJogo, 1500);
             } else {
-                message.innerHTML = '<span class="wrong">Quase lá! Tenta contar outra vez. 😊</span>';
+                feedback.innerHTML = '<span style="color: #d90429">Tenta contar outra vez! 😊</span>';
             }
         }
 
-        // Inicia o jogo assim que a página carrega
-        window.onload = initGame;
+        // Iniciar ao carregar
+        window.onload = novoJogo;
     </script>
 
 </body>
