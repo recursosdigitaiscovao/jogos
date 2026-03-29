@@ -40,12 +40,8 @@
         .overlay.active { display: block; }
 
         /* === ÁREA PRINCIPAL === */
-        main { 
-            flex: 1; display: flex; flex-direction: column; 
-            padding: 20px 20px; /* Padding padrão de 20px */
-            overflow: hidden; 
-        }
-        main.menu-active { padding: 20px 30px; } /* Padding lateral 30px no menu */
+        main { flex: 1; display: flex; flex-direction: column; padding: 20px 20px; overflow: hidden; }
+        main.menu-active { padding: 20px 30px; }
 
         .screen-container { display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%; }
         
@@ -79,7 +75,7 @@
         .cat-card:active { transform: translateY(2px); box-shadow: 0 0 0 #ecdff5; }
         .cat-card span:last-child { font-size: 1.1rem; font-weight: 900; color: #9b59b6; }
 
-        /* JOGO CONTAINER - ESCALA REDUZIDA LEVEMENTE */
+        /* JOGO CONTAINER */
         #jogo-container { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; }
 
         .math-operation { 
@@ -88,12 +84,12 @@
             padding: 10px clamp(25px, 5vw, 60px);
         }
 
-        .row { display: flex; justify-content: flex-end; gap: clamp(4px, 1.2vw, 15px); min-height: clamp(45px, 9vh, 95px); align-items: center; position: relative; }
-        .carry-row { min-height: clamp(25px, 5vh, 50px); margin-bottom: 2px; }
+        .row { display: flex; justify-content: flex-end; gap: clamp(4px, 1.2vw, 15px); min-height: clamp(40px, 8vh, 85px); align-items: center; position: relative; }
+        .carry-row { min-height: clamp(25px, 5vh, 45px); margin-bottom: 2px; }
 
         .digit-box { 
-            width: clamp(35px, 7vw, 85px); text-align: center; 
-            font-size: clamp(1.8rem, 8vh, 5rem); /* Reduzido de 6rem */
+            width: clamp(32px, 6.5vw, 80px); text-align: center; 
+            font-size: clamp(1.6rem, 7vh, 4.5rem); 
             font-weight: 900; color: #2c3e50; display: flex; justify-content: center; align-items: center;
         }
         
@@ -110,17 +106,17 @@
             text-align: center; font-size: inherit; font-weight: 900; background: #fdfaff; color: #9b59b6; outline: none;
         }
         .carry-input {
-            width: clamp(25px, 4.5vh, 45px); height: clamp(25px, 4.5vh, 45px); 
+            width: clamp(22px, 4vh, 40px); height: clamp(22px, 4vh, 40px); 
             border: 1.5px dashed #e74c3c; border-radius: 5px;
-            text-align: center; font-size: clamp(0.8rem, 3vh, 1.8rem); 
+            text-align: center; font-size: clamp(0.7rem, 2.5vh, 1.6rem); 
             color: #e74c3c; font-weight: 900; background: #fff1f1;
             visibility: hidden; opacity: 0; transition: 0.2s;
         }
         .carry-input.visible { visibility: visible; opacity: 1; }
 
         .btn-check {
-            padding: clamp(10px, 2vh, 20px) clamp(25px, 4vw, 70px); 
-            font-size: clamp(1rem, 1.6vw, 1.4rem); 
+            padding: clamp(10px, 2vh, 18px) clamp(25px, 4vw, 60px); 
+            font-size: clamp(0.9rem, 1.5vw, 1.3rem); 
             background-color: #9b59b6; color: white; border-radius: 12px; 
             border: none; border-bottom: 4px solid #732d91; cursor: pointer; font-weight: 800;
         }
@@ -131,7 +127,11 @@
 
         .hidden { display: none !important; }
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(3px); }
-        .modal-content { background: white; padding: 25px; border-radius: 20px; text-align: center; width: 90%; max-width: 400px; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; text-align: center; width: 90%; max-width: 420px; }
+        
+        .stats-summary { text-align: left; background: #f8f9fa; padding: 15px; border-radius: 12px; margin: 15px 0; font-size: 0.85rem; border-left: 5px solid #9b59b6; }
+        .stats-summary b { color: #9b59b6; }
+
         footer { width: 100%; padding: 8px; background: #fff; text-align: center; color: #7f8c8d; border-top: 1px solid #ddd; font-size: 0.7rem; flex-shrink: 0; }
     </style>
 </head>
@@ -198,12 +198,17 @@
 
     <div id="modal-info" class="modal">
         <div class="modal-content">
-            <h2 style="color: #9b59b6;">Como Resolver</h2>
-            <p style="text-align: left; font-size: 0.9rem; margin: 15px 0; line-height: 1.4;">
-                • Soma da direita para a esquerda.<br><br>
-                • Se o resultado for 10 ou mais, coloca o algarismo das unidades em baixo e o <b>transporte (vai um)</b> na lacuna vermelha.<br><br>
-                • Se não houver transporte, deixa o espaço em branco ou coloca 0.
-            </p>
+            <h2 style="color: #9b59b6;">Como Resolver Passo a Passo</h2>
+            <div style="text-align: left; font-size: 0.85rem; margin: 15px 0; line-height: 1.5; color: #444;">
+                <p><b>1. Alinhamento:</b> Resolve sempre da <b>direita para a esquerda</b> (das Unidades para as Dezenas, Centenas, etc).</p><br>
+                <p><b>2. Somar a Coluna:</b> Soma todos os números da coluna atual.</p><br>
+                <p><b>3. O "Vai Um" (Transporte):</b> Se a soma da coluna for 10 ou mais:</p>
+                <ul style="margin-left: 20px;">
+                    <li>Escreve o algarismo das <b>unidades</b> no resultado em baixo.</li>
+                    <li>Escreve o algarismo das <b>dezenas</b> no quadrado vermelho no topo da próxima coluna à esquerda.</li>
+                </ul><br>
+                <p><b>4. Próxima Coluna:</b> Soma a coluna seguinte não esquecendo de somar também o transporte (número vermelho) se ele existir.</p>
+            </div>
             <button class="btn-voltar-3d" style="width:100%" onclick="closeInfo()">Entendido!</button>
         </div>
     </div>
@@ -211,9 +216,12 @@
     <div id="modal-feedback" class="modal">
         <div class="modal-content">
             <div id="f-emoji" style="font-size: 3rem;">🏆</div>
-            <h2 id="f-titulo">Resultado</h2>
-            <p id="f-texto" style="color: #9b59b6; font-weight: 900; margin: 15px 0;"></p>
-            <button class="btn-voltar-3d" style="width:100%" onclick="resetToMenu()">Jogar Novamente</button>
+            <h2 id="f-titulo">Desafio Concluído!</h2>
+            <div id="f-stats" class="stats-summary"></div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn-voltar-3d" style="width:100%" onclick="repetirMesmoDesafio()">Repetir Este Desafio</button>
+                <button class="btn-voltar-3d" style="width:100%; background-color: #3498db; border-color: #2980b9; box-shadow: 0 3px 0 #2980b9;" onclick="resetToMenu()">Mudar de Categoria</button>
+            </div>
         </div>
     </div>
 
@@ -221,6 +229,7 @@
 
     <script>
         let perguntaAtual = 0, pontos = 0, segs = 0, timer, limiteMax = 0, emJogo = false;
+        let stats = { l1: {c:0, w:0}, l2: {c:0, w:0}, l3: {c:0, w:0} };
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -239,8 +248,13 @@
             document.getElementById('modal-feedback').style.display = 'none';
         }
 
+        function repetirMesmoDesafio() {
+            startChallenge(limiteMax);
+        }
+
         function startChallenge(max) {
             limiteMax = max; emJogo = true; perguntaAtual = 0; pontos = 0; segs = 0;
+            stats = { l1: {c:0, w:0}, l2: {c:0, w:0}, l3: {c:0, w:0} };
             document.getElementById('main-area').classList.remove('menu-active');
             document.getElementById('menu-categorias').classList.add('hidden');
             document.getElementById('jogo-container').classList.remove('hidden');
@@ -258,8 +272,8 @@
         }
 
         function proxima() {
-            if (perguntaAtual === 10) { finalizar(); return; }
-            const nivel = (perguntaAtual < 5) ? 1 : 2;
+            if (perguntaAtual === 15) { finalizar(); return; }
+            const nivel = Math.floor(perguntaAtual / 5) + 1;
             if (perguntaAtual % 5 === 0) {
                 document.querySelectorAll('.star-svg').forEach(s => s.classList.remove('win', 'lose'));
             }
@@ -267,36 +281,42 @@
         }
 
         function gerarAlgoritmo(nivel) {
-            let n1, n2, n3 = 0, res;
+            let n1, n2, n3 = 0;
             const digits = Math.floor(Math.log10(limiteMax));
 
             if (nivel === 1) {
-                // Nível 1: Sem transporte
+                // Nível 1: 2 parcelas, Sem transporte
                 let s1 = "", s2 = "";
                 for(let i=0; i<digits; i++) {
-                    let d1 = Math.floor(Math.random() * 5); // Max 4
-                    let d2 = Math.floor(Math.random() * (10 - d1)); // d1+d2 < 10
+                    let d1 = Math.floor(Math.random() * 5); 
+                    let d2 = Math.floor(Math.random() * (10 - d1)); 
                     if (d1 + d2 > 9) d2 = 9 - d1;
                     s1 = d1 + s1; s2 = d2 + s2;
                 }
                 n1 = parseInt(s1) || 5; n2 = parseInt(s2) || 4;
-            } else {
-                // Nível 2: Com transporte garantido
+            } else if (nivel === 2) {
+                // Nível 2: 2 parcelas, Com transporte
                 do {
                     n1 = Math.floor(Math.random() * (limiteMax * 0.7)) + 10;
                     n2 = Math.floor(Math.random() * (limiteMax * 0.7)) + 10;
-                    res = n1 + n2;
-                } while (!temTransporte(n1, n2));
+                } while (!temTransporte(n1, n2, 0));
+            } else {
+                // Nível 3: 3 parcelas, Com transporte
+                do {
+                    n1 = Math.floor(Math.random() * (limiteMax * 0.4)) + 5;
+                    n2 = Math.floor(Math.random() * (limiteMax * 0.4)) + 5;
+                    n3 = Math.floor(Math.random() * (limiteMax * 0.4)) + 5;
+                } while (!temTransporte(n1, n2, n3));
             }
-            renderOperacao(n1, n2, 0, n1 + n2);
+            renderOperacao(n1, n2, n3, n1 + n2 + n3);
         }
 
-        function temTransporte(a, b) {
+        function temTransporte(a, b, c) {
             let carry = 0;
-            while (a > 0 || b > 0) {
-                if ((a % 10) + (b % 10) + carry >= 10) return true;
-                carry = Math.floor(((a % 10) + (b % 10) + carry) / 10);
-                a = Math.floor(a / 10); b = Math.floor(b / 10);
+            while (a > 0 || b > 0 || c > 0) {
+                if ((a % 10) + (b % 10) + (c % 10) + carry >= 10) return true;
+                carry = Math.floor(((a % 10) + (b % 10) + (c % 10) + carry) / 10);
+                a = Math.floor(a / 10); b = Math.floor(b / 10); c = Math.floor(c / 10);
             }
             return false;
         }
@@ -308,6 +328,7 @@
             const viewLength = resStr.length;
             let s1 = n1.toString().padStart(viewLength, ' ');
             let s2 = n2.toString().padStart(viewLength, ' ');
+            let s3 = n3 > 0 ? n3.toString().padStart(viewLength, ' ') : null;
 
             // Linha de Transporte
             const rowC = document.createElement('div'); rowC.className = "row carry-row";
@@ -317,7 +338,7 @@
                 let carry_check = 0;
                 let temp_carry = 0;
                 for(let j=0; j < posMat; j++) {
-                    let sumCol = temp_carry + parseInt(s1.split('').reverse()[j] || 0) + parseInt(s2.split('').reverse()[j] || 0);
+                    let sumCol = temp_carry + parseInt(s1.split('').reverse()[j] || 0) + parseInt(s2.split('').reverse()[j] || 0) + (s3 ? parseInt(s3.split('').reverse()[j] || 0) : 0);
                     temp_carry = Math.floor(sumCol / 10);
                     carry_check = temp_carry;
                 }
@@ -331,9 +352,10 @@
             container.appendChild(rowC);
 
             // Parcelas
-            [s1, s2].forEach((s, idx) => {
+            let list = s3 ? [s1, s2, s3] : [s1, s2];
+            list.forEach((s, idx) => {
                 const row = document.createElement('div'); row.className = "row";
-                if(idx === 1) row.innerHTML += '<span class="plus-sign">+</span>';
+                if(idx === list.length - 1) row.innerHTML += '<span class="plus-sign">+</span>';
                 for(let i=0; i < viewLength; i++) {
                     let cell = document.createElement('div'); cell.className = "digit-box";
                     cell.innerText = s[i] === ' ' ? '' : s[i];
@@ -354,7 +376,7 @@
                     let posMat = viewLength - 1 - i;
                     let c_val = 0;
                     for(let j=0; j <= posMat; j++) {
-                        let sum = c_val + parseInt(s1.split('').reverse()[j] || 0) + parseInt(s2.split('').reverse()[j] || 0);
+                        let sum = c_val + parseInt(s1.split('').reverse()[j] || 0) + parseInt(s2.split('').reverse()[j] || 0) + (s3 ? parseInt(s3.split('').reverse()[j] || 0) : 0);
                         c_val = Math.floor(sum / 10);
                     }
                     if(c_val > 0) {
@@ -383,9 +405,17 @@
             });
             document.getElementById('btn-verificar').disabled = true;
             
+            const nIdx = Math.floor(perguntaAtual / 5) + 1;
             const star = document.getElementById('star-' + (perguntaAtual % 5));
-            if(!erro) { pontos += (perguntaAtual < 5 ? 10 : 20); star.classList.add('win'); }
-            else { star.classList.add('lose'); }
+            
+            if(!erro) { 
+                stats['l'+nIdx].c++; 
+                pontos += (nIdx * 10); 
+                star.classList.add('win'); 
+            } else { 
+                stats['l'+nIdx].w++; 
+                star.classList.add('lose'); 
+            }
             
             document.getElementById('score').innerText = pontos;
             perguntaAtual++; setTimeout(proxima, 2000);
@@ -393,7 +423,17 @@
 
         function finalizar() {
             clearInterval(timer);
-            document.getElementById('f-texto').innerText = `Desafio concluído! \n Pontuação: ${pontos} pontos.`;
+            const totalCertas = stats.l1.c + stats.l2.c + stats.l3.c;
+            const fStats = document.getElementById('f-stats');
+            
+            fStats.innerHTML = `
+                <b>Total de Pontos:</b> ${pontos}<br>
+                <b>Tempo total:</b> ${document.getElementById('timer').innerText}<br><br>
+                <b>Nível 1 (2 parcelas s/ transporte):</b> ${stats.l1.c} ✅ / ${stats.l1.w} ❌<br>
+                <b>Nível 2 (2 parcelas c/ transporte):</b> ${stats.l2.c} ✅ / ${stats.l2.w} ❌<br>
+                <b>Nível 3 (3 parcelas c/ transporte):</b> ${stats.l3.c} ✅ / ${stats.l3.w} ❌<br>
+            `;
+            
             document.getElementById('modal-feedback').style.display = 'flex';
         }
     </script>
