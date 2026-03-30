@@ -7,165 +7,85 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --cor-principal: #ff9100; /* Laranja Vibrante */
+            --cor-principal: #ff9100;
             --cor-vibrante: #ff7300;  
             --cor-fundo: #fef7ed;      
             --cor-texto: #8a6436;      
             --header-height: 70px;
+            --cor-sucesso: #4caf50;
+            --cor-erro: #f44336;
         }
 
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden; 
-        }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
+        body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        body {
-            background: var(--cor-fundo);
-            font-family: 'Fredoka', sans-serif;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* --- Header --- */
-        .nav-bar {
-            background: white;
-            padding: 0 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            height: var(--header-height);
-            flex-shrink: 0;
-            z-index: 1000;
-        }
-
-        .menu-btn { 
-            background: none; 
-            border: none; 
-            font-size: 26px; 
-            cursor: pointer; 
-            color: var(--cor-principal); 
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-        }
-
-        .back-btn {
-            background: var(--cor-principal);
-            color: white;
-            padding: 8px 18px;
-            border-radius: 50px;
-            border: none;
-            font-weight: bold;
-            font-size: 0.85rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            font-family: 'Fredoka';
-            transition: 0.3s;
-            text-decoration: none;
-        }
-        .back-btn:hover {
-            background: var(--cor-vibrante);
-            transform: scale(1.05);
-        }
-
-        /* --- Sidebar --- */
+        /* --- Header & Sidebar (Mantidos) --- */
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); flex-shrink: 0; z-index: 1000; }
+        .menu-btn { background: none; border: none; font-size: 26px; cursor: pointer; color: var(--cor-principal); font-weight: 700; }
+        .back-btn { background: var(--cor-principal); color: white; padding: 8px 18px; border-radius: 50px; border: none; font-weight: bold; font-size: 0.85rem; cursor: pointer; text-decoration: none; transition: 0.3s; }
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        
-        .sidebar-item { 
-            display: block; 
-            padding: 15px 25px; 
-            color: #555; 
-            text-decoration: none; 
-            border-bottom: 1px solid #f9f9f9;
-            transition: 0.3s;
-        }
-
-        .sidebar-item:hover {
-            color: var(--cor-principal) !important;
-            background-color: var(--cor-fundo);
-            padding-left: 35px;
-            font-weight: bold;
-        }
-
+        .sidebar-item { display: block; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* --- Main & Grid --- */
-        .main-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px 0; /* Padding lateral controlado pelo container do jogo */
-            -webkit-overflow-scrolling: touch;
-            text-align: center;
-        }
-
+        /* --- Layout --- */
+        .main-content { flex: 1; overflow-y: auto; padding: 20px 0; text-align: center; }
         .intro-text { color: var(--cor-texto); font-size: 1.1rem; margin-bottom: 20px; }
-
-        /* Alteração aqui: container único com padding de 25px */
-        .game-container {
-            padding: 0 25px;
-            max-width: 100%;
-            box-sizing: border-box;
-        }
+        .game-container { padding: 0 25px; max-width: 600px; margin: 0 auto; box-sizing: border-box; }
 
         .game-card {
-            background: white;
-            border-radius: 20px;
-            padding: 15px;
-            text-align: center;
-            border: 3px solid var(--cor-principal);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: 0.3s;
-            width: 100%;
-            box-sizing: border-box;
+            background: white; border-radius: 20px; padding: 15px; border: 3px solid var(--cor-principal);
+            display: flex; flex-direction: column; min-height: 400px; position: relative;
         }
 
-        .game-img {
-            width: 100%; height: 120px;
-            background: var(--cor-fundo);
-            border-radius: 15px; margin-bottom: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 3rem;
+        /* --- ÁREA DO JOGO --- */
+        .game-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 10px; border-bottom: 2px dashed #eee; margin-bottom: 10px;
         }
 
-        h2 { font-size: 1rem; color: var(--cor-texto); min-height: 35px; display: flex; align-items: center; justify-content: center; margin: 10px 0; }
+        .stats-item { font-weight: bold; color: var(--cor-texto); font-size: 0.9rem; }
+
+        .stars-container { display: flex; gap: 3px; }
+        .star {
+            font-size: 1.2rem;
+            color: transparent;
+            -webkit-text-stroke: 1.5px var(--cor-principal);
+        }
+        .star.correct { color: var(--cor-sucesso); -webkit-text-stroke: 0px; }
+        .star.wrong { color: var(--cor-erro); -webkit-text-stroke: 0px; }
+
+        .game-img-area {
+            flex: 1; background: var(--cor-fundo); border-radius: 15px; margin-bottom: 15px;
+            display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+            font-size: 2.5rem; padding: 10px; gap: 10px; overflow: hidden; align-content: center;
+        }
+
+        h2 { font-size: 1.1rem; color: var(--cor-texto); margin: 10px 0; min-height: 1.2em; }
+
+        /* Botões de Resposta */
+        .options-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px;
+        }
+
+        .option-btn {
+            background: white; border: 2px solid var(--cor-principal); color: var(--cor-principal);
+            padding: 10px 0; border-radius: 10px; font-family: 'Fredoka'; font-weight: bold;
+            cursor: pointer; transition: 0.2s; font-size: 1rem;
+        }
+        .option-btn:hover { background: var(--cor-fundo); }
 
         .play-btn {
-            background: var(--cor-principal);
-            color: white; 
-            border: none; 
-            padding: 12px 0;
-            width: 100%; 
-            border-radius: 12px;
-            font-size: 0.9rem; 
-            cursor: pointer; 
-            font-family: 'Fredoka'; 
-            font-weight: bold;
-            transition: 0.2s;
-        }
-        .play-btn:hover {
-            background: var(--cor-vibrante);
-            transform: scale(1.02);
+            background: var(--cor-principal); color: white; border: none; padding: 15px 0;
+            width: 100%; border-radius: 12px; font-size: 1.1rem; cursor: pointer;
+            font-family: 'Fredoka'; font-weight: bold; transition: 0.2s;
         }
 
         h1 { color: var(--cor-principal); margin: 0; font-size: 1.1rem; text-align: center; flex-grow: 1; }
+        footer { background: white; padding: 10px 0; text-align: center; font-size: 0.95rem; color: #777; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); }
 
-        footer {
-            background: white;
-            padding: 10px 0;
-            text-align: center;
-            font-size: 0.95rem;
-            color: #777;
-            flex-shrink: 0;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
-        }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -191,30 +111,175 @@
     </header>
 
     <main class="main-content">
-        <p class="intro-text">Conta os objetos.</p>
+        <p class="intro-text" id="intro-instruction">Conta os objetos.</p>
         
         <div class="game-container">
-            <!-- Jogo Único -->
             <div class="game-card">
-                <div class="game-img">🔢</div>
-                <h2>Conta os objetos</h2>
-                <button class="play-btn">JOGAR</button>
+                
+                <!-- Cabeçalho do Jogo (Timer, Estrelas, Pontos) -->
+                <div id="game-stats" class="game-header hidden">
+                    <div class="stats-item" id="timer">⏱️ 00:00</div>
+                    <div class="stars-container" id="stars-row">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                    </div>
+                    <div class="stats-item" id="points-display">Pontos: 0</div>
+                </div>
+
+                <!-- Área Visual (Ícone ou Objetos) -->
+                <div class="game-img-area" id="visual-area">
+                    <span id="initial-icon">🔢</span>
+                </div>
+
+                <!-- Pergunta -->
+                <h2 id="game-question">Conta os objetos</h2>
+
+                <!-- Controlos -->
+                <div id="start-controls">
+                    <button class="play-btn" onclick="startGame()">JOGAR</button>
+                </div>
+
+                <div id="game-options" class="options-grid hidden">
+                    <!-- Botões de 1 a 10 serão gerados aqui -->
+                </div>
+
             </div>
         </div>
     </main>
 
-    <footer>
-        Recursos Digitais Covão
-    </footer>
+    <footer>Recursos Digitais Covão</footer>
 
     <script>
+        let level = 1;
+        let questionNum = 1;
+        let points = 0;
+        let seconds = 0;
+        let timerInterval;
+        let currentAnswer = 0;
+        
+        const emojis = ['🍎', '🐶', '⚽', '🚗', '🐱', '🦁', '🐢', '🍌', '🧸', '🍦'];
+        const distractors = ['🌳', '☁️', '🏠', '🎁', '🍭'];
+
         function toggleMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function startGame() {
+            level = 1;
+            questionNum = 1;
+            points = 0;
+            seconds = 0;
+            
+            document.getElementById('start-controls').classList.add('hidden');
+            document.getElementById('initial-icon').classList.add('hidden');
+            document.getElementById('game-stats').classList.remove('hidden');
+            document.getElementById('game-options').classList.remove('hidden');
+            
+            resetStars();
+            createOptionButtons();
+            startTimer();
+            nextQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                seconds++;
+                let min = Math.floor(seconds / 60).toString().padStart(2, '0');
+                let sec = (seconds % 60).toString().padStart(2, '0');
+                document.getElementById('timer').innerText = `⏱️ ${min}:${sec}`;
+            }, 1000);
+        }
+
+        function createOptionButtons() {
+            const grid = document.getElementById('game-options');
+            grid.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = i;
+                btn.onclick = () => checkAnswer(i);
+                grid.appendChild(btn);
+            }
+        }
+
+        function nextQuestion() {
+            const visualArea = document.getElementById('visual-area');
+            const questionText = document.getElementById('game-question');
+            visualArea.innerHTML = '';
+            
+            let targetEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+            currentAnswer = Math.floor(Math.random() * 9) + 1; // 1 a 9
+
+            if (level === 1) {
+                questionText.innerText = `Quantos objetos vês?`;
+                for (let i = 0; i < currentAnswer; i++) {
+                    visualArea.innerHTML += `<span>${targetEmoji}</span>`;
+                }
+            } else {
+                questionText.innerText = `Conta apenas: ${targetEmoji}`;
+                let totalItems = 12; // Encher a área
+                let placedTargets = 0;
+                
+                // Criar array com alvos e distratores
+                let items = [];
+                for(let i=0; i<currentAnswer; i++) items.push(targetEmoji);
+                while(items.length < totalItems) {
+                    let d = distractors[Math.floor(Math.random() * distractors.length)];
+                    items.push(d);
+                }
+                // Baralhar
+                items.sort(() => Math.random() - 0.5);
+                items.forEach(item => {
+                    visualArea.innerHTML += `<span>${item}</span>`;
+                });
+            }
+        }
+
+        function checkAnswer(val) {
+            const stars = document.getElementById('stars-row').children;
+            const currentStar = stars[questionNum - 1];
+
+            if (val === currentAnswer) {
+                points += 10;
+                currentStar.classList.add('correct');
+            } else {
+                currentStar.classList.add('wrong');
+            }
+
+            document.getElementById('points-display').innerText = `Pontos: ${points}`;
+
+            if (questionNum < 5) {
+                questionNum++;
+                nextQuestion();
+            } else if (level === 1) {
+                alert("Nível 1 Concluído! Vamos para o Nível 2 (Misturado)");
+                level = 2;
+                questionNum = 1;
+                resetStars();
+                nextQuestion();
+            } else {
+                endGame();
+            }
+        }
+
+        function resetStars() {
+            const stars = document.getElementById('stars-row').children;
+            for (let s of stars) {
+                s.classList.remove('correct', 'wrong');
+            }
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            const timeStr = document.getElementById('timer').innerText;
+            alert(`Parabéns! Terminaste o jogo.\n${timeStr}\nPontos: ${points}`);
+            location.reload(); // Reinicia o estado original
         }
     </script>
-
 </body>
 </html>
