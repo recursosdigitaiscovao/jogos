@@ -16,12 +16,17 @@
             --cor-erro: #f44336;
         }
 
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
+        html, body { 
+            height: 100%; margin: 0; padding: 0; overflow: hidden; 
+            /* Impede seleção de texto e realce de clique no mobile */
+            user-select: none; 
+            -webkit-tap-highlight-color: transparent; 
+        }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
         /* --- Header --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); flex-shrink: 0; z-index: 1000; }
-        .menu-btn { background: none; border: none; font-size: 26px; cursor: pointer; color: var(--cor-principal); font-weight: 700; transition: 0.3s; }
+        .menu-btn { background: none; border: none; font-size: 26px; cursor: pointer; color: var(--cor-principal); font-weight: 700; transition: 0.3s; outline: none; }
         .menu-btn:hover { color: var(--cor-vibrante); transform: scale(1.1); }
         
         .back-btn { background: var(--cor-principal); color: white; padding: 8px 18px; border-radius: 50px; border: none; font-weight: bold; font-size: 0.85rem; cursor: pointer; text-decoration: none; transition: 0.3s; }
@@ -45,6 +50,20 @@
             transition: 0.3s;
         }
 
+        /* Suporte para Fullscreen */
+        .game-card:fullscreen {
+            width: 100vw; height: 100vh; max-width: none; border: none; border-radius: 0;
+            padding: 40px; justify-content: center; background: var(--cor-fundo);
+        }
+
+        /* Botão Expandir */
+        .expand-btn {
+            position: absolute; top: 10px; right: 10px; background: none; border: none;
+            font-size: 20px; cursor: pointer; color: var(--cor-principal); z-index: 10;
+            outline: none; transition: 0.2s;
+        }
+        .expand-btn:hover { transform: scale(1.2); }
+
         /* --- UI do Jogo --- */
         .game-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 2px dashed #eee; margin-bottom: 10px; }
         .stats-item { font-weight: bold; color: var(--cor-texto); font-size: 0.9rem; }
@@ -61,7 +80,6 @@
         }
 
         .instruction-text { font-size: 1rem; color: var(--cor-texto); line-height: 1.4; padding: 0 10px; }
-
         h2 { font-size: 1.1rem; color: var(--cor-texto); margin: 10px 0; }
 
         /* Botões */
@@ -69,36 +87,33 @@
         .option-btn {
             background: white; border: 2px solid var(--cor-principal); color: var(--cor-principal);
             padding: 12px 0; border-radius: 12px; font-family: 'Fredoka'; font-weight: bold;
-            cursor: pointer; transition: 0.2s; font-size: 1.1rem;
+            cursor: pointer; transition: 0.2s; font-size: 1.1rem; outline: none;
         }
-        .option-btn:hover { background: var(--cor-principal); color: white; transform: translateY(-2px); }
+        /* Corrigido para não manter a seleção visual após o clique no mobile */
+        .option-btn:active { background: var(--cor-principal); color: white; }
+        .option-btn:focus { outline: none; }
 
         .play-btn {
             background: var(--cor-principal); color: white; border: none; padding: 15px 0;
             width: 100%; border-radius: 12px; font-size: 1.2rem; cursor: pointer;
-            font-family: 'Fredoka'; font-weight: bold; transition: 0.2s; box-shadow: 0 4px 0 #e68200;
+            font-family: 'Fredoka'; font-weight: bold; transition: 0.2s; box-shadow: 0 4px 0 #e68200; outline: none;
         }
         .play-btn:hover { background: var(--cor-vibrante); transform: translateY(-2px); }
-        .play-btn:active { transform: translateY(2px); box-shadow: none; }
 
-        /* --- Popups Personalizados --- */
+        /* --- Popups --- */
         .modal-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(255, 255, 255, 0.95); border-radius: 18px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 100; padding: 20px; text-align: center; box-sizing: border-box;
-            display: none;
+            z-index: 100; padding: 20px; text-align: center; display: none;
         }
         .modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
         .modal-title { color: var(--cor-principal); font-size: 1.5rem; margin-bottom: 10px; }
-        .modal-msg { color: var(--cor-texto); font-size: 1.1rem; margin-bottom: 20px; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        @keyframes pulseSuccess { 0% { background-color: var(--cor-fundo); } 50% { background-color: #e8f5e9; } 100% { background-color: var(--cor-fundo); } }
-
         .wrong-anim { animation: shake 0.3s; border-color: var(--cor-erro) !important; }
-        .correct-anim { animation: pulseSuccess 0.5s; border-color: var(--cor-sucesso) !important; }
+        .correct-anim { border-color: var(--cor-sucesso) !important; background-color: #e8f5e9 !important; }
 
         h1 { color: var(--cor-principal); margin: 0; font-size: 1.1rem; text-align: center; flex-grow: 1; }
         footer { background: white; padding: 10px 0; text-align: center; font-size: 0.95rem; color: #777; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); }
@@ -132,6 +147,9 @@
         <div class="game-container">
             <div class="game-card" id="card-element">
                 
+                <!-- Botão Expandir -->
+                <button class="expand-btn" id="btn-fullscreen" onclick="toggleFullScreen()" title="Expandir Jogo">⛶</button>
+
                 <!-- Popup Interno -->
                 <div id="game-modal" class="modal-overlay">
                     <h3 class="modal-title" id="modal-title">Nível Concluído!</h3>
@@ -151,7 +169,7 @@
                     <div class="instruction-text" id="explanation">
                         <span style="font-size: 3rem; display: block; margin-bottom: 10px;">🎮</span>
                         <strong>Como jogar:</strong><br>
-                        Observa os objetos que aparecem no quadro. No nível 1, conta todos. No nível 2, conta apenas o objeto pedido! Escolhe o número certo o mais rápido que conseguires.
+                        Observa os objetos que aparecem no quadro. No nível 1, conta todos. No nível 2, conta apenas o objeto pedido!
                     </div>
                 </div>
 
@@ -177,33 +195,48 @@
         let seconds = 0;
         let timerInterval;
         let currentAnswer = 0;
-        let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let audioCtx;
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        // --- Sons Sintetizados ---
+        // --- Função Ecrã Total ---
+        function toggleFullScreen() {
+            const card = document.getElementById('card-element');
+            const btn = document.getElementById('btn-fullscreen');
+            
+            if (!document.fullscreenElement) {
+                if (card.requestFullscreen) card.requestFullscreen();
+                else if (card.webkitRequestFullscreen) card.webkitRequestFullscreen();
+                btn.innerText = "❐"; // Ícone de voltar ao normal
+                btn.title = "Sair do Ecrã Total";
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                btn.innerText = "⛶";
+                btn.title = "Expandir Jogo";
+            }
+        }
+
+        // --- Sons ---
         function playSound(type) {
+            if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
 
             if(type === 'correct') {
-                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.setValueAtTime(523, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
             } else {
-                osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
             }
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
         }
 
         function startGame() {
@@ -235,7 +268,10 @@
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
                 btn.innerText = i;
-                btn.onclick = () => checkAnswer(i);
+                btn.onclick = (e) => {
+                    checkAnswer(i);
+                    e.target.blur(); // Remove o foco imediatamente após o clique
+                };
                 grid.appendChild(btn);
             }
         }
@@ -316,12 +352,11 @@
             clearInterval(timerInterval);
             title.innerText = "Jogo Terminado!";
             
-            let feedback = "";
-            if(totalCorrect >= 9) feedback = "🌟 Muito bem! És um especialista a contar.";
-            else if(totalCorrect >= 6) feedback = "👍 Estás no bom caminho! Continua a praticar.";
-            else feedback = "💪 Tens que te esforçar mais! Tenta outra vez.";
+            let feedback = totalCorrect >= 9 ? "🌟 És um especialista a contar!" : 
+                           totalCorrect >= 6 ? "👍 Estás no bom caminho!" : 
+                           "💪 Tens que te esforçar mais!";
 
-            msg.innerHTML = `${feedback}<br><br><b>Acertos Totais:</b> ${totalCorrect}/10<br><b>Tempo:</b> ${document.getElementById('timer').innerText.replace('⏱️ ', '')}<br><b>Pontos:</b> ${points}`;
+            msg.innerHTML = `${feedback}<br><br><b>Acertos:</b> ${totalCorrect}/10<br><b>Pontos:</b> ${points}`;
             btn.innerText = "RECOMEÇAR";
             btn.onclick = () => location.reload();
             modal.classList.add('active');
@@ -329,11 +364,8 @@
 
         function closeModal() {
             document.getElementById('game-modal').classList.remove('active');
-            level = 2;
-            questionNum = 1;
-            levelCorrect = 0;
-            resetStars();
-            nextQuestion();
+            level = 2; questionNum = 1; levelCorrect = 0;
+            resetStars(); nextQuestion();
         }
 
         function resetStars() {
