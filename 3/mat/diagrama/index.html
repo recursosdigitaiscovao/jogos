@@ -1,1 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jogo: Caule-e-Folhas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --vibrant-orange: #ff6b1a;
+            --soft-orange: #fff5e6;
+            --cor-texto: #8c5d40;
+            --cor-acerto: #45cfa8;
+            --cor-erro: #ff4757;
+        }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: var(--soft-orange);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            width: 100%;
+            padding: 20px 10px 40px 10px;
+            text-align: center;
+            background: white;
+            border-bottom-left-radius: 50% 15%;
+            border-bottom-right-radius: 50% 15%;
+            box-shadow: 0 10px 30px rgba(255, 107, 26, 0.1);
+            position: relative;
+        }
+
+        .btn-voltar {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background-color: var(--vibrant-orange);
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        h1 { color: var(--vibrant-orange); font-size: 1.5rem; margin-bottom: 5px; }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Área do Jogo */
+        .game-container {
+            background: white;
+            padding: 20px;
+            border-radius: 30px;
+            border: 4px solid var(--vibrant-orange);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .pergunta {
+            font-size: 1.2rem;
+            color: var(--cor-texto);
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        /* Estilo do Diagrama */
+        .diagrama-box {
+            background: #fff9f0;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px dashed var(--vibrant-orange);
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            text-align: left;
+        }
+
+        .linha {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            padding: 5px 0;
+        }
+        .linha:last-child { border-bottom: none; }
+
+        .caule {
+            font-weight: 700;
+            color: var(--vibrant-orange);
+            padding-right: 15px;
+            border-right: 3px solid var(--vibrant-orange);
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .folhas {
+            padding-left: 15px;
+            letter-spacing: 8px;
+            color: #555;
+        }
+
+        /* Opções de Resposta */
+        .opcoes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .btn-opcao {
+            background: white;
+            border: 2px solid var(--vibrant-orange);
+            padding: 12px;
+            border-radius: 15px;
+            font-family: 'Fredoka';
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: var(--vibrant-orange);
+        }
+
+        .btn-opcao:hover { background: var(--soft-orange); }
+
+        .feedback {
+            margin-top: 15px;
+            font-weight: bold;
+            height: 25px;
+        }
+
+        footer {
+            background: white;
+            padding: 10px;
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 500px) {
+            .game-container { padding: 15px; }
+            h1 { font-size: 1.2rem; }
+            .diagrama-box { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../" class="btn-voltar">⬅ Voltar</a>
+        <h1>🔢 Gráfico de Números</h1>
+        <p style="color: #8c5d40; font-size: 0.9rem;">Analisa o caule e as folhas!</p>
+    </header>
+
+    <main>
+        <div class="game-container">
+            <div id="enunciado" class="pergunta">Quantas vezes aparece o número 12?</div>
+            
+            <div class="diagrama-box">
+                <div class="linha">
+                    <div class="caule">1</div>
+                    <div class="folhas">0 2 2 5</div>
+                </div>
+                <div class="linha">
+                    <div class="caule">2</div>
+                    <div class="folhas">1 3 3 3</div>
+                </div>
+                <div class="linha">
+                    <div class="caule">3</div>
+                    <div class="folhas">0 4</div>
+                </div>
+            </div>
+
+            <div class="opcoes" id="area-opcoes">
+                <!-- Botões gerados via JS -->
+            </div>
+
+            <div id="feedback" class="feedback"></div>
+        </div>
+        
+        <button id="btn-proximo" class="btn-voltar" style="position: static; margin-top: 20px; display: none; background: #45cfa8;">Próximo Desafio ➔</button>
+    </main>
+
+    <footer>Recursos Digitais Covão</footer>
+
+    <script>
+        const desafios = [
+            {
+                pergunta: "Quantas vezes aparece o número 12?",
+                opcoes: ["1 vez", "2 vezes", "3 vezes", "Nenhuma"],
+                correta: 1,
+                explicação: "No caule 1, temos as folhas 0, 2, 2, 5. O número 12 aparece 2 vezes!"
+            },
+            {
+                pergunta: "Qual é o maior número do gráfico?",
+                opcoes: ["4", "30", "34", "15"],
+                correta: 2,
+                explicação: "O último caule é 3 e a última folha é 4. Juntos formam o 34!"
+            },
+            {
+                pergunta: "Quantos números existem no caule 2?",
+                opcoes: ["2 números", "4 números", "1 número", "3 números"],
+                correta: 1,
+                explicação: "No caule 2 temos as folhas 1, 3, 3, 3. São 4 números no total."
+            },
+            {
+                pergunta: "O número 21 está no gráfico?",
+                opcoes: ["Sim", "Não"],
+                correta: 0,
+                explicação: "Sim! Caule 2 e folha 1 formam o número 21."
+            }
+        ];
+
+        let indiceAtual = 0;
+
+        function carregarDesafio() {
+            const desafio = desafios[indiceAtual];
+            document.getElementById('enunciado').innerText = desafio.pergunta;
+            document.getElementById('feedback').innerText = "";
+            document.getElementById('btn-proximo').style.display = "none";
+            
+            const areaOpcoes = document.getElementById('area-opcoes');
+            areaOpcoes.innerHTML = "";
+
+            desafio.opcoes.forEach((texto, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-opcao';
+                btn.innerText = texto;
+                btn.onclick = () => verificarResposta(i);
+                areaOpcoes.appendChild(btn);
+            });
+        }
+
+        function verificarResposta(escolhida) {
+            const desafio = desafios[indiceAtual];
+            const feedback = document.getElementById('feedback');
+            const botoes = document.querySelectorAll('.btn-opcao');
+
+            if (escolhida === desafio.correta) {
+                feedback.innerHTML = "✅ Muito bem! Está certo!";
+                feedback.style.color = "var(--cor-acerto)";
+                document.getElementById('btn-proximo').style.display = "block";
+            } else {
+                feedback.innerHTML = "❌ Tenta outra vez!";
+                feedback.style.color = "var(--cor-erro)";
+            }
+        }
+
+        document.getElementById('btn-proximo').onclick = () => {
+            indiceAtual++;
+            if (indiceAtual >= desafios.length) {
+                document.getElementById('enunciado').innerText = "🎉 Parabéns! Completaste todos os desafios!";
+                document.querySelector('.diagrama-box').style.display = "none";
+                document.getElementById('area-opcoes').innerHTML = "";
+                document.getElementById('btn-proximo').style.display = "none";
+            } else {
+                carregarDesafio();
+            }
+        };
+
+        // Iniciar jogo
+        carregarDesafio();
+    </script>
+</body>
+</html>
