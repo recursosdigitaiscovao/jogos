@@ -7,12 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Cores alteradas para o tema do 2º Ano */
-            --primary-green: #45cfa8;
-            --vibrant-green: #45cfa8;
-            --soft-green: #f0faf7; /* Fundo suave esverdeado */
-            --cor-texto: #3a6b5e;
-            
+            --cor-tema: #45cfa8;          /* Verde sugerido */
+            --cor-tema-suave: #e8f9f4;    /* Fundo suave baseado no verde */
             --azul-pt: #5ea2e6;
             --azul-pt-fundo: #ebf4ff;
             --verde-mat: #45cfa8;
@@ -21,15 +17,11 @@
             --vermelho-em-fundo: #fff0f1;
         }
         
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Fredoka', sans-serif;
-            background: var(--soft-green);
+            background: var(--cor-tema-suave);
             display: flex;
             flex-direction: column;
             height: 100vh;
@@ -37,21 +29,62 @@
             overflow: hidden; 
         }
 
+        /* --- Sidebar --- */
+        .sidebar { 
+            position: fixed; top: 0; left: -260px; width: 240px; height: 100%; 
+            background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); 
+            transition: 0.3s; z-index: 2000; padding-top: 10px; 
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-item { 
+            display: flex; align-items: center; padding: 15px 25px; 
+            color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9;
+            transition: all 0.3s ease; font-weight: normal;
+        }
+        .sidebar-item:hover {
+            color: var(--cor-tema) !important;
+            background-color: var(--cor-tema-suave);
+            padding-left: 35px;
+            font-weight: bold;
+        }
+        .img-icon-sidebar { height: 26px; width: auto; margin-right: 12px; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
+        .overlay.active { display: block; }
+
+        /* --- Header --- */
         header {
-            width: 100%;
-            padding: 20px 10px 40px 10px; 
             background: white;
+            padding: 20px 0 50px 0;
             border-bottom-left-radius: 50% 20%;
             border-bottom-right-radius: 50% 20%;
-            box-shadow: 0 5px 20px rgba(69, 207, 168, 0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            z-index: 100;
             flex-shrink: 0;
-            position: relative; 
+            position: relative;
+            min-height: 130px;
             display: flex;
             flex-direction: column;
+            align-items: center;
             justify-content: center;
-            align-items: center; 
-            min-height: 110px;
-            text-align: center;
+        }
+
+        .header-line-1 {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 50px;
+        }
+
+        .menu-btn {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none; border: none; font-size: 30px; cursor: pointer;
+            color: var(--cor-tema);
+            padding: 0;
         }
 
         .btn-voltar {
@@ -59,103 +92,78 @@
             right: 20px;
             top: 50%;
             transform: translateY(-50%);
-            background-color: var(--vibrant-green);
-            color: white;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            z-index: 20;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.2s;
+            background-color: var(--cor-tema);
+            color: white; text-decoration: none;
+            padding: 8px 18px; border-radius: 50px;
+            font-weight: bold; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 5px;
+            transition: 0.2s;
             white-space: nowrap;
         }
 
-        .btn-voltar:hover {
-            transform: translateY(-50%) scale(1.05);
-            filter: brightness(1.1);
+        .header-title-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .img-icon-header {
+            height: clamp(35px, 5vh, 50px);
+            width: auto;
         }
 
         h1 {
-            font-size: clamp(1.1rem, 3.5vh, 2.2rem); 
-            color: var(--vibrant-green);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            font-size: clamp(1.2rem, 4vw, 2.2rem);
+            color: var(--cor-tema);
+            white-space: nowrap;
             margin: 0;
-            width: 100%;
-            padding: 0 110px; 
         }
 
-        .header-text {
-            color: var(--cor-texto);
-            font-size: clamp(0.7rem, 1.8vh, 1rem);
-            margin-top: 4px;
+        .header-subtitle {
             width: 100%;
-            padding: 0 110px;
+            text-align: center;
+            color: #555;
+            font-size: clamp(0.75rem, 2vh, 1.05rem);
+            margin-top: 10px;
+            font-weight: 400;
         }
 
+        /* --- Main Content --- */
         main {
             flex: 1;
             display: flex;
-            padding: 20px;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            padding: 20px;
             min-height: 0;
         }
 
         .games-grid {
             display: grid;
             width: 100%;
-            height: 100%;
+            height: 90%;
             max-width: 1100px;
             gap: 20px;
             grid-template-columns: repeat(3, 1fr);
         }
 
         .game-card {
-            background: white;
-            border-radius: 25px;
-            padding: 15px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-decoration: none;
-            height: 100%;
-            min-height: 0;
-            border-bottom: 8px solid rgba(0,0,0,0.08);
-            transition: 0.3s;
+            background: white; border-radius: 25px; padding: 15px;
+            text-align: center; display: flex; flex-direction: column;
+            text-decoration: none; border-bottom: 8px solid rgba(0,0,0,0.08);
+            transition: 0.3s; min-height: 0;
         }
 
         .game-img-container {
-            flex: 1;
-            width: 100%;
-            border-radius: 20px; 
-            margin-bottom: 10px;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
+            flex: 1; width: 100%; border-radius: 20px; margin-bottom: 10px;
+            display: flex; align-items: center; justify-content: center;
             min-height: 0;
         }
 
-        .game-img-container img {
-            max-width: 80%;
-            max-height: 80%;
-            object-fit: contain;
-        }
+        .game-img-container img { max-width: 75%; max-height: 75%; object-fit: contain; }
 
-        h2 { 
-            font-size: clamp(0.9rem, 2.5vh, 1.5rem);
-            color: inherit;
-            margin: 10px 0;
-            flex-shrink: 0;
-        }
+        h2 { font-size: clamp(0.9rem, 2.5vh, 1.5rem); color: inherit; margin: 10px 0; }
 
         .card-pt { border: 4px solid var(--azul-pt); color: var(--azul-pt); }
         .card-pt .game-img-container { background: var(--azul-pt-fundo); }
@@ -164,70 +172,45 @@
         .card-em { border: 4px solid var(--vermelho-em); color: var(--vermelho-em); }
         .card-em .game-img-container { background: var(--vermelho-em-fundo); }
 
-        footer {
-            background: white;
-            padding: 10px 0;
-            text-align: center;
-            font-size: 0.85rem;
-            color: #888;
-            flex-shrink: 0;
-        }
+        footer { background: white; padding: 10px 0; text-align: center; font-size: 0.85rem; color: #888; flex-shrink: 0; }
 
-        /* --- Ajustes para PC --- */
-        @media (min-width: 1024px) {
-            header {
-                padding-left: 10px;
-                padding-right: 10px;
-            }
-            footer {
-                padding-left: 100px;
-                padding-right: 100px;
-            }
-            .btn-voltar {
-                right: 20px;
-            }
-            .games-grid {
-                height: 65%; 
-                max-height: 700px;
-            }
-        }
-
-        /* --- Ajustes para Telemóveis (Vertical) --- */
-        @media (max-width: 650px) and (orientation: portrait) {
-            .games-grid {
-                grid-template-columns: 1fr;
-                grid-template-rows: repeat(3, 1fr);
-                height: 100%;
-                gap: 12px;
-            }
-            header { padding: 20px 10px 35px 10px; min-height: 100px;}
-            .btn-voltar { 
-                right: 10px; 
-                padding: 6px 10px; 
-                font-size: 0.75rem; 
-            }
-            h1, .header-text { padding: 0 75px; } 
-        }
-
-        /* --- Telemóveis (Deitado) --- */
-        @media (max-height: 550px) {
-            header { min-height: 75px; padding: 10px 10px 25px 10px; }
-            .header-text { display: none; }
-            h1 { font-size: 1.1rem; padding: 0 85px; }
-            .btn-voltar { padding: 5px 10px; font-size: 0.75rem; }
-            .games-grid { height: 90%; }
+        @media (max-width: 750px) {
+            .games-grid { grid-template-columns: 1fr; grid-template-rows: repeat(3, 1fr); height: 100%; gap: 12px; }
+            .btn-voltar span { display: none; }
+            h1 { font-size: 1.3rem; }
+            header { padding-bottom: 40px; }
         }
     </style>
 </head>
 <body>
 
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="sidebar" id="sidebar">
+        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: bold; color: var(--cor-tema);">MENU</span>
+            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size: 18px;">✕</button>
+        </div>
+        <a href="/" class="sidebar-item">🏠 Início</a>
+        <a href="/jogos/pre/" class="sidebar-item"><img src="img/iconpre.png" class="img-icon-sidebar"> Pré-Escolar</a>
+        <a href="/jogos/1/" class="sidebar-item"><img src="img/icon1.png" class="img-icon-sidebar"> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img src="img/icon2.png" class="img-icon-sidebar"> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img src="img/icon3.png" class="img-icon-sidebar"> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img src="img/icon4.png" class="img-icon-sidebar"> 4º Ano</a>
+    </div>
+
     <header>
-        <a href="../" class="btn-voltar">
-            <span>⬅</span> Voltar
-        </a>
-        
-        <h1><span>🦊</span> 2º Ano <span>✨</span></h1>
-        <p class="header-text">O que vamos aprender hoje?</p>
+        <div class="header-line-1">
+            <button class="menu-btn" onclick="toggleMenu()">☰</button>
+            
+            <div class="header-title-group">
+                <img src="img/icon2.png" alt="2º Ano" class="img-icon-header">
+                <h1>2º Ano</h1>
+            </div>
+
+            <a href="../" class="btn-voltar">⬅ <span>Voltar</span></a>
+        </div>
+
+        <p class="header-subtitle">Prontos para novos desafios?</p>
     </header>
 
     <main>
@@ -259,5 +242,13 @@
         Recursos Digitais Covão
     </footer>
 
+    <script>
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+    </script>
 </body>
 </html>
