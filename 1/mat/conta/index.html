@@ -29,55 +29,72 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* --- Main Layout --- */
+        /* --- Layout --- */
         .main-content { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; position: relative; }
         .screen { display: none; width: 100%; flex-direction: column; align-items: center; flex: 1; }
         .screen.active { display: flex; }
 
-        /* --- Game Card & Internal Status --- */
         .game-card {
             background: white; border-radius: 30px; padding: 15px; border: 4px solid var(--cor-principal);
             display: flex; flex-direction: column; width: 100%; max-width: 900px; flex: 1; box-sizing: border-box;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
 
+        /* --- ANIMAÇÃO DE EXPLICAÇÃO (INTRO) --- */
+        .explanation-box {
+            background: #e8f9f4; border-radius: 20px; flex: 1; margin-bottom: 15px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;
+        }
+        .anim-container { display: flex; gap: 20px; margin-bottom: 25px; }
+        .anim-group { display: flex; flex-direction: column; align-items: center; opacity: 0; animation: stepFade 4s infinite; }
+        .anim-group img { height: 60px; width: auto; }
+        .anim-group b { font-size: 2rem; color: var(--cor-principal); }
+        
+        .step1 { animation-delay: 0.5s; }
+        .step2 { animation-delay: 1.5s; }
+        .step3 { animation-delay: 2.5s; }
+
+        @keyframes stepFade {
+            0%, 10% { opacity: 0; transform: scale(0.5); }
+            20%, 90% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; }
+        }
+
+        .fake-options { display: flex; gap: 10px; }
+        .fake-btn { 
+            width: 50px; height: 50px; border-radius: 10px; border: 3px solid var(--cor-jogo-verde); 
+            display: flex; align-items: center; justify-content: center; font-weight: bold; background: white;
+        }
+        .fake-btn.active { animation: highlightBtn 4s infinite; animation-delay: 2.8s; }
+
+        @keyframes highlightBtn {
+            0%, 20% { background: white; color: black; }
+            40%, 80% { background: var(--cor-jogo-verde); color: white; transform: scale(1.1); }
+            100% { background: white; }
+        }
+
+        /* --- GAME STATUS BAR (Inside Card) --- */
         .card-header {
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 10px 10px 10px; border-bottom: 2px solid #f0f0f0; margin-bottom: 10px;
         }
-
-        .status-item { font-weight: bold; color: var(--cor-texto); font-size: 1rem; display: flex; align-items: center; gap: 5px; }
-        
+        .status-item { font-weight: bold; color: var(--cor-texto); font-size: 1rem; }
         .stars-container { display: flex; gap: 4px; }
-        .star { 
-            width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; font-size: 12px; color: transparent;
-        }
+        .star { width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: transparent; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
-        /* --- Instruction Area (Visual) --- */
-        .instruction-area {
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            font-size: 1.2rem; font-weight: bold; color: var(--cor-texto); margin-bottom: 10px;
-        }
-        .instruction-area img { height: 45px; width: auto; filter: drop-shadow(2px 2px 0px #eee); }
+        /* --- AREAS DE JOGO --- */
+        .instruction-area { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1.2rem; font-weight: bold; color: var(--cor-texto); margin-bottom: 10px; }
+        .instruction-area img { height: 45px; }
 
-        /* --- Game Grid --- */
-        .objects-container {
-            background: #fff; border: 2px dashed #eee; border-radius: 20px; flex: 1;
-            display: flex; flex-wrap: wrap; align-items: center; justify-content: center; padding: 15px; gap: 10px;
-        }
+        .objects-container { background: #fff; border: 2px dashed #eee; border-radius: 20px; flex: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; padding: 15px; gap: 10px; }
         .fruit-img { width: clamp(55px, 10vw, 85px); animation: pop 0.4s ease; }
 
         .options-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 15px; }
-        .option-btn {
-            background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde);
-            font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s;
-        }
+        .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; }
         .option-btn:hover { background: var(--cor-jogo-verde); color: white; transform: translateY(-3px); }
 
-        /* --- Popups --- */
+        /* --- POPUP --- */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 350px; }
 
@@ -110,21 +127,30 @@
 
     <main class="main-content">
         
-        <!-- ECRÃ INICIAL -->
+        <!-- ECRÃ INICIAL (Explicação Animada) -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
-                <div class="objects-container" style="background:#e8f9f4">
-                    <div id="anim-box" style="display:flex; gap:10px;"></div>
+                <div class="explanation-box">
+                    <div class="anim-container">
+                        <div class="anim-group step1"><b>1</b><img class="intro-fruit" src=""></div>
+                        <div class="anim-group step2"><b>2</b><img class="intro-fruit" src=""></div>
+                        <div class="anim-group step3"><b>3</b><img class="intro-fruit" src=""></div>
+                    </div>
+                    <div class="fake-options">
+                        <div class="fake-btn">1</div>
+                        <div class="fake-btn">2</div>
+                        <div class="fake-btn active">3</div>
+                    </div>
+                    <p style="color:var(--cor-texto); font-weight:bold; margin-top:20px;">Conta e escolhe o número!</p>
                 </div>
                 <h2 style="color:var(--cor-principal); text-align:center;">Jogo de Contar</h2>
-                <button class="option-btn" style="width:100%; border-color:var(--cor-principal); color:var(--cor-principal);" onclick="startGame()">JOGAR</button>
+                <button class="option-btn" style="width:100%; border-color:var(--cor-jogo-verde); background:var(--cor-jogo-verde); color:white;" onclick="startGame()">JOGAR</button>
             </div>
         </section>
 
         <!-- ECRÃ DE JOGO -->
         <section id="game-screen" class="screen">
             <div class="game-card">
-                <!-- Status bar DENTRO do Card -->
                 <div class="card-header">
                     <div class="status-item">⏳ <span id="timer">00:00</span></div>
                     <div class="stars-container" id="stars-bar">
@@ -132,10 +158,7 @@
                     </div>
                     <div class="status-item">PTS: <span id="points">0</span></div>
                 </div>
-
-                <!-- Instrução Visual -->
                 <div class="instruction-area" id="instruction-area"></div>
-
                 <div id="objects-area" class="objects-container"></div>
                 <div class="options-grid" id="options-area"></div>
             </div>
@@ -155,9 +178,9 @@
         let level = 1, questionNum = 1, points = 0, seconds = 0, timerInterval, currentAnswer = 0;
         const stars = document.querySelectorAll('.star');
 
-        // Inicialização de Caminhos Dinâmicos
         window.onload = () => {
             const imgPath = JOGO_CONFIG.caminhoImg;
+            // Header e Sidebar
             document.getElementById('header-icon').src = imgPath + JOGO_CONFIG.iconesMenu.ano1;
             document.getElementById('side-pre').src = imgPath + JOGO_CONFIG.iconesMenu.pre;
             document.getElementById('side-1').src = imgPath + JOGO_CONFIG.iconesMenu.ano1;
@@ -165,13 +188,9 @@
             document.getElementById('side-3').src = imgPath + JOGO_CONFIG.iconesMenu.ano3;
             document.getElementById('side-4').src = imgPath + JOGO_CONFIG.iconesMenu.ano4;
 
-            const animBox = document.getElementById('anim-box');
-            for(let i=0; i<3; i++) {
-                const img = document.createElement('img');
-                img.src = imgPath + JOGO_CONFIG.frutas[i];
-                img.style.height = "60px";
-                animBox.appendChild(img);
-            }
+            // Imagens da animação inicial
+            const introFruits = document.querySelectorAll('.intro-fruit');
+            introFruits.forEach(img => img.src = imgPath + JOGO_CONFIG.frutas[0]);
         };
 
         function toggleMenu() {
@@ -203,9 +222,8 @@
             area.innerHTML = ''; options.innerHTML = '';
 
             let targetFruit = JOGO_CONFIG.frutas[Math.floor(Math.random() * JOGO_CONFIG.frutas.length)];
-            currentAnswer = Math.floor(Math.random() * 8) + 2; // Entre 2 e 9
+            currentAnswer = Math.floor(Math.random() * 8) + 2;
 
-            // Define a instrução visual
             instr.innerHTML = `<span>Conta:</span> <img src="${imgPath + targetFruit}">`;
 
             if (level === 1) {
