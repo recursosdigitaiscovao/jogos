@@ -14,7 +14,7 @@
             --header-height: 70px;
             --cor-jogo-verde: #45cfa8; 
             --cor-erro: #ff4757;
-            --cor-caixa-info: #e8f9f4;
+            --cor-caixa-info: #e8f9f4; /* Cor suave para áreas de foco */
         }
 
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
@@ -31,7 +31,7 @@
         .overlay.active { display: block; }
 
         /* --- Layout --- */
-        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
+        .main-content { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
         .screen { display: none; width: 100%; flex-direction: column; align-items: center; flex: 1; overflow: hidden; }
         .screen.active { display: flex; }
 
@@ -64,19 +64,20 @@
         .instruction-area { text-align: center; font-size: 1.2rem; font-weight: bold; color: var(--cor-texto); margin-bottom: 10px; }
         .instruction-area span { color: var(--cor-vibrante); text-decoration: underline; }
 
-        /* Grelha adaptável para 12 formas (4x3) */
+        /* Grelha que se adapta a qualquer monitor */
         .objects-container { 
             background: var(--cor-caixa-info); border: 2px dashed #b2dfdb; border-radius: 20px; flex: 1; 
             display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr);
             padding: 10px; gap: 10px; overflow: hidden; align-items: center; justify-items: center;
         }
 
-        .shape-item { cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; position: relative; }
-        .shape-item svg { width: 80%; height: 80%; max-width: 90px; max-height: 90px; }
-        .shape-item.found { opacity: 0.2; transform: scale(0.8); pointer-events: none; }
+        .shape-item { cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+        .shape-item svg { width: 85%; height: 85%; max-width: 100px; max-height: 100px; }
+        
+        .shape-item.found { opacity: 0.15; transform: scale(0.8); pointer-events: none; }
         .shape-item.error-shake { animation: shake 0.4s; }
 
-        @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
+        @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-10px);} 75% {transform:translateX(10px);} }
 
         .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; }
         .option-btn:hover { background: var(--cor-jogo-verde); color: white; transform: translateY(-3px); }
@@ -110,6 +111,7 @@
     </header>
 
     <main class="main-content">
+        <!-- ECRÃ INICIAL -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
@@ -132,6 +134,7 @@
             </div>
         </section>
 
+        <!-- ECRÃ DE JOGO -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
@@ -181,7 +184,7 @@
             osc.connect(gain); gain.connect(audioCtx.destination);
             if(type === 'certo') {
                 osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
+                osc.frequency.exponentialRampToValueAtTime(1100, audioCtx.currentTime + 0.1);
                 gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.2);
             } else {
@@ -192,14 +195,15 @@
         }
 
         window.onload = () => {
-            const imgPath = typeof JOGO_CONFIG !== 'undefined' ? JOGO_CONFIG.caminhoImg : "";
-            if(document.getElementById('header-icon') && JOGO_CONFIG.iconesMenu) {
-                document.getElementById('header-icon').src = imgPath + JOGO_CONFIG.iconesMenu.ano1;
-                document.getElementById('side-pre').src = imgPath + JOGO_CONFIG.iconesMenu.pre;
-                document.getElementById('side-1').src = imgPath + JOGO_CONFIG.iconesMenu.ano1;
-                document.getElementById('side-2').src = imgPath + JOGO_CONFIG.iconesMenu.ano2;
-                document.getElementById('side-3').src = imgPath + JOGO_CONFIG.iconesMenu.ano3;
-                document.getElementById('side-4').src = imgPath + JOGO_CONFIG.iconesMenu.ano4;
+            if(typeof JOGO_CONFIG !== 'undefined') {
+                const p = JOGO_CONFIG.caminhoImg;
+                const m = JOGO_CONFIG.iconesMenu;
+                document.getElementById('header-icon').src = p + m.ano1;
+                document.getElementById('side-pre').src = p + m.pre;
+                document.getElementById('side-1').src = p + m.ano1;
+                document.getElementById('side-2').src = p + m.ano2;
+                document.getElementById('side-3').src = p + m.ano3;
+                document.getElementById('side-4').src = p + m.ano4;
             }
         };
 
@@ -242,16 +246,18 @@
             document.getElementById('target-shape-name').innerText = targetObj.name;
 
             let pool = [];
-            totalTargetsToFind = Math.floor(Math.random() * 2) + 3; 
+            totalTargetsToFind = Math.floor(Math.random() * 2) + 3; // 3 a 4 alvos
 
             for(let i=0; i<totalTargetsToFind; i++) {
                 let specificType = currentTargetType;
+                // Regra: se o alvo é Retângulo, o Quadrado conta como alvo.
                 if(currentTargetType === "rectangle" && Math.random() > 0.5) specificType = "square";
                 pool.push({ type: specificType, isTarget: true });
             }
 
             while(pool.length < 12) {
                 let dist = shapesList[Math.floor(Math.random() * shapesList.length)];
+                // Evitar distratores que se confundam com a regra do Retângulo/Quadrado
                 if(currentTargetType === "rectangle" && dist.id === "square") continue;
                 if(currentTargetType === "square" && dist.id === "rectangle") continue;
                 if(dist.id !== currentTargetType) pool.push({ type: dist.id, isTarget: false });
@@ -261,7 +267,7 @@
                 const div = document.createElement('div');
                 div.className = 'shape-item';
                 if (level === 2) {
-                    let scale = (Math.random() * 0.3) + 0.7;
+                    let scale = (Math.random() * 0.3) + 0.65;
                     div.style.transform = `scale(${scale})`;
                 }
                 div.innerHTML = getShapeSVG(item.type, colors[Math.floor(Math.random()*colors.length)]);
@@ -281,10 +287,11 @@
                     if(totalTargetsFound === totalTargetsToFind) finishRound(true);
                 }
             } else {
+                // ERRO IMEDIATO: Para a ronda, marca X e passa para a próxima
                 playSound('errado');
                 element.classList.add('error-shake');
-                isRoundActive = false; // Bloqueia novos cliques
-                setTimeout(() => finishRound(false), 500); // Passa para a próxima como errado
+                isRoundActive = false;
+                setTimeout(() => finishRound(false), 500);
             }
         }
 
