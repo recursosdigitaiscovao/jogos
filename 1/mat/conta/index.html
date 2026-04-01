@@ -260,21 +260,29 @@
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
                 btn.innerText = i;
-                btn.onclick = () => checkAnswer(i);
+                btn.onclick = (e) => checkAnswer(i, e.target); // Passa o elemento clicado para dar feedback visual
                 options.appendChild(btn);
             }
         }
 
-        function checkAnswer(val) {
+        function checkAnswer(val, clickedBtn) {
             let starIndex = questionNum - 1;
+
+            // Bloqueia cliques adicionais na grelha enquanto processa a resposta
+            const optionsArea = document.getElementById('options-area');
+            optionsArea.style.pointerEvents = 'none';
+
             if (val === currentAnswer) {
                 // Tocar som de certo
                 somCerto.currentTime = 0;
                 somCerto.play();
 
+                // Feedback visual direto no botão clicado
+                clickedBtn.style.background = 'var(--cor-jogo-verde)';
+                clickedBtn.style.color = 'white';
+
                 points += 10;
                 
-                // Regista em qual nível os pontos foram ganhos
                 if (level === 1) pointsLevel1 += 10;
                 else pointsLevel2 += 10;
 
@@ -285,6 +293,11 @@
                 somErrado.currentTime = 0;
                 somErrado.play();
 
+                // Feedback visual direto no botão clicado
+                clickedBtn.style.background = 'var(--cor-erro)';
+                clickedBtn.style.borderColor = 'var(--cor-erro)';
+                clickedBtn.style.color = 'white';
+
                 stars[starIndex].classList.add('wrong');
                 stars[starIndex].innerText = '✕';
             }
@@ -292,18 +305,21 @@
             document.getElementById('points').innerText = points;
             questionNum++;
 
-            if (questionNum > 5) {
-                if (level === 1) {
-                    level = 2; questionNum = 1;
-                    // Retirado o 'alert', e mantido apenas o intervalo
-                    setTimeout(() => { resetStars(); loadQuestion(); }, 500);
+            // Aguarda 1 segundo para o aluno ver a cor do botão e ouvir o som
+            setTimeout(() => {
+                optionsArea.style.pointerEvents = 'auto'; // Reativa os cliques
+
+                if (questionNum > 5) {
+                    if (level === 1) {
+                        level = 2; questionNum = 1;
+                        setTimeout(() => { resetStars(); loadQuestion(); }, 500);
+                    } else {
+                        setTimeout(endGame, 500);
+                    }
                 } else {
-                    // Espera 500ms para o utilizador ver a resposta antes de chamar a janela final
-                    setTimeout(endGame, 500);
+                    loadQuestion();
                 }
-            } else {
-                setTimeout(loadQuestion, 500);
-            }
+            }, 1000);
         }
 
         function resetStars() {
@@ -318,7 +334,6 @@
             let titleText = "";
             let titleColor = "";
 
-            // Mensagens consoante a pontuação do jogador
             if (points >= 80) {
                 titleText = "Muito bem!";
                 titleColor = "var(--cor-jogo-verde)";
@@ -334,7 +349,6 @@
             modalTitle.innerText = titleText;
             modalTitle.style.color = titleColor;
 
-            // Estruturação pormenorizada da mensagem
             const tempoDecorrido = document.getElementById('timer').innerText;
             document.getElementById('modal-msg').innerHTML = `
                 <p style="margin-top:0;">Completaste o jogo em <b>${tempoDecorrido}</b>!</p>
