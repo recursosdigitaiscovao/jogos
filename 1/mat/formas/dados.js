@@ -1,4 +1,3 @@
-// dados.js
 const JOGO_CONFIG = {
     caminhoImg: "../../../img/",
     iconesMenu: {
