@@ -1,5 +1,7 @@
+// dados.js
 const JOGO_CONFIG = {
-    caminhoImg: "../../../img/",
+    caminhoIcons: "../../../icons/", // Três níveis acima
+    caminhoImg: "../../../img/",     // Três níveis acima
     iconesMenu: {
         pre: "iconpre.png",
         ano1: "icon1.png",
