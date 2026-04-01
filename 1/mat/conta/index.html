@@ -179,9 +179,12 @@
 
     <script src="dados.js"></script>
     <script>
-        // Adicionadas variáveis para registar os pontos de cada nível separadamente
         let level = 1, questionNum = 1, points = 0, pointsLevel1 = 0, pointsLevel2 = 0, seconds = 0, timerInterval, currentAnswer = 0;
         const stars = document.querySelectorAll('.star');
+
+        // Sons do jogo
+        const somCerto = new Audio('certo.mp3');
+        const somErrado = new Audio('errado.mp3');
 
         window.onload = () => {
             const imgPath = JOGO_CONFIG.caminhoImg;
@@ -265,6 +268,10 @@
         function checkAnswer(val) {
             let starIndex = questionNum - 1;
             if (val === currentAnswer) {
+                // Tocar som de certo
+                somCerto.currentTime = 0;
+                somCerto.play();
+
                 points += 10;
                 
                 // Regista em qual nível os pontos foram ganhos
@@ -274,6 +281,10 @@
                 stars[starIndex].classList.add('correct');
                 stars[starIndex].innerText = '✓';
             } else {
+                // Tocar som de errado
+                somErrado.currentTime = 0;
+                somErrado.play();
+
                 stars[starIndex].classList.add('wrong');
                 stars[starIndex].innerText = '✕';
             }
