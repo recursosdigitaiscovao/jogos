@@ -8,3 +8,4 @@ const JOGO_CONFIG = {
         ano3: "icon3.png",
         ano4: "icon4.png"
     }
+};
