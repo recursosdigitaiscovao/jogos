@@ -14,6 +14,7 @@
             --header-height: 70px;
             --cor-jogo-verde: #45cfa8; 
             --cor-erro: #ff4757;
+            --cor-caixa-info: #e8f9f4; /* Cor solicitada */
         }
 
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
@@ -30,18 +31,18 @@
         .overlay.active { display: block; }
 
         /* --- Layout --- */
-        .main-content { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; position: relative; }
-        .screen { display: none; width: 100%; flex-direction: column; align-items: center; flex: 1; }
+        .main-content { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
+        .screen { display: none; width: 100%; flex-direction: column; align-items: center; flex: 1; overflow: hidden; }
         .screen.active { display: flex; }
 
         .game-card {
             background: white; border-radius: 30px; padding: 15px; border: 4px solid var(--cor-principal);
-            display: flex; flex-direction: column; width: 100%; max-width: 900px; flex: 1; box-sizing: border-box;
+            display: flex; flex-direction: column; width: 100%; max-width: 900px; flex: 1; box-sizing: border-box; overflow: hidden;
         }
 
         /* --- ANIMAÇÃO DE EXPLICAÇÃO (INTRO) --- */
         .explanation-box {
-            background: #e8f9f4; border-radius: 20px; flex: 1; margin-bottom: 15px;
+            background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 15px;
             display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden;
         }
         .anim-shapes-container { display: flex; gap: 30px; align-items: center; justify-content: center; position: relative; }
@@ -83,13 +84,20 @@
         .instruction-area { text-align: center; font-size: 1.3rem; font-weight: bold; color: var(--cor-texto); margin-bottom: 10px; }
         .instruction-area span { color: var(--cor-vibrante); text-decoration: underline; }
 
+        /* Área solicitada: Mesma cor da explicação e organizada */
         .objects-container { 
-            background: #fff; border: 2px dashed #eee; border-radius: 20px; flex: 1; 
+            background: var(--cor-caixa-info); border: 2px dashed #b2dfdb; border-radius: 20px; flex: 1; 
             display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr);
             align-items: center; justify-items: center; padding: 10px; gap: 10px;
+            overflow: hidden; /* Garante que nada sai para fora */
         }
 
-        .shape-item { cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+        .shape-item { 
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; 
+            justify-content: center; width: 100%; height: 100%; max-height: 100%;
+        }
+        .shape-item svg { max-width: 90%; max-height: 90%; } /* Impede transbordar o espaço da grelha */
+        
         .shape-item:hover { transform: scale(1.05); }
         .shape-item.found { opacity: 0.2; transform: scale(0.8); pointer-events: none; }
         .shape-item.error { animation: shake 0.4s; }
@@ -245,7 +253,7 @@
             }, 1000);
         }
 
-        function getShapeSVG(type, color, size) {
+        function getShapeSVG(type, color) {
             let path = "";
             if(type === "circle") path = `<circle cx="50" cy="50" r="40" fill="${color}" />`;
             else if(type === "square") path = `<rect x="15" y="15" width="70" height="70" fill="${color}" />`;
@@ -253,7 +261,7 @@
             else if(type === "triangle") path = `<path d="M50 10 L90 85 L10 85 Z" fill="${color}" />`;
             else if(type === "pentagon") path = `<path d="M50 10 L90 40 L75 85 L25 85 L10 40 Z" fill="${color}" />`;
             else if(type === "hexagon") path = `<path d="M30 10 L70 10 L90 50 L70 90 L30 90 L10 50 Z" fill="${color}" />`;
-            return `<svg viewBox="0 0 100 100" width="${size}" height="${size}">${path}</svg>`;
+            return `<svg viewBox="0 0 100 100" style="width:100%; height:100%;">${path}</svg>`;
         }
 
         function loadQuestion() {
@@ -264,7 +272,7 @@
             document.getElementById('target-shape-name').innerText = targetObj.name;
 
             let pool = [];
-            totalTargetsToFind = Math.floor(Math.random() * 2) + 3; // 3 a 4 alvos
+            totalTargetsToFind = Math.floor(Math.random() * 2) + 3; 
 
             for(let i=0; i<totalTargetsToFind; i++) {
                 let specificType = currentTargetType;
@@ -282,8 +290,14 @@
             pool.sort(() => Math.random() - 0.5).forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'shape-item';
-                let size = (level === 1) ? 75 : (Math.floor(Math.random() * 30) + 50);
-                div.innerHTML = getShapeSVG(item.type, colors[Math.floor(Math.random()*colors.length)], size);
+                
+                // Nível 2 aplica uma escala aleatória para variar o tamanho sem quebrar o layout
+                if (level === 2) {
+                    let scale = (Math.random() * 0.4) + 0.6; // Entre 60% e 100%
+                    div.style.transform = `scale(${scale})`;
+                }
+                
+                div.innerHTML = getShapeSVG(item.type, colors[Math.floor(Math.random()*colors.length)]);
                 div.onclick = () => checkShape(div, item.isTarget);
                 area.appendChild(div);
             });
