@@ -89,19 +89,20 @@
         .num-btn { 
             background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-texto);
             font-size: clamp(1.1rem, 3vh, 1.6rem); font-weight: bold; padding: clamp(8px, 2vh, 15px) 2px; border-radius: 12px; cursor: pointer;
-            transition: background 0.2s, transform 0.1s; font-family: 'Fredoka';
+            transition: background 0.1s; font-family: 'Fredoka';
             -webkit-tap-highlight-color: transparent; outline: none;
         }
         
+        /* HOVER: Apenas para quem usa rato */
         @media (hover: hover) {
-            .num-btn:hover { background: var(--cor-jogo-verde); color: white; transform: scale(1.05); }
+            .num-btn:hover { background: var(--cor-jogo-verde); color: white; }
         }
         
-        /* Estado ativo (clique/toque momentâneo) */
-        .num-btn:active { background: var(--cor-jogo-verde) !important; color: white !important; transform: scale(0.9) !important; }
+        /* ACTIVE: Efeito visual apenas enquanto se pressiona */
+        .num-btn:active { background: var(--cor-jogo-verde) !important; color: white !important; }
         
-        /* Impedir que o foco mantenha a cor no mobile */
-        .num-btn:focus { background: white; color: var(--cor-texto); }
+        /* FOCUS: Garante que o botão volte ao branco após o clique/toque */
+        .num-btn:focus, .num-btn:focus-visible { background: white !important; color: var(--cor-texto) !important; }
 
         .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
         .option-btn:hover { background: var(--cor-jogo-verde); color: white; transform: translateY(-3px); }
@@ -197,17 +198,17 @@
                 </div>
 
                 <div class="numpad">
-                    <button class="num-btn" onclick="handleInput(0)">0</button>
-                    <button class="num-btn" onclick="handleInput(1)">1</button>
-                    <button class="num-btn" onclick="handleInput(2)">2</button>
-                    <button class="num-btn" onclick="handleInput(3)">3</button>
-                    <button class="num-btn" onclick="handleInput(4)">4</button>
-                    <button class="num-btn" onclick="handleInput(5)">5</button>
-                    <button class="num-btn" onclick="handleInput(6)">6</button>
-                    <button class="num-btn" onclick="handleInput(7)">7</button>
-                    <button class="num-btn" onclick="handleInput(8)">8</button>
-                    <button class="num-btn" onclick="handleInput(9)">9</button>
-                    <button class="num-btn" onclick="handleInput(10)">10</button>
+                    <button class="num-btn" onclick="handleInput(0, event)">0</button>
+                    <button class="num-btn" onclick="handleInput(1, event)">1</button>
+                    <button class="num-btn" onclick="handleInput(2, event)">2</button>
+                    <button class="num-btn" onclick="handleInput(3, event)">3</button>
+                    <button class="num-btn" onclick="handleInput(4, event)">4</button>
+                    <button class="num-btn" onclick="handleInput(5, event)">5</button>
+                    <button class="num-btn" onclick="handleInput(6, event)">6</button>
+                    <button class="num-btn" onclick="handleInput(7, event)">7</button>
+                    <button class="num-btn" onclick="handleInput(8, event)">8</button>
+                    <button class="num-btn" onclick="handleInput(9, event)">9</button>
+                    <button class="num-btn" onclick="handleInput(10, event)">10</button>
                 </div>
             </div>
         </section>
@@ -341,11 +342,11 @@
             }
         }
 
-        function handleInput(ans) {
+        function handleInput(ans, event) {
             if (!isRoundActive) return;
             
-            // Força o botão a perder o foco (remove seleção no mobile)
-            if (document.activeElement) document.activeElement.blur();
+            // Remove o foco técnico do botão imediatamente
+            if (event && event.currentTarget) event.currentTarget.blur();
             
             isRoundActive = false;
             const currentSlot = document.getElementById(hiddenSlotId);
