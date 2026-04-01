@@ -127,7 +127,7 @@
 
     <main class="main-content">
         
-        <!-- ECRÃ INICIAL (Explicação Animada) -->
+        <!-- ECRÃ INICIAL -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
@@ -165,7 +165,7 @@
         </section>
     </main>
 
-    <!-- Modal modificado com mais informações e botões adicionais -->
+    <!-- Modal Final -->
     <div class="modal" id="modal">
         <div class="modal-content">
             <h2 id="modal-title" style="margin-top: 0;"></h2>
@@ -182,13 +182,12 @@
         let level = 1, questionNum = 1, points = 0, pointsLevel1 = 0, pointsLevel2 = 0, seconds = 0, timerInterval, currentAnswer = 0;
         const stars = document.querySelectorAll('.star');
 
-        // Sons do jogo
+        // Carregamento dos sons
         const somCerto = new Audio('certo.mp3');
         const somErrado = new Audio('errado.mp3');
 
         window.onload = () => {
             const imgPath = JOGO_CONFIG.caminhoImg;
-            // Header e Sidebar
             document.getElementById('header-icon').src = imgPath + JOGO_CONFIG.iconesMenu.ano1;
             document.getElementById('side-pre').src = imgPath + JOGO_CONFIG.iconesMenu.pre;
             document.getElementById('side-1').src = imgPath + JOGO_CONFIG.iconesMenu.ano1;
@@ -196,7 +195,6 @@
             document.getElementById('side-3').src = imgPath + JOGO_CONFIG.iconesMenu.ano3;
             document.getElementById('side-4').src = imgPath + JOGO_CONFIG.iconesMenu.ano4;
 
-            // Imagens da animação inicial
             const introFruits = document.querySelectorAll('.intro-fruit');
             introFruits.forEach(img => img.src = imgPath + JOGO_CONFIG.frutas[0]);
         };
@@ -260,43 +258,28 @@
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
                 btn.innerText = i;
-                btn.onclick = (e) => checkAnswer(i, e.target); // Passa o elemento clicado para dar feedback visual
+                btn.onclick = () => checkAnswer(i);
                 options.appendChild(btn);
             }
         }
 
-        function checkAnswer(val, clickedBtn) {
+        function checkAnswer(val) {
             let starIndex = questionNum - 1;
-
-            // Bloqueia cliques adicionais na grelha enquanto processa a resposta
-            const optionsArea = document.getElementById('options-area');
-            optionsArea.style.pointerEvents = 'none';
-
             if (val === currentAnswer) {
-                // Tocar som de certo
+                // Feedback Sonoro de Acerto
                 somCerto.currentTime = 0;
                 somCerto.play();
 
-                // Feedback visual direto no botão clicado
-                clickedBtn.style.background = 'var(--cor-jogo-verde)';
-                clickedBtn.style.color = 'white';
-
                 points += 10;
-                
                 if (level === 1) pointsLevel1 += 10;
                 else pointsLevel2 += 10;
 
                 stars[starIndex].classList.add('correct');
                 stars[starIndex].innerText = '✓';
             } else {
-                // Tocar som de errado
+                // Feedback Sonoro de Erro
                 somErrado.currentTime = 0;
                 somErrado.play();
-
-                // Feedback visual direto no botão clicado
-                clickedBtn.style.background = 'var(--cor-erro)';
-                clickedBtn.style.borderColor = 'var(--cor-erro)';
-                clickedBtn.style.color = 'white';
 
                 stars[starIndex].classList.add('wrong');
                 stars[starIndex].innerText = '✕';
@@ -305,21 +288,16 @@
             document.getElementById('points').innerText = points;
             questionNum++;
 
-            // Aguarda 1 segundo para o aluno ver a cor do botão e ouvir o som
-            setTimeout(() => {
-                optionsArea.style.pointerEvents = 'auto'; // Reativa os cliques
-
-                if (questionNum > 5) {
-                    if (level === 1) {
-                        level = 2; questionNum = 1;
-                        setTimeout(() => { resetStars(); loadQuestion(); }, 500);
-                    } else {
-                        setTimeout(endGame, 500);
-                    }
+            if (questionNum > 5) {
+                if (level === 1) {
+                    level = 2; questionNum = 1;
+                    setTimeout(() => { resetStars(); loadQuestion(); }, 500);
                 } else {
-                    loadQuestion();
+                    setTimeout(endGame, 500);
                 }
-            }, 1000);
+            } else {
+                setTimeout(loadQuestion, 500);
+            }
         }
 
         function resetStars() {
