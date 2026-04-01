@@ -39,15 +39,37 @@
             display: flex; flex-direction: column; width: 100%; max-width: 900px; flex: 1; box-sizing: border-box;
         }
 
-        /* --- ANIMAÇÃO DE EXPLICAÇÃO --- */
+        /* --- ANIMAÇÃO DE EXPLICAÇÃO (INTRO) --- */
         .explanation-box {
             background: #e8f9f4; border-radius: 20px; flex: 1; margin-bottom: 15px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden;
         }
-        .anim-shape { width: 80px; height: 80px; background: var(--cor-principal); border-radius: 50%; margin-bottom: 20px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.1);} 100% {transform: scale(1);} }
+        .anim-shapes-container { display: flex; gap: 30px; align-items: center; justify-content: center; position: relative; }
+        .hand-icon { 
+            position: absolute; width: 40px; height: 40px; 
+            bottom: -20px; right: 20px; pointer-events: none;
+            animation: handMove 4s infinite;
+        }
+        @keyframes handMove {
+            0% { transform: translate(100px, 100px); opacity: 0; }
+            10% { transform: translate(0, 0); opacity: 1; }
+            25% { transform: scale(0.8); }
+            30% { transform: scale(1); }
+            40% { transform: translate(-110px, 0); }
+            55% { transform: scale(0.8); }
+            60% { transform: scale(1); }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        .check-anim { 
+            position: absolute; font-size: 40px; color: var(--cor-jogo-verde); font-weight: bold;
+            opacity: 0; animation: checkPop 4s infinite;
+        }
+        .check1 { top: -20px; right: 10px; animation-delay: 0.3s; }
+        .check2 { top: -20px; left: 10px; animation-delay: 0.6s; }
+        @keyframes checkPop { 0%, 20% { opacity:0; transform:scale(0); } 30%, 90% { opacity:1; transform:scale(1); } 100% { opacity:0; } }
 
-        /* --- GAME STATUS BAR --- */
+        /* --- JOGO --- */
         .card-header {
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 10px 10px 10px; border-bottom: 2px solid #f0f0f0; margin-bottom: 10px;
@@ -58,33 +80,27 @@
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
-        /* --- AREAS DE JOGO --- */
-        .instruction-area { text-align: center; font-size: 1.4rem; font-weight: bold; color: var(--cor-texto); margin-bottom: 15px; }
-        .instruction-area span { color: var(--cor-vibrante); border-bottom: 3px solid; }
+        .instruction-area { text-align: center; font-size: 1.3rem; font-weight: bold; color: var(--cor-texto); margin-bottom: 10px; }
+        .instruction-area span { color: var(--cor-vibrante); text-decoration: underline; }
 
         .objects-container { 
             background: #fff; border: 2px dashed #eee; border-radius: 20px; flex: 1; 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); 
-            align-items: center; justify-items: center; padding: 15px; gap: 15px; overflow-y: auto;
+            display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr);
+            align-items: center; justify-items: center; padding: 10px; gap: 10px;
         }
 
-        .shape-item { cursor: pointer; transition: 0.3s; padding: 10px; display: flex; align-items: center; justify-content: center; }
-        .shape-item:hover { transform: scale(1.1); }
-        .shape-item.found { opacity: 0.3; filter: grayscale(1); pointer-events: none; }
+        .shape-item { cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+        .shape-item:hover { transform: scale(1.05); }
+        .shape-item.found { opacity: 0.2; transform: scale(0.8); pointer-events: none; }
         .shape-item.error { animation: shake 0.4s; }
 
-        @keyframes shake {
-            0%, 100% {transform: translateX(0);}
-            25% {transform: translateX(-5px);}
-            75% {transform: translateX(5px);}
-        }
+        @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-5px);} 75% {transform:translateX(5px);} }
 
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 350px; width: 90%; }
-        
         .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; }
         .option-btn:hover { background: var(--cor-jogo-verde); color: white; transform: translateY(-3px); }
 
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 350px; width: 90%; }
     </style>
 </head>
 <body>
@@ -117,8 +133,19 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <div class="anim-shape"></div>
-                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; text-align: center; padding: 0 20px;">Presta atenção ao nome da forma e clica em todas as que encontrares!</p>
+                    <p style="color:var(--cor-texto); font-weight:bold; margin-bottom: 15px;">Encontra os <u>Retângulos</u>!</p>
+                    <div class="anim-shapes-container">
+                        <div style="position:relative;">
+                            <svg viewBox="0 0 100 100" width="80" height="80"><rect x="10" y="20" width="80" height="60" fill="#45cfa8"/></svg>
+                            <span class="check-anim check1">✓</span>
+                        </div>
+                        <div style="position:relative;">
+                            <svg viewBox="0 0 100 100" width="80" height="80"><rect x="15" y="15" width="70" height="70" fill="#ff9100"/></svg>
+                            <span class="check-anim check2">✓</span>
+                        </div>
+                        <svg viewBox="0 0 100 100" width="80" height="80"><path d="M50 5 L95 90 L5 90 Z" fill="#ccc"/></svg>
+                        <div class="hand-icon">☝️</div>
+                    </div>
                 </div>
                 <h2 style="color:var(--cor-principal); text-align:center;">Formas Geométricas</h2>
                 <button class="option-btn" style="width:100%; border-color:var(--cor-jogo-verde); background:var(--cor-jogo-verde); color:white;" onclick="startGame()">JOGAR</button>
@@ -135,15 +162,14 @@
                     </div>
                     <div class="status-item">PTS: <span id="points">0</span></div>
                 </div>
-                <div class="instruction-area" id="instruction-area">
-                    Encontra todos os <span id="target-shape-name">...</span>!
+                <div class="instruction-area">
+                    Clica em todos os <span id="target-shape-name">...</span>!
                 </div>
                 <div id="objects-area" class="objects-container"></div>
             </div>
         </section>
     </main>
 
-    <!-- Modal Final -->
     <div class="modal" id="modal">
         <div class="modal-content">
             <h2 id="modal-title" style="margin-top: 0;"></h2>
@@ -158,10 +184,7 @@
     <script src="dados.js"></script>
     <script>
         let level = 1, questionNum = 1, points = 0, pointsLevel1 = 0, pointsLevel2 = 0, seconds = 0, timerInterval;
-        let currentTargetType = "";
-        let totalTargetsFound = 0;
-        let totalTargetsToFind = 0;
-        let roundErrorOccurred = false;
+        let currentTargetType = "", totalTargetsFound = 0, totalTargetsToFind = 0, roundErrorOccurred = false;
 
         const shapesList = [
             { id: "circle", name: "Círculos" },
@@ -174,7 +197,6 @@
 
         const colors = ["#FF5733", "#33FF57", "#3357FF", "#F333FF", "#FF33A8", "#FFD700", "#00CED1"];
 
-        // Áudio via Web Audio API
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound(type) {
             const osc = audioCtx.createOscillator();
@@ -182,13 +204,12 @@
             osc.connect(gain); gain.connect(audioCtx.destination);
             if(type === 'certo') {
                 osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+                osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
                 gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.2);
             } else {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                osc.type = 'square'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.2);
             }
         }
@@ -214,77 +235,54 @@
             if (audioCtx.state === 'suspended') audioCtx.resume();
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            startTimer();
-            loadQuestion();
+            startTimer(); loadQuestion();
         }
 
         function startTimer() {
             timerInterval = setInterval(() => {
                 seconds++;
-                let min = Math.floor(seconds/60).toString().padStart(2,'0');
-                let sec = (seconds%60).toString().padStart(2,'0');
-                document.getElementById('timer').innerText = `${min}:${sec}`;
+                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
             }, 1000);
         }
 
         function getShapeSVG(type, color, size) {
             let path = "";
-            if(type === "circle") path = `<circle cx="50" cy="50" r="45" fill="${color}" />`;
-            else if(type === "square") path = `<rect x="10" y="10" width="80" height="80" fill="${color}" />`;
-            else if(type === "rectangle") path = `<rect x="5" y="25" width="90" height="50" fill="${color}" />`;
-            else if(type === "triangle") path = `<path d="M50 5 L95 90 L5 90 Z" fill="${color}" />`;
-            else if(type === "pentagon") path = `<path d="M50 5 L95 38 L78 92 L22 92 L5 38 Z" fill="${color}" />`;
-            else if(type === "hexagon") path = `<path d="M25 5 L75 5 L100 50 L75 95 L25 95 L0 50 Z" fill="${color}" />`;
-            
+            if(type === "circle") path = `<circle cx="50" cy="50" r="40" fill="${color}" />`;
+            else if(type === "square") path = `<rect x="15" y="15" width="70" height="70" fill="${color}" />`;
+            else if(type === "rectangle") path = `<rect x="10" y="25" width="80" height="50" fill="${color}" />`;
+            else if(type === "triangle") path = `<path d="M50 10 L90 85 L10 85 Z" fill="${color}" />`;
+            else if(type === "pentagon") path = `<path d="M50 10 L90 40 L75 85 L25 85 L10 40 Z" fill="${color}" />`;
+            else if(type === "hexagon") path = `<path d="M30 10 L70 10 L90 50 L70 90 L30 90 L10 50 Z" fill="${color}" />`;
             return `<svg viewBox="0 0 100 100" width="${size}" height="${size}">${path}</svg>`;
         }
 
         function loadQuestion() {
             const area = document.getElementById('objects-area');
-            area.innerHTML = '';
-            totalTargetsFound = 0;
-            roundErrorOccurred = false;
-
-            // Escolher forma alvo
+            area.innerHTML = ''; totalTargetsFound = 0; roundErrorOccurred = false;
             const targetObj = shapesList[Math.floor(Math.random() * shapesList.length)];
             currentTargetType = targetObj.id;
             document.getElementById('target-shape-name').innerText = targetObj.name;
 
             let pool = [];
-            totalTargetsToFind = Math.floor(Math.random() * 3) + 3; // 3 a 5 alvos
+            totalTargetsToFind = Math.floor(Math.random() * 2) + 3; // 3 a 4 alvos
 
-            // Adicionar alvos
             for(let i=0; i<totalTargetsToFind; i++) {
-                // Se o alvo for retângulo, podemos meter alguns quadrados também
                 let specificType = currentTargetType;
-                if(currentTargetType === "rectangle" && Math.random() > 0.6) specificType = "square";
-                
+                if(currentTargetType === "rectangle" && Math.random() > 0.5) specificType = "square";
                 pool.push({ type: specificType, isTarget: true });
             }
 
-            // Adicionar distratores (total de 12 formas no ecrã)
             while(pool.length < 12) {
-                let distObj = shapesList[Math.floor(Math.random() * shapesList.length)];
-                
-                // Regra: Se o alvo é Retângulo, o distrator não pode ser Quadrado
-                if(currentTargetType === "rectangle" && distObj.id === "square") continue;
-                // Se o alvo é Quadrado, o distrator não pode ser Retângulo (para não confundir a criança)
-                if(currentTargetType === "square" && distObj.id === "rectangle") continue;
-
-                if(distObj.id !== currentTargetType) {
-                    pool.push({ type: distObj.id, isTarget: false });
-                }
+                let dist = shapesList[Math.floor(Math.random() * shapesList.length)];
+                if(currentTargetType === "rectangle" && dist.id === "square") continue;
+                if(currentTargetType === "square" && dist.id === "rectangle") continue;
+                if(dist.id !== currentTargetType) pool.push({ type: dist.id, isTarget: false });
             }
 
-            pool.sort(() => Math.random() - 0.5);
-
-            pool.forEach(item => {
+            pool.sort(() => Math.random() - 0.5).forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'shape-item';
-                
-                // Nível 1: tamanho fixo. Nível 2: tamanhos variados.
-                let size = (level === 1) ? 80 : (Math.floor(Math.random() * 40) + 55);
-                
+                let size = (level === 1) ? 75 : (Math.floor(Math.random() * 30) + 50);
                 div.innerHTML = getShapeSVG(item.type, colors[Math.floor(Math.random()*colors.length)], size);
                 div.onclick = () => checkShape(div, item.isTarget);
                 area.appendChild(div);
@@ -297,9 +295,7 @@
                     playSound('certo');
                     element.classList.add('found');
                     totalTargetsFound++;
-                    if(totalTargetsFound === totalTargetsToFind) {
-                        finishRound();
-                    }
+                    if(totalTargetsFound === totalTargetsToFind) finishRound();
                 }
             } else {
                 playSound('errado');
@@ -312,65 +308,37 @@
         function finishRound() {
             let starIndex = questionNum - 1;
             const stars = document.querySelectorAll('.star');
-
             if (!roundErrorOccurred) {
-                points += 20;
-                if(level === 1) pointsLevel1 += 20; else pointsLevel2 += 20;
-                stars[starIndex].classList.add('correct');
-                stars[starIndex].innerText = '✓';
+                points += 20; if(level === 1) pointsLevel1 += 20; else pointsLevel2 += 20;
+                stars[starIndex].classList.add('correct'); stars[starIndex].innerText = '✓';
             } else {
-                points += 10;
-                if(level === 1) pointsLevel1 += 10; else pointsLevel2 += 10;
-                stars[starIndex].classList.add('wrong');
-                stars[starIndex].innerText = '✕';
+                points += 10; if(level === 1) pointsLevel1 += 10; else pointsLevel2 += 10;
+                stars[starIndex].classList.add('wrong'); stars[starIndex].innerText = '✕';
             }
-
             document.getElementById('points').innerText = points;
             questionNum++;
-
             setTimeout(() => {
                 if (questionNum > 5) {
-                    if (level === 1) {
-                        level = 2; questionNum = 1;
-                        resetStars();
-                        loadQuestion();
-                    } else {
-                        endGame();
-                    }
-                } else {
-                    loadQuestion();
-                }
-            }, 800);
+                    if (level === 1) { level = 2; questionNum = 1; resetStars(); loadQuestion(); }
+                    else endGame();
+                } else loadQuestion();
+            }, 600);
         }
 
         function resetStars() {
-            document.querySelectorAll('.star').forEach(s => { 
-                s.classList.remove('correct', 'wrong'); 
-                s.innerText = '★'; 
-            });
+            document.querySelectorAll('.star').forEach(s => { s.classList.remove('correct', 'wrong'); s.innerText = '★'; });
         }
 
         function endGame() {
             clearInterval(timerInterval);
             const modal = document.getElementById('modal');
             modal.style.display = 'flex';
-            
-            let titleText = "", titleColor = "";
-            if (points >= 150) { titleText = "Especialista em Formas!"; titleColor = "var(--cor-jogo-verde)"; }
-            else if (points >= 100) { titleText = "Muito bem!"; titleColor = "var(--cor-principal)"; }
-            else { titleText = "Continua a praticar!"; titleColor = "var(--cor-erro)"; }
-
+            let titleText = (points >= 150) ? "Mestre das Formas!" : (points >= 100 ? "Muito bem!" : "Continua a praticar!");
             document.getElementById('modal-title').innerText = titleText;
-            document.getElementById('modal-title').style.color = titleColor;
-
-            const tempo = document.getElementById('timer').innerText;
             document.getElementById('modal-msg').innerHTML = `
-                <p>Terminaste em <b>${tempo}</b>!</p>
-                <hr style="border: 0; border-top: 1px dashed #ccc; margin: 15px 0;">
-                <p>Nível 1: ${pointsLevel1} pts</p>
-                <p>Nível 2: ${pointsLevel2} pts</p>
-                <p style="font-size: 1.3rem; color: var(--cor-principal);"><b>Total: ${points} / 200</b></p>
-            `;
+                <p>Terminaste em <b>${document.getElementById('timer').innerText}</b>!</p>
+                <p>Nível 1: ${pointsLevel1} pts | Nível 2: ${pointsLevel2} pts</p>
+                <p style="font-size:1.3rem; color:var(--cor-principal);"><b>Total: ${points} / 200</b></p>`;
         }
     </script>
 </body>
