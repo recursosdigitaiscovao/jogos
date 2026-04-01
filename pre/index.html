@@ -2,126 +2,207 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pré-Escolar - Matemática</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Cor Principal do Pré-Escolar */
-            --cor-principal: #e691a7; 
-            --soft-bg: #fff5f7;
-            --azul-pt: #5ea2e6;
-            --azul-pt-fundo: #ebf4ff;
-            --verde-mat: #45cfa8;
-            --verde-mat-fundo: #e8f9f4;
-            --vermelho-em: #ff4757;
-            --vermelho-em-fundo: #fff0f1;
+            --cor-principal: #e691a7; /* Rosa Pré-Escolar */
+            --cor-vibrante: #d47a92;  
+            --cor-fundo: #fff5f7;      
+            --cor-texto: #8a5d66;      
+            --header-height: 70px;
+            --cor-jogo-verde: #45cfa8; 
         }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            font-family: 'Fredoka', sans-serif;
-            background: var(--soft-bg);
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            height: 100dvh; 
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
             overflow: hidden; 
         }
 
-        /* --- Sidebar --- */
-        .sidebar { 
-            position: fixed; top: 0; left: -260px; width: 240px; height: 100%; 
-            background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); 
-            transition: 0.3s; z-index: 2000; padding-top: 10px; 
+        body {
+            background: var(--cor-fundo);
+            font-family: 'Fredoka', sans-serif;
+            display: flex;
+            flex-direction: column;
         }
+
+        /* --- Header --- */
+        .nav-bar {
+            background: white;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: var(--header-height);
+            flex-shrink: 0;
+            z-index: 1000;
+        }
+
+        .menu-btn { 
+            background: none; 
+            border: none; 
+            font-size: 26px; 
+            cursor: pointer; 
+            color: var(--cor-principal); 
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-btn {
+            background: var(--cor-principal);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 50px;
+            border: none;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-family: 'Fredoka';
+            transition: 0.3s;
+            text-decoration: none;
+        }
+        .back-btn:hover {
+            background: var(--cor-vibrante);
+            transform: scale(1.05);
+        }
+
+        /* --- Sidebar --- */
+        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         
-        /* Efeito de Hover no BOTÃO inteiro */
+        /* Efeito de hover no BOTÃO inteiro */
         .sidebar-item { 
-            display: flex; align-items: center; padding: 15px 25px; 
-            color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9;
-            transition: all 0.3s ease; font-weight: normal;
+            display: flex; 
+            align-items: center;
+            padding: 15px 25px; 
+            color: #555; 
+            text-decoration: none; 
+            border-bottom: 1px solid #f9f9f9;
+            transition: all 0.3s ease;
             cursor: pointer;
         }
+
         .sidebar-item:hover {
-            background-color: var(--soft-bg);
-            padding-left: 35px;
+            background-color: var(--cor-fundo); /* Fundo muda no botão todo */
+            padding-left: 35px; /* Efeito de deslize */
             color: var(--cor-principal) !important;
             font-weight: bold;
         }
-        .img-icon-sidebar { height: 26px; width: auto; margin-right: 12px; }
+
+        .sidebar-item img {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            object-fit: contain;
+        }
+
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* --- Header --- */
-        header {
-            background: white;
-            padding: 20px 0 50px 0;
-            border-bottom-left-radius: 50% 20%;
-            border-bottom-right-radius: 50% 20%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            z-index: 100; flex-shrink: 0; position: relative;
-            min-height: 130px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        /* --- Main & Grid --- */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 15px;
+            -webkit-overflow-scrolling: touch;
+            text-align: center;
         }
 
-        .header-line-1 {
-            position: relative; width: 100%; display: flex; justify-content: center; align-items: center; min-height: 50px;
+        .intro-text { color: var(--cor-texto); font-size: 1.1rem; margin-bottom: 20px; }
+
+        .games-grid {
+            display: grid;
+            gap: 15px;
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .menu-btn {
-            position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
-            background: none; border: none; font-size: 30px; cursor: pointer;
-            color: var(--cor-principal); padding: 0;
+        @media (min-width: 900px) {
+            .games-grid { grid-template-columns: repeat(5, 1fr); gap: 20px; }
         }
-
-        .btn-voltar {
-            position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
-            background-color: var(--cor-principal); color: white; text-decoration: none;
-            padding: 8px 18px; border-radius: 50px; font-weight: bold; font-size: 0.9rem;
-            display: flex; align-items: center; gap: 5px; transition: 0.2s; white-space: nowrap;
-        }
-
-        .header-title-group { display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .img-icon-header { height: clamp(35px, 5vh, 50px); width: auto; }
-
-        h1 { font-size: clamp(1.2rem, 4vw, 2.2rem); color: var(--cor-principal); white-space: nowrap; margin: 0; }
-        .header-subtitle { width: 100%; text-align: center; color: #8a6436; font-size: clamp(0.75rem, 2vh, 1.05rem); margin-top: 10px; font-weight: 400; }
-
-        /* --- Main Content --- */
-        main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; min-height: 0; }
-        .games-grid { display: grid; width: 100%; height: 90%; max-width: 1100px; gap: 20px; grid-template-columns: repeat(3, 1fr); }
 
         .game-card {
-            background: white; border-radius: 25px; padding: 15px; text-align: center; 
-            display: flex; flex-direction: column; text-decoration: none; 
-            border-bottom: 8px solid rgba(0,0,0,0.08); transition: 0.3s; min-height: 0;
+            background: white;
+            border-radius: 20px;
+            padding: 10px;
+            text-align: center;
+            border: 3px solid var(--cor-principal);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: 0.3s;
         }
-        .game-card:hover { transform: translateY(-5px); }
 
-        .game-img-container { flex: 1; width: 100%; border-radius: 20px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; min-height: 0; }
-        .game-img-container img { max-width: 75%; max-height: 75%; object-fit: contain; }
+        .game-img {
+            width: 100%; height: 90px;
+            background: #fdf0f3; 
+            border-radius: 15px; margin-bottom: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.2rem;
+        }
 
-        h2 { font-size: clamp(0.9rem, 2.5vh, 1.5rem); color: inherit; margin: 10px 0; }
+        h2 { 
+            font-size: 0.85rem; 
+            color: var(--cor-principal);
+            min-height: 35px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 5px 0; 
+            font-weight: 700;
+        }
 
-        .card-pt { border: 4px solid var(--azul-pt); color: var(--azul-pt); }
-        .card-pt .game-img-container { background: var(--azul-pt-fundo); }
-        .card-mat { border: 4px solid var(--verde-mat); color: var(--verde-mat); }
-        .card-mat .game-img-container { background: var(--verde-mat-fundo); }
-        .card-em { border: 4px solid var(--vermelho-em); color: var(--vermelho-em); }
-        .card-em .game-img-container { background: var(--vermelho-em-fundo); }
+        .play-btn {
+            background: var(--cor-jogo-verde);
+            color: white; 
+            border: none; 
+            padding: 8px 0;
+            width: 100%; 
+            border-radius: 12px;
+            font-size: 0.75rem; 
+            cursor: pointer; 
+            font-family: 'Fredoka'; 
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .play-btn:hover {
+            background: #38b593;
+            transform: scale(1.02);
+        }
 
-        footer { background: white; padding: 10px 0; text-align: center; font-size: 0.85rem; color: #888; flex-shrink: 0; }
+        h1 { 
+            color: var(--cor-principal); 
+            margin: 0; 
+            font-size: 1.1rem; 
+            text-align: center; 
+            flex-grow: 1; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
 
-        @media (max-width: 750px) {
-            .games-grid { grid-template-columns: 1fr; grid-template-rows: repeat(3, 1fr); height: 100%; gap: 12px; }
-            .btn-voltar span { display: inline; }
-            .btn-voltar { right: 10px; padding: 6px 12px; font-size: 0.8rem; }
-            .menu-btn { left: 10px; }
-            h1 { font-size: 1.1rem; }
-            .img-icon-header { height: 30px; }
-            header { padding-bottom: 40px; }
+        h1 img {
+            height: 28px;
+            width: auto;
+        }
+
+        footer {
+            background: white;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #777;
+            flex-shrink: 0;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
         }
     </style>
 </head>
@@ -134,78 +215,66 @@
             <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size: 18px;">✕</button>
         </div>
         <a href="../../../" class="sidebar-item">🏠 Início</a>
-        <a href="../pre/" class="sidebar-item"><img id="side-pre" src="" class="img-icon-sidebar"> Pré-Escolar</a>
-        <a href="../1/" class="sidebar-item"><img id="side-1" src="" class="img-icon-sidebar"> 1º Ano</a>
-        <a href="../2/" class="sidebar-item"><img id="side-2" src="" class="img-icon-sidebar"> 2º Ano</a>
-        <a href="../3/" class="sidebar-item"><img id="side-3" src="" class="img-icon-sidebar"> 3º Ano</a>
-        <a href="../4/" class="sidebar-item"><img id="side-4" src="" class="img-icon-sidebar"> 4º Ano</a>
+        <a href="../pre/" class="sidebar-item"><img src="../icons/iconpre.png"> Pré-Escolar</a>
+        <a href="../1/" class="sidebar-item"><img src="../icons/icon1.png"> 1º Ano</a>
+        <a href="../2/" class="sidebar-item"><img src="../icons/icon2.png"> 2º Ano</a>
+        <a href="../3/" class="sidebar-item"><img src="../icons/icon3.png"> 3º Ano</a>
+        <a href="../4/" class="sidebar-item"><img src="../icons/icon4.png"> 4º Ano</a>
     </div>
 
-    <header>
-        <div class="header-line-1">
-            <button class="menu-btn" onclick="toggleMenu()">☰</button>
-            <div class="header-title-group">
-                <img id="header-icon" src="" alt="Pré-Escolar" class="img-icon-header">
-                <h1>Pré-Escolar</h1>
-            </div>
-            <a href="../" class="btn-voltar">⬅ <span>Voltar</span></a>
-        </div>
-        <p class="header-subtitle">Vamos brincar e aprender?</p>
+    <header class="nav-bar">
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <h1>
+            <img src="../icons/iconpre.png" alt="Icone">
+            Matemática - Pré-Escolar
+        </h1>
+        <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
 
-    <main>
+    <main class="main-content">
+        <p class="intro-text">Vamos brincar com os números, as cores e as formas!</p>
+        
         <div class="games-grid">
-            <a href="pt" class="game-card card-pt">
-                <div class="game-img-container">
-                    <img id="img-pt" src="" alt="Linguagem">
-                </div>
-                <h2>Linguagem</h2>
-            </a>
-
-            <a href="mat" class="game-card card-mat">
-                <div class="game-img-container">
-                    <img id="img-mat" src="" alt="Matemática">
-                </div>
-                <h2>Matemática</h2>
-            </a>
-
-            <a href="em" class="game-card card-em">
-                <div class="game-img-container">
-                    <img id="img-em" src="" alt="Mundo">
-                </div>
-                <h2>O Mundo</h2>
-            </a>
+            <div class="game-card">
+                <div class="game-img">🔢</div>
+                <h2>Contar até 10</h2>
+                <button class="play-btn">JOGAR</button>
+            </div>
+            <div class="game-card">
+                <div class="game-img">🎨</div>
+                <h2>Cores Divertidas</h2>
+                <button class="play-btn">JOGAR</button>
+            </div>
+            <div class="game-card">
+                <div class="game-img">🔷</div>
+                <h2>Formas Básicas</h2>
+                <button class="play-btn">JOGAR</button>
+            </div>
+            <div class="game-card">
+                <div class="game-img">📏</div>
+                <h2>Maior ou Menor</h2>
+                <button class="play-btn">JOGAR</button>
+            </div>
+            <div class="game-card">
+                <div class="game-img">🧩</div>
+                <h2>Padrões Simples</h2>
+                <button class="play-btn">JOGAR</button>
+            </div>
         </div>
     </main>
 
-    <footer>Recursos Digitais Covão</footer>
+    <footer>
+        Recursos Digitais Covão
+    </footer>
 
-    <script src="dados.js"></script>
     <script>
         function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
         }
-
-        window.onload = () => {
-            if (typeof JOGO_CONFIG !== 'undefined') {
-                const p = JOGO_CONFIG.caminhoIcons;
-                const i = JOGO_CONFIG.icones;
-
-                // Preencher Ícones
-                document.getElementById('header-icon').src = p + i.pre;
-                document.getElementById('side-pre').src = p + i.pre;
-                document.getElementById('side-1').src = p + i.ano1;
-                document.getElementById('side-2').src = p + i.ano2;
-                document.getElementById('side-3').src = p + i.ano3;
-                document.getElementById('side-4').src = p + i.ano4;
-
-                // Imagens das Disciplinas (assumindo que estão na pasta icons)
-                document.getElementById('img-pt').src = p + "pt.png";
-                document.getElementById('img-mat').src = p + "mat.png";
-                document.getElementById('img-em').src = p + "em.png";
-            }
-        };
     </script>
+
 </body>
 </html>
