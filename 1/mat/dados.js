@@ -1,6 +1,6 @@
 // dados.js
 const JOGO_CONFIG = {
-    caminhoIcons: "../../icons/", // Dois níveis acima
+    caminhoIcons: "../../icons/", // Sobe dois níveis para encontrar a pasta icons
     icones: {
         pre: "iconpre.png",
         ano1: "icon1.png",
