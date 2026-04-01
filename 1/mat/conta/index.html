@@ -25,7 +25,6 @@
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         
-        /* Alteração solicitada: Efeito no botão inteiro (background) */
         .sidebar-item { 
             display: flex; align-items: center; padding: 15px 25px; 
             color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9;
@@ -36,7 +35,11 @@
             padding-left: 35px;
             color: white !important;
         }
-        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
+        .sidebar-item img { 
+            width: 24px; height: 24px; margin-right: 12px; 
+            object-fit: contain; 
+            /* Removido o filtro de inverter cores */
+        }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
@@ -73,7 +76,7 @@
         .fruit-img { width: clamp(50px, 12vw, 80px); animation: pop 0.4s ease; }
 
         .options-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
-        .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 10px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; }
+        .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 10px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; }
         .option-btn:hover { background: var(--cor-jogo-verde); color: white; transform: translateY(-3px); }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
@@ -98,7 +101,7 @@
     </div>
 
     <header class="nav-bar">
-        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
         <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal);">
             <img id="header-icon" src="" style="height:32px; width: auto;"> Matemática - 1º Ano
         </h1>
@@ -118,7 +121,7 @@
                     <p style="color:var(--cor-texto); font-weight:bold;">Conta as frutas e escolhe o número!</p>
                 </div>
                 <h2 style="color:var(--cor-principal); text-align:center;">Jogo de Contar</h2>
-                <button class="option-btn" style="background:var(--cor-jogo-verde); color:white; width: 100%;" onclick="startGame()">JOGAR</button>
+                <button class="option-btn" style="background:var(--cor-jogo-verde); color:white;" onclick="startGame()">JOGAR</button>
             </div>
         </section>
 
@@ -141,10 +144,10 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color: var(--cor-principal);"></h2>
-            <p id="modal-msg" style="color: var(--cor-texto); font-weight: bold;"></p>
-            <button class="option-btn" onclick="location.reload()" style="background:var(--cor-jogo-verde); color:white; margin-bottom:10px; width: 100%;">Jogar de Novo</button>
-            <button class="option-btn" onclick="window.location.href='../'" style="background:white; color:var(--cor-principal); border-color:var(--cor-principal); width: 100%;">Voltar</button>
+            <h2 id="modal-title"></h2>
+            <p id="modal-msg"></p>
+            <button class="option-btn" onclick="location.reload()" style="background:var(--cor-jogo-verde); color:white; margin-bottom:10px;">Jogar de Novo</button>
+            <button class="option-btn" onclick="window.location.href='../'" style="background:white; color:var(--cor-principal); border-color:var(--cor-principal);">Voltar</button>
         </div>
     </div>
 
@@ -176,16 +179,12 @@
                 const pIcons = JOGO_CONFIG.caminhoIcons;
                 const pImg = JOGO_CONFIG.caminhoImg;
                 const i = JOGO_CONFIG.iconesMenu;
-                
-                // Preencher Ícones do Menu
                 document.getElementById('header-icon').src = pIcons + i.ano1;
                 document.getElementById('side-pre').src = pIcons + i.pre;
                 document.getElementById('side-1').src = pIcons + i.ano1;
                 document.getElementById('side-2').src = pIcons + i.ano2;
                 document.getElementById('side-3').src = pIcons + i.ano3;
                 document.getElementById('side-4').src = pIcons + i.ano4;
-                
-                // Preencher Fruta da Intro
                 document.querySelectorAll('.intro-f').forEach(img => img.src = pImg + JOGO_CONFIG.frutas[0]);
             }
         };
@@ -217,12 +216,12 @@
             instr.innerHTML = `Conta: <img src="${JOGO_CONFIG.caminhoImg + fruit}" style="height:40px;">`;
 
             let items = [];
-            for(let i=0; i<currentAnswer; i++) items.push({img: fruit});
+            for(let i=0; i<currentAnswer; i++) items.push({img: fruit, target: true});
 
             if(level === 2) {
                 while(items.length < 15) {
                     let other = JOGO_CONFIG.frutas[Math.floor(Math.random() * JOGO_CONFIG.frutas.length)];
-                    if(other !== fruit) items.push({img: other});
+                    if(other !== fruit) items.push({img: other, target: false});
                 }
             }
             
@@ -230,7 +229,7 @@
                 const img = document.createElement('img');
                 img.src = JOGO_CONFIG.caminhoImg + item.img;
                 img.className = 'fruit-img';
-                if(level === 2) img.style.transform = `scale(${0.8 + Math.random()*0.4})`;
+                if(level === 2) img.style.transform = `scale(${0.7 + Math.random()*0.5})`;
                 area.appendChild(img);
             });
 
@@ -274,7 +273,7 @@
             document.getElementById('modal').style.display = 'flex';
             let msg = points >= 160 ? JOGO_CONFIG.mensagens.excelente : (points >= 100 ? JOGO_CONFIG.mensagens.bom : JOGO_CONFIG.mensagens.tenta);
             document.getElementById('modal-title').innerText = points >= 160 ? "Incrível!" : "Fim do Jogo!";
-            document.getElementById('modal-msg').innerHTML = msg + "<br><br>Pontos: " + points + " / 200";
+            document.getElementById('modal-msg').innerText = msg + "\nPontos: " + points + " / 200";
         }
     </script>
 </body>
