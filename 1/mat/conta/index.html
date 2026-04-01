@@ -96,7 +96,7 @@
 
         /* --- POPUP --- */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 350px; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 350px; width: 90%; }
 
         @keyframes pop { 0% {transform: scale(0);} 100% {transform: scale(1);} }
     </style>
@@ -165,17 +165,22 @@
         </section>
     </main>
 
+    <!-- Modal modificado com mais informações e botões adicionais -->
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--cor-principal)"></h2>
-            <p id="modal-msg"></p>
-            <button class="option-btn" onclick="location.reload()" style="width:100%">Jogar de Novo</button>
+            <h2 id="modal-title" style="margin-top: 0;"></h2>
+            <div id="modal-msg" style="margin-bottom: 25px; color: var(--cor-texto); font-size: 1.1rem;"></div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="option-btn" onclick="location.reload()" style="width:100%; background: var(--cor-jogo-verde); color: white; border-color: var(--cor-jogo-verde);">Jogar de Novo</button>
+                <button class="option-btn" onclick="window.location.href='../'" style="width:100%; background: white; color: var(--cor-principal); border-color: var(--cor-principal);">Escolher Outro Jogo</button>
+            </div>
         </div>
     </div>
 
     <script src="dados.js"></script>
     <script>
-        let level = 1, questionNum = 1, points = 0, seconds = 0, timerInterval, currentAnswer = 0;
+        // Adicionadas variáveis para registar os pontos de cada nível separadamente
+        let level = 1, questionNum = 1, points = 0, pointsLevel1 = 0, pointsLevel2 = 0, seconds = 0, timerInterval, currentAnswer = 0;
         const stars = document.querySelectorAll('.star');
 
         window.onload = () => {
@@ -261,6 +266,11 @@
             let starIndex = questionNum - 1;
             if (val === currentAnswer) {
                 points += 10;
+                
+                // Regista em qual nível os pontos foram ganhos
+                if (level === 1) pointsLevel1 += 10;
+                else pointsLevel2 += 10;
+
                 stars[starIndex].classList.add('correct');
                 stars[starIndex].innerText = '✓';
             } else {
@@ -274,9 +284,11 @@
             if (questionNum > 5) {
                 if (level === 1) {
                     level = 2; questionNum = 1;
-                    setTimeout(() => { alert("Nível 2: Agora as frutas estão misturadas!"); resetStars(); loadQuestion(); }, 500);
+                    // Retirado o 'alert', e mantido apenas o intervalo
+                    setTimeout(() => { resetStars(); loadQuestion(); }, 500);
                 } else {
-                    endGame();
+                    // Espera 500ms para o utilizador ver a resposta antes de chamar a janela final
+                    setTimeout(endGame, 500);
                 }
             } else {
                 setTimeout(loadQuestion, 500);
@@ -291,8 +303,39 @@
             clearInterval(timerInterval);
             const modal = document.getElementById('modal');
             modal.style.display = 'flex';
-            document.getElementById('modal-title').innerText = points >= 80 ? "Excelente!" : "Bom Trabalho!";
-            document.getElementById('modal-msg').innerText = `Fizeste ${points} pontos em ${document.getElementById('timer').innerText}!`;
+            
+            let titleText = "";
+            let titleColor = "";
+
+            // Mensagens consoante a pontuação do jogador
+            if (points >= 80) {
+                titleText = "Muito bem!";
+                titleColor = "var(--cor-jogo-verde)";
+            } else if (points >= 50) {
+                titleText = "Estás quase lá!";
+                titleColor = "var(--cor-principal)";
+            } else {
+                titleText = "Tens que treinar mais!";
+                titleColor = "var(--cor-erro)";
+            }
+
+            const modalTitle = document.getElementById('modal-title');
+            modalTitle.innerText = titleText;
+            modalTitle.style.color = titleColor;
+
+            // Estruturação pormenorizada da mensagem
+            const tempoDecorrido = document.getElementById('timer').innerText;
+            document.getElementById('modal-msg').innerHTML = `
+                <p style="margin-top:0;">Completaste o jogo em <b>${tempoDecorrido}</b>!</p>
+                <hr style="border: 0; border-top: 1px dashed #ccc; margin: 15px 0;">
+                <div style="text-align: left; display: inline-block; margin: 0 auto;">
+                    <p style="margin: 5px 0;"><b>Nível 1:</b> ${pointsLevel1} / 50 pts</p>
+                    <p style="margin: 5px 0;"><b>Nível 2:</b> ${pointsLevel2} / 50 pts</p>
+                    <p style="margin: 10px 0 0 0; font-size: 1.3em; color: var(--cor-principal);">
+                        <b>Total: ${points} / 100 pts</b>
+                    </p>
+                </div>
+            `;
         }
     </script>
 </body>
