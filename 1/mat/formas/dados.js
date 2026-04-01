@@ -1,5 +1,6 @@
+// dados.js
 const JOGO_CONFIG = {
-    caminhoImg: "../../../img/",
+    caminhoImg: "https://recursosdigitaiscovao.github.io/jogos/img/",
     iconesMenu: {
         pre: "iconpre.png",
         ano1: "icon1.png",
