@@ -1,6 +1,10 @@
+// dados.js
 const JOGO_CONFIG = {
+    // Caminhos para as pastas
     caminhoIcons: "../../../icons/", 
     caminhoImg: "../../../img/",     
+
+    // Ícones usados no Menu e na Barra de Navegação
     iconesMenu: {
         pre: "iconpre.png",
         ano1: "icon1.png",
@@ -8,6 +12,9 @@ const JOGO_CONFIG = {
         ano3: "icon3.png",
         ano4: "icon4.png"
     },
+
+    // Lista de números para o Nível 2 (Símbolos) e Jogo de Ligar
+    // Nota: Os nomes das imagens seguem o padrão da tua imagem: zero.png, um.png, etc.
     numeros: [
         { valor: 0, palavra: "ZERO", imagem: "zero.png" },
         { valor: 1, palavra: "UM", imagem: "um.png" },
@@ -21,6 +28,23 @@ const JOGO_CONFIG = {
         { valor: 9, palavra: "NOVE", imagem: "nove.png" },
         { valor: 10, palavra: "DEZ", imagem: "dez.png" }
     ],
+
+    // Lista de frutas para o Nível 1 (Comparação de quantidades)
+    frutas: [
+        "ananas.png", 
+        "banana.png", 
+        "cereja.png", 
+        "kiwi.png", 
+        "laranja.png", 
+        "maca.png", 
+        "melancia.png", 
+        "morango.png", 
+        "papaia.png", 
+        "pera.png", 
+        "uvas.png"
+    ],
+
+    // Mensagens de feedback final
     mensagens: {
         excelente: "Incrível! És um mestre da matemática! 🌟",
         bom: "Muito bem! Estás no bom caminho! 👍",
