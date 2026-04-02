@@ -89,14 +89,16 @@
         .num-btn { 
             background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-texto);
             font-size: clamp(1.1rem, 3vh, 1.6rem); font-weight: bold; padding: clamp(8px, 2vh, 15px) 2px; border-radius: 12px; cursor: pointer;
-            transition: background 0.1s; font-family: 'Fredoka';
+            transition: transform 0.1s; font-family: 'Fredoka';
             -webkit-tap-highlight-color: transparent; outline: none;
         }
         
         @media (hover: hover) {
-            .num-btn:hover { background: var(--cor-jogo-verde); color: white; }
+            .num-btn:hover { transform: scale(1.05); }
         }
-        .num-btn:active { background: var(--cor-jogo-verde) !important; color: white !important; }
+        /* Fica verde APENAS enquanto está pressionado (on press) */
+        .num-btn:active { background: var(--cor-jogo-verde) !important; color: white !important; transform: scale(0.95); }
+        /* Garante que ao soltar o clique/foco volta à cor original */
         .num-btn:focus, .num-btn:focus-visible { background: white !important; color: var(--cor-texto) !important; }
 
         .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
@@ -134,7 +136,7 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <p style="color:var(--cor-texto); font-weight:bold; margin-bottom: 10px; font-size: clamp(1rem, 3vh, 1.5rem);">Vê como subtrair:</p>
+                    <p style="color:var(--cor-texto); font-weight:bold; margin-bottom: 30px; margin-top: -15px; font-size: clamp(1.2rem, 4vh, 1.7rem);">Como jogar</p>
                     <div class="anim-math-container">
                         <div class="num-block">
                             <span>3</span>
@@ -256,10 +258,6 @@
         };
 
         function startAnimation() {
-            const dots = {
-                in: ["ad1", "ad2", "ad3", "ad4"],
-                res: ["ad5", "ad6"]
-            };
             setTimeout(() => document.getElementById("ad1").classList.add("dot-in"), 500);
             setTimeout(() => document.getElementById("ad2").classList.add("dot-in"), 700);
             setTimeout(() => document.getElementById("ad3").classList.add("dot-in"), 900);
@@ -300,9 +298,8 @@
 
         function loadQuestion() {
             isRoundActive = true;
-            // Garante que o resultado é positivo na subtração
-            valA = Math.floor(Math.random() * 11); // 0 a 10
-            valB = Math.floor(Math.random() * (valA + 1)); // 0 até valA
+            valA = Math.floor(Math.random() * 11);
+            valB = Math.floor(Math.random() * (valA + 1));
             result = valA - valB;
 
             const slotA = document.getElementById('val-a');
