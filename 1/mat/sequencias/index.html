@@ -38,16 +38,23 @@
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Explicação Animada --- */
-        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; position: relative; overflow: hidden; padding: 20px; }
+        /* --- Explicação Animada (3 Linhas) --- */
+        .explanation-box { 
+            background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: space-around; 
+            position: relative; overflow: hidden; padding: 15px; 
+        }
         
-        .anim-road { width: 100%; height: 120px; position: relative; flex-grow: 1; display: flex; align-items: flex-end; justify-content: center; }
+        .anim-line-1 { width: 100%; text-align: center; } /* Texto */
+        .anim-line-2 { width: 100%; height: 110px; position: relative; display: flex; align-items: flex-end; justify-content: center; } /* Trator */
+        .anim-line-3 { width: 100%; display: flex; justify-content: center; align-items: center; } /* Botões */
+
         .anim-train-wrap { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; animation: animDriveIn 2s ease-out forwards; }
         @keyframes animDriveIn { from { left: -400px; transform: translateX(0); } to { left: 50%; transform: translateX(-50%); } }
 
-        .anim-options { display: flex; gap: 15px; opacity: 0; animation: fadeIn 0.5s forwards 2s; justify-content: center; margin-bottom: 10px; }
+        .anim-options { display: flex; gap: 15px; opacity: 0; animation: fadeIn 0.5s forwards 2s; }
         @keyframes fadeIn { to { opacity: 1; } }
-        .anim-opt { width: 60px; height: 60px; border: 3px solid var(--cor-jogo-verde); background: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; color: var(--cor-texto); }
+        .anim-opt { width: 60px; height: 60px; border: 3px solid var(--cor-jogo-verde); background: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; color: var(--cor-texto); transition: 0.3s; }
         .anim-opt.correct-anim { animation: selectAnim 2s infinite 2.5s; }
         @keyframes selectAnim { 0%, 100% { background: white; color: var(--cor-texto); } 50% { background: var(--cor-jogo-verde); color: white; transform: scale(1.1); } }
 
@@ -64,6 +71,7 @@
             flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;
             background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb; min-height: 0;
             box-sizing: border-box; position: relative; justify-content: flex-start;
+            padding: 0 10px; 
         }
 
         .road { height: 40%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; margin-top: 5px; }
@@ -100,14 +108,14 @@
             padding: 10px; 
             flex-grow: 1;
             width: 100%;
-            max-width: 450px;
+            max-width: 420px;
             margin: 0 auto;
             align-content: center;
         }
         
         .opt-btn {
             background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-texto);
-            height: clamp(55px, 8vh, 75px);
+            height: clamp(55px, 8vh, 72px);
             border-radius: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
             font-size: clamp(1.5rem, 4vh, 2.2rem); font-weight: 700;
             transition: 0.1s; -webkit-tap-highlight-color: transparent; outline: none; font-family: 'Fredoka';
@@ -152,17 +160,26 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.4rem; margin: 0;">Completa a sequência:</p>
-                    <div class="anim-road">
+                    <!-- Linha 1: Texto -->
+                    <div class="anim-line-1">
+                        <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.4rem; margin: 0;">Vê como completar:</p>
+                    </div>
+                    
+                    <!-- Linha 2: Trator -->
+                    <div class="anim-line-2">
                         <div class="anim-train-wrap" id="intro-train"></div>
                     </div>
-                    <div class="anim-options">
-                        <div class="anim-opt">3</div>
-                        <div class="anim-opt correct-anim">4</div>
-                        <div class="anim-opt">5</div>
+                    
+                    <!-- Linha 3: Botões -->
+                    <div class="anim-line-3">
+                        <div class="anim-options">
+                            <div class="anim-opt">3</div>
+                            <div class="anim-opt correct-anim">4</div>
+                            <div class="anim-opt">5</div>
+                        </div>
                     </div>
                 </div>
-                <h2 style="color:var(--cor-principal); text-align:center; margin: 10px 0;">O Trator das Sequências</h2>
+                <h2 style="color:var(--cor-principal); text-align:center; margin: 5px 0;">O Trator das Sequências</h2>
                 <button class="option-btn" style="border-color:var(--cor-jogo-verde); background:var(--cor-jogo-verde); color:white;" onclick="startGame()">JOGAR</button>
             </div>
         </section>
@@ -306,7 +323,7 @@
             tractor.innerHTML = `<div class="num-holder"></div><img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.trator}" class="vehicle">`;
             train.appendChild(tractor);
 
-            // Gerar 9 opções
+            // Gerar 9 opções aleatórias garantindo a correta
             let options = [targetValue];
             while(options.length < 9) { 
                 let r = Math.floor(Math.random() * 11); 
