@@ -34,7 +34,9 @@
         .screen.active { display: flex; }
 
         .game-card {
-            background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal);
+            background: white; border-radius: 30px; 
+            padding: 10px 30px; /* 30px lateral conforme pedido */
+            border: 4px solid var(--cor-principal);
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
@@ -42,8 +44,8 @@
         
         .balloon {
             position: relative; 
-            width: clamp(120px, 28vw, 190px); 
-            height: clamp(150px, 32vh, 230px);
+            width: clamp(100px, 22vw, 170px); 
+            height: clamp(130px, 28vh, 200px);
             display: flex; 
             justify-content: center; 
             cursor: pointer; 
@@ -73,7 +75,7 @@
             line-height: 1;
         }
 
-        /* Feedback visual antes de desaparecer */
+        /* Feedback visual */
         .balloon.correct { filter: drop-shadow(0 0 20px var(--cor-jogo-verde)) brightness(1.2); }
         .balloon.error-match { filter: drop-shadow(0 0 20px var(--cor-erro)) brightness(1.2); animation: shake 0.4s; }
 
@@ -82,7 +84,7 @@
 
         @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
 
-        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; padding: 0 10px 8px 10px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; }
         .stars-container { display: flex; gap: 4px; }
         .star { width: clamp(20px, 3vh, 26px); height: clamp(20px, 3vh, 26px); border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
@@ -94,8 +96,9 @@
         .game-area { 
             flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr);
             width: 100%; background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb;
-            padding: 10px 20px; /* Padding lateral de 20px solicitado */
-            gap: 5px; box-sizing: border-box; justify-items: center; align-items: center;
+            gap: 10px; box-sizing: border-box; 
+            justify-items: center; /* Alinhamento central na horizontal */
+            align-items: center;
         }
 
         .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
@@ -112,11 +115,11 @@
             <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src="" class="side-img"> Pré-Escolar</a>
-        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src="" class="side-img"> 1º Ano</a>
-        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src="" class="side-img"> 2º Ano</a>
-        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src="" class="side-img"> 3º Ano</a>
-        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src="" class="side-img"> 4º Ano</a>
+        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src="" class="side-img" style="width:28px"> Pré-Escolar</a>
+        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src="" class="side-img" style="width:28px"> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src="" class="side-img" style="width:28px"> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src="" class="side-img" style="width:28px"> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src="" class="side-img" style="width:28px"> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
@@ -181,11 +184,6 @@
                     osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
                     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-                } else if (type === 'pop') {
-                    osc.type = 'sine'; osc.frequency.setValueAtTime(100, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(1, audioCtx.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
                 } else {
                     osc.type = 'square'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
                     gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
@@ -199,10 +197,14 @@
                 const p = JOGO_CONFIG.caminhoIcons;
                 const i = JOGO_CONFIG.iconesMenu;
                 document.getElementById('header-icon').src = p + i.ano1;
-                document.querySelectorAll('.side-img').forEach((img, idx) => {
-                    const keys = ['pre', 'ano1', 'ano2', 'ano3', 'ano4'];
-                    if(img) img.src = p + i[keys[idx]];
-                });
+                const sideImgs = document.querySelectorAll('.side-img');
+                if(sideImgs.length >= 5) {
+                    sideImgs[0].src = p + i.pre;
+                    sideImgs[1].src = p + i.ano1;
+                    sideImgs[2].src = p + i.ano2;
+                    sideImgs[3].src = p + i.ano3;
+                    sideImgs[4].src = p + i.ano4;
+                }
                 buildIntroAnim();
             }
         };
@@ -213,7 +215,7 @@
             const b2 = createBalloonDOM(5, JOGO_CONFIG.baloes[3]);
             container.appendChild(b1); container.appendChild(b2);
             setTimeout(() => { b1.classList.add('correct'); setTimeout(()=>b1.classList.add('popped'), 600); }, 1000);
-            setTimeout(() => { b2.classList.add('error-match'); setTimeout(()=>b2.classList.add('popped'), 600); }, 2000);
+            setTimeout(() => { b2.classList.add('error-match'); }, 2000);
         }
 
         function createBalloonDOM(num, imgName) {
@@ -272,9 +274,9 @@
                         setTimeout(() => b.classList.add('popped'), 600);
                         if(targetsFound === targetsToFind) endRound(true);
                     } else {
-                        playSound('pop');
+                        playSound('errado');
                         b.classList.add('error-match');
-                        setTimeout(() => b.classList.add('popped'), 600);
+                        // Fica vermelho e não desaparece (até ao endRound mudar a ronda)
                         endRound(false);
                     }
                 };
@@ -298,7 +300,9 @@
                 if(questionNum > 5) {
                     if(level === 1) { level = 2; questionNum = 1; initStars(); loadRound(); }
                     else { endGame(); }
-                } else { loadRound(); }
+                } else {
+                    loadRound();
+                }
             }, 1200);
         }
 
