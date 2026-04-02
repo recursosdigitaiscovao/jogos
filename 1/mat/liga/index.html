@@ -71,16 +71,18 @@
         .match-item {
             background: white; border: 3px solid #ddd; border-radius: 15px;
             display: flex; align-items: center; justify-content: center;
-            font-size: clamp(1.2rem, 4vh, 2rem); font-weight: 700; color: var(--cor-texto);
-            cursor: pointer; transition: 0.2s; height: 16%; min-height: 50px;
-            -webkit-tap-highlight-color: transparent;
+            font-size: clamp(1.1rem, 3.5vh, 1.8rem); font-weight: 700; color: var(--cor-texto);
+            cursor: pointer; transition: 0.2s; height: 16%; min-height: 55px;
+            -webkit-tap-highlight-color: transparent; overflow: hidden;
         }
+        
+        .match-item img { height: 80%; width: auto; object-fit: contain; pointer-events: none; }
         
         @media (hover: hover) { .match-item:hover { border-color: var(--cor-principal); background: #fff9f0; } }
         
-        .match-item.selected { border-color: var(--cor-principal); background: #fff0db; transform: scale(1.05); box-shadow: 0 5px 15px rgba(255, 145, 0, 0.2); }
-        .match-item.found { opacity: 0; pointer-events: none; transform: scale(0.8); }
-        .match-item.error-shake { animation: shake 0.4s; border-color: var(--cor-erro); color: var(--cor-erro); }
+        .match-item.selected { border-color: var(--cor-principal); background: #fff0db; transform: scale(1.05); }
+        .match-item.found { opacity: 0.1; pointer-events: none; transform: scale(0.9); border-color: var(--cor-jogo-verde); }
+        .match-item.error-shake { animation: shake 0.4s; border-color: var(--cor-erro); }
         
         @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
 
@@ -119,7 +121,7 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <p style="color:var(--cor-texto); font-weight:bold; margin-bottom: 20px; font-size: 1.4rem;">Ligar os Números:</p>
+                    <p style="color:var(--cor-texto); font-weight:bold; margin-bottom: 20px; font-size: 1.4rem;">Vê como jogar:</p>
                     <div class="anim-match-container">
                         <div class="anim-item">1</div>
                         <div class="anim-item" style="font-size: 1.2rem;">UM</div>
@@ -140,7 +142,7 @@
                     </div>
                     <div class="status-item">PTS: <span id="points">0</span></div>
                 </div>
-                <div class="instruction-area">Liga o <span>número</span> ao seu <span>nome</span>!</div>
+                <div class="instruction-area">Liga a <span>imagem</span> ao seu <span>nome</span>!</div>
                 
                 <div class="matching-grid">
                     <div id="col-digits" class="match-column"></div>
@@ -161,8 +163,8 @@
 
     <script src="dados.js"></script>
     <script>
-        let level = 1, questionNum = 1, points = 0, seconds = 0, timerInterval;
-        let selectedDigit = null, selectedWord = null;
+        let level = 1, points = 0, seconds = 0, timerInterval;
+        let selectedImg = null, selectedWord = null;
         let matchesFound = 0, totalPairs = 5;
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -210,6 +212,7 @@
         }
 
         function startTimer() {
+            if(timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 seconds++;
                 document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
@@ -222,77 +225,83 @@
             const colWords = document.getElementById('col-words');
             colDigits.innerHTML = ''; colWords.innerHTML = '';
 
-            // Definir subconjunto de números baseado no nível
             let subset = [];
             if (level === 1) {
-                subset = JOGO_CONFIG.numeros.slice(0, 6); // 0 a 5
+                subset = JOGO_CONFIG.numeros.slice(0, 5); // 0 a 4 (5 itens)
             } else {
-                subset = [...JOGO_CONFIG.numeros].sort(() => 0.5 - Math.random()).slice(0, 6); // 6 aleatórios de 0-10
+                subset = [...JOGO_CONFIG.numeros].sort(() => 0.5 - Math.random()).slice(0, 5); // 5 aleatórios
             }
             totalPairs = subset.length;
 
             const digits = [...subset].sort(() => 0.5 - Math.random());
             const words = [...subset].sort(() => 0.5 - Math.random());
 
-            digits.forEach(n => colDigits.appendChild(createItem(n.valor, 'digit')));
-            words.forEach(n => colWords.appendChild(createItem(n.palavra, 'word', n.valor)));
+            digits.forEach(n => colDigits.appendChild(createItem(n, 'img')));
+            words.forEach(n => colWords.appendChild(createItem(n, 'word')));
         }
 
-        function createItem(label, type, valorVinculado = null) {
+        function createItem(data, type) {
             const div = document.createElement('div');
             div.className = 'match-item';
-            div.innerText = label;
-            const valorReal = (type === 'digit') ? label : valorVinculado;
+            
+            if (type === 'img') {
+                const img = document.createElement('img');
+                img.src = JOGO_CONFIG.caminhoImg + data.imagem;
+                div.appendChild(img);
+            } else {
+                div.innerText = data.palavra;
+            }
             
             div.onclick = () => {
-                if(div.classList.contains('found')) return;
+                if (div.classList.contains('found')) return;
                 
-                if (type === 'digit') {
-                    if (selectedDigit) selectedDigit.element.classList.remove('selected');
-                    selectedDigit = { val: valorReal, element: div };
-                    div.classList.add('selected');
+                if (type === 'img') {
+                    if (selectedImg) selectedImg.element.classList.remove('selected');
+                    selectedImg = { val: data.valor, element: div };
                 } else {
                     if (selectedWord) selectedWord.element.classList.remove('selected');
-                    selectedWord = { val: valorReal, element: div };
-                    div.classList.add('selected');
+                    selectedWord = { val: data.valor, element: div };
                 }
+                div.classList.add('selected');
                 checkMatch();
             };
             return div;
         }
 
         function checkMatch() {
-            if (selectedDigit && selectedWord) {
-                if (selectedDigit.val === selectedWord.val) {
+            if (selectedImg && selectedWord) {
+                if (selectedImg.val === selectedWord.val) {
                     playSound('certo');
-                    selectedDigit.element.classList.add('found');
-                    selectedWord.element.classList.add('found');
+                    const imgEl = selectedImg.element;
+                    const wordEl = selectedWord.element;
+                    
+                    imgEl.classList.replace('selected', 'found');
+                    wordEl.classList.replace('selected', 'found');
+                    
                     matchesFound++;
-                    points += 10;
+                    points += 20;
                     document.getElementById('points').innerText = points;
-                    resetSelection();
-                    if (matchesFound === totalPairs) finishLevel();
+                    selectedImg = null; selectedWord = null;
+                    
+                    if (matchesFound === totalPairs) finishRound();
                 } else {
                     playSound('errado');
-                    const d = selectedDigit.element;
-                    const w = selectedWord.element;
-                    d.classList.add('error-shake');
-                    w.classList.add('error-shake');
+                    const imgEl = selectedImg.element;
+                    const wordEl = selectedWord.element;
+                    
+                    imgEl.classList.add('error-shake');
+                    wordEl.classList.add('error-shake');
+                    
                     setTimeout(() => {
-                        d.classList.remove('error-shake', 'selected');
-                        w.classList.remove('error-shake', 'selected');
-                    }, 400);
-                    resetSelection();
+                        imgEl.classList.remove('error-shake', 'selected');
+                        wordEl.classList.remove('error-shake', 'selected');
+                        selectedImg = null; selectedWord = null;
+                    }, 450);
                 }
             }
         }
 
-        function resetSelection() {
-            selectedDigit = null;
-            selectedWord = null;
-        }
-
-        function finishLevel() {
+        function finishRound() {
             const stars = document.querySelectorAll('.star');
             stars[level - 1].classList.add('correct');
             stars[level - 1].innerText = '✓';
@@ -304,7 +313,7 @@
                 } else {
                     endGame();
                 }
-            }, 1000);
+            }, 1200);
         }
 
         function endGame() {
@@ -313,11 +322,11 @@
             modal.style.display = 'flex';
             
             let msgFim = JOGO_CONFIG.mensagens.tenta;
-            if(points >= 100) msgFim = JOGO_CONFIG.mensagens.excelente;
-            else if(points >= 60) msgFim = JOGO_CONFIG.mensagens.bom;
+            if(points >= 180) msgFim = JOGO_CONFIG.mensagens.excelente;
+            else if(points >= 120) msgFim = JOGO_CONFIG.mensagens.bom;
 
             document.getElementById('modal-title').innerText = "Excelente!";
-            document.getElementById('modal-msg').innerHTML = `<p>${msgFim}</p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p><p>Pontos: <b>${points}</b></p>`;
+            document.getElementById('modal-msg').innerHTML = `<p>${msgFim}</p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p><p>Pontos: <b>${points} / 200</b></p>`;
         }
     </script>
 </body>
