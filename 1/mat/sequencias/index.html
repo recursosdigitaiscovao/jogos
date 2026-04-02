@@ -38,13 +38,19 @@
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Explicação --- */
-        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        .anim-tractor { position: relative; width: 200px; animation: driveBy 4s infinite linear; }
-        @keyframes driveBy { from { left: -150px; } to { left: 100%; } }
+        /* --- Explicação Animada --- */
+        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 10px; }
+        .anim-train-wrap { position: absolute; left: -500px; display: flex; align-items: flex-end; animation: driveAndStop 6s infinite ease-in-out; }
+        @keyframes driveAndStop { 
+            0% { left: -500px; } 
+            30%, 70% { left: 50%; transform: translateX(-50%); } 
+            100% { left: 120%; } 
+        }
+        .hand-icon { position: absolute; font-size: 3rem; bottom: -60px; left: 40%; opacity: 0; animation: handPoint 6s infinite; }
+        @keyframes handPoint { 35%, 65% { opacity: 1; transform: translateY(-20px); } 0%, 30%, 70%, 100% { opacity: 0; transform: translateY(0); } }
 
         /* --- Jogo --- */
-        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; padding: 0 10px 8px 10px; }
         .stars-container { display: flex; gap: 4px; }
         .star { width: clamp(20px, 3vh, 26px); height: clamp(20px, 3vh, 26px); border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
@@ -55,11 +61,11 @@
         .game-area { 
             flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;
             background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb; min-height: 0;
-            box-sizing: border-box; position: relative; justify-content: space-between; padding-bottom: 15px;
+            box-sizing: border-box; position: relative; justify-content: center;
         }
 
-        /* Estrada e Trator */
-        .road { flex: 1; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; }
+        /* Estrada e Comboio */
+        .road { height: 60%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; }
         
         .tractor-train {
             display: flex; align-items: flex-end; position: absolute; left: -1000px; 
@@ -68,26 +74,29 @@
         .tractor-train.at-center { left: 50%; transform: translateX(-50%); }
         .tractor-train.exit { left: 110%; transition: left 1s ease-in; }
 
-        .wagon { position: relative; width: clamp(80px, 12vw, 120px); text-align: center; }
-        .wagon img.vehicle { width: 100%; height: auto; display: block; }
-        .wagon .content-num { 
-            position: absolute; top: 15%; left: 50%; transform: translateX(-50%);
-            width: 50%; height: auto;
+        /* Estilo dos Reboques e Números */
+        .wagon { position: relative; width: clamp(90px, 14vw, 130px); display: flex; flex-direction: column; align-items: center; }
+        .wagon img.vehicle { width: 100%; height: auto; z-index: 1; }
+        
+        .num-holder { 
+            height: clamp(50px, 10vh, 80px); width: 100%;
+            display: flex; justify-content: center; align-items: center;
+            margin-bottom: -5px; /* Cola o número ao reboque */
         }
+        .num-holder img { max-height: 90%; max-width: 80%; object-fit: contain; }
 
         .lacuna-wagon {
-            width: clamp(50px, 8vw, 70px); height: clamp(50px, 8vw, 70px);
-            border: 3px dashed var(--cor-principal); border-radius: 10px;
-            background: white; position: absolute; top: 10%; left: 50%; transform: translateX(-50%);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; font-weight: bold; color: var(--cor-vibrante);
+            width: clamp(55px, 9vw, 75px); height: clamp(55px, 9vw, 75px);
+            border: 4px dashed var(--cor-principal); border-radius: 15px;
+            background: white; display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; font-weight: bold; color: var(--cor-vibrante);
         }
 
         /* Teclado de Opções */
-        .options-area { display: flex; justify-content: center; gap: 15px; padding: 10px; flex-shrink: 0; }
+        .options-area { display: flex; justify-content: center; gap: clamp(10px, 2vw, 20px); padding: 10px; flex-shrink: 0; min-height: 120px; }
         .opt-btn {
             background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-texto);
-            width: clamp(70px, 15vw, 110px); height: clamp(70px, 10vh, 100px);
+            width: clamp(75px, 16vw, 115px); height: clamp(75px, 11vh, 105px);
             border-radius: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
             transition: 0.1s; -webkit-tap-highlight-color: transparent; outline: none;
         }
@@ -134,9 +143,10 @@
             <div class="game-card">
                 <div class="explanation-box">
                     <p style="color:var(--cor-texto); font-weight:bold; margin-bottom: 20px; font-size: 1.4rem;">Completa a sequência:</p>
-                    <div class="anim-tractor">
-                        <img id="intro-tractor" src="" style="width:100px;">
+                    <div class="anim-train-wrap" id="intro-train">
+                        <!-- Comboio da explicação -->
                     </div>
+                    <div class="hand-icon">☝️</div>
                 </div>
                 <h2 style="color:var(--cor-principal); text-align:center;">O Trator das Sequências</h2>
                 <button class="option-btn" style="border-color:var(--cor-jogo-verde); background:var(--cor-jogo-verde); color:white;" onclick="startGame()">JOGAR</button>
@@ -150,17 +160,17 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div class="status-item">PTS: <span id="points">0</span></div>
                 </div>
-                <div class="instruction-area">Ajuda o trator a encontrar o número em falta!</div>
+                <div class="instruction-area">Que número falta no reboque?</div>
                 
                 <div class="game-area">
                     <div class="road">
                         <div id="train" class="tractor-train">
-                            <!-- Trator e reboques aqui -->
+                            <!-- Comboio do jogo -->
                         </div>
                     </div>
 
                     <div id="options-pad" class="options-area">
-                        <!-- Opções aqui -->
+                        <!-- Opções -->
                     </div>
                 </div>
             </div>
@@ -210,9 +220,32 @@
                 document.getElementById('side-2').src = p + i.ano2;
                 document.getElementById('side-3').src = p + i.ano3;
                 document.getElementById('side-4').src = p + i.ano4;
-                document.getElementById('intro-tractor').src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.trator;
+                buildIntroTrain();
             }
         };
+
+        function buildIntroTrain() {
+            const intro = document.getElementById('intro-train');
+            // Reboques (3, 4, 5) -> Trator
+            const seq = [3, 4, 5];
+            seq.forEach((n, idx) => {
+                const w = document.createElement('div');
+                w.className = 'wagon';
+                const nh = document.createElement('div');
+                nh.className = 'num-holder';
+                if(idx === 1) nh.innerHTML = '<div class="lacuna-wagon" style="font-size:1.5rem">?</div>';
+                else nh.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.numeros.find(x => x.valor === n).imagem}">`;
+                w.appendChild(nh);
+                const img = document.createElement('img'); img.className = 'vehicle';
+                img.src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.reboque;
+                w.appendChild(img);
+                intro.appendChild(w);
+            });
+            const tractor = document.createElement('div');
+            tractor.className = 'wagon';
+            tractor.innerHTML = `<div class="num-holder"></div><img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.trator}" class="vehicle">`;
+            intro.appendChild(tractor);
+        }
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -238,9 +271,7 @@
             bar.innerHTML = '';
             for(let i=0; i<5; i++) {
                 const s = document.createElement('div');
-                s.className = 'star';
-                s.innerText = '★';
-                bar.appendChild(s);
+                s.className = 'star'; s.innerText = '★'; bar.appendChild(s);
             }
         }
 
@@ -252,52 +283,44 @@
             optionsPad.innerHTML = '';
             isRoundActive = false;
 
-            // Gerar Sequência
             let sequence = [];
             let start, step;
             if (level === 1) {
                 step = 1; start = Math.floor(Math.random() * 8);
-                for(let i=0; i<4; i++) sequence.push(start + i);
+                for(let i=0; i<3; i++) sequence.push(start + i);
             } else {
                 step = Math.random() > 0.5 ? 1 : 2;
-                if(Math.random() > 0.5) { // Progressiva
-                    start = Math.floor(Math.random() * (11 - (step * 3)));
-                    for(let i=0; i<4; i++) sequence.push(start + (i * step));
-                } else { // Regressiva
-                    start = Math.floor(Math.random() * (step * 3)) + (step * 3);
-                    for(let i=0; i<4; i++) sequence.push(start - (i * step));
-                }
+                start = Math.floor(Math.random() * (11 - (step * 2)));
+                for(let i=0; i<3; i++) sequence.push(start + (i * step));
             }
 
-            let hiddenIdx = Math.floor(Math.random() * 3) + 1;
+            let hiddenIdx = Math.floor(Math.random() * 3);
             targetValue = sequence[hiddenIdx];
 
-            // Criar Trator e Reboques
+            // Criar Reboques Primeiro
             sequence.forEach((num, idx) => {
                 const wagon = document.createElement('div');
                 wagon.className = 'wagon';
-                
-                const vehicleImg = document.createElement('img');
-                vehicleImg.className = 'vehicle';
-                vehicleImg.src = JOGO_CONFIG.caminhoImg + (idx === 0 ? JOGO_CONFIG.veiculos.trator : JOGO_CONFIG.veiculos.reboque);
-                wagon.appendChild(vehicleImg);
-
+                const nh = document.createElement('div'); nh.className = 'num-holder';
                 if (idx === hiddenIdx) {
-                    const lacuna = document.createElement('div');
-                    lacuna.className = 'lacuna-wagon';
-                    lacuna.id = 'lacuna';
-                    lacuna.innerText = '?';
-                    wagon.appendChild(lacuna);
+                    nh.innerHTML = '<div class="lacuna-wagon" id="lacuna">?</div>';
                 } else {
-                    const numImg = document.createElement('img');
-                    numImg.className = 'content-num';
-                    numImg.src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.numeros.find(n => n.valor === num).imagem;
-                    wagon.appendChild(numImg);
+                    nh.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.numeros.find(n => n.valor === num).imagem}">`;
                 }
+                wagon.appendChild(nh);
+                const vImg = document.createElement('img'); vImg.className = 'vehicle';
+                vImg.src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.reboque;
+                wagon.appendChild(vImg);
                 train.appendChild(wagon);
             });
 
-            // Criar Opções
+            // Adicionar Trator na Frente (Direita)
+            const tractor = document.createElement('div');
+            tractor.className = 'wagon';
+            tractor.innerHTML = `<div class="num-holder"></div><img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.trator}" class="vehicle">`;
+            train.appendChild(tractor);
+
+            // Opções
             let options = [targetValue];
             let numOptions = (level === 1) ? 3 : 5;
             while(options.length < numOptions) {
@@ -307,20 +330,13 @@
             options.sort(() => Math.random() - 0.5);
 
             options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'opt-btn';
-                const img = document.createElement('img');
-                img.src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.numeros.find(n => n.valor === opt).imagem;
-                btn.appendChild(img);
+                const btn = document.createElement('button'); btn.className = 'opt-btn';
+                btn.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.numeros.find(n => n.valor === opt).imagem}">`;
                 btn.onclick = (e) => checkAnswer(opt, e);
                 optionsPad.appendChild(btn);
             });
 
-            // Animar entrada
-            setTimeout(() => {
-                train.classList.add('at-center');
-                isRoundActive = true;
-            }, 100);
+            setTimeout(() => { train.classList.add('at-center'); isRoundActive = true; }, 100);
         }
 
         function checkAnswer(ans, event) {
@@ -335,29 +351,22 @@
                 playSound('certo');
                 lacuna.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.numeros.find(n => n.valor === ans).imagem}" style="width:80%">`;
                 lacuna.style.borderColor = "var(--cor-jogo-verde)";
-                points += 20;
-                document.getElementById('points').innerText = points;
-                stars[questionNum - 1].classList.add('correct');
-                stars[questionNum - 1].innerText = '✓';
+                points += 20; document.getElementById('points').innerText = points;
+                stars[questionNum - 1].classList.add('correct'); stars[questionNum - 1].innerText = '✓';
             } else {
                 playSound('errado');
-                lacuna.innerText = "!";
-                lacuna.classList.add('error-shake');
-                lacuna.style.borderColor = "var(--cor-erro)";
-                stars[questionNum - 1].classList.add('wrong');
-                stars[questionNum - 1].innerText = '✕';
+                lacuna.innerText = "!"; lacuna.classList.add('error-shake'); lacuna.style.borderColor = "var(--cor-erro)";
+                stars[questionNum - 1].classList.add('wrong'); stars[questionNum - 1].innerText = '✕';
             }
 
             setTimeout(() => {
                 document.getElementById('train').classList.remove('at-center');
                 document.getElementById('train').classList.add('exit');
-                
                 setTimeout(() => {
                     questionNum++;
                     if (questionNum > 5) {
-                        if (level === 1) {
-                            level = 2; questionNum = 1; loadQuestion(); initStars();
-                        } else { endGame(); }
+                        if (level === 1) { level = 2; questionNum = 1; loadQuestion(); initStars(); }
+                        else { endGame(); }
                     } else { loadQuestion(); }
                 }, 1000);
             }, 1500);
@@ -370,7 +379,6 @@
             let msgFim = JOGO_CONFIG.mensagens.tenta;
             if(points >= 180) msgFim = JOGO_CONFIG.mensagens.excelente;
             else if(points >= 120) msgFim = JOGO_CONFIG.mensagens.bom;
-
             document.getElementById('modal-title').innerText = "Fim da Viagem!";
             document.getElementById('modal-msg').innerHTML = `<p>${msgFim}</p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p><p>Pontos: <b>${points} / 200</b></p>`;
         }
