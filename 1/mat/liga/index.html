@@ -35,17 +35,15 @@
 
         .game-card {
             background: white; border-radius: 30px; padding: clamp(10px, 1.5vh, 20px); border: 4px solid var(--cor-principal);
-            display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box;
+            display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Explicação --- */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
         .anim-match-container { display: flex; align-items: center; gap: 40px; }
         .anim-item { width: clamp(70px, 12vh, 100px); height: clamp(70px, 12vh, 100px); background: white; border: 3px solid var(--cor-principal); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; color: var(--cor-texto); }
         .hand-icon { position: absolute; font-size: 2.5rem; bottom: 20px; left: 30%; animation: handMatch 3s infinite; }
         @keyframes handMatch { 0%, 100% { transform: translate(0,0); opacity:0; } 10%, 90% { opacity:1; } 50% { transform: translate(120px, 0); } }
 
-        /* --- Jogo --- */
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 10px; flex-shrink: 0; }
         .stars-container { display: flex; gap: 6px; }
         .star { width: clamp(20px, 3vh, 26px); height: clamp(20px, 3vh, 26px); border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: transparent; }
@@ -54,21 +52,19 @@
 
         .instruction-area { text-align: center; font-size: clamp(0.9rem, 2.5vh, 1.2rem); font-weight: bold; color: var(--cor-texto); margin-bottom: 10px; flex-shrink: 0; }
 
+        /* Ajuste para caber em todos os ecrãs */
         .matching-grid { 
-            flex: 1; display: grid; gap: clamp(10px, 1.5vh, 20px); width: 100%; overflow: hidden; padding: clamp(10px, 2vh, 20px);
+            flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(10px, 1.5vh, 20px); width: 100%; overflow: hidden; padding: clamp(10px, 2vh, 20px);
             background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb; min-height: 0;
         }
         
-        .grid-level-1 { grid-template-columns: 1fr 1fr; }
-        .match-column { display: flex; flex-direction: column; gap: 10px; justify-content: space-around; height: 100%; }
-
-        .grid-level-2 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); }
+        .match-column { display: flex; flex-direction: column; gap: clamp(5px, 1vh, 15px); justify-content: space-around; height: 100%; }
 
         .match-item {
             background: white; border: 3px solid #eee; border-radius: 15px;
             display: flex; align-items: center; justify-content: center;
             font-size: clamp(1rem, 3.5vh, 1.8rem); font-weight: 700; color: var(--cor-texto);
-            cursor: pointer; transition: 0.2s; height: 100%; min-height: 0;
+            cursor: pointer; transition: 0.2s; height: 22%; min-height: 0;
             -webkit-tap-highlight-color: transparent; position: relative; box-sizing: border-box;
         }
         
@@ -132,8 +128,11 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div class="status-item">PTS: <span id="points">0</span></div>
                 </div>
-                <div class="instruction-area" id="instruction">Liga a imagem ao nome!</div>
-                <div id="matching-area" class="matching-grid"></div>
+                <div class="instruction-area" id="instruction">Liga a imagem ao nome correto!</div>
+                <div id="matching-area" class="matching-grid">
+                    <div id="col-left" class="match-column"></div>
+                    <div id="col-right" class="match-column"></div>
+                </div>
             </div>
         </section>
     </main>
@@ -231,34 +230,40 @@
             matchesFound = 0;
             attemptsInLevel = 0;
             initStars();
-            const area = document.getElementById('matching-area');
-            area.innerHTML = '';
+            const colLeft = document.getElementById('col-left');
+            const colRight = document.getElementById('col-right');
+            colLeft.innerHTML = ''; colRight.innerHTML = '';
             
             let subset = [...JOGO_CONFIG.numeros].sort(() => 0.5 - Math.random()).slice(0, 4);
             
+            let leftItems = [];
+            let rightItems = [];
+
             if (level === 1) {
-                area.className = 'matching-grid grid-level-1';
-                const colImg = document.createElement('div'); colImg.className = 'match-column';
-                const colWord = document.createElement('div'); colWord.className = 'match-column';
-                
-                let imgs = [...subset].sort(() => 0.5 - Math.random());
-                let words = [...subset].sort(() => 0.5 - Math.random());
-                
-                imgs.forEach(n => colImg.appendChild(createItem(n, 'img')));
-                words.forEach(n => colWord.appendChild(createItem(n, 'word')));
-                
-                area.appendChild(colImg);
-                area.appendChild(colWord);
-            } else {
-                area.className = 'matching-grid grid-level-2';
-                let allItems = [];
+                // Nível 1: Imagens na esquerda, palavras na direita
                 subset.forEach(n => {
-                    allItems.push({data: n, type: 'img'});
-                    allItems.push({data: n, type: 'word'});
+                    leftItems.push({data: n, type: 'img'});
+                    rightItems.push({data: n, type: 'word'});
                 });
-                allItems.sort(() => 0.5 - Math.random());
-                allItems.forEach(item => area.appendChild(createItem(item.data, item.type)));
+            } else {
+                // Nível 2: Imagens e palavras misturadas nas duas colunas
+                subset.forEach(n => {
+                    if (Math.random() > 0.5) {
+                        leftItems.push({data: n, type: 'img'});
+                        rightItems.push({data: n, type: 'word'});
+                    } else {
+                        leftItems.push({data: n, type: 'word'});
+                        rightItems.push({data: n, type: 'img'});
+                    }
+                });
             }
+
+            // Baralhar as colunas individualmente
+            leftItems.sort(() => 0.5 - Math.random());
+            rightItems.sort(() => 0.5 - Math.random());
+
+            leftItems.forEach(item => colLeft.appendChild(createItem(item.data, item.type)));
+            rightItems.forEach(item => colRight.appendChild(createItem(item.data, item.type)));
         }
 
         function createItem(data, type) {
@@ -281,9 +286,7 @@
 
         function handleSelection(el) {
             if (isChecking || el.classList.contains('correct-match') || el.classList.contains('selected')) return;
-
             el.classList.add('selected');
-
             if (!selectedItem1) {
                 selectedItem1 = el;
             } else {
