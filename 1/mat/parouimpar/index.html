@@ -39,28 +39,44 @@
         }
 
         /* --- Explicação Animada --- */
-        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 20px; }
+        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 15px; }
         .anim-line-1 { font-weight: bold; font-size: 1.4rem; color: var(--cor-texto); }
-        .anim-line-2 { display: flex; gap: 40px; }
-        .anim-line-3 { display: flex; gap: 20px; opacity: 0; animation: fadeIn 0.5s forwards 2.5s; }
+        .anim-line-2 { display: flex; gap: 30px; justify-content: center; align-items: center; }
+        .anim-line-3 { font-size: 1.1rem; opacity: 0; animation: fadeIn 0.5s forwards 2.5s; text-align: center; }
         @keyframes fadeIn { to { opacity: 1; } }
 
         /* --- Estilo dos Balões --- */
         .balloon {
-            position: relative; width: clamp(80px, 15vw, 120px); height: clamp(100px, 18vh, 150px);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: transform 0.2s, opacity 0.3s;
+            position: relative; 
+            width: clamp(80px, 18vw, 130px); 
+            height: clamp(100px, 20vh, 160px);
+            display: flex; 
+            justify-content: center; 
+            cursor: pointer; 
+            transition: transform 0.2s, opacity 0.3s, filter 0.3s;
             -webkit-tap-highlight-color: transparent;
         }
-        .balloon img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+        .balloon img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+            pointer-events: none; 
+        }
+        /* Alinhamento Central do Número */
         .balloon .num-label { 
-            position: absolute; top: 35%; font-size: clamp(1.5rem, 5vh, 2.5rem); 
-            font-weight: 700; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            position: absolute; 
+            top: 42%; /* Ajustado para o centro da "bolha" do balão, ignorando o fio */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(1.8rem, 6vh, 3rem); 
+            font-weight: 800; 
+            color: white; 
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
             pointer-events: none;
+            font-family: 'Fredoka', sans-serif;
         }
 
-        /* Estados do Balão */
-        .balloon.correct { filter: drop-shadow(0 0 15px var(--cor-jogo-verde)) brightness(1.2); transform: scale(1.1); pointer-events: none; }
+        .balloon.correct { filter: drop-shadow(0 0 15px var(--cor-jogo-verde)) brightness(1.1); transform: scale(1.05); pointer-events: none; }
         .balloon.popped { transform: scale(0); opacity: 0; pointer-events: none; }
 
         /* --- Jogo --- */
@@ -92,11 +108,11 @@
             <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src="" class="img-icon-sidebar"> Pré-Escolar</a>
-        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src="" class="img-icon-sidebar"> 1º Ano</a>
-        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src="" class="img-icon-sidebar"> 2º Ano</a>
-        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src="" class="img-icon-sidebar"> 3º Ano</a>
-        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src="" class="img-icon-sidebar"> 4º Ano</a>
+        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src="" class="side-img"> Pré-Escolar</a>
+        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src="" class="side-img"> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src="" class="side-img"> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src="" class="side-img"> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src="" class="side-img"> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
@@ -112,9 +128,7 @@
             <div class="game-card">
                 <div class="explanation-box">
                     <div class="anim-line-1">Clica nos números PARES:</div>
-                    <div class="anim-line-2" id="anim-baloes">
-                        <!-- Balões da animação -->
-                    </div>
+                    <div class="anim-line-2" id="anim-baloes"></div>
                     <div class="anim-line-3">
                         <span style="color:var(--cor-texto)">Os pares terminam em: <b>0, 2, 4, 6, 8</b></span>
                     </div>
@@ -181,22 +195,19 @@
                 const p = JOGO_CONFIG.caminhoIcons;
                 const i = JOGO_CONFIG.iconesMenu;
                 document.getElementById('header-icon').src = p + i.ano1;
-                document.getElementById('side-pre').src = p + i.pre;
-                document.getElementById('side-1').src = p + i.ano1;
-                document.getElementById('side-2').src = p + i.ano2;
-                document.getElementById('side-3').src = p + i.ano3;
-                document.getElementById('side-4').src = p + i.ano4;
+                document.querySelectorAll('.side-img').forEach((img, idx) => {
+                    const keys = ['pre', 'ano1', 'ano2', 'ano3', 'ano4'];
+                    img.src = p + i[keys[idx]];
+                });
                 buildIntroAnim();
             }
         };
 
         function buildIntroAnim() {
             const container = document.getElementById('anim-baloes');
-            // Exemplo: 4 (par) e 7 (ímpar)
-            const b1 = createBalloonDOM(4, JOGO_CONFIG.baloes[0]);
-            const b2 = createBalloonDOM(7, JOGO_CONFIG.baloes[0]);
+            const b1 = createBalloonDOM(4, JOGO_CONFIG.baloes[1]); // Verde
+            const b2 = createBalloonDOM(7, JOGO_CONFIG.baloes[3]); // Vermelho
             container.appendChild(b1); container.appendChild(b2);
-
             setTimeout(() => { b1.classList.add('correct'); }, 1000);
             setTimeout(() => { b2.classList.add('popped'); }, 2000);
         }
@@ -237,11 +248,10 @@
             pairsFound = 0; pairsToFind = 0;
             isRoundActive = true;
 
-            // Nível 1: Uma cor fixa | Nível 2: Cores aleatórias
             const fixedColor = JOGO_CONFIG.baloes[Math.floor(Math.random() * JOGO_CONFIG.baloes.length)];
 
             for(let i=0; i<8; i++) {
-                const num = Math.floor(Math.random() * 21); // Números de 0 a 20
+                const num = Math.floor(Math.random() * 21);
                 const isEven = (num % 2 === 0);
                 if(isEven) pairsToFind++;
 
@@ -264,13 +274,11 @@
                 };
                 area.appendChild(b);
             }
-            // Garantia que existe pelo menos um par
             if(pairsToFind === 0) loadRound();
         }
 
         function endRound(wasCorrect) {
-            if(!wasCorrect) isRoundActive = false; // Bloqueia cliques se errou
-
+            isRoundActive = false;
             const stars = document.querySelectorAll('.star');
             setTimeout(() => {
                 if(wasCorrect) {
@@ -288,13 +296,11 @@
                     if(level === 1) {
                         level = 2; questionNum = 1;
                         initStars(); loadRound();
-                    } else {
-                        endGame();
-                    }
+                    } else { endGame(); }
                 } else {
                     loadRound();
                 }
-            }, 800);
+            }, 1000);
         }
 
         function toggleMenu() {
