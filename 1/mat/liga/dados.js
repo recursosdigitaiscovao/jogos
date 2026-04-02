@@ -1,7 +1,7 @@
 // dados.js
 const JOGO_CONFIG = {
-    caminhoIcons: "../../../icons/", // Três níveis acima
-    caminhoImg: "../../../img/",     // Três níveis acima (onde estão as imagens dos números)
+    caminhoIcons: "../../../icons/", 
+    caminhoImg: "../../../img/",     
     iconesMenu: {
         pre: "iconpre.png",
         ano1: "icon1.png",
