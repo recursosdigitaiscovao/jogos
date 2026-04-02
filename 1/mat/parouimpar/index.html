@@ -1,1 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1º Ano - Matemática - Balões dos Pares</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cor-principal: #ff9100;
+            --cor-vibrante: #ff7300;  
+            --cor-fundo: #fef7ed;      
+            --cor-texto: #8a6436;      
+            --header-height: 70px;
+            --cor-jogo-verde: #45cfa8; 
+            --cor-erro: #ff4757;
+            --cor-caixa-info: #e8f9f4;
+        }
 
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
+        body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
+
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
+        .sidebar.active { left: 0; }
+        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: all 0.3s ease; cursor: pointer; font-weight: 500; }
+        .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
+        .sidebar-item img { width: 28px; height: 28px; margin-right: 12px; object-fit: contain; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
+        .overlay.active { display: block; }
+
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; height: calc(100% - var(--header-height)); }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow: hidden; }
+        .screen.active { display: flex; }
+
+        .game-card {
+            background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal);
+            display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
+        }
+
+        /* --- Explicação Animada --- */
+        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 20px; }
+        .anim-line-1 { font-weight: bold; font-size: 1.4rem; color: var(--cor-texto); }
+        .anim-line-2 { display: flex; gap: 40px; }
+        .anim-line-3 { display: flex; gap: 20px; opacity: 0; animation: fadeIn 0.5s forwards 2.5s; }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        /* --- Estilo dos Balões --- */
+        .balloon {
+            position: relative; width: clamp(80px, 15vw, 120px); height: clamp(100px, 18vh, 150px);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: transform 0.2s, opacity 0.3s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .balloon img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+        .balloon .num-label { 
+            position: absolute; top: 35%; font-size: clamp(1.5rem, 5vh, 2.5rem); 
+            font-weight: 700; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+
+        /* Estados do Balão */
+        .balloon.correct { filter: drop-shadow(0 0 15px var(--cor-jogo-verde)) brightness(1.2); transform: scale(1.1); pointer-events: none; }
+        .balloon.popped { transform: scale(0); opacity: 0; pointer-events: none; }
+
+        /* --- Jogo --- */
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; padding: 0 10px 8px 10px; }
+        .stars-container { display: flex; gap: 4px; }
+        .star { width: clamp(20px, 3vh, 26px); height: clamp(20px, 3vh, 26px); border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
+        .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
+        .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
+
+        .instruction-area { text-align: center; font-size: clamp(0.9rem, 2.5vh, 1.2rem); font-weight: bold; color: var(--cor-texto); margin-bottom: 5px; flex-shrink: 0; }
+
+        .game-area { 
+            flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr);
+            width: 100%; background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb;
+            padding: 10px; gap: 10px; box-sizing: border-box; justify-items: center; align-items: center;
+        }
+
+        .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .modal-content { background: white; padding: 30px 20px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 360px; width: 90%; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="sidebar" id="sidebar">
+        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
+            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
+        </div>
+        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src="" class="img-icon-sidebar"> Pré-Escolar</a>
+        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src="" class="img-icon-sidebar"> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src="" class="img-icon-sidebar"> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src="" class="img-icon-sidebar"> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src="" class="img-icon-sidebar"> 4º Ano</a>
+    </div>
+
+    <header class="nav-bar">
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
+        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal);">
+            <img id="header-icon" src="" style="height:32px; width: auto;"> Matemática - 1º Ano
+        </h1>
+        <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
+    </header>
+
+    <main class="main-content">
+        <section id="intro-screen" class="screen active">
+            <div class="game-card">
+                <div class="explanation-box">
+                    <div class="anim-line-1">Clica nos números PARES:</div>
+                    <div class="anim-line-2" id="anim-baloes">
+                        <!-- Balões da animação -->
+                    </div>
+                    <div class="anim-line-3">
+                        <span style="color:var(--cor-texto)">Os pares terminam em: <b>0, 2, 4, 6, 8</b></span>
+                    </div>
+                </div>
+                <h2 style="color:var(--cor-principal); text-align:center;">Balões dos Pares</h2>
+                <button class="option-btn" style="border-color:var(--cor-jogo-verde); background:var(--cor-jogo-verde); color:white;" onclick="startGame()">JOGAR</button>
+            </div>
+        </section>
+
+        <section id="game-screen" class="screen">
+            <div class="game-card">
+                <div class="card-header">
+                    <div class="status-item">⏳ <span id="timer">00:00</span></div>
+                    <div class="stars-container" id="stars-bar"></div>
+                    <div class="status-item">PTS: <span id="points">0</span></div>
+                </div>
+                <div class="instruction-area">Encontra todos os balões <span>Pares</span>!</div>
+                <div id="game-area" class="game-area"></div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 id="modal-title" style="margin-top: 0;"></h2>
+            <div id="modal-msg" style="margin-bottom: 25px; color: var(--cor-texto);"></div>
+            <button class="option-btn" onclick="location.reload()" style="background: var(--cor-jogo-verde); color: white; margin-bottom: 10px;">Jogar de Novo</button>
+            <button class="option-btn" onclick="window.location.href='../'" style="background: white; color: var(--cor-principal); border-color: var(--cor-principal);">Voltar</button>
+        </div>
+    </div>
+
+    <script src="dados.js"></script>
+    <script>
+        let level = 1, points = 0, seconds = 0, timerInterval;
+        let questionNum = 1, pairsToFind = 0, pairsFound = 0;
+        let isRoundActive = false;
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                if(type === 'certo') {
+                    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+                } else if (type === 'pop') {
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1, audioCtx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+                } else {
+                    osc.type = 'square'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+                }
+            } catch(e) {}
+        }
+
+        window.onload = () => {
+            if(typeof JOGO_CONFIG !== 'undefined') {
+                const p = JOGO_CONFIG.caminhoIcons;
+                const i = JOGO_CONFIG.iconesMenu;
+                document.getElementById('header-icon').src = p + i.ano1;
+                document.getElementById('side-pre').src = p + i.pre;
+                document.getElementById('side-1').src = p + i.ano1;
+                document.getElementById('side-2').src = p + i.ano2;
+                document.getElementById('side-3').src = p + i.ano3;
+                document.getElementById('side-4').src = p + i.ano4;
+                buildIntroAnim();
+            }
+        };
+
+        function buildIntroAnim() {
+            const container = document.getElementById('anim-baloes');
+            // Exemplo: 4 (par) e 7 (ímpar)
+            const b1 = createBalloonDOM(4, JOGO_CONFIG.baloes[0]);
+            const b2 = createBalloonDOM(7, JOGO_CONFIG.baloes[0]);
+            container.appendChild(b1); container.appendChild(b2);
+
+            setTimeout(() => { b1.classList.add('correct'); }, 1000);
+            setTimeout(() => { b2.classList.add('popped'); }, 2000);
+        }
+
+        function createBalloonDOM(num, imgName) {
+            const div = document.createElement('div');
+            div.className = 'balloon';
+            div.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + imgName}"><div class="num-label">${num}</div>`;
+            return div;
+        }
+
+        function startGame() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            startTimer(); initStars(); loadRound();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                seconds++;
+                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
+            }, 1000);
+        }
+
+        function initStars() {
+            const bar = document.getElementById('stars-bar');
+            bar.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const s = document.createElement('div');
+                s.className = 'star'; s.innerText = '★'; bar.appendChild(s);
+            }
+        }
+
+        function loadRound() {
+            const area = document.getElementById('game-area');
+            area.innerHTML = '';
+            pairsFound = 0; pairsToFind = 0;
+            isRoundActive = true;
+
+            // Nível 1: Uma cor fixa | Nível 2: Cores aleatórias
+            const fixedColor = JOGO_CONFIG.baloes[Math.floor(Math.random() * JOGO_CONFIG.baloes.length)];
+
+            for(let i=0; i<8; i++) {
+                const num = Math.floor(Math.random() * 21); // Números de 0 a 20
+                const isEven = (num % 2 === 0);
+                if(isEven) pairsToFind++;
+
+                const color = (level === 1) ? fixedColor : JOGO_CONFIG.baloes[Math.floor(Math.random() * JOGO_CONFIG.baloes.length)];
+                const b = createBalloonDOM(num, color);
+                
+                b.onclick = () => {
+                    if(!isRoundActive || b.classList.contains('correct') || b.classList.contains('popped')) return;
+
+                    if(isEven) {
+                        playSound('certo');
+                        b.classList.add('correct');
+                        pairsFound++;
+                        if(pairsFound === pairsToFind) endRound(true);
+                    } else {
+                        playSound('pop');
+                        b.classList.add('popped');
+                        endRound(false);
+                    }
+                };
+                area.appendChild(b);
+            }
+            // Garantia que existe pelo menos um par
+            if(pairsToFind === 0) loadRound();
+        }
+
+        function endRound(wasCorrect) {
+            if(!wasCorrect) isRoundActive = false; // Bloqueia cliques se errou
+
+            const stars = document.querySelectorAll('.star');
+            setTimeout(() => {
+                if(wasCorrect) {
+                    points += 20;
+                    stars[questionNum-1].classList.add('correct');
+                    stars[questionNum-1].innerText = '✓';
+                } else {
+                    stars[questionNum-1].classList.add('wrong');
+                    stars[questionNum-1].innerText = '✕';
+                }
+                document.getElementById('points').innerText = points;
+
+                questionNum++;
+                if(questionNum > 5) {
+                    if(level === 1) {
+                        level = 2; questionNum = 1;
+                        initStars(); loadRound();
+                    } else {
+                        endGame();
+                    }
+                } else {
+                    loadRound();
+                }
+            }, 800);
+        }
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            const modal = document.getElementById('modal');
+            modal.style.display = 'flex';
+            let msgFim = JOGO_CONFIG.mensagens.tenta;
+            if(points >= 180) msgFim = JOGO_CONFIG.mensagens.excelente;
+            else if(points >= 120) msgFim = JOGO_CONFIG.mensagens.bom;
+
+            document.getElementById('modal-title').innerText = "Fim da Festa!";
+            document.getElementById('modal-msg').innerHTML = `<p>${msgFim}</p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p><p>Pontos: <b>${points} / 200</b></p>`;
+        }
+    </script>
+</body>
+</html>
