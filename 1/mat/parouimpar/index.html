@@ -42,8 +42,8 @@
         
         .balloon {
             position: relative; 
-            width: clamp(120px, 28vw, 190px); 
-            height: clamp(150px, 32vh, 230px);
+            width: clamp(100px, 25vw, 160px); 
+            height: clamp(130px, 30vh, 200px);
             display: flex; 
             justify-content: center; 
             cursor: pointer; 
@@ -54,18 +54,18 @@
 
         @keyframes float {
             0%, 100% { transform: translateY(0) rotate(0deg); }
-            33% { transform: translateY(-10px) rotate(1deg); }
-            66% { transform: translateY(5px) rotate(-1deg); }
+            33% { transform: translateY(-12px) rotate(1deg); }
+            66% { transform: translateY(6px) rotate(-1deg); }
         }
 
         .balloon img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
         
         .balloon .num-label { 
             position: absolute; 
-            top: 42%; 
+            top: 40%; 
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: clamp(1.5rem, 6vh, 2.5rem); 
+            font-size: clamp(1.8rem, 7vh, 3rem); 
             font-weight: 800; 
             color: white; 
             text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
@@ -73,7 +73,6 @@
             line-height: 1;
         }
 
-        /* Feedback visual antes de desaparecer */
         .balloon.correct { filter: drop-shadow(0 0 20px var(--cor-jogo-verde)) brightness(1.2); }
         .balloon.error-match { filter: drop-shadow(0 0 20px var(--cor-erro)) brightness(1.2); animation: shake 0.4s; }
 
@@ -91,11 +90,14 @@
         .instruction-area { text-align: center; font-size: clamp(1.1rem, 3.8vh, 1.6rem); font-weight: bold; color: var(--cor-texto); margin-bottom: 5px; flex-shrink: 0; }
         .instruction-area span { color: var(--cor-vibrante); text-decoration: underline; text-transform: uppercase; }
 
+        /* Grelha centrada com padding lateral de 30px */
         .game-area { 
             flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr);
             width: 100%; background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb;
-            padding: 10px 20px; /* Padding lateral de 20px solicitado */
-            gap: 5px; box-sizing: border-box; justify-items: center; align-items: center;
+            padding: 10px 30px; 
+            gap: 10px; box-sizing: border-box; 
+            justify-items: center; 
+            align-items: center;
         }
 
         .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
@@ -112,11 +114,11 @@
             <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src="" class="side-img"> Pré-Escolar</a>
-        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src="" class="side-img"> 1º Ano</a>
-        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src="" class="side-img"> 2º Ano</a>
-        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src="" class="side-img"> 3º Ano</a>
-        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src="" class="side-img"> 4º Ano</a>
+        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src="" class="side-img" style="width:28px"> Pré-Escolar</a>
+        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src="" class="side-img" style="width:28px"> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src="" class="side-img" style="width:28px"> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src="" class="side-img" style="width:28px"> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src="" class="side-img" style="width:28px"> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
@@ -199,10 +201,10 @@
                 const p = JOGO_CONFIG.caminhoIcons;
                 const i = JOGO_CONFIG.iconesMenu;
                 document.getElementById('header-icon').src = p + i.ano1;
-                document.querySelectorAll('.side-img').forEach((img, idx) => {
-                    const keys = ['pre', 'ano1', 'ano2', 'ano3', 'ano4'];
-                    if(img) img.src = p + i[keys[idx]];
-                });
+                const sideImgs = document.querySelectorAll('.side-img');
+                if(sideImgs.length >= 5) {
+                    sideImgs[0].src = p + i.pre; sideImgs[1].src = p + i.ano1; sideImgs[2].src = p + i.ano2; sideImgs[3].src = p + i.ano3; sideImgs[4].src = p + i.ano4;
+                }
                 buildIntroAnim();
             }
         };
@@ -213,7 +215,7 @@
             const b2 = createBalloonDOM(5, JOGO_CONFIG.baloes[3]);
             container.appendChild(b1); container.appendChild(b2);
             setTimeout(() => { b1.classList.add('correct'); setTimeout(()=>b1.classList.add('popped'), 600); }, 1000);
-            setTimeout(() => { b2.classList.add('error-match'); setTimeout(()=>b2.classList.add('popped'), 600); }, 2000);
+            setTimeout(() => { b2.classList.add('error-match'); }, 2000);
         }
 
         function createBalloonDOM(num, imgName) {
@@ -274,7 +276,6 @@
                     } else {
                         playSound('pop');
                         b.classList.add('error-match');
-                        setTimeout(() => b.classList.add('popped'), 600);
                         endRound(false);
                     }
                 };
