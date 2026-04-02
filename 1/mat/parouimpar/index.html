@@ -38,13 +38,9 @@
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Explicação Animada --- */
+        /* --- Explicação --- */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 15px; }
-        .anim-line-1 { font-weight: bold; font-size: 1.4rem; color: var(--cor-texto); }
-        .anim-line-2 { display: flex; gap: 30px; justify-content: center; align-items: center; }
-        .anim-line-3 { font-size: 1.1rem; opacity: 0; animation: fadeIn 0.5s forwards 2.5s; text-align: center; }
-        @keyframes fadeIn { to { opacity: 1; } }
-
+        
         /* --- Estilo dos Balões --- */
         .balloon {
             position: relative; 
@@ -53,19 +49,23 @@
             display: flex; 
             justify-content: center; 
             cursor: pointer; 
-            transition: transform 0.2s, opacity 0.3s, filter 0.3s;
+            transition: opacity 0.3s;
             -webkit-tap-highlight-color: transparent;
+            animation: float 4s infinite ease-in-out; /* Efeito de movimento */
         }
-        .balloon img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: contain; 
-            pointer-events: none; 
+
+        /* Animação de flutuar e balançar */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-15px) rotate(2deg); }
+            66% { transform: translateY(5px) rotate(-2deg); }
         }
-        /* Alinhamento Central do Número */
+
+        .balloon img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+        
         .balloon .num-label { 
             position: absolute; 
-            top: 42%; /* Ajustado para o centro da "bolha" do balão, ignorando o fio */
+            top: 42%; 
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: clamp(1.8rem, 6vh, 3rem); 
@@ -73,11 +73,18 @@
             color: white; 
             text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
             pointer-events: none;
-            font-family: 'Fredoka', sans-serif;
         }
 
-        .balloon.correct { filter: drop-shadow(0 0 15px var(--cor-jogo-verde)) brightness(1.1); transform: scale(1.05); pointer-events: none; }
-        .balloon.popped { transform: scale(0); opacity: 0; pointer-events: none; }
+        /* Estados do Balão */
+        .balloon.correct { 
+            filter: drop-shadow(0 0 15px var(--cor-jogo-verde)) brightness(1.1); 
+            animation-play-state: paused; 
+            transform: scale(1.1); 
+            pointer-events: none; 
+            transition: filter 0.3s, transform 0.3s;
+        }
+        .balloon.popped { animation: popEffect 0.3s forwards; pointer-events: none; }
+        @keyframes popEffect { to { transform: scale(0); opacity: 0; } }
 
         /* --- Jogo --- */
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; padding: 0 10px 8px 10px; }
@@ -127,10 +134,10 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <div class="anim-line-1">Clica nos números PARES:</div>
-                    <div class="anim-line-2" id="anim-baloes"></div>
-                    <div class="anim-line-3">
-                        <span style="color:var(--cor-texto)">Os pares terminam em: <b>0, 2, 4, 6, 8</b></span>
+                    <p style="font-weight: bold; font-size: 1.4rem; color: var(--cor-texto);">Clica nos balões PARES:</p>
+                    <div id="anim-baloes" style="display:flex; gap:30px"></div>
+                    <div style="font-size: 1.1rem; text-align: center;">
+                        <span style="color:var(--cor-texto)">Exemplo: O <b>4</b> é Par, o <b>7</b> é Ímpar.</span>
                     </div>
                 </div>
                 <h2 style="color:var(--cor-principal); text-align:center;">Balões dos Pares</h2>
@@ -145,7 +152,7 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div class="status-item">PTS: <span id="points">0</span></div>
                 </div>
-                <div class="instruction-area">Encontra todos os balões <span>Pares</span>!</div>
+                <div class="instruction-area">Clica em todos os balões <span>Pares</span>!</div>
                 <div id="game-area" class="game-area"></div>
             </div>
         </section>
@@ -205,8 +212,8 @@
 
         function buildIntroAnim() {
             const container = document.getElementById('anim-baloes');
-            const b1 = createBalloonDOM(4, JOGO_CONFIG.baloes[1]); // Verde
-            const b2 = createBalloonDOM(7, JOGO_CONFIG.baloes[3]); // Vermelho
+            const b1 = createBalloonDOM(4, JOGO_CONFIG.baloes[1]);
+            const b2 = createBalloonDOM(7, JOGO_CONFIG.baloes[3]);
             container.appendChild(b1); container.appendChild(b2);
             setTimeout(() => { b1.classList.add('correct'); }, 1000);
             setTimeout(() => { b2.classList.add('popped'); }, 2000);
@@ -215,6 +222,12 @@
         function createBalloonDOM(num, imgName) {
             const div = document.createElement('div');
             div.className = 'balloon';
+            // Aleatorizar a velocidade da animação e o atraso para não serem todos iguais
+            const duration = (3 + Math.random() * 2).toFixed(2);
+            const delay = (Math.random() * -4).toFixed(2);
+            div.style.animationDuration = `${duration}s`;
+            div.style.animationDelay = `${delay}s`;
+            
             div.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + imgName}"><div class="num-label">${num}</div>`;
             return div;
         }
@@ -227,19 +240,12 @@
         }
 
         function startTimer() {
-            timerInterval = setInterval(() => {
-                seconds++;
-                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
-            }, 1000);
+            timerInterval = setInterval(() => { seconds++; document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; }, 1000);
         }
 
         function initStars() {
-            const bar = document.getElementById('stars-bar');
-            bar.innerHTML = '';
-            for(let i=0; i<5; i++) {
-                const s = document.createElement('div');
-                s.className = 'star'; s.innerText = '★'; bar.appendChild(s);
-            }
+            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
+            for(let i=0; i<5; i++) { const s = document.createElement('div'); s.className = 'star'; s.innerText = '★'; bar.appendChild(s); }
         }
 
         function loadRound() {
@@ -260,7 +266,6 @@
                 
                 b.onclick = () => {
                     if(!isRoundActive || b.classList.contains('correct') || b.classList.contains('popped')) return;
-
                     if(isEven) {
                         playSound('certo');
                         b.classList.add('correct');
@@ -283,30 +288,20 @@
             setTimeout(() => {
                 if(wasCorrect) {
                     points += 20;
-                    stars[questionNum-1].classList.add('correct');
-                    stars[questionNum-1].innerText = '✓';
+                    stars[questionNum-1].classList.add('correct'); stars[questionNum-1].innerText = '✓';
                 } else {
-                    stars[questionNum-1].classList.add('wrong');
-                    stars[questionNum-1].innerText = '✕';
+                    stars[questionNum-1].classList.add('wrong'); stars[questionNum-1].innerText = '✕';
                 }
                 document.getElementById('points').innerText = points;
-
                 questionNum++;
                 if(questionNum > 5) {
-                    if(level === 1) {
-                        level = 2; questionNum = 1;
-                        initStars(); loadRound();
-                    } else { endGame(); }
-                } else {
-                    loadRound();
-                }
+                    if(level === 1) { level = 2; questionNum = 1; initStars(); loadRound(); }
+                    else { endGame(); }
+                } else { loadRound(); }
             }, 1000);
         }
 
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
 
         function endGame() {
             clearInterval(timerInterval);
@@ -315,7 +310,6 @@
             let msgFim = JOGO_CONFIG.mensagens.tenta;
             if(points >= 180) msgFim = JOGO_CONFIG.mensagens.excelente;
             else if(points >= 120) msgFim = JOGO_CONFIG.mensagens.bom;
-
             document.getElementById('modal-title').innerText = "Fim da Festa!";
             document.getElementById('modal-msg').innerHTML = `<p>${msgFim}</p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p><p>Pontos: <b>${points} / 200</b></p>`;
         }
