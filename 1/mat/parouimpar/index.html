@@ -40,7 +40,6 @@
 
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 15px; }
         
-        /* --- Balões Aumentados --- */
         .balloon {
             position: relative; 
             width: clamp(120px, 28vw, 190px); 
@@ -48,7 +47,7 @@
             display: flex; 
             justify-content: center; 
             cursor: pointer; 
-            transition: opacity 0.3s;
+            transition: opacity 0.3s, filter 0.3s;
             -webkit-tap-highlight-color: transparent;
             animation: float 4s infinite ease-in-out;
         }
@@ -61,7 +60,6 @@
 
         .balloon img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
         
-        /* --- Números Diminuídos e Centrados --- */
         .balloon .num-label { 
             position: absolute; 
             top: 42%; 
@@ -75,9 +73,14 @@
             line-height: 1;
         }
 
-        .balloon.correct { filter: drop-shadow(0 0 15px var(--cor-jogo-verde)) brightness(1.1); transform: scale(1.05); pointer-events: none; animation-play-state: paused; }
-        .balloon.popped { animation: popEffect 0.3s forwards; pointer-events: none; }
+        /* Feedback visual antes de desaparecer */
+        .balloon.correct { filter: drop-shadow(0 0 20px var(--cor-jogo-verde)) brightness(1.2); }
+        .balloon.error-match { filter: drop-shadow(0 0 20px var(--cor-erro)) brightness(1.2); animation: shake 0.4s; }
+
+        .balloon.popped { animation: popEffect 0.4s forwards; pointer-events: none; }
         @keyframes popEffect { to { transform: scale(0); opacity: 0; } }
+
+        @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
 
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; padding: 0 10px 8px 10px; }
         .stars-container { display: flex; gap: 4px; }
@@ -91,7 +94,8 @@
         .game-area { 
             flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr);
             width: 100%; background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb;
-            padding: 10px; gap: 5px; box-sizing: border-box; justify-items: center; align-items: center;
+            padding: 10px 20px; /* Padding lateral de 20px solicitado */
+            gap: 5px; box-sizing: border-box; justify-items: center; align-items: center;
         }
 
         .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
@@ -197,7 +201,7 @@
                 document.getElementById('header-icon').src = p + i.ano1;
                 document.querySelectorAll('.side-img').forEach((img, idx) => {
                     const keys = ['pre', 'ano1', 'ano2', 'ano3', 'ano4'];
-                    img.src = p + i[keys[idx]];
+                    if(img) img.src = p + i[keys[idx]];
                 });
                 buildIntroAnim();
             }
@@ -208,8 +212,8 @@
             const b1 = createBalloonDOM(2, JOGO_CONFIG.baloes[1]);
             const b2 = createBalloonDOM(5, JOGO_CONFIG.baloes[3]);
             container.appendChild(b1); container.appendChild(b2);
-            setTimeout(() => { b1.classList.add('correct'); }, 1000);
-            setTimeout(() => { b2.classList.add('popped'); }, 2000);
+            setTimeout(() => { b1.classList.add('correct'); setTimeout(()=>b1.classList.add('popped'), 600); }, 1000);
+            setTimeout(() => { b2.classList.add('error-match'); setTimeout(()=>b2.classList.add('popped'), 600); }, 2000);
         }
 
         function createBalloonDOM(num, imgName) {
@@ -259,15 +263,18 @@
                 const b = createBalloonDOM(num, color);
                 
                 b.onclick = () => {
-                    if(!isRoundActive || b.classList.contains('correct') || b.classList.contains('popped')) return;
+                    if(!isRoundActive || b.classList.contains('correct') || b.classList.contains('error-match') || b.classList.contains('popped')) return;
+                    
                     if(isCorrectNum) {
                         playSound('certo');
                         b.classList.add('correct');
                         targetsFound++;
+                        setTimeout(() => b.classList.add('popped'), 600);
                         if(targetsFound === targetsToFind) endRound(true);
                     } else {
                         playSound('pop');
-                        b.classList.add('popped');
+                        b.classList.add('error-match');
+                        setTimeout(() => b.classList.add('popped'), 600);
                         endRound(false);
                     }
                 };
@@ -292,7 +299,7 @@
                     if(level === 1) { level = 2; questionNum = 1; initStars(); loadRound(); }
                     else { endGame(); }
                 } else { loadRound(); }
-            }, 1000);
+            }, 1200);
         }
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
