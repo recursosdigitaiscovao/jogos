@@ -13,6 +13,7 @@
             --cor-texto: #8a6436;      
             --header-height: 70px;
             --cor-jogo-verde: #45cfa8; 
+            --cor-caixa-info: #e8f9f4; /* O verde claro para fundos */
         }
 
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
@@ -59,28 +60,46 @@
         }
         @media (min-width: 900px) { .games-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
 
-        /* --- Game Card Transformado em Botão --- */
+        /* --- Game Card Estilizado --- */
         .game-card { 
             background: white; border-radius: 25px; padding: 15px; 
-            border: 4px solid var(--cor-jogo-verde); /* Limite da cor do botão */
+            border: 4px solid var(--cor-jogo-verde); /* Limite verde */
             display: flex; flex-direction: column; align-items: center;
             cursor: pointer; transition: 0.3s; text-decoration: none;
+            box-sizing: border-box;
         }
         .game-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(69, 207, 168, 0.2); }
         .game-card:active { transform: scale(0.95); }
 
-        .game-img-container { width: 100%; height: 100px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; }
-        .game-img-container img { max-height: 100%; max-width: 100%; object-fit: contain; }
+        /* Contentor da Imagem com fundo verde claro */
+        .game-img-container { 
+            width: 100%; 
+            height: 110px; 
+            background-color: var(--cor-caixa-info); /* Fundo verde claro */
+            border-radius: 20px; 
+            margin-bottom: 12px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden;
+        }
+        .game-img-container img { 
+            max-height: 75%; 
+            max-width: 75%; 
+            object-fit: contain; 
+            transition: 0.3s;
+        }
+        .game-card:hover .game-img-container img { transform: scale(1.1); }
 
         h2 { 
-            font-size: 1rem; color: var(--cor-jogo-verde); /* Nome com a cor do botão */
+            font-size: 1rem; color: var(--cor-jogo-verde); /* Nome a verde */
             margin: 0; font-weight: 700; text-align: center;
         }
 
         h1 { color: var(--cor-principal); margin: 0; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
         h1 img { height: 30px; width: auto; display: block; }
 
-        footer { background: white; padding: 10px 0; text-align: center; font-size: 0.95rem; color: #777; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); }
+        footer { background: white; padding: 15px 0; text-align: center; font-size: 0.9rem; color: #777; border-top: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -111,9 +130,7 @@
     <main class="main-content">
         <p class="intro-text">Explora os números e resolve desafios!</p>
         
-        <div class="games-grid" id="jogos-container">
-            <!-- Os cards serão injetados pelo JavaScript para usar as imagens do dados.js -->
-            
+        <div class="games-grid">
             <a href="conta/" class="game-card">
                 <div class="game-img-container"><img src="./iconjogos/conta.png"></div>
                 <h2>Contar Objetos</h2>
@@ -153,7 +170,6 @@
                 <div class="game-img-container"><img src="./iconjogos/parouimpar.png"></div>
                 <h2>Pares ou Ímpares</h2>
             </a>
-
         </div>
     </main>
 
@@ -170,8 +186,6 @@
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const p = JOGO_CONFIG.caminhoIcons;
                 const i = JOGO_CONFIG.icones;
-
-                // Aplicar ícones do menu lateral e header
                 document.getElementById('side-pre').src = p + i.pre;
                 document.getElementById('side-1').src = p + i.ano1;
                 document.getElementById('side-2').src = p + i.ano2;
@@ -180,10 +194,7 @@
                 document.getElementById('header-icon').src = p + i.ano1;
             }
         }
-
-        aplicarConfiguracao();
         window.addEventListener('load', aplicarConfiguracao);
     </script>
-
 </body>
 </html>
