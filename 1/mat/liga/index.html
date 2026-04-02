@@ -42,45 +42,46 @@
 
         /* --- Explicação --- */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        .anim-match-container { display: flex; align-items: center; gap: 40px; }
-        .anim-item { width: 80px; height: 80px; background: white; border: 3px solid var(--cor-principal); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; color: var(--cor-texto); }
+        .anim-match-container { display: flex; align-items: center; gap: clamp(20px, 5vw, 40px); }
+        .anim-item { width: clamp(60px, 10vh, 90px); height: clamp(60px, 10vh, 90px); background: white; border: 3px solid var(--cor-principal); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: var(--cor-texto); }
         .hand-icon { position: absolute; font-size: 2.5rem; bottom: 20px; left: 30%; animation: handMatch 3s infinite; }
         @keyframes handMatch { 0%, 100% { transform: translate(0,0); opacity:0; } 10%, 90% { opacity:1; } 50% { transform: translate(120px, 0); } }
 
         /* --- Jogo --- */
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 10px; flex-shrink: 0; }
-        .stars-container { display: flex; gap: 4px; }
-        .star { width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
+        .stars-container { display: flex; gap: 6px; }
+        .star { width: clamp(20px, 3vh, 26px); height: clamp(20px, 3vh, 26px); border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
+        .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
         .instruction-area { text-align: center; font-size: clamp(0.9rem, 2.5vh, 1.2rem); font-weight: bold; color: var(--cor-texto); margin-bottom: 10px; flex-shrink: 0; }
 
-        .matching-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; overflow: hidden; padding: 5px; }
+        /* Espaço de jogo com a cor da animação */
+        .matching-grid { 
+            flex: 1; display: grid; gap: 15px; width: 100%; overflow: hidden; padding: 15px;
+            background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb;
+        }
+        
+        /* Layout Nível 1 (Duas colunas) */
+        .grid-level-1 { grid-template-columns: 1fr 1fr; }
         .match-column { display: flex; flex-direction: column; gap: 10px; justify-content: space-around; height: 100%; }
+
+        /* Layout Nível 2 (Grelha misturada 4x2) */
+        .grid-level-2 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); }
 
         .match-item {
             background: white; border: 3px solid #eee; border-radius: 15px;
             display: flex; align-items: center; justify-content: center;
-            font-size: clamp(1rem, 3.5vh, 1.6rem); font-weight: 700; color: var(--cor-texto);
-            cursor: pointer; transition: 0.2s; height: 18%; min-height: 60px;
-            -webkit-tap-highlight-color: transparent; position: relative;
-            box-sizing: border-box;
+            font-size: clamp(0.9rem, 3vh, 1.5rem); font-weight: 700; color: var(--cor-texto);
+            cursor: pointer; transition: 0.2s; height: 100%; min-height: 50px;
+            -webkit-tap-highlight-color: transparent; position: relative; box-sizing: border-box;
         }
         
-        /* CSS corrigido para o telemóvel mostrar as imagens */
-        .match-item img { 
-            max-height: 85%; 
-            max-width: 85%; 
-            width: auto;
-            height: auto;
-            object-fit: contain; 
-            pointer-events: none; 
-            display: block;
-        }
+        .match-item img { max-height: 80%; max-width: 80%; object-fit: contain; pointer-events: none; }
 
-        .match-item.selected { border-color: var(--cor-principal); background: #fff8f0; transform: scale(1.03); z-index: 10; }
-        .match-item.correct-match { border-color: var(--cor-jogo-verde); background: #e8f9f4; opacity: 0.2; pointer-events: none; }
-        .match-item.error-match { border-color: var(--cor-erro) !important; background: #fff0f0 !important; color: var(--cor-erro); animation: shake 0.4s; }
+        .match-item.selected { border-color: var(--cor-principal); background: #fff8f0; transform: scale(1.05); z-index: 10; }
+        .match-item.correct-match { border-color: var(--cor-jogo-verde); background: #e8f9f4; opacity: 0.3; pointer-events: none; }
+        .match-item.error-match { border-color: var(--cor-erro) !important; background: #fff0f0 !important; animation: shake 0.4s; }
 
         @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
 
@@ -120,7 +121,7 @@
                     <p style="color:var(--cor-texto); font-weight:bold; margin-bottom: 20px;">Liga o número ao nome:</p>
                     <div class="anim-match-container">
                         <div class="anim-item">1</div>
-                        <div class="anim-item" style="font-size: 1.2rem;">UM</div>
+                        <div class="anim-item" style="font-size: 1rem;">UM</div>
                         <div class="hand-icon">☝️</div>
                     </div>
                 </div>
@@ -134,15 +135,14 @@
                 <div class="card-header">
                     <div class="status-item">⏳ <span id="timer">00:00</span></div>
                     <div class="stars-container" id="stars-bar">
-                        <div class="star">★</div><div class="star">★</div><div class="star">★</div><div class="star">★</div><div class="star">★</div>
+                        <!-- Estrelas dinâmicas aqui -->
                     </div>
                     <div class="status-item">PTS: <span id="points">0</span></div>
                 </div>
-                <div class="instruction-area">Clica na <span>imagem</span> e depois no <span>nome</span>!</div>
+                <div class="instruction-area" id="instruction">Liga a imagem ao nome correto!</div>
                 
-                <div class="matching-grid">
-                    <div id="col-images" class="match-column"></div>
-                    <div id="col-words" class="match-column"></div>
+                <div id="matching-area" class="matching-grid">
+                    <!-- Conteúdo dinâmico -->
                 </div>
             </div>
         </section>
@@ -160,8 +160,8 @@
     <script src="dados.js"></script>
     <script>
         let level = 1, points = 0, seconds = 0, timerInterval;
-        let selectedImg = null, selectedWord = null;
-        let matchesFound = 0, totalPairs = 4;
+        let selectedItem1 = null, selectedItem2 = null;
+        let matchesFound = 0, totalPairs = 4, attemptCount = 0;
         let isChecking = false;
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -205,7 +205,9 @@
             if (audioCtx.state === 'suspended') audioCtx.resume();
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            startTimer(); loadLevel();
+            startTimer(); 
+            initStars();
+            loadLevel();
         }
 
         function startTimer() {
@@ -216,108 +218,134 @@
             }, 1000);
         }
 
+        function initStars() {
+            const bar = document.getElementById('stars-bar');
+            bar.innerHTML = '';
+            // Criamos 8 estrelas (4 para cada nível ou até acabar as tentativas)
+            for(let i=0; i<8; i++) {
+                const s = document.createElement('div');
+                s.className = 'star';
+                s.innerText = '★';
+                bar.appendChild(s);
+            }
+        }
+
+        function updateStar(wasCorrect) {
+            const stars = document.querySelectorAll('.star');
+            if(stars[attemptCount]) {
+                stars[attemptCount].classList.add(wasCorrect ? 'correct' : 'wrong');
+                stars[attemptCount].innerText = wasCorrect ? '✓' : '✕';
+                attemptCount++;
+            }
+        }
+
         function loadLevel() {
             matchesFound = 0;
-            const colImages = document.getElementById('col-images');
-            const colWords = document.getElementById('col-words');
-            colImages.innerHTML = ''; colWords.innerHTML = '';
-
-            let subset = [];
-            // Nível 1: 4 números do início | Nível 2: 5 números aleatórios
+            const area = document.getElementById('matching-area');
+            area.innerHTML = '';
+            
+            // Escolher 4 números aleatórios
+            let subset = [...JOGO_CONFIG.numeros].sort(() => 0.5 - Math.random()).slice(0, 4);
+            
             if (level === 1) {
-                subset = JOGO_CONFIG.numeros.slice(0, 4);
+                area.className = 'matching-grid grid-level-1';
+                const colImg = document.createElement('div'); colImg.className = 'match-column';
+                const colWord = document.createElement('div'); colWord.className = 'match-column';
+                
+                let imgs = [...subset].sort(() => 0.5 - Math.random());
+                let words = [...subset].sort(() => 0.5 - Math.random());
+                
+                imgs.forEach(n => colImg.appendChild(createItem(n, 'img')));
+                words.forEach(n => colWord.appendChild(createItem(n, 'word')));
+                
+                area.appendChild(colImg);
+                area.appendChild(colWord);
             } else {
-                subset = [...JOGO_CONFIG.numeros].sort(() => 0.5 - Math.random()).slice(0, 5);
+                area.className = 'matching-grid grid-level-2';
+                // Misturar tudo numa única lista
+                let allItems = [];
+                subset.forEach(n => {
+                    allItems.push({data: n, type: 'img'});
+                    allItems.push({data: n, type: 'word'});
+                });
+                allItems.sort(() => 0.5 - Math.random());
+                allItems.forEach(item => area.appendChild(createItem(item.data, item.type)));
             }
-            totalPairs = subset.length;
-
-            const imgsData = [...subset].sort(() => 0.5 - Math.random());
-            const wordsData = [...subset].sort(() => 0.5 - Math.random());
-
-            imgsData.forEach(n => colImages.appendChild(createItem(n, 'img')));
-            wordsData.forEach(n => colWords.appendChild(createItem(n, 'word')));
         }
 
         function createItem(data, type) {
             const div = document.createElement('div');
             div.className = 'match-item';
+            div.dataset.value = data.valor;
+            div.dataset.type = type;
             
             if (type === 'img') {
                 const img = document.createElement('img');
                 img.src = JOGO_CONFIG.caminhoImg + data.imagem;
-                img.alt = data.palavra;
-                // Previne o "arrastar" da imagem em browsers mobile
-                img.setAttribute('draggable', 'false');
                 div.appendChild(img);
             } else {
                 div.innerText = data.palavra;
             }
             
-            div.onclick = () => {
-                if (isChecking || div.classList.contains('correct-match')) return;
-                
-                if (type === 'img') {
-                    if (selectedImg) selectedImg.el.classList.remove('selected');
-                    selectedImg = { val: data.valor, el: div };
-                } else {
-                    if (selectedWord) selectedWord.el.classList.remove('selected');
-                    selectedWord = { val: data.valor, el: div };
-                }
-                div.classList.add('selected');
-                checkMatch();
-            };
+            div.onclick = () => handleSelection(div);
             return div;
         }
 
-        function checkMatch() {
-            if (selectedImg && selectedWord) {
-                isChecking = true;
-                const el1 = selectedImg.el;
-                const el2 = selectedWord.el;
+        function handleSelection(el) {
+            if (isChecking || el.classList.contains('correct-match') || el.classList.contains('selected')) return;
 
-                if (selectedImg.val === selectedWord.val) {
-                    playSound('certo');
-                    el1.classList.remove('selected');
-                    el2.classList.remove('selected');
-                    el1.classList.add('correct-match');
-                    el2.classList.add('correct-match');
-                    
-                    matchesFound++;
-                    points += 25;
-                    document.getElementById('points').innerText = points;
-                    selectedImg = null; selectedWord = null;
-                    isChecking = false;
-                    
-                    if (matchesFound === totalPairs) finishLevel();
-                } else {
-                    playSound('errado');
-                    el1.classList.add('error-match');
-                    el2.classList.add('error-match');
-                    
-                    setTimeout(() => {
-                        el1.classList.remove('error-match', 'selected');
-                        el2.classList.remove('error-match', 'selected');
-                        selectedImg = null; selectedWord = null;
-                        isChecking = false;
-                    }, 600);
-                }
+            el.classList.add('selected');
+
+            if (!selectedItem1) {
+                selectedItem1 = el;
+            } else {
+                selectedItem2 = el;
+                checkMatch();
             }
         }
 
-        function finishLevel() {
-            const stars = document.querySelectorAll('.star');
-            if(stars[level-1]) {
-                stars[level-1].classList.add('correct');
-                stars[level-1].innerText = '✓';
-            }
+        function checkMatch() {
+            isChecking = true;
+            const val1 = selectedItem1.dataset.value;
+            const val2 = selectedItem2.dataset.value;
+            const type1 = selectedItem1.dataset.type;
+            const type2 = selectedItem2.dataset.type;
 
-            setTimeout(() => {
-                if (level === 1) {
-                    level = 2; loadLevel();
-                } else {
-                    endGame();
+            // Condição: Valores iguais e tipos diferentes (imagem com palavra)
+            if (val1 === val2 && type1 !== type2) {
+                playSound('certo');
+                selectedItem1.classList.replace('selected', 'correct-match');
+                selectedItem2.classList.replace('selected', 'correct-match');
+                
+                updateStar(true);
+                matchesFound++;
+                points += 25;
+                document.getElementById('points').innerText = points;
+                
+                selectedItem1 = null; selectedItem2 = null;
+                isChecking = false;
+                
+                if (matchesFound === totalPairs) {
+                    setTimeout(() => {
+                        if(level === 1) { level = 2; loadLevel(); }
+                        else { endGame(); }
+                    }, 1000);
                 }
-            }, 1200);
+            } else {
+                // Erro
+                playSound('errado');
+                selectedItem1.classList.add('error-match');
+                selectedItem2.classList.add('error-match');
+                
+                updateStar(false);
+
+                setTimeout(() => {
+                    selectedItem1.classList.remove('error-match', 'selected');
+                    selectedItem2.classList.remove('error-match', 'selected');
+                    selectedItem1 = null; selectedItem2 = null;
+                    isChecking = false;
+                }, 600);
+            }
         }
 
         function endGame() {
@@ -325,11 +353,11 @@
             const modal = document.getElementById('modal');
             modal.style.display = 'flex';
             let msgFim = JOGO_CONFIG.mensagens.tenta;
-            if(points >= 200) msgFim = JOGO_CONFIG.mensagens.excelente;
-            else if(points >= 100) msgFim = JOGO_CONFIG.mensagens.bom;
+            if(points >= 180) msgFim = JOGO_CONFIG.mensagens.excelente;
+            else if(points >= 120) msgFim = JOGO_CONFIG.mensagens.bom;
 
             document.getElementById('modal-title').innerText = "Excelente!";
-            document.getElementById('modal-msg').innerHTML = `<p>${msgFim}</p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p><p>Pontos: <b>${points}</b></p>`;
+            document.getElementById('modal-msg').innerHTML = `<p>${msgFim}</p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p><p>Pontos: <b>${points} / 200</b></p>`;
         }
     </script>
 </body>
