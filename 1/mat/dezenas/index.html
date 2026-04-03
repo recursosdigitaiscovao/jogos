@@ -66,12 +66,8 @@
             display: flex; align-items: flex-end; justify-content: center; gap: 3px;
             margin-bottom: -8px; z-index: 5;
         }
-        /* Pilha de Dezenas (Vertical única de 10) */
         .dezena-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
-        
-        /* Pilha de Unidades (Vertical de 5) */
         .unit-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
-
         .fardo-img { width: clamp(10px, 2.1vw, 17px); height: auto; object-fit: contain; }
 
         /* --- Interface do Jogo --- */
@@ -90,11 +86,12 @@
         }
 
         .road { height: 45%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; margin-top: 5px; }
-        .tractor-container { display: flex; align-items: flex-end; position: absolute; left: -1200px; transition: left 0.8s ease-out; gap: 0; }
-        .tractor-container.at-center { left: 50%; transform: translateX(-50%); }
-        .tractor-container.exit { left: 120%; transition: left 0.8s ease-in; }
+        .tractor-container { display: flex; align-items: flex-end; position: absolute; left: -1200px; gap: 0; z-index: 20; }
+        
+        /* Classes de animação controladas por JS */
+        .tractor-container.animate-in { left: 50%; transform: translateX(-50%); transition: left 0.8s ease-out; }
+        .tractor-container.animate-out { left: 130%; transition: left 0.8s ease-in; }
 
-        /* Teclado do Jogo */
         .options-area { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; flex-grow: 1; width: 100%; max-width: 450px; margin: 0 auto; align-content: center; }
         
         .control-btn {
@@ -282,9 +279,7 @@
         function renderCargo(container, total, isTens) {
             container.innerHTML = '';
             const pi = JOGO_CONFIG.caminhoImg;
-            
             if (isTens) {
-                // Dezenas: Uma pilha vertical de 10 por cada unidade de dezena
                 for (let i = 0; i < total; i++) {
                     const stack = document.createElement('div');
                     stack.className = 'dezena-stack';
@@ -297,7 +292,6 @@
                     container.appendChild(stack);
                 }
             } else {
-                // Unidades: Pilhas verticais de no máximo 5 fardos
                 let remaining = total;
                 while (remaining > 0) {
                     const stack = document.createElement('div');
@@ -348,12 +342,13 @@
             isRoundActive = false;
             const train = document.getElementById('tractor-unit');
             const controls = document.getElementById('controls');
-            train.classList.remove('at-center', 'exit');
             
-            currentTens = 0;
-            currentUnits = 0;
-            document.getElementById('cargo-tens').innerHTML = '';
-            document.getElementById('cargo-units').innerHTML = '';
+            // 2- O trator reseta posição fora do ecrã antes de entrar
+            train.style.transition = 'none';
+            train.classList.remove('animate-in', 'animate-out');
+            train.style.left = '-1200px';
+            
+            clearWagons();
             controls.innerHTML = '';
             
             targetValue = Math.floor(Math.random() * 41) + 10;
@@ -370,10 +365,11 @@
                 buildControlsLevel2();
             }
 
+            // Ativar animação de entrada
             setTimeout(() => {
-                train.classList.add('at-center');
+                train.classList.add('animate-in');
                 isRoundActive = true;
-            }, 100);
+            }, 50);
         }
 
         function buildControlsLevel1() {
@@ -386,7 +382,9 @@
                 <button class="control-btn build" onclick="addCargo('unidade')">
                     <img src="${pi + JOGO_CONFIG.veiculos.unidade}" style="height:22px;"> +1
                 </button>
-                <button class="control-btn build" style="border-color:var(--cor-erro)" onclick="clearWagons()">LIMPAR</button>
+                <button class="control-btn build" style="border-color:var(--cor-erro)" onclick="clearWagons()">
+                    <img src="${pi}borracha.png" style="height:40px;">
+                </button>
                 <button class="go-btn" onclick="checkAnswer(null)">ENTREGAR CARGA <img src="${pi + JOGO_CONFIG.veiculos.trator}" style="height:30px;"></button>
             `;
         }
@@ -442,10 +440,13 @@
                 stars[round - 1].innerText = '✓';
                 points += 20;
                 document.getElementById('points').innerText = points;
+                
+                // 2- Sair completamente antes da próxima ronda
                 setTimeout(() => {
-                    train.classList.add('exit');
+                    train.classList.remove('animate-in');
+                    train.classList.add('animate-out');
                     setTimeout(nextStep, 1000);
-                }, 500);
+                }, 600);
             } else {
                 playSound('errado');
                 stars[round - 1].classList.add('wrong');
@@ -453,7 +454,8 @@
                 train.classList.add('error-shake');
                 setTimeout(() => {
                     train.classList.remove('error-shake');
-                    train.classList.add('exit');
+                    train.classList.remove('animate-in');
+                    train.classList.add('animate-out');
                     setTimeout(nextStep, 1000);
                 }, 800);
             }
