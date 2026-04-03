@@ -46,7 +46,6 @@
         .anim-tractor-wrap { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; animation: animDriveIn 2s ease-out forwards; }
         @keyframes animDriveIn { from { left: -400px; transform: translateX(0); } to { left: 50%; transform: translateX(-50%); } }
 
-        /* AJUSTE BOTÕES INTRO LADO A LADO */
         .anim-line-3 { display: flex; gap: 10px; justify-content: center; width: 100%; flex-wrap: nowrap; }
         .intro-btn {
             background: white; border: 3.5px solid var(--cor-jogo-verde); border-radius: 15px;
@@ -64,12 +63,15 @@
 
         .cargo-bay {
             height: clamp(45px, 12vh, 90px); width: 85%;
-            display: flex; align-items: flex-end; justify-content: center; gap: 2px;
+            display: flex; align-items: flex-end; justify-content: center; gap: 3px;
             margin-bottom: -8px; z-index: 5;
         }
-        .cargo-bay.units { display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-rows: min-content; align-content: end; justify-items: center; }
-
+        /* Pilha de Dezenas (Vertical única de 10) */
         .dezena-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
+        
+        /* Pilha de Unidades (Vertical de 5) */
+        .unit-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
+
         .fardo-img { width: clamp(10px, 2.1vw, 17px); height: auto; object-fit: contain; }
 
         /* --- Interface do Jogo --- */
@@ -103,8 +105,6 @@
         .control-btn:active { background: var(--cor-jogo-verde) !important; color: white !important; transform: scale(0.95); }
         .control-btn.build { height: clamp(65px, 11vh, 95px); font-size: 1.1rem; }
         .control-btn.build img { height: 60%; width: auto; }
-        
-        /* Botões Numéricos Nível 2 */
         .control-btn.num { height: clamp(55px, 8vh, 75px); font-size: clamp(1.4rem, 4vh, 2rem); flex-direction: column; }
 
         .go-btn { 
@@ -120,8 +120,8 @@
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px 20px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 360px; width: 90%; box-sizing: border-box; }
 
-        @keyframes selectPulse { 0%, 100% { background: white; } 50% { background: var(--cor-jogo-verde); color: white; } }
         .active-sim { animation: selectPulse 1.2s infinite; }
+        @keyframes selectPulse { 0%, 100% { background: white; } 50% { background: var(--cor-jogo-verde); color: white; } }
         @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
         .error-shake { animation: shake 0.4s; }
     </style>
@@ -138,8 +138,6 @@
         <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
         <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
         <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
-        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
-        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
@@ -162,7 +160,7 @@
                                 <img id="wagon-tens-img" class="wagon-img" src="">
                             </div>
                             <div class="wagon-unit">
-                                <div id="cargo-units-intro" class="cargo-bay" style="display:grid; grid-template-columns: repeat(5, 1fr); align-content: end; justify-items: center;"></div>
+                                <div id="cargo-units-intro" class="cargo-bay"></div>
                                 <img id="wagon-units-img" class="wagon-img" src="">
                             </div>
                             <img id="tractor-img" class="tractor-img" src="">
@@ -196,15 +194,13 @@
                                 <img class="wagon-img-game-1" src="" style="width:100%; height:auto;">
                             </div>
                             <div class="wagon-unit">
-                                <div id="cargo-units" class="cargo-bay units"></div>
+                                <div id="cargo-units" class="cargo-bay"></div>
                                 <img class="wagon-img-game-2" src="" style="width:100%; height:auto;">
                             </div>
                             <img id="game-tractor-img" class="tractor-img" src="">
                         </div>
                     </div>
-                    <div id="controls" class="options-area">
-                        <!-- Botões injetados via JS dependendo do nível -->
-                    </div>
+                    <div id="controls" class="options-area"></div>
                 </div>
             </div>
         </section>
@@ -257,8 +253,6 @@
                 document.getElementById('side-pre').src = pIcons + JOGO_CONFIG.iconesMenu.pre;
                 document.getElementById('side-1').src = pIcons + JOGO_CONFIG.iconesMenu.ano1;
                 document.getElementById('side-2').src = pIcons + JOGO_CONFIG.iconesMenu.ano2;
-                document.getElementById('side-3').src = pIcons + JOGO_CONFIG.iconesMenu.ano3;
-                document.getElementById('side-4').src = pIcons + JOGO_CONFIG.iconesMenu.ano4;
                 document.getElementById('tractor-img').src = pi + JOGO_CONFIG.veiculos.trator;
                 document.getElementById('wagon-tens-img').src = pi + JOGO_CONFIG.veiculos.reboque;
                 document.getElementById('wagon-units-img').src = pi + JOGO_CONFIG.veiculos.reboque;
@@ -271,43 +265,53 @@
         };
 
         function iniciarSimulacaoIntro() {
-            const pi = JOGO_CONFIG.caminhoImg;
-            const btnTens = document.getElementById('btn-tens-intro');
-            const btnUnits = document.getElementById('btn-units-intro');
-            const cargoTens = document.getElementById('cargo-tens-intro');
-            const cargoUnits = document.getElementById('cargo-units-intro');
-
             setTimeout(() => {
-                btnTens.classList.add('active-sim');
-                addBaleVisual(cargoTens, 10);
+                document.getElementById('btn-tens-intro').classList.add('active-sim');
+                renderCargo(document.getElementById('cargo-tens-intro'), 1, true);
                 setTimeout(() => {
-                    btnTens.classList.remove('active-sim');
+                    document.getElementById('btn-tens-intro').classList.remove('active-sim');
                     setTimeout(() => {
-                        btnUnits.classList.add('active-sim');
-                        addBaleVisual(cargoUnits, 1);
-                        setTimeout(() => btnUnits.classList.remove('active-sim'), 1000);
+                        document.getElementById('btn-units-intro').classList.add('active-sim');
+                        renderCargo(document.getElementById('cargo-units-intro'), 1, false);
+                        setTimeout(() => document.getElementById('btn-units-intro').classList.remove('active-sim'), 1000);
                     }, 500);
                 }, 1000);
             }, 2500);
         }
 
-        function addBaleVisual(container, amount) {
+        function renderCargo(container, total, isTens) {
+            container.innerHTML = '';
             const pi = JOGO_CONFIG.caminhoImg;
-            if(amount === 10) {
-                const stack = document.createElement('div');
-                stack.className = 'dezena-stack';
-                for(let i=0; i<10; i++) {
-                    const img = document.createElement('img');
-                    img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                    img.className = 'fardo-img';
-                    stack.appendChild(img);
+            
+            if (isTens) {
+                // Dezenas: Uma pilha vertical de 10 por cada unidade de dezena
+                for (let i = 0; i < total; i++) {
+                    const stack = document.createElement('div');
+                    stack.className = 'dezena-stack';
+                    for (let j = 0; j < 10; j++) {
+                        const img = document.createElement('img');
+                        img.src = pi + JOGO_CONFIG.veiculos.fardo;
+                        img.className = 'fardo-img';
+                        stack.appendChild(img);
+                    }
+                    container.appendChild(stack);
                 }
-                container.appendChild(stack);
             } else {
-                const img = document.createElement('img');
-                img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                img.className = 'fardo-img';
-                container.appendChild(img);
+                // Unidades: Pilhas verticais de no máximo 5 fardos
+                let remaining = total;
+                while (remaining > 0) {
+                    const stack = document.createElement('div');
+                    stack.className = 'unit-stack';
+                    let inThisStack = Math.min(remaining, 5);
+                    for (let j = 0; j < inThisStack; j++) {
+                        const img = document.createElement('img');
+                        img.src = pi + JOGO_CONFIG.veiculos.fardo;
+                        img.className = 'fardo-img';
+                        stack.appendChild(img);
+                    }
+                    container.appendChild(stack);
+                    remaining -= inThisStack;
+                }
             }
         }
 
@@ -346,7 +350,10 @@
             const controls = document.getElementById('controls');
             train.classList.remove('at-center', 'exit');
             
-            clearWagons();
+            currentTens = 0;
+            currentUnits = 0;
+            document.getElementById('cargo-tens').innerHTML = '';
+            document.getElementById('cargo-units').innerHTML = '';
             controls.innerHTML = '';
             
             targetValue = Math.floor(Math.random() * 41) + 10;
@@ -358,11 +365,8 @@
                 buildControlsLevel1();
             } else {
                 document.getElementById('target-number').style.display = 'none';
-                // Carregar trator automaticamente no nível 2
-                let d = Math.floor(targetValue / 10);
-                let u = targetValue % 10;
-                for(let i=0; i<d; i++) addBaleVisual(document.getElementById('cargo-tens'), 10);
-                for(let i=0; i<u; i++) addBaleVisual(document.getElementById('cargo-units'), 1);
+                renderCargo(document.getElementById('cargo-tens'), Math.floor(targetValue/10), true);
+                renderCargo(document.getElementById('cargo-units'), targetValue % 10, false);
                 buildControlsLevel2();
             }
 
@@ -395,7 +399,6 @@
                 if(!options.includes(r)) options.push(r);
             }
             options.sort((a,b) => a - b);
-            
             options.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.className = 'control-btn num';
@@ -410,11 +413,11 @@
             if(type === 'dezena') {
                 if(currentTens >= 5) return;
                 currentTens++;
-                addBaleVisual(document.getElementById('cargo-tens'), 10);
+                renderCargo(document.getElementById('cargo-tens'), currentTens, true);
             } else {
                 if(currentUnits >= 15) return;
                 currentUnits++;
-                addBaleVisual(document.getElementById('cargo-units'), 1);
+                renderCargo(document.getElementById('cargo-units'), currentUnits, false);
             }
         }
 
@@ -429,13 +432,7 @@
             if(!isRoundActive) return;
             isRoundActive = false;
 
-            let isCorrect = false;
-            if (level === 1) {
-                isCorrect = ((currentTens * 10) + currentUnits) === targetValue;
-            } else {
-                isCorrect = val === targetValue;
-            }
-
+            let isCorrect = (level === 1) ? ((currentTens * 10) + currentUnits === targetValue) : (val === targetValue);
             const stars = document.querySelectorAll('.star');
             const train = document.getElementById('tractor-unit');
 
@@ -465,17 +462,9 @@
         function nextStep() {
             round++;
             if(round > 5) {
-                if(level === 1) {
-                    level = 2;
-                    round = 1;
-                    initStars();
-                    loadRound();
-                } else {
-                    endGame();
-                }
-            } else {
-                loadRound();
-            }
+                if(level === 1) { level = 2; round = 1; initStars(); loadRound(); }
+                else { endGame(); }
+            } else { loadRound(); }
         }
 
         function endGame() {
