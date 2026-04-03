@@ -11,10 +11,9 @@ const JOGO_CONFIG = {
     },
     veiculos: {
         trator: "trator1.png",
-        reboque: "reboque.png",
-        fardo: "fardos.png",   // A carga que aparece no reboque
-        dezena: "barra.png",   // O botão que vale 10
-        unidade: "cubo.png"    // O botão que vale 1
+        fardo: "fardo.png",   
+        dezena: "barra.png",   
+        unidade: "cubo.png"    
     },
     mensagens: {
         excelente: "Incrível! És um mestre das dezenas! 🌟",
