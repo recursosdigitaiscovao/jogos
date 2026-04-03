@@ -11,8 +11,8 @@ const JOGO_CONFIG = {
     },
     veiculos: {
         camiao: "camiao.png",
-        dezena: "barra.png",   
-        unidade: "cubo.png"    
+        dezena: "barra.png",   // A barra que vale 10
+        unidade: "cubo.png"    // O cubo que vale 1
     },
     mensagens: {
         excelente: "Incrível! És um mestre das dezenas! 🌟",
