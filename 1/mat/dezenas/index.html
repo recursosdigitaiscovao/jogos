@@ -20,11 +20,12 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* --- Sidebar & Nav --- */
+        /* --- Sidebar & Nav (ESTRUTURA ORIGINAL) --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: all 0.2s ease; cursor: pointer; font-weight: 500; }
+        .sidebar-item:hover { color: white !important; background-color: var(--cor-principal); padding-left: 35px; }
         .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
@@ -34,87 +35,89 @@
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
 
-        /* Ajuste para caber em qualquer ecrã */
         .game-card {
             background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal);
-            display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; 
+            display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
         /* --- Explicação (INTRO) --- */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px; position: relative; }
         
-        /* 1- Trator avança e traz os reboques atrás de forma contínua */
-        .anim-line-2 { width: 100%; height: 100px; position: relative; overflow: hidden; }
-        .tractor-wagon-group { display: flex; align-items: flex-end; position: absolute; left: -800px; animation: driveInGroup 2s ease-out forwards; white-space: nowrap; }
+        /* Trator avança e traz atrás os reboques (Intro) */
+        .anim-line-2 { width: 100%; height: 120px; position: relative; overflow: hidden; }
+        .tractor-wagon-group { display: flex; align-items: flex-end; position: absolute; left: -700px; animation: driveInGroup 2s ease-out forwards; }
         @keyframes driveInGroup { to { left: 50%; transform: translateX(-50%); } }
 
-        .intro-controls-flex { display: flex; gap: 10px; justify-content: center; width: 100%; }
+        .intro-controls-flex { display: flex; gap: 15px; justify-content: center; width: 100%; }
 
         /* --- Jogo --- */
-        .card-header { display: flex; justify-content: space-between; align-items: center; padding: 0 10px 5px 10px; border-bottom: 2px solid #f0f0f0; flex-shrink: 0; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding: 0 10px 8px 10px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; }
         .stars-container { display: flex; gap: 4px; }
-        .star { width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
+        .star { width: clamp(20px, 3vh, 26px); height: clamp(20px, 3vh, 26px); border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
-        .target-number-box { font-size: clamp(1.8rem, 4vh, 2.5rem); color: var(--cor-vibrante); font-weight: 700; background: white; padding: 5px 25px; border-radius: 15px; border: 3px solid var(--cor-vibrante); margin: 5px auto; flex-shrink: 0; }
+        .target-number-box { font-size: clamp(2rem, 5vh, 2.8rem); color: var(--cor-vibrante); font-weight: 700; background: white; padding: 5px 30px; border-radius: 15px; border: 3px solid var(--cor-vibrante); margin: 0 auto 5px auto; }
 
         .game-area { 
             flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;
-            background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb; padding: 5px; justify-content: space-between;
+            background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb; padding: 10px; position: relative;
         }
 
-        /* 4- Ajustado a todos os monitores (Flexbox) */
-        .road { flex: 0 0 40%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; }
+        .road { height: 50%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; }
         
-        /* 1- Trator avança e traz atrás os reboques no jogo */
-        .tractor-container { display: flex; align-items: flex-end; position: absolute; left: -1000px; transition: left 1s ease-out; white-space: nowrap; }
+        /* Movimento do trator que traz atrás os reboques no Jogo - CORREÇÃO IMPORTANTE */
+        .tractor-container { display: flex; align-items: flex-end; position: absolute; left: -1000px; transition: left 1s ease-out; width: auto; }
         .tractor-container.at-center { left: 50%; transform: translateX(-50%); }
         .tractor-container.exit { left: 120%; transition: left 0.8s ease-in; }
 
-        /* Evitar imagens cortadas */
-        .tractor-img { height: clamp(55px, 10vh, 85px); width: auto; z-index: 10; margin-left: -5px; object-fit: contain; }
-        .wagon-unit { position: relative; width: clamp(90px, 16vw, 130px); display: flex; flex-direction: column; align-items: center; }
-        .wagon-img { width: 100%; height: auto; margin-top: -5px; object-fit: contain; }
+        .tractor-img { height: clamp(65px, 12vh, 100px); width: auto; z-index: 10; display: block; }
+        .wagon-unit { position: relative; width: auto; display: flex; flex-direction: column; align-items: center; }
+        .wagon-img { width: 100%; height: auto; display: block; }
         
-        /* Altura suficiente para fardos não cortarem */
-        .cargo-bay { height: clamp(50px, 10vh, 80px); width: 85%; display: flex; align-items: flex-end; justify-content: center; margin-bottom: -5px; z-index: 5; }
+        .cargo-bay { height: clamp(55px, 13vh, 100px); width: 85%; display: flex; align-items: flex-end; justify-content: center; margin-bottom: -8px; z-index: 5; }
         .cargo-bay.units { display: grid; grid-template-columns: repeat(5, 1fr); align-content: end; justify-items: center; }
 
-        /* Fardos empilhados sem ultrapassar */
-        .dezena-stack { display: flex; flex-direction: column-reverse; }
-        .fardo-img { width: clamp(16px, 3vw, 24px); height: auto; object-fit: contain; margin-top: -8px; } /* Margem negativa para não cortar */
+        .dezena-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
+        .fardo-img { width: clamp(20px, 3.8vw, 28px); height: auto; object-fit: contain; }
 
-        /* 2- Botões Dezenas e Unidades perfeitamente uniformes */
-        .options-area { flex: 0 0 45%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 5px; width: 100%; max-width: 460px; margin: 0 auto; align-content: center; }
+        /* Botões */
+        .options-area { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; width: 100%; max-width: 500px; margin: 0 auto; align-content: center; }
         
         .control-btn {
-            background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-texto);
-            border-radius: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-family: 'Fredoka'; gap: 5px; font-weight: 700; height: clamp(60px, 9vh, 80px); width: 100%; box-sizing: border-box;
+            background: white; border: 3.5px solid var(--cor-jogo-verde); color: var(--cor-texto);
+            border-radius: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.1s; outline: none; font-family: 'Fredoka'; gap: 8px; font-weight: 700;
+            height: clamp(75px, 11vh, 95px); width: 100%; box-sizing: border-box;
         }
-        /* Tamanho forçado para uniformidade de ícones */
-        .control-btn .btn-icon-img { height: clamp(35px, 5vh, 45px); width: clamp(35px, 5vh, 45px); object-fit: contain; }
-        .control-btn.num { font-size: clamp(1.5rem, 3.5vh, 2rem); }
+
+        .control-btn .btn-icon-img { max-width: 50px; max-height: 50px; object-fit: contain; }
+
+        .control-btn.num { font-size: clamp(1.8rem, 4vh, 2.5rem); }
 
         .go-btn { 
-            background: var(--cor-vibrante); color: white; border: none; padding: 10px; 
-            border-radius: 50px; font-size: clamp(1rem, 2.5vh, 1.3rem); font-weight: 700; cursor: pointer; 
-            grid-column: span 3; display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 0 3px 0 #bf5600;
+            background: var(--cor-vibrante); color: white; border: none; padding: 12px; 
+            border-radius: 50px; font-size: clamp(1.1rem, 3vh, 1.4rem); font-weight: 700; cursor: pointer; 
+            box-shadow: 0 4px 0 #bf5600; grid-column: span 3; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        .go-btn img { height: 25px; }
+        .go-btn img { height: 32px; }
 
-        .option-btn { background: var(--cor-jogo-verde); border: none; color: white; font-size: 1.4rem; font-weight: 700; padding: 15px; border-radius: 20px; cursor: pointer; width: 100%; }
+        /* Botão JOGAR Original */
+        .option-btn { background: var(--cor-jogo-verde); border: none; color: white; font-size: 1.5rem; font-weight: 700; padding: 18px; border-radius: 20px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka', sans-serif; width: 100%; }
 
         @keyframes selectPulse { 0%, 100% { background: white; } 50% { background: var(--cor-jogo-verde); color: white; } }
         .active-anim { animation: selectPulse 1.2s infinite; }
 
+        /* Ajustes para ecrãs pequenos */
         @media (max-width: 480px) {
-            .wagon-unit { width: 80px; }
-            .options-area { gap: 5px; }
-            .control-btn { height: 55px; }
+            .tractor-img { height: 60px; }
+            .wagon-unit { width: 90px; }
+            .control-btn .btn-icon-img { max-width: 35px; max-height: 35px; }
+            .control-btn.build { font-size: 0.9rem; }
         }
+
+        /* Adicionado para evitar que as imagens sejam cortadas - CORREÇÃO */
+        img { max-width: 100%; height: auto; display: block; }
     </style>
 </head>
 <body>
@@ -126,31 +129,35 @@
             <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
+        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
         <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal);">
-            <img id="header-icon" src="" style="height:32px;"> Matemática - 1º Ano
+            <img id="header-icon" src="" style="height:32px; width: auto;"> Matemática - 1º Ano
         </h1>
         <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
     </header>
 
     <main class="main-content">
-        <!-- 3- Ecrã de Intro -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <div class="anim-line-1" style="font-weight: bold; color: var(--cor-texto);">Carrega o Trator</div>
+                    <div class="anim-line-1" style="font-weight: bold; color: var(--cor-texto); font-size: 1.2rem;">Carrega o Trator</div>
                     <div class="anim-line-2" id="intro-tractor-container"></div>
                     <div class="intro-controls-flex" id="intro-controls"></div>
                 </div>
-                <h2 style="color:var(--cor-principal); text-align:center; margin: 10px 0;">O Trator das Dezenas</h2>
+                <h2 style="color:var(--cor-principal); text-align:center;">O Trator das Dezenas</h2>
                 <button class="option-btn" onclick="startGame()">JOGAR</button>
             </div>
         </section>
 
-        <!-- 3- Ecrã do Jogo garantido que aparece -->
+        <!-- Jogo agora aparece corretamente - CORREÇÃO -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
@@ -158,7 +165,7 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div>PTS: <span id="points">0</span></div>
                 </div>
-                <div id="instruction" style="text-align: center; color: var(--cor-texto); font-weight: bold; font-size: 0.9rem;">...</div>
+                <div id="instruction" style="text-align: center; color: var(--cor-texto); font-weight: bold; padding: 5px;">...</div>
                 
                 <div class="game-area">
                     <div id="target-number" class="target-number-box" style="display:none;">0</div>
@@ -194,8 +201,16 @@
 
         window.onload = () => {
             if(typeof JOGO_CONFIG !== 'undefined') {
+                const p = JOGO_CONFIG.caminhoIcons;
                 const pi = JOGO_CONFIG.caminhoImg;
-                document.getElementById('header-icon').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1;
+                const i = JOGO_CONFIG.iconesMenu;
+                document.getElementById('header-icon').src = p + i.ano1;
+                document.getElementById('side-pre').src = p + i.pre;
+                document.getElementById('side-1').src = p + i.ano1;
+                document.getElementById('side-2').src = p + i.ano2;
+                document.getElementById('side-3').src = p + i.ano3;
+                document.getElementById('side-4').src = p + i.ano4;
+                
                 document.getElementById('game-tractor-img').src = pi + JOGO_CONFIG.veiculos.trator;
                 document.getElementById('img-w-1').src = pi + JOGO_CONFIG.veiculos.reboque;
                 document.getElementById('img-w-2').src = pi + JOGO_CONFIG.veiculos.reboque;
@@ -206,18 +221,21 @@
         function buildIntro(pi) {
             const container = document.getElementById('intro-tractor-container');
             const ctrls = document.getElementById('intro-controls');
+            
+            // CONJUNTO ÚNICO: Trator + Reboques
             const group = document.createElement('div');
             group.className = 'tractor-wagon-group';
             
-            const tr = document.createElement('img'); tr.src = pi + JOGO_CONFIG.veiculos.trator; tr.style.height = "65px";
+            const tr = document.createElement('img'); tr.src = pi + JOGO_CONFIG.veiculos.trator; tr.style.height = "75px";
             const w1 = document.createElement('div'); w1.className = 'wagon-unit';
-            w1.innerHTML = `<div id="intro-cargo-1" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}">`;
+            w1.innerHTML = `<div id="intro-cargo-1" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:60px">`;
             const w2 = document.createElement('div'); w2.className = 'wagon-unit';
-            w2.innerHTML = `<div id="intro-cargo-2" class="cargo-bay units"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}">`;
+            w2.innerHTML = `<div id="intro-cargo-2" class="cargo-bay units"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:60px">`;
             
             group.append(tr, w1, w2);
             container.appendChild(group);
 
+            // BOTÕES UNIFORMES
             const btnD = document.createElement('button'); btnD.id = "mock-tens"; btnD.className = 'control-btn';
             btnD.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.dezena}" class="btn-icon-img"> +10`;
             const btnU = document.createElement('button'); btnU.id = "mock-units"; btnU.className = 'control-btn';
@@ -232,7 +250,7 @@
                     document.getElementById('mock-units').classList.add('active-anim');
                     addFardosIntro('intro-cargo-2', 1);
                 }, 1500);
-            }, 2200);
+            }, 2500);
         }
 
         function addFardosIntro(id, num) {
@@ -242,18 +260,18 @@
                 const s = document.createElement('div'); s.className = 'dezena-stack';
                 for(let i=0; i<10; i++) {
                     const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                    img.className = 'fardo-img'; s.appendChild(img);
+                    img.className = 'fardo-img'; img.style.width="18px"; s.appendChild(img);
                 }
                 c.appendChild(s);
             } else {
                 const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                img.className = 'fardo-img'; c.appendChild(img);
+                img.className = 'fardo-img'; img.style.width="18px"; c.appendChild(img);
             }
         }
 
         function startGame() {
             document.getElementById('intro-screen').classList.remove('active');
-            document.getElementById('game-screen').classList.add('active');
+            document.getElementById('game-screen').classList.add('active'); // Garante que o jogo fica visível
             startTimer(); initStars(); loadQuestion();
         }
 
@@ -299,7 +317,7 @@
                 btnClear.style.borderColor = 'var(--cor-erro)'; btnClear.innerText = "Limpar";
                 btnClear.onclick = () => { cargoTens.innerHTML = ''; cargoUnits.innerHTML = ''; currentTens = 0; currentUnits = 0; };
                 const go = document.createElement('button'); go.className = 'go-btn';
-                go.innerHTML = `ENTREGAR <img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.trator}" style="height:25px">`;
+                go.innerHTML = `ENTREGAR <img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.trator}" style="height:30px">`;
                 go.onclick = () => checkResult(currentTens * 10 + currentUnits);
                 controls.append(btnD, btnU, btnClear, go);
             } else {
@@ -357,8 +375,14 @@
             questionNum++;
             if (questionNum > 4) {
                 if (level === 1) { level = 2; questionNum = 1; initStars(); loadQuestion(); }
-                else { alert("Fim do Jogo! Pontos: " + points); location.reload(); }
+                else { endGame(); }
             } else { loadQuestion(); }
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            alert("Trabalho Concluído! Pontos: " + points + " / 200");
+            location.reload();
         }
     </script>
 </body>
