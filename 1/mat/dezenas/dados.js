@@ -14,27 +14,26 @@ const JOGO_CONFIG = {
         reboque: "reboque.png",
         fardo: "fardo.png",    // A palha que aparece nos reboques
         dezena: "barra.png",   // Ícone do botão +10
-        unidade: "cubo.png"    // Ícone do botão +1
+        unidade: "cubo.png",   // Ícone do botão +1
+        borracha: "borracha.png" // Imagem para o botão de limpar
     },
-    // Configurações de cada nível
     niveis: {
         1: {
-            titulo: "Nível 1 - Representação",
+            titulo: "Nível 1",
             instrucao: "Carrega o trator com o número indicado:",
-            tipo: "carregar" // O aluno clica nos botões para encher o trator
+            tipo: "carregar" 
         },
         2: {
-            titulo: "Nível 2 - Identificação",
+            titulo: "Nível 2",
             instrucao: "Quantos fardos de palha leva o trator?",
-            tipo: "identificar" // O trator vem cheio e o aluno escolhe o número
+            tipo: "identificar" 
         },
         3: {
-            titulo: "Nível 3 - Ordens",
+            titulo: "Nível 3",
             instrucao: "Carrega o trator seguindo as ordens:",
-            tipo: "ordens" // Aparece "X dezenas e Y unidades"
+            tipo: "ordens" 
         }
     },
-    // Escrita das ordens para o Nível 3
     terminologia: {
         dezenaSingular: "dezena",
         dezenaPlural: "dezenas",
@@ -42,18 +41,17 @@ const JOGO_CONFIG = {
         unidadePlural: "unidades",
         conjuncao: "e"
     },
-    // Mensagens do Popup Final
     mensagens: {
-        excelente: "Incrível! És um verdadeiro mestre do campo! 🌟",
-        bom: "Muito bem! Fizeste uma excelente colheita! 👍",
-        tenta: "Bom esforço! Continua a praticar para seres um mestre! 💪"
+        excelente: "Incrível! És um mestre das dezenas! 🌟",
+        bom: "Muito bem! Estás no bom caminho! 👍",
+        tenta: "Bom esforço! Continua a praticar! 💪"
     },
-    // Textos do Relatório Final (Popup)
     relatorio: {
         titulo: "Relatório de Colheita",
-        pontuacao: "Pontuação Total:",
-        certas: "Certas",
-        erradas: "Erradas",
-        tempo: "Tempo Total:"
+        pontosTotal: "Total de Pontos:",
+        tempoTotal: "Tempo Total:",
+        labelNivel: "Nível",
+        labelCertas: "Certas:",
+        labelErradas: "Erradas:"
     }
 };
