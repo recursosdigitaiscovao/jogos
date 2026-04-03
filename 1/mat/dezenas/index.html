@@ -1,3 +1,5 @@
+--- START OF FILE Paste April 03, 2026 - 3:32PM ---
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -20,7 +22,7 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* --- Sidebar & Nav --- */
+        /* --- Sidebar & Nav (ESTRUTURA ORIGINAL) --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
@@ -40,12 +42,18 @@
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Explicação e Animações --- */
+        /* --- Explicação --- */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px; position: relative; }
-        .anim-line-2 { width: 100%; height: 110px; position: relative; display: flex; align-items: flex-end; justify-content: center; }
         
-        /* Botões Intro Lado a Lado */
-        .intro-controls-flex { display: flex; gap: 10px; justify-content: center; width: 100%; }
+        /* ANIMAÇÃO: Trator puxando reboques (Conjunto Único) */
+        .anim-line-2 { width: 100%; height: 110px; position: relative; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; }
+        .tractor-wagon-group { display: flex; align-items: flex-end; position: absolute; left: -600px; animation: driveInGroup 2.5s ease-out forwards; }
+        @keyframes driveInGroup { to { left: 50%; transform: translateX(-50%); } }
+
+        /* Botões Intro Uniformes */
+        .intro-controls-flex { display: flex; gap: 15px; justify-content: center; width: 100%; }
+        .active-anim { animation: selectPulse 1.2s infinite; }
+        @keyframes selectPulse { 0%, 100% { background: white; } 50% { background: var(--cor-jogo-verde); color: white; } }
 
         /* --- Jogo --- */
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; padding: 0 10px 8px 10px; }
@@ -53,6 +61,8 @@
         .star { width: clamp(20px, 3vh, 26px); height: clamp(20px, 3vh, 26px); border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
+
+        .target-number-box { font-size: clamp(2rem, 6vh, 2.8rem); color: var(--cor-vibrante); font-weight: 700; background: white; padding: 5px 30px; border-radius: 15px; border: 3px solid var(--cor-vibrante); margin: 0 auto 5px auto; display: block; width: fit-content; }
 
         .game-area { 
             flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;
@@ -62,53 +72,68 @@
 
         .road { height: 45%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; margin-top: 5px; }
         
-        /* Estilos do Trator e Reboques */
-        .tractor-container { display: flex; align-items: flex-end; position: absolute; left: 50%; transform: translateX(-50%); }
-        .tractor-img { height: clamp(55px, 11vh, 90px); width: auto; position: relative; transition: left 0.8s ease-out; }
-        
-        /* Reboques começam invisíveis */
-        .wagon-unit { 
-            position: relative; width: clamp(90px, 16vw, 135px); display: flex; flex-direction: column; align-items: center; 
-            opacity: 0; transition: opacity 0.4s ease-out; 
-        }
-        .wagon-unit.visible { opacity: 1; }
+        /* MOVIMENTO NO JOGO: Trator puxa reboques juntos */
+        .tractor-container { display: flex; align-items: flex-end; position: absolute; left: -1000px; transition: left 1s ease-out; gap: 0; }
+        .tractor-container.at-center { left: 50%; transform: translateX(-50%); }
+        .tractor-container.exit { left: 120%; transition: left 0.8s ease-in; }
+
+        .tractor-img { height: clamp(60px, 12vh, 100px); width: auto; z-index: 10; margin-left: -5px; }
+        .wagon-unit { position: relative; width: clamp(100px, 18vw, 150px); display: flex; flex-direction: column; align-items: center; }
         .wagon-img { width: 100%; height: auto; display: block; margin-top: -5px; }
         
         .cargo-bay {
-            height: clamp(45px, 12vh, 90px); width: 85%;
+            height: clamp(50px, 13vh, 100px); width: 85%;
             display: flex; align-items: flex-end; justify-content: center; gap: 2px;
             margin-bottom: -8px; z-index: 5;
         }
         .cargo-bay.units { display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-rows: min-content; align-content: end; justify-items: center; }
 
         .dezena-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
+        
+        /* FARDOS MAIORES */
+        .fardo-img { width: clamp(16px, 3vw, 24px); height: auto; object-fit: contain; }
 
-        /* ALTERAÇÃO 4: Aumento significativo dos fardos */
-        .fardo-img { width: clamp(18px, 3.5vw, 26px); height: auto; object-fit: contain; }
-
-        .active-anim { animation: selectPulse 1.2s infinite; }
-        @keyframes selectPulse { 0%, 100% { background: white; } 50% { background: var(--cor-jogo-verde); color: white; } }
-
-        /* Controles */
-        .options-area { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; flex-grow: 1; width: 100%; max-width: 450px; margin: 0 auto; align-content: center; }
+        /* Teclado - BOTÕES UNIFORMES */
+        .options-area { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; flex-grow: 1; width: 100%; max-width: 500px; margin: 0 auto; align-content: center; }
+        
         .control-btn {
             background: white; border: 3.5px solid var(--cor-jogo-verde); color: var(--cor-texto);
             border-radius: 20px; cursor: pointer; display: flex; flex-direction: row; align-items: center; justify-content: center;
-            transition: 0.1s; outline: none; font-family: 'Fredoka'; gap: 8px; font-weight: 700;
+            transition: 0.1s; -webkit-tap-highlight-color: transparent; outline: none; font-family: 'Fredoka'; gap: 8px;
+            width: 100%; box-sizing: border-box;
         }
-        .control-btn.build { height: clamp(65px, 10vh, 85px); font-size: 1rem; }
-        .control-btn.build img { height: 50%; }
-        .control-btn.num { height: clamp(50px, 7vh, 65px); font-size: 1.8rem; }
+        .control-btn:active { background: var(--cor-jogo-verde) !important; color: white !important; transform: scale(0.95); }
+        
+        /* Botões de construção (Barra e Cubo) uniformes */
+        .control-btn.build { height: clamp(70px, 11vh, 95px); font-weight: 700; font-size: 1.2rem; }
+        .btn-icon { height: 70% !important; width: auto; object-fit: contain; }
+
+        .control-btn.num { height: clamp(55px, 8vh, 70px); font-size: clamp(1.6rem, 4vh, 2.2rem); font-weight: 700; flex-direction: column; }
 
         .go-btn { 
-            background: var(--cor-vibrante); color: white; border: none; padding: 10px; 
-            border-radius: 50px; font-size: 1.2rem; font-weight: 700; cursor: pointer; 
-            box-shadow: 0 4px 0 #bf5600; grid-column: span 3; display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: var(--cor-vibrante); color: white; border: none; padding: 12px; 
+            border-radius: 50px; font-size: 1.4rem; font-weight: 700; cursor: pointer; 
+            box-shadow: 0 4px 0 #bf5600; font-family: 'Fredoka'; grid-column: span 3; 
+            margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        .target-number-box { font-size: 2.5rem; color: var(--cor-vibrante); font-weight: 700; background: white; padding: 5px 30px; border-radius: 15px; border: 3px solid var(--cor-vibrante); margin: 0 auto 5px auto; }
+        .go-btn img { height: 32px; }
+        .go-btn:active { transform: translateY(2px); box-shadow: none; }
+
+        /* Botão Jogar ORIGINAL */
+        .option-btn { background: var(--cor-jogo-verde); border: none; color: white; font-size: 1.4rem; font-weight: 700; padding: 15px; border-radius: 20px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka', sans-serif; width: 100%; flex-shrink: 0; }
+
+        @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
+        .error-shake { animation: shake 0.4s; }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 360px; width: 90%; }
+        .modal-content { background: white; padding: 30px 20px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 360px; width: 90%; box-sizing: border-box; }
+
+        /* Ajustes Mobile Pequeno */
+        @media (max-width: 380px) {
+            .control-btn.build { font-size: 0.9rem; gap: 4px; }
+            .wagon-unit { width: 90px; }
+            .fardo-img { width: 14px; }
+        }
     </style>
 </head>
 <body>
@@ -120,12 +145,17 @@
             <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
+        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
         <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal);">
-            <img id="header-icon" src="" style="height:32px;"> Matemática - 1º Ano
+            <img id="header-icon" src="" style="height:32px; width: auto;"> Matemática - 1º Ano
         </h1>
         <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
     </header>
@@ -134,13 +164,11 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <div class="anim-line-1">Carrega o Trator</div>
-                    <!-- Intro: Trator e Reboques -->
+                    <div class="anim-line-1" style="font-weight: bold; color: var(--cor-texto); font-size: 1.2rem;">Carrega o Trator</div>
                     <div class="anim-line-2" id="intro-tractor-container"></div>
-                    <!-- ALTERAÇÃO 2: Botões Lado a Lado -->
                     <div class="intro-controls-flex" id="intro-controls"></div>
                 </div>
-                <h2 style="color:var(--cor-principal); text-align:center;">O Trator das Dezenas</h2>
+                <h2 style="color:var(--cor-principal); text-align:center; margin: 10px 0;">O Trator das Dezenas</h2>
                 <button class="option-btn" onclick="startGame()">JOGAR</button>
             </div>
         </section>
@@ -152,18 +180,18 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div class="status-item">PTS: <span id="points">0</span></div>
                 </div>
-                <div id="instruction" style="text-align:center; font-weight:bold; color:var(--cor-texto)">...</div>
+                <div class="instruction-area" id="instruction" style="text-align: center; color: var(--cor-texto); font-weight: bold;">...</div>
                 
                 <div class="game-area">
                     <div id="target-number" class="target-number-box" style="display:none;">0</div>
                     <div class="road">
                         <div id="tractor-unit" class="tractor-container">
                             <img id="game-tractor-img" class="tractor-img" src="">
-                            <div id="game-w1" class="wagon-unit">
+                            <div class="wagon-unit">
                                 <div id="cargo-tens" class="cargo-bay"></div>
                                 <img class="wagon-img" id="img-w-1" src="">
                             </div>
-                            <div id="game-w2" class="wagon-unit">
+                            <div class="wagon-unit">
                                 <div id="cargo-units" class="cargo-bay units"></div>
                                 <img class="wagon-img" id="img-w-2" src="">
                             </div>
@@ -177,9 +205,10 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title"></h2>
-            <div id="modal-msg"></div>
-            <button class="option-btn" onclick="location.reload()">Jogar de Novo</button>
+            <h2 id="modal-title" style="margin-top: 0;"></h2>
+            <div id="modal-msg" style="margin-bottom: 25px; color: var(--cor-texto);"></div>
+            <button class="option-btn" onclick="location.reload()" style="margin-bottom:10px;">Jogar de Novo</button>
+            <button class="option-btn" onclick="window.location.href='../'" style="background: white; color: var(--cor-principal); border: 2px solid var(--cor-principal);">Voltar</button>
         </div>
     </div>
 
@@ -189,10 +218,23 @@
         let questionNum = 1, targetValue = 0, currentTens = 0, currentUnits = 0;
         let isRoundActive = false;
 
+        function toggleMenu() { 
+            document.getElementById('sidebar').classList.toggle('active'); 
+            document.getElementById('overlay').classList.toggle('active'); 
+        }
+
         window.onload = () => {
             if(typeof JOGO_CONFIG !== 'undefined') {
+                const p = JOGO_CONFIG.caminhoIcons;
                 const pi = JOGO_CONFIG.caminhoImg;
-                document.getElementById('header-icon').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1;
+                const i = JOGO_CONFIG.iconesMenu;
+                document.getElementById('header-icon').src = p + i.ano1;
+                document.getElementById('side-pre').src = p + i.pre;
+                document.getElementById('side-1').src = p + i.ano1;
+                document.getElementById('side-2').src = p + i.ano2;
+                document.getElementById('side-3').src = p + i.ano3;
+                document.getElementById('side-4').src = p + i.ano4;
+                
                 document.getElementById('game-tractor-img').src = pi + JOGO_CONFIG.veiculos.trator;
                 document.getElementById('img-w-1').src = pi + JOGO_CONFIG.veiculos.reboque;
                 document.getElementById('img-w-2').src = pi + JOGO_CONFIG.veiculos.reboque;
@@ -200,61 +242,47 @@
             }
         };
 
-        // ALTERAÇÃO 1: Trator entra, reboques aparecem depois (INTRO)
         function buildIntro(pi) {
             const container = document.getElementById('intro-tractor-container');
             const ctrls = document.getElementById('intro-controls');
             
-            const tr = document.createElement('img'); 
-            tr.src = pi + JOGO_CONFIG.veiculos.trator; 
-            tr.className = "tractor-img";
-            tr.style.left = "-300px";
-
+            // Grupo Único que se move junto
+            const group = document.createElement('div');
+            group.className = 'tractor-wagon-group';
+            
+            const tr = document.createElement('img'); tr.src = pi + JOGO_CONFIG.veiculos.trator; tr.style.height = "70px";
             const w1 = document.createElement('div'); w1.className = 'wagon-unit';
-            w1.innerHTML = `<div id="intro-cargo-1" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:50px">`;
-            
+            w1.innerHTML = `<div id="intro-cargo-1" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:60px">`;
             const w2 = document.createElement('div'); w2.className = 'wagon-unit';
-            w2.innerHTML = `<div id="intro-cargo-2" class="cargo-bay units"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:50px">`;
+            w2.innerHTML = `<div id="intro-cargo-2" class="cargo-bay units"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:60px">`;
             
-            container.append(tr, w1, w2);
+            group.append(tr, w1, w2);
+            container.appendChild(group);
 
+            // Botões Lado a Lado e Uniformes
             const btnD = document.createElement('button'); btnD.id = "mock-tens"; btnD.className = 'control-btn build';
-            btnD.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.dezena}"> +10`;
+            btnD.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.dezena}" class="btn-icon"> +10`;
             const btnU = document.createElement('button'); btnU.id = "mock-units"; btnU.className = 'control-btn build';
-            btnU.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.unidade}"> +1`;
+            btnU.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.unidade}" class="btn-icon"> +1`;
             ctrls.append(btnD, btnU);
 
-            // Sequência
-            setTimeout(() => { tr.style.left = "0px"; }, 100);
-            setTimeout(() => { w1.classList.add('visible'); }, 900);
-            setTimeout(() => { w2.classList.add('visible'); }, 1300);
-
-            // Animação dos botões simulada
             setTimeout(() => {
                 document.getElementById('mock-tens').classList.add('active-anim');
-                addFardosIntro('intro-cargo-1', 10);
+                const cargo = document.getElementById('intro-cargo-1');
+                const stack = document.createElement('div'); stack.className = 'dezena-stack';
+                for(let i=0; i<10; i++) {
+                    const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
+                    img.className = 'fardo-img'; stack.appendChild(img);
+                }
+                cargo.appendChild(stack);
                 setTimeout(() => {
                     document.getElementById('mock-tens').classList.remove('active-anim');
                     document.getElementById('mock-units').classList.add('active-anim');
-                    addFardosIntro('intro-cargo-2', 1);
-                }, 1500);
-            }, 2000);
-        }
-
-        function addFardosIntro(id, num) {
-            const c = document.getElementById(id);
-            const pi = JOGO_CONFIG.caminhoImg;
-            if(num === 10) {
-                const s = document.createElement('div'); s.className = 'dezena-stack';
-                for(let i=0; i<10; i++) {
+                    const cargoUnits = document.getElementById('intro-cargo-2');
                     const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                    img.className = 'fardo-img'; img.style.width = "12px"; s.appendChild(img);
-                }
-                c.appendChild(s);
-            } else {
-                const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                img.className = 'fardo-img'; img.style.width = "12px"; c.appendChild(img);
-            }
+                    img.className = 'fardo-img'; cargoUnits.appendChild(img);
+                }, 1500);
+            }, 2600);
         }
 
         function startGame() {
@@ -263,79 +291,105 @@
             startTimer(); initStars(); loadQuestion();
         }
 
+        function startTimer() {
+            timerInterval = setInterval(() => { 
+                seconds++; 
+                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; 
+            }, 1000);
+        }
+
+        function initStars() {
+            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
+            for(let i=0; i<4; i++) { const s = document.createElement('div'); s.className = 'star'; s.innerText = '★'; bar.appendChild(s); }
+        }
+
         function loadQuestion() {
-            const tr = document.getElementById('game-tractor-img');
-            const w1 = document.getElementById('game-w1');
-            const w2 = document.getElementById('game-w2');
+            const train = document.getElementById('tractor-unit');
             const controls = document.getElementById('controls');
-            
-            isRoundActive = false;
-            w1.classList.remove('visible'); w2.classList.remove('visible');
-            tr.style.left = "-500px";
-            document.getElementById('cargo-tens').innerHTML = '';
-            document.getElementById('cargo-units').innerHTML = '';
+            const targetDisplay = document.getElementById('target-number');
+            const cargoTens = document.getElementById('cargo-tens');
+            const cargoUnits = document.getElementById('cargo-units');
+
+            train.classList.remove('at-center', 'exit');
+            train.style.left = "-1000px";
+            cargoTens.innerHTML = ''; cargoUnits.innerHTML = '';
             controls.innerHTML = '';
             currentTens = 0; currentUnits = 0;
+            isRoundActive = false;
 
             targetValue = Math.floor(Math.random() * 41) + 10;
-            document.getElementById('instruction').innerText = level === 1 ? "Carrega o trator:" : "Quantos fardos leva o trator?";
-            document.getElementById('target-number').style.display = level === 1 ? 'block' : 'none';
-            document.getElementById('target-number').innerText = targetValue;
 
-            // ALTERAÇÃO 3: Trator desliza primeiro, reboques aparecem depois (JOGO)
-            setTimeout(() => { tr.style.left = "0px"; }, 100);
-            setTimeout(() => { w1.classList.add('visible'); }, 800);
-            setTimeout(() => { w2.classList.add('visible'); }, 1200);
-            
-            // Criar botões após animação
-            setTimeout(() => {
-                if (level === 1) {
-                    const bD = document.createElement('button'); bD.className = 'control-btn build';
-                    bD.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.dezena}"> +10`;
-                    bD.onclick = () => addCargo('dezena');
-                    const bU = document.createElement('button'); bU.className = 'control-btn build';
-                    bU.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.unidade}"> +1`;
-                    bU.onclick = () => addCargo('unidade');
-                    const bC = document.createElement('button'); bC.className = 'control-btn build';
-                    bC.style.borderColor = 'var(--cor-erro)'; bC.innerText = "Limpar";
-                    bC.onclick = () => { document.getElementById('cargo-tens').innerHTML = ''; document.getElementById('cargo-units').innerHTML = ''; currentTens = 0; currentUnits = 0; };
-                    const go = document.createElement('button'); go.className = 'go-btn';
-                    go.innerHTML = `ENTREGAR <img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.trator}" style="height:25px">`;
-                    go.onclick = () => checkResult(currentTens * 10 + currentUnits);
-                    controls.append(bD, bU, bC, go);
-                } else {
-                    let d = Math.floor(targetValue / 10), u = targetValue % 10;
-                    for(let i=0; i<d; i++) addCargoDOM('dezena');
-                    for(let i=0; i<u; i++) addCargoDOM('unidade');
-                    let opts = [targetValue];
-                    while(opts.length < 6) { let r = Math.floor(Math.random()*50)+1; if(!opts.includes(r)) opts.push(r); }
-                    opts.sort((a,b)=>a-b).forEach(o => {
-                        const b = document.createElement('button'); b.className = 'control-btn num'; b.innerText = o;
-                        b.onclick = () => checkResult(o); controls.appendChild(b);
-                    });
+            if (level === 1) {
+                document.getElementById('instruction').innerText = "Carrega o trator:";
+                targetDisplay.style.display = 'block'; targetDisplay.innerText = targetValue;
+                
+                const btnD = document.createElement('button'); btnD.className = 'control-btn build';
+                btnD.innerHTML = `<img class="btn-icon" src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.dezena}"> +10`;
+                btnD.onclick = () => addCargo('dezena');
+                
+                const btnU = document.createElement('button'); btnU.className = 'control-btn build';
+                btnU.innerHTML = `<img class="btn-icon" src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.unidade}"> +1`;
+                btnU.onclick = () => addCargo('unidade');
+                
+                const btnClear = document.createElement('button'); btnClear.className = 'control-btn build';
+                btnClear.style.borderColor = 'var(--cor-erro)'; btnClear.innerText = "Limpar";
+                btnClear.onclick = () => { cargoTens.innerHTML = ''; cargoUnits.innerHTML = ''; currentTens = 0; currentUnits = 0; };
+                
+                const go = document.createElement('button'); go.className = 'go-btn';
+                go.innerHTML = `ENTREGAR <img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.trator}" style="height:30px">`;
+                go.onclick = (e) => { checkResult(currentTens * 10 + currentUnits); };
+
+                controls.append(btnD, btnU, btnClear, go);
+            } else {
+                document.getElementById('instruction').innerText = "Quantos fardos leva o trator?";
+                targetDisplay.style.display = 'none';
+                let d = Math.floor(targetValue / 10);
+                let u = targetValue % 10;
+                for(let i=0; i<d; i++) addCargoDOM('dezena');
+                for(let i=0; i<u; i++) addCargoDOM('unidade');
+
+                let options = [targetValue];
+                while(options.length < 6) {
+                    let r = Math.floor(Math.random() * 50) + 1;
+                    if(!options.includes(r)) options.push(r);
                 }
-                isRoundActive = true;
-            }, 1500);
+                options.sort((a,b) => a-b);
+                options.forEach(opt => {
+                    const btn = document.createElement('button'); btn.className = 'control-btn num';
+                    btn.innerText = opt;
+                    btn.onclick = () => { checkResult(opt); };
+                    controls.appendChild(btn);
+                });
+            }
+            setTimeout(() => { train.classList.add('at-center'); isRoundActive = true; }, 100);
         }
 
         function addCargo(type) {
             if(!isRoundActive) return;
-            if(type === 'dezena' && currentTens < 5) { currentTens++; addCargoDOM('dezena'); }
-            else if(type === 'unidade' && currentUnits < 15) { currentUnits++; addCargoDOM('unidade'); }
+            if(type === 'dezena') {
+                if(currentTens >= 5) return;
+                currentTens++;
+            } else {
+                if(currentUnits >= 15) return;
+                currentUnits++;
+            }
+            addCargoDOM(type);
         }
 
         function addCargoDOM(type) {
             const container = document.getElementById(type === 'dezena' ? 'cargo-tens' : 'cargo-units');
             const pi = JOGO_CONFIG.caminhoImg;
             if(type === 'dezena') {
-                const s = document.createElement('div'); s.className = 'dezena-stack';
+                const stack = document.createElement('div'); stack.className = 'dezena-stack';
                 for(let i=0; i<10; i++) {
-                    const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                    img.className = 'fardo-img'; s.appendChild(img);
+                    const img = document.createElement('img');
+                    img.src = pi + JOGO_CONFIG.veiculos.fardo;
+                    img.className = 'fardo-img'; stack.appendChild(img);
                 }
-                container.appendChild(s);
+                container.appendChild(stack);
             } else {
-                const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
+                const img = document.createElement('img');
+                img.src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.fardo;
                 img.className = 'fardo-img'; container.appendChild(img);
             }
         }
@@ -344,13 +398,16 @@
             if (!isRoundActive) return;
             isRoundActive = false;
             const stars = document.querySelectorAll('.star');
+            const train = document.getElementById('tractor-unit');
+
             if (ans === targetValue) {
                 stars[questionNum - 1].classList.add('correct'); stars[questionNum - 1].innerText = '✓';
                 points += 25; document.getElementById('points').innerText = points;
-                setTimeout(nextRound, 1000);
+                setTimeout(() => { train.classList.add('exit'); setTimeout(nextRound, 1000); }, 600);
             } else {
                 stars[questionNum - 1].classList.add('wrong'); stars[questionNum - 1].innerText = '✕';
-                setTimeout(nextRound, 1000);
+                train.classList.add('error-shake');
+                setTimeout(() => { train.classList.remove('error-shake'); train.classList.add('exit'); setTimeout(nextRound, 1000); }, 800);
             }
         }
 
@@ -362,25 +419,12 @@
             } else { loadQuestion(); }
         }
 
-        function initStars() {
-            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
-            for(let i=0; i<4; i++) { const s = document.createElement('div'); s.className = 'star'; s.innerText = '★'; bar.appendChild(s); }
-        }
-
-        function startTimer() {
-            timerInterval = setInterval(() => { seconds++; document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; }, 1000);
-        }
-
-        function toggleMenu() { 
-            document.getElementById('sidebar').classList.toggle('active'); 
-            document.getElementById('overlay').classList.toggle('active'); 
-        }
-
         function endGame() {
             clearInterval(timerInterval);
-            document.getElementById('modal').style.display = 'flex';
+            const modal = document.getElementById('modal');
+            modal.style.display = 'flex';
             document.getElementById('modal-title').innerText = "Trabalho Concluído!";
-            document.getElementById('modal-msg').innerHTML = `<p>Pontos: ${points} / 200</p>`;
+            document.getElementById('modal-msg').innerHTML = `<p>Tempo: <b>${document.getElementById('timer').innerText}</b></p><p>Pontos: <b>${points} / 200</b></p>`;
         }
     </script>
 </body>
