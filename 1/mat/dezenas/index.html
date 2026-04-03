@@ -40,11 +40,10 @@
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Explicação Animada --- */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin: 0 20px 10px 20px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px; position: relative; }
         .anim-line-2 { width: 100%; height: 110px; position: relative; display: flex; align-items: flex-end; justify-content: center; }
-        .anim-tractor-wrap { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; animation: animDriveIn 2s ease-out forwards; }
-        @keyframes animDriveIn { from { left: -400px; transform: translateX(0); } to { left: 50%; transform: translateX(-50%); } }
+        .anim-tractor-wrap { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; animation: animDriveIn 2s ease-out forwards; width: max-content; }
+        @keyframes animDriveIn { from { left: -600px; transform: translateX(0); } to { left: 50%; transform: translateX(-50%); } }
 
         .anim-line-3 { display: flex; gap: 10px; justify-content: center; width: 100%; flex-wrap: nowrap; }
         .intro-btn {
@@ -85,9 +84,10 @@
             box-sizing: border-box; position: relative; justify-content: flex-start; padding: 10px 0;
         }
 
-        /* ALTERAÇÃO 1: Centralização da zona de estrada */
         .road { height: 45%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-top: 5px; }
-        .tractor-container { display: flex; align-items: flex-end; position: absolute; left: -1200px; gap: 0; transition: left 0.8s ease-in-out; }
+        
+        /* ALTERAÇÃO 1: width: max-content para centrar corretamente no telemóvel */
+        .tractor-container { display: flex; align-items: flex-end; position: absolute; left: -1200px; gap: 0; transition: left 0.8s ease-in-out; width: max-content; }
         .tractor-container.at-center { left: 50%; transform: translateX(-50%); }
         .tractor-container.exit { left: 150%; transition: left 1s ease-in; }
 
@@ -135,8 +135,6 @@
         <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
         <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
         <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
-        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
-        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
@@ -252,8 +250,6 @@
                 document.getElementById('side-pre').src = pIcons + JOGO_CONFIG.iconesMenu.pre;
                 document.getElementById('side-1').src = pIcons + JOGO_CONFIG.iconesMenu.ano1;
                 document.getElementById('side-2').src = pIcons + JOGO_CONFIG.iconesMenu.ano2;
-                document.getElementById('side-3').src = pIcons + JOGO_CONFIG.iconesMenu.ano3;
-                document.getElementById('side-4').src = pIcons + JOGO_CONFIG.iconesMenu.ano4;
                 document.getElementById('tractor-img').src = pi + JOGO_CONFIG.veiculos.trator;
                 document.getElementById('wagon-tens-img').src = pi + JOGO_CONFIG.veiculos.reboque;
                 document.getElementById('wagon-units-img').src = pi + JOGO_CONFIG.veiculos.reboque;
@@ -281,13 +277,13 @@
             }, 2500);
         }
 
-        // ALTERAÇÃO 2: Lógica de carregamento com pilhas de 5 para as unidades
+        // ALTERAÇÃO 2: Lógica de empilhamento vertical (máximo 5) e novas pilhas à direita
         function renderCargo(container, total, isTens) {
             container.innerHTML = '';
             const pi = JOGO_CONFIG.caminhoImg;
             
             if (isTens) {
-                // Dezenas: Uma pilha vertical de 10 por cada dezena
+                // Dezenas: Uma pilha vertical única de 10 por cada dezena
                 for (let i = 0; i < total; i++) {
                     const stack = document.createElement('div');
                     stack.className = 'dezena-stack';
@@ -300,22 +296,20 @@
                     container.appendChild(stack);
                 }
             } else {
-                // Unidades: Pilhas de no máximo 5 fardos (1 em cima do outro), novas pilhas ao lado
-                let numStacks = Math.ceil(total / 5);
-                for (let i = 0; i < numStacks; i++) {
-                    const stack = document.createElement('div');
-                    stack.className = 'unit-stack';
-                    
-                    // Define quantos fardos vão nesta pilha (máximo 5)
-                    let itemsInThisStack = (i === numStacks - 1) ? (total % 5 || 5) : 5;
-                    
-                    for (let j = 0; j < itemsInThisStack; j++) {
-                        const img = document.createElement('img');
-                        img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                        img.className = 'fardo-img';
-                        stack.appendChild(img);
+                // Unidades: Empilha até 5, depois cria nova pilha à DIREITA
+                let currentStack = null;
+                for (let i = 0; i < total; i++) {
+                    // Sempre que i for múltiplo de 5, criamos uma nova coluna
+                    if (i % 5 === 0) {
+                        currentStack = document.createElement('div');
+                        currentStack.className = 'unit-stack';
+                        container.appendChild(currentStack);
                     }
-                    container.appendChild(stack);
+                    
+                    const img = document.createElement('img');
+                    img.src = pi + JOGO_CONFIG.veiculos.fardo;
+                    img.className = 'fardo-img';
+                    currentStack.appendChild(img);
                 }
             }
         }
