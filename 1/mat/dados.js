@@ -21,5 +21,6 @@ const JOGO_CONFIG = {
         compara: "compara.png",
         sequencias: "sequencias.png",
         parouimpar: "parouimpar.png"
+        dezenas: "dezenas.png"
     }
 };
