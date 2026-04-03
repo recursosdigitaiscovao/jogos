@@ -1,7 +1,7 @@
 // dados.js
 const JOGO_CONFIG = {
-    caminhoIcons: "../../icons/", 
-    caminhoImg: "../../img/",     
+    caminhoIcons: "../../../icons/", 
+    caminhoImg: "../../../img/",     
     iconesMenu: {
         pre: "iconpre.png",
         ano1: "icon1.png",
