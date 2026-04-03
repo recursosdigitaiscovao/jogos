@@ -10,10 +10,11 @@ const JOGO_CONFIG = {
         ano4: "icon4.png"
     },
     veiculos: {
-        trator: "trator1.png",
-        fardo: "fardo.png",   
-        dezena: "barra.png",   
-        unidade: "cubo.png"    
+        trator: "trator.png",
+        reboque: "reboque.png",
+        fardo: "fardo.png",    // A palha
+        dezena: "barra.png",   // O ícone do botão 10
+        unidade: "cubo.png"    // O ícone do botão 1
     },
     mensagens: {
         excelente: "Incrível! És um mestre das dezenas! 🌟",
