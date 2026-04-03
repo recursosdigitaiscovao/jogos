@@ -38,23 +38,20 @@
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Animação 3 Linhas --- */
+        /* --- Explicação Animada --- */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 15px; }
         .anim-line-1 { font-weight: bold; font-size: 1.3rem; color: var(--cor-texto); }
-        .anim-line-2 { width: 100%; height: 120px; position: relative; display: flex; align-items: flex-end; justify-content: center; }
+        .anim-line-2 { width: 100%; height: 110px; position: relative; display: flex; align-items: flex-end; justify-content: center; }
         .anim-line-3 { width: 100%; display: flex; justify-content: center; gap: 15px; }
-
         .anim-tractor-wrap { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; animation: animDriveIn 2s ease-out forwards; }
-        @keyframes animDriveIn { from { left: -500px; transform: translateX(0); } to { left: 50%; transform: translateX(-50%); } }
-        
-        .anim-btn-mock { width: 60px; height: 50px; border: 3px solid var(--cor-jogo-verde); background: white; border-radius: 12px; }
-        .anim-btn-mock.active-anim { animation: selectPulse 1.5s infinite; }
+        @keyframes animDriveIn { from { left: -400px; transform: translateX(0); } to { left: 50%; transform: translateX(-50%); } }
+        .anim-btn-mock { width: 60px; height: 50px; border: 3px solid var(--cor-jogo-verde); background: white; border-radius: 12px; animation: selectPulse 1.5s infinite 2.5s; }
         @keyframes selectPulse { 0%, 100% { background: white; } 50% { background: var(--cor-jogo-verde); } }
 
         /* --- Jogo --- */
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; padding: 0 10px 8px 10px; }
         .stars-container { display: flex; gap: 4px; }
-        .star { width: clamp(18px, 2.5vh, 24px); height: clamp(18px, 2.5vh, 24px); border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
+        .star { width: clamp(20px, 3vh, 26px); height: clamp(20px, 3vh, 26px); border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
@@ -98,6 +95,7 @@
             border-radius: 18px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: 0.1s; -webkit-tap-highlight-color: transparent; outline: none; font-family: 'Fredoka';
         }
+        /* Verde APENAS no clique */
         .control-btn:active { background: var(--cor-jogo-verde) !important; color: white !important; transform: scale(0.95); }
         .control-btn.build { height: clamp(65px, 11vh, 85px); font-weight: bold; font-size: 0.8rem; }
         .control-btn.build img { height: 40%; margin-bottom: 4px; }
@@ -124,11 +122,11 @@
             <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
-        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
-        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
-        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
-        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
+        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src="" style="width:24px"> Pré-Escolar</a>
+        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src="" style="width:24px"> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src="" style="width:24px"> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src="" style="width:24px"> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src="" style="width:24px"> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
@@ -143,7 +141,7 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <div class="anim-line-1">Carrega o trator com dezenas e unidades:</div>
+                    <div class="anim-line-1">Carrega o trator com fardos!</div>
                     <div class="anim-line-2">
                         <div class="anim-tractor-wrap" id="intro-tractor-container"></div>
                     </div>
@@ -226,10 +224,11 @@
                 const p = JOGO_CONFIG.caminhoIcons;
                 const pi = JOGO_CONFIG.caminhoImg;
                 const i = JOGO_CONFIG.iconesMenu;
+                
                 document.getElementById('header-icon').src = p + i.ano1;
                 document.querySelectorAll('.sidebar-item img').forEach((img, idx) => {
                     const keys = ['pre', 'ano1', 'ano2', 'ano3', 'ano4'];
-                    if(idx > 0) img.src = p + i[keys[idx-1]];
+                    img.src = p + i[keys[idx]];
                 });
                 
                 document.getElementById('game-tractor-img').src = pi + JOGO_CONFIG.veiculos.trator;
@@ -245,22 +244,22 @@
             const pi = JOGO_CONFIG.caminhoImg;
             
             const w1 = document.createElement('div'); w1.className = 'wagon-unit';
-            w1.innerHTML = `<div id="intro-cargo" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:60px">`;
+            w1.innerHTML = `<div id="intro-cargo" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:50px">`;
             
             const w2 = document.createElement('div'); w2.className = 'wagon-unit';
-            w2.innerHTML = `<img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:60px">`;
+            w2.innerHTML = `<img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:50px">`;
             
-            const tr = document.createElement('img'); tr.src = pi + JOGO_CONFIG.veiculos.trator; tr.style.height = "80px";
+            const tr = document.createElement('img'); tr.src = pi + JOGO_CONFIG.veiculos.trator; tr.style.height = "70px";
             
             container.append(w1, w2, tr);
 
-            // Simular clique nas dezenas
+            // Simular clique nas dezenas após a entrada
             setTimeout(() => {
                 const cargo = document.getElementById('intro-cargo');
                 const stack = document.createElement('div'); stack.className = 'dezena-stack';
                 for(let i=0; i<10; i++) {
                     const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                    img.className = 'fardo-img'; img.style.width = '12px'; stack.appendChild(img);
+                    img.className = 'fardo-img'; img.style.width = '10px'; stack.appendChild(img);
                 }
                 cargo.appendChild(stack);
             }, 3000);
@@ -358,17 +357,18 @@
 
         function addCargoDOM(type) {
             const container = document.getElementById(type === 'dezena' ? 'cargo-tens' : 'cargo-units');
+            const pi = JOGO_CONFIG.caminhoImg;
             if(type === 'dezena') {
                 const stack = document.createElement('div'); stack.className = 'dezena-stack';
                 for(let i=0; i<10; i++) {
                     const img = document.createElement('img');
-                    img.src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.fardo;
+                    img.src = pi + JOGO_CONFIG.veiculos.fardo;
                     img.className = 'fardo-img'; stack.appendChild(img);
                 }
                 container.appendChild(stack);
             } else {
                 const img = document.createElement('img');
-                img.src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.fardo;
+                img.src = pi + JOGO_CONFIG.veiculos.fardo;
                 img.className = 'fardo-img'; container.appendChild(img);
             }
         }
