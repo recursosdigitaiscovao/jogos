@@ -9,11 +9,10 @@ const JOGO_CONFIG = {
         ano3: "icon3.png",
         ano4: "icon4.png"
     },
-    // Imagens para este jogo
     veiculos: {
         camiao: "camiao.png",
-        dezena: "barra.png",   // Barra de 10
-        unidade: "cubo.png"    // Cubo de 1
+        dezena: "barra.png",   
+        unidade: "cubo.png"    
     },
     mensagens: {
         excelente: "Incrível! És um mestre das dezenas! 🌟",
