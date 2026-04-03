@@ -38,16 +38,23 @@
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
+        /* --- Animação 3 Linhas --- */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 15px; }
         .anim-line-1 { font-weight: bold; font-size: 1.3rem; color: var(--cor-texto); }
-        .anim-line-2 { width: 100%; height: 110px; position: relative; display: flex; align-items: flex-end; justify-content: center; }
-        
+        .anim-line-2 { width: 100%; height: 120px; position: relative; display: flex; align-items: flex-end; justify-content: center; }
+        .anim-line-3 { width: 100%; display: flex; justify-content: center; gap: 15px; }
+
         .anim-tractor-wrap { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; animation: animDriveIn 2s ease-out forwards; }
         @keyframes animDriveIn { from { left: -500px; transform: translateX(0); } to { left: 50%; transform: translateX(-50%); } }
+        
+        .anim-btn-mock { width: 60px; height: 50px; border: 3px solid var(--cor-jogo-verde); background: white; border-radius: 12px; }
+        .anim-btn-mock.active-anim { animation: selectPulse 1.5s infinite; }
+        @keyframes selectPulse { 0%, 100% { background: white; } 50% { background: var(--cor-jogo-verde); } }
 
+        /* --- Jogo --- */
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; padding: 0 10px 8px 10px; }
         .stars-container { display: flex; gap: 4px; }
-        .star { width: clamp(20px, 3vh, 26px); height: clamp(20px, 3vh, 26px); border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
+        .star { width: clamp(18px, 2.5vh, 24px); height: clamp(18px, 2.5vh, 24px); border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
@@ -66,21 +73,21 @@
         .tractor-container.exit { left: 120%; transition: left 0.8s ease-in; }
 
         /* Trator e Reboques */
-        .tractor-img { height: clamp(80px, 15vh, 130px); width: auto; display: block; z-index: 10; }
+        .tractor-img { height: clamp(80px, 15vh, 120px); width: auto; display: block; z-index: 10; }
         .wagon-unit { position: relative; width: clamp(100px, 18vw, 150px); display: flex; flex-direction: column; align-items: center; }
         .wagon-img { width: 100%; height: auto; display: block; margin-top: -10px; }
         
         .cargo-bay {
             height: clamp(50px, 10vh, 80px); width: 85%;
             display: flex; align-items: flex-end; justify-content: center; gap: 2px;
-            margin-bottom: -15px; z-index: 5;
+            margin-bottom: -12px; z-index: 5;
         }
         .cargo-bay.units { flex-wrap: wrap-reverse; }
 
         .dezena-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
-        .fardo-img { width: clamp(14px, 2.5vw, 22px); height: auto; object-fit: contain; }
+        .fardo-img { width: clamp(14px, 2.5vw, 20px); height: auto; object-fit: contain; }
 
-        /* Controlos */
+        /* Teclado */
         .options-area { 
             display: grid; grid-template-columns: repeat(3, 1fr);
             gap: 8px; padding: 10px; flex-grow: 1; width: 100%; max-width: 420px; margin: 0 auto; align-content: center;
@@ -140,6 +147,10 @@
                     <div class="anim-line-2">
                         <div class="anim-tractor-wrap" id="intro-tractor-container"></div>
                     </div>
+                    <div class="anim-line-3">
+                        <div class="anim-btn-mock active-anim" id="mock-tens"></div>
+                        <div class="anim-btn-mock"></div>
+                    </div>
                 </div>
                 <h2 style="color:var(--cor-principal); text-align:center;">O Trator das Dezenas</h2>
                 <button class="option-btn" onclick="startGame()">JOGAR</button>
@@ -157,7 +168,7 @@
                 
                 <div class="game-area">
                     <div class="road">
-                        <div id="tractor-train" class="tractor-container">
+                        <div id="tractor-unit" class="tractor-container">
                             <div class="wagon-unit">
                                 <div id="cargo-tens" class="cargo-bay"></div>
                                 <img class="wagon-img" id="img-w-1" src="">
@@ -216,27 +227,44 @@
                 const pi = JOGO_CONFIG.caminhoImg;
                 const i = JOGO_CONFIG.iconesMenu;
                 document.getElementById('header-icon').src = p + i.ano1;
-                document.getElementById('side-pre').src = p + i.pre;
-                document.getElementById('side-1').src = p + i.ano1;
-                document.getElementById('side-2').src = p + i.ano2;
-                document.getElementById('side-3').src = p + i.ano3;
-                document.getElementById('side-4').src = p + i.ano4;
+                document.querySelectorAll('.sidebar-item img').forEach((img, idx) => {
+                    const keys = ['pre', 'ano1', 'ano2', 'ano3', 'ano4'];
+                    if(idx > 0) img.src = p + i[keys[idx-1]];
+                });
                 
                 document.getElementById('game-tractor-img').src = pi + JOGO_CONFIG.veiculos.trator;
                 document.getElementById('img-w-1').src = pi + JOGO_CONFIG.veiculos.reboque;
                 document.getElementById('img-w-2').src = pi + JOGO_CONFIG.veiculos.reboque;
 
-                const introT = document.createElement('img');
-                introT.src = pi + JOGO_CONFIG.veiculos.trator;
-                introT.style.height = "80px";
-                const introR = document.createElement('img');
-                introR.src = pi + JOGO_CONFIG.veiculos.reboque;
-                introR.style.height = "60px";
-                document.getElementById('intro-tractor-container').append(introR, introT);
+                buildIntro();
             }
         };
 
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function buildIntro() {
+            const container = document.getElementById('intro-tractor-container');
+            const pi = JOGO_CONFIG.caminhoImg;
+            
+            const w1 = document.createElement('div'); w1.className = 'wagon-unit';
+            w1.innerHTML = `<div id="intro-cargo" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:60px">`;
+            
+            const w2 = document.createElement('div'); w2.className = 'wagon-unit';
+            w2.innerHTML = `<img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:60px">`;
+            
+            const tr = document.createElement('img'); tr.src = pi + JOGO_CONFIG.veiculos.trator; tr.style.height = "80px";
+            
+            container.append(w1, w2, tr);
+
+            // Simular clique nas dezenas
+            setTimeout(() => {
+                const cargo = document.getElementById('intro-cargo');
+                const stack = document.createElement('div'); stack.className = 'dezena-stack';
+                for(let i=0; i<10; i++) {
+                    const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
+                    img.className = 'fardo-img'; img.style.width = '12px'; stack.appendChild(img);
+                }
+                cargo.appendChild(stack);
+            }, 3000);
+        }
 
         function startGame() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -322,7 +350,7 @@
                 if(currentTens >= 5) return;
                 currentTens++;
             } else {
-                if(currentUnits >= 9) return;
+                if(currentUnits >= 12) return;
                 currentUnits++;
             }
             addCargoDOM(type);
@@ -331,20 +359,17 @@
         function addCargoDOM(type) {
             const container = document.getElementById(type === 'dezena' ? 'cargo-tens' : 'cargo-units');
             if(type === 'dezena') {
-                const stack = document.createElement('div');
-                stack.className = 'dezena-stack';
+                const stack = document.createElement('div'); stack.className = 'dezena-stack';
                 for(let i=0; i<10; i++) {
                     const img = document.createElement('img');
                     img.src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.fardo;
-                    img.className = 'fardo-img';
-                    stack.appendChild(img);
+                    img.className = 'fardo-img'; stack.appendChild(img);
                 }
                 container.appendChild(stack);
             } else {
                 const img = document.createElement('img');
                 img.src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.fardo;
-                img.className = 'fardo-img';
-                container.appendChild(img);
+                img.className = 'fardo-img'; container.appendChild(img);
             }
         }
 
