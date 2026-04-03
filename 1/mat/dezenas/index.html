@@ -88,9 +88,10 @@
         }
 
         .road { height: 45%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; margin-top: 5px; }
-        .tractor-container { display: flex; align-items: flex-end; position: absolute; left: -1200px; transition: left 0.8s ease-out; gap: 0; }
+        .tractor-container { display: flex; align-items: flex-end; position: absolute; left: -1200px; gap: 0; transition: left 0.8s ease-in-out; }
         .tractor-container.at-center { left: 50%; transform: translateX(-50%); }
-        .tractor-container.exit { left: 120%; transition: left 0.8s ease-in; }
+        /* ALTERAÇÃO 2: Aumentado para 150% para garantir que saia todo */
+        .tractor-container.exit { left: 150%; transition: left 1s ease-in; }
 
         /* Teclado do Jogo */
         .options-area { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; flex-grow: 1; width: 100%; max-width: 450px; margin: 0 auto; align-content: center; }
@@ -344,6 +345,9 @@
             isRoundActive = false;
             const train = document.getElementById('tractor-unit');
             const controls = document.getElementById('controls');
+            
+            // ALTERAÇÃO 2: Trator volta para a esquerda sem animação antes de entrar
+            train.style.transition = 'none';
             train.classList.remove('at-center', 'exit');
             
             clearWagons();
@@ -358,7 +362,6 @@
                 buildControlsLevel1();
             } else {
                 document.getElementById('target-number').style.display = 'none';
-                // Carregar trator automaticamente no nível 2
                 let d = Math.floor(targetValue / 10);
                 let u = targetValue % 10;
                 for(let i=0; i<d; i++) addBaleVisual(document.getElementById('cargo-tens'), 10);
@@ -367,6 +370,7 @@
             }
 
             setTimeout(() => {
+                train.style.transition = 'left 0.8s ease-out';
                 train.classList.add('at-center');
                 isRoundActive = true;
             }, 100);
@@ -375,6 +379,7 @@
         function buildControlsLevel1() {
             const ctrls = document.getElementById('controls');
             const pi = JOGO_CONFIG.caminhoImg;
+            // ALTERAÇÃO 1: Botão LIMPAR agora usa imagem borracha.png
             ctrls.innerHTML = `
                 <button class="control-btn build" onclick="addCargo('dezena')">
                     <img src="${pi + JOGO_CONFIG.veiculos.dezena}" style="height:55px;"> +10
@@ -382,7 +387,9 @@
                 <button class="control-btn build" onclick="addCargo('unidade')">
                     <img src="${pi + JOGO_CONFIG.veiculos.unidade}" style="height:22px;"> +1
                 </button>
-                <button class="control-btn build" style="border-color:var(--cor-erro)" onclick="clearWagons()">LIMPAR</button>
+                <button class="control-btn build" style="border-color:var(--cor-erro)" onclick="clearWagons()">
+                    <img src="${pi}borracha.png" style="height:40px;">
+                </button>
                 <button class="go-btn" onclick="checkAnswer(null)">ENTREGAR CARGA <img src="${pi + JOGO_CONFIG.veiculos.trator}" style="height:30px;"></button>
             `;
         }
