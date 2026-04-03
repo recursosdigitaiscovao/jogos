@@ -45,8 +45,8 @@
         
         /* Trator avança e traz atrás os reboques (Intro) */
         .anim-line-2 { width: 100%; height: 120px; position: relative; overflow: hidden; }
-        /* PONTO 1: Ajuste de tamanho para visibilidade total. PONTO 2: Trator à frente (ordem flex) */
-        .tractor-wagon-group { display: flex; flex-direction: row-reverse; align-items: flex-end; position: absolute; left: -700px; animation: driveInGroup 2s ease-out forwards; gap: 5px; }
+        /* ALTERAÇÃO 2: flex-direction: row-reverse para o trator ir à frente */
+        .tractor-wagon-group { display: flex; flex-direction: row-reverse; align-items: flex-end; position: absolute; left: -700px; animation: driveInGroup 2s ease-out forwards; }
         @keyframes driveInGroup { to { left: 50%; transform: translateX(-50%); } }
 
         .intro-controls-flex { display: flex; gap: 15px; justify-content: center; width: 100%; }
@@ -65,27 +65,27 @@
             background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb; padding: 10px; position: relative;
         }
 
-        /* PONTO 1: Aumentada altura da estrada para caber tudo verticalmente */
-        .road { height: 60%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; }
+        .road { height: 50%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; }
         
         /* Movimento do trator que traz atrás os reboques no Jogo - CORREÇÃO IMPORTANTE */
-        /* PONTO 1: Ajuste de gap e padding para não cortar. PONTO 2: Ordem reversa para trator à frente */
-        .tractor-container { display: flex; flex-direction: row-reverse; align-items: flex-end; position: absolute; left: -1000px; transition: left 1s ease-out; width: auto; gap: 5px; padding-left: 20px; }
+        /* ALTERAÇÃO 2: flex-direction: row-reverse para o trator ir à frente */
+        .tractor-container { display: flex; flex-direction: row-reverse; align-items: flex-end; position: absolute; left: -1000px; transition: left 1s ease-out; width: auto; }
         .tractor-container.at-center { left: 50%; transform: translateX(-50%); }
         .tractor-container.exit { left: 120%; transition: left 0.8s ease-in; }
 
-        /* PONTO 1: Redução ligeira do tamanho das imagens para caberem no ecrã */
+        /* ALTERAÇÃO 1: Ajuste de altura para visibilidade */
         .tractor-img { height: clamp(55px, 10vh, 90px); width: auto; z-index: 10; display: block; }
-        .wagon-unit { position: relative; width: clamp(100px, 20vw, 160px); display: flex; flex-direction: column; align-items: center; }
-        .wagon-img { width: 100%; height: auto; display: block; }
+        .wagon-unit { position: relative; width: auto; display: flex; flex-direction: column; align-items: center; }
+        /* ALTERAÇÃO 1: Ajuste de largura/altura para visibilidade */
+        .wagon-img { width: clamp(80px, 15vw, 130px); height: auto; display: block; }
         
-        /* PONTO 1: Ajuste de fardos para não saírem por cima */
-        .cargo-bay { height: clamp(45px, 9vh, 80px); width: 85%; display: flex; align-items: flex-end; justify-content: center; margin-bottom: -5px; z-index: 5; }
+        /* ALTERAÇÃO 1: Ajuste de altura e margem para visibilidade */
+        .cargo-bay { height: clamp(45px, 11vh, 90px); width: 85%; display: flex; align-items: flex-end; justify-content: center; margin-bottom: -5px; z-index: 5; }
         .cargo-bay.units { display: grid; grid-template-columns: repeat(5, 1fr); align-content: end; justify-items: center; }
 
         .dezena-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
-        /* PONTO 1: Fardos ligeiramente menores */
-        .fardo-img { width: clamp(16px, 3vw, 22px); height: auto; object-fit: contain; }
+        /* ALTERAÇÃO 1: Ajuste de largura para visibilidade */
+        .fardo-img { width: clamp(16px, 3vw, 24px); height: auto; object-fit: contain; }
 
         /* Botões */
         .options-area { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; width: 100%; max-width: 500px; margin: 0 auto; align-content: center; }
@@ -94,10 +94,10 @@
             background: white; border: 3.5px solid var(--cor-jogo-verde); color: var(--cor-texto);
             border-radius: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
             transition: 0.1s; outline: none; font-family: 'Fredoka'; gap: 8px; font-weight: 700;
-            height: clamp(65px, 10vh, 90px); width: 100%; box-sizing: border-box;
+            height: clamp(75px, 11vh, 95px); width: 100%; box-sizing: border-box;
         }
 
-        .control-btn .btn-icon-img { max-width: 45px; max-height: 45px; object-fit: contain; }
+        .control-btn .btn-icon-img { max-width: 50px; max-height: 50px; object-fit: contain; }
 
         .control-btn.num { font-size: clamp(1.8rem, 4vh, 2.5rem); }
 
@@ -116,11 +116,14 @@
 
         /* Ajustes para ecrãs pequenos */
         @media (max-width: 480px) {
+            /* ALTERAÇÃO 1: Ajustes para visibilidade em mobile */
             .tractor-img { height: 50px; }
-            .wagon-unit { width: 85px; }
-            .control-btn .btn-icon-img { max-width: 30px; max-height: 30px; }
+            .wagon-unit { width: 75px; }
+            .wagon-img { width: 75px; }
+            .cargo-bay { height: 40px; }
+            .control-btn .btn-icon-img { max-width: 35px; max-height: 35px; }
             .control-btn.build { font-size: 0.9rem; }
-            .anim-line-2 { height: 100px; }
+            .fardo-img { width: 14px; }
         }
 
         /* Adicionado para evitar que as imagens sejam cortadas - CORREÇÃO */
@@ -232,14 +235,13 @@
             const group = document.createElement('div');
             group.className = 'tractor-wagon-group';
             
-            // PONTO 1: Tamanhos menores na intro. PONTO 2: Trator primeiro no append para vir à frente
-            const tr = document.createElement('img'); tr.src = pi + JOGO_CONFIG.veiculos.trator; tr.style.height = "60px";
-            const w1 = document.createElement('div'); w1.className = 'wagon-unit'; w1.style.width = "100px";
-            w1.innerHTML = `<div id="intro-cargo-1" class="cargo-bay" style="height:50px"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:45px">`;
-            const w2 = document.createElement('div'); w2.className = 'wagon-unit'; w2.style.width = "100px";
-            w2.innerHTML = `<div id="intro-cargo-2" class="cargo-bay units" style="height:50px"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:45px">`;
+            const tr = document.createElement('img'); tr.src = pi + JOGO_CONFIG.veiculos.trator; tr.style.height = "75px";
+            const w1 = document.createElement('div'); w1.className = 'wagon-unit';
+            w1.innerHTML = `<div id="intro-cargo-1" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:60px">`;
+            const w2 = document.createElement('div'); w2.className = 'wagon-unit';
+            w2.innerHTML = `<div id="intro-cargo-2" class="cargo-bay units"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:60px">`;
             
-            // PONTO 2: Append na ordem correta (Trator à frente)
+            // ALTERAÇÃO 2: Ordem de append alterada para trator vir à frente visualmente com row-reverse
             group.append(tr, w1, w2);
             container.appendChild(group);
 
@@ -268,9 +270,139 @@
                 const s = document.createElement('div'); s.className = 'dezena-stack';
                 for(let i=0; i<10; i++) {
                     const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                    img.className = 'fardo-img'; img.style.width="15px"; s.appendChild(img);
+                    img.className = 'fardo-img'; img.style.width="18px"; s.appendChild(img);
                 }
                 c.appendChild(s);
             } else {
                 const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                img.className = 'fardo-img'; img.style.width="15
+                img.className = 'fardo-img'; img.style.width="18px"; c.appendChild(img);
+            }
+        }
+
+        function startGame() {
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active'); // Garante que o jogo fica visível
+            startTimer(); initStars(); loadQuestion();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => { 
+                seconds++; 
+                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; 
+            }, 1000);
+        }
+
+        function initStars() {
+            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
+            for(let i=0; i<4; i++) { const s = document.createElement('div'); s.className = 'star'; s.innerText = '★'; bar.appendChild(s); }
+        }
+
+        function loadQuestion() {
+            const train = document.getElementById('tractor-unit');
+            const controls = document.getElementById('controls');
+            const targetDisplay = document.getElementById('target-number');
+            const cargoTens = document.getElementById('cargo-tens');
+            const cargoUnits = document.getElementById('cargo-units');
+
+            train.classList.remove('at-center', 'exit');
+            train.style.left = "-1000px";
+            cargoTens.innerHTML = ''; cargoUnits.innerHTML = '';
+            controls.innerHTML = '';
+            currentTens = 0; currentUnits = 0;
+            isRoundActive = false;
+
+            targetValue = Math.floor(Math.random() * 41) + 10;
+            document.getElementById('instruction').innerText = level === 1 ? "Carrega o trator:" : "Quantos fardos leva o trator?";
+            targetDisplay.style.display = level === 1 ? 'block' : 'none';
+            targetDisplay.innerText = targetValue;
+
+            if (level === 1) {
+                // ALTERAÇÃO 3: Botões chamam addCargo especificando o contentor correto
+                const btnD = document.createElement('button'); btnD.className = 'control-btn';
+                btnD.innerHTML = `<img class="btn-icon-img" src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.dezena}"> +10`;
+                btnD.onclick = () => addCargo('dezena', 'cargo-tens'); // Carrega reboque esquerdo
+                
+                const btnU = document.createElement('button'); btnU.className = 'control-btn';
+                btnU.innerHTML = `<img class="btn-icon-img" src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.unidade}"> +1`;
+                btnU.onclick = () => addCargo('unidade', 'cargo-units'); // Carrega reboque direito
+                
+                const btnClear = document.createElement('button'); btnClear.className = 'control-btn';
+                btnClear.style.borderColor = 'var(--cor-erro)'; btnClear.innerText = "Limpar";
+                btnClear.onclick = () => { cargoTens.innerHTML = ''; cargoUnits.innerHTML = ''; currentTens = 0; currentUnits = 0; };
+                const go = document.createElement('button'); go.className = 'go-btn';
+                go.innerHTML = `ENTREGAR <img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.trator}" style="height:30px">`;
+                go.onclick = () => checkResult(currentTens * 10 + currentUnits);
+                controls.append(btnD, btnU, btnClear, go);
+            } else {
+                let d = Math.floor(targetValue / 10), u = targetValue % 10;
+                // ALTERAÇÃO 3: Nível 2 também usa os IDs corretos ao preencher
+                for(let i=0; i<d; i++) addCargoDOM('dezena', 'cargo-tens');
+                for(let i=0; i<u; i++) addCargoDOM('unidade', 'cargo-units');
+                let options = [targetValue];
+                while(options.length < 6) { let r = Math.floor(Math.random() * 50) + 1; if(!options.includes(r)) options.push(r); }
+                options.sort((a,b) => a-b).forEach(opt => {
+                    const btn = document.createElement('button'); btn.className = 'control-btn num'; btn.innerText = opt;
+                    btn.onclick = () => checkResult(opt); controls.appendChild(btn);
+                });
+            }
+            setTimeout(() => { train.classList.add('at-center'); isRoundActive = true; }, 100);
+        }
+
+        // ALTERAÇÃO 3: Função addCargo recebe o targetId
+        function addCargo(type, targetId) {
+            if(!isRoundActive) return;
+            // Mantemos os limites originais de carregamento por tipo
+            if(type === 'dezena' && currentTens < 5) { currentTens++; addCargoDOM('dezena', targetId); }
+            else if(type === 'unidade' && currentUnits < 15) { currentUnits++; addCargoDOM('unidade', targetId); }
+        }
+
+        // ALTERAÇÃO 3: Função addCargoDOM recebe o targetId explicitamente
+        function addCargoDOM(type, targetId) {
+            const container = document.getElementById(targetId);
+            if(!container) return; // Segurança caso o ID esteja errado
+            
+            const pi = JOGO_CONFIG.caminhoImg;
+            if(type === 'dezena') {
+                const stack = document.createElement('div'); stack.className = 'dezena-stack';
+                for(let i=0; i<10; i++) {
+                    const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
+                    img.className = 'fardo-img'; stack.appendChild(img);
+                }
+                container.appendChild(stack);
+            } else {
+                const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
+                img.className = 'fardo-img'; container.appendChild(img);
+            }
+        }
+
+        function checkResult(ans) {
+            if (!isRoundActive) return;
+            isRoundActive = false;
+            const stars = document.querySelectorAll('.star');
+            const train = document.getElementById('tractor-unit');
+            if (ans === targetValue) {
+                stars[questionNum - 1].classList.add('correct'); stars[questionNum - 1].innerText = '✓';
+                points += 25; document.getElementById('points').innerText = points;
+                setTimeout(() => { train.classList.add('exit'); setTimeout(nextRound, 1000); }, 600);
+            } else {
+                stars[questionNum - 1].classList.add('wrong'); stars[questionNum - 1].innerText = '✕';
+                setTimeout(() => { train.classList.add('exit'); setTimeout(nextRound, 1000); }, 600);
+            }
+        }
+
+        function nextRound() {
+            questionNum++;
+            if (questionNum > 4) {
+                if (level === 1) { level = 2; questionNum = 1; initStars(); loadQuestion(); }
+                else { endGame(); }
+            } else { loadQuestion(); }
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            alert("Trabalho Concluído! Pontos: " + points + " / 200");
+            location.reload();
+        }
+    </script>
+</body>
+</html>
