@@ -1,3 +1,5 @@
+--- START OF FILE Paste April 03, 2026 - 3:32PM ---
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -20,7 +22,7 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* --- Sidebar & Nav (Hamburger Completo) --- */
+        /* --- Sidebar & Nav --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
@@ -40,12 +42,20 @@
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Explicação --- */
+        /* --- Explicação e Animações --- */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px; position: relative; }
-        .anim-line-2 { width: 100%; height: 110px; position: relative; display: flex; align-items: flex-end; justify-content: center; }
-        .anim-tractor-wrap { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; animation: animDriveIn 2s ease-out forwards; }
-        @keyframes animDriveIn { from { left: -400px; transform: translateX(0); } to { left: 50%; transform: translateX(-50%); } }
+        .anim-line-2 { width: 100%; height: 110px; position: relative; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; }
         
+        /* Animação Intro: Trator entra, Reboques surgem depois */
+        .anim-tractor-wrap { display: flex; align-items: flex-end; }
+        .intro-trator { animation: driveIn 1.5s ease-out forwards; position: relative; }
+        .intro-wagon { opacity: 0; transform: scale(0.5); animation: popIn 0.5s ease-out forwards; }
+        .intro-wagon-1 { animation-delay: 1.6s; }
+        .intro-wagon-2 { animation-delay: 2.1s; }
+
+        @keyframes driveIn { from { left: -300px; } to { left: 0px; } }
+        @keyframes popIn { to { opacity: 1; transform: scale(1); } }
+
         .active-anim { animation: selectPulse 1.2s infinite; }
         @keyframes selectPulse { 0%, 100% { background: white; } 50% { background: var(--cor-jogo-verde); color: white; } }
 
@@ -65,13 +75,19 @@
         }
 
         .road { height: 45%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; margin-top: 5px; }
-        .tractor-container { display: flex; align-items: flex-end; position: absolute; left: -1200px; transition: left 0.8s ease-out; gap: 0; }
-        .tractor-container.at-center { left: 50%; transform: translateX(-50%); }
-        .tractor-container.exit { left: 120%; transition: left 0.8s ease-in; }
+        .tractor-container { display: flex; align-items: flex-end; position: absolute; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s; }
+        .tractor-container.at-center { opacity: 1; }
+        
+        /* Peças do Trator no Jogo (Aparecimento faseado) */
+        .game-tractor-img { height: clamp(55px, 11vh, 90px); width: auto; position: relative; left: -1000px; transition: left 0.8s ease-out; }
+        .at-center .game-tractor-img { left: 0; }
+        
+        .wagon-unit { position: relative; width: clamp(90px, 16vw, 135px); display: flex; flex-direction: column; align-items: center; opacity: 0; transform: translateY(20px); transition: 0.5s ease-out; }
+        .at-center .wagon-unit:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.8s; }
+        .at-center .wagon-unit:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 1.3s; }
 
-        /* Trator Pequeno */
-        .tractor-img { height: clamp(55px, 11vh, 90px); width: auto; display: block; z-index: 10; margin-left: -5px; }
-        .wagon-unit { position: relative; width: clamp(90px, 16vw, 135px); display: flex; flex-direction: column; align-items: center; }
+        .tractor-container.exit { left: 120%; transition: left 0.8s ease-in; opacity: 1; }
+
         .wagon-img { width: 100%; height: auto; display: block; margin-top: -5px; }
         
         .cargo-bay {
@@ -82,18 +98,22 @@
         .cargo-bay.units { display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-rows: min-content; align-content: end; justify-items: center; }
 
         .dezena-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
-        .fardo-img { width: clamp(10px, 2.1vw, 17px); height: auto; object-fit: contain; }
+        /* ALTERAÇÃO 4: Aumento do tamanho dos fardos */
+        .fardo-img { width: clamp(14px, 2.5vw, 22px); height: auto; object-fit: contain; }
 
-        /* Teclado */
+        /* Teclado e Controles */
         .options-area { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; flex-grow: 1; width: 100%; max-width: 450px; margin: 0 auto; align-content: center; }
         
+        /* ALTERAÇÃO 2: Estilo para botões lado a lado na intro */
+        .intro-controls-flex { display: flex; gap: 15px; justify-content: center; width: 100%; }
+
         .control-btn {
             background: white; border: 3.5px solid var(--cor-jogo-verde); color: var(--cor-texto);
             border-radius: 20px; cursor: pointer; display: flex; flex-direction: row; align-items: center; justify-content: center;
             transition: 0.1s; -webkit-tap-highlight-color: transparent; outline: none; font-family: 'Fredoka'; gap: 8px;
         }
         .control-btn:active { background: var(--cor-jogo-verde) !important; color: white !important; transform: scale(0.95); }
-        .control-btn.build { height: clamp(65px, 11vh, 95px); font-weight: 700; font-size: 1.1rem; }
+        .control-btn.build { height: clamp(65px, 11vh, 95px); font-weight: 700; font-size: 1.1rem; width: 140px; }
         .control-btn.build img { height: 60%; width: auto; }
         .control-btn.num { height: clamp(50px, 7vh, 65px); font-size: clamp(1.4rem, 4vh, 2rem); font-weight: 700; flex-direction: column; }
 
@@ -145,7 +165,7 @@
                 <div class="explanation-box">
                     <div class="anim-line-1">Carrega o Trator</div>
                     <div class="anim-line-2" id="intro-tractor-container"></div>
-                    <div class="anim-line-3" id="intro-controls"></div>
+                    <div class="anim-line-3 intro-controls-flex" id="intro-controls"></div>
                 </div>
                 <h2 style="color:var(--cor-principal); text-align:center;">O Trator das Dezenas</h2>
                 <button class="option-btn" onclick="startGame()">JOGAR</button>
@@ -159,14 +179,14 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div class="status-item">PTS: <span id="points">0</span></div>
                 </div>
-                <div class="instruction-area" id="instruction">...</div>
+                <div class="instruction-area" id="instruction" style="text-align:center; padding:5px; font-weight:bold; color:var(--cor-texto)">...</div>
                 
                 <div class="game-area">
                     <div id="target-number" class="target-number-box" style="display:none;">0</div>
                     <div class="road">
                         <div id="tractor-unit" class="tractor-container">
-                            <!-- [Trator] [Reboque Dezenas] [Reboque Unidades] -->
-                            <img id="game-tractor-img" class="tractor-img" src="">
+                            <!-- ALTERAÇÃO 3: Estrutura preparada para animação faseada -->
+                            <img id="game-tractor-img" class="game-tractor-img" src="">
                             <div class="wagon-unit">
                                 <div id="cargo-tens" class="cargo-bay"></div>
                                 <img class="wagon-img" id="img-w-1" src="">
@@ -241,17 +261,25 @@
             }
         };
 
+        // ALTERAÇÃO 1: Animação faseada na Intro
         function buildIntro(pi) {
             const container = document.getElementById('intro-tractor-container');
             const ctrls = document.getElementById('intro-controls');
             
-            const tr = document.createElement('img'); tr.src = pi + JOGO_CONFIG.veiculos.trator; tr.style.height = "60px";
-            const w1 = document.createElement('div'); w1.className = 'wagon-unit';
+            const tr = document.createElement('img'); 
+            tr.src = pi + JOGO_CONFIG.veiculos.trator; 
+            tr.className = "intro-trator";
+            tr.style.height = "60px";
+
+            const w1 = document.createElement('div'); 
+            w1.className = 'wagon-unit intro-wagon intro-wagon-1';
             w1.innerHTML = `<div id="intro-cargo-1" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:50px">`;
-            const w2 = document.createElement('div'); w2.className = 'wagon-unit';
+            
+            const w2 = document.createElement('div'); 
+            w2.className = 'wagon-unit intro-wagon intro-wagon-2';
             w2.innerHTML = `<div id="intro-cargo-2" class="cargo-bay units"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:50px">`;
             
-            container.append(tr, w1, w2); // Trator na frente (esquerda)
+            container.append(tr, w1, w2);
 
             const btnD = document.createElement('button'); btnD.id = "mock-tens"; btnD.className = 'control-btn build';
             btnD.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.dezena}" style="height:60%"> +10`;
@@ -265,7 +293,7 @@
                 const stack = document.createElement('div'); stack.className = 'dezena-stack';
                 for(let i=0; i<10; i++) {
                     const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                    img.className = 'fardo-img'; img.style.width = '10px'; stack.appendChild(img);
+                    img.className = 'fardo-img'; img.style.width = '12px'; stack.appendChild(img);
                 }
                 cargo.appendChild(stack);
                 setTimeout(() => {
@@ -273,9 +301,9 @@
                     document.getElementById('mock-units').classList.add('active-anim');
                     const cargoUnits = document.getElementById('intro-cargo-2');
                     const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                    img.className = 'fardo-img'; img.style.width = '10px'; cargoUnits.appendChild(img);
+                    img.className = 'fardo-img'; img.style.width = '12px'; cargoUnits.appendChild(img);
                 }, 1500);
-            }, 2500);
+            }, 3000);
         }
 
         function startGame() {
@@ -301,7 +329,6 @@
             const cargoTens = document.getElementById('cargo-tens');
             const cargoUnits = document.getElementById('cargo-units');
 
-            train.style.transition = 'none';
             train.classList.remove('at-center', 'exit');
             cargoTens.innerHTML = ''; cargoUnits.innerHTML = '';
             controls.innerHTML = '';
@@ -349,7 +376,13 @@
                     controls.appendChild(btn);
                 });
             }
-            setTimeout(() => { train.style.transition = 'left 0.8s ease-out'; train.classList.add('at-center'); isRoundActive = true; }, 50);
+            
+            // ALTERAÇÃO 3: Acionamento da animação faseada no jogo
+            setTimeout(() => { 
+                train.classList.add('at-center'); 
+                // A ativação do round ocorre após os reboques chegarem (delay total aprox 1.8s)
+                setTimeout(() => { isRoundActive = true; }, 1800);
+            }, 100);
         }
 
         function addCargo(type) {
