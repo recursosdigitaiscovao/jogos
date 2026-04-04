@@ -9,7 +9,7 @@
         :root {
             --cor-principal: #ff9100;
             --cor-vibrante: #ff7300;  
-            --cor-fundo: #fef7ed;      
+            --cor-fundo: #e8f9f4;      /* ALTERADO: Agora igual à área de jogo */
             --cor-texto: #8a6436;      
             --header-height: 70px;
             --cor-jogo-verde: #45cfa8; 
@@ -118,11 +118,9 @@
 
         .option-btn { background: var(--cor-jogo-verde); border: none; color: white; font-size: 1.4rem; font-weight: 700; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka', sans-serif; width: 100%; flex-shrink: 0; }
 
-        /* MODIFICAÇÃO SOLICITADA: Padding 25px L/R e largura reduzida */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 360px; width: 90%; box-sizing: border-box; }
 
-        /* Tabela simples para o relatório */
         .result-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9rem; }
         .result-table th { border-bottom: 2px solid #eee; padding: 5px; color: var(--cor-principal); }
         .result-table td { padding: 8px 5px; border-bottom: 1px solid #f9f9f9; }
@@ -226,7 +224,6 @@
         let level = 1, round = 1, points = 0, seconds = 0, timerInterval;
         let targetValue = 0, currentTens = 0, currentUnits = 0;
         let isRoundActive = false;
-        // Objeto para guardar certas/erradas por nível
         let stats = { 1: { c: 0, e: 0 }, 2: { c: 0, e: 0 } };
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -417,7 +414,7 @@
             if(type === 'dezena') {
                 if(currentTens >= 5) return;
                 currentTens++;
-                addBaleVisual(document.getElementById('cargo-tens'), 1, true); // Adiciona 1 unidade de dezena
+                addBaleVisual(document.getElementById('cargo-tens'), 1, true);
             } else {
                 if(currentUnits >= 15) return;
                 currentUnits++;
@@ -441,7 +438,7 @@
 
             if(isCorrect) {
                 playSound('certo');
-                stats[level].c++; // Incrementa estatística correta
+                stats[level].c++;
                 stars[round - 1].classList.add('correct');
                 stars[round - 1].innerText = '✓';
                 points += 20;
@@ -452,7 +449,7 @@
                 }, 1000);
             } else {
                 playSound('errado');
-                stats[level].e++; // Incrementa estatística errada
+                stats[level].e++;
                 stars[round - 1].classList.add('wrong');
                 stars[round - 1].innerText = '✕';
                 train.classList.add('error-shake');
@@ -480,7 +477,6 @@
             }
         }
 
-        // ALTERAÇÃO SOLICITADA: Relatório com Níveis e Tempo
         function endGame() {
             clearInterval(timerInterval);
             const modal = document.getElementById('modal');
