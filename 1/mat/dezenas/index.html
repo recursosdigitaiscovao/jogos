@@ -33,7 +33,7 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* --- Layout Card --- */
+        /* --- Layout do Card --- */
         .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow: hidden; }
         .screen.active { display: flex; }
@@ -57,47 +57,46 @@
         .game-area { 
             flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;
             background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb;
-            box-sizing: border-box; justify-content: center; /* CENTRALIZAÇÃO VERTICAL */
-            align-items: center; position: relative; padding: 10px 0;
+            box-sizing: border-box; justify-content: flex-end; align-items: center; position: relative; padding-bottom: 20px;
         }
 
         .target-display { position: absolute; top: 10px; left: 15px; background: white; border: 3px solid var(--cor-jogo-verde); border-radius: 12px; padding: 5px 15px; font-size: 1.5rem; font-weight: bold; color: var(--cor-jogo-verde); z-index: 10; }
 
         /* --- Comboio do Trator --- */
-        .scene-container { display: flex; align-items: flex-end; justify-content: center; width: 100%; gap: 2px; position: relative; margin: auto 0; }
+        .scene-container { display: flex; align-items: flex-end; justify-content: center; width: 95%; gap: 2px; }
         
         .trator-img { height: clamp(40px, 9vh, 65px); z-index: 5; order: 3; }
         .reboque-container { position: relative; display: flex; align-items: flex-end; }
-        .reb-dez-box { order: 1; } 
-        .reb-uni-box { order: 2; } 
+        .reb1-box { order: 1; } /* Esquerda */
+        .reb2-box { order: 2; } /* Direita */
         .reboque-img { height: clamp(30px, 7vh, 50px); width: auto; }
 
+        /* Animação Sequencial: Trator -> Reb 1 -> Reb 2 */
         .anim-enter { animation: driveIn 1s ease-out forwards; opacity: 0; }
-        @keyframes driveIn { 0% { transform: translateX(-150%); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+        @keyframes driveIn { 
+            0% { transform: translateX(-150%); opacity: 0; } 
+            100% { transform: translateX(0); opacity: 1; } 
+        }
 
         .carga-area { position: absolute; bottom: 35%; left: 5%; width: 90%; height: 90%; display: flex; align-items: flex-end; justify-content: center; flex-wrap: wrap-reverse; gap: 1px; }
         .carga-area img.dez { height: 110%; width: auto; }
         .carga-area img.uni { height: 25%; width: auto; }
 
-        /* --- UI de Controlos --- */
-        .game-ui-overlay { width: 100%; display: flex; flex-direction: column; align-items: center; padding: 0 10px; z-index: 20; margin-top: auto; }
-        .symbol-pad { display: flex; gap: 10px; justify-content: center; margin-bottom: 10px; }
+        /* --- UI de Controlos (Dentro da Zona Verde) --- */
+        .game-ui-overlay { width: 100%; display: flex; flex-direction: column; align-items: center; padding: 0 10px; z-index: 20; }
+        .symbol-pad { display: flex; gap: 8px; justify-content: center; margin-bottom: 5px; }
         .sym-btn {
-            background: white; border: 3px solid var(--cor-jogo-verde); border-radius: 18px;
-            padding: 8px 20px; cursor: pointer; display: flex; flex-direction: column; align-items: center; 
-            font-family: 'Fredoka'; font-weight: bold; font-size: 0.8rem; min-width: 90px; transition: 0.2s;
+            background: white; border: 3px solid var(--cor-jogo-verde); border-radius: 15px;
+            padding: 5px 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; 
+            font-family: 'Fredoka'; font-weight: bold; font-size: 0.65rem;
         }
-        .sym-btn img { height: 22px; margin-bottom: 4px; }
-        .sym-btn:active, .sym-btn.simulated-click { transform: scale(0.9); background: var(--cor-jogo-verde); color: white; }
+        .sym-btn img { height: 18px; margin-bottom: 2px; }
+        .sym-btn:active { transform: scale(0.95); background: var(--cor-jogo-verde); color: white; }
 
-        .btn-carregar { background: var(--cor-principal); color: white; border: none; padding: 12px 50px; border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; }
+        .btn-carregar { background: var(--cor-principal); color: white; border: none; padding: 10px 40px; border-radius: 50px; font-size: 1rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; }
 
-        .options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 90%; max-width: 400px; margin-top: 10px; }
+        .options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 90%; max-width: 380px; margin-top: 10px; }
         .opt-btn { background: white; border: 3px solid var(--cor-jogo-verde); border-radius: 15px; padding: 15px 0; font-size: 1.3rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; color: var(--cor-texto); }
-
-        /* --- Animação Explicação --- */
-        @keyframes simulatedCargo { 0% { opacity: 0; transform: translateY(-20px); } 100% { opacity: 1; transform: translateY(0); } }
-        .carga-simulated { animation: simulatedCargo 0.5s forwards; }
 
         .error-shake { animation: shake 0.4s; border-color: var(--cor-erro) !important; }
         @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
@@ -105,6 +104,9 @@
         /* Modal */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); max-width: 380px; width: 90%; }
+        .report-table { width: 100%; margin: 15px 0; border-collapse: collapse; font-size: 0.85rem; }
+        .report-table th { background: var(--cor-caixa-info); padding: 8px; }
+        .report-table td { padding: 8px; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -134,20 +136,10 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <div class="scene-container" id="intro-scene" style="margin-bottom: 30px;">
+                    <div class="scene-container" id="intro-scene">
                         <img id="intro-trator" class="trator-img anim-enter" style="animation-delay: 0s;">
-                        <div class="reboque-container reb-uni-box anim-enter" style="animation-delay: 0.2s;">
-                            <div id="intro-carga-uni" class="carga-area"></div>
-                            <img id="intro-reb1" class="reboque-img">
-                        </div>
-                        <div class="reboque-container reb-dez-box anim-enter" style="animation-delay: 0.4s;">
-                            <div id="intro-carga-dez" class="carga-area"></div>
-                            <img id="intro-reb2" class="reboque-img">
-                        </div>
-                    </div>
-                    <div class="symbol-pad">
-                        <div id="exp-btn-dez" class="sym-btn"><img id="exp-dez-img"> +10</div>
-                        <div id="exp-btn-uni" class="sym-btn"><img id="exp-uni-img"> +1</div>
+                        <div class="reboque-container reb-uni-box anim-enter" style="animation-delay: 0.3s;"><img id="intro-reb1" class="reboque-img"></div>
+                        <div class="reboque-container reb-dez-box anim-enter" style="animation-delay: 0.6s;"><img id="intro-reb2" class="reboque-img"></div>
                     </div>
                 </div>
                 <h2 class="game-title">Trator das Dezenas</h2>
@@ -163,7 +155,7 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div>PTS: <span id="points">0</span></div>
                 </div>
-                
+                <div id="instruction-text" style="text-align:center; font-weight:bold; color:var(--cor-texto); font-size: 0.9rem;"></div>
                 <div class="game-area" id="game-canvas">
                     <div id="target-number" class="target-display">0</div>
                     
@@ -180,7 +172,6 @@
                     </div>
 
                     <div class="game-ui-overlay">
-                        <div id="instruction-text" style="text-align:center; font-weight:bold; color:var(--cor-texto); font-size: 0.9rem; margin-bottom: 10px;"></div>
                         <div id="ui-n1" style="display:none; flex-direction:column; align-items:center;">
                             <div class="symbol-pad">
                                 <button class="sym-btn" onclick="add('D')"><img id="btn-dez"> +10</button>
@@ -217,14 +208,12 @@
                 const pi = JOGO_CONFIG.caminhoIcons;
                 const pm = JOGO_CONFIG.caminhoImg;
                 const v = JOGO_CONFIG.veiculos;
-
                 ['pre','1','2','3','4'].forEach(n => {
                     const id = n === 'pre' ? 'pre' : 'ano'+n;
                     const el = document.getElementById('side-'+n);
                     if(el) el.src = pi + JOGO_CONFIG.iconesMenu[id];
                 });
                 document.getElementById('header-icon').src = pi + JOGO_CONFIG.iconesMenu.ano1;
-
                 const tImg = pm + v.trator, rImg = pm + v.reboque;
                 document.getElementById('intro-trator').src = tImg;
                 document.getElementById('intro-reb1').src = rImg;
@@ -232,48 +221,11 @@
                 document.getElementById('game-tractor').src = tImg;
                 document.getElementById('game-reb-1').src = rImg;
                 document.getElementById('game-reb-2').src = rImg;
-                
-                document.getElementById('exp-dez-img').src = pm + v.unidade;
-                document.getElementById('exp-uni-img').src = pm + v.unidade;
-                document.getElementById('btn-dez').src = pm + v.unidade; 
+                document.getElementById('btn-dez').src = pm + v.unidade;
                 document.getElementById('btn-uni').src = pm + v.unidade;
                 document.getElementById('btn-bor').src = pm + v.borracha;
-
-                startIntroAnimation();
             }
         };
-
-        function startIntroAnimation() {
-            const btnDez = document.getElementById('exp-btn-dez');
-            const btnUni = document.getElementById('exp-btn-uni');
-            const cargaDez = document.getElementById('intro-carga-dez');
-            const cargaUni = document.getElementById('intro-carga-uni');
-            const pm = JOGO_CONFIG.caminhoImg;
-            const v = JOGO_CONFIG.veiculos;
-
-            setInterval(() => {
-                setTimeout(() => {
-                    btnDez.classList.add('simulated-click');
-                    const img = document.createElement('img');
-                    img.src = pm + v.dezena; img.className = 'dez carga-simulated';
-                    cargaDez.appendChild(img);
-                    setTimeout(() => btnDez.classList.remove('simulated-click'), 300);
-                }, 1000);
-
-                setTimeout(() => {
-                    btnUni.classList.add('simulated-click');
-                    const img = document.createElement('img');
-                    img.src = pm + v.unidade; img.className = 'uni carga-simulated';
-                    cargaUni.appendChild(img);
-                    setTimeout(() => btnUni.classList.remove('simulated-click'), 300);
-                }, 2500);
-
-                setTimeout(() => {
-                    cargaDez.innerHTML = '';
-                    cargaUni.innerHTML = '';
-                }, 4500);
-            }, 5000);
-        }
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -296,11 +248,9 @@
             active = true; clearC();
             const t = document.getElementById('game-tractor'), rU = document.getElementById('reb-uni-box'), rD = document.getElementById('reb-dez-box');
             [t, rU, rD].forEach(el => { el.classList.remove('anim-enter'); void el.offsetWidth; el.classList.add('anim-enter'); });
-            t.style.animationDelay = '0s'; rU.style.animationDelay = '0.2s'; rD.style.animationDelay = '0.4s';
-
+            t.style.animationDelay = '0s'; rU.style.animationDelay = '0.3s'; rD.style.animationDelay = '0.6s';
             document.getElementById('instruction-text').innerText = JOGO_CONFIG.niveis[level].instrucao;
             target = Math.floor(Math.random() * 29) + 1;
-
             if(level === 1) {
                 document.getElementById('target-number').style.display = 'block';
                 document.getElementById('target-number').innerText = target;
@@ -344,12 +294,8 @@
             const pm = JOGO_CONFIG.caminhoImg, v = JOGO_CONFIG.veiculos;
             const cT = document.getElementById('carga-tens'), cU = document.getElementById('carga-units');
             cT.innerHTML = ''; cU.innerHTML = '';
-            for(let i=0; i<uTens; i++) { 
-                const img = document.createElement('img'); img.src = pm + v.dezena; img.className = 'dez'; cT.appendChild(img); 
-            }
-            for(let i=0; i<uUnits; i++) { 
-                const img = document.createElement('img'); img.src = pm + v.unidade; img.className = 'uni'; cU.appendChild(img); 
-            }
+            for(let i=0; i<uTens; i++) { const img = document.createElement('img'); img.src = pm + v.dezena; img.className = 'dez'; cT.appendChild(img); }
+            for(let i=0; i<uUnits; i++) { const img = document.createElement('img'); img.src = pm + v.unidade; img.className = 'uni'; cU.appendChild(img); }
         }
 
         function check() { validate((uTens * 10 + uUnits) === target); }
@@ -358,7 +304,7 @@
             if(!active) return; active = false;
             const stars = document.querySelectorAll('.star');
             if(win) { pts += 20; stats[level].c++; stars[quest-1].classList.add('correct'); stars[quest-1].innerText = '✓'; }
-            else { stats[level].e++; stars[quest-1].classList.add('wrong'); stars[quest-1].innerText = '✕'; document.getElementById('game-canvas').classList.add('shake'); }
+            else { stats[level].e++; stars[quest-1].classList.add('wrong'); stars[quest-1].innerText = '✕'; document.getElementById('game-canvas').classList.add('error-shake'); }
             document.getElementById('points').innerText = pts;
             setTimeout(() => {
                 quest++;
