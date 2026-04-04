@@ -26,5 +26,13 @@ const JOGO_CONFIG = {
         excelente: "Incrível! És um mestre da matemática! 🌟",
         bom: "Muito bem! Estás no bom caminho! 👍",
         tenta: "Bom esforço! Continua a praticar! 💪"
+    },
+    relatorio: {
+        titulo: "Fim do Jogo!",
+        pontosTotal: "Pontuação Total:",
+        tempoTotal: "Tempo Total:",
+        labelNivel: "Nível",
+        labelCertas: "Certas",
+        labelErradas: "Erradas"
     }
 };
