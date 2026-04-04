@@ -9,7 +9,7 @@
         :root {
             --cor-principal: #ff9100;
             --cor-vibrante: #ff7300;  
-            --cor-fundo: #e8f9f4;      /* ALTERADO: Igual à área de jogo */
+            --cor-fundo: #e8f9f4;      /* IGUAL À ÁREA DE JOGO */
             --cor-texto: #8a6436;      
             --header-height: 70px;
             --cor-jogo-verde: #45cfa8; 
@@ -46,7 +46,7 @@
 
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; }
         .stars-container { display: flex; gap: 6px; }
-        .star { width: clamp(20px, 3vh, 26px); height: clamp(20px, 3vh, 26px); border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: transparent; }
+        .star { width: 24px; height: 24px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: transparent; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
@@ -70,16 +70,15 @@
         }
         
         .match-item img { max-height: 75%; max-width: 80%; object-fit: contain; pointer-events: none; }
-
-        .match-item.selected { border-color: var(--cor-principal); background: #fff8f0; transform: scale(1.04); z-index: 10; }
-        .match-item.correct-match { border-color: var(--cor-jogo-verde); background: #e8f9f4; opacity: 0.2; pointer-events: none; }
+        .match-item.selected { border-color: var(--cor-principal); background: #fff8f0; transform: scale(1.04); }
+        .match-item.correct-match { border-color: var(--cor-jogo-verde); background: #e8f9f4; opacity: 0.3; pointer-events: none; }
         .match-item.error-match { border-color: var(--cor-erro) !important; background: #fff0f0 !important; animation: shake 0.4s; }
 
         @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
 
         .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
         
-        /* MODAL ATUALIZADO: Padding 25px lateral e largura */
+        /* MODAL ATUALIZADO: Padding 25px L/R e largura reduzida */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 380px; width: 90%; box-sizing: border-box; }
 
@@ -99,9 +98,6 @@
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
         <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src="" class="img-icon-sidebar"> Pré-Escolar</a>
         <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src="" class="img-icon-sidebar"> 1º Ano</a>
-        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src="" class="img-icon-sidebar"> 2º Ano</a>
-        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src="" class="img-icon-sidebar"> 3º Ano</a>
-        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src="" class="img-icon-sidebar"> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
@@ -167,26 +163,17 @@
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.connect(gain); gain.connect(audioCtx.destination);
-                if(type === 'certo') {
-                    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-                } else {
-                    osc.type = 'square'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-                }
+                osc.frequency.setValueAtTime(type === 'certo' ? 600 : 150, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
             } catch(e) {}
         }
 
         window.onload = () => {
             if(typeof JOGO_CONFIG !== 'undefined') {
-                const p = JOGO_CONFIG.caminhoIcons;
-                const i = JOGO_CONFIG.iconesMenu;
-                document.getElementById('header-icon').src = p + i.ano1;
-                document.getElementById('side-pre').src = p + i.pre;
-                document.getElementById('side-1').src = p + i.ano1;
+                document.getElementById('header-icon').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1;
+                document.getElementById('side-pre').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.pre;
+                document.getElementById('side-1').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1;
             }
         };
 
@@ -234,6 +221,8 @@
         function loadLevel() {
             matchesFound = 0;
             attemptsInLevel = 0;
+            selectedItem1 = null;
+            selectedItem2 = null;
             initStars();
             const colLeft = document.getElementById('col-left');
             const colRight = document.getElementById('col-right');
@@ -275,10 +264,18 @@
 
         function handleSelection(el) {
             if (isChecking || el.classList.contains('correct-match') || el.classList.contains('selected')) return;
+            
             el.classList.add('selected');
+            
             if (!selectedItem1) {
                 selectedItem1 = el;
             } else {
+                // Verificar se clicou no mesmo tipo de coluna (ex: dois nomes)
+                if (selectedItem1.dataset.type === el.dataset.type) {
+                    selectedItem1.classList.remove('selected');
+                    selectedItem1 = el;
+                    return;
+                }
                 selectedItem2 = el;
                 checkMatch();
             }
@@ -288,10 +285,8 @@
             isChecking = true;
             const val1 = selectedItem1.dataset.value;
             const val2 = selectedItem2.dataset.value;
-            const type1 = selectedItem1.dataset.type;
-            const type2 = selectedItem2.dataset.type;
 
-            if (val1 === val2 && type1 !== type2) {
+            if (val1 === val2) {
                 playSound('certo');
                 selectedItem1.classList.replace('selected', 'correct-match');
                 selectedItem2.classList.replace('selected', 'correct-match');
@@ -320,6 +315,7 @@
         }
 
         function checkLevelEnd() {
+            // Se acertou todos ou se as 4 tentativas do nível acabaram
             if (matchesFound === 4 || attemptsInLevel === 4) {
                 setTimeout(() => {
                     if (level === 1) {
@@ -343,8 +339,8 @@
                 <p>${finalMsg}</p>
                 <table class="result-table">
                     <tr><th>Nível</th><th>Certas</th><th>Erradas</th></tr>
-                    <tr><td>1</td><td>${stats[1].c}</td><td>${stats[1].e}</td></tr>
-                    <tr><td>2</td><td>${stats[2].c}</td><td>${stats[2].e}</td></tr>
+                    <tr><td>1</td><td style="color:var(--cor-jogo-verde); font-weight:bold;">${stats[1].c}</td><td style="color:var(--cor-erro); font-weight:bold;">${stats[1].e}</td></tr>
+                    <tr><td>2</td><td style="color:var(--cor-jogo-verde); font-weight:bold;">${stats[2].c}</td><td style="color:var(--cor-erro); font-weight:bold;">${stats[2].e}</td></tr>
                 </table>
                 <p><b>${r.pontosTotal} ${points} / 200</b></p>
                 <p>${r.tempoTotal} <b>${document.getElementById('timer').innerText}</b></p>
