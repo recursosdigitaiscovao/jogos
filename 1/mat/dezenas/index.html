@@ -3,229 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1º Ano - Matemática - Maior, Menor ou Igual</title>
+    <title>1º Ano - Matemática - Trator das Dezenas</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --cor-principal: #ff9100;
             --cor-vibrante: #ff7300;  
-            --cor-fundo: #e8f9f4;      /* ALTERADO: Igual à área de jogo */
+            --cor-fundo: #e8f9f4;      
             --cor-texto: #8a6436;      
             --header-height: 70px;
             --cor-jogo-verde: #45cfa8; 
             --cor-erro: #ff4757;
-            --cor-caixa-info: #e8f9f4;
+            --cor-caixa-info: #ffffff;
         }
 
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
+        /* Navegação */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: all 0.3s ease; cursor: pointer; font-weight: 500; }
-        .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
-        .sidebar-item img { width: 28px; height: 28px; margin-right: 12px; object-fit: contain; }
+        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; cursor: pointer; }
+        .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; height: calc(100% - var(--header-height)); }
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow: hidden; }
+        /* Content */
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
 
         .game-card {
-            background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal);
-            display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
+            background: white; border-radius: 30px; padding: 15px; border: 4px solid var(--cor-principal);
+            display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box;
         }
 
-        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 10px; }
-        .anim-comp-container { display: flex; align-items: center; gap: clamp(15px, 4vw, 40px); font-size: 2.5rem; font-weight: bold; color: var(--cor-texto); }
-        .anim-box { width: 70px; height: 70px; background: white; border: 3px solid var(--cor-principal); border-radius: 15px; display: flex; align-items: center; justify-content: center; }
-        .anim-symbol { font-size: 4rem; color: var(--cor-vibrante); animation: symbolPop 2s infinite; }
-        @keyframes symbolPop { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
-
-        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; padding: 0 10px 8px 10px; }
-        .stars-container { display: flex; gap: 4px; }
-        .star { width: clamp(18px, 2.5vh, 24px); height: clamp(18px, 2.5vh, 24px); border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
-        .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
-        .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
-
-        .instruction-area { text-align: center; font-size: clamp(0.9rem, 2.5vh, 1.2rem); font-weight: bold; color: var(--cor-texto); margin-bottom: 5px; flex-shrink: 0; }
-
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0; margin-bottom: 10px; }
+        
+        /* Área do Trator */
         .game-area { 
-            flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;
-            background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb; min-height: 0;
-            box-sizing: border-box; justify-content: center; align-items: center; gap: 15px;
+            flex: 1; background: #f9f9f9; border-radius: 20px; border: 2px dashed #ccc;
+            position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+            padding-bottom: 40px; overflow: hidden;
         }
 
-        .comparison-row { display: flex; align-items: center; justify-content: center; gap: clamp(10px, 3vw, 30px); width: 100%; }
-        
-        .comp-card {
-            background: white; border: 3.5px solid #eee; border-radius: 20px;
-            width: clamp(120px, 30vw, 280px); height: clamp(150px, 40vh, 320px);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03); padding: 10px; box-sizing: border-box;
+        .tractor-container { position: relative; display: flex; align-items: flex-end; gap: 0; }
+        .img-trator { height: clamp(100px, 20vh, 180px); z-index: 2; }
+        .reboque-container { position: relative; }
+        .img-reboque { height: clamp(80px, 15vh, 140px); display: block; }
+
+        /* Carga no Reboque */
+        .carga-area {
+            position: absolute; bottom: 35%; left: 10%; width: 80%; height: 100px;
+            display: flex; align-items: flex-end; justify-content: center; gap: 5px; flex-wrap: wrap-reverse;
+        }
+        .item-dezena { height: 70px; width: auto; }
+        .item-unidade { height: 20px; width: auto; }
+
+        /* Control Pad */
+        .controls { display: flex; gap: 15px; margin-top: 15px; justify-content: center; }
+        .btn-control {
+            background: white; border: 3px solid var(--cor-jogo-verde); border-radius: 20px;
+            padding: 10px 20px; font-family: 'Fredoka'; font-weight: bold; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; transition: 0.2s;
+        }
+        .btn-control:active { transform: scale(0.9); background: var(--cor-jogo-verde); color: white; }
+        .btn-control img { width: 30px; margin-bottom: 5px; }
+
+        .btn-confirmar {
+            background: var(--cor-principal); color: white; border: none; padding: 15px 40px;
+            border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 10px;
         }
 
-        .fruit-grid { 
-            display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; align-items: center; width: 100%; max-height: 100%;
-        }
-        .fruit-grid img { width: clamp(24px, 5vh, 45px); height: auto; object-fit: contain; }
-
-        .comp-img-num { max-height: 90%; max-width: 90%; object-fit: contain; }
-
-        .symbol-lacuna {
-            width: clamp(60px, 15vw, 100px); height: clamp(60px, 15vw, 100px);
-            border: 4px dashed var(--cor-principal); border-radius: 20px;
-            background: white; display: flex; align-items: center; justify-content: center;
-            font-size: clamp(2.5rem, 8vh, 4rem); font-weight: bold; color: var(--cor-vibrante);
+        .alvo-numero {
+            font-size: 3rem; color: var(--cor-principal); background: white;
+            padding: 10px 20px; border-radius: 20px; border: 3px solid var(--cor-principal);
+            margin-bottom: 10px;
         }
 
-        .symbol-pad { display: flex; gap: clamp(10px, 2vw, 20px); margin-top: 5px; flex-shrink: 0; }
-        .sym-btn {
-            background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-texto);
-            font-size: 2.5rem; font-weight: bold; width: clamp(70px, 12vh, 100px); height: clamp(70px, 12vh, 100px);
-            border-radius: 20px; cursor: pointer; transition: 0.1s; display: flex; align-items: center; justify-content: center;
-            -webkit-tap-highlight-color: transparent; outline: none;
-        }
-        
-        @media (hover: hover) { .sym-btn:hover { transform: scale(1.05); } }
-        .sym-btn:active { background: var(--cor-jogo-verde) !important; color: white !important; transform: scale(0.95); }
-        .sym-btn:focus { background: white; }
-
-        .error-shake { animation: shake 0.4s; color: var(--cor-erro) !important; border-color: var(--cor-erro) !important; }
-        @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
-
-        .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
-
-        /* MODAL ATUALIZADO: Padding 25px e estilo de relatório */
+        /* Modal / Relatório */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 380px; width: 90%; box-sizing: border-box; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 400px; width: 90%; }
         
-        .report-table { width: 100%; margin: 15px 0; border-collapse: collapse; font-size: 0.9rem; }
-        .report-table th { background: var(--cor-caixa-info); padding: 8px; color: var(--cor-texto); }
-        .report-table td { padding: 8px; border-bottom: 1px solid #eee; }
-        .text-correct { color: var(--cor-jogo-verde); font-weight: bold; }
-        .text-wrong { color: var(--cor-erro); font-weight: bold; }
+        .star { font-size: 20px; color: #ddd; }
+        .star.correct { color: var(--cor-jogo-verde); }
+        .star.wrong { color: var(--cor-erro); }
+
+        /* Estilo Nível 2 - Botões Numéricos */
+        .num-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; width: 100%; max-width: 400px; margin-top: 10px; }
+        .num-btn { background: white; border: 2px solid var(--cor-principal); border-radius: 10px; padding: 10px; font-size: 1.2rem; font-weight: bold; cursor: pointer; }
+        .num-btn:hover { background: var(--cor-fundo); }
     </style>
 </head>
 <body>
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     <div class="sidebar" id="sidebar">
+        <!-- Sidebar content similar ao anterior -->
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
-            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
+            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src="" class="img-icon-sidebar"> Pré-Escolar</a>
-        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src="" class="img-icon-sidebar"> 1º Ano</a>
-        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src="" class="img-icon-sidebar"> 2º Ano</a>
-        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src="" class="img-icon-sidebar"> 3º Ano</a>
-        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src="" class="img-icon-sidebar"> 4º Ano</a>
+        <a href="/jogos/1/" class="sidebar-item" id="menu-1">1º Ano</a>
     </div>
 
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
         <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal);">
-            <img id="header-icon" src="" style="height:32px; width: auto;"> Matemática - 1º Ano
+            <img id="header-icon" src="" style="height:32px;"> Matemática - 1º Ano
         </h1>
         <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
     </header>
 
     <main class="main-content">
+        <!-- Tela Inicial -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
-                <div class="explanation-box">
-                    <p style="color:var(--cor-texto); font-weight:bold; margin-bottom: 20px; font-size: 1.4rem;">Vê qual é o maior:</p>
-                    <div class="anim-comp-container">
-                        <div class="anim-box">5</div>
-                        <div class="anim-symbol">></div>
-                        <div class="anim-box">2</div>
-                    </div>
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                    <img id="intro-img" src="" style="width:200px; margin-bottom:20px;">
+                    <h2 style="color:var(--cor-principal);">Trator das Dezenas</h2>
+                    <p>Aprende as dezenas e unidades na quinta!</p>
                 </div>
-                <h2 style="color:var(--cor-principal); text-align:center;">Maior, Menor ou Igual</h2>
-                <button class="option-btn" style="border-color:var(--cor-jogo-verde); background:var(--cor-jogo-verde); color:white;" onclick="startGame()">JOGAR</button>
+                <button class="btn-confirmar" onclick="startGame()">JOGAR</button>
             </div>
         </section>
 
+        <!-- Tela de Jogo -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
-                    <div class="status-item">⏳ <span id="timer">00:00</span></div>
-                    <div class="stars-container" id="stars-bar"></div>
-                    <div class="status-item">PTS: <span id="points">0</span></div>
+                    <div id="timer">00:00</div>
+                    <div id="stars-bar"></div>
+                    <div>PTS: <span id="points">0</span></div>
                 </div>
-                <div class="instruction-area" id="instruction-text">Compara as quantidades!</div>
+
+                <div id="instruction-text" style="text-align:center; font-weight:bold; color:var(--cor-texto); margin-bottom:10px;"></div>
                 
                 <div class="game-area">
-                    <div class="comparison-row">
-                        <div id="card-left" class="comp-card"></div>
-                        <div id="lacuna" class="symbol-lacuna">?</div>
-                        <div id="card-right" class="comp-card"></div>
-                    </div>
-
-                    <div class="symbol-pad">
-                        <button class="sym-btn" onclick="checkAnswer('<', event)"><</button>
-                        <button class="sym-btn" onclick="checkAnswer('=', event)">=</button>
-                        <button class="sym-btn" onclick="checkAnswer('>', event)">></button>
+                    <div id="target-display" class="alvo-numero">0</div>
+                    
+                    <div class="tractor-container">
+                        <img id="img-trator" class="img-trator" src="">
+                        <div class="reboque-container">
+                            <div id="carga" class="carga-area"></div>
+                            <img id="img-reboque" class="img-reboque" src="">
+                        </div>
                     </div>
                 </div>
+
+                <!-- Controlos Nível 1 -->
+                <div id="controls-n1" class="controls">
+                    <button class="btn-control" onclick="addItem('D')">
+                        <img id="btn-img-dez" src=""> +10
+                    </button>
+                    <button class="btn-control" onclick="addItem('U')">
+                        <img id="btn-img-uni" src=""> +1
+                    </button>
+                    <button class="btn-control" onclick="clearCarga()" style="border-color:var(--cor-erro)">
+                        <img id="btn-img-bor" src=""> Limpar
+                    </button>
+                </div>
+
+                <!-- Controlos Nível 2 -->
+                <div id="controls-n2" class="controls" style="display:none; flex-direction:column; align-items:center;">
+                    <div class="num-grid" id="num-pad"></div>
+                </div>
+
+                <button id="btn-proximo" class="btn-confirmar" onclick="checkAnswer()">CONFIRMAR</button>
             </div>
         </section>
     </main>
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="margin-top: 0; color: var(--cor-principal);"></h2>
-            <div id="modal-msg" style="margin-bottom: 25px; color: var(--cor-texto);"></div>
-            <button class="option-btn" onclick="location.reload()" style="background: var(--cor-jogo-verde); color: white; margin-bottom: 10px;">Jogar de Novo</button>
-            <button class="option-btn" onclick="window.location.href='../'" style="background: white; color: var(--cor-principal); border: 2px solid var(--cor-principal);">Voltar</button>
+            <h2 id="modal-title"></h2>
+            <div id="modal-msg"></div>
+            <button class="btn-confirmar" onclick="location.reload()">Jogar de Novo</button>
         </div>
     </div>
 
     <script src="dados.js"></script>
     <script>
-        let level = 1, points = 0, seconds = 0, timerInterval;
-        let questionNum = 1, valA = 0, valB = 0, correctSym = "";
-        let isRoundActive = true, currentFruit = "";
+        let currentLevel = 1, points = 0, questionNum = 1, seconds = 0;
+        let targetValue = 0, userTens = 0, userUnits = 0;
         let stats = { 1: { c: 0, e: 0 }, 2: { c: 0, e: 0 } };
-
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playSound(type) {
-            try {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.frequency.setValueAtTime(type === 'certo' ? 600 : 150, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-            } catch(e) {}
-        }
+        let timerInterval;
 
         window.onload = () => {
-            if(typeof JOGO_CONFIG !== 'undefined') {
-                const p = JOGO_CONFIG.caminhoIcons;
-                const i = JOGO_CONFIG.iconesMenu;
-                document.getElementById('header-icon').src = p + i.ano1;
-                document.getElementById('side-pre').src = p + i.pre;
-                document.getElementById('side-1').src = p + i.ano1;
-                document.getElementById('side-2').src = p + i.ano2;
-                document.getElementById('side-3').src = p + i.ano3;
-                document.getElementById('side-4').src = p + i.ano4;
+            const v = JOGO_CONFIG.veiculos;
+            const p = JOGO_CONFIG.caminhoImg;
+            const pi = JOGO_CONFIG.caminhoIcons;
+
+            // Setup Imagens
+            document.getElementById('header-icon').src = pi + JOGO_CONFIG.iconesMenu.ano1;
+            document.getElementById('intro-img').src = p + v.trator;
+            document.getElementById('img-trator').src = p + v.trator;
+            document.getElementById('img-reboque').src = p + v.reboque;
+            document.getElementById('btn-img-dez').src = p + v.dezena;
+            document.getElementById('btn-img-uni').src = p + v.unidade;
+            document.getElementById('btn-img-bor').src = p + v.borracha;
+
+            // Gerar teclado numérico para nível 2
+            const pad = document.getElementById('num-pad');
+            for(let i=1; i<=30; i++) {
+                const b = document.createElement('button');
+                b.className = 'num-btn';
+                b.innerText = i;
+                b.onclick = () => selectNumber(i);
+                pad.appendChild(b);
             }
         };
 
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
         function startGame() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            startTimer(); 
+            startTimer();
             initStars();
             loadQuestion();
         }
@@ -233,7 +227,9 @@
         function startTimer() {
             timerInterval = setInterval(() => {
                 seconds++;
-                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
+                let m = Math.floor(seconds/60).toString().padStart(2,'0');
+                let s = (seconds%60).toString().padStart(2,'0');
+                document.getElementById('timer').innerText = `${m}:${s}`;
             }, 1000);
         }
 
@@ -241,125 +237,133 @@
             const bar = document.getElementById('stars-bar');
             bar.innerHTML = '';
             for(let i=0; i<5; i++) {
-                const s = document.createElement('div');
+                const s = document.createElement('span');
                 s.className = 'star';
-                s.innerText = '★';
+                s.innerText = '★ ';
                 bar.appendChild(s);
             }
         }
 
         function loadQuestion() {
-            isRoundActive = true;
-            document.getElementById('lacuna').innerText = "?";
-            document.getElementById('lacuna').classList.remove('error-shake');
-            document.getElementById('lacuna').style.color = "var(--cor-vibrante)";
-            document.getElementById('lacuna').style.borderColor = "var(--cor-principal)";
-
-            valA = Math.floor(Math.random() * 11);
-            valB = Math.floor(Math.random() * 11);
-            if(Math.random() > 0.75) valB = valA; 
-
-            if(valA > valB) correctSym = ">";
-            else if(valA < valB) correctSym = "<";
-            else correctSym = "=";
-
-            if (level === 1) {
-                document.getElementById('instruction-text').innerText = "Compara as quantidades!";
-                currentFruit = JOGO_CONFIG.frutas[Math.floor(Math.random() * JOGO_CONFIG.frutas.length)];
-            } else {
-                document.getElementById('instruction-text').innerText = "Qual número é maior?";
-            }
-
-            renderCard('card-left', valA);
-            renderCard('card-right', valB);
-        }
-
-        function renderCard(id, value) {
-            const card = document.getElementById(id);
-            card.innerHTML = "";
-
-            if (level === 1) {
-                const grid = document.createElement('div');
-                grid.className = 'fruit-grid';
-                if(value > 0) {
-                    for(let i=0; i<value; i++) {
-                        const img = document.createElement('img');
-                        img.src = JOGO_CONFIG.caminhoImg + currentFruit;
-                        grid.appendChild(img);
-                    }
-                }
-                card.appendChild(grid);
-            } else {
-                const numObj = JOGO_CONFIG.numeros.find(n => n.valor === value);
-                if(numObj) {
-                    const img = document.createElement('img');
-                    img.src = JOGO_CONFIG.caminhoImg + numObj.imagem;
-                    img.className = "comp-img-num";
-                    card.appendChild(img);
-                }
-            }
-        }
-
-        function checkAnswer(sym, event) {
-            if (!isRoundActive) return;
-            if (event) event.currentTarget.blur();
+            clearCarga();
+            const config = JOGO_CONFIG.niveis[currentLevel];
+            document.getElementById('instruction-text').innerText = config.instrucao;
             
-            isRoundActive = false;
-            document.getElementById('lacuna').innerText = sym;
+            // Gerar número entre 1 e 30
+            targetValue = Math.floor(Math.random() * 29) + 1;
+
+            if(currentLevel === 1) {
+                document.getElementById('target-display').style.display = 'block';
+                document.getElementById('target-display').innerText = targetValue;
+                document.getElementById('controls-n1').style.display = 'flex';
+                document.getElementById('controls-n2').style.display = 'none';
+                document.getElementById('btn-proximo').style.display = 'block';
+            } else {
+                document.getElementById('target-display').style.display = 'none';
+                document.getElementById('controls-n1').style.display = 'none';
+                document.getElementById('controls-n2').style.display = 'flex';
+                document.getElementById('btn-proximo').style.display = 'none';
+                
+                // No Nível 2, o trator já aparece carregado
+                userTens = Math.floor(targetValue / 10);
+                userUnits = targetValue % 10;
+                renderCarga();
+            }
+        }
+
+        function addItem(tipo) {
+            if(tipo === 'D' && userTens < 3) userTens++;
+            if(tipo === 'U' && userUnits < 9) userUnits++;
+            renderCarga();
+        }
+
+        function clearCarga() {
+            userTens = 0; userUnits = 0;
+            renderCarga();
+        }
+
+        function renderCarga() {
+            const container = document.getElementById('carga');
+            container.innerHTML = '';
+            const p = JOGO_CONFIG.caminhoImg;
+            const v = JOGO_CONFIG.veiculos;
+
+            for(let i=0; i<userTens; i++) {
+                const img = document.createElement('img');
+                img.src = p + v.dezena;
+                img.className = 'item-dezena';
+                container.appendChild(img);
+            }
+            for(let i=0; i<userUnits; i++) {
+                const img = document.createElement('img');
+                img.src = p + v.unidade;
+                img.className = 'item-unidade';
+                container.appendChild(img);
+            }
+        }
+
+        function selectNumber(num) {
+            checkAnswer(num);
+        }
+
+        function checkAnswer(chosenNum = null) {
+            let isCorrect = false;
+            const totalUser = (userTens * 10) + userUnits;
+
+            if(currentLevel === 1) {
+                isCorrect = (totalUser === targetValue);
+            } else {
+                isCorrect = (chosenNum === targetValue);
+            }
 
             const stars = document.querySelectorAll('.star');
-            if (sym === correctSym) {
-                playSound('certo');
+            if(isCorrect) {
                 points += 20;
-                stats[level].c++;
-                document.getElementById('points').innerText = points;
-                stars[questionNum - 1].classList.add('correct');
-                stars[questionNum - 1].innerText = '✓';
+                stats[currentLevel].c++;
+                stars[questionNum-1].classList.add('correct');
             } else {
-                playSound('errado');
-                stats[level].e++;
-                document.getElementById('lacuna').classList.add('error-shake');
-                document.getElementById('lacuna').style.color = "var(--cor-erro)";
-                document.getElementById('lacuna').style.borderColor = "var(--cor-erro)";
-                stars[questionNum - 1].classList.add('wrong');
-                stars[questionNum - 1].innerText = '✕';
+                stats[currentLevel].e++;
+                stars[questionNum-1].classList.add('wrong');
             }
+
+            document.getElementById('points').innerText = points;
 
             setTimeout(() => {
                 questionNum++;
-                if (questionNum > 5) {
-                    if (level === 1) {
-                        level = 2; questionNum = 1;
+                if(questionNum > 5) {
+                    if(currentLevel === 1) {
+                        currentLevel = 2; questionNum = 1;
                         initStars(); loadQuestion();
                     } else {
-                        endGame();
+                        showReport();
                     }
                 } else {
                     loadQuestion();
                 }
-            }, 1500);
+            }, 1000);
         }
 
-        function endGame() {
+        function showReport() {
             clearInterval(timerInterval);
-            const modal = document.getElementById('modal');
+            const m = document.getElementById('modal');
             const r = JOGO_CONFIG.relatorio;
-            let msgFim = JOGO_CONFIG.mensagens.tenta;
-            if(points >= 180) msgFim = JOGO_CONFIG.mensagens.excelente;
-            else if(points >= 120) msgFim = JOGO_CONFIG.mensagens.bom;
+            let finalMsg = JOGO_CONFIG.mensagens.tenta;
+            if(points >= 160) finalMsg = JOGO_CONFIG.mensagens.excelente;
 
             document.getElementById('modal-title').innerText = r.titulo;
             document.getElementById('modal-msg').innerHTML = `
-                <p>${msgFim}</p>
-                <table class="report-table">
-                    <tr><th>Nível</th><th>Certas</th><th>Erradas</th></tr>
-                    <tr><td>1</td><td class="text-correct">${stats[1].c}</td><td class="text-wrong">${stats[1].e}</td></tr>
-                    <tr><td>2</td><td class="text-correct">${stats[2].c}</td><td class="text-wrong">${stats[2].e}</td></tr>
-                </table>
-                <p><b>${r.pontosTotal} ${points} / 200</b></p>
-                <p>${r.tempoTotal} <b>${document.getElementById('timer').innerText}</b></p>
+                <p>${finalMsg}</p>
+                <p><b>${r.pontosTotal}</b> ${points}</p>
+                <p><b>Nível 1:</b> ${stats[1].c} Certas</p>
+                <p><b>Nível 2:</b> ${stats[2].c} Certas</p>
+                <p><b>Tempo:</b> ${document.getElementById('timer').innerText}</p>
             `;
-            modal.style.display = 'flex';
+            m.style.display = 'flex';
+        }
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
         }
     </script>
 </body>
