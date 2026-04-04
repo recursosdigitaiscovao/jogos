@@ -46,7 +46,6 @@
         .anim-tractor-wrap { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; animation: animDriveIn 2s ease-out forwards; }
         @keyframes animDriveIn { from { left: -400px; transform: translateX(0); } to { left: 50%; transform: translateX(-50%); } }
 
-        /* AJUSTE BOTÕES INTRO LADO A LADO */
         .anim-line-3 { display: flex; gap: 10px; justify-content: center; width: 100%; flex-wrap: nowrap; }
         .intro-btn {
             background: white; border: 3.5px solid var(--cor-jogo-verde); border-radius: 15px;
@@ -67,9 +66,7 @@
             display: flex; align-items: flex-end; justify-content: center; gap: 3px;
             margin-bottom: -8px; z-index: 5;
         }
-        /* Pilhas */
         .dezena-stack, .unit-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
-
         .fardo-img { width: clamp(10px, 2.1vw, 17px); height: auto; object-fit: contain; }
 
         /* --- Interface do Jogo --- */
@@ -79,6 +76,7 @@
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
+        .instruction-area { text-align: center; color: var(--cor-texto); font-weight: bold; padding: 5px 20px; }
         .target-number-box { font-size: clamp(1.8rem, 5vh, 2.5rem); color: var(--cor-vibrante); font-weight: 700; background: white; padding: 5px 30px; border-radius: 15px; border: 3px solid var(--cor-vibrante); margin: 0 auto 5px auto; display: block; width: fit-content; }
 
         .game-area { 
@@ -92,7 +90,7 @@
         .tractor-container.at-center { left: 50%; transform: translateX(-50%); }
         .tractor-container.exit { left: 150%; transition: left 1s ease-in; }
 
-        /* Teclado do Jogo - REDUÇÃO DE LARGURA E DESLOCAMENTO 10px */
+        /* Teclado do Jogo */
         .options-area { 
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; 
             flex-grow: 1; width: 100%; max-width: 380px; margin: 0 auto; align-content: center;
@@ -105,8 +103,6 @@
             transition: 0.1s; -webkit-tap-highlight-color: transparent; outline: none; font-family: 'Fredoka'; gap: 8px; font-weight: 700;
         }
         .control-btn:active { background: var(--cor-jogo-verde) !important; color: white !important; transform: scale(0.95); }
-        
-        /* BOTÕES MAIS PEQUENOS */
         .control-btn.build { height: clamp(50px, 8vh, 65px); font-size: 0.95rem; padding: 4px; }
         .control-btn.build img { height: 45%; width: auto; }
         .control-btn.num { height: clamp(40px, 6.5vh, 55px); font-size: clamp(1.1rem, 3vh, 1.7rem); flex-direction: column; }
@@ -122,8 +118,14 @@
 
         .option-btn { background: var(--cor-jogo-verde); border: none; color: white; font-size: 1.4rem; font-weight: 700; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka', sans-serif; width: 100%; flex-shrink: 0; }
 
+        /* MODIFICAÇÃO SOLICITADA: Padding 25px L/R e largura reduzida */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px 20px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 360px; width: 90%; box-sizing: border-box; }
+        .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 360px; width: 90%; box-sizing: border-box; }
+
+        /* Tabela simples para o relatório */
+        .result-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9rem; }
+        .result-table th { border-bottom: 2px solid #eee; padding: 5px; color: var(--cor-principal); }
+        .result-table td { padding: 8px 5px; border-bottom: 1px solid #f9f9f9; }
 
         @keyframes selectPulse { 0%, 100% { background: white; } 50% { background: var(--cor-jogo-verde); color: white; } }
         .active-sim { animation: selectPulse 1.2s infinite; }
@@ -204,8 +206,7 @@
                             <img id="game-tractor-img" class="tractor-img" src="">
                         </div>
                     </div>
-                    <div id="controls" class="options-area">
-                    </div>
+                    <div id="controls" class="options-area"></div>
                 </div>
             </div>
         </section>
@@ -213,7 +214,7 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="margin-top: 0;"></h2>
+            <h2 id="modal-title" style="margin-top: 0; color: var(--cor-principal);"></h2>
             <div id="modal-msg" style="margin-bottom: 25px; color: var(--cor-texto);"></div>
             <button class="option-btn" onclick="location.reload()" style="margin-bottom:10px;">Jogar de Novo</button>
             <button class="option-btn" onclick="window.location.href='../'" style="background: white; color: var(--cor-principal); border: 2px solid var(--cor-principal);">Voltar</button>
@@ -225,6 +226,8 @@
         let level = 1, round = 1, points = 0, seconds = 0, timerInterval;
         let targetValue = 0, currentTens = 0, currentUnits = 0;
         let isRoundActive = false;
+        // Objeto para guardar certas/erradas por nível
+        let stats = { 1: { c: 0, e: 0 }, 2: { c: 0, e: 0 } };
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound(type) {
@@ -326,7 +329,9 @@
         function startTimer() {
             timerInterval = setInterval(() => {
                 seconds++;
-                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
+                const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const secs = (seconds % 60).toString().padStart(2, '0');
+                document.getElementById('timer').innerText = `${mins}:${secs}`;
             }, 1000);
         }
 
@@ -345,13 +350,10 @@
             isRoundActive = false;
             const train = document.getElementById('tractor-unit');
             const controls = document.getElementById('controls');
-            
             train.style.transition = 'none';
             train.classList.remove('at-center', 'exit');
-            
             clearWagons();
             controls.innerHTML = '';
-            
             targetValue = Math.floor(Math.random() * 41) + 10;
             document.getElementById('game-instruction').innerText = JOGO_CONFIG.niveis[level].instrucao;
 
@@ -388,7 +390,7 @@
                 <button class="control-btn build" style="border-color:var(--cor-erro)" onclick="clearWagons()">
                     <img src="${pi}borracha.png" style="height:35px;">
                 </button>
-                <button class="go-btn" onclick="checkAnswer(null)">ENTREGAR <img src="${pi + JOGO_CONFIG.veiculos.trator}" style="height:30px;"></button>
+                <button class="go-btn" onclick="checkAnswer(null)">ENTREGAR <img src="${pi + JOGO_CONFIG.veiculos.trator}" style="height:26px;"></button>
             `;
         }
 
@@ -415,7 +417,7 @@
             if(type === 'dezena') {
                 if(currentTens >= 5) return;
                 currentTens++;
-                addBaleVisual(document.getElementById('cargo-tens'), 10, true);
+                addBaleVisual(document.getElementById('cargo-tens'), 1, true); // Adiciona 1 unidade de dezena
             } else {
                 if(currentUnits >= 15) return;
                 currentUnits++;
@@ -433,18 +435,13 @@
             if(!isRoundActive) return;
             isRoundActive = false;
 
-            let isCorrect = false;
-            if (level === 1) {
-                isCorrect = ((currentTens * 10) + currentUnits) === targetValue;
-            } else {
-                isCorrect = val === targetValue;
-            }
-
+            let isCorrect = level === 1 ? ((currentTens * 10) + currentUnits === targetValue) : (val === targetValue);
             const stars = document.querySelectorAll('.star');
             const train = document.getElementById('tractor-unit');
 
             if(isCorrect) {
                 playSound('certo');
+                stats[level].c++; // Incrementa estatística correta
                 stars[round - 1].classList.add('correct');
                 stars[round - 1].innerText = '✓';
                 points += 20;
@@ -452,9 +449,10 @@
                 setTimeout(() => {
                     train.classList.add('exit');
                     setTimeout(nextStep, 1000);
-                }, 500);
+                }, 1000);
             } else {
                 playSound('errado');
+                stats[level].e++; // Incrementa estatística errada
                 stars[round - 1].classList.add('wrong');
                 stars[round - 1].innerText = '✕';
                 train.classList.add('error-shake');
@@ -462,7 +460,7 @@
                     train.classList.remove('error-shake');
                     train.classList.add('exit');
                     setTimeout(nextStep, 1000);
-                }, 800);
+                }, 1200);
             }
         }
 
@@ -482,17 +480,38 @@
             }
         }
 
+        // ALTERAÇÃO SOLICITADA: Relatório com Níveis e Tempo
         function endGame() {
             clearInterval(timerInterval);
             const modal = document.getElementById('modal');
-            modal.style.display = 'flex';
-            document.getElementById('modal-title').innerText = JOGO_CONFIG.relatorio.titulo;
+            const r = JOGO_CONFIG.relatorio;
+            document.getElementById('modal-title').innerText = r.titulo;
+            
             let finalMsg = points >= 160 ? JOGO_CONFIG.mensagens.excelente : (points >= 100 ? JOGO_CONFIG.mensagens.bom : JOGO_CONFIG.mensagens.tenta);
+            
             document.getElementById('modal-msg').innerHTML = `
-                <p style="font-size:1.2rem; font-weight:bold;">${finalMsg}</p>
-                <p>${JOGO_CONFIG.relatorio.pontuacao} <b>${points} / 200</b></p>
-                <p>${JOGO_CONFIG.relatorio.tempo} <b>${document.getElementById('timer').innerText}</b></p>
+                <p style="font-size:1.1rem; font-weight:bold; margin-bottom:15px;">${finalMsg}</p>
+                <table class="result-table">
+                    <tr>
+                        <th>${r.labelNivel}</th>
+                        <th>${r.labelCertas}</th>
+                        <th>${r.labelErradas}</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td style="color:var(--cor-jogo-verde); font-weight:bold;">${stats[1].c}</td>
+                        <td style="color:var(--cor-erro); font-weight:bold;">${stats[1].e}</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td style="color:var(--cor-jogo-verde); font-weight:bold;">${stats[2].c}</td>
+                        <td style="color:var(--cor-erro); font-weight:bold;">${stats[2].e}</td>
+                    </tr>
+                </table>
+                <p>${r.pontosTotal} <b>${points} / 200</b></p>
+                <p>${r.tempoTotal} <b>${document.getElementById('timer').innerText}</b></p>
             `;
+            modal.style.display = 'flex';
         }
     </script>
 </body>
