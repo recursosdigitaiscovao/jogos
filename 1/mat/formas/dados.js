@@ -2,7 +2,7 @@
 const JOGO_CONFIG = {
     // Caminhos de diretoria (Ajustados para jogos/1/mat/formas/)
     caminhoIcons: "../../../icons/",
-    caminhoImg: "../../../img/", // Pasta onde estão as figuras geométricas
+    caminhoImg: "../../../img/formas/", // Pasta onde estão as figuras geométricas
 
     iconesMenu: {
         pre: "iconpre.png",
