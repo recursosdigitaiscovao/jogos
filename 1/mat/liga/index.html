@@ -7,12 +7,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --cor-principal: #ff9100;
+            --cor-principal: #ff9100;   /* Cor da navegação (Laranja) */
             --cor-vibrante: #ff7300;  
             --cor-fundo: #e8f9f4;      
             --cor-texto: #8a6436;      
             --header-height: 70px;
-            --cor-jogo-verde: #45cfa8; 
+            --cor-jogo-verde: #45cfa8;  /* Cor solicitada (#45cfa8) */
             --cor-erro: #ff4757;
             --cor-caixa-info: #e8f9f4;
         }
@@ -20,6 +20,7 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
+        /* --- Sidebar & Nav --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
@@ -29,12 +30,15 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
+        /* --- Layout --- */
         .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; height: calc(100% - var(--header-height)); }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow: hidden; }
         .screen.active { display: flex; }
 
+        /* ALTERAÇÃO 1: Limite do card com a cor #45cfa8 (var(--cor-jogo-verde)) */
         .game-card {
-            background: white; border-radius: 30px; padding: 0; border: 4px solid var(--cor-principal);
+            background: white; border-radius: 30px; padding: 0; 
+            border: 4px solid var(--cor-jogo-verde);
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
@@ -60,11 +64,7 @@
 
         .instruction-area { text-align: center; font-weight: bold; color: var(--cor-texto); padding: 5px 0; flex-shrink: 0; font-size: clamp(0.9rem, 2.5vh, 1.2rem); }
 
-        /* Ajuste dos Cartões para aparecerem sempre 4 */
-        .matching-grid { 
-            display: flex; width: 100%; height: 100%; padding: 15px; box-sizing: border-box; gap: 15px; min-height: 0;
-        }
-        
+        .matching-grid { display: flex; width: 100%; height: 100%; padding: 15px; box-sizing: border-box; gap: 15px; min-height: 0; }
         .match-column { flex: 1; display: flex; flex-direction: column; gap: 10px; height: 100%; }
 
         .match-item {
@@ -83,19 +83,21 @@
         @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
 
         .footer-btns { padding: 10px 20px 20px 20px; width: 100%; box-sizing: border-box; }
+        
+        /* ALTERAÇÃO 2: Título do jogo em verde (#45cfa8) */
+        .footer-btns h2 { color: var(--cor-jogo-verde) !important; text-align: center; margin-top: 0; font-weight: bold; }
+        
         .option-btn { background: var(--cor-jogo-verde); border: none; color: white; font-size: 1.4rem; font-weight: 700; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; }
         
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 380px; width: 90%; box-sizing: border-box; }
-
-        .result-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9rem; }
-        .result-table th { border-bottom: 2px solid #eee; padding: 5px; color: var(--cor-principal); }
-        .result-table td { padding: 8px 5px; border-bottom: 1px solid #f9f9f9; }
+        .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); max-width: 380px; width: 90%; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    
+    <!-- Sidebar Completa (Alteração 3) -->
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
@@ -104,11 +106,16 @@
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
         <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
         <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
-        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal);"><img id="header-icon" src="" style="height:32px;"> Matemática - 1º Ano</h1>
+        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin: 0;">
+            <img id="header-icon" src="" style="height:32px; width: auto;"> Matemática - 1º Ano
+        </h1>
         <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
     </header>
 
@@ -124,7 +131,7 @@
                     </div>
                 </div>
                 <div class="footer-btns">
-                    <h2 style="color:var(--cor-principal); text-align:center; margin-top:0;">Ligar Números</h2>
+                    <h2>Ligar Números</h2>
                     <button class="option-btn" onclick="startGame()">JOGAR</button>
                 </div>
             </div>
@@ -133,9 +140,9 @@
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
-                    <div class="status-item">⏳ <span id="timer">00:00</span></div>
+                    <div>⏳ <span id="timer">00:00</span></div>
                     <div class="stars-container" id="stars-bar"></div>
-                    <div class="status-item">PTS: <span id="points">0</span></div>
+                    <div>PTS: <span id="points">0</span></div>
                 </div>
                 <div class="instruction-area">Liga todos os pares corretamente!</div>
                 <div class="game-area">
@@ -150,10 +157,9 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="margin-top: 0; color: var(--cor-principal);"></h2>
-            <div id="modal-msg"></div>
+            <h2 id="modal-title" style="margin-top: 0;"></h2>
+            <div id="modal-msg" style="margin-bottom: 20px;"></div>
             <button class="option-btn" onclick="location.reload()" style="margin-bottom:10px;">Jogar de Novo</button>
-            <button class="option-btn" onclick="window.location.href='../'" style="background: white; color: var(--cor-principal); border: 2px solid var(--cor-principal);">Voltar</button>
         </div>
     </div>
 
@@ -179,9 +185,17 @@
 
         window.onload = () => {
             if(typeof JOGO_CONFIG !== 'undefined') {
-                document.getElementById('header-icon').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1;
-                document.getElementById('side-pre').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.pre;
-                document.getElementById('side-1').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1;
+                const pi = JOGO_CONFIG.caminhoIcons;
+                const i = JOGO_CONFIG.iconesMenu;
+                document.getElementById('header-icon').src = pi + i.ano1;
+                
+                // Carregar todos os ícones do menu (Alteração 3)
+                if(document.getElementById('side-pre')) document.getElementById('side-pre').src = pi + i.pre;
+                if(document.getElementById('side-1')) document.getElementById('side-1').src = pi + i.ano1;
+                if(document.getElementById('side-2')) document.getElementById('side-2').src = pi + i.ano2;
+                if(document.getElementById('side-3')) document.getElementById('side-3').src = pi + i.ano3;
+                if(document.getElementById('side-4')) document.getElementById('side-4').src = pi + i.ano4;
+                
                 iniciarAnimIntro();
             }
         };
@@ -213,20 +227,16 @@
         function startTimer() { timerInterval = setInterval(() => { seconds++; document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; }, 1000); }
 
         function initStars() {
-            const bar = document.getElementById('stars-bar');
-            bar.innerHTML = '';
+            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
             for(let i=0; i<4; i++) {
                 const s = document.createElement('div');
-                s.className = 'star';
-                s.innerText = '★';
+                s.className = 'star'; s.innerText = '★';
                 bar.appendChild(s);
             }
         }
 
         function loadRound() {
-            matchesFoundInRound = 0;
-            selectedItem1 = null; selectedItem2 = null;
-            isChecking = false;
+            matchesFoundInRound = 0; selectedItem1 = null; selectedItem2 = null; isChecking = false;
             if(roundInLevel === 1) initStars();
 
             const colLeft = document.getElementById('col-left');
@@ -340,12 +350,12 @@
             document.getElementById('modal-msg').innerHTML = `
                 <p style="margin-bottom:15px; font-weight:bold;">${finalMsg}</p>
                 <table class="result-table">
-                    <tr><th>${r.labelNivel}</th><th>${r.labelCertas}</th><th>${r.labelErradas}</th></tr>
-                    <tr><td>1</td><td style="color:var(--cor-jogo-verde); font-weight:bold;">${stats[1].c}</td><td style="color:var(--cor-erro); font-weight:bold;">${stats[1].e}</td></tr>
-                    <tr><td>2</td><td style="color:var(--cor-jogo-verde); font-weight:bold;">${stats[2].c}</td><td style="color:var(--cor-erro); font-weight:bold;">${stats[2].e}</td></tr>
+                    <tr><th>Nível</th><th>Certas</th><th>Erradas</th></tr>
+                    <tr><td>1</td><td>${stats[1].c}</td><td>${stats[1].e}</td></tr>
+                    <tr><td>2</td><td>${stats[2].c}</td><td>${stats[2].e}</td></tr>
                 </table>
-                <p>${r.pontosTotal} <b>${points} / 200</b></p>
-                <p>${r.tempoTotal} <b>${document.getElementById('timer').innerText}</b></p>
+                <p>Pontuação Total: <b>${points} / 200</b></p>
+                <p>Tempo: <b>${document.getElementById('timer').innerText}</b></p>
             `;
             modal.style.display = 'flex';
         }
