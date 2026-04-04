@@ -1,26 +1,29 @@
-// dados.js
 const JOGO_CONFIG = {
-    // Se estiveres na pasta /1/mat/, o caminho para /icons/ é ../../icons/
-    caminhoIcons: "../../icons/", 
-    // Caminho para os icons dos jogos (mesma diretoria)
-    caminhoIconJogos: "./iconjogos/",
-    icones: {
-        pre: "iconpre.png",
-        ano1: "icon1.png",
-        ano2: "icon2.png",
-        ano3: "icon3.png",
-        ano4: "icon4.png"
+    // Caminho para os icons do menu (subindo dois níveis até à pasta jogos/icons)
+    caminhoIconsMenu: "../../icons/",
+    
+    // Caminho para os icons dos jogos (na mesma pasta do index)
+    caminhoIconsJogos: "iconjogos/",
+
+    // Nomes dos ficheiros de ícones do menu/sidebar
+    iconesMenu: {
+        pre: "pre.png",
+        ano1: "ano1.png",
+        ano2: "ano2.png",
+        ano3: "ano3.png",
+        ano4: "ano4.png"
     },
-    // Mapeamento dos ficheiros da imagem que enviaste
-    iconesJogos: {
-        conta: "conta.png",
-        formas: "formas.png",
-        soma: "soma.png",
-        subtrair: "subtrair.png",
-        liga: "liga.png",
-        compara: "compara.png",
-        sequencias: "sequencias.png",
-        parouimpar: "parouimpar.png"
-        dezenas: "dezenas.png"
-    }
+
+    // Lista de jogos desta página
+    listaJogos: [
+        { nome: "Contar os Números", icon: "conta.png", link: "contar/" },
+        { nome: "Formas Geométricas", icon: "formas.png", link: "formas/" },
+        { nome: "Somas Divertidas", icon: "soma.png", link: "soma/" },
+        { nome: "Subtração", icon: "subtrair.png", link: "subtrair/" },
+        { nome: "Liga os Pontos", icon: "liga.png", link: "liga/" },
+        { nome: "Compara Números", icon: "compara.png", link: "compara/" },
+        { nome: "Sequências", icon: "sequencias.png", link: "sequencias/" },
+        { nome: "Par ou Ímpar", icon: "parouimpar.png", link: "parouimpar/" },
+        { nome: "As Dezenas", icon: "dezenas.png", link: "dezenas/" }
+    ]
 };
