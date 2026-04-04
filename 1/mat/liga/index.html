@@ -34,7 +34,7 @@
         .screen.active { display: flex; }
 
         .game-card {
-            background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal);
+            background: white; border-radius: 30px; padding: 10px 20px; border: 4px solid var(--cor-principal);
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
@@ -44,11 +44,13 @@
         .hand-icon { position: absolute; font-size: 2.5rem; bottom: 20px; left: 30%; animation: handMatch 3s infinite; }
         @keyframes handMatch { 0%, 100% { transform: translate(0,0); opacity:0; } 10%, 90% { opacity:1; } 50% { transform: translate(120px, 0); } }
 
-        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; padding: 0 10px 8px 10px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; }
         .stars-container { display: flex; gap: 6px; }
         .star { width: 24px; height: 24px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: transparent; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
+
+        .instruction-area { text-align: center; font-family: 'Fredoka', sans-serif; font-size: clamp(1rem, 2.5vh, 1.3rem); font-weight: bold; color: var(--cor-texto); padding: 5px 0; margin-bottom: 5px; flex-shrink: 0; }
 
         .matching-grid { 
             flex: 1; display: grid; grid-template-columns: 1fr 1fr; width: 100%; overflow: hidden;
@@ -76,7 +78,7 @@
         .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
         
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 360px; width: 90%; box-sizing: border-box; }
+        .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 380px; width: 90%; box-sizing: border-box; }
 
         .result-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9rem; }
         .result-table th { border-bottom: 2px solid #eee; padding: 5px; color: var(--cor-principal); }
@@ -149,7 +151,7 @@
     <script>
         let level = 1, points = 0, seconds = 0, timerInterval;
         let selectedItem1 = null, selectedItem2 = null;
-        let matchesFound = 0, attemptsInRound = 0;
+        let roundInLevel = 1, matchesFoundInRound = 0;
         let isChecking = false;
         let stats = { 1: { c: 0, e: 0 }, 2: { c: 0, e: 0 } };
 
@@ -170,16 +172,23 @@
             document.getElementById('overlay').classList.toggle('active');
         }
 
+        window.onload = () => {
+            if(typeof JOGO_CONFIG !== 'undefined') {
+                document.getElementById('header-icon').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1;
+                document.getElementById('side-pre').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.pre;
+                document.getElementById('side-1').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1;
+            }
+        };
+
         function startGame() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
             startTimer(); 
-            loadLevel();
+            loadRound();
         }
 
         function startTimer() {
-            if(timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 seconds++;
                 document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
@@ -189,7 +198,7 @@
         function initStars() {
             const bar = document.getElementById('stars-bar');
             bar.innerHTML = '';
-            for(let i=0; i<4; i++) { // 4 Rondas por nível
+            for(let i=0; i<4; i++) {
                 const s = document.createElement('div');
                 s.className = 'star';
                 s.innerText = '★';
@@ -197,45 +206,38 @@
             }
         }
 
-        function updateStar(wasCorrect) {
-            const stars = document.querySelectorAll('.star');
-            if(stars[attemptsInRound]) {
-                stars[attemptsInRound].classList.add(wasCorrect ? 'correct' : 'wrong');
-                stars[attemptsInRound].innerText = wasCorrect ? '✓' : '✕';
-            }
-            attemptsInRound++;
-        }
-
-        function loadLevel() {
-            matchesFound = 0;
-            attemptsInRound = 0;
+        function loadRound() {
+            matchesFoundInRound = 0;
             selectedItem1 = null;
             selectedItem2 = null;
-            initStars();
+            isChecking = false;
+            
+            if(roundInLevel === 1) initStars();
+
             const colLeft = document.getElementById('col-left');
             const colRight = document.getElementById('col-right');
             colLeft.innerHTML = ''; colRight.innerHTML = '';
             
-            // Escolher 4 números únicos para a ronda
+            // Escolher 4 números únicos
             let subset = [...JOGO_CONFIG.numeros].sort(() => 0.5 - Math.random()).slice(0, 4);
-            let allCards = [];
+            let allItems = [];
 
             subset.forEach(n => {
-                allCards.push({data: n, type: 'img'});
-                allCards.push({data: n, type: 'word'});
+                allItems.push({data: n, type: 'img'});
+                allItems.push({data: n, type: 'word'});
             });
 
             if (level === 1) {
-                // Nível 1: Esquerda Imagens, Direita Palavras
-                let lefts = allCards.filter(c => c.type === 'img').sort(() => 0.5 - Math.random());
-                let rights = allCards.filter(c => c.type === 'word').sort(() => 0.5 - Math.random());
-                lefts.forEach(c => colLeft.appendChild(createItem(c.data, c.type)));
-                rights.forEach(c => colRight.appendChild(createItem(c.data, c.type)));
+                // Nível 1: Fixos - Imagens à esquerda, Palavras à direita
+                let lefts = allItems.filter(i => i.type === 'img').sort(() => 0.5 - Math.random());
+                let rights = allItems.filter(i => i.type === 'word').sort(() => 0.5 - Math.random());
+                lefts.forEach(i => colLeft.appendChild(createItem(i.data, i.type)));
+                rights.forEach(i => colRight.appendChild(createItem(i.data, i.type)));
             } else {
-                // Nível 2: Tudo misturado entre as duas colunas
-                allCards.sort(() => 0.5 - Math.random());
-                allCards.slice(0, 4).forEach(c => colLeft.appendChild(createItem(c.data, c.type)));
-                allCards.slice(4, 8).forEach(c => colRight.appendChild(createItem(c.data, c.type)));
+                // Nível 2: Tudo misturado
+                allItems.sort(() => 0.5 - Math.random());
+                allItems.slice(0, 4).forEach(i => colLeft.appendChild(createItem(i.data, i.type)));
+                allItems.slice(4, 8).forEach(i => colRight.appendChild(createItem(i.data, i.type)));
             }
         }
 
@@ -244,7 +246,6 @@
             div.className = 'match-item';
             div.dataset.value = data.valor;
             div.dataset.type = type;
-            
             if (type === 'img') {
                 const img = document.createElement('img');
                 img.src = JOGO_CONFIG.caminhoImg + data.imagem;
@@ -252,16 +253,13 @@
             } else {
                 div.innerText = data.palavra;
             }
-            
             div.onclick = () => handleSelection(div);
             return div;
         }
 
         function handleSelection(el) {
             if (isChecking || el.classList.contains('correct-match') || el.classList.contains('selected')) return;
-            
             el.classList.add('selected');
-            
             if (!selectedItem1) {
                 selectedItem1 = el;
             } else {
@@ -277,46 +275,51 @@
             const type1 = selectedItem1.dataset.type;
             const type2 = selectedItem2.dataset.type;
 
-            // Condição de sucesso: mesmo valor E tipos diferentes (Imagem + Palavra)
             if (val1 === val2 && type1 !== type2) {
                 playSound('certo');
                 selectedItem1.classList.replace('selected', 'correct-match');
                 selectedItem2.classList.replace('selected', 'correct-match');
-                updateStar(true);
-                stats[level].c++;
-                matchesFound++;
-                points += 25;
-                document.getElementById('points').innerText = points;
+                matchesFoundInRound++;
                 selectedItem1 = null; selectedItem2 = null;
                 isChecking = false;
-                checkRoundEnd();
+                
+                if (matchesFoundInRound === 4) {
+                    const stars = document.querySelectorAll('.star');
+                    stars[roundInLevel - 1].classList.add('correct');
+                    stars[roundInLevel - 1].innerText = '✓';
+                    stats[level].c++;
+                    points += 25;
+                    document.getElementById('points').innerText = points;
+                    setTimeout(nextRound, 1000);
+                }
             } else {
                 playSound('errado');
                 selectedItem1.classList.add('error-match');
                 selectedItem2.classList.add('error-match');
-                updateStar(false);
+                const stars = document.querySelectorAll('.star');
+                stars[roundInLevel - 1].classList.add('wrong');
+                stars[roundInLevel - 1].innerText = '✕';
                 stats[level].e++;
+                
                 setTimeout(() => {
-                    selectedItem1.classList.remove('error-match', 'selected');
-                    selectedItem2.classList.remove('error-match', 'selected');
-                    selectedItem1 = null; selectedItem2 = null;
-                    isChecking = false;
-                    checkRoundEnd();
-                }, 600);
+                    // Errou: Gera novos números para a mesma ronda
+                    loadRound();
+                }, 800);
             }
         }
 
-        function checkRoundEnd() {
-            // Se acertou os 4 pares OU se esgotou as 4 tentativas (estrelas)
-            if (matchesFound === 4 || attemptsInRound === 4) {
-                setTimeout(() => {
-                    if (level === 1) {
-                        level = 2;
-                        loadLevel();
-                    } else {
-                        endGame();
-                    }
-                }, 1000);
+        function nextRound() {
+            roundInLevel++;
+            if (roundInLevel > 4) {
+                if (level === 1) {
+                    level = 2;
+                    roundInLevel = 1;
+                    loadRound();
+                } else {
+                    endGame();
+                }
+            } else {
+                loadRound();
             }
         }
 
@@ -324,13 +327,13 @@
             clearInterval(timerInterval);
             const modal = document.getElementById('modal');
             const r = JOGO_CONFIG.relatorio;
-            let finalMsg = points >= 175 ? JOGO_CONFIG.mensagens.excelente : (points >= 100 ? JOGO_CONFIG.mensagens.bom : JOGO_CONFIG.mensagens.tenta);
+            let finalMsg = points >= 150 ? JOGO_CONFIG.mensagens.excelente : (points >= 100 ? JOGO_CONFIG.mensagens.bom : JOGO_CONFIG.mensagens.tenta);
 
             document.getElementById('modal-title').innerText = r.titulo;
             document.getElementById('modal-msg').innerHTML = `
                 <p style="margin-bottom:15px; font-weight:bold;">${finalMsg}</p>
                 <table class="result-table">
-                    <tr><th>${r.labelNivel}</th><th>${r.labelCertas}</th><th>${r.labelErradas}</th></tr>
+                    <tr><th>Nível</th><th>Certas</th><th>Erradas</th></tr>
                     <tr><td>1</td><td style="color:var(--cor-jogo-verde); font-weight:bold;">${stats[1].c}</td><td style="color:var(--cor-erro); font-weight:bold;">${stats[1].e}</td></tr>
                     <tr><td>2</td><td style="color:var(--cor-jogo-verde); font-weight:bold;">${stats[2].c}</td><td style="color:var(--cor-erro); font-weight:bold;">${stats[2].e}</td></tr>
                 </table>
