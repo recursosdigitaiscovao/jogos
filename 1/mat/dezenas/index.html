@@ -20,16 +20,16 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* --- Header & Sidebar --- */
+        /* --- Sidebar & Header --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .nav-bar h1 { font-size: 0.95rem; color: var(--cor-principal); display: flex; align-items: center; gap: 8px; margin: 0; flex-grow: 1; justify-content: center; }
         .nav-bar h1 img { height: 28px; width: auto; }
         
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; cursor: pointer; }
-        .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; }
-        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; }
+        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; cursor: pointer; font-weight: 500; }
+        .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
+        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
@@ -43,92 +43,91 @@
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Intro Screen com Animação --- */
+        /* --- Intro Screen Rigorosa --- */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 10px; }
-        .anim-container { display: flex; align-items: center; gap: 15px; }
-        .anim-item { height: 60px; animation: popIn 2s infinite; }
-        .anim-text { font-size: 2rem; font-weight: bold; color: var(--cor-texto); }
-        @keyframes popIn { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        .anim-box { display: flex; align-items: center; gap: 15px; }
+        .anim-item { height: clamp(50px, 10vh, 70px); animation: pulse 2s infinite; }
+        .anim-text { font-size: 2.2rem; font-weight: bold; color: var(--cor-texto); }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
-        /* --- Game Header & Instruction --- */
+        /* --- Game Elements --- */
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; padding: 0 10px; font-size: 0.85rem; }
-        .stars-container { display: flex; gap: 3px; }
+        .stars-container { display: flex; gap: 4px; }
         .star { width: 18px; height: 18px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
         .instruction-area { text-align: center; font-size: 1rem; font-weight: bold; color: var(--cor-texto); margin-bottom: 5px; flex-shrink: 0; }
 
-        /* --- Área de Jogo com Trator e 2 Reboques --- */
+        /* --- Área de Jogo & Animação do Trator --- */
         .game-area { 
             flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;
             background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb; min-height: 0;
             box-sizing: border-box; justify-content: center; align-items: center; position: relative;
         }
 
-        .target-number {
-            position: absolute; top: 10px; right: 15px; background: white;
-            border: 3px solid var(--cor-principal); border-radius: 12px;
-            padding: 5px 15px; font-size: 1.8rem; font-weight: bold; color: var(--cor-principal);
-            z-index: 5;
+        .target-display { position: absolute; top: 10px; right: 15px; background: white; border: 3px solid var(--cor-principal); border-radius: 12px; padding: 5px 15px; font-size: 2rem; font-weight: bold; color: var(--cor-principal); z-index: 10; }
+
+        .scene-container { display: flex; align-items: flex-end; justify-content: center; width: 100%; gap: 3px; position: relative; transition: 0.5s; }
+        
+        /* Animação de Entrada do Trator e Reboques */
+        .scene-entering { animation: driveIn 1.2s ease-out forwards; }
+        @keyframes driveIn {
+            0% { transform: translateX(-120%); }
+            100% { transform: translateX(0); }
         }
 
-        .scene-flex { display: flex; align-items: flex-end; justify-content: center; width: 95%; gap: 2px; }
-        .trator-img { height: clamp(70px, 16vh, 130px); width: auto; z-index: 3; }
-        
+        .trator-img { height: clamp(75px, 16vh, 120px); width: auto; z-index: 5; margin-right: -4px; }
         .reboque-container { position: relative; display: flex; align-items: flex-end; }
-        .reboque-img { height: clamp(60px, 12vh, 100px); width: auto; }
+        .reboque-img { height: clamp(65px, 14vh, 100px); width: auto; display: block; }
         
-        /* Carga nos Reboques */
-        .carga-bay {
-            position: absolute; bottom: 35%; left: 10%; width: 80%; height: 80%;
-            display: flex; align-items: flex-end; justify-content: center; flex-wrap: wrap-reverse; gap: 2px;
-        }
-        .img-dezena { height: 90%; width: auto; }
-        .img-unidade { height: 30%; width: auto; }
+        .carga-area { position: absolute; bottom: 35%; left: 10%; width: 80%; height: 80%; display: flex; align-items: flex-end; justify-content: center; flex-wrap: wrap-reverse; gap: 2px; }
+        .carga-area img.dez { height: 95%; width: auto; }
+        .carga-area img.uni { height: 35%; width: auto; }
 
-        /* --- Controlos --- */
+        /* --- Controlos UI --- */
         .symbol-pad { display: flex; gap: 10px; margin-top: 5px; flex-shrink: 0; width: 100%; justify-content: center; }
         .sym-btn {
             background: white; border: 3px solid var(--cor-jogo-verde); border-radius: 15px;
             padding: 8px; flex: 1; max-width: 100px; cursor: pointer; transition: 0.1s;
-            display: flex; flex-direction: column; align-items: center; font-family: 'Fredoka'; font-weight: bold; font-size: 0.8rem;
+            display: flex; flex-direction: column; align-items: center; font-family: 'Fredoka'; font-weight: bold; font-size: 0.75rem;
         }
-        .sym-btn img { height: 25px; margin-bottom: 4px; }
+        .sym-btn img { height: 24px; margin-bottom: 4px; }
         .sym-btn:active { transform: scale(0.95); background: var(--cor-jogo-verde); color: white; }
 
-        .num-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; width: 100%; max-width: 400px; }
-        .num-btn { background: white; border: 2px solid var(--cor-principal); border-radius: 10px; padding: 8px 0; font-size: 1rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; }
+        .confirm-btn { background: var(--cor-principal); color: white; border: none; padding: 12px 0; width: 100%; border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 8px; font-family: 'Fredoka'; }
 
-        .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.2rem; font-weight: bold; padding: 10px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; }
+        .num-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; width: 100%; max-width: 400px; padding-top: 5px; }
+        .num-btn { background: white; border: 2px solid var(--cor-principal); border-radius: 10px; padding: 10px 0; font-size: 1rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; }
+        
+        .error-shake { animation: shake 0.4s; border-color: var(--cor-erro) !important; }
+        @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
 
-        .confirm-btn {
-            background: var(--cor-principal); color: white; border: none; padding: 12px 0;
-            width: 100%; border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer;
-            margin-top: 5px; font-family: 'Fredoka';
-        }
-
-        /* --- Modals --- */
+        /* --- Modal Relatório --- */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 380px; width: 90%; }
         .report-table { width: 100%; margin: 15px 0; border-collapse: collapse; font-size: 0.85rem; }
         .report-table th { background: var(--cor-caixa-info); padding: 8px; }
         .report-table td { padding: 8px; border-bottom: 1px solid #eee; }
-        
-        .error-shake { animation: shake 0.4s; border-color: var(--cor-erro) !important; }
-        @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
+        .option-btn { background: var(--cor-jogo-verde); color: white; border: none; font-size: 1.2rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; width: 100%; font-family: 'Fredoka'; }
     </style>
 </head>
 <body>
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    
+    <!-- Sidebar Completa -->
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
-            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer;">✕</button>
+            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size: 20px;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="/jogos/1/" class="sidebar-item" id="side-1-link"><img id="side-1" src=""> 1º Ano</a>
+        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre"> Pré-Escolar</a>
+        <a href="/jogos/1/" class="sidebar-item"><img id="side-1"> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img id="side-2"> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img id="side-3"> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img id="side-4"> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
@@ -138,24 +137,24 @@
     </header>
 
     <main class="main-content">
-        <!-- TELA INICIAL -->
+        <!-- ECRÃ INICIAL -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <div class="anim-container">
-                        <img id="anim-dez" class="anim-item" src="">
+                    <div class="anim-box">
+                        <img id="anim-dez" class="anim-item">
                         <span class="anim-text">+</span>
-                        <img id="anim-uni" class="anim-item" src="">
+                        <img id="anim-uni" class="anim-item">
                         <span class="anim-text">=</span>
                         <span class="anim-text" style="color:var(--cor-principal); font-size: 3rem;">11</span>
                     </div>
                 </div>
                 <h2 style="color:var(--cor-principal); text-align:center; font-size: 1.2rem; margin: 5px 0;">Trator das Dezenas</h2>
-                <button class="option-btn" style="background:var(--cor-jogo-verde); color:white;" onclick="startGame()">JOGAR</button>
+                <button class="option-btn" onclick="startGame()">JOGAR</button>
             </div>
         </section>
 
-        <!-- TELA DE JOGO -->
+        <!-- ECRÃ DE JOGO -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
@@ -167,37 +166,34 @@
                 <div class="instruction-area" id="instruction-text"></div>
                 
                 <div class="game-area" id="game-canvas">
-                    <div id="target-number" class="target-number">0</div>
+                    <div id="target-number" class="target-display">0</div>
                     
-                    <div class="scene-flex">
-                        <img id="game-trator" class="trator-img" src="">
-                        
-                        <!-- Reboque das Dezenas -->
+                    <!-- Cena com Animação -->
+                    <div class="scene-container" id="tractor-train">
+                        <img id="game-tractor" class="trator-img">
                         <div class="reboque-container">
-                            <div id="carga-dezenas" class="carga-bay"></div>
-                            <img id="game-reboque-1" class="reboque-img" src="">
+                            <div id="carga-tens" class="carga-area"></div>
+                            <img id="game-reb-1" class="reboque-img">
                         </div>
-                        
-                        <!-- Reboque das Unidades -->
                         <div class="reboque-container">
-                            <div id="carga-unidades" class="carga-bay"></div>
-                            <img id="game-reboque-2" class="reboque-img" src="">
+                            <div id="carga-units" class="carga-area"></div>
+                            <img id="game-reb-2" class="reboque-img">
                         </div>
                     </div>
                 </div>
 
-                <!-- CONTROLOS NÍVEL 1 -->
+                <!-- UI NÍVEL 1 -->
                 <div id="ui-n1" style="display:none; flex-direction:column;">
                     <div class="symbol-pad">
-                        <button class="sym-btn" onclick="add('D')"><img id="btn-dez" src=""> Dezena</button>
-                        <button class="sym-btn" onclick="add('U')"><img id="btn-uni" src=""> Unidade</button>
-                        <button class="sym-btn" onclick="clearC()" style="border-color:var(--cor-erro)"><img id="btn-bor" src=""> Limpar</button>
+                        <button class="sym-btn" onclick="add('D')"><img id="btn-dez"> Dezena</button>
+                        <button class="sym-btn" onclick="add('U')"><img id="btn-uni"> Unidade</button>
+                        <button class="sym-btn" onclick="clearC()" style="border-color:var(--cor-erro)"><img id="btn-bor"> Limpar</button>
                     </div>
                     <button class="confirm-btn" onclick="check()">CONFIRMAR</button>
                 </div>
 
-                <!-- CONTROLOS NÍVEL 2 -->
-                <div id="ui-n2" style="display:none; justify-content:center; padding-top:5px;">
+                <!-- UI NÍVEL 2 -->
+                <div id="ui-n2" style="display:none; justify-content:center;">
                     <div class="num-grid" id="num-pad"></div>
                 </div>
             </div>
@@ -208,15 +204,14 @@
         <div class="modal-content">
             <h2 id="modal-title" style="color:var(--cor-principal); font-size: 1.2rem;"></h2>
             <div id="modal-msg"></div>
-            <button class="option-btn" onclick="location.reload()" style="background:var(--cor-jogo-verde); color:white;">Jogar de Novo</button>
-            <button class="option-btn" onclick="window.location.href='../'" style="margin-top:10px; border-color:var(--cor-principal); color:var(--cor-principal);">Sair</button>
+            <button class="option-btn" onclick="location.reload()">Jogar de Novo</button>
         </div>
     </div>
 
     <script src="dados.js"></script>
     <script>
         let level = 1, pts = 0, quest = 1, secs = 0, timer;
-        let target = 0, uTens = 0, uUnits = 0, isOk = true;
+        let target = 0, uTens = 0, uUnits = 0, active = true;
         let stats = { 1: { c: 0, e: 0 }, 2: { c: 0, e: 0 } };
 
         window.onload = () => {
@@ -225,17 +220,20 @@
                 const pm = JOGO_CONFIG.caminhoImg;
                 const v = JOGO_CONFIG.veiculos;
 
-                document.getElementById('header-icon').src = pi + JOGO_CONFIG.iconesMenu.ano1;
+                // Sidebar
+                document.getElementById('side-pre').src = pi + JOGO_CONFIG.iconesMenu.pre;
                 document.getElementById('side-1').src = pi + JOGO_CONFIG.iconesMenu.ano1;
-                
-                // Imagens do trator e reboques
-                document.getElementById('game-trator').src = pm + v.trator;
-                document.getElementById('game-reboque-1').src = pm + v.reboque;
-                document.getElementById('game-reboque-2').src = pm + v.reboque;
-                
-                // Botões e Animação
+                document.getElementById('side-2').src = pi + JOGO_CONFIG.iconesMenu.ano2;
+                document.getElementById('side-3').src = pi + JOGO_CONFIG.iconesMenu.ano3;
+                document.getElementById('side-4').src = pi + JOGO_CONFIG.iconesMenu.ano4;
+                document.getElementById('header-icon').src = pi + JOGO_CONFIG.iconesMenu.ano1;
+
+                // Assets Jogo
                 document.getElementById('anim-dez').src = pm + v.dezena;
                 document.getElementById('anim-uni').src = pm + v.unidade;
+                document.getElementById('game-tractor').src = pm + v.trator;
+                document.getElementById('game-reb-1').src = pm + v.reboque;
+                document.getElementById('game-reb-2').src = pm + v.reboque;
                 document.getElementById('btn-dez').src = pm + v.dezena;
                 document.getElementById('btn-uni').src = pm + v.unidade;
                 document.getElementById('btn-bor').src = pm + v.borracha;
@@ -260,8 +258,7 @@
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
             timer = setInterval(() => { secs++; document.getElementById('timer').innerText = `${Math.floor(secs/60).toString().padStart(2,'0')}:${(secs%60).toString().padStart(2,'0')}`; }, 1000);
-            initStars();
-            loadQ();
+            initStars(); loadQ();
         }
 
         function initStars() {
@@ -276,8 +273,13 @@
         }
 
         function loadQ() {
-            isOk = true;
+            active = true;
             clearC();
+            const train = document.getElementById('tractor-train');
+            train.classList.remove('scene-entering');
+            void train.offsetWidth; // Trigger reflow
+            train.classList.add('scene-entering');
+
             const cfg = JOGO_CONFIG.niveis[level];
             document.getElementById('instruction-text').innerText = cfg.instrucao;
             target = Math.floor(Math.random() * 29) + 1;
@@ -298,46 +300,41 @@
         }
 
         function add(t) {
-            if(!isOk) return;
+            if(!active) return;
             if(t === 'D' && uTens < 3) uTens++;
             if(t === 'U' && uUnits < 9) uUnits++;
             render();
         }
 
         function clearC() {
-            uTens = 0; uUnits = 0;
-            render();
+            uTens = 0; uUnits = 0; render();
             document.getElementById('game-canvas').classList.remove('error-shake');
         }
 
         function render() {
-            const d1 = document.getElementById('carga-dezenas');
-            const d2 = document.getElementById('carga-unidades');
             const pm = JOGO_CONFIG.caminhoImg;
-            const v = JOGO_CONFIG.veiculos;
-            d1.innerHTML = ''; d2.innerHTML = '';
-
+            const cT = document.getElementById('carga-tens');
+            const cU = document.getElementById('carga-units');
+            cT.innerHTML = ''; cU.innerHTML = '';
             for(let i=0; i<uTens; i++) {
                 const img = document.createElement('img');
-                img.src = pm + v.dezena;
-                img.className = 'img-dezena';
-                d1.appendChild(img);
+                img.src = pm + JOGO_CONFIG.veiculos.dezena;
+                img.className = 'dez';
+                cT.appendChild(img);
             }
             for(let i=0; i<uUnits; i++) {
                 const img = document.createElement('img');
-                img.src = pm + v.unidade;
-                img.className = 'img-unidade';
-                d2.appendChild(img);
+                img.src = pm + JOGO_CONFIG.veiculos.unidade;
+                img.className = 'uni';
+                cU.appendChild(img);
             }
         }
 
-        function check() {
-            validate((uTens * 10 + uUnits) === target);
-        }
+        function check() { validate((uTens * 10 + uUnits) === target); }
 
         function validate(win) {
-            if(!isOk) return;
-            isOk = false;
+            if(!active) return;
+            active = false;
             const stars = document.querySelectorAll('.star');
             if(win) {
                 pts += 20; stats[level].c++;
@@ -350,14 +347,13 @@
                 document.getElementById('game-canvas').classList.add('error-shake');
             }
             document.getElementById('points').innerText = pts;
-
             setTimeout(() => {
                 quest++;
                 if(quest > 5) {
                     if(level === 1) { level = 2; quest = 1; initStars(); loadQ(); }
-                    else { endGame(); }
-                } else { loadQ(); }
-            }, 1000);
+                    else endGame();
+                } else loadQ();
+            }, 1200);
         }
 
         function endGame() {
@@ -370,8 +366,7 @@
                     <tr><td>Carregar</td><td>${stats[1].c}</td><td>${stats[1].e}</td></tr>
                     <tr><td>Contar</td><td>${stats[2].c}</td><td>${stats[2].e}</td></tr>
                 </table>
-                <p><b>Pontos:</b> ${pts} / 200</p>
-                <p><b>Tempo:</b> ${document.getElementById('timer').innerText}</p>
+                <p><b>Total:</b> ${pts} pts | <b>Tempo:</b> ${document.getElementById('timer').innerText}</p>
             `;
             document.getElementById('modal').style.display = 'flex';
         }
