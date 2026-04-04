@@ -1,13 +1,28 @@
 // dados.js
 const JOGO_CONFIG = {
-    // Se o index está em jogos/1/mat/, para chegar a jogos/icons/ usamos ../../
+    // Caminhos de diretoria (Ajustados para jogos/1/mat/formas/)
     caminhoIcons: "../../../icons/",
-    
+    caminhoImg: "../../../img/formas/", // Pasta onde estão as figuras geométricas
+
     iconesMenu: {
         pre: "iconpre.png",
         ano1: "icon1.png",
         ano2: "icon2.png",
         ano3: "icon3.png",
         ano4: "icon4.png"
+    },
+
+    // Definição das Formas e Cores disponíveis
+    formas: ["circulo", "quadrado", "triangulo", "retangulo", "pentagono", "hexagono"],
+    cores: ["v", "a", "l"], // v=verde, a=azul, l=laranja
+
+    // Traduções para as instruções
+    nomesFormas: {
+        "circulo": "Círculos",
+        "quadrado": "Quadrados",
+        "triangulo": "Triângulos",
+        "retangulo": "Retângulos",
+        "pentagono": "Pentágonos",
+        "hexagono": "Hexágonos"
     }
 };
