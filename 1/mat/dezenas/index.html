@@ -40,7 +40,7 @@
 
         .game-card {
             background: white; border-radius: 30px; padding: 10px; 
-            border: 4px solid var(--cor-jogo-verde); /* Cor do botão jogar */
+            border: 4px solid var(--cor-jogo-verde); 
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
@@ -62,19 +62,24 @@
 
         .target-display { position: absolute; top: 10px; left: 15px; background: white; border: 3px solid var(--cor-jogo-verde); border-radius: 12px; padding: 5px 15px; font-size: 1.6rem; font-weight: bold; color: var(--cor-jogo-verde); z-index: 10; }
 
-        /* --- Comboio do Trator (Reduzido) --- */
-        .scene-container { display: flex; align-items: flex-end; justify-content: flex-end; width: 95%; gap: 2px; padding-right: 15px; overflow: visible; }
+        /* --- Comboio do Trator (Centrado e Reduzido) --- */
+        .scene-container { 
+            display: flex; align-items: flex-end; 
+            justify-content: center; /* CENTRADO */
+            width: 100%; gap: 2px; position: relative; overflow: visible; 
+        }
         
-        .trator-img { height: clamp(50px, 12vh, 90px); z-index: 5; order: 3; }
+        /* Ajuste de tamanhos solicitados */
+        .trator-img { height: clamp(50px, 11vh, 85px); z-index: 5; order: 3; }
         .reboque-container { position: relative; display: flex; align-items: flex-end; }
         .reb1-box { order: 2; }
         .reb2-box { order: 1; }
-        .reboque-img { height: clamp(40px, 10vh, 75px); width: auto; }
+        .reboque-img { height: clamp(40px, 9vh, 70px); width: auto; }
 
-        /* Animação Sequencial Trator -> Reb 1 -> Reb 2 */
+        /* Animação de Entrada: Trator lidera à frente (direita) */
         .anim-enter { animation: driveIn 1s ease-out forwards; opacity: 0; }
         @keyframes driveIn { 
-            0% { transform: translateX(-150%); opacity: 0; } 
+            0% { transform: translateX(-100vw); opacity: 0; } 
             100% { transform: translateX(0); opacity: 1; } 
         }
 
@@ -82,17 +87,16 @@
         .carga-area img.dez { height: 110%; width: auto; }
         .carga-area img.uni { height: 25%; width: auto; }
 
-        /* --- UI de Controlos Interna --- */
+        /* --- UI de Controlos --- */
         .game-ui-overlay { width: 100%; display: flex; flex-direction: column; align-items: center; padding: 0 10px; z-index: 20; }
         .symbol-pad { display: flex; gap: 8px; justify-content: center; margin-bottom: 5px; }
         .sym-btn {
             background: white; border: 3px solid var(--cor-jogo-verde); border-radius: 15px;
-            padding: 5px 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; 
+            padding: 5px 15px; cursor: pointer; display: flex; flex-direction: column; align-items: center; 
             font-family: 'Fredoka'; font-weight: bold; font-size: 0.65rem;
         }
         .sym-btn img { height: 18px; margin-bottom: 2px; }
-        .sym-btn:active { transform: scale(0.95); background: var(--cor-jogo-verde); color: white; }
-
+        
         .btn-carregar { background: var(--cor-principal); color: white; border: none; padding: 10px 40px; border-radius: 50px; font-size: 1rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; }
 
         .options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 90%; max-width: 380px; }
@@ -132,7 +136,7 @@
     </header>
 
     <main class="main-content">
-        <!-- INTRO -->
+        <!-- TELA INICIAL -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
@@ -147,7 +151,7 @@
             </div>
         </section>
 
-        <!-- JOGO -->
+        <!-- TELA DE JOGO -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
@@ -156,8 +160,10 @@
                     <div>PTS: <span id="points">0</span></div>
                 </div>
                 <div id="instruction-text" style="text-align:center; font-weight:bold; color:var(--cor-texto); font-size: 0.9rem;"></div>
+                
                 <div class="game-area" id="game-canvas">
                     <div id="target-number" class="target-display">0</div>
+                    
                     <div class="scene-container" id="tractor-train">
                         <img id="game-tractor" class="trator-img">
                         <div class="reboque-container reb1-box" id="reb1-box">
@@ -169,6 +175,7 @@
                             <img id="game-reb-2" class="reboque-img">
                         </div>
                     </div>
+
                     <div class="game-ui-overlay">
                         <div id="ui-n1" style="display:none; flex-direction:column; align-items:center;">
                             <div class="symbol-pad">
@@ -206,11 +213,14 @@
                 const pi = JOGO_CONFIG.caminhoIcons;
                 const pm = JOGO_CONFIG.caminhoImg;
                 const v = JOGO_CONFIG.veiculos;
+
                 ['pre','1','2','3','4'].forEach(n => {
+                    const id = n === 'pre' ? 'pre' : 'ano'+n;
                     const el = document.getElementById('side-'+n);
-                    if(el) el.src = pi + JOGO_CONFIG.iconesMenu[n==='pre'?'pre':'ano'+n];
+                    if(el) el.src = pi + JOGO_CONFIG.iconesMenu[id];
                 });
                 document.getElementById('header-icon').src = pi + JOGO_CONFIG.iconesMenu.ano1;
+
                 const tImg = pm + v.trator, rImg = pm + v.reboque;
                 document.getElementById('intro-trator').src = tImg;
                 document.getElementById('intro-reb1').src = rImg;
@@ -218,7 +228,7 @@
                 document.getElementById('game-tractor').src = tImg;
                 document.getElementById('game-reb-1').src = rImg;
                 document.getElementById('game-reb-2').src = rImg;
-                document.getElementById('btn-dez').src = pm + v.unidade;
+                document.getElementById('btn-dez').src = pm + v.unidade; 
                 document.getElementById('btn-uni').src = pm + v.unidade;
                 document.getElementById('btn-bor').src = pm + v.borracha;
             }
@@ -244,8 +254,11 @@
         function loadQ() {
             active = true; clearC();
             const t = document.getElementById('game-tractor'), r1 = document.getElementById('reb1-box'), r2 = document.getElementById('reb2-box');
+            
             [t, r1, r2].forEach(el => { el.classList.remove('anim-enter'); void el.offsetWidth; el.classList.add('anim-enter'); });
-            t.style.animationDelay = '0s'; r1.style.animationDelay = '0.3s'; r2.style.animationDelay = '0.6s';
+            t.style.animationDelay = '0s';
+            r1.style.animationDelay = '0.3s';
+            r2.style.animationDelay = '0.6s';
 
             document.getElementById('instruction-text').innerText = JOGO_CONFIG.niveis[level].instrucao;
             target = Math.floor(Math.random() * 29) + 1;
@@ -260,7 +273,8 @@
                 document.getElementById('ui-n1').style.display = 'none';
                 document.getElementById('ui-n2').style.display = 'flex';
                 uTens = Math.floor(target / 10); uUnits = target % 10;
-                render(); generateOptions();
+                render();
+                generateOptions();
             }
         }
 
