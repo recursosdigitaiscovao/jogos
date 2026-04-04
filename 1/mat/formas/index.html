@@ -12,7 +12,7 @@
             --cor-fundo: #e8f9f4;      
             --cor-texto: #8a6436;      
             --header-height: 70px;
-            --cor-jogo-verde: #45cfa8;  /* Cor solicitada */
+            --cor-jogo-verde: #45cfa8;  /* Limite e Título do Jogo */
             --cor-erro: #ff4757;
             --cor-caixa-info: #e8f9f4;
         }
@@ -20,7 +20,7 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* --- Sidebar & Header --- */
+        /* --- Header & Sidebar --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
@@ -35,7 +35,6 @@
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow: hidden; }
         .screen.active { display: flex; }
 
-        /* Limite do card em verde (#45cfa8) */
         .game-card {
             background: white; border-radius: 30px; padding: 15px 20px; 
             border: 4px solid var(--cor-jogo-verde); 
@@ -44,33 +43,40 @@
 
         .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 10px 0; font-weight: bold; }
 
-        /* --- Áreas de Jogo --- */
-        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        /* --- Estilo das Formas --- */
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0; margin-bottom: 10px; flex-shrink: 0; }
         .stars-container { display: flex; gap: 4px; }
-        .star { width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: transparent; }
+        .star { width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
         .instruction-area { text-align: center; font-size: 1.2rem; font-weight: bold; color: var(--cor-texto); margin-bottom: 10px; flex-shrink: 0; }
+        .instruction-area b { color: var(--cor-jogo-verde); text-transform: uppercase; }
 
-        .objects-container { 
+        .game-grid { 
             background: var(--cor-caixa-info); border: 2px dashed #b2dfdb; border-radius: 20px; flex: 1; 
             display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr);
             padding: 10px; gap: 10px; overflow: hidden; align-items: center; justify-items: center;
         }
 
-        .shape-item { cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
-        .shape-item svg { width: 80%; height: 80%; max-width: 80px; }
-        .shape-item.found { opacity: 0.2; transform: scale(0.8); pointer-events: none; }
-        .shape-item.error-shake { animation: shake 0.4s; }
+        .shape-btn { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .shape-btn img { max-width: 85%; max-height: 85%; object-fit: contain; }
+        .shape-btn.found { filter: grayscale(1) opacity(0.2); pointer-events: none; transform: scale(0.8); }
+        .shape-btn.error-shake { animation: shake 0.4s; }
 
         @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-10px);} 75% {transform:translateX(10px);} }
 
-        .option-btn { background: white; border: 3.5px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
-        
+        /* --- Footer & Botões --- */
+        .option-btn { background: var(--cor-jogo-verde); border: none; color: white; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
+        .option-btn:hover { filter: brightness(0.9); }
+
+        /* --- Modal Relatório --- */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); max-width: 380px; width: 90%; box-sizing: border-box; }
+        
+        .report-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        .report-table th { padding: 8px; border-bottom: 2px solid #eee; color: var(--cor-jogo-verde); }
+        .report-table td { padding: 10px; border-bottom: 1px solid #f9f9f9; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -92,24 +98,32 @@
 
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
-        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin: 0;">
+        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin:0;">
             <img id="header-icon" src="" style="height:32px; width: auto;"> Matemática - 1º Ano
         </h1>
         <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
     </header>
 
     <main class="main-content">
+        <!-- ECRÃ INICIAL -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
-                <div class="explanation-box">
-                    <p style="color:var(--cor-texto); font-weight:bold; margin-bottom: 15px;">Encontra as formas!</p>
-                    <svg viewBox="0 0 100 100" width="80" height="80"><circle cx="50" cy="50" r="40" fill="#45cfa8" /></svg>
+                <div class="explanation-box" style="background:var(--cor-caixa-info); border-radius:20px; flex:1; margin-bottom:15px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; text-align:center;">
+                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.3rem; margin-bottom: 20px;">Reconhece as formas geométricas!</p>
+                    <div style="display:flex; gap:15px;">
+                        <!-- Exemplo de forma para a intro -->
+                        <div style="background:white; padding:10px; border-radius:15px; border:2px solid var(--cor-jogo-verde)">
+                            <img id="intro-shape" style="height:80px;">
+                        </div>
+                    </div>
+                    <p style="margin-top:20px; color:var(--cor-texto)">No <b>Nível 1</b> as cores são iguais.<br>No <b>Nível 2</b> foca-te apenas na forma!</p>
                 </div>
                 <h2 class="game-title">Formas Geométricas</h2>
-                <button class="option-btn" style="background:var(--cor-jogo-verde); color:white;" onclick="startGame()">JOGAR</button>
+                <button class="option-btn" onclick="startGame()">JOGAR</button>
             </div>
         </section>
 
+        <!-- ECRÃ DE JOGO -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
@@ -117,75 +131,173 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div>PTS: <span id="points">0</span></div>
                 </div>
-                <div class="instruction-area">Clica em todos os <span id="target-shape-name" style="color:var(--cor-jogo-verde)">...</span>!</div>
-                <div id="objects-area" class="objects-container"></div>
+                <div class="instruction-area">Clica em todos os: <b id="target-name">...</b></div>
+                <div id="game-grid" class="game-grid"></div>
             </div>
         </section>
     </main>
 
+    <!-- MODAL RELATÓRIO -->
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="margin-top: 0; color: var(--cor-jogo-verde);">Relatório</h2>
-            <div id="modal-msg" style="margin-bottom: 20px;"></div>
-            <button class="option-btn" onclick="location.reload()" style="background: var(--cor-jogo-verde); color: white;">Jogar de Novo</button>
+            <h2 id="modal-title" style="color:var(--cor-jogo-verde); margin-top:0;">Relatório</h2>
+            <div id="modal-msg"></div>
+            <table class="report-table">
+                <tr><th>Nível</th><th>Certas</th><th>Erradas</th></tr>
+                <tr><td>Nível 1</td><td id="c1" style="color:var(--cor-jogo-verde)">0</td><td id="e1" style="color:var(--cor-erro)">0</td></tr>
+                <tr><td>Nível 2</td><td id="c2" style="color:var(--cor-jogo-verde)">0</td><td id="e2" style="color:var(--cor-erro)">0</td></tr>
+            </table>
+            <button class="option-btn" onclick="location.reload()">Jogar de Novo</button>
         </div>
     </div>
 
     <script src="dados.js"></script>
     <script>
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
+        let currentLevel = 1, currentRound = 1, points = 0, seconds = 0, timerInterval;
+        let stats = { 1: { c: 0, e: 0 }, 2: { c: 0, e: 0 } };
+        let targetShape = "", shapesOnScreen = [];
+        let targetsFoundCount = 0, totalTargetsOnScreen = 0;
+
+        // Audio Context para sons de feedback
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playFeedback(isCorrect) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.frequency.setValueAtTime(isCorrect ? 600 : 150, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            } catch(e) {}
         }
 
         window.onload = () => {
             if(typeof JOGO_CONFIG !== 'undefined') {
                 const p = JOGO_CONFIG.caminhoIcons;
                 const i = JOGO_CONFIG.iconesMenu;
-                
-                // Header
                 document.getElementById('header-icon').src = p + i.ano1;
-
-                // Sidebar
-                document.getElementById('side-pre').src = p + i.pre;
-                document.getElementById('side-1').src = p + i.ano1;
-                document.getElementById('side-2').src = p + i.ano2;
-                document.getElementById('side-3').src = p + i.ano3;
-                document.getElementById('side-4').src = p + i.ano4;
+                ['pre','1','2','3','4'].forEach(n => {
+                    const el = document.getElementById('side-'+n);
+                    if(el) el.src = p + i[n === 'pre' ? 'pre' : 'ano'+n];
+                });
+                document.getElementById('intro-shape').src = JOGO_CONFIG.caminhoImg + "circulo_v.png";
             }
         };
 
-        // Lógica simplificada
-        let points = 0, seconds = 0, timerInterval, questionNum = 1;
-        
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
         function startGame() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
+            initStars();
+            startTimer();
+            loadRound();
+        }
+
+        function startTimer() {
             timerInterval = setInterval(() => {
                 seconds++;
-                let m = Math.floor(seconds/60).toString().padStart(2,'0');
-                let s = (seconds%60).toString().padStart(2,'0');
-                document.getElementById('timer').innerText = `${m}:${s}`;
+                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
             }, 1000);
-            initStars();
-            loadQuestion();
         }
 
         function initStars() {
-            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
-            for(let i=0; i<5; i++) { const s = document.createElement('div'); s.className = 'star'; s.innerText = '★'; bar.appendChild(s); }
+            const bar = document.getElementById('stars-bar');
+            bar.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const s = document.createElement('div'); s.className = 'star'; s.innerText = '★'; bar.appendChild(s);
+            }
         }
 
-        function loadQuestion() {
-            const area = document.getElementById('objects-area'); area.innerHTML = '';
-            document.getElementById('target-shape-name').innerText = "Círculos";
+        function loadRound() {
+            const grid = document.getElementById('game-grid');
+            grid.innerHTML = '';
+            targetsFoundCount = 0;
+            totalTargetsOnScreen = 0;
+
+            // Escolher forma alvo e instrução
+            targetShape = JOGO_CONFIG.formas[Math.floor(Math.random() * JOGO_CONFIG.formas.length)];
+            document.getElementById('target-name').innerText = JOGO_CONFIG.nomesFormas[targetShape];
+
+            // Nível 1: Cor única para todos | Nível 2: Cores misturadas
+            const levelColor = JOGO_CONFIG.cores[Math.floor(Math.random() * JOGO_CONFIG.cores.length)];
+
             for(let i=0; i<12; i++) {
-                const div = document.createElement('div');
-                div.className = 'shape-item';
-                div.innerHTML = `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="${i<3?'#45cfa8':'#ff9100'}"/></svg>`;
-                div.onclick = () => { if(i<3) div.classList.add('found'); else div.classList.add('error-shake'); };
-                area.appendChild(div);
+                const isTarget = Math.random() > 0.6 || (i < 2); // Garante pelo menos algumas formas certas
+                let shape, color;
+
+                if (isTarget) {
+                    shape = targetShape;
+                    totalTargetsOnScreen++;
+                } else {
+                    do { shape = JOGO_CONFIG.formas[Math.floor(Math.random() * JOGO_CONFIG.formas.length)]; } 
+                    while (shape === targetShape);
+                }
+
+                color = (currentLevel === 1) ? levelColor : JOGO_CONFIG.cores[Math.floor(Math.random() * JOGO_CONFIG.cores.length)];
+                
+                const btn = document.createElement('div');
+                btn.className = 'shape-btn';
+                const imgName = `${shape}_${color}.png`;
+                btn.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + imgName}">`;
+                
+                btn.onclick = () => checkShape(btn, shape === targetShape);
+                grid.appendChild(btn);
             }
+        }
+
+        function checkShape(element, isCorrect) {
+            if (element.classList.contains('found')) return;
+
+            if (isCorrect) {
+                playFeedback(true);
+                element.classList.add('found');
+                targetsFoundCount++;
+                points += 10;
+                document.getElementById('points').innerText = points;
+
+                if (targetsFoundCount === totalTargetsOnScreen) {
+                    stats[currentLevel].c++;
+                    document.querySelectorAll('.star')[currentRound-1].classList.add('correct');
+                    nextStep();
+                }
+            } else {
+                playFeedback(false);
+                stats[currentLevel].e++;
+                element.classList.add('error-shake');
+                setTimeout(() => element.classList.remove('error-shake'), 400);
+            }
+        }
+
+        function nextStep() {
+            currentRound++;
+            if (currentRound > 5) {
+                if (currentLevel === 1) {
+                    currentLevel = 2;
+                    currentRound = 1;
+                    setTimeout(() => { initStars(); loadRound(); }, 500);
+                } else {
+                    endGame();
+                }
+            } else {
+                setTimeout(loadRound, 500);
+            }
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            document.getElementById('c1').innerText = stats[1].c;
+            document.getElementById('e1').innerText = stats[1].e;
+            document.getElementById('c2').innerText = stats[2].c;
+            document.getElementById('e2').innerText = stats[2].e;
+
+            let msg = points >= 80 ? "Parabéns! Terminaste o jogo! 🌟" : "Bom trabalho! Continua a treinar! 👍";
+            document.getElementById('modal-msg').innerHTML = `<p>${msg}</p><p>Pontuação: <b>${points} pontos</b></p>`;
+            document.getElementById('modal').style.display = 'flex';
         }
     </script>
 </body>
