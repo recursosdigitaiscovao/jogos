@@ -23,8 +23,8 @@ const JOGO_CONFIG = {
     ],
     mensagens: {
         excelente: "Incrível! És um mestre da matemática! 🌟",
-        bom: "Muito bem! Estás no bom caminho! 👍",
-        tenta: "Bom esforço! Continua a praticar! 💪"
+        bom: "Bom esforço! Estás no bom caminho! 👍",
+        tenta: "Esforça-te mais! Continua a praticar! 💪"
     },
     relatorio: {
         titulo: "Fim do Jogo!",
