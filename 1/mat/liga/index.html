@@ -50,8 +50,6 @@
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
-        .instruction-area { text-align: center; font-size: clamp(0.9rem, 2.5vh, 1.2rem); font-weight: bold; color: var(--cor-texto); margin-bottom: 5px; flex-shrink: 0; }
-
         .matching-grid { 
             flex: 1; display: grid; grid-template-columns: 1fr 1fr; width: 100%; overflow: hidden;
             background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb; min-height: 0;
@@ -65,8 +63,7 @@
             display: flex; align-items: center; justify-content: center;
             font-size: clamp(0.9rem, 3vh, 1.7rem); font-weight: 700; color: var(--cor-texto);
             cursor: pointer; transition: 0.2s; height: 21%; width: 85%; max-width: 260px;
-            -webkit-tap-highlight-color: transparent; position: relative; box-sizing: border-box;
-            text-align: center;
+            position: relative; box-sizing: border-box; text-align: center;
         }
         
         .match-item img { max-height: 75%; max-width: 80%; object-fit: contain; pointer-events: none; }
@@ -78,9 +75,8 @@
 
         .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
         
-        /* MODAL: Padding 25px lateral e largura reduzida */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 380px; width: 90%; box-sizing: border-box; }
+        .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 360px; width: 90%; box-sizing: border-box; }
 
         .result-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9rem; }
         .result-table th { border-bottom: 2px solid #eee; padding: 5px; color: var(--cor-principal); }
@@ -131,7 +127,7 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div class="status-item">PTS: <span id="points">0</span></div>
                 </div>
-                <div class="instruction-area">Liga o par correto!</div>
+                <div class="instruction-area">Liga a imagem ao nome correto!</div>
                 <div id="matching-area" class="matching-grid">
                     <div id="col-left" class="match-column"></div>
                     <div id="col-right" class="match-column"></div>
@@ -153,7 +149,7 @@
     <script>
         let level = 1, points = 0, seconds = 0, timerInterval;
         let selectedItem1 = null, selectedItem2 = null;
-        let matchesFound = 0, attemptsInLevel = 0;
+        let matchesFound = 0, attemptsInRound = 0;
         let isChecking = false;
         let stats = { 1: { c: 0, e: 0 }, 2: { c: 0, e: 0 } };
 
@@ -168,14 +164,6 @@
                 osc.start(); osc.stop(audioCtx.currentTime + 0.2);
             } catch(e) {}
         }
-
-        window.onload = () => {
-            if(typeof JOGO_CONFIG !== 'undefined') {
-                document.getElementById('header-icon').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1;
-                document.getElementById('side-pre').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.pre;
-                document.getElementById('side-1').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1;
-            }
-        };
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -201,7 +189,7 @@
         function initStars() {
             const bar = document.getElementById('stars-bar');
             bar.innerHTML = '';
-            for(let i=0; i<4; i++) {
+            for(let i=0; i<4; i++) { // 4 Rondas por nível
                 const s = document.createElement('div');
                 s.className = 'star';
                 s.innerText = '★';
@@ -211,16 +199,16 @@
 
         function updateStar(wasCorrect) {
             const stars = document.querySelectorAll('.star');
-            if(stars[attemptsInLevel]) {
-                stars[attemptsInLevel].classList.add(wasCorrect ? 'correct' : 'wrong');
-                stars[attemptsInLevel].innerText = wasCorrect ? '✓' : '✕';
+            if(stars[attemptsInRound]) {
+                stars[attemptsInRound].classList.add(wasCorrect ? 'correct' : 'wrong');
+                stars[attemptsInRound].innerText = wasCorrect ? '✓' : '✕';
             }
-            attemptsInLevel++;
+            attemptsInRound++;
         }
 
         function loadLevel() {
             matchesFound = 0;
-            attemptsInLevel = 0;
+            attemptsInRound = 0;
             selectedItem1 = null;
             selectedItem2 = null;
             initStars();
@@ -228,32 +216,27 @@
             const colRight = document.getElementById('col-right');
             colLeft.innerHTML = ''; colRight.innerHTML = '';
             
+            // Escolher 4 números únicos para a ronda
             let subset = [...JOGO_CONFIG.numeros].sort(() => 0.5 - Math.random()).slice(0, 4);
-            let leftItems = [];
-            let rightItems = [];
+            let allCards = [];
 
             subset.forEach(n => {
-                if (level === 1) {
-                    // Nível 1: Esquerda fixa Imagem, Direita fixa Palavra
-                    leftItems.push({data: n, type: 'img'});
-                    rightItems.push({data: n, type: 'word'});
-                } else {
-                    // Nível 2: Lados aleatórios por par
-                    if (Math.random() > 0.5) {
-                        leftItems.push({data: n, type: 'img'});
-                        rightItems.push({data: n, type: 'word'});
-                    } else {
-                        leftItems.push({data: n, type: 'word'});
-                        rightItems.push({data: n, type: 'img'});
-                    }
-                }
+                allCards.push({data: n, type: 'img'});
+                allCards.push({data: n, type: 'word'});
             });
 
-            leftItems.sort(() => 0.5 - Math.random());
-            rightItems.sort(() => 0.5 - Math.random());
-
-            leftItems.forEach(item => colLeft.appendChild(createItem(item.data, item.type)));
-            rightItems.forEach(item => colRight.appendChild(createItem(item.data, item.type)));
+            if (level === 1) {
+                // Nível 1: Esquerda Imagens, Direita Palavras
+                let lefts = allCards.filter(c => c.type === 'img').sort(() => 0.5 - Math.random());
+                let rights = allCards.filter(c => c.type === 'word').sort(() => 0.5 - Math.random());
+                lefts.forEach(c => colLeft.appendChild(createItem(c.data, c.type)));
+                rights.forEach(c => colRight.appendChild(createItem(c.data, c.type)));
+            } else {
+                // Nível 2: Tudo misturado entre as duas colunas
+                allCards.sort(() => 0.5 - Math.random());
+                allCards.slice(0, 4).forEach(c => colLeft.appendChild(createItem(c.data, c.type)));
+                allCards.slice(4, 8).forEach(c => colRight.appendChild(createItem(c.data, c.type)));
+            }
         }
 
         function createItem(data, type) {
@@ -282,12 +265,6 @@
             if (!selectedItem1) {
                 selectedItem1 = el;
             } else {
-                // Se o utilizador clicar em dois cartões da mesma coluna, troca a seleção
-                if (selectedItem1.parentElement === el.parentElement) {
-                    selectedItem1.classList.remove('selected');
-                    selectedItem1 = el;
-                    return;
-                }
                 selectedItem2 = el;
                 checkMatch();
             }
@@ -297,8 +274,11 @@
             isChecking = true;
             const val1 = selectedItem1.dataset.value;
             const val2 = selectedItem2.dataset.value;
+            const type1 = selectedItem1.dataset.type;
+            const type2 = selectedItem2.dataset.type;
 
-            if (val1 === val2) {
+            // Condição de sucesso: mesmo valor E tipos diferentes (Imagem + Palavra)
+            if (val1 === val2 && type1 !== type2) {
                 playSound('certo');
                 selectedItem1.classList.replace('selected', 'correct-match');
                 selectedItem2.classList.replace('selected', 'correct-match');
@@ -309,7 +289,7 @@
                 document.getElementById('points').innerText = points;
                 selectedItem1 = null; selectedItem2 = null;
                 isChecking = false;
-                checkLevelEnd();
+                checkRoundEnd();
             } else {
                 playSound('errado');
                 selectedItem1.classList.add('error-match');
@@ -321,13 +301,14 @@
                     selectedItem2.classList.remove('error-match', 'selected');
                     selectedItem1 = null; selectedItem2 = null;
                     isChecking = false;
-                    checkLevelEnd();
+                    checkRoundEnd();
                 }, 600);
             }
         }
 
-        function checkLevelEnd() {
-            if (matchesFound === 4 || attemptsInLevel === 4) {
+        function checkRoundEnd() {
+            // Se acertou os 4 pares OU se esgotou as 4 tentativas (estrelas)
+            if (matchesFound === 4 || attemptsInRound === 4) {
                 setTimeout(() => {
                     if (level === 1) {
                         level = 2;
