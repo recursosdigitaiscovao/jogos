@@ -9,7 +9,7 @@
         :root {
             --cor-principal: #ff9100;
             --cor-vibrante: #ff7300;  
-            --cor-fundo: #e8f9f4;      /* IGUAL À ÁREA DE JOGO */
+            --cor-fundo: #e8f9f4;      
             --cor-texto: #8a6436;      
             --header-height: 70px;
             --cor-jogo-verde: #45cfa8; 
@@ -44,7 +44,7 @@
         .hand-icon { position: absolute; font-size: 2.5rem; bottom: 20px; left: 30%; animation: handMatch 3s infinite; }
         @keyframes handMatch { 0%, 100% { transform: translate(0,0); opacity:0; } 10%, 90% { opacity:1; } 50% { transform: translate(120px, 0); } }
 
-        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; padding: 0 10px 8px 10px; }
         .stars-container { display: flex; gap: 6px; }
         .star { width: 24px; height: 24px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: transparent; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
@@ -78,7 +78,7 @@
 
         .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
         
-        /* MODAL ATUALIZADO: Padding 25px L/R e largura reduzida */
+        /* MODAL: Padding 25px lateral e largura reduzida */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 380px; width: 90%; box-sizing: border-box; }
 
@@ -131,7 +131,7 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div class="status-item">PTS: <span id="points">0</span></div>
                 </div>
-                <div class="instruction-area">Liga a imagem ao nome correto!</div>
+                <div class="instruction-area">Liga o par correto!</div>
                 <div id="matching-area" class="matching-grid">
                     <div id="col-left" class="match-column"></div>
                     <div id="col-right" class="match-column"></div>
@@ -233,8 +233,20 @@
             let rightItems = [];
 
             subset.forEach(n => {
-                leftItems.push({data: n, type: 'img'});
-                rightItems.push({data: n, type: 'word'});
+                if (level === 1) {
+                    // Nível 1: Esquerda fixa Imagem, Direita fixa Palavra
+                    leftItems.push({data: n, type: 'img'});
+                    rightItems.push({data: n, type: 'word'});
+                } else {
+                    // Nível 2: Lados aleatórios por par
+                    if (Math.random() > 0.5) {
+                        leftItems.push({data: n, type: 'img'});
+                        rightItems.push({data: n, type: 'word'});
+                    } else {
+                        leftItems.push({data: n, type: 'word'});
+                        rightItems.push({data: n, type: 'img'});
+                    }
+                }
             });
 
             leftItems.sort(() => 0.5 - Math.random());
@@ -270,8 +282,8 @@
             if (!selectedItem1) {
                 selectedItem1 = el;
             } else {
-                // Verificar se clicou no mesmo tipo de coluna (ex: dois nomes)
-                if (selectedItem1.dataset.type === el.dataset.type) {
+                // Se o utilizador clicar em dois cartões da mesma coluna, troca a seleção
+                if (selectedItem1.parentElement === el.parentElement) {
                     selectedItem1.classList.remove('selected');
                     selectedItem1 = el;
                     return;
@@ -315,7 +327,6 @@
         }
 
         function checkLevelEnd() {
-            // Se acertou todos ou se as 4 tentativas do nível acabaram
             if (matchesFound === 4 || attemptsInLevel === 4) {
                 setTimeout(() => {
                     if (level === 1) {
@@ -336,13 +347,13 @@
 
             document.getElementById('modal-title').innerText = r.titulo;
             document.getElementById('modal-msg').innerHTML = `
-                <p>${finalMsg}</p>
+                <p style="margin-bottom:15px; font-weight:bold;">${finalMsg}</p>
                 <table class="result-table">
-                    <tr><th>Nível</th><th>Certas</th><th>Erradas</th></tr>
+                    <tr><th>${r.labelNivel}</th><th>${r.labelCertas}</th><th>${r.labelErradas}</th></tr>
                     <tr><td>1</td><td style="color:var(--cor-jogo-verde); font-weight:bold;">${stats[1].c}</td><td style="color:var(--cor-erro); font-weight:bold;">${stats[1].e}</td></tr>
                     <tr><td>2</td><td style="color:var(--cor-jogo-verde); font-weight:bold;">${stats[2].c}</td><td style="color:var(--cor-erro); font-weight:bold;">${stats[2].e}</td></tr>
                 </table>
-                <p><b>${r.pontosTotal} ${points} / 200</b></p>
+                <p>${r.pontosTotal} <b>${points} / 200</b></p>
                 <p>${r.tempoTotal} <b>${document.getElementById('timer').innerText}</b></p>
             `;
             modal.style.display = 'flex';
