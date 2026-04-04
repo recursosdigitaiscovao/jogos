@@ -7,12 +7,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --cor-principal: #ff9100;
+            --cor-principal: #ff9100;   /* Cor da navegação (Laranja) */
             --cor-vibrante: #ff7300;  
             --cor-fundo: #e8f9f4;      
             --cor-texto: #8a6436;      
             --header-height: 70px;
-            --cor-jogo-verde: #45cfa8; /* Cor solicitada */
+            --cor-jogo-verde: #45cfa8;  /* Cor solicitada para limite e título */
             --cor-erro: #ff4757;
             --cor-caixa-info: #e8f9f4;
         }
@@ -22,11 +22,18 @@
 
         /* --- Sidebar & Nav --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: all 0.3s ease; cursor: pointer; font-weight: 500; }
+        
+        .sidebar-item { 
+            display: flex; align-items: center; padding: 15px 25px; 
+            color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9;
+            transition: all 0.3s ease; cursor: pointer; font-weight: 500;
+        }
         .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
         .sidebar-item img { width: 28px; height: 28px; margin-right: 12px; object-fit: contain; }
+
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
@@ -35,22 +42,21 @@
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow: hidden; }
         .screen.active { display: flex; }
 
-        /* ALTERAÇÃO 1: Limite do card com a cor #45cfa8 (var(--cor-jogo-verde)) */
+        /* ALTERAÇÃO 1: Limite do card em verde (#45cfa8) */
         .game-card {
             background: white; border-radius: 30px; padding: 15px 20px; 
             border: 4px solid var(--cor-jogo-verde); 
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Explicação Animada --- */
+        /* --- Intro Screen --- */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
         .anim-shapes-container { display: flex; gap: 30px; align-items: center; justify-content: center; position: relative; }
         .hand-icon { position: absolute; width: 40px; height: 40px; bottom: -20px; right: 20px; pointer-events: none; animation: handMove 4s infinite; font-size: 30px; }
         @keyframes handMove { 0% {transform:translate(100px, 100px); opacity:0;} 10% {transform:translate(0,0); opacity:1;} 25%, 30% {transform:scale(0.8);} 40% {transform:translate(-110px, 0);} 55%, 60% {transform:scale(0.8);} 80% {opacity:1;} 100% {opacity:0;} }
-        .check-anim { position: absolute; font-size: 40px; color: var(--cor-jogo-verde); font-weight: bold; opacity: 0; animation: checkPop 4s infinite; }
-        .check1 { top: -20px; right: 10px; animation-delay: 0.3s; }
-        .check2 { top: -20px; left: 10px; animation-delay: 0.6s; }
-        @keyframes checkPop { 0%, 20% { opacity:0; transform:scale(0); } 30%, 90% { opacity:1; transform:scale(1); } 100% { opacity:0; } }
+        
+        /* ALTERAÇÃO 2: Título do jogo em verde (#45cfa8) */
+        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 10px 0; font-weight: bold; }
 
         /* --- Jogo --- */
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0; margin-bottom: 10px; flex-shrink: 0; }
@@ -77,7 +83,6 @@
 
         .option-btn { background: white; border: 3.5px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
         
-        /* Modal - Consistência visual */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); max-width: 380px; width: 90%; box-sizing: border-box; }
 
@@ -89,6 +94,8 @@
 <body>
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    
+    <!-- Sidebar Completa -->
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
@@ -114,23 +121,16 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <p style="color:var(--cor-texto); font-weight:bold; margin-bottom: 15px;">Encontra os <u>Retângulos</u>!</p>
+                    <p style="color:var(--cor-texto); font-weight:bold; margin-bottom: 15px;">Encontra as formas corretas!</p>
                     <div class="anim-shapes-container">
-                        <div style="position:relative;">
-                            <svg viewBox="0 0 100 100" width="80" height="80"><rect x="10" y="20" width="80" height="60" fill="#45cfa8"/></svg>
-                            <span class="check-anim check1">✓</span>
-                        </div>
-                        <div style="position:relative;">
-                            <svg viewBox="0 0 100 100" width="80" height="80"><rect x="15" y="15" width="70" height="70" fill="#ff9100"/></svg>
-                            <span class="check-anim check2">✓</span>
-                        </div>
-                        <svg viewBox="0 0 100 100" width="80" height="80"><path d="M50 5 L95 90 L5 90 Z" fill="#ccc"/></svg>
+                        <svg viewBox="0 0 100 100" width="80" height="80"><circle cx="50" cy="50" r="40" fill="#45cfa8" /></svg>
+                        <svg viewBox="0 0 100 100" width="80" height="80"><rect x="15" y="15" width="70" height="70" fill="#ff9100"/></svg>
+                        <svg viewBox="0 0 100 100" width="80" height="80"><path d="M50 10 L90 85 L10 85 Z" fill="#ccc"/></svg>
                         <div class="hand-icon">☝️</div>
                     </div>
                 </div>
-                <!-- ALTERAÇÃO 2: Título do jogo com a cor #45cfa8 (var(--cor-jogo-verde)) -->
-                <h2 style="color:var(--cor-jogo-verde); text-align:center;">Formas Geométricas</h2>
-                <button class="option-btn" style="border-color:var(--cor-jogo-verde); background:var(--cor-jogo-verde); color:white;" onclick="startGame()">JOGAR</button>
+                <h2 class="game-title">Formas Geométricas</h2>
+                <button class="option-btn" style="background:var(--cor-jogo-verde); color:white;" onclick="startGame()">JOGAR</button>
             </div>
         </section>
 
@@ -151,7 +151,7 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="margin-top: 0; color: var(--cor-jogo-verde);"></h2>
+            <h2 id="modal-title" style="margin-top: 0; color: var(--cor-jogo-verde);">Relatório</h2>
             <div id="modal-msg"></div>
             <button class="option-btn" onclick="location.reload()" style="background: var(--cor-jogo-verde); color: white; margin-bottom: 10px;">Jogar de Novo</button>
             <button class="option-btn" onclick="window.location.href='../'" style="background: white; color: var(--cor-principal); border: 2px solid var(--cor-principal);">Voltar</button>
@@ -168,9 +168,7 @@
             { id: "circle", name: "Círculos" },
             { id: "square", name: "Quadrados" },
             { id: "rectangle", name: "Retângulos" },
-            { id: "triangle", name: "Triângulos" },
-            { id: "pentagon", name: "Pentágonos" },
-            { id: "hexagon", name: "Hexágonos" }
+            { id: "triangle", name: "Triângulos" }
         ];
 
         const colors = ["#FF5733", "#33FF57", "#3357FF", "#F333FF", "#FF33A8", "#FFD700", "#00CED1"];
@@ -181,26 +179,23 @@
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.connect(gain); gain.connect(audioCtx.destination);
-                if(type === 'certo') {
-                    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-                } else {
-                    osc.type = 'square'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-                }
+                osc.frequency.setValueAtTime(type === 'certo' ? 600 : 150, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
             } catch(e) {}
         }
 
         window.onload = () => {
             if(typeof JOGO_CONFIG !== 'undefined') {
                 const p = JOGO_CONFIG.caminhoIcons;
-                const i = JOGO_CONFIG.icones;
+                const i = JOGO_CONFIG.iconesMenu;
+                
                 document.getElementById('header-icon').src = p + i.ano1;
-                document.getElementById('side-pre').src = p + i.pre;
-                document.getElementById('side-1').src = p + i.ano1;
+                if(document.getElementById('side-pre')) document.getElementById('side-pre').src = p + i.pre;
+                if(document.getElementById('side-1')) document.getElementById('side-1').src = p + i.ano1;
+                if(document.getElementById('side-2')) document.getElementById('side-2').src = p + i.ano2;
+                if(document.getElementById('side-3')) document.getElementById('side-3').src = p + i.ano3;
+                if(document.getElementById('side-4')) document.getElementById('side-4').src = p + i.ano4;
             }
         };
 
@@ -217,7 +212,6 @@
         }
 
         function startTimer() {
-            if(timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 seconds++;
                 document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
@@ -230,8 +224,6 @@
             else if(type === "square") path = `<rect x="15" y="15" width="70" height="70" fill="${color}" />`;
             else if(type === "rectangle") path = `<rect x="10" y="25" width="80" height="50" fill="${color}" />`;
             else if(type === "triangle") path = `<path d="M50 10 L90 85 L10 85 Z" fill="${color}" />`;
-            else if(type === "pentagon") path = `<path d="M50 10 L90 40 L75 85 L25 85 L10 40 Z" fill="${color}" />`;
-            else if(type === "hexagon") path = `<path d="M30 10 L70 10 L90 50 L70 90 L30 90 L10 50 Z" fill="${color}" />`;
             return `<svg viewBox="0 0 100 100">${path}</svg>`;
         }
 
@@ -244,12 +236,9 @@
             document.getElementById('target-shape-name').innerText = targetObj.name;
 
             let pool = [];
-            totalTargetsToFind = Math.floor(Math.random() * 2) + 3; 
+            totalTargetsToFind = level === 1 ? 3 : 4; 
 
-            for(let i=0; i<totalTargetsToFind; i++) {
-                pool.push({ type: currentTargetType, isTarget: true });
-            }
-
+            for(let i=0; i<totalTargetsToFind; i++) pool.push({ type: currentTargetType, isTarget: true });
             while(pool.length < 12) {
                 let dist = shapesList[Math.floor(Math.random() * shapesList.length)];
                 if(dist.id !== currentTargetType) pool.push({ type: dist.id, isTarget: false });
@@ -258,10 +247,6 @@
             pool.sort(() => Math.random() - 0.5).forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'shape-item';
-                if (level === 2) {
-                    let scale = (Math.random() * 0.3) + 0.65;
-                    div.style.transform = `scale(${scale})`;
-                }
                 div.innerHTML = getShapeSVG(item.type, colors[Math.floor(Math.random()*colors.length)]);
                 div.onclick = () => checkShape(div, item.isTarget);
                 area.appendChild(div);
@@ -286,15 +271,10 @@
         }
 
         function finishRound(wasCorrect) {
-            let starIndex = questionNum - 1;
             const stars = document.querySelectorAll('.star');
-            if (wasCorrect) {
-                points += 20; stats[level].c++;
-                stars[starIndex].classList.add('correct'); stars[starIndex].innerText = '✓';
-            } else {
-                stats[level].e++;
-                stars[starIndex].classList.add('wrong'); stars[starIndex].innerText = '✕';
-            }
+            if (wasCorrect) { points += 20; stats[level].c++; stars[questionNum-1].classList.add('correct'); stars[questionNum-1].innerText = '✓'; }
+            else { stats[level].e++; stars[questionNum-1].classList.add('wrong'); stars[questionNum-1].innerText = '✕'; }
+            
             document.getElementById('points').innerText = points;
             questionNum++;
             setTimeout(() => {
@@ -305,29 +285,19 @@
             }, 600);
         }
 
-        function resetStars() {
-            document.querySelectorAll('.star').forEach(s => { s.classList.remove('correct', 'wrong'); s.innerText = '★'; });
-        }
+        function resetStars() { document.querySelectorAll('.star').forEach(s => { s.classList.remove('correct', 'wrong'); s.innerText = '★'; }); }
 
         function endGame() {
             clearInterval(timerInterval);
-            const modal = document.getElementById('modal');
-            const p = points;
-            
-            let finalMsg = p >= 160 ? "Incrível! És um verdadeiro mestre das formas! 🌟" : (p >= 100 ? "Muito bem! Estás no bom caminho! 👍" : "Bom esforço! Continua a praticar! 💪");
-
-            document.getElementById('modal-title').innerText = p >= 100 ? "Fim do Jogo!" : "Continua a praticar!";
             document.getElementById('modal-msg').innerHTML = `
-                <p style="margin-bottom:15px; font-weight:bold;">${finalMsg}</p>
                 <table class="result-table">
                     <tr><th>Nível</th><th>Certas</th><th>Erradas</th></tr>
-                    <tr><td>1</td><td style="color:var(--cor-jogo-verde); font-weight:bold;">${stats[1].c}</td><td style="color:var(--cor-erro); font-weight:bold;">${stats[1].e}</td></tr>
-                    <tr><td>2</td><td style="color:var(--cor-jogo-verde); font-weight:bold;">${stats[2].c}</td><td style="color:var(--cor-erro); font-weight:bold;">${stats[2].e}</td></tr>
+                    <tr><td>1</td><td>${stats[1].c}</td><td>${stats[1].e}</td></tr>
+                    <tr><td>2</td><td>${stats[2].c}</td><td>${stats[2].e}</td></tr>
                 </table>
-                <p>Pontuação Total: <b>${points} / 200</b></p>
-                <p>Tempo Total: <b>${document.getElementById('timer').innerText}</b></p>
+                <p>Pontos: <b>${points} / 200</b></p>
             `;
-            modal.style.display = 'flex';
+            document.getElementById('modal').style.display = 'flex';
         }
     </script>
 </body>
