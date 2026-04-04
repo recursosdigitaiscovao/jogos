@@ -7,12 +7,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --cor-principal: #ff9100;   /* Laranja da navegação */
+            --cor-principal: #ff9100;
             --cor-vibrante: #ff7300;  
             --cor-fundo: #e8f9f4;      
             --cor-texto: #8a6436;      
             --header-height: 70px;
-            --cor-jogo-verde: #45cfa8;  /* Cor do botão Jogar */
+            --cor-jogo-verde: #45cfa8; 
             --cor-erro: #ff4757;
             --cor-caixa-info: #e8f9f4;
         }
@@ -20,7 +20,7 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* --- Sidebar & Header (Navegação mantém Laranja) --- */
+        /* --- Header & Sidebar --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .nav-bar h1 { font-size: 0.95rem; color: var(--cor-principal); display: flex; align-items: center; gap: 8px; margin: 0; flex-grow: 1; justify-content: center; }
         .nav-bar h1 img { height: 28px; width: auto; }
@@ -29,7 +29,7 @@
         .sidebar.active { left: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; cursor: pointer; }
         .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; }
-        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; }
+        .sidebar-item img { width: 22px; height: 22px; margin-right: 12px; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
@@ -38,20 +38,16 @@
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow: hidden; }
         .screen.active { display: flex; }
 
-        /* ALTERAÇÃO 1: Limite do card com a cor do botão jogar (Verde) */
         .game-card {
             background: white; border-radius: 30px; padding: 10px; 
-            border: 4px solid var(--cor-jogo-verde); 
+            border: 4px solid var(--cor-jogo-verde); /* Cor do botão jogar */
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Intro Screen --- */
-        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        
-        /* ALTERAÇÃO 1: Título do jogo com a cor do botão jogar (Verde) */
-        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.2rem; margin: 5px 0; font-weight: bold; }
+        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.1rem; margin: 5px 0; font-weight: bold; }
 
-        /* --- Área de Jogo --- */
+        /* --- Área de Jogo (Zona Verde) --- */
+        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 5px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; font-size: 0.85rem; }
         .stars-container { display: flex; gap: 3px; }
         .star { width: 18px; height: 18px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; }
@@ -61,48 +57,56 @@
         .game-area { 
             flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;
             background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb;
-            box-sizing: border-box; justify-content: space-between; align-items: center; position: relative; padding: 15px 0;
+            box-sizing: border-box; justify-content: space-between; align-items: center; position: relative; padding: 10px 0;
         }
 
-        .target-display { position: absolute; top: 10px; left: 15px; background: white; border: 3px solid var(--cor-jogo-verde); border-radius: 12px; padding: 5px 15px; font-size: 1.8rem; font-weight: bold; color: var(--cor-jogo-verde); z-index: 10; }
+        .target-display { position: absolute; top: 10px; left: 15px; background: white; border: 3px solid var(--cor-jogo-verde); border-radius: 12px; padding: 5px 15px; font-size: 1.6rem; font-weight: bold; color: var(--cor-jogo-verde); z-index: 10; }
 
-        /* ALTERAÇÃO 2: Sequência e Posição (Trator à direita) */
-        .scene-container { display: flex; align-items: flex-end; justify-content: flex-end; width: 95%; gap: 2px; padding-right: 20px; }
+        /* --- Comboio do Trator (Reduzido) --- */
+        .scene-container { display: flex; align-items: flex-end; justify-content: flex-end; width: 95%; gap: 2px; padding-right: 15px; overflow: visible; }
         
-        /* Ordem visual via CSS: Reboque 2, Reboque 1, Trator (Direita) */
-        .trator-img { height: clamp(70px, 15vh, 120px); z-index: 5; order: 3; }
+        .trator-img { height: clamp(50px, 12vh, 90px); z-index: 5; order: 3; }
+        .reboque-container { position: relative; display: flex; align-items: flex-end; }
         .reb1-box { order: 2; }
         .reb2-box { order: 1; }
-        .reboque-img { height: clamp(60px, 13vh, 95px); }
+        .reboque-img { height: clamp(40px, 10vh, 75px); width: auto; }
 
-        /* Animação Sequencial: Trator (0s), Reb 1 (0.3s), Reb 2 (0.6s) */
-        .anim-enter { animation: driveToRight 1s ease-out forwards; opacity: 0; }
-        @keyframes driveToRight { 
-            0% { transform: translateX(-300px); opacity: 0; } 
+        /* Animação Sequencial Trator -> Reb 1 -> Reb 2 */
+        .anim-enter { animation: driveIn 1s ease-out forwards; opacity: 0; }
+        @keyframes driveIn { 
+            0% { transform: translateX(-150%); opacity: 0; } 
             100% { transform: translateX(0); opacity: 1; } 
         }
 
-        .carga-area { position: absolute; bottom: 35%; left: 10%; width: 80%; height: 80%; display: flex; align-items: flex-end; justify-content: center; flex-wrap: wrap-reverse; gap: 2px; }
-        .carga-area img.dez { height: 110%; width: auto; } /* Barra Maior */
-        .carga-area img.uni { height: 25%; width: auto; }  /* Cubo Menor */
+        .carga-area { position: absolute; bottom: 35%; left: 10%; width: 80%; height: 80%; display: flex; align-items: flex-end; justify-content: center; flex-wrap: wrap-reverse; gap: 1px; }
+        .carga-area img.dez { height: 110%; width: auto; }
+        .carga-area img.uni { height: 25%; width: auto; }
 
-        /* --- UI Controlos --- */
+        /* --- UI de Controlos Interna --- */
         .game-ui-overlay { width: 100%; display: flex; flex-direction: column; align-items: center; padding: 0 10px; z-index: 20; }
         .symbol-pad { display: flex; gap: 8px; justify-content: center; margin-bottom: 5px; }
         .sym-btn {
             background: white; border: 3px solid var(--cor-jogo-verde); border-radius: 15px;
-            padding: 5px 15px; cursor: pointer; display: flex; flex-direction: column; align-items: center; 
-            font-family: 'Fredoka'; font-weight: bold; font-size: 0.7rem;
+            padding: 5px 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; 
+            font-family: 'Fredoka'; font-weight: bold; font-size: 0.65rem;
         }
-        .sym-btn img { height: 20px; margin-bottom: 2px; }
-        .btn-carregar { background: var(--cor-principal); color: white; border: none; padding: 10px 40px; border-radius: 50px; font-size: 1.1rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; }
+        .sym-btn img { height: 18px; margin-bottom: 2px; }
+        .sym-btn:active { transform: scale(0.95); background: var(--cor-jogo-verde); color: white; }
 
-        /* Nível 2 - 6 Opções */
-        .options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 90%; max-width: 400px; }
-        .opt-btn { background: white; border: 3px solid var(--cor-jogo-verde); border-radius: 12px; padding: 12px 0; font-size: 1.2rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; }
+        .btn-carregar { background: var(--cor-principal); color: white; border: none; padding: 10px 40px; border-radius: 50px; font-size: 1rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; }
+
+        .options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 90%; max-width: 380px; }
+        .opt-btn { background: white; border: 3px solid var(--cor-jogo-verde); border-radius: 12px; padding: 10px 0; font-size: 1.1rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; color: var(--cor-texto); }
 
         .error-shake { animation: shake 0.4s; border-color: var(--cor-erro) !important; }
         @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
+
+        /* Modal Relatório */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .modal-content { background: white; padding: 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); max-width: 380px; width: 90%; }
+        .report-table { width: 100%; margin: 15px 0; border-collapse: collapse; font-size: 0.85rem; }
+        .report-table th { background: var(--cor-caixa-info); padding: 8px; }
+        .report-table td { padding: 8px; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -128,7 +132,7 @@
     </header>
 
     <main class="main-content">
-        <!-- ECRÃ INICIAL -->
+        <!-- INTRO -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
@@ -139,11 +143,11 @@
                     </div>
                 </div>
                 <h2 class="game-title">Trator das Dezenas</h2>
-                <button class="opt-btn" style="background:var(--cor-jogo-verde); color:white; width: 100%; border:none; border-radius:15px;" onclick="startGame()">JOGAR</button>
+                <button class="btn-carregar" style="background:var(--cor-jogo-verde); width: 100%; border-radius:15px;" onclick="startGame()">JOGAR</button>
             </div>
         </section>
 
-        <!-- ECRÃ DE JOGO -->
+        <!-- JOGO -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
@@ -151,12 +155,9 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div>PTS: <span id="points">0</span></div>
                 </div>
-
-                <div class="instruction-area" id="instruction-text"></div>
-                
+                <div id="instruction-text" style="text-align:center; font-weight:bold; color:var(--cor-texto); font-size: 0.9rem;"></div>
                 <div class="game-area" id="game-canvas">
                     <div id="target-number" class="target-display">0</div>
-                    
                     <div class="scene-container" id="tractor-train">
                         <img id="game-tractor" class="trator-img">
                         <div class="reboque-container reb1-box" id="reb1-box">
@@ -168,7 +169,6 @@
                             <img id="game-reb-2" class="reboque-img">
                         </div>
                     </div>
-
                     <div class="game-ui-overlay">
                         <div id="ui-n1" style="display:none; flex-direction:column; align-items:center;">
                             <div class="symbol-pad">
@@ -189,7 +189,7 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--cor-jogo-verde); font-size: 1.2rem;">Relatório</h2>
+            <h2 style="color:var(--cor-jogo-verde); margin-top:0;">Relatório</h2>
             <div id="modal-msg"></div>
             <button class="btn-carregar" onclick="location.reload()" style="width:100%">Jogar de Novo</button>
         </div>
@@ -198,7 +198,7 @@
     <script src="dados.js"></script>
     <script>
         let level = 1, pts = 0, quest = 1, secs = 0, timer;
-        let target = 0, uTens = 0, uUnits = 0, active = true;
+        let target = 0, uTens = 0, uUnits = 0, active = false;
         let stats = { 1: { c: 0, e: 0 }, 2: { c: 0, e: 0 } };
 
         window.onload = () => {
@@ -206,15 +206,11 @@
                 const pi = JOGO_CONFIG.caminhoIcons;
                 const pm = JOGO_CONFIG.caminhoImg;
                 const v = JOGO_CONFIG.veiculos;
-
-                // Sidebar
                 ['pre','1','2','3','4'].forEach(n => {
-                    const id = n === 'pre' ? 'pre' : 'ano'+n;
-                    document.getElementById('side-'+n).src = pi + JOGO_CONFIG.iconesMenu[id];
+                    const el = document.getElementById('side-'+n);
+                    if(el) el.src = pi + JOGO_CONFIG.iconesMenu[n==='pre'?'pre':'ano'+n];
                 });
                 document.getElementById('header-icon').src = pi + JOGO_CONFIG.iconesMenu.ano1;
-
-                // Assets
                 const tImg = pm + v.trator, rImg = pm + v.reboque;
                 document.getElementById('intro-trator').src = tImg;
                 document.getElementById('intro-reb1').src = rImg;
@@ -222,7 +218,7 @@
                 document.getElementById('game-tractor').src = tImg;
                 document.getElementById('game-reb-1').src = rImg;
                 document.getElementById('game-reb-2').src = rImg;
-                document.getElementById('btn-dez').src = pm + v.unidade; // Ícone de cubo nos botões
+                document.getElementById('btn-dez').src = pm + v.unidade;
                 document.getElementById('btn-uni').src = pm + v.unidade;
                 document.getElementById('btn-bor').src = pm + v.borracha;
             }
@@ -242,21 +238,16 @@
 
         function initStars() {
             const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
-            for(let i=0; i<5; i++) { const s = document.createElement('div'); s.className = 'star'; s.innerText = '★'; bar.appendChild(s); }
+            for(let i=0; i<5; i++) { const s = document.createElement('div'); s.className = 'star'; bar.appendChild(s); }
         }
 
         function loadQ() {
             active = true; clearC();
             const t = document.getElementById('game-tractor'), r1 = document.getElementById('reb1-box'), r2 = document.getElementById('reb2-box');
-            
-            // Reiniciar animações sequenciais
             [t, r1, r2].forEach(el => { el.classList.remove('anim-enter'); void el.offsetWidth; el.classList.add('anim-enter'); });
-            t.style.animationDelay = '0s';
-            r1.style.animationDelay = '0.3s';
-            r2.style.animationDelay = '0.6s';
+            t.style.animationDelay = '0s'; r1.style.animationDelay = '0.3s'; r2.style.animationDelay = '0.6s';
 
-            const cfg = JOGO_CONFIG.niveis[level];
-            document.getElementById('instruction-text').innerText = cfg.instrucao;
+            document.getElementById('instruction-text').innerText = JOGO_CONFIG.niveis[level].instrucao;
             target = Math.floor(Math.random() * 29) + 1;
 
             if(level === 1) {
@@ -269,8 +260,7 @@
                 document.getElementById('ui-n1').style.display = 'none';
                 document.getElementById('ui-n2').style.display = 'flex';
                 uTens = Math.floor(target / 10); uUnits = target % 10;
-                render();
-                generateOptions();
+                render(); generateOptions();
             }
         }
 
@@ -283,19 +273,13 @@
             }
             opts.sort((a,b) => a-b).forEach(o => {
                 const b = document.createElement('button');
-                b.className = 'opt-btn';
-                b.innerText = o;
+                b.className = 'opt-btn'; b.innerText = o;
                 b.onclick = () => validate(o === target);
                 pad.appendChild(b);
             });
         }
 
-        function add(t) {
-            if(!active) return;
-            if(t === 'D' && uTens < 3) uTens++;
-            if(t === 'U' && uUnits < 9) uUnits++;
-            render();
-        }
+        function add(t) { if(active && level === 1) { if(t==='D' && uTens<3) uTens++; if(t==='U' && uUnits<9) uUnits++; render(); } }
 
         function clearC() { uTens = 0; uUnits = 0; render(); document.getElementById('game-canvas').classList.remove('error-shake'); }
 
@@ -303,14 +287,8 @@
             const pm = JOGO_CONFIG.caminhoImg, v = JOGO_CONFIG.veiculos;
             const cT = document.getElementById('carga-tens'), cU = document.getElementById('carga-units');
             cT.innerHTML = ''; cU.innerHTML = '';
-            for(let i=0; i<uTens; i++) {
-                const img = document.createElement('img'); img.src = pm + v.dezena; 
-                img.className = 'dez'; cT.appendChild(img);
-            }
-            for(let i=0; i<uUnits; i++) {
-                const img = document.createElement('img'); img.src = pm + v.unidade; 
-                img.className = 'uni'; cU.appendChild(img);
-            }
+            for(let i=0; i<uTens; i++) { const img = document.createElement('img'); img.src = pm + v.dezena; img.className = 'dez'; cT.appendChild(img); }
+            for(let i=0; i<uUnits; i++) { const img = document.createElement('img'); img.src = pm + v.unidade; img.className = 'uni'; cU.appendChild(img); }
         }
 
         function check() { validate((uTens * 10 + uUnits) === target); }
@@ -325,13 +303,12 @@
                 quest++;
                 if(quest > 5) {
                     if(level === 1) { level = 2; quest = 1; initStars(); loadQ(); }
-                    else endGame();
+                    else { clearInterval(timer); showReport(); }
                 } else loadQ();
             }, 1200);
         }
 
-        function endGame() {
-            clearInterval(timer);
+        function showReport() {
             document.getElementById('modal-msg').innerHTML = `
                 <table class="report-table">
                     <tr><th>Nível</th><th>Certas</th><th>Erradas</th></tr>
