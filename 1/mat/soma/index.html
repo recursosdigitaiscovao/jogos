@@ -12,7 +12,7 @@
             --cor-fundo: #e8f9f4;      
             --cor-texto: #8a6436;      
             --header-height: 70px;
-            --cor-jogo-verde: #45cfa8; 
+            --cor-jogo-verde: #45cfa8; /* Cor solicitada */
             --cor-erro: #ff4757;
             --cor-caixa-info: #e8f9f4;
         }
@@ -20,177 +20,146 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* --- Sidebar & Nav --- */
+        /* --- Header --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        
+        .menu-btn { background: none; border: none; font-size: 26px; color: var(--cor-principal); cursor: pointer; }
+
+        .back-btn {
+            background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px;
+            text-decoration: none; font-weight: bold; font-size: 0.8rem; transition: 0.3s;
+        }
+
+        /* --- Sidebar Completa --- */
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: all 0.3s ease; cursor: pointer; font-weight: 500; }
+        
+        .sidebar-item { 
+            display: flex; align-items: center; padding: 15px 25px; 
+            color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9;
+            transition: all 0.3s ease; cursor: pointer; font-weight: 500;
+        }
         .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
         .sidebar-item img { width: 28px; height: 28px; margin-right: 12px; object-fit: contain; }
+
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* --- Layout Responsivo --- */
+        /* --- Layout --- */
         .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; height: calc(100% - var(--header-height)); }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow: hidden; }
         .screen.active { display: flex; }
 
-        /* ALTERAÇÃO 1: Limite do card com a cor #45cfa8 (var(--cor-jogo-verde)) */
+        /* ALTERAÇÃO 1: Limite do card em Verde (#45cfa8) */
         .game-card {
-            background: white; border-radius: 30px; padding: clamp(10px, 2vh, 20px); 
+            background: white; border-radius: 30px; padding: 15px; 
             border: 4px solid var(--cor-jogo-verde);
             display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Explicação Animada --- */
-        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 10px; min-height: 0; }
-        .anim-math-container { display: flex; align-items: center; gap: clamp(10px, 2vw, 25px); font-size: clamp(1.8rem, 6vh, 3.5rem); font-weight: bold; color: var(--cor-texto); }
-        .anim-dots { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; width: clamp(50px, 15vw, 100px); min-height: 40px; }
-        .anim-dot { width: clamp(10px, 1.8vh, 18px); height: clamp(10px, 1.8vh, 18px); background: var(--cor-principal); border-radius: 50%; opacity: 0; }
-        
+        /* --- Intro --- */
+        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 10px; }
+        .anim-math-container { display: flex; align-items: center; gap: 15px; font-size: 2.5rem; font-weight: bold; color: var(--cor-texto); }
+        .anim-dot { width: 15px; height: 15px; background: var(--cor-principal); border-radius: 50%; opacity: 0; animation: fadeInDot 0.5s forwards; }
         @keyframes fadeInDot { to { opacity: 1; } }
-        .dot-delay-1 { animation: fadeInDot 0.5s forwards 0.5s; }
-        .dot-delay-2 { animation: fadeInDot 0.5s forwards 1s; }
-        .dot-delay-3 { animation: fadeInDot 0.5s forwards 1.5s; }
-        .dot-delay-res { animation: fadeInDot 0.5s forwards 2.5s; }
+
+        /* ALTERAÇÃO 2: Título do jogo em Verde (#45cfa8) */
+        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 10px 0; font-weight: bold; }
 
         /* --- Jogo --- */
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 8px; flex-shrink: 0; }
         .stars-container { display: flex; gap: 4px; }
-        .star { width: clamp(18px, 2.5vh, 24px); height: clamp(18px, 2.5vh, 24px); border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
+        .star { width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
-        .instruction-area { text-align: center; font-size: clamp(0.9rem, 2.5vh, 1.3rem); font-weight: bold; color: var(--cor-texto); margin-bottom: 8px; flex-shrink: 0; }
-        
-        /* Área da Equação */
         .equation-container { 
             flex: 2; display: flex; justify-content: center; align-items: center; gap: clamp(5px, 2vw, 25px); 
-            background: var(--cor-caixa-info); border-radius: 20px; margin-bottom: 10px; border: 2px dashed #b2dfdb; overflow: hidden; min-height: 0;
+            background: var(--cor-caixa-info); border-radius: 20px; margin-bottom: 10px; border: 2px dashed #b2dfdb; overflow: hidden;
         }
-        .num-block { display: flex; flex-direction: column; align-items: center; min-width: clamp(80px, 18vw, 140px); }
-        .num-value { font-size: clamp(2.2rem, 9vh, 4.5rem); font-weight: 700; color: var(--cor-texto); min-height: 1.1em; display: flex; align-items: center; justify-content: center; }
-        
-        .lacuna { 
-            width: clamp(70px, 15vw, 110px); 
-            height: clamp(60px, 11vh, 100px); 
-            border: 4px dashed var(--cor-principal); border-radius: 15px; background: #fff; display: flex; align-items: center; justify-content: center; 
-        }
+        .num-value { font-size: 4rem; font-weight: 700; color: var(--cor-texto); }
+        .lacuna { width: 90px; height: 90px; border: 4px dashed var(--cor-principal); border-radius: 15px; background: #fff; display: flex; align-items: center; justify-content: center; }
 
-        .dots-grid { 
-            display: flex; flex-wrap: wrap; gap: 4px; min-height: clamp(30px, 5vh, 55px); width: 100%;
-            justify-content: center; align-content: flex-start; padding: 4px 0;
-        }
-        .dot { width: clamp(7px, 1.5vh, 15px); height: clamp(7px, 1.5vh, 15px); background: var(--cor-principal); border-radius: 50%; }
-        .dot.result-dot { background: var(--cor-jogo-verde); }
-        .op-symbol { font-size: clamp(1.5rem, 5vh, 3rem); font-weight: bold; color: var(--cor-principal); padding-bottom: clamp(25px, 6vh, 60px); }
-
-        /* Teclado Numérico */
-        .numpad { 
-            display: grid; grid-template-columns: repeat(6, 1fr); gap: clamp(4px, 1vw, 10px); 
-            padding: clamp(8px, 1.5vh, 15px); background: var(--cor-caixa-info); border-radius: 20px; flex-shrink: 0;
-        }
+        .numpad { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; padding: 15px; background: var(--cor-caixa-info); border-radius: 20px; flex-shrink: 0; }
         .num-btn { 
             background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-texto);
-            font-size: clamp(1rem, 2.8vh, 1.6rem); font-weight: bold; padding: clamp(6px, 1.8vh, 14px) 2px; border-radius: 12px; cursor: pointer;
-            transition: transform 0.1s; font-family: 'Fredoka';
-            -webkit-tap-highlight-color: transparent; outline: none;
+            font-size: 1.5rem; font-weight: bold; padding: 10px; border-radius: 12px; cursor: pointer; font-family: 'Fredoka';
         }
+        .num-btn:active { background: var(--cor-jogo-verde); color: white; transform: scale(0.95); }
+
+        .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
         
-        .num-btn:active { background: var(--cor-jogo-verde) !important; color: white !important; transform: scale(0.95); }
-
-        .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: clamp(1.1rem, 3vh, 1.4rem); font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
-        .option-btn:hover { background: var(--cor-jogo-verde); color: white; transform: translateY(-3px); }
-
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        /* Consistência: borda do modal em verde */
         .modal-content { background: white; padding: 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); max-width: 350px; width: 85%; }
+        
+        .error-shake { animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
     </style>
 </head>
 <body>
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    
+    <!-- Sidebar Completa -->
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
             <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src="" class="img-icon-sidebar"> Pré-Escolar</a>
-        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src="" class="img-icon-sidebar"> 1º Ano</a>
+        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre"> Pré-Escolar</a>
+        <a href="/jogos/1/" class="sidebar-item"><img id="side-1"> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img id="side-2"> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img id="side-3"> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img id="side-4"> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
-        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
-        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal);">
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin:0;">
             <img id="header-icon" src="" style="height:32px; width: auto;"> Matemática - 1º Ano
         </h1>
-        <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
+        <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
 
     <main class="main-content">
+        <!-- Tela Intro -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <p style="color:var(--cor-texto); font-weight:bold; margin-bottom: clamp(10px, 4vh, 25px); font-size: clamp(1rem, 3.5vh, 1.5rem);">Vê como somar:</p>
                     <div class="anim-math-container">
-                        <div class="num-block">
-                            <span>1</span>
-                            <div class="anim-dots"><div class="anim-dot dot-delay-1"></div></div>
-                        </div>
-                        <span class="op-symbol" style="padding:0; margin-bottom:40px">+</span>
-                        <div class="num-block">
-                            <span>2</span>
-                            <div class="anim-dots"><div class="anim-dot dot-delay-2"></div><div class="anim-dot dot-delay-3"></div></div>
-                        </div>
-                        <span class="op-symbol" style="padding:0; margin-bottom:40px">=</span>
-                        <div class="num-block">
-                            <span style="color:var(--cor-jogo-verde)">3</span>
-                            <div class="anim-dots">
-                                <div class="anim-dot dot-delay-res" style="background:var(--cor-jogo-verde)"></div>
-                                <div class="anim-dot dot-delay-res" style="background:var(--cor-jogo-verde)"></div>
-                                <div class="anim-dot dot-delay-res" style="background:var(--cor-jogo-verde)"></div>
-                            </div>
-                        </div>
+                        <span>1 + 2 = <span style="color:var(--cor-jogo-verde)">3</span></span>
                     </div>
                 </div>
-                <!-- ALTERAÇÃO 2: Título com a cor #45cfa8 (var(--cor-jogo-verde)) -->
-                <h2 style="color:var(--cor-jogo-verde); text-align:center; font-size: clamp(1.1rem, 4vh, 1.6rem); margin: 10px 0;">Somas até 10</h2>
-                <button class="option-btn" style="border-color:var(--cor-jogo-verde); background:var(--cor-jogo-verde); color:white;" onclick="startGame()">JOGAR</button>
+                <h2 class="game-title">Somas até 10</h2>
+                <button class="option-btn" style="background:var(--cor-jogo-verde); color:white;" onclick="startGame()">JOGAR</button>
             </div>
         </section>
 
+        <!-- Tela Jogo -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
-                    <div class="status-item">⏳ <span id="timer">00:00</span></div>
-                    <div class="stars-container" id="stars-bar">
-                        <div class="star">★</div><div class="star">★</div><div class="star">★</div><div class="star">★</div><div class="star">★</div>
-                    </div>
-                    <div class="status-item">PTS: <span id="points">0</span></div>
+                    <div>⏳ <span id="timer">00:00</span></div>
+                    <div class="stars-container" id="stars-bar"></div>
+                    <div>PTS: <span id="points">0</span></div>
                 </div>
-                <div class="instruction-area" id="game-instruction">Resolve a conta!</div>
+                <div id="game-instruction" style="text-align:center; font-weight:bold; color:var(--cor-texto); margin-bottom:10px;">Resolve a conta!</div>
                 
                 <div class="equation-container">
-                    <div class="num-block"><div id="val-a" class="num-value"></div><div id="dots-a" class="dots-grid"></div></div>
-                    <div class="op-symbol">+</div>
-                    <div class="num-block"><div id="val-b" class="num-value"></div><div id="dots-b" class="dots-grid"></div></div>
-                    <div class="op-symbol">=</div>
-                    <div class="num-block"><div id="val-res" class="num-value"></div><div id="dots-res" class="dots-grid"></div></div>
+                    <div id="val-a" class="num-value"></div>
+                    <div style="font-size:3rem; color:var(--cor-principal)">+</div>
+                    <div id="val-b" class="num-value"></div>
+                    <div style="font-size:3rem; color:var(--cor-principal)">=</div>
+                    <div id="val-res" class="num-value"></div>
                 </div>
 
                 <div class="numpad">
-                    <button class="num-btn" onclick="handleInput(0, event)">0</button>
-                    <button class="num-btn" onclick="handleInput(1, event)">1</button>
-                    <button class="num-btn" onclick="handleInput(2, event)">2</button>
-                    <button class="num-btn" onclick="handleInput(3, event)">3</button>
-                    <button class="num-btn" onclick="handleInput(4, event)">4</button>
-                    <button class="num-btn" onclick="handleInput(5, event)">5</button>
-                    <button class="num-btn" onclick="handleInput(6, event)">6</button>
-                    <button class="num-btn" onclick="handleInput(7, event)">7</button>
-                    <button class="num-btn" onclick="handleInput(8, event)">8</button>
-                    <button class="num-btn" onclick="handleInput(9, event)">9</button>
-                    <button class="num-btn" onclick="handleInput(10, event)">10</button>
+                    <script>
+                        for(let i=0; i<=10; i++) {
+                            document.write(`<button class="num-btn" onclick="handleInput(${i}, event)">${i}</button>`);
+                        }
+                    </script>
                 </div>
             </div>
         </section>
@@ -198,45 +167,27 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="margin: 0 0 15px 0; color:var(--cor-jogo-verde);"></h2>
-            <div id="modal-msg" style="margin-bottom: 20px; color: var(--cor-texto);"></div>
-            <button class="option-btn" onclick="location.reload()" style="background: var(--cor-jogo-verde); color: white; margin-bottom: 10px;">Jogar de Novo</button>
-            <button class="option-btn" onclick="window.location.href='../'" style="background: white; color: var(--cor-principal); border-color: var(--cor-principal);">Voltar</button>
+            <h2 id="modal-title"></h2>
+            <div id="modal-msg" style="margin-bottom: 20px;"></div>
+            <button class="option-btn" onclick="location.reload()" style="background: var(--cor-jogo-verde); color: white;">Jogar de Novo</button>
         </div>
     </div>
 
     <script src="dados.js"></script>
     <script>
         let level = 1, questionNum = 1, points = 0, seconds = 0, timerInterval;
-        let valA = 0, valB = 0, result = 0, targetValue = 0, hiddenSlotId = "";
-        let isRoundActive = true;
-
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playSound(type) {
-            try {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                if(type === 'certo') {
-                    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-                } else {
-                    osc.type = 'square'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-                }
-            } catch(e) {}
-        }
+        let valA, valB, result, targetValue, hiddenSlotId, isRoundActive = true;
 
         window.onload = () => {
             if(typeof JOGO_CONFIG !== 'undefined') {
-                const p = JOGO_CONFIG.caminhoIcons;
+                const pi = JOGO_CONFIG.caminhoIcons;
                 const i = JOGO_CONFIG.iconesMenu;
-                document.getElementById('header-icon').src = p + i.ano1;
-                document.getElementById('side-pre').src = p + i.pre;
-                document.getElementById('side-1').src = p + i.ano1;
+                document.getElementById('header-icon').src = pi + i.ano1;
+                document.getElementById('side-pre').src = pi + i.pre;
+                document.getElementById('side-1').src = pi + i.ano1;
+                document.getElementById('side-2').src = pi + i.ano2;
+                document.getElementById('side-3').src = pi + i.ano3;
+                document.getElementById('side-4').src = pi + i.ano4;
             }
         };
 
@@ -246,27 +197,29 @@
         }
 
         function startGame() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            startTimer(); loadQuestion();
+            startTimer();
+            initStars();
+            loadQuestion();
         }
 
         function startTimer() {
-            if(timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 seconds++;
-                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
+                let m = Math.floor(seconds/60).toString().padStart(2,'0');
+                let s = (seconds%60).toString().padStart(2,'0');
+                document.getElementById('timer').innerText = `${m}:${s}`;
             }, 1000);
         }
 
-        function renderDots(count, containerId, isResult = false) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            for(let i=0; i<count; i++) {
-                const dot = document.createElement('div');
-                dot.className = isResult ? 'dot result-dot' : 'dot';
-                container.appendChild(dot);
+        function initStars() {
+            const bar = document.getElementById('stars-bar');
+            bar.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const s = document.createElement('div');
+                s.className = 'star'; s.innerText = '★';
+                bar.appendChild(s);
             }
         }
 
@@ -280,87 +233,54 @@
             const slotB = document.getElementById('val-b');
             const slotRes = document.getElementById('val-res');
 
-            [slotA, slotB, slotRes].forEach(s => {
-                s.classList.remove('lacuna');
-                s.style.color = "var(--cor-texto)";
-                s.innerHTML = "";
-            });
+            [slotA, slotB, slotRes].forEach(s => { s.classList.remove('lacuna', 'error-shake'); s.style.color = "var(--cor-texto)"; s.innerText = ""; });
 
             if (level === 1) {
                 hiddenSlotId = "val-res"; targetValue = result;
                 slotA.innerText = valA; slotB.innerText = valB;
                 slotRes.classList.add('lacuna');
-                document.getElementById('game-instruction').innerText = "Qual é o resultado da soma?";
-                renderDots(valA, 'dots-a'); renderDots(valB, 'dots-b');
-                document.getElementById('dots-res').innerHTML = "";
             } else {
                 let hide = Math.random() > 0.5 ? "a" : "b";
-                if(hide === "a") {
-                    hiddenSlotId = "val-a"; targetValue = valA;
-                    slotA.classList.add('lacuna'); slotB.innerText = valB;
-                    document.getElementById('dots-a').innerHTML = ""; renderDots(valB, 'dots-b');
-                } else {
-                    hiddenSlotId = "val-b"; targetValue = valB;
-                    slotB.classList.add('lacuna'); slotA.innerText = valA;
-                    document.getElementById('dots-b').innerHTML = ""; renderDots(valA, 'dots-a');
-                }
-                slotRes.innerText = result; slotRes.style.color = "var(--cor-jogo-verde)";
-                document.getElementById('game-instruction').innerText = "Que número falta na conta?";
-                renderDots(result, 'dots-res', true);
+                if(hide === "a") { hiddenSlotId = "val-a"; targetValue = valA; slotA.classList.add('lacuna'); slotB.innerText = valB; }
+                else { hiddenSlotId = "val-b"; targetValue = valB; slotB.classList.add('lacuna'); slotA.innerText = valA; }
+                slotRes.innerText = result;
             }
         }
 
         function handleInput(ans, event) {
             if (!isRoundActive) return;
-            if (event && event.currentTarget) event.currentTarget.blur();
             isRoundActive = false;
-            const currentSlot = document.getElementById(hiddenSlotId);
-            currentSlot.innerText = ans;
+            const slot = document.getElementById(hiddenSlotId);
+            slot.innerText = ans;
 
-            if (ans === targetValue) {
-                playSound('certo');
-                currentSlot.classList.remove('lacuna'); currentSlot.style.color = "var(--cor-vibrante)";
-                if (hiddenSlotId === "val-res") renderDots(result, 'dots-res', true);
-                else if (hiddenSlotId === "val-a") renderDots(valA, 'dots-a');
-                else renderDots(valB, 'dots-b');
-                finishRound(true);
-            } else {
-                playSound('errado');
-                currentSlot.style.color = "var(--cor-erro)";
-                currentSlot.classList.add('error-shake');
-                finishRound(false);
-            }
-        }
-
-        function finishRound(wasCorrect) {
-            let starIndex = questionNum - 1;
             const stars = document.querySelectorAll('.star');
-            if (wasCorrect) {
-                points += 20; stars[starIndex].classList.add('correct'); stars[starIndex].innerText = '✓';
+            if (ans === targetValue) {
+                points += 20;
+                slot.style.color = "var(--cor-jogo-verde)";
+                stars[questionNum - 1].classList.add('correct');
+                stars[questionNum - 1].innerText = '✓';
             } else {
-                stars[starIndex].classList.add('wrong'); stars[starIndex].innerText = '✕';
+                slot.style.color = "var(--cor-erro)";
+                slot.classList.add('error-shake');
+                stars[questionNum - 1].classList.add('wrong');
+                stars[questionNum - 1].innerText = '✕';
             }
-            document.getElementById('points').innerText = points;
-            questionNum++;
-            setTimeout(() => {
-                if (questionNum > 5) {
-                    if (level === 1) { level = 2; questionNum = 1; resetStars(); loadQuestion(); }
-                    else { endGame(); }
-                } else { loadQuestion(); }
-            }, 1800);
-        }
 
-        function resetStars() { document.querySelectorAll('.star').forEach(s => { s.classList.remove('correct', 'wrong'); s.innerText = '★'; }); }
+            document.getElementById('points').innerText = points;
+            setTimeout(() => {
+                questionNum++;
+                if (questionNum > 5) {
+                    if (level === 1) { level = 2; questionNum = 1; initStars(); loadQuestion(); }
+                    else endGame();
+                } else loadQuestion();
+            }, 1500);
+        }
 
         function endGame() {
             clearInterval(timerInterval);
-            const modal = document.getElementById('modal');
-            modal.style.display = 'flex';
-            let msgFim = JOGO_CONFIG.mensagens.tenta;
-            if(points >= 180) msgFim = JOGO_CONFIG.mensagens.excelente;
-            else if(points >= 120) msgFim = JOGO_CONFIG.mensagens.bom;
             document.getElementById('modal-title').innerText = "Fim do Jogo!";
-            document.getElementById('modal-msg').innerHTML = `<p>${msgFim}</p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p><p>Pontos: <b>${points} / 200</b></p>`;
+            document.getElementById('modal-msg').innerHTML = `Pontos: ${points} / 200<br>Tempo: ${document.getElementById('timer').innerText}`;
+            document.getElementById('modal').style.display = 'flex';
         }
     </script>
 </body>
