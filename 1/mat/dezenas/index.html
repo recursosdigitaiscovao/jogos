@@ -46,7 +46,6 @@
         .anim-tractor-wrap { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; animation: animDriveIn 2s ease-out forwards; }
         @keyframes animDriveIn { from { left: -400px; transform: translateX(0); } to { left: 50%; transform: translateX(-50%); } }
 
-        /* AJUSTE BOTÕES INTRO LADO A LADO */
         .anim-line-3 { display: flex; gap: 10px; justify-content: center; width: 100%; flex-wrap: nowrap; }
         .intro-btn {
             background: white; border: 3.5px solid var(--cor-jogo-verde); border-radius: 15px;
@@ -67,9 +66,7 @@
             display: flex; align-items: flex-end; justify-content: center; gap: 3px;
             margin-bottom: -8px; z-index: 5;
         }
-        /* Pilhas */
         .dezena-stack, .unit-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
-
         .fardo-img { width: clamp(10px, 2.1vw, 17px); height: auto; object-fit: contain; }
 
         /* --- Interface do Jogo --- */
@@ -93,7 +90,12 @@
         .tractor-container.exit { left: 150%; transition: left 1s ease-in; }
 
         /* Teclado do Jogo */
-        .options-area { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; flex-grow: 1; width: 100%; max-width: 450px; margin: 0 auto; align-content: center; }
+        .options-area { 
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px 20px; 
+            flex-grow: 1; width: 100%; max-width: 450px; margin: 0 auto; align-content: center;
+            /* ALTERAÇÃO: 10px para a esquerda */
+            transform: translateX(-10px); 
+        }
         
         .control-btn {
             background: white; border: 3.5px solid var(--cor-jogo-verde); color: var(--cor-texto);
@@ -102,10 +104,10 @@
         }
         .control-btn:active { background: var(--cor-jogo-verde) !important; color: white !important; transform: scale(0.95); }
         
-        /* BOTÕES MAIS PEQUENOS */
-        .control-btn.build { height: clamp(55px, 9vh, 75px); font-size: 1rem; padding: 5px; }
-        .control-btn.build img { height: 50%; width: auto; }
-        .control-btn.num { height: clamp(45px, 7vh, 60px); font-size: clamp(1.2rem, 3.5vh, 1.8rem); flex-direction: column; }
+        /* ALTERAÇÃO: Ligeiramente mais pequenos */
+        .control-btn.build { height: clamp(50px, 8vh, 65px); font-size: 0.95rem; padding: 4px; }
+        .control-btn.build img { height: 45%; width: auto; }
+        .control-btn.num { height: clamp(40px, 6.5vh, 55px); font-size: clamp(1.1rem, 3vh, 1.7rem); flex-direction: column; }
 
         .go-btn { 
             background: var(--cor-vibrante); color: white; border: none; padding: 10px 30px; 
@@ -162,7 +164,7 @@
                                 <img id="wagon-tens-img" class="wagon-img" src="">
                             </div>
                             <div class="wagon-unit">
-                                <div id="cargo-units-intro" class="cargo-bay"></div>
+                                <div id="cargo-units-intro" class="cargo-bay" style="display:grid; grid-template-columns: repeat(5, 1fr); align-content: end; justify-items: center;"></div>
                                 <img id="wagon-units-img" class="wagon-img" src="">
                             </div>
                             <img id="tractor-img" class="tractor-img" src="">
@@ -196,7 +198,7 @@
                                 <img class="wagon-img-game-1" src="" style="width:100%; height:auto;">
                             </div>
                             <div class="wagon-unit">
-                                <div id="cargo-units" class="cargo-bay"></div>
+                                <div id="cargo-units" class="cargo-bay units"></div>
                                 <img class="wagon-img-game-2" src="" style="width:100%; height:auto;">
                             </div>
                             <img id="game-tractor-img" class="tractor-img" src="">
@@ -286,11 +288,9 @@
             }, 2500);
         }
 
-        // REDESENHA O CONTEÚDO PARA AGRUPAR UNIDADES 5 A 5
         function addBaleVisual(container, amount, isTens) {
             const pi = JOGO_CONFIG.caminhoImg;
             if(isTens) {
-                // Dezenas: Uma pilha vertical única de 10
                 const stack = document.createElement('div');
                 stack.className = 'dezena-stack';
                 for(let i=0; i<10; i++) {
@@ -301,7 +301,6 @@
                 }
                 container.appendChild(stack);
             } else {
-                // UNIDADES: Agrupamento visual 5 a 5 (Limpa e redesenha tudo)
                 container.innerHTML = '';
                 for (let i = 0; i < amount; i++) {
                     let stackIdx = Math.floor(i / 5);
@@ -402,6 +401,7 @@
                 if(!options.includes(r)) options.push(r);
             }
             options.sort((a,b) => a - b);
+            
             options.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.className = 'control-btn num';
@@ -433,7 +433,14 @@
         function checkAnswer(val) {
             if(!isRoundActive) return;
             isRoundActive = false;
-            let isCorrect = level === 1 ? ((currentTens * 10) + currentUnits === targetValue) : (val === targetValue);
+
+            let isCorrect = false;
+            if (level === 1) {
+                isCorrect = ((currentTens * 10) + currentUnits) === targetValue;
+            } else {
+                isCorrect = val === targetValue;
+            }
+
             const stars = document.querySelectorAll('.star');
             const train = document.getElementById('tractor-unit');
 
@@ -463,9 +470,17 @@
         function nextStep() {
             round++;
             if(round > 5) {
-                if(level === 1) { level = 2; round = 1; initStars(); loadRound(); }
-                else endGame();
-            } else loadRound();
+                if(level === 1) {
+                    level = 2;
+                    round = 1;
+                    initStars();
+                    loadRound();
+                } else {
+                    endGame();
+                }
+            } else {
+                loadRound();
+            }
         }
 
         function endGame() {
@@ -474,7 +489,11 @@
             modal.style.display = 'flex';
             document.getElementById('modal-title').innerText = JOGO_CONFIG.relatorio.titulo;
             let finalMsg = points >= 160 ? JOGO_CONFIG.mensagens.excelente : (points >= 100 ? JOGO_CONFIG.mensagens.bom : JOGO_CONFIG.mensagens.tenta);
-            document.getElementById('modal-msg').innerHTML = `<p style="font-size:1.2rem; font-weight:bold;">${finalMsg}</p><p>${JOGO_CONFIG.relatorio.pontuacao} <b>${points} / 200</b></p><p>${JOGO_CONFIG.relatorio.tempo} <b>${document.getElementById('timer').innerText}</b></p>`;
+            document.getElementById('modal-msg').innerHTML = `
+                <p style="font-size:1.2rem; font-weight:bold;">${finalMsg}</p>
+                <p>${JOGO_CONFIG.relatorio.pontuacao} <b>${points} / 200</b></p>
+                <p>${JOGO_CONFIG.relatorio.tempo} <b>${document.getElementById('timer').innerText}</b></p>
+            `;
         }
     </script>
 </body>
