@@ -43,8 +43,8 @@
         /* --- Explicação Animada --- */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin: 0 20px 10px 20px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px; position: relative; }
         .anim-line-2 { width: 100%; height: 110px; position: relative; display: flex; align-items: flex-end; justify-content: center; }
-        .anim-tractor-wrap { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; animation: animDriveIn 2s ease-out forwards; }
-        @keyframes animDriveIn { from { left: -400px; transform: translateX(0); } to { left: 50%; transform: translateX(-50%); } }
+        .anim-tractor-wrap { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; animation: animDriveIn 2s ease-out forwards; width: max-content; }
+        @keyframes animDriveIn { from { left: -600px; transform: translateX(0); } to { left: 50%; transform: translateX(-50%); } }
 
         .anim-line-3 { display: flex; gap: 10px; justify-content: center; width: 100%; flex-wrap: nowrap; }
         .intro-btn {
@@ -53,8 +53,6 @@
             font-size: clamp(0.9rem, 2vw, 1.1rem); font-weight: bold; color: var(--cor-texto);
         }
         .intro-btn img { height: clamp(30px, 5vh, 50px); }
-        #icon-bar { height: 55px; }
-        #icon-cube { height: 22px; }
 
         /* --- Elementos do Trator --- */
         .wagon-unit { position: relative; width: clamp(90px, 16vw, 135px); display: flex; flex-direction: column; align-items: center; }
@@ -117,12 +115,15 @@
 
         .option-btn { background: var(--cor-jogo-verde); border: none; color: white; font-size: 1.4rem; font-weight: 700; padding: 12px; border-radius: 20px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka', sans-serif; width: calc(100% - 40px); margin: 0 20px; flex-shrink: 0; }
 
+        /* MODAL ATUALIZADO: max-width reduzido e padding lateral de 20px */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 450px; width: 95%; box-sizing: border-box; max-height: 95vh; overflow-y: auto; }
+        .modal-content { background: white; padding: 25px 20px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 360px; width: 90%; box-sizing: border-box; }
 
         .report-table { width: 100%; margin: 15px 0; border-collapse: collapse; font-size: 0.9rem; }
         .report-table th { background: var(--cor-caixa-info); padding: 8px; color: var(--cor-texto); }
         .report-table td { padding: 8px; border-bottom: 1px solid #eee; }
+        .text-correct { color: var(--cor-jogo-verde); font-weight: bold; }
+        .text-wrong { color: var(--cor-erro); font-weight: bold; }
 
         @keyframes selectPulse { 0%, 100% { background: white; } 50% { background: var(--cor-jogo-verde); color: white; } }
         .active-sim { animation: selectPulse 1.2s infinite; }
@@ -176,6 +177,7 @@
                     <div class="status-item">PTS: <span id="points">0</span></div>
                 </div>
                 <div class="instruction-area" id="game-instruction">...</div>
+                
                 <div class="game-area">
                     <div id="target-number" class="target-number-box">0</div>
                     <div class="road">
@@ -299,7 +301,8 @@
             clearWagons();
             controls.innerHTML = '';
             targetValue = Math.floor(Math.random() * 41) + 10;
-            document.getElementById('game-instruction').innerText = JOGO_CONFIG.niveis[level].instrucao;
+            const cfg = JOGO_CONFIG.niveis[level];
+            document.getElementById('game-instruction').innerText = cfg.instrucao;
 
             if (level === 1) {
                 document.getElementById('target-number').style.display = 'block';
@@ -312,7 +315,7 @@
                 buildIdentControls();
             }
 
-            setTimeout(() => { train.style.transition = 'left 0.8s ease-out'; train.classList.add('at-center'); isRoundActive = true; }, 100);
+            setTimeout(() => { train.style.transition = 'left 0.8s ease-in-out'; train.classList.add('at-center'); isRoundActive = true; }, 100);
         }
 
         function buildBuildControls() {
@@ -349,11 +352,11 @@
         function checkAnswer(val) {
             if(!isRoundActive) return;
             isRoundActive = false;
-            let correct = level === 1 ? ((currentTens * 10) + currentUnits === targetValue) : (val === targetValue);
+            let isCorrect = level === 1 ? ((currentTens * 10) + currentUnits === targetValue) : (val === targetValue);
             const stars = document.querySelectorAll('.star');
             const train = document.getElementById('tractor-unit');
 
-            if(correct) {
+            if(isCorrect) {
                 playSound('certo'); stats[level].c++;
                 stars[round - 1].classList.add('correct'); stars[round - 1].innerText = '✓';
                 points += 20; document.getElementById('points').innerText = points;
