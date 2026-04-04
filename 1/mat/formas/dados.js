@@ -1,7 +1,7 @@
 // dados.js
 const JOGO_CONFIG = {
     // Se o index está em jogos/1/mat/, para chegar a jogos/icons/ usamos ../../
-    caminhoIcons: "../../icons/",
+    caminhoIcons: "../../../icons/",
     
     iconesMenu: {
         pre: "iconpre.png",
