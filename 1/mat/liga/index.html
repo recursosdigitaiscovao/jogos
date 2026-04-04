@@ -9,7 +9,7 @@
         :root {
             --cor-principal: #ff9100;
             --cor-vibrante: #ff7300;  
-            --cor-fundo: #fef7ed;      
+            --cor-fundo: #e8f9f4;      /* ALTERADO: Igual à área de jogo */
             --cor-texto: #8a6436;      
             --header-height: 70px;
             --cor-jogo-verde: #45cfa8; 
@@ -79,8 +79,13 @@
 
         .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
         
+        /* MODAL ATUALIZADO: Padding 25px lateral e largura */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px 20px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 360px; width: 90%; box-sizing: border-box; }
+        .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 380px; width: 90%; box-sizing: border-box; }
+
+        .result-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9rem; }
+        .result-table th { border-bottom: 2px solid #eee; padding: 5px; color: var(--cor-principal); }
+        .result-table td { padding: 8px 5px; border-bottom: 1px solid #f9f9f9; }
     </style>
 </head>
 <body>
@@ -141,10 +146,10 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="margin-top: 0;"></h2>
-            <div id="modal-msg" style="margin-bottom: 25px; color: var(--cor-texto);"></div>
+            <h2 id="modal-title" style="margin-top: 0; color: var(--cor-principal);"></h2>
+            <div id="modal-msg"></div>
             <button class="option-btn" onclick="location.reload()" style="background: var(--cor-jogo-verde); color: white; margin-bottom: 10px;">Jogar de Novo</button>
-            <button class="option-btn" onclick="window.location.href='../'" style="background: white; color: var(--cor-principal); border-color: var(--cor-principal);">Voltar</button>
+            <button class="option-btn" onclick="window.location.href='../'" style="background: white; color: var(--cor-principal); border: 2px solid var(--cor-principal);">Voltar</button>
         </div>
     </div>
 
@@ -154,6 +159,7 @@
         let selectedItem1 = null, selectedItem2 = null;
         let matchesFound = 0, attemptsInLevel = 0;
         let isChecking = false;
+        let stats = { 1: { c: 0, e: 0 }, 2: { c: 0, e: 0 } };
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound(type) {
@@ -181,9 +187,6 @@
                 document.getElementById('header-icon').src = p + i.ano1;
                 document.getElementById('side-pre').src = p + i.pre;
                 document.getElementById('side-1').src = p + i.ano1;
-                document.getElementById('side-2').src = p + i.ano2;
-                document.getElementById('side-3').src = p + i.ano3;
-                document.getElementById('side-4').src = p + i.ano4;
             }
         };
 
@@ -211,7 +214,7 @@
         function initStars() {
             const bar = document.getElementById('stars-bar');
             bar.innerHTML = '';
-            for(let i=0; i<4; i++) { // Alterado para 4 rondas
+            for(let i=0; i<4; i++) {
                 const s = document.createElement('div');
                 s.className = 'star';
                 s.innerText = '★';
@@ -240,22 +243,10 @@
             let leftItems = [];
             let rightItems = [];
 
-            if (level === 1) {
-                subset.forEach(n => {
-                    leftItems.push({data: n, type: 'img'});
-                    rightItems.push({data: n, type: 'word'});
-                });
-            } else {
-                subset.forEach(n => {
-                    if (Math.random() > 0.5) {
-                        leftItems.push({data: n, type: 'img'});
-                        rightItems.push({data: n, type: 'word'});
-                    } else {
-                        leftItems.push({data: n, type: 'word'});
-                        rightItems.push({data: n, type: 'img'});
-                    }
-                });
-            }
+            subset.forEach(n => {
+                leftItems.push({data: n, type: 'img'});
+                rightItems.push({data: n, type: 'word'});
+            });
 
             leftItems.sort(() => 0.5 - Math.random());
             rightItems.sort(() => 0.5 - Math.random());
@@ -305,6 +296,7 @@
                 selectedItem1.classList.replace('selected', 'correct-match');
                 selectedItem2.classList.replace('selected', 'correct-match');
                 updateStar(true);
+                stats[level].c++;
                 matchesFound++;
                 points += 25;
                 document.getElementById('points').innerText = points;
@@ -316,6 +308,7 @@
                 selectedItem1.classList.add('error-match');
                 selectedItem2.classList.add('error-match');
                 updateStar(false);
+                stats[level].e++;
                 setTimeout(() => {
                     selectedItem1.classList.remove('error-match', 'selected');
                     selectedItem2.classList.remove('error-match', 'selected');
@@ -327,7 +320,7 @@
         }
 
         function checkLevelEnd() {
-            if (matchesFound === 4 || attemptsInLevel === 4) { // Alterado para 4 rondas
+            if (matchesFound === 4 || attemptsInLevel === 4) {
                 setTimeout(() => {
                     if (level === 1) {
                         level = 2;
@@ -342,13 +335,21 @@
         function endGame() {
             clearInterval(timerInterval);
             const modal = document.getElementById('modal');
-            modal.style.display = 'flex';
-            let msgFim = JOGO_CONFIG.mensagens.tenta;
-            if(points >= 175) msgFim = JOGO_CONFIG.mensagens.excelente;
-            else if(points >= 100) msgFim = JOGO_CONFIG.mensagens.bom;
+            const r = JOGO_CONFIG.relatorio;
+            let finalMsg = points >= 175 ? JOGO_CONFIG.mensagens.excelente : (points >= 100 ? JOGO_CONFIG.mensagens.bom : JOGO_CONFIG.mensagens.tenta);
 
-            document.getElementById('modal-title').innerText = "Fim do Jogo!";
-            document.getElementById('modal-msg').innerHTML = `<p>${msgFim}</p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p><p>Pontos: <b>${points} / 200</b></p>`;
+            document.getElementById('modal-title').innerText = r.titulo;
+            document.getElementById('modal-msg').innerHTML = `
+                <p>${finalMsg}</p>
+                <table class="result-table">
+                    <tr><th>Nível</th><th>Certas</th><th>Erradas</th></tr>
+                    <tr><td>1</td><td>${stats[1].c}</td><td>${stats[1].e}</td></tr>
+                    <tr><td>2</td><td>${stats[2].c}</td><td>${stats[2].e}</td></tr>
+                </table>
+                <p><b>${r.pontosTotal} ${points} / 200</b></p>
+                <p>${r.tempoTotal} <b>${document.getElementById('timer').innerText}</b></p>
+            `;
+            modal.style.display = 'flex';
         }
     </script>
 </body>
