@@ -92,7 +92,7 @@
         .tractor-container.at-center { left: 50%; transform: translateX(-50%); }
         .tractor-container.exit { left: 150%; transition: left 1s ease-in; }
 
-        /* Teclado do Jogo - REDUÇÃO DE LARGURA DA ÁREA */
+        /* Teclado do Jogo - REDUÇÃO DE LARGURA E DESLOCAMENTO 10px */
         .options-area { 
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; 
             flex-grow: 1; width: 100%; max-width: 380px; margin: 0 auto; align-content: center;
@@ -116,7 +116,7 @@
             border-radius: 50px; font-size: 1.15rem; font-weight: 700; cursor: pointer; 
             box-shadow: 0 4px 0 #bf5600; font-family: 'Fredoka'; grid-column: span 3; 
             margin: 5px auto 0 auto; display: flex; align-items: center; justify-content: center; gap: 10px;
-            width: 85%; /* REDUÇÃO DA LARGURA */
+            width: 85%;
         }
         .go-btn img { height: 26px; }
 
@@ -142,9 +142,6 @@
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
         <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
         <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
-        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
-        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
-        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
@@ -207,7 +204,8 @@
                             <img id="game-tractor-img" class="tractor-img" src="">
                         </div>
                     </div>
-                    <div id="controls" class="options-area"></div>
+                    <div id="controls" class="options-area">
+                    </div>
                 </div>
             </div>
         </section>
@@ -259,9 +257,6 @@
                 document.getElementById('header-icon').src = pIcons + JOGO_CONFIG.iconesMenu.ano1;
                 document.getElementById('side-pre').src = pIcons + JOGO_CONFIG.iconesMenu.pre;
                 document.getElementById('side-1').src = pIcons + JOGO_CONFIG.iconesMenu.ano1;
-                document.getElementById('side-2').src = pIcons + JOGO_CONFIG.iconesMenu.ano2;
-                document.getElementById('side-3').src = pIcons + JOGO_CONFIG.iconesMenu.ano3;
-                document.getElementById('side-4').src = pIcons + JOGO_CONFIG.iconesMenu.ano4;
                 document.getElementById('tractor-img').src = pi + JOGO_CONFIG.veiculos.trator;
                 document.getElementById('wagon-tens-img').src = pi + JOGO_CONFIG.veiculos.reboque;
                 document.getElementById('wagon-units-img').src = pi + JOGO_CONFIG.veiculos.reboque;
@@ -350,10 +345,13 @@
             isRoundActive = false;
             const train = document.getElementById('tractor-unit');
             const controls = document.getElementById('controls');
+            
             train.style.transition = 'none';
             train.classList.remove('at-center', 'exit');
+            
             clearWagons();
             controls.innerHTML = '';
+            
             targetValue = Math.floor(Math.random() * 41) + 10;
             document.getElementById('game-instruction').innerText = JOGO_CONFIG.niveis[level].instrucao;
 
@@ -365,7 +363,7 @@
                 document.getElementById('target-number').style.display = 'none';
                 let d = Math.floor(targetValue / 10);
                 let u = targetValue % 10;
-                for(let i=0; i<d; i++) addBaleVisual(document.getElementById('cargo-tens'), 1, true);
+                for(let i=0; i<d; i++) addBaleVisual(document.getElementById('cargo-tens'), 10, true);
                 addBaleVisual(document.getElementById('cargo-units'), u, false);
                 buildControlsLevel2();
             }
@@ -417,7 +415,7 @@
             if(type === 'dezena') {
                 if(currentTens >= 5) return;
                 currentTens++;
-                addBaleVisual(document.getElementById('cargo-tens'), 1, true);
+                addBaleVisual(document.getElementById('cargo-tens'), 10, true);
             } else {
                 if(currentUnits >= 15) return;
                 currentUnits++;
