@@ -39,6 +39,16 @@
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
+        /* --- Estilo da Instrução (Igual à Intro) --- */
+        .instruction-area { 
+            font-weight: 700; 
+            font-size: 1.4rem; 
+            color: var(--cor-texto); 
+            text-align: center; 
+            padding: 10px 0;
+            width: 100%;
+        }
+
         /* --- Explicação --- */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px; position: relative; }
         .anim-line-1 { font-weight: 700; font-size: 1.4rem; color: var(--cor-texto); text-align: center; }
@@ -73,12 +83,12 @@
             box-sizing: border-box; position: relative; justify-content: flex-start; padding: 10px;
         }
 
-        .road { height: 45%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; margin-top: 5px; }
+        /* Estrada posicionada mais abaixo */
+        .road { height: 40%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; margin-top: 25px; }
         .tractor-container { display: flex; align-items: flex-end; position: absolute; left: -1200px; transition: left 0.8s ease-out; gap: 0; }
         .tractor-container.at-center { left: 50%; transform: translateX(-50%); }
         .tractor-container.exit { left: 120%; transition: left 0.8s ease-in; }
 
-        /* Trator virado para a ESQUERDA (puxando o comboio para a direita) */
         .tractor-img { height: clamp(55px, 11vh, 90px); width: auto; display: block; z-index: 10; transform: scaleX(1); margin-left: -5px; }
         .wagon-unit { position: relative; width: clamp(90px, 16vw, 135px); display: flex; flex-direction: column; align-items: center; }
         .wagon-img { width: 100%; height: auto; display: block; margin-top: -5px; }
@@ -93,18 +103,28 @@
         .dezena-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
         .fardo-img { width: clamp(14px, 2.5vw, 22px); height: auto; object-fit: contain; }
 
-        /* Teclado Responsivo Lado a Lado */
+        /* Teclado e Botões mais baixos */
         .options-area { 
             display: flex; flex-direction: column; gap: 10px; padding: 10px; flex-grow: 1; width: 100%; align-items: center; justify-content: center;
+            margin-top: 15px;
         }
         .buttons-row { display: flex; gap: clamp(5px, 1.5vw, 12px); width: 100%; justify-content: center; padding: 0 10px; }
         
+        /* Layout 3+3 para o Nível 2 */
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 480px;
+        }
+
         .control-btn {
             background: white; border: 3.5px solid var(--cor-jogo-verde); color: var(--cor-texto);
-            height: clamp(60px, 10vh, 90px); flex: 1; max-width: 150px;
+            height: clamp(60px, 9vh, 80px); flex: 1;
             border-radius: 18px; cursor: pointer; display: flex; flex-direction: row; align-items: center; justify-content: center;
             transition: 0.1s; -webkit-tap-highlight-color: transparent; outline: none; font-family: 'Fredoka'; gap: 8px;
-            font-size: clamp(0.85rem, 2vw, 1.2rem); font-weight: 700;
+            font-size: clamp(0.9rem, 2vw, 1.3rem); font-weight: 700;
         }
         .control-btn:active { background: var(--cor-jogo-verde) !important; color: white !important; transform: scale(0.95); }
         .control-btn img { height: 60%; width: auto; }
@@ -209,9 +229,13 @@
                     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.2);
                 } else {
-                    osc.type = 'square'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+                    // Som de erro mais grave e audível
+                    osc.type = 'sawtooth'; 
+                    osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
                 }
             } catch(e) {}
         }
@@ -239,7 +263,7 @@
             const w2 = document.createElement('div'); w2.className = 'wagon-unit';
             w2.innerHTML = `<div id="intro-cargo-2" class="cargo-bay units"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:50px">`;
             const tr = document.createElement('img'); tr.src = pi + JOGO_CONFIG.veiculos.trator; tr.style.height = "70px";
-            container.append(w1, w2, tr); // Trator na direita
+            container.append(w1, w2, tr);
 
             const btnD = document.createElement('button'); btnD.id = "mock-tens"; btnD.className = 'control-btn build';
             btnD.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.dezena}"> +10`;
@@ -247,7 +271,6 @@
             btnU.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.unidade}"> +1`;
             ctrls.append(btnD, btnU);
 
-            // Animação da intro
             setTimeout(() => {
                 document.getElementById('mock-tens').classList.add('active-anim');
                 const cargo = document.getElementById('intro-cargo-1');
@@ -280,7 +303,7 @@
 
         function initStars() {
             const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
-            for(let i=0; i<4; i++) { const s = document.createElement('div'); s.className = 'star'; s.innerText = '★'; bar.appendChild(s); }
+            for(let i=0; i<5; i++) { const s = document.createElement('div'); s.className = 'star'; s.innerText = '★'; bar.appendChild(s); }
         }
 
         function loadQuestion() {
@@ -329,6 +352,7 @@
             } else {
                 document.getElementById('instruction').innerText = "Que número leva o trator?";
                 targetDisplay.style.display = 'none';
+                
                 const keypad = document.createElement('div'); keypad.className = 'keypad-grid';
                 let options = [targetValue];
                 while(options.length < 6) { let r = Math.floor(Math.random() * 50) + 1; if(!options.includes(r)) options.push(r); }
@@ -337,6 +361,7 @@
                     btn.innerText = opt; btn.onclick = () => checkAnswer(opt); keypad.appendChild(btn);
                 });
                 controls.appendChild(keypad);
+                
                 setTimeout(() => {
                     let d = Math.floor(targetValue / 10), u = targetValue % 10;
                     for(let i=0; i<d; i++) addCargo('dezena');
@@ -374,7 +399,7 @@
             if (ans === targetValue) {
                 playSound('certo');
                 stars[questionNum - 1].classList.add('correct'); stars[questionNum - 1].innerText = '✓';
-                points += 25; document.getElementById('points').innerText = points;
+                points += 20; document.getElementById('points').innerText = points;
                 setTimeout(() => { train.classList.add('exit'); setTimeout(nextRound, 1000); }, 600);
             } else {
                 playSound('errado');
@@ -386,8 +411,8 @@
 
         function nextRound() {
             questionNum++;
-            if (questionNum > 4) {
-                if (level === 1) { level = 2; questionNum = 1; loadQuestion(); }
+            if (questionNum > 5) { // 5 Rondas agora
+                if (level === 1) { level = 2; questionNum = 1; loadQuestion(); initStars(); }
                 else endGame();
             } else loadQuestion();
         }
