@@ -12,7 +12,7 @@
             --cor-fundo: #e8f9f4;      
             --cor-texto: #8a6436;      
             --header-height: 70px;
-            --cor-jogo-verde: #45cfa8;  /* Limite e Título do Jogo */
+            --cor-jogo-verde: #45cfa8;  
             --cor-erro: #ff4757;
             --cor-caixa-info: #e8f9f4;
         }
@@ -20,17 +20,15 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* --- Header & Sidebar --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: all 0.3s ease; cursor: pointer; font-weight: 500; }
         .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
-        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
+        .sidebar-item img { width: 28px; height: 28px; margin-right: 12px; object-fit: contain; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* --- Layout do Jogo --- */
         .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; height: calc(100% - var(--header-height)); }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow: hidden; }
         .screen.active { display: flex; }
@@ -41,9 +39,8 @@
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 5px 0; font-weight: bold; }
+        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 10px 0; font-weight: bold; }
 
-        /* --- Estilo das Estrelas/Bolas --- */
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0; margin-bottom: 10px; flex-shrink: 0; }
         .stars-container { display: flex; gap: 6px; }
         .star { width: 24px; height: 24px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: transparent; transition: 0.3s; }
@@ -62,21 +59,23 @@
         .shape-btn { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; border-radius: 15px; }
         .shape-btn img { max-width: 80%; max-height: 80%; object-fit: contain; }
         .shape-btn.found { filter: grayscale(1) opacity(0.2); pointer-events: none; transform: scale(0.8); }
-        .shape-btn.error-shake { animation: shake 0.4s; background: rgba(255, 71, 87, 0.1); }
+        .shape-btn.error-shake { animation: shake 0.4s; background: rgba(255, 71, 87, 0.2); }
 
         @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-10px);} 75% {transform:translateX(10px);} }
 
         .option-btn { background: var(--cor-jogo-verde); border: none; color: white; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
         
-        /* --- Modal Relatório --- */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); max-width: 380px; width: 90%; box-sizing: border-box; }
+
+        .result-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9rem; }
+        .result-table th { border-bottom: 2px solid #eee; padding: 8px; color: var(--cor-jogo-verde); }
+        .result-table td { padding: 10px 8px; border-bottom: 1px solid #f9f9f9; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-    
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
@@ -99,20 +98,21 @@
     </header>
 
     <main class="main-content">
-        <!-- ECRÃ INICIAL -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box" style="padding:20px; text-align:center;">
                     <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.3rem;">Reconhece as formas geométricas!</p>
-                    <img id="intro-img" style="height:100px; margin: 20px 0;">
-                    <p style="color:var(--cor-texto)">Clica apenas nas formas pedidas.<br>Se errares, a bola fica vermelha!</p>
+                    <div style="display:flex; gap:10px; justify-content:center; margin: 20px 0;">
+                        <div style="background:white; padding:5px; border-radius:10px; border:2px solid var(--cor-jogo-verde)"><img id="intro-img-1" style="height:60px;"></div>
+                        <div style="background:white; padding:5px; border-radius:10px; border:2px solid var(--cor-jogo-verde)"><img id="intro-img-2" style="height:60px;"></div>
+                    </div>
+                    <p style="color:var(--cor-texto)"><b>Atenção:</b> Os quadrados também são retângulos!<br>Se errares uma vez, a ronda termina.</p>
                 </div>
                 <h2 class="game-title">Formas Geométricas</h2>
                 <button class="option-btn" onclick="startGame()">JOGAR</button>
             </div>
         </section>
 
-        <!-- ECRÃ DE JOGO -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
@@ -126,12 +126,12 @@
         </section>
     </main>
 
-    <!-- MODAL RELATÓRIO -->
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--cor-jogo-verde); margin-top:0;">Fim do Jogo!</h2>
+            <h2 id="modal-title" style="color:var(--cor-jogo-verde); margin-top:0;"></h2>
             <div id="modal-msg"></div>
-            <button class="option-btn" onclick="location.reload()">Jogar Novamente</button>
+            <div id="modal-table-container"></div>
+            <button class="option-btn" onclick="location.reload()" style="margin-top:15px;">Jogar Novamente</button>
         </div>
     </div>
 
@@ -139,8 +139,7 @@
     <script>
         let currentLevel = 1, currentRound = 1, points = 0, seconds = 0, timerInterval;
         let stats = { 1: { c: 0, e: 0 }, 2: { c: 0, e: 0 } };
-        let targetShape = "", targetsFoundCount = 0, totalTargetsOnScreen = 0;
-        let roundHasError = false;
+        let targetShape = "", targetsFoundCount = 0, totalTargetsOnScreen = 0, isRoundActive = false;
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playFeedback(isCorrect) {
@@ -163,8 +162,8 @@
                     const el = document.getElementById('side-'+n);
                     if(el) el.src = p + i[n === 'pre' ? 'pre' : 'ano'+n];
                 });
-                // Exemplo inicial usando "vd" (verde) do teu novo dados.js
-                document.getElementById('intro-img').src = JOGO_CONFIG.caminhoImg + "triangulo_vd.png";
+                document.getElementById('intro-img-1').src = JOGO_CONFIG.caminhoImg + "quadrado_a.png";
+                document.getElementById('intro-img-2').src = JOGO_CONFIG.caminhoImg + "retangulo_a.png";
             }
         };
 
@@ -177,9 +176,7 @@
             if (audioCtx.state === 'suspended') audioCtx.resume();
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            initStars();
-            startTimer();
-            loadRound();
+            initStars(); startTimer(); loadRound();
         }
 
         function startTimer() {
@@ -192,8 +189,7 @@
         }
 
         function initStars() {
-            const bar = document.getElementById('stars-bar');
-            bar.innerHTML = '';
+            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
             for(let i=0; i<5; i++) {
                 const s = document.createElement('div'); s.className = 'star'; s.innerText = '★'; bar.appendChild(s);
             }
@@ -201,45 +197,34 @@
 
         function loadRound() {
             const grid = document.getElementById('game-grid');
-            grid.innerHTML = '';
-            targetsFoundCount = 0;
-            roundHasError = false;
+            grid.innerHTML = ''; targetsFoundCount = 0; totalTargetsOnScreen = 0; isRoundActive = true;
 
             targetShape = JOGO_CONFIG.formas[Math.floor(Math.random() * JOGO_CONFIG.formas.length)];
             document.getElementById('target-name').innerText = JOGO_CONFIG.nomesFormas[targetShape];
 
-            // Quantidade baixa de formas corretas (3 ou 4) conforme pedido
-            totalTargetsOnScreen = Math.floor(Math.random() * 2) + 3; 
-
-            // Nível 1: Escolhe uma cor do array ["vd", "a", "l", "v"] para TODA a ronda
             const levelColor = JOGO_CONFIG.cores[Math.floor(Math.random() * JOGO_CONFIG.cores.length)];
-
             let pool = [];
-            // Adicionar as corretas
-            for(let i=0; i<totalTargetsOnScreen; i++) pool.push({ shape: targetShape, correct: true });
-            
-            // Preencher o resto até 12 com formas erradas
-            while(pool.length < 12) {
+            for(let i=0; i<12; i++) {
                 let s = JOGO_CONFIG.formas[Math.floor(Math.random() * JOGO_CONFIG.formas.length)];
-                if(s !== targetShape) pool.push({ shape: s, correct: false });
+                let color = (currentLevel === 1) ? levelColor : JOGO_CONFIG.cores[Math.floor(Math.random() * JOGO_CONFIG.cores.length)];
+                let isCorrect = (s === targetShape) || (targetShape === "retangulo" && s === "quadrado");
+                if (isCorrect) totalTargetsOnScreen++;
+                pool.push({ shape: s, color: color, correct: isCorrect });
             }
+            if (totalTargetsOnScreen < 2 || totalTargetsOnScreen > 4) return loadRound();
 
-            // Baralhar e Mostrar
-            pool.sort(() => Math.random() - 0.5).forEach(item => {
-                // Nível 1: usa a mesma cor | Nível 2: usa cores aleatórias do array
-                const color = (currentLevel === 1) ? levelColor : JOGO_CONFIG.cores[Math.floor(Math.random() * JOGO_CONFIG.cores.length)];
+            pool.forEach(item => {
                 const btn = document.createElement('div');
                 btn.className = 'shape-btn';
-                btn.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + item.shape}_${color}.png">`;
+                btn.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + item.shape}_${item.color}.png">`;
                 btn.onclick = () => checkShape(btn, item.correct);
                 grid.appendChild(btn);
             });
         }
 
         function checkShape(element, isCorrect) {
-            if (element.classList.contains('found')) return;
-            const stars = document.querySelectorAll('.star');
-            const currentStar = stars[currentRound-1];
+            if (!isRoundActive || element.classList.contains('found')) return;
+            const currentStar = document.querySelectorAll('.star')[currentRound-1];
 
             if (isCorrect) {
                 playFeedback(true);
@@ -247,53 +232,49 @@
                 targetsFoundCount++;
                 points += 10;
                 document.getElementById('points').innerText = points;
-
                 if (targetsFoundCount === totalTargetsOnScreen) {
-                    // Só fica verde se não houve erro nenhum na ronda
-                    if (!roundHasError) {
-                        currentStar.classList.add('correct');
-                        currentStar.innerText = '✓';
-                        stats[currentLevel].c++;
-                    }
-                    nextStep();
+                    isRoundActive = false;
+                    currentStar.classList.add('correct'); currentStar.innerText = '✓';
+                    stats[currentLevel].c++;
+                    setTimeout(nextStep, 600);
                 }
             } else {
+                isRoundActive = false;
                 playFeedback(false);
-                roundHasError = true;
                 element.classList.add('error-shake');
-                
-                // Errou? Bola vermelha imediata.
-                currentStar.classList.add('wrong');
-                currentStar.innerText = '✕';
+                currentStar.classList.add('wrong'); currentStar.innerText = '✕';
                 stats[currentLevel].e++;
-                
-                setTimeout(() => element.classList.remove('error-shake'), 400);
+                setTimeout(nextStep, 1000);
             }
         }
 
         function nextStep() {
             currentRound++;
-            setTimeout(() => {
-                if (currentRound > 5) {
-                    if (currentLevel === 1) {
-                        currentLevel = 2; currentRound = 1;
-                        initStars(); loadRound();
-                    } else {
-                        endGame();
-                    }
-                } else {
-                    loadRound();
-                }
-            }, 600);
+            if (currentRound > 5) {
+                if (currentLevel === 1) {
+                    currentLevel = 2; currentRound = 1; initStars(); loadRound();
+                } else endGame();
+            } else loadRound();
         }
 
         function endGame() {
             clearInterval(timerInterval);
-            let msg = points >= 150 ? "Incrível! És um mestre das formas! 🌟" : "Bom trabalho! Continua a treinar! 👍";
-            document.getElementById('modal-msg').innerHTML = `
-                <p>${msg}</p>
-                <p>Pontuação Total: <b>${points} pontos</b></p>
-                <p>Tempo: <b>${document.getElementById('timer').innerText}</b></p>
+            const r = JOGO_CONFIG.relatorio;
+            const m = JOGO_CONFIG.mensagens;
+
+            let feedbackMsg = points >= 140 ? m.excelente : (points >= 80 ? m.bom : m.tenta);
+
+            document.getElementById('modal-title').innerText = r.titulo;
+            document.getElementById('modal-msg').innerHTML = `<p style="font-weight:bold; font-size:1.1rem;">${feedbackMsg}</p>`;
+            
+            document.getElementById('modal-table-container').innerHTML = `
+                <table class="result-table">
+                    <tr><th>${r.labelNivel}</th><th>${r.labelCertas}</th><th>${r.labelErradas}</th></tr>
+                    <tr><td>1</td><td>${stats[1].c}</td><td>${stats[1].e}</td></tr>
+                    <tr><td>2</td><td>${stats[2].c}</td><td>${stats[2].e}</td></tr>
+                </table>
+                <p>${r.pontosTotal} <b>${points}</b></p>
+                <p>${r.tempoTotal} <b>${document.getElementById('timer').innerText}</b></p>
             `;
             document.getElementById('modal').style.display = 'flex';
         }
