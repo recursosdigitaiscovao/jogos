@@ -1,3 +1,5 @@
+--- START OF FILE Paste April 05, 2026 - 10:35PM ---
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -59,8 +61,9 @@
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
+        /* Alteração 3: Quadrado com número no topo à direita */
         .target-number-box { 
-            position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+            position: absolute; top: 10px; right: 20px;
             font-size: clamp(2.5rem, 7vh, 3.5rem); color: white; font-weight: 700; 
             background: var(--cor-principal); padding: 5px 35px; border-radius: 15px; 
             border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -73,7 +76,9 @@
             box-sizing: border-box; position: relative; justify-content: flex-start; padding: 10px;
         }
 
-        .road { height: 35%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; margin-top: 25px; }
+        /* Alteração 2: Margem inferior da estrada para separar do controle (60px) */
+        .road { height: 35%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; margin-top: 25px; margin-bottom: 60px; }
+        
         .tractor-container { display: flex; align-items: flex-end; position: absolute; left: -1200px; transition: left 0.8s ease-out; gap: 0; }
         .tractor-container.at-center { left: 50%; transform: translateX(-50%); }
         .tractor-container.exit { left: 120%; transition: left 0.8s ease-in; }
@@ -91,22 +96,21 @@
 
         .dezena-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
         .unidade-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
-        /* Redução do tamanho dos fardos (cubos) */
         .fardo-img { width: clamp(10px, 1.8vw, 16px); height: auto; object-fit: contain; }
 
         .options-area { 
-            display: flex; flex-direction: column; gap: 12px; 
-            padding: 10px 25px 60px 25px; /* Padding conforme solicitado */
-            flex-grow: 1; width: 100%; align-items: center; justify-content: center;
-            margin-top: 10px; box-sizing: border-box;
+            display: flex; flex-direction: column; gap: 0; 
+            padding: 0 25px;
+            flex-grow: 1; width: 100%; align-items: center; justify-content: flex-start;
+            box-sizing: border-box;
         }
         
-        .buttons-row { display: flex; gap: 15px; width: 100%; justify-content: center; }
+        /* Alteração 2: Padding entre botões de controle e entregar (40px) */
+        .buttons-row { display: flex; gap: 15px; width: 100%; justify-content: center; margin-bottom: 40px; }
         
-        /* Prevenção de botões extensíveis */
         .control-btn {
             background: white; border: 3.5px solid var(--cor-jogo-verde); color: var(--cor-texto);
-            height: 70px; width: 140px; /* Largura fixa para não esticar */
+            height: 70px; width: 140px; 
             border-radius: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
             transition: 0.1s; -webkit-tap-highlight-color: transparent; outline: none; font-family: 'Fredoka'; gap: 8px;
             font-size: 1.2rem; font-weight: 700; flex: none;
@@ -114,7 +118,6 @@
         .control-btn:active { background: var(--cor-jogo-verde) !important; color: white !important; transform: scale(0.95); }
         .control-btn img { height: 35px; width: auto; }
 
-        /* Estilo específico para o Keypad do Nível 2 */
         .keypad-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -123,17 +126,18 @@
             max-width: 450px;
         }
         .keypad-grid .control-btn {
-            width: 100%; /* No grid ele ocupa a célula, mas a altura é controlada */
-            height: 60px; /* Redução de altura no nível 2 */
-            font-size: 2rem; /* Números maiores */
+            width: 100%; 
+            height: 60px; 
+            font-size: 2rem; 
             color: var(--cor-jogo-verde);
         }
 
+        /* Alteração 1: Botão entregar com 60px de padding do fundo */
         .go-btn { 
             background: var(--cor-vibrante); color: white; border: none; padding: 15px 0; 
             border-radius: 50px; font-size: 1.4rem; font-weight: 700; cursor: pointer; 
             box-shadow: 0 4px 0 #bf5600; font-family: 'Fredoka'; width: 100%; max-width: 400px;
-            margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin-bottom: 60px; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
         .go-btn:active { transform: translateY(2px); box-shadow: none; }
 
@@ -147,299 +151,4 @@
     </style>
 </head>
 <body>
-
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-    <div class="sidebar" id="sidebar">
-        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
-            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
-        </div>
-        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
-        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
-        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
-        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
-        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
-    </div>
-
-    <header class="nav-bar">
-        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
-        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal);">
-            <img id="header-icon" src="" style="height:32px; width: auto;"> Matemática - 1º Ano
-        </h1>
-        <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
-    </header>
-
-    <main class="main-content">
-        <section id="intro-screen" class="screen active">
-            <div class="game-card">
-                <div class="explanation-box">
-                    <div class="anim-line-1">Carrega o Trator</div>
-                    <div class="anim-line-2" id="intro-tractor-container"></div>
-                    <div class="anim-line-3" id="intro-controls"></div>
-                </div>
-                <h2 style="color:var(--cor-jogo-verde); text-align:center; font-weight:700; margin: 10px 0;">O Trator das Dezenas</h2>
-                <button class="option-btn" onclick="startGame()">JOGAR</button>
-            </div>
-        </section>
-
-        <section id="game-screen" class="screen">
-            <div class="game-card">
-                <div class="card-header">
-                    <div class="status-item">⏳ <span id="timer">00:00</span></div>
-                    <div class="stars-container" id="stars-bar"></div>
-                    <div class="status-item">PTS: <span id="points">0</span></div>
-                </div>
-                <div class="instruction-area" id="instruction">...</div>
-                
-                <div class="game-area">
-                    <div id="target-number" class="target-number-box" style="display:none;">0</div>
-                    <div class="road">
-                        <div id="tractor-unit" class="tractor-container"></div>
-                    </div>
-                    <div id="controls" class="options-area"></div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <h2 id="modal-title" style="margin-top: 0; font-weight:700;"></h2>
-            <div id="modal-msg" style="margin-bottom: 25px; color: var(--cor-texto);"></div>
-            <button class="option-btn" onclick="location.reload()" style="margin-bottom:10px;">Jogar de Novo</button>
-            <button class="option-btn" onclick="window.location.href='../'" style="background: white; color: var(--cor-principal); border: 2px solid var(--cor-principal); padding:10px;">Voltar</button>
-        </div>
-    </div>
-
-    <script src="dados.js"></script>
-    <script>
-        let level = 1, points = 0, seconds = 0, timerInterval;
-        let questionNum = 1, targetValue = 0, currentTens = 0, currentUnits = 0;
-        let isRoundActive = false;
-
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playSound(type) {
-            try {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                if(type === 'certo') {
-                    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-                } else {
-                    osc.type = 'sawtooth'; 
-                    osc.frequency.setValueAtTime(120, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.3);
-                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                    gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-                }
-            } catch(e) {}
-        }
-
-        window.onload = () => {
-            if(typeof JOGO_CONFIG !== 'undefined') {
-                const p = JOGO_CONFIG.caminhoIcons;
-                const pi = JOGO_CONFIG.caminhoImg;
-                const i = JOGO_CONFIG.iconesMenu;
-                document.getElementById('header-icon').src = p + i.ano1;
-                document.querySelectorAll('.sidebar-item img').forEach((img, idx) => {
-                    const keys = ['pre', 'ano1', 'ano2', 'ano3', 'ano4'];
-                    if(idx > 0) img.src = p + i[keys[idx-1]];
-                });
-                buildIntro(pi);
-            }
-        };
-
-        function buildIntro(pi) {
-            const container = document.getElementById('intro-tractor-container');
-            const ctrls = document.getElementById('intro-controls');
-            
-            const w1 = document.createElement('div'); w1.className = 'wagon-unit';
-            w1.innerHTML = `<div id="intro-cargo-1" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:50px">`;
-            const w2 = document.createElement('div'); w2.className = 'wagon-unit';
-            w2.innerHTML = `<div id="intro-cargo-2" class="cargo-bay units"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:50px">`;
-            const tr = document.createElement('img'); tr.src = pi + JOGO_CONFIG.veiculos.trator; tr.style.height = "70px";
-            container.append(w1, w2, tr);
-
-            const btnD = document.createElement('button'); btnD.id = "mock-tens"; btnD.className = 'control-btn';
-            btnD.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.dezena}"> +10`;
-            const btnU = document.createElement('button'); btnU.id = "mock-units"; btnU.className = 'control-btn';
-            btnU.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.unidade}"> +1`;
-            ctrls.append(btnD, btnU);
-
-            setTimeout(() => {
-                document.getElementById('mock-tens').classList.add('active-anim');
-                const cargo = document.getElementById('intro-cargo-1');
-                const stack = document.createElement('div'); stack.className = 'dezena-stack';
-                for(let i=0; i<10; i++) {
-                    const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                    img.className = 'fardo-img'; stack.appendChild(img);
-                }
-                cargo.appendChild(stack);
-                setTimeout(() => {
-                    document.getElementById('mock-tens').classList.remove('active-anim');
-                    document.getElementById('mock-units').classList.add('active-anim');
-                    const cargoUnits = document.getElementById('intro-cargo-2');
-                    const stackU = document.createElement('div'); stackU.className = 'unidade-stack';
-                    const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                    img.className = 'fardo-img'; stackU.appendChild(img);
-                    cargoUnits.appendChild(stackU);
-                }, 1500);
-            }, 2500);
-        }
-
-        function startGame() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            document.getElementById('intro-screen').classList.remove('active');
-            document.getElementById('game-screen').classList.add('active');
-            startTimer(); initStars(); loadQuestion();
-        }
-
-        function startTimer() {
-            timerInterval = setInterval(() => { seconds++; document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; }, 1000);
-        }
-
-        function initStars() {
-            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
-            for(let i=0; i<5; i++) { const s = document.createElement('div'); s.className = 'star'; s.innerText = '★'; bar.appendChild(s); }
-        }
-
-        function loadQuestion() {
-            const train = document.getElementById('tractor-unit');
-            const controls = document.getElementById('controls');
-            const targetDisplay = document.getElementById('target-number');
-            const pi = JOGO_CONFIG.caminhoImg;
-            
-            train.style.transition = 'none';
-            train.classList.remove('at-center', 'exit');
-            train.innerHTML = '';
-            controls.innerHTML = '';
-            isRoundActive = false;
-            currentTens = 0; currentUnits = 0;
-
-            targetValue = Math.floor(Math.random() * 41) + 10;
-
-            const w1 = document.createElement('div'); w1.className = 'wagon-unit';
-            w1.innerHTML = `<div id="cargo-tens" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}">`;
-            const w2 = document.createElement('div'); w2.className = 'wagon-unit';
-            w2.innerHTML = `<div id="cargo-units" class="cargo-bay units"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}">`;
-            const tr = document.createElement('img'); tr.className = 'tractor-img'; tr.src = pi + JOGO_CONFIG.veiculos.trator;
-            train.append(w1, w2, tr);
-
-            if (level === 1) {
-                document.getElementById('instruction').innerText = "Carrega o trator!";
-                targetDisplay.style.display = 'block'; targetDisplay.innerText = targetValue;
-                
-                const row = document.createElement('div'); row.className = 'buttons-row';
-                const btnD = document.createElement('button'); btnD.className = 'control-btn';
-                btnD.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.dezena}"> +10`;
-                btnD.onclick = () => addCargo('dezena');
-                const btnU = document.createElement('button'); btnU.className = 'control-btn';
-                btnU.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.unidade}"> +1`;
-                btnU.onclick = () => addCargo('unidade');
-                const btnB = document.createElement('button'); btnB.className = 'control-btn';
-                btnB.style.width = '70px'; btnB.style.borderColor = 'var(--cor-erro)'; btnB.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.borracha}">`;
-                btnB.onclick = () => { document.getElementById('cargo-tens').innerHTML = ''; document.getElementById('cargo-units').innerHTML = ''; currentTens = 0; currentUnits = 0; };
-                row.append(btnD, btnU, btnB);
-
-                const go = document.createElement('button'); go.className = 'go-btn';
-                go.innerText = "ENTREGAR";
-                go.onclick = () => checkAnswer(currentTens * 10 + currentUnits);
-
-                controls.append(row, go);
-            } else {
-                document.getElementById('instruction').innerText = "Que número leva o trator?";
-                targetDisplay.style.display = 'none';
-                
-                const keypad = document.createElement('div'); keypad.className = 'keypad-grid';
-                let options = [targetValue];
-                while(options.length < 6) { let r = Math.floor(Math.random() * 50) + 1; if(!options.includes(r)) options.push(r); }
-                options.sort((a,b) => a-b).forEach(opt => {
-                    const btn = document.createElement('button'); btn.className = 'control-btn';
-                    btn.innerText = opt; btn.onclick = () => checkAnswer(opt); keypad.appendChild(btn);
-                });
-                controls.appendChild(keypad);
-                
-                setTimeout(() => {
-                    let d = Math.floor(targetValue / 10), u = targetValue % 10;
-                    for(let i=0; i<d; i++) addCargo('dezena');
-                    for(let i=0; i<u; i++) addCargo('unidade');
-                }, 100);
-            }
-            setTimeout(() => { train.style.transition = 'left 0.8s ease-out'; train.classList.add('at-center'); isRoundActive = true; }, 50);
-        }
-
-        function addCargo(type) {
-            const pi = JOGO_CONFIG.caminhoImg;
-            if(type === 'dezena') {
-                if(currentTens >= 5) return;
-                currentTens++;
-                const stack = document.createElement('div'); stack.className = 'dezena-stack';
-                for(let i=0; i<10; i++) {
-                    const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                    img.className = 'fardo-img'; stack.appendChild(img);
-                }
-                document.getElementById('cargo-tens').appendChild(stack);
-            } else {
-                if(currentUnits >= 15) return;
-                currentUnits++;
-                const container = document.getElementById('cargo-units');
-                let stacks = container.querySelectorAll('.unidade-stack');
-                let lastStack = stacks[stacks.length - 1];
-                if (!lastStack || lastStack.children.length >= 5) {
-                    lastStack = document.createElement('div');
-                    lastStack.className = 'unidade-stack';
-                    container.appendChild(lastStack);
-                }
-                const img = document.createElement('img'); 
-                img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                img.className = 'fardo-img'; 
-                lastStack.appendChild(img);
-            }
-        }
-
-        function checkAnswer(ans) {
-            if (!isRoundActive) return;
-            isRoundActive = false;
-            const stars = document.querySelectorAll('.star');
-            const train = document.getElementById('tractor-unit');
-
-            if (ans === targetValue) {
-                playSound('certo');
-                stars[questionNum - 1].classList.add('correct'); stars[questionNum - 1].innerText = '✓';
-                points += 20; document.getElementById('points').innerText = points;
-                setTimeout(() => { train.classList.add('exit'); setTimeout(nextRound, 1000); }, 600);
-            } else {
-                playSound('errado');
-                stars[questionNum - 1].classList.add('wrong'); stars[questionNum - 1].innerText = '✕';
-                train.classList.add('error-shake');
-                setTimeout(() => { train.classList.remove('error-shake'); train.classList.add('exit'); setTimeout(nextRound, 1000); }, 800);
-            }
-        }
-
-        function nextRound() {
-            questionNum++;
-            if (questionNum > 5) { 
-                if (level === 1) { level = 2; questionNum = 1; loadQuestion(); initStars(); }
-                else endGame();
-            } else loadQuestion();
-        }
-
-        function endGame() {
-            clearInterval(timerInterval);
-            const modal = document.getElementById('modal');
-            modal.style.display = 'flex';
-            let msgFim = JOGO_CONFIG.mensagens.tenta;
-            if(points >= 180) msgFim = JOGO_CONFIG.mensagens.excelente;
-            else if(points >= 120) msgFim = JOGO_CONFIG.mensagens.bom;
-            document.getElementById('modal-title').innerText = "Trabalho Concluído!";
-            document.getElementById('modal-msg').innerHTML = `<p>${msgFim}</p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p><p>Pontos: <b>${points} / 200</b></p>`;
-        }
-
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
-    </script>
-</body>
-</html>
+... (resto do código permanece igual)
