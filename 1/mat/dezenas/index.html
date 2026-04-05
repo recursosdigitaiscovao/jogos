@@ -19,22 +19,30 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* Estilos de Navegação Base */
-        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; }
+        /* NAVEGAÇÃO E SIDEBAR */
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
+        .sidebar.active { left: 0; }
+        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.2s; cursor: pointer; font-weight: 500; }
+        .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; }
+        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
+        .overlay.active { display: block; }
+
+        /* CONTEÚDO PRINCIPAL */
         .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
-        
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
 
         .game-card {
-            background: white; border-radius: 30px; padding: 15px; border: 4px solid var(--cor-jogo-verde);
-            display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box;
+            background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-jogo-verde);
+            display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* Área de Jogo */
+        /* ÁREA DE JOGO */
         .game-area { 
             flex: 1; display: flex; flex-direction: column; width: 100%; 
-            background: #f0fdfa; border-radius: 20px; border: 2px dashed #b2dfdb;
+            background: #f4fdfb; border-radius: 20px; border: 2px dashed #b2dfdb;
             position: relative; overflow: hidden;
         }
 
@@ -42,28 +50,33 @@
         .road { 
             flex: 1; 
             display: flex; 
-            align-items: center;    /* Centraliza verticalmente */
-            justify-content: center; /* Centraliza horizontalmente */
+            align-items: center;    /* Centraliza Verticalmente */
+            justify-content: center; /* Centraliza Horizontalmente */
             position: relative;
+            width: 100%;
         }
 
         .tractor-container { 
             display: flex; 
             align-items: flex-end; 
-            gap: 5px; 
-            transition: transform 0.6s ease-out;
+            position: absolute; 
+            left: 50%; 
+            transform: translateX(-50%); /* Força o centro exato */
+            transition: left 0.6s ease-in-out;
         }
+        
+        .tractor-container.exit { left: 150%; }
+        .tractor-container.entry { left: -50%; }
 
-        .wagon-unit { position: relative; width: 120px; display: flex; flex-direction: column; align-items: center; }
+        .wagon-unit { position: relative; width: 110px; display: flex; flex-direction: column; align-items: center; }
         .wagon-img { width: 100%; height: auto; margin-top: -5px; }
-        .tractor-img { height: 85px; width: auto; margin-left: -5px; }
+        .tractor-img { height: 80px; width: auto; margin-left: -5px; }
 
-        /* Carga */
-        .cargo-bay { height: 80px; width: 100%; display: flex; align-items: flex-end; justify-content: center; gap: 3px; }
+        .cargo-bay { height: 80px; width: 85%; display: flex; align-items: flex-end; justify-content: center; gap: 3px; margin-bottom: 2px; }
         .dezena-stack, .unidade-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
-        .fardo-img { width: 16px; height: auto; }
+        .fardo-img { width: clamp(12px, 1.5vw, 16px); height: auto; }
 
-        /* Target Number */
+        /* TARGET NUMBER */
         .target-number-box { 
             position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
             font-size: 3rem; color: white; font-weight: 700; 
@@ -71,99 +84,116 @@
             border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 20; 
         }
 
-        /* ÁREA DE BOTÕES - AJUSTE DE PADDING */
+        /* ÁREA DE BOTÕES - ESPAÇAMENTOS SOLICITADOS */
         .options-area { 
             display: flex; 
             flex-direction: column; 
             align-items: center;
-            padding-bottom: 60px; /* Padding solicitado no fundo */
+            padding-bottom: 60px; /* Padding no fundo */
+            width: 100%;
         }
 
         .buttons-row { 
             display: flex; 
             gap: 15px; 
             justify-content: center;
-            margin-bottom: 40px; /* Padding solicitado entre controles e entrega */
+            margin-bottom: 40px; /* Padding entre botões de controle e entrega */
+            width: 100%;
         }
 
-        /* Padronização dos Botões de Controle */
         .control-btn {
             background: white; border: 3.5px solid var(--cor-jogo-verde); color: var(--cor-texto);
-            height: 75px; width: 130px; /* Tamanhos iguais */
+            height: 75px; width: 140px; /* Largura fixa igual para todos */
             border-radius: 18px; cursor: pointer; display: flex; flex-direction: column;
             align-items: center; justify-content: center; font-family: 'Fredoka';
             font-size: 1.1rem; font-weight: 700; transition: 0.1s;
         }
         .control-btn:active { background: var(--cor-jogo-verde); color: white; transform: scale(0.95); }
-        .control-btn img { height: 30px; margin-bottom: 3px; }
-        .btn-clear { border-color: var(--cor-erro); }
+        .control-btn img { height: 32px; margin-bottom: 4px; }
+        .btn-clear { border-color: var(--cor-erro); color: var(--cor-erro); }
 
         .go-btn { 
             background: var(--cor-vibrante); color: white; border: none; 
-            height: 70px; width: 100%; max-width: 450px;
+            height: 75px; width: 100%; max-width: 450px;
             border-radius: 50px; font-size: 1.6rem; font-weight: 700; cursor: pointer; 
             box-shadow: 0 5px 0 #bf5600; font-family: 'Fredoka';
         }
         .go-btn:active { transform: translateY(3px); box-shadow: none; }
 
-        /* HUD e Estrelas */
-        .card-header { display: flex; justify-content: space-between; align-items: center; padding: 10px; }
+        /* HUD */
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; border-bottom: 2px solid #f0f0f0; }
+        .status-item { font-weight: 700; color: var(--cor-texto); }
         .stars-container { display: flex; gap: 5px; }
-        .star { width: 28px; height: 28px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-        .star.correct { background: var(--cor-jogo-verde); color: white; border-color: var(--cor-jogo-verde); }
-        .star.wrong { background: var(--cor-erro); color: white; border-color: var(--cor-erro); }
+        .star { width: 26px; height: 26px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: transparent; }
+        .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
+        .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; max-width: 380px; width: 90%; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; max-width: 380px; width: 90%; border: 5px solid var(--cor-principal); }
+
+        @keyframes shake { 0%, 100% {transform:translateX(-50%);} 25% {transform:translateX(-55%);} 75% {transform:translateX(-45%);} }
+        .error-shake { animation: shake 0.4s; }
     </style>
 </head>
 <body>
 
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    
+    <div class="sidebar" id="sidebar">
+        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
+            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
+        </div>
+        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
+        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
+    </div>
+
     <header class="nav-bar">
-        <div style="font-weight: 700; color: var(--cor-principal);">MATEMÁTICA - 1º ANO</div>
-        <div id="timer" style="font-weight: 700; color: var(--cor-texto);">00:00</div>
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
+        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal);">
+            <img id="header-icon" src="" style="height:32px; width: auto;"> Matemática - 1º Ano
+        </h1>
+        <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
     </header>
 
     <main class="main-content">
-        <!-- Tela Inicial -->
         <section id="intro-screen" class="screen active">
-            <div class="game-card" style="justify-content: center; text-align: center;">
-                <h1 style="color: var(--cor-vibrante); font-size: 2.5rem;">O Trator das Dezenas</h1>
-                <p style="color: var(--cor-texto); font-size: 1.2rem;">Ajuda o trator a levar a carga correta!</p>
-                <button class="go-btn" onclick="startGame()" style="margin: 30px auto;">COMEÇAR</button>
+            <div class="game-card" style="justify-content: center; align-items: center; text-align: center;">
+                <h2 style="color: var(--cor-principal); font-size: 2.5rem; margin-bottom: 10px;">O Trator das Dezenas</h2>
+                <p style="color: var(--cor-texto); font-size: 1.2rem; max-width: 400px;">Usa as dezenas e unidades para carregar o trator com o número indicado!</p>
+                <button class="go-btn" onclick="startGame()" style="margin-top: 30px;">JOGAR</button>
             </div>
         </section>
 
-        <!-- Tela de Jogo -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
-                    <div id="stars-bar" class="stars-container"></div>
-                    <div style="font-weight: 700; color: var(--cor-texto);">PTS: <span id="points">0</span></div>
+                    <div class="status-item">⏳ <span id="timer">00:00</span></div>
+                    <div class="stars-container" id="stars-bar"></div>
+                    <div class="status-item">PTS: <span id="points">0</span></div>
                 </div>
 
                 <div class="game-area">
                     <div id="target-number" class="target-number-box">0</div>
                     
                     <div class="road">
-                        <div id="tractor-unit" class="tractor-container">
-                            <!-- Gerado via JS -->
-                        </div>
+                        <div id="tractor-unit" class="tractor-container"></div>
                     </div>
 
                     <div class="options-area">
                         <div class="buttons-row">
                             <button class="control-btn" onclick="addCargo('dezena')">
-                                <img id="img-dez" src="">
-                                +10
+                                <img id="btn-img-dez" src=""> +10
                             </button>
                             <button class="control-btn" onclick="addCargo('unidade')">
-                                <img id="img-uni" src="">
-                                +1
+                                <img id="btn-img-uni" src=""> +1
                             </button>
                             <button class="control-btn btn-clear" onclick="clearCargo()">
-                                <img id="img-clear" src="">
-                                Limpar
+                                <img id="btn-img-bor" src=""> Limpar
                             </button>
                         </div>
                         <button class="go-btn" onclick="checkAnswer()">ENTREGAR</button>
@@ -175,44 +205,64 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color: var(--cor-principal)">Fim do Trabalho!</h2>
-            <div id="modal-msg" style="margin: 20px 0; font-size: 1.2rem;"></div>
-            <button class="go-btn" onclick="location.reload()">JOGAR DE NOVO</button>
+            <h2 id="modal-title" style="margin-top: 0; font-weight:700; color: var(--cor-principal);">Trabalho Concluído!</h2>
+            <div id="modal-msg" style="margin-bottom: 25px; color: var(--cor-texto); font-size: 1.2rem;"></div>
+            <button class="go-btn" onclick="location.reload()" style="margin-bottom:10px;">Jogar de Novo</button>
+            <button class="go-btn" onclick="window.location.href='../'" style="background: white; color: var(--cor-principal); border: 2px solid var(--cor-principal); box-shadow:none;">Sair</button>
         </div>
     </div>
 
-    <!-- Importante: Substituir 'dados.js' pelo caminho real ou garantir que JOGO_CONFIG existe -->
     <script src="dados.js"></script>
     <script>
         let points = 0, seconds = 0, timerInterval;
         let questionNum = 1, targetValue = 0, currentTens = 0, currentUnits = 0;
-        const totalQuestions = 10;
+        let isRoundActive = false;
 
-        // Fallback caso dados.js não carregue
-        if (typeof JOGO_CONFIG === 'undefined') {
-            window.JOGO_CONFIG = {
-                caminhoImg: "",
-                veiculos: {
-                    trator: "https://cdn-icons-png.flaticon.com/512/2555/2555020.png",
-                    reboque: "https://cdn-icons-png.flaticon.com/512/2555/2555030.png",
-                    dezena: "https://cdn-icons-png.flaticon.com/512/2555/2555010.png",
-                    unidade: "https://cdn-icons-png.flaticon.com/512/2555/2554990.png",
-                    fardo: "https://cdn-icons-png.flaticon.com/512/864/864834.png",
-                    borracha: "https://cdn-icons-png.flaticon.com/512/565/565733.png"
-                },
-                mensagens: { excelente: "Incrível! És um mestre das dezenas!", bom: "Bom trabalho!", tenta: "Continua a praticar!" }
-            };
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                if(type === 'certo') {
+                    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+                } else {
+                    osc.type = 'sawtooth'; 
+                    osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+                }
+            } catch(e) {}
+        }
+
+        window.onload = () => {
+            if(typeof JOGO_CONFIG !== 'undefined') {
+                const p = JOGO_CONFIG.caminhoIcons;
+                const i = JOGO_CONFIG.iconesMenu;
+                document.getElementById('header-icon').src = p + i.ano1;
+                const keys = ['pre', 'ano1', 'ano2', 'ano3', 'ano4'];
+                document.querySelectorAll('.sidebar-item img').forEach((img, idx) => {
+                    if(idx > 0) img.src = p + i[keys[idx-1]];
+                });
+
+                // Icones dos botões de jogo
+                document.getElementById('btn-img-dez').src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.dezena;
+                document.getElementById('btn-img-uni').src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.unidade;
+                document.getElementById('btn-img-bor').src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.borracha;
+            }
+        };
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
         }
 
         function startGame() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            
-            // Icones dos botões
-            document.getElementById('img-dez').src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.dezena;
-            document.getElementById('img-uni').src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.unidade;
-            document.getElementById('img-clear').src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.borracha;
-
             startTimer();
             initStars();
             loadQuestion();
@@ -230,7 +280,7 @@
         function initStars() {
             const bar = document.getElementById('stars-bar');
             bar.innerHTML = '';
-            for(let i=0; i<totalQuestions; i++) {
+            for(let i=0; i<5; i++) {
                 const s = document.createElement('div');
                 s.className = 'star';
                 s.innerText = '★';
@@ -242,11 +292,14 @@
             const train = document.getElementById('tractor-unit');
             const pi = JOGO_CONFIG.caminhoImg;
             
-            currentTens = 0; 
-            currentUnits = 0;
-            targetValue = Math.floor(Math.random() * 90) + 10; // Números de 10 a 99
+            isRoundActive = false;
+            currentTens = 0; currentUnits = 0;
+            targetValue = Math.floor(Math.random() * 41) + 10; 
             document.getElementById('target-number').innerText = targetValue;
 
+            train.style.transition = 'none';
+            train.style.left = '-50%';
+            
             train.innerHTML = `
                 <div class="wagon-unit">
                     <div id="cargo-tens" class="cargo-bay"></div>
@@ -258,12 +311,19 @@
                 </div>
                 <img class="tractor-img" src="${pi + JOGO_CONFIG.veiculos.trator}">
             `;
+
+            setTimeout(() => {
+                train.style.transition = 'left 0.8s ease-out';
+                train.style.left = '50%';
+                isRoundActive = true;
+            }, 50);
         }
 
         function addCargo(type) {
+            if(!isRoundActive) return;
             const pi = JOGO_CONFIG.caminhoImg;
             if(type === 'dezena') {
-                if(currentTens >= 9) return;
+                if(currentTens >= 5) return;
                 currentTens++;
                 const stack = document.createElement('div');
                 stack.className = 'dezena-stack';
@@ -275,47 +335,64 @@
                 }
                 document.getElementById('cargo-tens').appendChild(stack);
             } else {
-                if(currentUnits >= 9) return;
+                if(currentUnits >= 15) return;
                 currentUnits++;
-                const stack = document.createElement('div');
-                stack.className = 'unidade-stack';
+                const container = document.getElementById('cargo-units');
+                let stacks = container.querySelectorAll('.unidade-stack');
+                let lastStack = stacks[stacks.length - 1];
+                if (!lastStack || lastStack.children.length >= 5) {
+                    lastStack = document.createElement('div');
+                    lastStack.className = 'unidade-stack';
+                    container.appendChild(lastStack);
+                }
                 const img = document.createElement('img');
                 img.src = pi + JOGO_CONFIG.veiculos.fardo;
                 img.className = 'fardo-img';
-                stack.appendChild(img);
-                document.getElementById('cargo-units').appendChild(stack);
+                lastStack.appendChild(img);
             }
         }
 
         function clearCargo() {
-            currentTens = 0;
-            currentUnits = 0;
+            if(!isRoundActive) return;
+            currentTens = 0; currentUnits = 0;
             document.getElementById('cargo-tens').innerHTML = '';
             document.getElementById('cargo-units').innerHTML = '';
         }
 
         function checkAnswer() {
+            if(!isRoundActive) return;
+            isRoundActive = false;
             const total = (currentTens * 10) + currentUnits;
             const stars = document.querySelectorAll('.star');
-            const currentStar = stars[questionNum - 1];
+            const train = document.getElementById('tractor-unit');
 
             if (total === targetValue) {
-                currentStar.classList.add('correct');
-                currentStar.innerText = '✓';
-                points += 20;
+                playSound('certo');
+                stars[questionNum - 1].classList.add('correct');
+                stars[questionNum - 1].innerText = '✓';
+                points += 40;
+                document.getElementById('points').innerText = points;
+                setTimeout(() => {
+                    train.style.left = '150%';
+                    setTimeout(nextRound, 800);
+                }, 500);
             } else {
-                currentStar.classList.add('wrong');
-                currentStar.innerText = '✕';
+                playSound('errado');
+                stars[questionNum - 1].classList.add('wrong');
+                stars[questionNum - 1].innerText = '✕';
+                train.classList.add('error-shake');
+                setTimeout(() => {
+                    train.classList.remove('error-shake');
+                    train.style.left = '150%';
+                    setTimeout(nextRound, 800);
+                }, 800);
             }
-            
-            document.getElementById('points').innerText = points;
-            
-            if(questionNum < totalQuestions) {
-                questionNum++;
-                setTimeout(loadQuestion, 500);
-            } else {
-                endGame();
-            }
+        }
+
+        function nextRound() {
+            questionNum++;
+            if(questionNum > 5) endGame();
+            else loadQuestion();
         }
 
         function endGame() {
@@ -324,12 +401,12 @@
             modal.style.display = 'flex';
             
             let msg = JOGO_CONFIG.mensagens.tenta;
-            if(points >= (totalQuestions * 20) * 0.8) msg = JOGO_CONFIG.mensagens.excelente;
-            else if(points >= (totalQuestions * 20) * 0.5) msg = JOGO_CONFIG.mensagens.bom;
+            if(points >= 200) msg = JOGO_CONFIG.mensagens.excelente;
+            else if(points >= 120) msg = JOGO_CONFIG.mensagens.bom;
 
             document.getElementById('modal-msg').innerHTML = `
                 <p>${msg}</p>
-                <p>Pontuação: <b>${points}</b></p>
+                <p>Pontos: <b>${points} / 200</b></p>
                 <p>Tempo: <b>${document.getElementById('timer').innerText}</b></p>
             `;
         }
