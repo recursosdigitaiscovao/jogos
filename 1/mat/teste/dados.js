@@ -1,6 +1,8 @@
 // dados.js
 const JOGO_CONFIG = {
     caminhoIcons: "../../../icons/",
+    caminhoImg: "../../../img/frutas/", 
+
     iconesMenu: {
         pre: "iconpre.png",
         ano1: "icon1.png",
@@ -8,11 +10,19 @@ const JOGO_CONFIG = {
         ano3: "icon3.png",
         ano4: "icon4.png"
     },
+
+    frutas: [
+        "ananas.png", "banana.png", "cereja.png", "kiwi.png", 
+        "laranja.png", "maca.png", "melancia.png", "morango.png", 
+        "papaia.png", "pera.png", "uvas.png"
+    ],
+
     mensagens: {
-        excelente: "Incrível! És um mestre das coordenadas! 🌟",
+        excelente: "Incrível! És um mestre da matemática! 🌟",
         bom: "Bom esforço! Estás no bom caminho! 👍",
         tenta: "Esforça-te mais! Continua a praticar! 💪"
     },
+
     relatorio: {
         titulo: "Fim do Jogo!",
         pontosTotal: "Pontuação Total:",
