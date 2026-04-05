@@ -39,17 +39,10 @@
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Estilo da Instrução (Igual à Intro) --- */
         .instruction-area { 
-            font-weight: 700; 
-            font-size: 1.4rem; 
-            color: var(--cor-texto); 
-            text-align: center; 
-            padding: 10px 0;
-            width: 100%;
+            font-weight: 700; font-size: 1.4rem; color: var(--cor-texto); text-align: center; padding: 10px 0; width: 100%;
         }
 
-        /* --- Explicação --- */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px; position: relative; }
         .anim-line-1 { font-weight: 700; font-size: 1.4rem; color: var(--cor-texto); text-align: center; }
         .anim-line-2 { width: 100%; height: 110px; position: relative; display: flex; align-items: flex-end; justify-content: center; }
@@ -68,7 +61,6 @@
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
-        /* Placa do Número Alvo no Stage */
         .target-number-box { 
             position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
             font-size: clamp(2rem, 6vh, 3rem); color: white; font-weight: 700; 
@@ -83,7 +75,6 @@
             box-sizing: border-box; position: relative; justify-content: flex-start; padding: 10px;
         }
 
-        /* Estrada posicionada mais abaixo */
         .road { height: 40%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; margin-top: 25px; }
         .tractor-container { display: flex; align-items: flex-end; position: absolute; left: -1200px; transition: left 0.8s ease-out; gap: 0; }
         .tractor-container.at-center { left: 50%; transform: translateX(-50%); }
@@ -95,22 +86,27 @@
         
         .cargo-bay {
             height: clamp(45px, 12vh, 90px); width: 85%;
-            display: flex; align-items: flex-end; justify-content: center; gap: 2px;
+            display: flex; align-items: flex-end; justify-content: center; gap: 4px;
             margin-bottom: 2px; z-index: 5;
         }
-        .cargo-bay.units { display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-rows: min-content; align-content: end; justify-items: center; }
+        /* Ajuste específico para as unidades ficarem lado a lado (pilhas de 5) */
+        .cargo-bay.units { 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-end; 
+            gap: 6px; 
+        }
 
         .dezena-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
+        .unidade-stack { display: flex; flex-direction: column-reverse; gap: 1px; } /* Nova classe para pilhas de 5 */
         .fardo-img { width: clamp(14px, 2.5vw, 22px); height: auto; object-fit: contain; }
 
-        /* Teclado e Botões mais baixos */
         .options-area { 
             display: flex; flex-direction: column; gap: 10px; padding: 10px; flex-grow: 1; width: 100%; align-items: center; justify-content: center;
             margin-top: 15px;
         }
         .buttons-row { display: flex; gap: clamp(5px, 1.5vw, 12px); width: 100%; justify-content: center; padding: 0 10px; }
         
-        /* Layout 3+3 para o Nível 2 */
         .keypad-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -229,7 +225,6 @@
                     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.2);
                 } else {
-                    // Som de erro mais grave e audível
                     osc.type = 'sawtooth'; 
                     osc.frequency.setValueAtTime(120, audioCtx.currentTime);
                     osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.3);
@@ -284,8 +279,11 @@
                     document.getElementById('mock-tens').classList.remove('active-anim');
                     document.getElementById('mock-units').classList.add('active-anim');
                     const cargoUnits = document.getElementById('intro-cargo-2');
+                    // Simulação intro unidades empilhadas
+                    const stackU = document.createElement('div'); stackU.className = 'unidade-stack';
                     const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                    img.className = 'fardo-img'; img.style.width = '10px'; cargoUnits.appendChild(img);
+                    img.className = 'fardo-img'; img.style.width = '10px'; stackU.appendChild(img);
+                    cargoUnits.appendChild(stackU);
                 }, 1500);
             }, 2500);
         }
@@ -371,6 +369,7 @@
             setTimeout(() => { train.style.transition = 'left 0.8s ease-out'; train.classList.add('at-center'); isRoundActive = true; }, 50);
         }
 
+        // FUNÇÃO ATUALIZADA PARA EMPILHAR 5 EM 5
         function addCargo(type) {
             const pi = JOGO_CONFIG.caminhoImg;
             if(type === 'dezena') {
@@ -383,10 +382,25 @@
                 }
                 document.getElementById('cargo-tens').appendChild(stack);
             } else {
+                // Lógica de 5 em 5 para Unidades
                 if(currentUnits >= 15) return;
                 currentUnits++;
-                const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                img.className = 'fardo-img'; document.getElementById('cargo-units').appendChild(img);
+
+                const container = document.getElementById('cargo-units');
+                let stacks = container.querySelectorAll('.unidade-stack');
+                let lastStack = stacks[stacks.length - 1];
+
+                // Se não houver pilha ou a última estiver cheia (5 itens), cria uma nova coluna
+                if (!lastStack || lastStack.children.length >= 5) {
+                    lastStack = document.createElement('div');
+                    lastStack.className = 'unidade-stack';
+                    container.appendChild(lastStack);
+                }
+
+                const img = document.createElement('img'); 
+                img.src = pi + JOGO_CONFIG.veiculos.fardo;
+                img.className = 'fardo-img'; 
+                lastStack.appendChild(img);
             }
         }
 
@@ -411,7 +425,7 @@
 
         function nextRound() {
             questionNum++;
-            if (questionNum > 5) { // 5 Rondas agora
+            if (questionNum > 5) { 
                 if (level === 1) { level = 2; questionNum = 1; loadQuestion(); initStars(); }
                 else endGame();
             } else loadQuestion();
