@@ -1,7 +1,6 @@
-// dados.js
 const JOGO_CONFIG = {
-    caminhoIcons: "../../../icons/",
-    caminhoGeralImg: "../../../img/",
+    caminhoIcons: "../../icons/",
+    caminhoGeralImg: "../../img/",
 
     iconesMenu: {
         pre: "iconpre.png",
@@ -11,16 +10,15 @@ const JOGO_CONFIG = {
         ano4: "icon4.png"
     },
 
-    // Categorias para o jogo de sombras
     categorias: {
         animais: {
             nome: "Animais",
-            caminho: "../../../img/animaisdomesticos/",
+            caminho: "../../img/animaisdomesticos/",
             lista: ["galinha.png", "cabra.png", "ovelha.png", "coelho.png", "burro.png", "peru.png", "porco.png", "cavalo.png", "vaca.png", "pato.png", "gato.png", "cao.png"]
         },
         frutas: {
             nome: "Frutas",
-            caminho: "../../../img/frutas/",
+            caminho: "../../img/frutas/",
             lista: ["ananas.png", "banana.png", "cereja.png", "kiwi.png", "laranja.png", "maca.png", "melancia.png", "morango.png", "papaia.png", "pera.png", "uvas.png"]
         }
     },
