@@ -15,8 +15,7 @@ const JOGO_CONFIG = {
         fardo: "fardo.png",
         dezena: "cubo.png",     
         unidade: "cubo.png",
-        borracha: "borracha.png",
-        barra: "fardo.png" // Usaremos o fardo para representar os itens na carga
+        borracha: "borracha.png"
     },
     mensagens: {
         excelente: "Incrível! És um mestre das dezenas! 🌟",
