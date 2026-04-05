@@ -10,7 +10,7 @@ const JOGO_CONFIG = {
         ano4: "icon4.png"
     },
     veiculos: {
-        trator: "trator1.png",
+        trator: "trator.png",
         reboque: "reboque.png", 
         fardo: "fardo.png",
         dezena: "cubo.png",     
