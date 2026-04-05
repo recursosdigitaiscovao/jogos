@@ -11,91 +11,75 @@
             --cor-vibrante: #d47a92;  
             --cor-fundo: #fff5f7;      
             --cor-texto: #555555;      
-            --cor-vermelho: #ff4757;    /* Cor do botão JOGAR */
+            --cor-vermelho: #ff4757;    
             --header-height: 70px;
-            --cor-jogo-sucesso: #45cfa8;
-            --cor-erro: #ff4757;
-            --cor-caixa-info: #ffffff;
+            --cor-sucesso: #45cfa8;
         }
 
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* --- Header --- */
-        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
-        .menu-btn { background: none; border: none; font-size: 26px; color: var(--cor-principal); cursor: pointer; }
-        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
-
-        /* --- Sidebar --- */
+        /* --- Header & Sidebar --- */
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; }
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: all 0.3s ease; cursor: pointer; font-weight: 500; }
-        .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
-        .sidebar-item img { width: 28px; height: 28px; margin-right: 12px; object-fit: contain; }
-
+        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-weight: 500; }
+        .sidebar-item:hover { background-color: var(--cor-principal); color: white; }
+        .sidebar-item img { width: 28px; height: 28px; margin-right: 12px; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* --- Layout --- */
-        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; height: calc(100% - var(--header-height)); }
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow: hidden; }
-        .screen.active { display: flex; }
+        /* --- Intro & Menu Roda Dentada --- */
+        .intro-container { position: relative; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .btn-group { display: flex; align-items: center; gap: 10px; position: relative; }
+        .gear-btn { width: 50px; height: 50px; cursor: pointer; transition: 0.3s; }
+        .gear-btn:hover { transform: rotate(45deg); }
+        
+        .config-menu { 
+            position: absolute; bottom: 70px; right: 0; background: white; border: 3px solid var(--cor-principal); 
+            border-radius: 15px; display: none; flex-direction: column; overflow: hidden; min-width: 120px; z-index: 10;
+        }
+        .config-menu.active { display: flex; }
+        .config-opt { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; font-weight: bold; color: var(--cor-texto); text-align: center; }
+        .config-opt:hover { background: var(--cor-fundo); }
 
-        .game-card {
-            background: white; border-radius: 30px; padding: 10px; 
-            border: 4px solid var(--cor-principal);
-            display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
+        /* --- Game Grid --- */
+        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal); width: 100%; max-width: 950px; height: 100%; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; border-bottom: 2px solid #f0f0f0; font-size: 0.9rem; }
+        
+        .play-area { flex: 1; display: grid; grid-template-rows: 1fr auto; gap: 10px; padding: 10px; overflow: hidden; }
+        
+        /* Grid para Sombras (Alvos) */
+        .shadows-grid { 
+            display: grid; gap: 10px; justify-content: center; align-content: center;
+            grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+        }
+        /* Grid para Animais (Arrastáveis) */
+        .items-grid { 
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; 
+            padding: 10px; background: #fff5f7; border-radius: 20px;
         }
 
-        /* --- Intro Animation Box --- */
-        .explanation-box { background: #fff0f3; border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; position: relative; overflow: hidden; padding: 15px; }
-        .anim-line-shadow { width: 120px; height: 120px; filter: brightness(0); opacity: 0.2; }
-        .anim-line-animal { width: 100px; position: absolute; animation: dragAnim 3s infinite; }
-        @keyframes dragAnim {
-            0% { transform: translate(150px, 50px); opacity: 1; }
-            70% { transform: translate(0, 0); opacity: 1; }
-            100% { transform: translate(0, 0); opacity: 0; }
-        }
+        .drop-target { width: 75px; height: 75px; border: 2px dashed #ccc; border-radius: 15px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .drop-target img { width: 80%; filter: brightness(0); opacity: 0.15; }
+        .drop-target.matched { border: 2px solid var(--cor-sucesso); background: #e8f9f4; }
+        .drop-target.matched img { filter: none; opacity: 1; }
 
-        .game-title { color: var(--cor-principal); text-align: center; font-size: 1.4rem; margin: 5px 0; font-weight: bold; }
+        .draggable-item { width: 65px; height: 65px; cursor: grab; z-index: 100; touch-action: none; display: flex; align-items: center; justify-content: center; }
+        .draggable-item img { width: 100%; pointer-events: none; }
+        .dragging { opacity: 0.7; transform: scale(1.2); pointer-events: none; }
 
-        /* --- Interface do Jogo --- */
-        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; padding: 0 10px; font-size: 0.85rem; }
-        .stars-container { display: flex; gap: 4px; }
-        .star { width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; }
-        .star.correct { background: var(--cor-jogo-sucesso); border-color: var(--cor-jogo-sucesso); color: white; }
-        .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
-
-        .instruction-area { text-align: center; font-size: 1.1rem; font-weight: bold; color: var(--cor-texto); margin-bottom: 5px; flex-shrink: 0; }
-
-        .game-area { 
-            flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;
-            background: #fffafa; border-radius: 20px; border: 2px dashed var(--cor-principal); min-height: 0;
-            box-sizing: border-box; position: relative; justify-content: center; align-items: center;
-        }
-
-        /* --- Drag & Drop Styles --- */
-        #shadow-target { width: 160px; height: 160px; display: flex; align-items: center; justify-content: center; background: #f0f0f0; border-radius: 30px; border: 3px dashed #ccc; transition: 0.3s; }
-        #shadow-target img { width: 85%; filter: brightness(0); opacity: 0.2; }
-        #shadow-target.highlight { border-color: var(--cor-principal); background: #fff5f7; transform: scale(1.05); }
-        #shadow-target.success { border-color: var(--cor-jogo-sucesso); background: #e8f9f4; }
-        #shadow-target.success img { filter: none; opacity: 1; }
-
-        .options-area { display: flex; justify-content: center; gap: 15px; padding: 15px; width: 100%; flex-wrap: wrap; }
-        .draggable-item { width: 80px; height: 80px; cursor: grab; touch-action: none; transition: transform 0.2s; }
-        .draggable-item img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-        .draggable-item.dragging { opacity: 0.5; transform: scale(1.2); }
-
-        .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 12px 30px; border-radius: 50px; font-size: 1.3rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; width: 100%; }
-
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 380px; width: 90%; }
+        .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 15px 40px; border-radius: 50px; font-size: 1.4rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; }
+        
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 80%; max-width: 400px; }
     </style>
 </head>
 <body>
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     
+    <!-- Sidebar Completa -->
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
@@ -104,40 +88,52 @@
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
         <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
         <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
-        <button onclick="toggleMenu()" class="menu-btn">☰</button>
-        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin: 0;">
-            <img id="header-icon" src="" style="height:32px; width: auto;"> Sombras Misteriosas
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
+        <h1 style="display:flex; align-items:center; gap:10px; font-size:1rem; color:var(--cor-principal); margin: 0;">
+            <img id="header-icon" src="" style="height:30px;"> Matemática - Pré-Escolar
         </h1>
-        <a href="../" class="back-btn">⬅ Voltar</a>
+        <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
     </header>
 
-    <main class="main-content">
-        <section id="intro-screen" class="screen active">
-            <div class="game-card">
-                <div class="explanation-box">
-                    <img src="" id="intro-shadow" class="anim-line-shadow">
-                    <img src="" id="intro-animal" class="anim-line-animal">
-                    <p style="color:var(--cor-texto); font-weight:bold; margin-top: 10px;">Arrasta o animal para a sua sombra!</p>
+    <main class="main-content" style="flex:1; display:flex; flex-direction:column; align-items:center; padding:10px;">
+        <!-- Tela Inicial -->
+        <section id="intro-screen" class="screen active" style="display:flex; justify-content:center; align-items:center; height:100%; width:100%;">
+            <div class="game-card" style="justify-content:center; align-items:center; text-align:center;">
+                <h2 style="color:var(--cor-principal); font-size: 1.8rem;">De quem é esta sombra?</h2>
+                <div class="intro-container">
+                    <div class="btn-group">
+                        <button class="btn-jogar" onclick="startGame()">JOGAR</button>
+                        <div style="position:relative;">
+                            <img id="gear-img" src="" class="gear-btn" onclick="toggleConfig()">
+                            <div id="config-menu" class="config-menu">
+                                <div class="config-opt" onclick="setCategory('animais')">Animais</div>
+                                <div class="config-opt" onclick="setCategory('frutas')">Frutas</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="color:var(--cor-texto);">Escolha o tema na roda dentada ou clique em Jogar!</p>
                 </div>
-                <h2 class="game-title">Onde está a minha sombra?</h2>
-                <button class="btn-jogar" onclick="startGame()">JOGAR</button>
             </div>
         </section>
 
-        <section id="game-screen" class="screen">
+        <!-- Tela de Jogo -->
+        <section id="game-screen" class="screen" style="display:none; width:100%; height:100%;">
             <div class="game-card">
                 <div class="card-header">
                     <div>⏳ <span id="timer">00:00</span></div>
-                    <div class="stars-container" id="stars-bar"></div>
+                    <div id="level-txt" style="font-weight:bold; color:var(--cor-principal);">Nível 1</div>
                     <div>PTS: <span id="points">0</span></div>
                 </div>
-                <div class="instruction-area" id="instruction">Procura a sombra!</div>
-                <div class="game-area">
-                    <div id="shadow-target"></div>
-                    <div id="options-pad" class="options-area"></div>
+                
+                <div class="play-area">
+                    <div id="shadows-container" class="shadows-grid"></div>
+                    <div id="items-container" class="items-grid"></div>
                 </div>
             </div>
         </section>
@@ -145,158 +141,141 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="margin-top: 0; color: var(--cor-principal);">Relatório</h2>
-            <div id="modal-msg" style="margin-bottom: 20px;"></div>
-            <button class="btn-jogar" onclick="location.reload()">Jogar de Novo</button>
+            <h2 id="modal-title" style="color: var(--cor-principal);">Excelente!</h2>
+            <div id="modal-msg"></div>
+            <button class="btn-jogar" onclick="location.reload()" style="margin-top:20px; font-size:1.1rem;">Jogar de Novo</button>
         </div>
     </div>
 
     <script src="dados.js"></script>
     <script>
-        let level = 1, points = 0, seconds = 0, timerInterval;
-        let questionNum = 1, targetId = "", isRoundActive = false;
-        let stats = { 1: { c: 0, e: 0 }, 2: { c: 0, e: 0 } };
+        let currentLevel = 1, points = 0, seconds = 0, timerInterval;
+        let selectedCategory = 'animais', matchedInLevel = 0, totalInLevel = 6;
+        let draggedElement = null, initialX, initialY;
 
         window.onload = () => {
             if(typeof JOGO_CONFIG !== 'undefined') {
                 const p = JOGO_CONFIG.caminhoIcons;
+                const g = JOGO_CONFIG.caminhoGeralImg;
                 document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
                 document.getElementById('side-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
                 document.getElementById('side-1').src = p + JOGO_CONFIG.iconesMenu.ano1;
-                
-                const ani = JOGO_CONFIG.categorias.animais;
-                document.getElementById('intro-shadow').src = ani.caminho + ani.lista[0];
-                document.getElementById('intro-animal').src = ani.caminho + ani.lista[0];
+                document.getElementById('side-2').src = p + JOGO_CONFIG.iconesMenu.ano2;
+                document.getElementById('side-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
+                document.getElementById('side-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
+                document.getElementById('gear-img').src = g + "rd.png";
             }
         };
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function toggleConfig() { document.getElementById('config-menu').classList.toggle('active'); }
+        function setCategory(cat) { selectedCategory = cat; toggleConfig(); alert("Tema selecionado: " + cat); }
 
         function startGame() {
-            document.getElementById('intro-screen').classList.remove('active');
-            document.getElementById('game-screen').classList.add('active');
-            timerInterval = setInterval(() => { 
-                seconds++; 
-                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; 
+            document.getElementById('intro-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'flex';
+            timerInterval = setInterval(() => {
+                seconds++;
+                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
             }, 1000);
-            initStars(); 
-            loadQuestion();
+            loadLevel();
         }
 
-        function initStars() {
-            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
-            for(let i=0; i<5; i++) { const s = document.createElement('div'); s.className = 'star'; s.innerText = '★'; bar.appendChild(s); }
-        }
-
-        function loadQuestion() {
-            const shadowBox = document.getElementById('shadow-target');
-            const optionsPad = document.getElementById('options-pad');
-            shadowBox.className = ""; shadowBox.innerHTML = ""; optionsPad.innerHTML = "";
+        function loadLevel() {
+            matchedInLevel = 0;
+            totalInLevel = currentLevel === 1 ? 6 : 9;
+            document.getElementById('level-txt').innerText = `Nível ${currentLevel}`;
             
-            const catKey = level === 1 ? 'animais' : 'frutas';
-            const cat = JOGO_CONFIG.categorias[catKey];
-            document.getElementById('instruction').innerText = `Nível ${level}: Encontra a sombra!`;
-
-            let items = [...cat.lista].sort(() => 0.5 - Math.random()).slice(0, 3);
-            targetId = items[0];
-
-            // Setup Sombra
-            shadowBox.innerHTML = `<img src="${cat.caminho + targetId}">`;
+            const cat = JOGO_CONFIG.categorias[selectedCategory];
+            const items = [...cat.lista].sort(() => 0.5 - Math.random()).slice(0, totalInLevel);
             
-            // Setup Opções (Embaralhadas)
-            items.sort(() => 0.5 - Math.random()).forEach(imgName => {
+            const shadowsCont = document.getElementById('shadows-container');
+            const itemsCont = document.getElementById('items-container');
+            shadowsCont.innerHTML = ''; itemsCont.innerHTML = '';
+
+            // Criar Sombras (Alvos)
+            [...items].sort(() => 0.5 - Math.random()).forEach(img => {
                 const div = document.createElement('div');
-                div.className = 'draggable-item';
-                div.draggable = true;
-                div.dataset.id = imgName;
-                div.innerHTML = `<img src="${cat.caminho + imgName}">`;
-                
-                div.addEventListener('dragstart', onDragStart);
-                div.addEventListener('touchstart', onTouchStart, {passive: false});
-                div.addEventListener('touchmove', onTouchMove, {passive: false});
-                div.addEventListener('touchend', onTouchEnd);
-                
-                optionsPad.appendChild(div);
+                div.className = 'drop-target';
+                div.dataset.id = img;
+                div.innerHTML = `<img src="${cat.caminho + img}">`;
+                shadowsCont.appendChild(div);
             });
 
-            shadowBox.addEventListener('dragover', e => e.preventDefault());
-            shadowBox.addEventListener('drop', onDrop);
-            isRoundActive = true;
+            // Criar Itens (Arrastáveis)
+            items.forEach(img => {
+                const div = document.createElement('div');
+                div.className = 'draggable-item';
+                div.dataset.id = img;
+                div.innerHTML = `<img src="${cat.caminho + img}">`;
+                
+                // Eventos Touch para Telemóvel
+                div.addEventListener('touchstart', handleTouchStart, {passive: false});
+                div.addEventListener('touchmove', handleTouchMove, {passive: false});
+                div.addEventListener('touchend', handleTouchEnd);
+                
+                itemsCont.appendChild(div);
+            });
         }
 
-        // --- Drag & Drop Logic ---
-        let draggedItem = null;
-
-        function onDragStart(e) { draggedItem = this; }
-        function onDrop(e) { 
-            e.preventDefault(); 
-            if(draggedItem) checkResult(draggedItem.dataset.id); 
+        // --- Lógica Drag & Drop Especial para Telemóveis ---
+        function handleTouchStart(e) {
+            draggedElement = this;
+            const touch = e.touches[0];
+            const rect = draggedElement.getBoundingClientRect();
+            initialX = touch.clientX - rect.left;
+            initialY = touch.clientY - rect.top;
+            draggedElement.classList.add('dragging');
         }
 
-        // --- Touch Logic ---
-        let touchX, touchY;
-        function onTouchStart(e) {
-            draggedItem = this;
-            const t = e.touches[0];
-            touchX = t.clientX; touchY = t.clientY;
-            this.classList.add('dragging');
-        }
-        function onTouchMove(e) {
-            if(!draggedItem) return;
+        function handleTouchMove(e) {
+            if (!draggedElement) return;
             e.preventDefault();
-            const t = e.touches[0];
-            draggedItem.style.position = 'fixed';
-            draggedItem.style.left = (t.clientX - 40) + 'px';
-            draggedItem.style.top = (t.clientY - 40) + 'px';
-        }
-        function onTouchEnd(e) {
-            if(!draggedItem) return;
-            draggedItem.classList.remove('dragging');
-            const t = e.changedTouches[0];
-            const target = document.elementFromPoint(t.clientX, t.clientY);
-            if(target && (target.id === "shadow-target" || target.closest("#shadow-target"))) {
-                checkResult(draggedItem.dataset.id);
-            }
-            draggedItem.style.position = ''; draggedItem = null;
+            const touch = e.touches[0];
+            draggedElement.style.position = 'fixed';
+            draggedElement.style.left = (touch.clientX - initialX) + 'px';
+            draggedElement.style.top = (touch.clientY - initialY) + 'px';
         }
 
-        function checkResult(id) {
-            if(!isRoundActive) return;
-            isRoundActive = false;
-            const stars = document.querySelectorAll('.star');
-            const shadowBox = document.getElementById('shadow-target');
-
-            if(id === targetId) {
-                shadowBox.classList.add('success');
-                points += 20; stats[level].c++;
-                stars[questionNum-1].classList.add('correct');
-                stars[questionNum-1].innerText = '✓';
-            } else {
-                stars[questionNum-1].classList.add('wrong');
-                stars[questionNum-1].innerText = '✕';
-                stats[level].e++;
-            }
-
-            document.getElementById('points').innerText = points;
+        function handleTouchEnd(e) {
+            if (!draggedElement) return;
+            draggedElement.classList.remove('dragging');
             
-            setTimeout(() => {
-                questionNum++;
-                if(questionNum > 5) {
-                    if(level === 1) { level = 2; questionNum = 1; initStars(); loadQuestion(); }
-                    else endGame();
-                } else {
-                    loadQuestion();
+            const touch = e.changedTouches[0];
+            const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY)?.closest('.drop-target');
+            
+            if (dropTarget && dropTarget.dataset.id === draggedElement.dataset.id && !dropTarget.classList.contains('matched')) {
+                // Acertou
+                dropTarget.classList.add('matched');
+                draggedElement.style.display = 'none';
+                points += 10;
+                document.getElementById('points').innerText = points;
+                matchedInLevel++;
+                
+                if (matchedInLevel === totalInLevel) {
+                    setTimeout(() => {
+                        if (currentLevel === 1) {
+                            currentLevel = 2;
+                            loadLevel();
+                        } else {
+                            endGame();
+                        }
+                    }, 500);
                 }
-            }, 1000);
+            } else {
+                // Errou / Voltar posição
+                draggedElement.style.position = 'static';
+                draggedElement.style.left = 'auto';
+                draggedElement.style.top = 'auto';
+            }
+            draggedElement = null;
         }
 
         function endGame() {
             clearInterval(timerInterval);
             document.getElementById('modal-msg').innerHTML = `
-                <p>Pontos: <b>${points} / 200</b></p>
+                <p>Pontos Totais: <b>${points}</b></p>
                 <p>Tempo: <b>${document.getElementById('timer').innerText}</b></p>
-                <p>Nível 1 (Animais): ${stats[1].c} certas</p>
-                <p>Nível 2 (Frutas): ${stats[2].c} certas</p>
             `;
             document.getElementById('modal').style.display = 'flex';
         }
