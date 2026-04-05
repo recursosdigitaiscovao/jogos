@@ -20,18 +20,17 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* NAVEGAÇÃO */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.2s; cursor: pointer; font-weight: 500; }
-        .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; }
-        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
+        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: all 0.2s ease; cursor: pointer; font-weight: 500; }
+        .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
+        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; height: calc(100% - var(--header-height)); }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow: hidden; }
         .screen.active { display: flex; }
 
         .game-card {
@@ -39,106 +38,112 @@
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* ANIMAÇÃO INICIAL */
+        .instruction-area { 
+            font-weight: 700; font-size: 1.4rem; color: var(--cor-texto); text-align: center; padding: 10px 0; width: 100%;
+        }
+
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px; position: relative; }
         .anim-line-1 { font-weight: 700; font-size: 1.4rem; color: var(--cor-texto); text-align: center; }
         .anim-line-2 { width: 100%; height: 110px; position: relative; display: flex; align-items: flex-end; justify-content: center; }
         .anim-line-3 { width: 100%; display: flex; justify-content: center; gap: 15px; }
+
+        .anim-tractor-wrap { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; animation: animDriveIn 2s ease-out forwards; }
+        @keyframes animDriveIn { from { left: -600px; transform: translateX(0); } to { left: 50%; transform: translateX(-50%); } }
+        
         .active-anim { animation: selectPulse 1.2s infinite; }
         @keyframes selectPulse { 0%, 100% { background: white; } 50% { background: var(--cor-jogo-verde); color: white; } }
 
-        /* ÁREA DE JOGO */
-        .game-area { 
-            flex: 1; display: flex; flex-direction: column; width: 100%; 
-            background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb;
-            position: relative; overflow: hidden;
-        }
-
-        /* ESTRADA E TRATOR */
-        .road { 
-            flex: 1; 
-            display: flex; 
-            align-items: center;    /* Centraliza verticalmente no espaço disponível */
-            justify-content: center; 
-            position: relative;
-            margin-bottom: 40px;    /* Padding de 40px em relação aos botões de controlo */
-        }
-
-        .tractor-container { 
-            display: flex; 
-            align-items: flex-end; 
-            position: absolute; 
-            left: -1200px; 
-            transition: left 0.8s ease-out; 
-        }
-        .tractor-container.at-center { left: 50%; transform: translateX(-50%); }
-        .tractor-container.exit { left: 120%; transition: left 0.8s ease-in; }
-
-        .wagon-unit { position: relative; width: clamp(80px, 15vw, 110px); display: flex; flex-direction: column; align-items: center; }
-        .wagon-img { width: 100%; height: auto; margin-top: -5px; }
-        .tractor-img { height: clamp(50px, 10vh, 75px); width: auto; margin-left: -5px; }
-
-        .cargo-bay { height: clamp(40px, 11vh, 80px); width: 85%; display: flex; align-items: flex-end; justify-content: center; gap: 3px; }
-        .dezena-stack, .unidade-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
-        .fardo-img { width: clamp(10px, 1.8vw, 15px); height: auto; }
-
-        /* TARGET NUMBER */
-        .target-number-box { 
-            position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
-            font-size: clamp(2.5rem, 7vh, 3.2rem); color: white; font-weight: 700; 
-            background: var(--cor-principal); padding: 5px 35px; border-radius: 15px; 
-            border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 20; 
-        }
-
-        /* BOTÕES E ESPAÇAMENTO */
-        .options-area { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
-            padding-bottom: 60px; /* Padding no fundo conforme solicitado */
-            width: 100%;
-        }
-
-        .buttons-row { 
-            display: flex; 
-            gap: 15px; 
-            justify-content: center;
-            margin-bottom: 40px; /* Padding entre botões de controle e entrega */
-            width: 100%;
-        }
-
-        .control-btn {
-            background: white; border: 3.5px solid var(--cor-jogo-verde); color: var(--cor-texto);
-            height: 70px; width: 140px; /* Largura fixa para não esticar */
-            border-radius: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-family: 'Fredoka'; font-size: 1.1rem; font-weight: 700; gap: 8px; transition: 0.1s;
-        }
-        .control-btn:active { background: var(--cor-jogo-verde); color: white; transform: scale(0.95); }
-        .control-btn img { height: 32px; width: auto; }
-
-        .go-btn { 
-            background: var(--cor-vibrante); color: white; border: none; 
-            height: 70px; width: 100%; max-width: 450px;
-            border-radius: 50px; font-size: 1.4rem; font-weight: 700; cursor: pointer; 
-            box-shadow: 0 5px 0 #bf5600; font-family: 'Fredoka';
-        }
-        .go-btn:active { transform: translateY(3px); box-shadow: none; }
-
-        /* KEYPAD NÍVEL 2 */
-        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; max-width: 450px; }
-        .keypad-grid .control-btn { width: 100%; height: 60px; font-size: 1.8rem; }
-
-        /* HUD */
-        .card-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; border-bottom: 2px solid #f0f0f0; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; padding: 0 10px; }
+        .stars-container { display: flex; gap: 4px; }
         .star { width: 24px; height: 24px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; max-width: 360px; width: 90%; border: 5px solid var(--cor-principal); }
+        .target-number-box { 
+            position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+            font-size: clamp(2.5rem, 7vh, 3.5rem); color: white; font-weight: 700; 
+            background: var(--cor-principal); padding: 5px 35px; border-radius: 15px; 
+            border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            z-index: 20; 
+        }
+
+        .game-area { 
+            flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;
+            background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb; min-height: 0;
+            box-sizing: border-box; position: relative; justify-content: flex-start; padding: 10px;
+        }
+
+        .road { height: 35%; position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; margin-top: 25px; }
+        .tractor-container { display: flex; align-items: flex-end; position: absolute; left: -1200px; transition: left 0.8s ease-out; gap: 0; }
+        .tractor-container.at-center { left: 50%; transform: translateX(-50%); }
+        .tractor-container.exit { left: 120%; transition: left 0.8s ease-in; }
+
+        .tractor-img { height: clamp(50px, 10vh, 80px); width: auto; display: block; z-index: 10; margin-left: -5px; }
+        .wagon-unit { position: relative; width: clamp(80px, 15vw, 120px); display: flex; flex-direction: column; align-items: center; }
+        .wagon-img { width: 100%; height: auto; display: block; margin-top: -5px; }
+        
+        .cargo-bay {
+            height: clamp(40px, 11vh, 85px); width: 85%;
+            display: flex; align-items: flex-end; justify-content: center; gap: 3px;
+            margin-bottom: 2px; z-index: 5;
+        }
+        .cargo-bay.units { display: flex; justify-content: center; align-items: flex-end; gap: 4px; }
+
+        .dezena-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
+        .unidade-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
+        /* Redução do tamanho dos fardos (cubos) */
+        .fardo-img { width: clamp(10px, 1.8vw, 16px); height: auto; object-fit: contain; }
+
+        .options-area { 
+            display: flex; flex-direction: column; gap: 12px; 
+            padding: 10px 25px 60px 25px; /* Padding conforme solicitado */
+            flex-grow: 1; width: 100%; align-items: center; justify-content: center;
+            margin-top: 10px; box-sizing: border-box;
+        }
+        
+        .buttons-row { display: flex; gap: 15px; width: 100%; justify-content: center; }
+        
+        /* Prevenção de botões extensíveis */
+        .control-btn {
+            background: white; border: 3.5px solid var(--cor-jogo-verde); color: var(--cor-texto);
+            height: 70px; width: 140px; /* Largura fixa para não esticar */
+            border-radius: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.1s; -webkit-tap-highlight-color: transparent; outline: none; font-family: 'Fredoka'; gap: 8px;
+            font-size: 1.2rem; font-weight: 700; flex: none;
+        }
+        .control-btn:active { background: var(--cor-jogo-verde) !important; color: white !important; transform: scale(0.95); }
+        .control-btn img { height: 35px; width: auto; }
+
+        /* Estilo específico para o Keypad do Nível 2 */
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 450px;
+        }
+        .keypad-grid .control-btn {
+            width: 100%; /* No grid ele ocupa a célula, mas a altura é controlada */
+            height: 60px; /* Redução de altura no nível 2 */
+            font-size: 2rem; /* Números maiores */
+            color: var(--cor-jogo-verde);
+        }
+
+        .go-btn { 
+            background: var(--cor-vibrante); color: white; border: none; padding: 15px 0; 
+            border-radius: 50px; font-size: 1.4rem; font-weight: 700; cursor: pointer; 
+            box-shadow: 0 4px 0 #bf5600; font-family: 'Fredoka'; width: 100%; max-width: 400px;
+            margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .go-btn:active { transform: translateY(2px); box-shadow: none; }
+
+        .option-btn { background: var(--cor-jogo-verde); border: none; color: white; font-size: 1.4rem; font-weight: 700; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
 
         @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
         .error-shake { animation: shake 0.4s; }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .modal-content { background: white; padding: 30px 20px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 360px; width: 90%; box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -174,7 +179,7 @@
                     <div class="anim-line-3" id="intro-controls"></div>
                 </div>
                 <h2 style="color:var(--cor-jogo-verde); text-align:center; font-weight:700; margin: 10px 0;">O Trator das Dezenas</h2>
-                <button class="go-btn" onclick="startGame()" style="margin: 0 auto 20px auto;">JOGAR</button>
+                <button class="option-btn" onclick="startGame()">JOGAR</button>
             </div>
         </section>
 
@@ -185,17 +190,14 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div class="status-item">PTS: <span id="points">0</span></div>
                 </div>
+                <div class="instruction-area" id="instruction">...</div>
                 
                 <div class="game-area">
-                    <div id="target-number" class="target-number-box">0</div>
-                    
+                    <div id="target-number" class="target-number-box" style="display:none;">0</div>
                     <div class="road">
                         <div id="tractor-unit" class="tractor-container"></div>
                     </div>
-
-                    <div id="controls-container" class="options-area">
-                        <!-- Botões gerados via JS (L1 ou L2) -->
-                    </div>
+                    <div id="controls" class="options-area"></div>
                 </div>
             </div>
         </section>
@@ -203,9 +205,10 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="margin-top: 0; font-weight:700; color: var(--cor-principal);"></h2>
+            <h2 id="modal-title" style="margin-top: 0; font-weight:700;"></h2>
             <div id="modal-msg" style="margin-bottom: 25px; color: var(--cor-texto);"></div>
-            <button class="go-btn" onclick="location.reload()" style="margin-bottom:10px;">Jogar de Novo</button>
+            <button class="option-btn" onclick="location.reload()" style="margin-bottom:10px;">Jogar de Novo</button>
+            <button class="option-btn" onclick="window.location.href='../'" style="background: white; color: var(--cor-principal); border: 2px solid var(--cor-principal); padding:10px;">Voltar</button>
         </div>
     </div>
 
@@ -228,7 +231,9 @@
                 } else {
                     osc.type = 'sawtooth'; 
                     osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.3);
                     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.3);
                 }
             } catch(e) {}
@@ -252,16 +257,18 @@
             const container = document.getElementById('intro-tractor-container');
             const ctrls = document.getElementById('intro-controls');
             
-            container.innerHTML = `
-                <div class="wagon-unit"><div id="intro-cargo-1" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:50px"></div>
-                <div class="wagon-unit"><div id="intro-cargo-2" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:50px"></div>
-                <img src="${pi + JOGO_CONFIG.veiculos.trator}" style="height:70px">
-            `;
+            const w1 = document.createElement('div'); w1.className = 'wagon-unit';
+            w1.innerHTML = `<div id="intro-cargo-1" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:50px">`;
+            const w2 = document.createElement('div'); w2.className = 'wagon-unit';
+            w2.innerHTML = `<div id="intro-cargo-2" class="cargo-bay units"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:50px">`;
+            const tr = document.createElement('img'); tr.src = pi + JOGO_CONFIG.veiculos.trator; tr.style.height = "70px";
+            container.append(w1, w2, tr);
 
-            ctrls.innerHTML = `
-                <button id="mock-tens" class="control-btn"><img src="${pi + JOGO_CONFIG.veiculos.dezena}"> +10</button>
-                <button id="mock-units" class="control-btn"><img src="${pi + JOGO_CONFIG.veiculos.unidade}"> +1</button>
-            `;
+            const btnD = document.createElement('button'); btnD.id = "mock-tens"; btnD.className = 'control-btn';
+            btnD.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.dezena}"> +10`;
+            const btnU = document.createElement('button'); btnU.id = "mock-units"; btnU.className = 'control-btn';
+            btnU.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.unidade}"> +1`;
+            ctrls.append(btnD, btnU);
 
             setTimeout(() => {
                 document.getElementById('mock-tens').classList.add('active-anim');
@@ -275,13 +282,14 @@
                 setTimeout(() => {
                     document.getElementById('mock-tens').classList.remove('active-anim');
                     document.getElementById('mock-units').classList.add('active-anim');
+                    const cargoUnits = document.getElementById('intro-cargo-2');
+                    const stackU = document.createElement('div'); stackU.className = 'unidade-stack';
                     const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                    img.className = 'fardo-img'; document.getElementById('intro-cargo-2').appendChild(img);
-                }, 1200);
-            }, 1000);
+                    img.className = 'fardo-img'; stackU.appendChild(img);
+                    cargoUnits.appendChild(stackU);
+                }, 1500);
+            }, 2500);
         }
-
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
 
         function startGame() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -301,41 +309,51 @@
 
         function loadQuestion() {
             const train = document.getElementById('tractor-unit');
-            const controls = document.getElementById('controls-container');
+            const controls = document.getElementById('controls');
             const targetDisplay = document.getElementById('target-number');
             const pi = JOGO_CONFIG.caminhoImg;
             
+            train.style.transition = 'none';
+            train.classList.remove('at-center', 'exit');
+            train.innerHTML = '';
+            controls.innerHTML = '';
             isRoundActive = false;
             currentTens = 0; currentUnits = 0;
-            train.classList.remove('at-center', 'exit');
-            train.style.left = "-1200px";
-            controls.innerHTML = '';
 
             targetValue = Math.floor(Math.random() * 41) + 10;
 
-            train.innerHTML = `
-                <div class="wagon-unit"><div id="cargo-tens" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}"></div>
-                <div class="wagon-unit"><div id="cargo-units" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}"></div>
-                <img class="tractor-img" src="${pi + JOGO_CONFIG.veiculos.trator}">
-            `;
+            const w1 = document.createElement('div'); w1.className = 'wagon-unit';
+            w1.innerHTML = `<div id="cargo-tens" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}">`;
+            const w2 = document.createElement('div'); w2.className = 'wagon-unit';
+            w2.innerHTML = `<div id="cargo-units" class="cargo-bay units"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}">`;
+            const tr = document.createElement('img'); tr.className = 'tractor-img'; tr.src = pi + JOGO_CONFIG.veiculos.trator;
+            train.append(w1, w2, tr);
 
             if (level === 1) {
-                targetDisplay.style.display = 'block'; 
-                targetDisplay.innerText = targetValue;
+                document.getElementById('instruction').innerText = "Carrega o trator!";
+                targetDisplay.style.display = 'block'; targetDisplay.innerText = targetValue;
                 
                 const row = document.createElement('div'); row.className = 'buttons-row';
-                row.innerHTML = `
-                    <button class="control-btn" onclick="addCargo('dezena')"><img src="${pi + JOGO_CONFIG.veiculos.dezena}"> +10</button>
-                    <button class="control-btn" onclick="addCargo('unidade')"><img src="${pi + JOGO_CONFIG.veiculos.unidade}"> +1</button>
-                    <button class="control-btn" style="width:70px; border-color:var(--cor-erro)" onclick="clearCargo()"><img src="${pi + JOGO_CONFIG.veiculos.borracha}"></button>
-                `;
+                const btnD = document.createElement('button'); btnD.className = 'control-btn';
+                btnD.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.dezena}"> +10`;
+                btnD.onclick = () => addCargo('dezena');
+                const btnU = document.createElement('button'); btnU.className = 'control-btn';
+                btnU.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.unidade}"> +1`;
+                btnU.onclick = () => addCargo('unidade');
+                const btnB = document.createElement('button'); btnB.className = 'control-btn';
+                btnB.style.width = '70px'; btnB.style.borderColor = 'var(--cor-erro)'; btnB.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.borracha}">`;
+                btnB.onclick = () => { document.getElementById('cargo-tens').innerHTML = ''; document.getElementById('cargo-units').innerHTML = ''; currentTens = 0; currentUnits = 0; };
+                row.append(btnD, btnU, btnB);
 
                 const go = document.createElement('button'); go.className = 'go-btn';
-                go.innerText = "ENTREGAR"; go.onclick = () => checkAnswer(currentTens * 10 + currentUnits);
+                go.innerText = "ENTREGAR";
+                go.onclick = () => checkAnswer(currentTens * 10 + currentUnits);
 
                 controls.append(row, go);
             } else {
+                document.getElementById('instruction').innerText = "Que número leva o trator?";
                 targetDisplay.style.display = 'none';
+                
                 const keypad = document.createElement('div'); keypad.className = 'keypad-grid';
                 let options = [targetValue];
                 while(options.length < 6) { let r = Math.floor(Math.random() * 50) + 1; if(!options.includes(r)) options.push(r); }
@@ -351,8 +369,7 @@
                     for(let i=0; i<u; i++) addCargo('unidade');
                 }, 100);
             }
-
-            setTimeout(() => { train.classList.add('at-center'); isRoundActive = true; }, 100);
+            setTimeout(() => { train.style.transition = 'left 0.8s ease-out'; train.classList.add('at-center'); isRoundActive = true; }, 50);
         }
 
         function addCargo(type) {
@@ -369,18 +386,19 @@
             } else {
                 if(currentUnits >= 15) return;
                 currentUnits++;
-                const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                img.className = 'fardo-img';
-                const stackU = document.createElement('div'); stackU.className = 'unidade-stack';
-                stackU.appendChild(img);
-                document.getElementById('cargo-units').appendChild(stackU);
+                const container = document.getElementById('cargo-units');
+                let stacks = container.querySelectorAll('.unidade-stack');
+                let lastStack = stacks[stacks.length - 1];
+                if (!lastStack || lastStack.children.length >= 5) {
+                    lastStack = document.createElement('div');
+                    lastStack.className = 'unidade-stack';
+                    container.appendChild(lastStack);
+                }
+                const img = document.createElement('img'); 
+                img.src = pi + JOGO_CONFIG.veiculos.fardo;
+                img.className = 'fardo-img'; 
+                lastStack.appendChild(img);
             }
-        }
-
-        function clearCargo() {
-            currentTens = 0; currentUnits = 0;
-            document.getElementById('cargo-tens').innerHTML = '';
-            document.getElementById('cargo-units').innerHTML = '';
         }
 
         function checkAnswer(ans) {
@@ -412,11 +430,16 @@
 
         function endGame() {
             clearInterval(timerInterval);
-            document.getElementById('modal').style.display = 'flex';
-            let msg = points >= 180 ? JOGO_CONFIG.mensagens.excelente : (points >= 120 ? JOGO_CONFIG.mensagens.bom : JOGO_CONFIG.mensagens.tenta);
+            const modal = document.getElementById('modal');
+            modal.style.display = 'flex';
+            let msgFim = JOGO_CONFIG.mensagens.tenta;
+            if(points >= 180) msgFim = JOGO_CONFIG.mensagens.excelente;
+            else if(points >= 120) msgFim = JOGO_CONFIG.mensagens.bom;
             document.getElementById('modal-title').innerText = "Trabalho Concluído!";
-            document.getElementById('modal-msg').innerHTML = `<p>${msg}</p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p><p>Pontos: <b>${points} / 200</b></p>`;
+            document.getElementById('modal-msg').innerHTML = `<p>${msgFim}</p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p><p>Pontos: <b>${points} / 200</b></p>`;
         }
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
     </script>
 </body>
 </html>
