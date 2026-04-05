@@ -1,3 +1,5 @@
+--- START OF FILE Paste April 05, 2026 - 11:20PM ---
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -103,8 +105,20 @@
 
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px; position: relative; }
         .option-btn { background: var(--cor-jogo-verde); border: none; color: white; font-size: 1.4rem; font-weight: 700; padding: 12px; border-radius: 15px; cursor: pointer; width: 100%; flex-shrink: 0; font-family: 'Fredoka'; }
+        
+        /* MODAL ATUALIZADO */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px 20px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); max-width: 360px; width: 90%; }
+        .modal-content { 
+            background: white; 
+            padding: 30px 20px; 
+            border-radius: 25px; 
+            text-align: center; 
+            border: 4px solid var(--cor-jogo-verde); 
+            max-width: 380px; 
+            width: 90%;
+            box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
         
         @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
         .error-shake { animation: shake 0.4s; }
@@ -169,8 +183,8 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="margin-top: 0; font-weight:700;"></h2>
-            <div id="modal-msg" style="margin-bottom: 25px; color: var(--cor-texto);"></div>
+            <h2 id="modal-title" style="margin-top: 0; font-weight:700; color: var(--cor-texto);"></h2>
+            <div id="modal-msg" style="margin-bottom: 25px; color: var(--cor-texto); font-size: 1.1rem;"></div>
             <button class="option-btn" onclick="location.reload()" style="margin-bottom:10px;">Jogar de Novo</button>
             <button class="option-btn" onclick="window.location.href='../'" style="background: white; color: var(--cor-principal); border: 2px solid var(--cor-principal); padding:10px;">Voltar</button>
         </div>
@@ -261,21 +275,10 @@
             }
 
             tutorialInterval = setInterval(() => {
-                // Reset visual feedback
                 [btnTens, btnUnits, btnClear].forEach(b => b.classList.remove('simulated-click'));
-
-                if(step < 2) { // Adiciona 2 dezenas
-                    btnTens.classList.add('simulated-click');
-                    addIntroCargo('dezena');
-                } else if(step < 5) { // Adiciona 3 unidades
-                    btnUnits.classList.add('simulated-click');
-                    addIntroCargo('unidade');
-                } else if(step === 6) { // Limpa tudo
-                    btnClear.classList.add('simulated-click');
-                    cargoTens.innerHTML = '';
-                    cargoUnits.innerHTML = '';
-                }
-
+                if(step < 2) { addIntroCargo('dezena'); btnTens.classList.add('simulated-click'); }
+                else if(step < 5) { addIntroCargo('unidade'); btnUnits.classList.add('simulated-click'); }
+                else if(step === 6) { cargoTens.innerHTML = ''; cargoUnits.innerHTML = ''; btnClear.classList.add('simulated-click'); }
                 step = (step + 1) % 8;
             }, 800);
         }
@@ -322,46 +325,28 @@
             if (level === 1) {
                 document.getElementById('instruction').innerText = "Carrega o trator!";
                 targetDisplay.style.display = 'block'; targetDisplay.innerText = targetValue;
-                
                 const row = document.createElement('div'); row.className = 'buttons-row';
                 const btnD = document.createElement('button'); btnD.className = 'control-btn';
                 btnD.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.dezena}"> +10`;
                 btnD.onclick = () => addCargo('dezena');
-                
                 const btnU = document.createElement('button'); btnU.className = 'control-btn';
                 btnU.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.unidade}"> +1`;
                 btnU.onclick = () => addCargo('unidade');
-                
                 const btnB = document.createElement('button'); btnB.className = 'control-btn';
                 btnB.style.width = '60px'; btnB.style.borderColor = 'var(--cor-erro)'; btnB.innerHTML = `<img src="${pi + JOGO_CONFIG.veiculos.borracha}">`;
                 btnB.onclick = () => { document.getElementById('cargo-tens').innerHTML = ''; document.getElementById('cargo-units').innerHTML = ''; currentTens = 0; currentUnits = 0; };
-                
                 row.append(btnD, btnU, btnB);
-
                 const go = document.createElement('button'); go.className = 'go-btn';
                 go.innerText = "ENTREGAR";
                 go.onclick = () => checkAnswer(currentTens * 10 + currentUnits);
-
                 controls.append(row, go);
             } else {
                 document.getElementById('instruction').innerText = "Que número leva o trator?";
                 targetDisplay.style.display = 'none';
-                
                 const keypad = document.createElement('div');
-                keypad.style.display = 'grid';
-                keypad.style.gridTemplateColumns = 'repeat(3, 1fr)';
-                keypad.style.gap = '10px';
-                keypad.style.width = '100%';
-                keypad.style.maxWidth = '300px';
-                keypad.style.marginBottom = '20px';
-
-                // NÍVEL 2: Gerar 9 opções em vez de 6
+                keypad.style.cssText = 'display:grid; grid-template-columns:repeat(3,1fr); gap:10px; width:100%; max-width:300px; margin-bottom:20px;';
                 let options = [targetValue];
-                while(options.length < 9) { 
-                    let r = Math.floor(Math.random() * 50) + 1; 
-                    if(!options.includes(r)) options.push(r); 
-                }
-                
+                while(options.length < 9) { let r = Math.floor(Math.random() * 50) + 1; if(!options.includes(r)) options.push(r); }
                 options.sort((a,b) => a-b).forEach(opt => {
                     const btn = document.createElement('button'); btn.className = 'control-btn';
                     btn.style.width = '100%'; btn.innerText = opt; btn.onclick = () => checkAnswer(opt); 
@@ -383,10 +368,7 @@
                 if(currentTens >= 5) return;
                 currentTens++;
                 const stack = document.createElement('div'); stack.className = 'dezena-stack';
-                for(let i=0; i<10; i++) {
-                    const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                    img.className = 'fardo-img'; stack.appendChild(img);
-                }
+                for(let i=0; i<10; i++) { const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo; img.className = 'fardo-img'; stack.appendChild(img); }
                 document.getElementById('cargo-tens').appendChild(stack);
             } else {
                 if(currentUnits >= 15) return;
@@ -398,8 +380,7 @@
                     lastStack = document.createElement('div'); lastStack.className = 'unidade-stack';
                     container.appendChild(lastStack);
                 }
-                const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
-                img.className = 'fardo-img'; lastStack.appendChild(img);
+                const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo; img.className = 'fardo-img'; lastStack.appendChild(img);
             }
         }
 
