@@ -31,7 +31,6 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* ALTERAÇÃO: Padding de 10px nas laterais */
         .main-content { flex: 1; padding: 5px 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; height: calc(100% - var(--header-height)); }
         
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow: hidden; }
@@ -52,7 +51,6 @@
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
-        /* ELEMENTOS DO JOGO */
         .game-area { 
             flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;
             background: var(--cor-caixa-info); border-radius: 20px; border: 2px dashed #b2dfdb;
@@ -68,7 +66,6 @@
             border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 20; 
         }
 
-        /* ALTERAÇÃO: Padding (margin) de 100px para os botões */
         .road { height: 90px; position: relative; width: 100%; margin-bottom: 100px; flex-shrink: 0; display: flex; align-items: center; }
         
         .tractor-container { display: flex; align-items: flex-end; position: absolute; left: -1200px; transition: left 0.8s ease-out; gap: 0; }
@@ -84,7 +81,6 @@
         .dezena-stack, .unidade-stack { display: flex; flex-direction: column-reverse; gap: 1px; }
         .fardo-img { width: 13px; height: auto; object-fit: contain; }
 
-        /* ÁREA DE BOTÕES */
         .options-area { display: flex; flex-direction: column; width: 100%; align-items: center; flex-shrink: 0; }
         
         .buttons-row { display: flex; gap: 10px; width: 100%; justify-content: center; margin-bottom: 20px; }
@@ -92,9 +88,9 @@
         .control-btn {
             background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-texto);
             height: 55px; width: 110px; border-radius: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-family: 'Fredoka'; gap: 6px; font-size: 1rem; font-weight: 700; flex: none;
+            font-family: 'Fredoka'; gap: 6px; font-size: 1rem; font-weight: 700; flex: none; transition: transform 0.1s;
         }
-        .control-btn:active { background: var(--cor-jogo-verde); color: white; transform: scale(0.95); }
+        .control-btn:active, .control-btn.simulated-click { background: var(--cor-jogo-verde); color: white; transform: scale(0.95); }
         .control-btn img { height: 28px; }
 
         .go-btn { 
@@ -105,7 +101,6 @@
         }
         .go-btn:active { transform: translateY(2px); box-shadow: none; }
 
-        /* MODAIS */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px; position: relative; }
         .option-btn { background: var(--cor-jogo-verde); border: none; color: white; font-size: 1.4rem; font-weight: 700; padding: 12px; border-radius: 15px; cursor: pointer; width: 100%; flex-shrink: 0; font-family: 'Fredoka'; }
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
@@ -143,11 +138,11 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <div style="font-weight:700; font-size:1.4rem;">Carrega o Trator</div>
+                    <div style="font-weight:700; font-size:1.4rem; color: var(--cor-texto)">Carrega o Trator</div>
                     <div id="intro-tractor-container" style="height:110px; display:flex; align-items:flex-end; justify-content:center; position:relative; width:100%;"></div>
                     <div id="intro-controls" style="display:flex; gap:10px;"></div>
                 </div>
-                <h2 style="color:var(--cor-jogo-verde); text-align:center; font-weight:700; margin: 10px 0;">O Trator das Dezenas</h2>
+                <h2 style="color:var(--cor-texto); text-align:center; font-weight:700; margin: 10px 0;">O Trator das Dezenas</h2>
                 <button class="option-btn" onclick="startGame()">JOGAR</button>
             </div>
         </section>
@@ -186,6 +181,7 @@
         let level = 1, points = 0, seconds = 0, timerInterval;
         let questionNum = 1, targetValue = 0, currentTens = 0, currentUnits = 0;
         let isRoundActive = false;
+        let tutorialInterval;
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound(type) {
@@ -215,7 +211,6 @@
                 const i = JOGO_CONFIG.iconesMenu;
                 document.getElementById('header-icon').src = p + i.ano1;
                 
-                // ALTERAÇÃO: Corrigido o index para carregar o ícone da pré
                 document.querySelectorAll('.sidebar-item img').forEach((img, idx) => {
                     const keys = ['pre', 'ano1', 'ano2', 'ano3', 'ano4'];
                     img.src = p + i[keys[idx]];
@@ -230,11 +225,63 @@
             container.innerHTML = `<div class="wagon-unit"><div id="intro-cargo-1" class="cargo-bay"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:45px"></div>
                                    <div class="wagon-unit"><div id="intro-cargo-2" class="cargo-bay units"></div><img class="wagon-img" src="${pi + JOGO_CONFIG.veiculos.reboque}" style="height:45px"></div>
                                    <img src="${pi + JOGO_CONFIG.veiculos.trator}" style="height:60px">`;
-            ctrls.innerHTML = `<button class="control-btn" id="mock-tens"><img src="${pi + JOGO_CONFIG.veiculos.dezena}"> +10</button>
-                               <button class="control-btn" id="mock-units"><img src="${pi + JOGO_CONFIG.veiculos.unidade}"> +1</button>`;
+            ctrls.innerHTML = `<button class="control-btn" id="intro-btn-tens"><img src="${pi + JOGO_CONFIG.veiculos.dezena}"> +10</button>
+                               <button class="control-btn" id="intro-btn-units"><img src="${pi + JOGO_CONFIG.veiculos.unidade}"> +1</button>
+                               <button class="control-btn" id="intro-btn-clear" style="width:50px; border-color:var(--cor-erro)"><img src="${pi + JOGO_CONFIG.veiculos.borracha}"></button>`;
+            
+            startTutorialAnimation(pi);
+        }
+
+        function startTutorialAnimation(pi) {
+            let step = 0;
+            const btnTens = document.getElementById('intro-btn-tens');
+            const btnUnits = document.getElementById('intro-btn-units');
+            const btnClear = document.getElementById('intro-btn-clear');
+            const cargoTens = document.getElementById('intro-cargo-1');
+            const cargoUnits = document.getElementById('intro-cargo-2');
+
+            function addIntroCargo(type) {
+                if(type === 'dezena') {
+                    const stack = document.createElement('div'); stack.className = 'dezena-stack';
+                    for(let i=0; i<10; i++) {
+                        const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
+                        img.style.width = "8px"; stack.appendChild(img);
+                    }
+                    cargoTens.appendChild(stack);
+                } else {
+                    let stacks = cargoUnits.querySelectorAll('.unidade-stack');
+                    let lastStack = stacks[stacks.length - 1];
+                    if (!lastStack || lastStack.children.length >= 5) {
+                        lastStack = document.createElement('div'); lastStack.className = 'unidade-stack';
+                        cargoUnits.appendChild(lastStack);
+                    }
+                    const img = document.createElement('img'); img.src = pi + JOGO_CONFIG.veiculos.fardo;
+                    img.style.width = "8px"; lastStack.appendChild(img);
+                }
+            }
+
+            tutorialInterval = setInterval(() => {
+                // Reset visual feedback
+                [btnTens, btnUnits, btnClear].forEach(b => b.classList.remove('simulated-click'));
+
+                if(step < 2) { // Adiciona 2 dezenas
+                    btnTens.classList.add('simulated-click');
+                    addIntroCargo('dezena');
+                } else if(step < 5) { // Adiciona 3 unidades
+                    btnUnits.classList.add('simulated-click');
+                    addIntroCargo('unidade');
+                } else if(step === 6) { // Limpa tudo
+                    btnClear.classList.add('simulated-click');
+                    cargoTens.innerHTML = '';
+                    cargoUnits.innerHTML = '';
+                }
+
+                step = (step + 1) % 8;
+            }, 800);
         }
 
         function startGame() {
+            clearInterval(tutorialInterval);
             if (audioCtx.state === 'suspended') audioCtx.resume();
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
