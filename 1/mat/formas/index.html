@@ -26,7 +26,7 @@
         .sidebar.active { left: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: all 0.3s ease; cursor: pointer; font-weight: 500; }
         .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
-        .sidebar-item img { width: 28px; height: 28px; margin-right: 12px; object-fit: contain; }
+        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
@@ -41,12 +41,12 @@
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 10px 0; font-weight: bold; }
+        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 5px 0; font-weight: bold; }
 
-        /* --- Estilo das Formas --- */
+        /* --- Estilo das Estrelas/Bolas --- */
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0; margin-bottom: 10px; flex-shrink: 0; }
-        .stars-container { display: flex; gap: 4px; }
-        .star { width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; }
+        .stars-container { display: flex; gap: 6px; }
+        .star { width: 24px; height: 24px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: transparent; transition: 0.3s; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
@@ -59,24 +59,18 @@
             padding: 10px; gap: 10px; overflow: hidden; align-items: center; justify-items: center;
         }
 
-        .shape-btn { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .shape-btn img { max-width: 85%; max-height: 85%; object-fit: contain; }
+        .shape-btn { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; border-radius: 15px; }
+        .shape-btn img { max-width: 80%; max-height: 80%; object-fit: contain; }
         .shape-btn.found { filter: grayscale(1) opacity(0.2); pointer-events: none; transform: scale(0.8); }
-        .shape-btn.error-shake { animation: shake 0.4s; }
+        .shape-btn.error-shake { animation: shake 0.4s; background: rgba(255, 71, 87, 0.1); }
 
         @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-10px);} 75% {transform:translateX(10px);} }
 
-        /* --- Footer & Botões --- */
         .option-btn { background: var(--cor-jogo-verde); border: none; color: white; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
-        .option-btn:hover { filter: brightness(0.9); }
-
+        
         /* --- Modal Relatório --- */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); max-width: 380px; width: 90%; box-sizing: border-box; }
-        
-        .report-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-        .report-table th { padding: 8px; border-bottom: 2px solid #eee; color: var(--cor-jogo-verde); }
-        .report-table td { padding: 10px; border-bottom: 1px solid #f9f9f9; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -108,15 +102,10 @@
         <!-- ECRÃ INICIAL -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
-                <div class="explanation-box" style="background:var(--cor-caixa-info); border-radius:20px; flex:1; margin-bottom:15px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; text-align:center;">
-                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.3rem; margin-bottom: 20px;">Reconhece as formas geométricas!</p>
-                    <div style="display:flex; gap:15px;">
-                        <!-- Exemplo de forma para a intro -->
-                        <div style="background:white; padding:10px; border-radius:15px; border:2px solid var(--cor-jogo-verde)">
-                            <img id="intro-shape" style="height:80px;">
-                        </div>
-                    </div>
-                    <p style="margin-top:20px; color:var(--cor-texto)">No <b>Nível 1</b> as cores são iguais.<br>No <b>Nível 2</b> foca-te apenas na forma!</p>
+                <div class="explanation-box" style="padding:20px; text-align:center;">
+                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.3rem;">Reconhece as formas geométricas!</p>
+                    <img id="intro-img" style="height:100px; margin: 20px 0;">
+                    <p style="color:var(--cor-texto)">Clica apenas nas formas pedidas.<br>Se errares, a bola fica vermelha!</p>
                 </div>
                 <h2 class="game-title">Formas Geométricas</h2>
                 <button class="option-btn" onclick="startGame()">JOGAR</button>
@@ -140,14 +129,9 @@
     <!-- MODAL RELATÓRIO -->
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--cor-jogo-verde); margin-top:0;">Relatório</h2>
+            <h2 id="modal-title" style="color:var(--cor-jogo-verde); margin-top:0;">Fim do Jogo!</h2>
             <div id="modal-msg"></div>
-            <table class="report-table">
-                <tr><th>Nível</th><th>Certas</th><th>Erradas</th></tr>
-                <tr><td>Nível 1</td><td id="c1" style="color:var(--cor-jogo-verde)">0</td><td id="e1" style="color:var(--cor-erro)">0</td></tr>
-                <tr><td>Nível 2</td><td id="c2" style="color:var(--cor-jogo-verde)">0</td><td id="e2" style="color:var(--cor-erro)">0</td></tr>
-            </table>
-            <button class="option-btn" onclick="location.reload()">Jogar de Novo</button>
+            <button class="option-btn" onclick="location.reload()">Jogar Novamente</button>
         </div>
     </div>
 
@@ -155,10 +139,9 @@
     <script>
         let currentLevel = 1, currentRound = 1, points = 0, seconds = 0, timerInterval;
         let stats = { 1: { c: 0, e: 0 }, 2: { c: 0, e: 0 } };
-        let targetShape = "", shapesOnScreen = [];
-        let targetsFoundCount = 0, totalTargetsOnScreen = 0;
+        let targetShape = "", targetsFoundCount = 0, totalTargetsOnScreen = 0;
+        let roundHasError = false;
 
-        // Audio Context para sons de feedback
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playFeedback(isCorrect) {
             try {
@@ -180,7 +163,8 @@
                     const el = document.getElementById('side-'+n);
                     if(el) el.src = p + i[n === 'pre' ? 'pre' : 'ano'+n];
                 });
-                document.getElementById('intro-shape').src = JOGO_CONFIG.caminhoImg + "circulo_v.png";
+                // Exemplo inicial usando "vd" (verde) do teu novo dados.js
+                document.getElementById('intro-img').src = JOGO_CONFIG.caminhoImg + "triangulo_vd.png";
             }
         };
 
@@ -201,7 +185,9 @@
         function startTimer() {
             timerInterval = setInterval(() => {
                 seconds++;
-                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
+                let m = Math.floor(seconds/60).toString().padStart(2,'0');
+                let s = (seconds%60).toString().padStart(2,'0');
+                document.getElementById('timer').innerText = `${m}:${s}`;
             }, 1000);
         }
 
@@ -217,41 +203,43 @@
             const grid = document.getElementById('game-grid');
             grid.innerHTML = '';
             targetsFoundCount = 0;
-            totalTargetsOnScreen = 0;
+            roundHasError = false;
 
-            // Escolher forma alvo e instrução
             targetShape = JOGO_CONFIG.formas[Math.floor(Math.random() * JOGO_CONFIG.formas.length)];
             document.getElementById('target-name').innerText = JOGO_CONFIG.nomesFormas[targetShape];
 
-            // Nível 1: Cor única para todos | Nível 2: Cores misturadas
+            // Quantidade baixa de formas corretas (3 ou 4) conforme pedido
+            totalTargetsOnScreen = Math.floor(Math.random() * 2) + 3; 
+
+            // Nível 1: Escolhe uma cor do array ["vd", "a", "l", "v"] para TODA a ronda
             const levelColor = JOGO_CONFIG.cores[Math.floor(Math.random() * JOGO_CONFIG.cores.length)];
 
-            for(let i=0; i<12; i++) {
-                const isTarget = Math.random() > 0.6 || (i < 2); // Garante pelo menos algumas formas certas
-                let shape, color;
+            let pool = [];
+            // Adicionar as corretas
+            for(let i=0; i<totalTargetsOnScreen; i++) pool.push({ shape: targetShape, correct: true });
+            
+            // Preencher o resto até 12 com formas erradas
+            while(pool.length < 12) {
+                let s = JOGO_CONFIG.formas[Math.floor(Math.random() * JOGO_CONFIG.formas.length)];
+                if(s !== targetShape) pool.push({ shape: s, correct: false });
+            }
 
-                if (isTarget) {
-                    shape = targetShape;
-                    totalTargetsOnScreen++;
-                } else {
-                    do { shape = JOGO_CONFIG.formas[Math.floor(Math.random() * JOGO_CONFIG.formas.length)]; } 
-                    while (shape === targetShape);
-                }
-
-                color = (currentLevel === 1) ? levelColor : JOGO_CONFIG.cores[Math.floor(Math.random() * JOGO_CONFIG.cores.length)];
-                
+            // Baralhar e Mostrar
+            pool.sort(() => Math.random() - 0.5).forEach(item => {
+                // Nível 1: usa a mesma cor | Nível 2: usa cores aleatórias do array
+                const color = (currentLevel === 1) ? levelColor : JOGO_CONFIG.cores[Math.floor(Math.random() * JOGO_CONFIG.cores.length)];
                 const btn = document.createElement('div');
                 btn.className = 'shape-btn';
-                const imgName = `${shape}_${color}.png`;
-                btn.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + imgName}">`;
-                
-                btn.onclick = () => checkShape(btn, shape === targetShape);
+                btn.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + item.shape}_${color}.png">`;
+                btn.onclick = () => checkShape(btn, item.correct);
                 grid.appendChild(btn);
-            }
+            });
         }
 
         function checkShape(element, isCorrect) {
             if (element.classList.contains('found')) return;
+            const stars = document.querySelectorAll('.star');
+            const currentStar = stars[currentRound-1];
 
             if (isCorrect) {
                 playFeedback(true);
@@ -261,42 +249,52 @@
                 document.getElementById('points').innerText = points;
 
                 if (targetsFoundCount === totalTargetsOnScreen) {
-                    stats[currentLevel].c++;
-                    document.querySelectorAll('.star')[currentRound-1].classList.add('correct');
+                    // Só fica verde se não houve erro nenhum na ronda
+                    if (!roundHasError) {
+                        currentStar.classList.add('correct');
+                        currentStar.innerText = '✓';
+                        stats[currentLevel].c++;
+                    }
                     nextStep();
                 }
             } else {
                 playFeedback(false);
-                stats[currentLevel].e++;
+                roundHasError = true;
                 element.classList.add('error-shake');
+                
+                // Errou? Bola vermelha imediata.
+                currentStar.classList.add('wrong');
+                currentStar.innerText = '✕';
+                stats[currentLevel].e++;
+                
                 setTimeout(() => element.classList.remove('error-shake'), 400);
             }
         }
 
         function nextStep() {
             currentRound++;
-            if (currentRound > 5) {
-                if (currentLevel === 1) {
-                    currentLevel = 2;
-                    currentRound = 1;
-                    setTimeout(() => { initStars(); loadRound(); }, 500);
+            setTimeout(() => {
+                if (currentRound > 5) {
+                    if (currentLevel === 1) {
+                        currentLevel = 2; currentRound = 1;
+                        initStars(); loadRound();
+                    } else {
+                        endGame();
+                    }
                 } else {
-                    endGame();
+                    loadRound();
                 }
-            } else {
-                setTimeout(loadRound, 500);
-            }
+            }, 600);
         }
 
         function endGame() {
             clearInterval(timerInterval);
-            document.getElementById('c1').innerText = stats[1].c;
-            document.getElementById('e1').innerText = stats[1].e;
-            document.getElementById('c2').innerText = stats[2].c;
-            document.getElementById('e2').innerText = stats[2].e;
-
-            let msg = points >= 80 ? "Parabéns! Terminaste o jogo! 🌟" : "Bom trabalho! Continua a treinar! 👍";
-            document.getElementById('modal-msg').innerHTML = `<p>${msg}</p><p>Pontuação: <b>${points} pontos</b></p>`;
+            let msg = points >= 150 ? "Incrível! És um mestre das formas! 🌟" : "Bom trabalho! Continua a treinar! 👍";
+            document.getElementById('modal-msg').innerHTML = `
+                <p>${msg}</p>
+                <p>Pontuação Total: <b>${points} pontos</b></p>
+                <p>Tempo: <b>${document.getElementById('timer').innerText}</b></p>
+            `;
             document.getElementById('modal').style.display = 'flex';
         }
     </script>
