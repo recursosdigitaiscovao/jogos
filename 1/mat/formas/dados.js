@@ -14,7 +14,7 @@ const JOGO_CONFIG = {
 
     // Definição das Formas e Cores disponíveis
     formas: ["circulo", "quadrado", "triangulo", "retangulo", "pentagono", "hexagono"],
-    cores: ["v", "a", "l"], // v=verde, a=azul, l=laranja
+    cores: ["vd", "a", "l", "v"], // vd=verde, a=azul, l=laranja, v=vermelho
 
     // Traduções para as instruções
     nomesFormas: {
