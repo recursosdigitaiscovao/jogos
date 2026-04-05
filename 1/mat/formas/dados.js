@@ -1,8 +1,7 @@
 // dados.js
 const JOGO_CONFIG = {
-    // Caminhos de diretoria (Ajustados para jogos/1/mat/formas/)
     caminhoIcons: "../../../icons/",
-    caminhoImg: "../../../img/formas/", // Pasta onde estão as figuras geométricas
+    caminhoImg: "../../../img/formas/", 
 
     iconesMenu: {
         pre: "iconpre.png",
@@ -12,11 +11,9 @@ const JOGO_CONFIG = {
         ano4: "icon4.png"
     },
 
-    // Definição das Formas e Cores disponíveis
     formas: ["circulo", "quadrado", "triangulo", "retangulo", "pentagono", "hexagono"],
-    cores: ["vd", "a", "l", "v"], // vd=verde, a=azul, l=laranja, v=vermelho
+    cores: ["vd", "a", "l", "v"], 
 
-    // Traduções para as instruções
     nomesFormas: {
         "circulo": "Círculos",
         "quadrado": "Quadrados",
@@ -24,5 +21,20 @@ const JOGO_CONFIG = {
         "retangulo": "Retângulos",
         "pentagono": "Pentágonos",
         "hexagono": "Hexágonos"
+    },
+
+    mensagens: {
+        excelente: "Incrível! És um mestre da matemática! 🌟",
+        bom: "Bom esforço! Estás no bom caminho! 👍",
+        tenta: "Esforça-te mais! Continua a praticar! 💪"
+    },
+
+    relatorio: {
+        titulo: "Fim do Jogo!",
+        pontosTotal: "Pontuação Total:",
+        tempoTotal: "Tempo Total:",
+        labelNivel: "Nível",
+        labelCertas: "Certas",
+        labelErradas: "Erradas"
     }
 };
