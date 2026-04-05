@@ -7,12 +7,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --cor-principal: #ff9100;
+            --cor-principal: #ff9100;   /* Navegação (Laranja) */
             --cor-vibrante: #ff7300;  
             --cor-fundo: #e8f9f4;      
             --cor-texto: #8a6436;      
             --header-height: 70px;
-            --cor-jogo-verde: #45cfa8;  
+            --cor-jogo-verde: #45cfa8;  /* Limite e Título do Jogo */
             --cor-erro: #ff4757;
             --cor-caixa-info: #e8f9f4;
         }
@@ -20,15 +20,17 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
+        /* --- Header & Sidebar --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: all 0.3s ease; cursor: pointer; font-weight: 500; }
         .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
-        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
+        .sidebar-item img { width: 28px; height: 28px; margin-right: 12px; object-fit: contain; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
+        /* --- Layout do Jogo --- */
         .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; height: calc(100% - var(--header-height)); }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow: hidden; }
         .screen.active { display: flex; }
@@ -41,31 +43,37 @@
 
         .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 10px 0; font-weight: bold; }
 
-        /* --- Estilo da Explicação Animada --- */
+        /* --- ANIMAÇÃO DE EXPLICAÇÃO --- */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        .demo-container { display: flex; gap: 20px; align-items: center; position: relative; padding: 20px; }
-        .demo-shape { width: 70px; height: 70px; transition: 0.3s; }
+        
+        .demo-area { display: flex; gap: 30px; align-items: center; position: relative; padding: 30px; border: 2px dashed #b2dfdb; border-radius: 20px; background: white; }
+        .demo-shape { width: 60px; height: 60px; object-fit: contain; transition: 0.3s; }
+        
+        /* Mãozinha a clicar no quadrado */
         .demo-hand { 
             position: absolute; font-size: 3rem; pointer-events: none;
-            animation: handClickAnim 4s infinite ease-in-out;
             z-index: 10;
+            animation: handSequence 4s infinite ease-in-out;
         }
-        @keyframes handClickAnim {
-            0% { transform: translate(100px, 100px); opacity: 0; }
-            20% { transform: translate(20px, 20px); opacity: 1; } /* Move para o quadrado */
-            40% { transform: translate(20px, 20px) scale(0.8); } /* Clica */
-            50% { transform: translate(20px, 20px) scale(1); }
+
+        @keyframes handSequence {
+            0% { transform: translate(150px, 150px); opacity: 0; }
+            20% { transform: translate(50px, 20px); opacity: 1; }   /* Move-se para o Quadrado (centro) */
+            35% { transform: translate(50px, 20px) scale(0.8); }   /* Simula o Clique */
+            45% { transform: translate(50px, 20px) scale(1); }
             80% { opacity: 1; }
-            100% { opacity: 0; }
+            100% { transform: translate(50px, 20px); opacity: 0; }
         }
-        .demo-target { animation: targetGlow 4s infinite; }
-        @keyframes targetGlow {
+
+        /* Brilho no quadrado quando a mão clica */
+        .demo-quadrado { animation: targetEffect 4s infinite; }
+        @keyframes targetEffect {
             0%, 35% { filter: brightness(1); transform: scale(1); }
-            40% { filter: brightness(1.3); transform: scale(1.1); border-radius: 50%; box-shadow: 0 0 20px var(--cor-jogo-verde); }
+            40% { filter: brightness(1.2) drop-shadow(0 0 10px var(--cor-jogo-verde)); transform: scale(1.1); }
             60% { filter: brightness(1); transform: scale(1); }
         }
 
-        /* --- Jogo --- */
+        /* --- Elementos do Jogo --- */
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0; margin-bottom: 10px; flex-shrink: 0; }
         .stars-container { display: flex; gap: 6px; }
         .star { width: 24px; height: 24px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: transparent; transition: 0.3s; }
@@ -128,14 +136,14 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin-bottom: 10px;">Clica no <b style="color:var(--cor-jogo-verde)">Quadrado</b>!</p>
-                    <div class="demo-container">
-                        <img id="demo-img-1" class="demo-shape" src="">
-                        <img id="demo-img-2" class="demo-shape demo-target" src="">
-                        <img id="demo-img-3" class="demo-shape" src="">
+                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin-bottom: 20px;">Clica nas formas corretas!</p>
+                    <div class="demo-area">
+                        <img id="demo-circulo" class="demo-shape" src="">
+                        <img id="demo-quadrado" class="demo-shape demo-quadrado" src="">
+                        <img id="demo-triangulo" class="demo-shape" src="">
                         <div class="demo-hand">☝️</div>
                     </div>
-                    <p style="color:var(--cor-texto); padding: 0 20px; font-size: 0.9rem;">Lembra-te: Todo o Quadrado é um Retângulo!<br>Se errares, a ronda termina.</p>
+                    <p style="color:var(--cor-texto); margin-top: 20px; font-size: 0.9rem;">Lembra-te: Todo o Quadrado é um Retângulo!<br>Se errares, a ronda termina.</p>
                 </div>
                 <h2 class="game-title">Formas Geométricas</h2>
                 <button class="option-btn" onclick="startGame()">JOGAR</button>
@@ -156,7 +164,7 @@
         </section>
     </main>
 
-    <!-- MODAL FINAL -->
+    <!-- MODAL RELATÓRIO -->
     <div class="modal" id="modal">
         <div class="modal-content">
             <h2 id="modal-title" style="color:var(--cor-jogo-verde); margin-top:0;"></h2>
@@ -195,9 +203,10 @@
                 });
                 
                 // Configurar imagens da demo animada
-                document.getElementById('demo-img-1').src = JOGO_CONFIG.caminhoImg + "circulo_a.png";
-                document.getElementById('demo-img-2').src = JOGO_CONFIG.caminhoImg + "quadrado_a.png";
-                document.getElementById('demo-img-3').src = JOGO_CONFIG.caminhoImg + "triangulo_a.png";
+                const imgPath = JOGO_CONFIG.caminhoImg;
+                document.getElementById('demo-circulo').src = imgPath + "circulo_a.png";
+                document.getElementById('demo-quadrado').src = imgPath + "quadrado_a.png";
+                document.getElementById('demo-triangulo').src = imgPath + "triangulo_a.png";
             }
         };
 
@@ -243,14 +252,12 @@
                 let s = JOGO_CONFIG.formas[Math.floor(Math.random() * JOGO_CONFIG.formas.length)];
                 let color = (currentLevel === 1) ? levelColor : JOGO_CONFIG.cores[Math.floor(Math.random() * JOGO_CONFIG.cores.length)];
                 
-                // Lógica Matemática: Quadrado também é Retângulo
                 let isCorrect = (s === targetShape) || (targetShape === "retangulo" && s === "quadrado");
                 if (isCorrect) totalTargetsOnScreen++;
                 
                 pool.push({ shape: s, color: color, correct: isCorrect });
             }
 
-            // Garantir equilíbrio (entre 2 e 4 alvos)
             if (totalTargetsOnScreen < 2 || totalTargetsOnScreen > 4) return loadRound();
 
             pool.forEach(item => {
@@ -272,7 +279,6 @@
                 targetsFoundCount++;
                 points += 10;
                 document.getElementById('points').innerText = points;
-
                 if (targetsFoundCount === totalTargetsOnScreen) {
                     isRoundActive = false;
                     currentStar.classList.add('correct'); currentStar.innerText = '✓';
@@ -280,7 +286,6 @@
                     setTimeout(nextStep, 600);
                 }
             } else {
-                // ERRO: Preenche bola de vermelho e termina ronda
                 isRoundActive = false;
                 playFeedback(false);
                 element.classList.add('error-shake');
@@ -294,8 +299,7 @@
             currentRound++;
             if (currentRound > 5) {
                 if (currentLevel === 1) {
-                    currentLevel = 2; currentRound = 1;
-                    initStars(); loadRound();
+                    currentLevel = 2; currentRound = 1; initStars(); loadRound();
                 } else endGame();
             } else loadRound();
         }
@@ -304,7 +308,7 @@
             clearInterval(timerInterval);
             const r = JOGO_CONFIG.relatorio;
             const m = JOGO_CONFIG.mensagens;
-            let feedbackMsg = points >= 150 ? m.excelente : (points >= 90 ? m.bom : m.tenta);
+            let feedbackMsg = points >= 140 ? m.excelente : (points >= 90 ? m.bom : m.tenta);
 
             document.getElementById('modal-title').innerText = r.titulo;
             document.getElementById('modal-msg').innerHTML = `<p style="font-weight:bold; font-size:1.1rem;">${feedbackMsg}</p>`;
