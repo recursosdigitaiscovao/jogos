@@ -1,6 +1,6 @@
 const JOGO_CONFIG = {
     caminhoIcons: "../../icons/",
-    caminhoGeralImg: "../../img/",
+    caminhoGeralImg: "../../img/", // Onde está a rd.png
 
     iconesMenu: {
         pre: "iconpre.png",
@@ -23,18 +23,9 @@ const JOGO_CONFIG = {
         }
     },
 
-    mensagens: {
-        excelente: "Incrível! És um mestre! 🌟",
-        bom: "Bom esforço! Estás no bom caminho! 👍",
-        tenta: "Esforça-te mais! Continua a praticar! 💪"
-    },
-
     relatorio: {
         titulo: "Fim do Jogo!",
-        pontosTotal: "Pontuação Total:",
-        tempoTotal: "Tempo Total:",
-        labelNivel: "Nível",
-        labelCertas: "Certas",
-        labelErradas: "Erradas"
+        pontosTotal: "Pontos:",
+        tempoTotal: "Tempo:"
     }
 };
