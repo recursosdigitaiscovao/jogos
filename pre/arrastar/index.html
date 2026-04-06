@@ -39,10 +39,10 @@
         .screen.active { display: flex; }
 
         .game-card {
-            background: white; border-radius: 25px; padding: 10px; /* Rigoroso: Padding interior do card de 10px */
+            background: white; border-radius: 25px; padding: 10px;
             border: 4px solid var(--cor-principal);
             display: flex; flex-direction: column; 
-            width: 100%; max-width: 1100px; height: 100%; /* Ajustado para 100% devido ao padding de 10px no main-content */
+            width: 100%; max-width: 1100px; height: 100%;
             position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
@@ -97,9 +97,16 @@
             opacity: 0.9; 
             z-index: 9999 !important; 
             position: fixed !important; 
-            pointer-events: none; /* ESSENCIAL PARA O DROP FUNCIONAR */
+            pointer-events: none;
             transform: scale(1.1); 
             box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        /* ANIMAÇÃO EXPLICAÇÃO */
+        @keyframes slideAnim {
+            0% { transform: translateX(-60px); opacity: 0; }
+            50% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(60px); opacity: 0; }
         }
 
         /* OUTROS */
@@ -121,7 +128,11 @@
             <button onclick="toggleMenu()" style="border:none; background:none; font-size:24px; cursor:pointer;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src="" width="30"> Pré-Escolar</a>
+        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" width="30"> Pré-Escolar</a>
+        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" width="30"> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" width="30"> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" width="30"> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" width="30"> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
@@ -185,8 +196,15 @@
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
             const g = JOGO_CONFIG.caminhoGeralImg;
+            
+            // Icones Menu e Header
             document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
             document.getElementById('side-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
+            document.getElementById('side-1').src = p + JOGO_CONFIG.iconesMenu.ano1;
+            document.getElementById('side-2').src = p + JOGO_CONFIG.iconesMenu.ano2;
+            document.getElementById('side-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
+            document.getElementById('side-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
+            
             document.querySelectorAll('.gear-img-src').forEach(img => img.src = g + "rd.png");
             
             const menuCat = document.getElementById('shared-gear-menu');
@@ -222,13 +240,11 @@
             document.getElementById('anim-animal-img').src = cat.caminho + cat.lista[0];
             document.getElementById('shared-gear-menu').style.display = 'none';
             
-            // RIGOROSO: Voltar sempre para o Nível 1 e reiniciar progresso
             currentRound = 1;
             points = 0;
             matchedCount = 0;
             document.getElementById('points').innerText = '0';
             
-            // Se o jogo já estiver a decorrer, reinicia a partida visualmente
             if(document.getElementById('game-screen').classList.contains('active')) {
                 initStars();
                 startTimer();
@@ -327,8 +343,6 @@
         function stopDrag(e) {
             if(!dragElement) return;
             const event = e.type === 'touchend' ? e.changedTouches[0] : e;
-            
-            // O pointer-events:none no CSS .dragging permite-nos ver o que está por baixo
             const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
             const target = elemBelow ? elemBelow.closest('.target-box') : null;
 
@@ -345,7 +359,7 @@
                 }
             } else if(target && target.dataset.id !== dragElement.dataset.id) {
                 playSound('snd-wrong');
-                updateVisualFeedback(false); // Marca erro imediatamente
+                updateVisualFeedback(false);
                 setTimeout(nextRound, 800);
             } else {
                 dragElement.classList.remove('dragging');
