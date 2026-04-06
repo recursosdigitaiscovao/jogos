@@ -15,6 +15,7 @@
             --header-height: 70px;
             --cor-jogo-verde: #e691a7;  
             --cor-erro: #ff4757;
+            --cor-acerto: #2ed573;
         }
 
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
@@ -33,7 +34,7 @@
 
         .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
         .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
-        .sidebar-item img { width: 20px; height: 20px; margin-right: 12px; }
+        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
@@ -52,7 +53,8 @@
         
         /* Intro Animation */
         .intro-example { display: flex; gap: 10px; margin-top: 15px; }
-        .item-ex { width: 60px; height: 60px; border: 2px solid var(--cor-principal); border-radius: 10px; background: white; padding: 5px; }
+        .item-ex { width: 60px; height: 60px; border: 2px solid var(--cor-principal); border-radius: 10px; background: white; padding: 5px; display: flex; align-items: center; justify-content: center; }
+        .item-ex img { max-width: 90%; max-height: 90%; object-fit: contain; }
         .item-ex.unique { border: 4px solid var(--cor-vermelho); animation: pulse 1s infinite; }
         @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.1);} 100% {transform: scale(1);} }
 
@@ -70,21 +72,26 @@
         .game-area { flex: 1; display: flex; flex-wrap: wrap; content-content: center; align-items: center; justify-content: center; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 10px; gap: 10px; overflow-y: auto; }
         
         .game-item { 
-            width: clamp(60px, 15vw, 100px); 
-            height: clamp(60px, 15vw, 100px); 
+            width: clamp(65px, 18vw, 110px); 
+            height: clamp(65px, 18vw, 110px); 
             background: white; 
-            border: 3px solid var(--cor-principal); 
-            border-radius: 15px; 
+            border: 4px solid var(--cor-principal); 
+            border-radius: 20px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+            box-sizing: border-box;
+            padding: 8px;
         }
         .game-item:active { transform: scale(0.9); }
-        .game-item img { width: 80%; height: 80%; object-fit: contain; }
+        .game-item img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 
-        .error-shake { animation: shake 0.4s; border-color: var(--cor-erro) !important; }
+        /* Feedback de Erro e Acerto */
+        .item-correct { border-color: var(--cor-acerto) !important; background-color: #e8f5e9 !important; }
+        .item-wrong { border-color: var(--cor-erro) !important; background-color: #ffebee !important; }
+        .error-shake { animation: shake 0.4s; }
         @keyframes shake { 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
@@ -132,9 +139,9 @@
                 <div class="explanation-box">
                     <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin: 0;">Encontra quem não tem par:</p>
                     <div class="intro-example">
-                        <div class="item-ex"><img src="" class="ex-img-1" style="width:100%"></div>
-                        <div class="item-ex unique"><img src="" class="ex-img-unique" style="width:100%"></div>
-                        <div class="item-ex"><img src="" class="ex-img-1" style="width:100%"></div>
+                        <div class="item-ex"><img src="" class="ex-img-1"></div>
+                        <div class="item-ex unique"><img src="" class="ex-img-unique"></div>
+                        <div class="item-ex"><img src="" class="ex-img-1"></div>
                     </div>
                     <p style="font-size: 0.9rem; margin-top: 10px; color: #888;">Clica no objeto que aparece apenas uma vez!</p>
                 </div>
@@ -269,11 +276,10 @@
             const cat = JOGO_CONFIG.categorias[currentCatKey];
             let items = [...cat.lista].sort(() => 0.5 - Math.random());
             
-            // Definição de quantos pares conforme o nível
             let numPares = (level === 1) ? 5 : 8;
             
             let paresSelecionados = items.slice(0, numPares);
-            targetItem = items[numPares]; // O item sem par
+            targetItem = items[numPares];
             
             let deck = [];
             paresSelecionados.forEach(img => {
@@ -282,7 +288,6 @@
             });
             deck.push({img: targetItem, pair: false});
             
-            // Baralhar deck
             deck.sort(() => 0.5 - Math.random());
             
             deck.forEach(obj => {
@@ -301,8 +306,9 @@
                 isRoundActive = false;
                 points += 20;
                 document.getElementById('points').innerText = points;
-                element.style.borderColor = "lightgreen";
-                element.style.background = "#e8f5e9";
+                
+                // Feedback Visual Verde
+                element.classList.add('item-correct');
                 
                 updateStars();
                 
@@ -312,7 +318,6 @@
                         if (level === 1) {
                             level = 2;
                             currentQuestion = 1;
-                            alert("Nível 1 Concluído! Vamos para o Nível 2 (Mais pares!)");
                             initStars();
                             loadLevel();
                         } else {
@@ -321,10 +326,14 @@
                     } else {
                         loadLevel();
                     }
-                }, 1000);
+                }, 800);
             } else {
-                element.classList.add('error-shake');
-                setTimeout(() => element.classList.remove('error-shake'), 400);
+                // Feedback Visual Vermelho
+                element.classList.add('item-wrong', 'error-shake');
+                setTimeout(() => {
+                    element.classList.remove('error-shake', 'item-wrong');
+                }, 400);
+                
                 if(points > 0) points -= 2;
                 document.getElementById('points').innerText = points;
             }
