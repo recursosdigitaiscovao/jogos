@@ -1,6 +1,6 @@
 const JOGO_CONFIG = {
     caminhoIcons: "../../icons/",
-    caminhoGeralImg: "../../img/", // Onde está a rd.png
+    caminhoGeralImg: "../../img/", 
 
     iconesMenu: {
         pre: "iconpre.png",
@@ -20,6 +20,11 @@ const JOGO_CONFIG = {
             nome: "Frutas",
             caminho: "../../img/frutas/",
             lista: ["ananas.png", "banana.png", "cereja.png", "kiwi.png", "laranja.png", "maca.png", "melancia.png", "morango.png", "papaia.png", "pera.png", "uvas.png"]
+        },
+        materialescolar: {
+            nome: "Material Escolar",
+            caminho: "../../img/materialescolar/",
+            lista: ["cola.png", "folha.png", "tesoura.png", "capa.png", "estojo.png", "livro.png", "esquadro.png", "regua.png", "mochila.png", "borracha.png", "caneta.png", "pincel.png", "lapis.png", "afia.png"]
         }
     },
 
