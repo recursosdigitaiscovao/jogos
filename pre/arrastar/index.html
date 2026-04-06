@@ -27,7 +27,10 @@
         .sidebar.active { left: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: all 0.3s ease; cursor: pointer; font-weight: 500; }
         .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; padding-left: 35px; }
-        .sidebar-item img { width: 28px; height: 28px; margin-right: 12px; }
+        
+        /* CORREÇÃO: Imagens do menu lateral não mais largas que o necessário */
+        .sidebar-item img { width: 32px; height: 32px; margin-right: 12px; object-fit: contain; flex-shrink: 0; }
+        
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
@@ -37,15 +40,15 @@
         .screen.active { display: flex; }
 
         .game-card {
-            background: white; border-radius: 30px; padding: 10px; 
+            background: white; border-radius: 30px; padding: 15px; 
             border: 4px solid var(--cor-principal);
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
             position: relative;
         }
 
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        .anim-item { width: 80px; position: absolute; z-index: 5; animation: slideAnim 3s infinite; }
-        .anim-shadow { width: 90px; filter: brightness(0); opacity: 0.15; }
+        .anim-item { width: 100px; position: absolute; z-index: 5; animation: slideAnim 3s infinite; }
+        .anim-shadow { width: 110px; filter: brightness(0); opacity: 0.15; }
         @keyframes slideAnim {
             0% { transform: translate(120px, 0); opacity: 0; }
             20% { opacity: 1; }
@@ -62,47 +65,61 @@
         .gear-btn { width: 45px; height: 45px; cursor: pointer; z-index: 100; }
         .rd-float { position: absolute; bottom: 15px; right: 15px; }
 
+        /* CORREÇÃO: Menu de escolha */
         .gear-menu { 
-            position: absolute; bottom: 60px; right: 0; background: white; 
+            position: fixed; background: white; 
             border: 3px solid var(--cor-principal); border-radius: 15px; 
             display: none; flex-direction: row; gap: 10px; padding: 10px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1); z-index: 2000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 5000;
         }
         .gear-menu.active { display: flex; }
-        .gear-opt { cursor: pointer; border: 2px solid #eee; border-radius: 10px; padding: 5px; transition: 0.2s; background: white; }
+        .gear-opt { cursor: pointer; border: 2px solid #eee; border-radius: 10px; padding: 5px; transition: 0.2s; background: white; display: flex; align-items: center; justify-content: center; }
         .gear-opt:hover { border-color: var(--cor-principal); background: #fff0f3; }
         .gear-opt img { width: 50px; height: 50px; object-fit: contain; pointer-events: none; }
 
         /* --- Jogo --- */
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; font-size: 0.85rem; }
-        .stars-container { display: flex; gap: 4px; }
-        .star { width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; }
+        .stars-container { display: flex; gap: 6px; }
+        
+        /* CORREÇÃO: Estímulo Visual de Certo/Errado nas bolinhas */
+        .star { width: 28px; height: 28px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; color: transparent; background: white; font-weight: bold; transition: 0.2s; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
+        .star.correct::after { content: '✓'; }
+        .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; animation: shake 0.3s; }
+        .star.wrong::after { content: '✕'; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
 
         .game-area { 
-            flex: 1; display: grid; grid-template-rows: 1fr 1fr; gap: 10px; padding: 10px;
+            flex: 1; display: grid; grid-template-rows: 1.2fr 1fr; gap: 15px; padding: 15px;
             background: var(--cor-fundo); border-radius: 20px; border: 2px solid #ffdeeb; transition: background 0.2s;
         }
-        .game-area.error-flash { background: var(--cor-erro) !important; }
 
-        .drop-grid, .drag-grid { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 10px; }
+        .drop-grid, .drag-grid { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 15px; }
         
+        /* CORREÇÃO: Cartões maiores para as imagens */
         .target-box { 
-            width: clamp(60px, 12vw, 85px); height: clamp(60px, 12vw, 85px); 
-            border: 2px dashed var(--cor-principal); border-radius: 15px; display: flex; align-items: center; justify-content: center;
-            background: white;
+            width: clamp(85px, 16vw, 120px); height: clamp(85px, 16vw, 120px); 
+            border: 3px dashed var(--cor-principal); border-radius: 20px; display: flex; align-items: center; justify-content: center;
+            background: white; padding: 5px; box-sizing: border-box;
         }
-        .target-box img { width: 80%; filter: brightness(0); opacity: 0.15; pointer-events: none; }
-        .target-box.filled { border: 2px solid var(--cor-jogo-verde); background: #e8f9f4; }
+        .target-box img { width: 90%; height: 90%; object-fit: contain; filter: brightness(0); opacity: 0.15; pointer-events: none; }
+        .target-box.filled { border: 3px solid var(--cor-jogo-verde); background: #e8f9f4; }
         .target-box.filled img { filter: none; opacity: 1; }
 
         .item-drag { 
-            width: clamp(55px, 11vw, 80px); height: clamp(55px, 11vw, 80px); 
+            width: clamp(80px, 15vw, 115px); height: clamp(80px, 15vw, 115px); 
             cursor: grab; touch-action: none; z-index: 100;
-            background: white; border-radius: 12px; padding: 5px; box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+            background: white; border-radius: 18px; padding: 8px; box-shadow: 0 6px 0 rgba(0,0,0,0.05);
+            display: flex; align-items: center; justify-content: center; box-sizing: border-box;
+            border: 2px solid #eee;
         }
-        .item-drag img { width: 100%; pointer-events: none; }
-        .dragging { opacity: 0.8; transform: scale(1.1); z-index: 1000; position: fixed !important; }
+        .item-drag img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+        .dragging { opacity: 0.8; transform: scale(1.1); z-index: 1000; position: fixed !important; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 90%; max-width: 400px; }
@@ -134,7 +151,6 @@
     </header>
 
     <main class="main-content">
-        <!-- MENU DE CATEGORIAS (Partilhado) -->
         <div id="shared-gear-menu" class="gear-menu"></div>
 
         <section id="intro-screen" class="screen active">
@@ -147,8 +163,8 @@
                 <h2 class="game-title">Sombras Misteriosas</h2>
                 <div class="intro-controls">
                     <button class="btn-jogar" onclick="startGame()">JOGAR</button>
-                    <div class="gear-btn" id="gear-anchor-intro">
-                        <img class="gear-img-src" src="" style="width:100%;" onclick="toggleGear('gear-anchor-intro')">
+                    <div class="gear-btn" id="gear-anchor-intro" onclick="toggleGear(this)">
+                        <img class="gear-img-src" src="" style="width:100%;">
                     </div>
                 </div>
             </div>
@@ -165,8 +181,8 @@
                     <div id="targets-grid" class="drop-grid"></div>
                     <div id="drags-grid" class="drag-grid"></div>
                 </div>
-                <div class="gear-btn rd-float" id="gear-anchor-game">
-                    <img class="gear-img-src" src="" style="width:100%;" onclick="toggleGear('gear-anchor-game')">
+                <div class="gear-btn rd-float" id="gear-anchor-game" onclick="toggleGear(this)">
+                    <img class="gear-img-src" src="" style="width:100%;">
                 </div>
             </div>
         </section>
@@ -203,7 +219,7 @@
                 const cat = JOGO_CONFIG.categorias[key];
                 const div = document.createElement('div');
                 div.className = 'gear-opt';
-                div.onclick = () => setTheme(key);
+                div.onclick = (e) => { e.stopPropagation(); setTheme(key); };
                 div.innerHTML = `<img src="${cat.caminho + cat.lista[0]}">`;
                 menuCat.appendChild(div);
             });
@@ -215,21 +231,31 @@
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         
-        function toggleGear(anchorId) { 
+        // CORREÇÃO: Posicionamento do menu de temas
+        function toggleGear(btn) { 
             const menu = document.getElementById('shared-gear-menu');
-            const anchor = document.getElementById(anchorId);
-            const rect = anchor.getBoundingClientRect();
+            const rect = btn.getBoundingClientRect();
             
-            menu.style.left = (rect.left - 120) + "px"; // Ajuste para alinhar
-            menu.style.top = (rect.top - 80) + "px";
-            menu.classList.toggle('active'); 
+            if (menu.classList.contains('active')) {
+                menu.classList.remove('active');
+            } else {
+                menu.style.display = 'flex'; // Força exibição para calcular tamanho
+                const menuRect = menu.getBoundingClientRect();
+                menu.style.left = (rect.left - menuRect.width + rect.width) + "px";
+                menu.style.top = (rect.top - menuRect.height - 10) + "px";
+                menu.classList.add('active');
+            }
         }
 
         function setTheme(t) { 
             selectedTheme = t; 
             document.getElementById('shared-gear-menu').classList.remove('active');
             if(document.getElementById('game-screen').classList.contains('active')) {
-                loadLevel(); // Recarrega se já estiver no jogo
+                loadLevel();
+            } else {
+                const cat = JOGO_CONFIG.categorias[t];
+                document.getElementById('anim-shadow-img').src = cat.caminho + cat.lista[0];
+                document.getElementById('anim-animal-img').src = cat.caminho + cat.lista[0];
             }
         }
 
@@ -246,12 +272,15 @@
 
         function initStars() {
             const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
-            for(let i=0; i<5; i++) { const s = document.createElement('div'); s.className = 'star'; s.innerText = '★'; bar.appendChild(s); }
+            // Criamos 5 ou 6 bolinhas dependendo do nível
+            const count = (currentLevel === 1) ? 6 : 8;
+            for(let i=0; i<count; i++) { const s = document.createElement('div'); s.className = 'star'; bar.appendChild(s); }
         }
 
         function loadLevel() {
             matchedCount = 0;
             totalToMatch = currentLevel === 1 ? 6 : 8;
+            initStars();
             const cat = JOGO_CONFIG.categorias[selectedTheme];
             const chosen = [...cat.lista].sort(() => 0.5 - Math.random()).slice(0, totalToMatch);
 
@@ -285,9 +314,11 @@
             const rect = dragElement.getBoundingClientRect();
             startX = event.clientX - rect.left;
             startY = event.clientY - rect.top;
+            
             dragElement.classList.add('dragging');
             dragElement.style.width = rect.width + 'px';
             dragElement.style.height = rect.height + 'px';
+            
             moveAt(event.clientX, event.clientY);
             document.addEventListener('mousemove', onMove);
             document.addEventListener('touchmove', onMove, {passive: false});
@@ -311,11 +342,11 @@
                 dragElement.remove();
                 points += 20;
                 document.getElementById('points').innerText = points;
+                updateStars(true);
                 matchedCount++;
-                updateStars();
                 if(matchedCount === totalToMatch) nextLevel();
             } else {
-                triggerError();
+                updateStars(false);
                 dragElement.classList.remove('dragging');
                 dragElement.style.position = 'relative';
                 dragElement.style.left = '0'; dragElement.style.top = '0';
@@ -326,24 +357,34 @@
             document.removeEventListener('mouseup', stopDrag); document.removeEventListener('touchend', stopDrag);
         }
 
-        function triggerError() {
-            const area = document.getElementById('main-game-area');
-            area.classList.add('error-flash');
-            setTimeout(() => area.classList.remove('error-flash'), 300);
-        }
-
-        function updateStars() {
+        // CORREÇÃO: Estimulo visual X e V nas bolinhas
+        function updateStars(isCorrect) {
             const stars = document.querySelectorAll('.star');
-            const percent = matchedCount / totalToMatch;
-            const starIndex = Math.floor(percent * 5) - 1;
-            if(starIndex >= 0 && stars[starIndex]) stars[starIndex].classList.add('correct');
+            if(isCorrect) {
+                // Encontra a primeira bolinha vazia e marca como correta
+                for(let s of stars) {
+                    if(!s.classList.contains('correct')) {
+                        s.classList.add('correct');
+                        break;
+                    }
+                }
+            } else {
+                // Encontra a primeira bolinha vazia, pisca o X e remove
+                for(let s of stars) {
+                    if(!s.classList.contains('correct') && !s.classList.contains('wrong')) {
+                        s.classList.add('wrong');
+                        setTimeout(() => s.classList.remove('wrong'), 500);
+                        break;
+                    }
+                }
+            }
         }
 
         function nextLevel() {
             setTimeout(() => {
-                if(currentLevel === 1) { currentLevel = 2; initStars(); loadLevel(); } 
+                if(currentLevel === 1) { currentLevel = 2; loadLevel(); } 
                 else { endGame(); }
-            }, 600);
+            }, 800);
         }
 
         function endGame() {
