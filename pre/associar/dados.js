@@ -1,15 +1,13 @@
 const JOGO_CONFIG = {
-    caminhoIcons: "../../icons/",
-    caminhoGeralImg: "../../img/", 
-
+    caminhoIcons: "../../img/icons/", // Ajustar conforme necessário
+    caminhoImg: "../../img/",
     iconesMenu: {
-        pre: "iconpre.png",
-        ano1: "icon1.png",
-        ano2: "icon2.png",
-        ano3: "icon3.png",
-        ano4: "icon4.png"
+        pre: "pre.png",
+        ano1: "1.png",
+        ano2: "2.png",
+        ano3: "3.png",
+        ano4: "4.png"
     },
-
     categorias: {
         animais: {
             nome: "Animais",
@@ -27,7 +25,6 @@ const JOGO_CONFIG = {
             lista: ["cola.png", "folha.png", "tesoura.png", "capa.png", "estojo.png", "livro.png", "esquadro.png", "regua.png", "mochila.png", "borracha.png", "caneta.png", "pincel.png", "lapis.png", "afia.png"]
         }
     },
-
     relatorio: {
         titulo: "Fim do Jogo!",
         pontosTotal: "Pontos:",
