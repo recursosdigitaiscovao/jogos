@@ -23,15 +23,17 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
+        /* NAVEGAÇÃO E MENU */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         
-        .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 5000; }
+        .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 5000; }
         .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 18px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f5f5f5; font-weight: 500; }
+        .sidebar-item { display: flex; align-items: center; padding: 18px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f5f5f5; font-weight: 500; gap: 10px; }
         
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 4000; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 4000; backdrop-filter: blur(2px); }
         .overlay.active { display: block; }
 
+        /* ÁREA PRINCIPAL */
         .main-content { flex: 1; padding: 5px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; }
         .screen.active { display: flex; }
@@ -51,7 +53,7 @@
         
         .stars-container { display: flex; gap: 5px; }
         .star { 
-            width: 25px; height: 25px; 
+            width: clamp(22px, 4vw, 30px); height: clamp(22px, 4vw, 30px); 
             border: 2px solid #ddd; border-radius: 50%; display: flex; 
             align-items: center; justify-content: center; font-size: 16px; background: white;
             font-weight: bold;
@@ -61,55 +63,50 @@
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
         .star.wrong::after { content: '✕'; }
 
+        /* JOGO */
         .game-area { 
-            flex: 1; display: flex; flex-direction: column; justify-content: space-around;
+            flex: 1; display: flex; flex-direction: column; justify-content: space-evenly;
             padding: 5px; background: var(--cor-fundo); border-radius: 20px; 
             margin-top: 5px; overflow: hidden;
         }
 
         .drop-grid, .drag-grid { 
             display: flex; justify-content: center; align-items: center; 
-            gap: 8px; width: 100%; flex-wrap: wrap; align-content: center;
+            gap: 1.5vmin; width: 100%; flex-wrap: wrap;
         }
         
-        /* Ajuste de tamanho responsivo - Máximo possível sem quebrar */
         .target-box, .item-drag { 
-            width: clamp(65px, 17vw, 150px);
-            height: clamp(65px, 17vw, 150px);
+            width: clamp(70px, 17vmin, 160px);
+            height: clamp(70px, 17vmin, 160px);
             background: white; border-radius: 15%; 
             display: flex; align-items: center; justify-content: center; 
-            padding: 5px; box-sizing: border-box;
+            padding: 8px; box-sizing: border-box;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            position: relative;
         }
 
         .target-box { border: 3px dashed var(--cor-principal); }
         .target-box img { width: 90%; height: 90%; object-fit: contain; filter: brightness(0); opacity: 0.15; }
-        
         .target-box.filled { border: 4px solid var(--cor-jogo-verde); transform: scale(1.05); }
         .target-box.filled img { filter: none; opacity: 1; }
 
-        .item-drag { border: 2px solid #eee; cursor: grab; z-index: 10; touch-action: none; }
+        .item-drag { border: 2px solid #eee; cursor: grab; touch-action: none; z-index: 10; }
         .item-drag img { width: 90%; height: 90%; object-fit: contain; pointer-events: none; }
         
         .dragging { 
-            opacity: 0.8; 
+            opacity: 0.9; 
             z-index: 9999 !important; 
             position: fixed !important; 
+            pointer-events: none; /* ESSENCIAL PARA O DROP FUNCIONAR */
             transform: scale(1.1); 
             box-shadow: 0 15px 30px rgba(0,0,0,0.3);
         }
 
-        .explanation-box { background: var(--cor-caixa-info); border-radius: 25px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-bottom: 10px; }
-        .anim-item { width: 100px; position: absolute; animation: slideAnim 3s infinite; }
-        .anim-shadow { width: 110px; filter: brightness(0); opacity: 0.15; }
-        @keyframes slideAnim { 0% { transform: translate(100px, 0); opacity: 0; } 20% { opacity: 1; } 80% { transform: translate(0, 0); opacity: 1; } 100% { transform: translate(0, 0); opacity: 0; } }
-        
+        /* OUTROS */
         .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 15px; border-radius: 50px; font-size: 1.4rem; font-weight: bold; width: 100%; cursor: pointer; box-shadow: 0 6px 0 #d63031; }
-
         .gear-btn { width: 45px; height: 45px; cursor: pointer; flex-shrink: 0; }
         .rd-float { position: absolute; bottom: 10px; right: 10px; z-index: 100; }
         .gear-menu { position: fixed; display: none; background: white; border: 3px solid var(--cor-principal); border-radius: 15px; padding: 10px; z-index: 9000; flex-direction: column; gap: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 10000; }
         .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 90%; max-width: 400px; }
     </style>
@@ -120,15 +117,15 @@
     
     <div class="sidebar" id="sidebar">
         <div style="padding:20px; border-bottom:2px solid #f5f5f5; display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-weight:bold; color:var(--cor-principal);">MENU</span>
-            <button onclick="toggleMenu()" style="border:none; background:none; font-size:24px;">✕</button>
+            <span style="font-weight:bold; color:var(--cor-principal); font-size: 1.2rem;">MENU</span>
+            <button onclick="toggleMenu()" style="border:none; background:none; font-size:24px; cursor:pointer;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
         <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src="" width="30"> Pré-Escolar</a>
     </div>
 
     <header class="nav-bar">
-        <button onclick="toggleMenu()" style="background:none; border:none; font-size:30px; color:var(--cor-principal);">☰</button>
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:30px; color:var(--cor-principal); cursor:pointer;">☰</button>
         <h1 style="font-size:0.9rem; color:var(--cor-principal); margin: 0; display:flex; align-items:center; gap:8px;">
             <img id="header-icon" src="" style="height:25px;"> Sombras Misteriosas
         </h1>
@@ -140,10 +137,10 @@
 
         <section id="intro-screen" class="screen active">
             <div class="game-card">
-                <div class="explanation-box">
-                    <img id="anim-shadow-img" src="" class="anim-shadow">
-                    <img id="anim-animal-img" src="" class="anim-item">
-                    <p style="color:var(--cor-texto); font-weight:bold; margin-top:20px;">De quem é esta sombra?</p>
+                <div style="background: var(--cor-caixa-info); border-radius: 25px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-bottom: 10px; position: relative;">
+                    <img id="anim-shadow-img" src="" style="width:110px; filter:brightness(0); opacity:0.15;">
+                    <img id="anim-animal-img" src="" style="width:100px; position:absolute; animation: slideAnim 3s infinite;">
+                    <p style="color:var(--cor-texto); font-weight:bold; margin-top:20px; font-size: 1.2rem;">De quem é esta sombra?</p>
                 </div>
                 <div style="display:flex; gap:10px; width:100%;">
                     <button class="btn-jogar" onclick="startGame()">JOGAR</button>
@@ -170,8 +167,8 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 style="color:var(--cor-principal);">Boa! 🌟</h2>
-            <div id="modal-msg" style="margin: 20px 0;"></div>
+            <h2 style="color:var(--cor-principal); font-size: 2rem;">Boa! 🌟</h2>
+            <div id="modal-msg" style="margin: 20px 0; font-size: 1.1rem;"></div>
             <button class="btn-jogar" onclick="location.reload()">Jogar Novamente</button>
         </div>
     </div>
@@ -246,20 +243,18 @@
         }
 
         function startTimer() {
-            seconds = 0;
-            clearInterval(timerInterval);
+            seconds = 0; clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 seconds++;
-                const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
-                const secs = (seconds % 60).toString().padStart(2, '0');
+                const mins = Math.floor(seconds/60).toString().padStart(2,'0');
+                const secs = (seconds%60).toString().padStart(2,'0');
                 document.getElementById('lbl-timer').innerText = `${mins}:${secs}`;
             }, 1000);
         }
 
         function loadRound() {
             matchedCount = 0;
-            // Reinicia estrelas visualmente se mudar de nível (do 5 para o 6)
-            if(currentRound === 6) initStars();
+            if(currentRound === 6 && !document.getElementById('stars-bar').querySelector('.star:not(.correct):not(.wrong)')) initStars();
 
             const cat = JOGO_CONFIG.categorias[selectedTheme];
             let allItems = [...cat.lista].sort(() => 0.5 - Math.random());
@@ -302,12 +297,12 @@
             dragElement.style.width = rect.width + 'px';
             dragElement.style.height = rect.height + 'px';
             dragElement.classList.add('dragging');
-            onMove(e);
 
             document.addEventListener('mousemove', onMove);
             document.addEventListener('touchmove', onMove, {passive: false});
             document.addEventListener('mouseup', stopDrag);
             document.addEventListener('touchend', stopDrag);
+            onMove(e);
         }
 
         function onMove(e) {
@@ -320,16 +315,15 @@
         function stopDrag(e) {
             if(!dragElement) return;
             const event = e.type === 'touchend' ? e.changedTouches[0] : e;
-            dragElement.hidden = true;
-            const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
-            dragElement.hidden = false;
             
+            // O pointer-events:none no CSS .dragging permite-nos ver o que está por baixo
+            const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
             const target = elemBelow ? elemBelow.closest('.target-box') : null;
 
             if(target && !target.classList.contains('filled') && target.dataset.id === dragElement.dataset.id) {
                 playSound('snd-correct');
                 target.classList.add('filled');
-                dragElement.style.visibility = 'hidden';
+                dragElement.remove();
                 points += 10;
                 document.getElementById('points').innerText = points;
                 matchedCount++;
@@ -339,19 +333,20 @@
                 }
             } else if(target && target.dataset.id !== dragElement.dataset.id) {
                 playSound('snd-wrong');
-                updateVisualFeedback(false); // Agora marca o círculo imediatamente
+                updateVisualFeedback(false); // Marca erro imediatamente
                 setTimeout(nextRound, 800);
             } else {
                 dragElement.classList.remove('dragging');
                 dragElement.style.position = 'relative';
                 dragElement.style.left = '0'; dragElement.style.top = '0';
+                dragElement.style.width = ''; dragElement.style.height = '';
             }
 
-            dragElement = null;
             document.removeEventListener('mousemove', onMove);
             document.removeEventListener('touchmove', onMove);
             document.removeEventListener('mouseup', stopDrag);
             document.removeEventListener('touchend', stopDrag);
+            dragElement = null;
         }
 
         function updateVisualFeedback(isCorrect) {
