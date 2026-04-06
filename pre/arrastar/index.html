@@ -47,7 +47,7 @@
             box-sizing: border-box; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
-        /* HEADER INTERNO (HORIZONTAL EM TODOS OS MONITORES) */
+        /* HEADER INTERNO */
         .card-header { 
             display: flex; flex-direction: row; align-items: center; justify-content: space-between; 
             padding-bottom: 12px; border-bottom: 2px solid #f0f0f0; margin-bottom: 10px; flex-shrink: 0;
@@ -65,18 +65,19 @@
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
         .star.wrong::after { content: '✕'; }
 
-        /* GRELHA DE JOGO - IMAGENS AUMENTADAS */
+        /* GRELHA DE JOGO - AJUSTADA PARA CABER EM TODOS OS ECRÃS */
         .game-area { 
-            flex: 1; display: grid; grid-template-rows: 1fr 1fr; gap: 15px; padding: 15px;
+            flex: 1; display: grid; grid-template-rows: 1fr 1fr; gap: 10px; padding: 10px;
             background: var(--cor-fundo); border-radius: 20px; overflow: hidden; align-items: center;
         }
-        .drop-grid, .drag-grid { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: clamp(10px, 2.5vw, 30px); }
+        .drop-grid, .drag-grid { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: clamp(8px, 2vh, 25px); }
         
-        /* Box de Destino (Sombras) */
+        /* Box de Destino (Sombras) - Usa vh para garantir que as duas filas caibam */
         .target-box { 
-            width: clamp(90px, 18vw, 140px); height: clamp(90px, 18vw, 140px); 
+            width: clamp(70px, 14vh, 130px); height: clamp(70px, 14vh, 130px); 
             border: 3px dashed var(--cor-principal); border-radius: 20px; 
-            display: flex; align-items: center; justify-content: center; background: white; padding: 10px;
+            display: flex; align-items: center; justify-content: center; background: white; padding: 5px;
+            box-sizing: border-box;
         }
         .target-box img { width: 90%; height: 90%; object-fit: contain; filter: brightness(0); opacity: 0.15; pointer-events: none; }
         .target-box.filled { border: 4px solid var(--cor-jogo-verde); background: #fff; transform: scale(1.05); }
@@ -84,14 +85,15 @@
 
         /* Box de Origem (Itens Arrastáveis) */
         .item-drag { 
-            width: clamp(80px, 16vw, 120px); height: clamp(80px, 16vw, 120px); 
+            width: clamp(65px, 13vh, 120px); height: clamp(65px, 13vh, 120px); 
             background: white; border-radius: 18px; border: 2px solid #eee; box-shadow: 0 4px 0 rgba(0,0,0,0.05);
-            display: flex; align-items: center; justify-content: center; touch-action: none; padding: 10px; cursor: grab;
+            display: flex; align-items: center; justify-content: center; touch-action: none; padding: 5px; cursor: grab;
+            box-sizing: border-box;
         }
         .item-drag img { width: 90%; height: 90%; object-fit: contain; pointer-events: none; }
         .dragging { opacity: 0.9; z-index: 1000; position: fixed !important; pointer-events: none; transform: scale(1.1); box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
 
-        /* INTRO SCREEN - BOTÃO EXPANSÍVEL */
+        /* INTRO SCREEN */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 25px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; width: 100%; margin-bottom: 20px; }
         .anim-item { width: clamp(80px, 15vw, 120px); position: absolute; animation: slideAnim 3s infinite; }
         .anim-shadow { width: clamp(90px, 18vw, 140px); filter: brightness(0); opacity: 0.15; }
@@ -107,6 +109,15 @@
         .gear-btn { width: 55px; height: 55px; cursor: pointer; flex-shrink: 0; }
         .rd-float { position: absolute; bottom: 20px; right: 20px; }
 
+        /* MENU ENGRENAGEM (MODIFICADO PARA VERTICAL) */
+        .gear-menu {
+            position: fixed; display: none; background: white; 
+            border: 3px solid var(--cor-principal); border-radius: 15px; 
+            padding: 10px; z-index: 9000; gap: 10px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            flex-direction: column; align-items: center;
+        }
+
         /* MODAL */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 10000; }
         .modal-content { background: white; padding: 40px 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 90%; max-width: 400px; }
@@ -114,7 +125,6 @@
 </head>
 <body>
 
-    <!-- OVERLAY E SIDEBAR -->
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     
     <div class="sidebar" id="sidebar">
@@ -130,7 +140,6 @@
         <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
     </div>
 
-    <!-- HEADER DA PÁGINA -->
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:30px; color:var(--cor-principal); cursor:pointer;">☰</button>
         <h1 style="display:flex; align-items:center; gap:10px; font-size:clamp(0.9rem, 4vw, 1.2rem); color:var(--cor-principal); margin: 0;">
@@ -140,10 +149,8 @@
     </header>
 
     <main class="main-content">
-        <!-- MENU DE TEMAS (ENGRENAGEM) -->
-        <div id="shared-gear-menu" class="gear-menu" style="position:fixed; display:none; background:white; border:3px solid var(--cor-principal); border-radius:15px; padding:10px; z-index:9000; gap:10px; box-shadow: 0 10px 20px rgba(0,0,0,0.2);"></div>
+        <div id="shared-gear-menu" class="gear-menu"></div>
 
-        <!-- TELA INICIAL -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
@@ -158,7 +165,6 @@
             </div>
         </section>
 
-        <!-- TELA DE JOGO -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
@@ -177,7 +183,6 @@
         </section>
     </main>
 
-    <!-- MODAL DE VITÓRIA -->
     <div class="modal" id="modal">
         <div class="modal-content">
             <h2 style="color:var(--cor-principal); font-size: 2.2rem; margin-bottom: 10px;">Boa! 🌟</h2>
@@ -199,7 +204,6 @@
             const p = JOGO_CONFIG.caminhoIcons;
             const g = JOGO_CONFIG.caminhoGeralImg;
             
-            // Carregar ícones
             document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
             document.getElementById('side-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
             document.getElementById('side-1').src = p + JOGO_CONFIG.iconesMenu.ano1;
@@ -208,7 +212,6 @@
             document.getElementById('side-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
             document.querySelectorAll('.gear-img-src').forEach(img => img.src = g + "rd.png");
             
-            // Gerar menu de temas
             const menuCat = document.getElementById('shared-gear-menu');
             Object.keys(JOGO_CONFIG.categorias).forEach(key => {
                 const cat = JOGO_CONFIG.categorias[key];
@@ -231,10 +234,13 @@
         function toggleGear(btn) {
             const menu = document.getElementById('shared-gear-menu');
             if(menu.style.display === 'flex') { menu.style.display = 'none'; return; }
-            const rect = btn.getBoundingClientRect();
+            
             menu.style.display = 'flex';
-            menu.style.left = (rect.left - 100) + "px";
-            menu.style.top = (rect.top - 80) + "px";
+            const rect = btn.getBoundingClientRect();
+            
+            // Centraliza horizontalmente e posiciona acima do botão
+            menu.style.left = (rect.left + (rect.width / 2) - (menu.offsetWidth / 2)) + "px";
+            menu.style.top = (rect.top - menu.offsetHeight - 10) + "px";
         }
 
         function setTheme(t) {
