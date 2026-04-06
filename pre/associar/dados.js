@@ -1,5 +1,5 @@
 const JOGO_CONFIG = {
-    caminhoIcons: "../../icons/", // Ajustar conforme necessário
+    caminhoIcons: "../../icon/", // Ajustar conforme necessário
     caminhoImg: "../../img/",
     iconesMenu: {
         pre: "pre.png",
