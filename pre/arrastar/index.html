@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar - Sombras Misteriosas</title>
+    <title>Pré-Escolar - Sombras</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,18 +13,20 @@
             --cor-texto: #555555;      
             --cor-vermelho: #ff4757;    
             --header-height: 70px;
-            --cor-sucesso: #45cfa8;
+            --cor-jogo-verde: #45cfa8;
+            --cor-erro: #ff4757;
+            --cor-caixa-info: #fff0f3;
         }
 
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* --- Sidebar & Header --- */
-        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; }
+        /* --- Header & Sidebar --- */
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-weight: 500; }
-        .sidebar-item:hover { background-color: var(--cor-principal); color: white; }
+        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: all 0.3s ease; cursor: pointer; font-weight: 500; }
+        .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; padding-left: 35px; }
         .sidebar-item img { width: 28px; height: 28px; margin-right: 12px; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
@@ -40,47 +42,57 @@
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Header Jogo (Estrutura Anterior) --- */
-        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; padding: 0 10px; font-size: 0.85rem; }
+        /* --- Explicação Animada (Original) --- */
+        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .anim-item { width: 80px; position: absolute; z-index: 5; animation: slideAnim 3s infinite; }
+        .anim-shadow { width: 90px; filter: brightness(0); opacity: 0.15; }
+        @keyframes slideAnim {
+            0% { transform: translate(120px, 0); opacity: 0; }
+            20% { opacity: 1; }
+            80% { transform: translate(0, 0); opacity: 1; }
+            100% { transform: translate(0, 0); opacity: 0; }
+        }
+
+        .game-title { color: var(--cor-principal); text-align: center; font-size: 1.4rem; margin: 5px 0; font-weight: bold; }
+
+        /* --- Botoes Intro --- */
+        .intro-controls { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+        .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 12px 35px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; }
+        .gear-btn { width: 45px; height: 45px; cursor: pointer; position: relative; }
+        .gear-menu { position: absolute; bottom: 55px; right: 0; background: white; border: 3px solid var(--cor-principal); border-radius: 15px; display: none; flex-direction: column; min-width: 120px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .gear-menu.active { display: flex; }
+        .gear-opt { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; text-align: center; color: var(--cor-texto); font-weight: bold; }
+
+        /* --- Jogo --- */
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; font-size: 0.85rem; }
         .stars-container { display: flex; gap: 4px; }
         .star { width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: transparent; }
-        .star.correct { background: var(--cor-sucesso); border-color: var(--cor-sucesso); color: white; }
+        .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
 
-        /* --- Menu Roda Dentada (Intro) --- */
-        .intro-btns { display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; margin-top: 20px; }
-        .gear-container { position: relative; }
-        .rd-btn { width: 45px; height: 45px; cursor: pointer; transition: 0.3s; }
-        .gear-menu { 
-            position: absolute; bottom: 60px; right: 0; background: white; border: 3px solid var(--cor-principal); 
-            border-radius: 15px; display: none; flex-direction: column; min-width: 130px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        .game-area { 
+            flex: 1; display: grid; grid-template-rows: 1fr 1fr; gap: 10px; padding: 5px;
+            background: #fffafa; border-radius: 20px; border: 2px dashed #ffc1d1;
         }
-        .gear-menu.active { display: flex; }
-        .gear-menu span { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; text-align: center; font-weight: bold; color: var(--cor-texto); }
-        .gear-menu span:hover { background: var(--cor-fundo); }
 
-        .btn-jogar-small { background: var(--cor-vermelho); color: white; border: none; padding: 12px 35px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; }
-
-        /* --- Área de Jogo --- */
-        .game-area { flex: 1; display: grid; grid-template-rows: 1fr 1fr; gap: 10px; padding: 5px; overflow: hidden; }
-        .grid-layout { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 8px; }
+        .drop-grid, .drag-grid { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 10px; }
         
-        .drop-target { 
-            width: clamp(55px, 12vw, 85px); height: clamp(55px, 12vw, 85px); 
-            border: 2px dashed #ccc; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+        .target-box { 
+            width: clamp(60px, 12vw, 85px); height: clamp(60px, 12vw, 85px); 
+            border: 2px dashed #ccc; border-radius: 15px; display: flex; align-items: center; justify-content: center;
         }
-        .drop-target img { width: 85%; filter: brightness(0); opacity: 0.15; }
-        .drop-target.success { border: 2px solid var(--cor-sucesso); background: #e8f9f4; }
-        .drop-target.success img { filter: none; opacity: 1; }
+        .target-box img { width: 80%; filter: brightness(0); opacity: 0.15; pointer-events: none; }
+        .target-box.filled { border: 2px solid var(--cor-jogo-verde); background: #e8f9f4; }
+        .target-box.filled img { filter: none; opacity: 1; }
 
-        .draggable-item { 
-            width: clamp(50px, 11vw, 75px); height: clamp(50px, 11vw, 75px); 
+        .item-drag { 
+            width: clamp(55px, 11vw, 80px); height: clamp(55px, 11vw, 80px); 
             cursor: grab; touch-action: none; z-index: 100;
         }
-        .draggable-item img { width: 100%; pointer-events: none; }
-        .dragging { opacity: 0.6; transform: scale(1.2); pointer-events: none; }
+        .item-drag img { width: 100%; pointer-events: none; }
+        .dragging { opacity: 0.8; transform: scale(1.1); z-index: 1000; }
 
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 85%; max-width: 400px; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 90%; max-width: 400px; }
     </style>
 </head>
 <body>
@@ -88,8 +100,8 @@
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     
     <div class="sidebar" id="sidebar">
-        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
+        <div style="padding:15px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:bold; color:var(--cor-principal);">MENU</span>
             <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
@@ -103,24 +115,27 @@
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
         <h1 style="display:flex; align-items:center; gap:10px; font-size:1rem; color:var(--cor-principal); margin: 0;">
-            <img id="header-icon" src="" style="height:32px;"> Pré-Escolar
+            <img id="header-icon" src="" style="height:32px;"> Pré-Escolar - Sombras
         </h1>
         <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
     </header>
 
     <main class="main-content">
         <section id="intro-screen" class="screen active">
-            <div class="game-card" style="justify-content:center; align-items:center; text-align:center;">
-                <h1 style="color:var(--cor-principal); margin-bottom: 0;">De quem é esta sombra?</h1>
-                <p style="color:var(--cor-texto);">Arrasta cada um para o sítio certo!</p>
-                <div class="intro-btns">
-                    <button class="btn-jogar-small" onclick="startGame()">JOGAR</button>
-                    <div class="gear-container">
-                        <img id="gear-img" src="" class="rd-btn" onclick="toggleGear()">
+            <div class="game-card">
+                <div class="explanation-box">
+                    <img id="anim-shadow-img" src="" class="anim-shadow">
+                    <img id="anim-animal-img" src="" class="anim-item">
+                    <p style="color:var(--cor-texto); font-weight:bold; margin-top:15px;">De quem é esta sombra?</p>
+                </div>
+                <h2 class="game-title">Sombras Misteriosas</h2>
+                <div class="intro-controls">
+                    <button class="btn-jogar" onclick="startGame()">JOGAR</button>
+                    <div class="gear-btn">
+                        <img id="gear-img" src="" style="width:100%;" onclick="toggleGear()">
                         <div id="gear-menu" class="gear-menu">
-                            <div style="background:var(--cor-principal); color:white; padding:5px; font-size:0.8rem;">ESCOLHE:</div>
-                            <span onclick="setTheme('animais')">Animais</span>
-                            <span onclick="setTheme('frutas')">Frutas</span>
+                            <div class="gear-opt" onclick="setTheme('animais')">Animais</div>
+                            <div class="gear-opt" onclick="setTheme('frutas')">Frutas</div>
                         </div>
                     </div>
                 </div>
@@ -134,9 +149,9 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div>PTS: <span id="points">0</span></div>
                 </div>
-                <div id="game-area" class="game-area">
-                    <div id="shadows-cont" class="grid-layout"></div>
-                    <div id="items-cont" class="grid-layout" style="background:#fff0f3; border-radius:20px; padding:10px;"></div>
+                <div class="game-area">
+                    <div id="targets-grid" class="drop-grid"></div>
+                    <div id="drags-grid" class="drag-grid" style="background:#fff2f5; border-radius:15px;"></div>
                 </div>
             </div>
         </section>
@@ -144,9 +159,9 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color: var(--cor-principal);">Excelente!</h2>
-            <div id="modal-msg"></div>
-            <button class="btn-jogar-small" onclick="location.reload()" style="margin-top:20px;">Jogar de Novo</button>
+            <h2 id="modal-title" style="color:var(--cor-principal);">Parabéns!</h2>
+            <div id="modal-msg" style="margin: 20px 0;"></div>
+            <button class="btn-jogar" onclick="location.reload()">Jogar de Novo</button>
         </div>
     </div>
 
@@ -154,7 +169,7 @@
     <script>
         let currentLevel = 1, points = 0, seconds = 0, timerInterval;
         let selectedTheme = 'animais', matchedCount = 0, totalToMatch = 6;
-        let dragItem = null, offsetX, offsetY;
+        let dragElement = null, startX, startY;
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
@@ -166,11 +181,16 @@
             document.getElementById('side-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
             document.getElementById('side-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
             document.getElementById('gear-img').src = g + "rd.png";
+            
+            // Setup Animação Inicial
+            const firstAni = JOGO_CONFIG.categorias.animais;
+            document.getElementById('anim-shadow-img').src = firstAni.caminho + firstAni.lista[0];
+            document.getElementById('anim-animal-img').src = firstAni.caminho + firstAni.lista[0];
         };
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function toggleGear() { document.getElementById('gear-menu').classList.toggle('active'); }
-        function setTheme(t) { selectedTheme = t; toggleGear(); }
+        function setTheme(t) { selectedTheme = t; toggleGear(); alert("Tema: " + t); }
 
         function startGame() {
             document.getElementById('intro-screen').classList.remove('active');
@@ -192,99 +212,128 @@
             matchedCount = 0;
             totalToMatch = currentLevel === 1 ? 6 : 9;
             const cat = JOGO_CONFIG.categorias[selectedTheme];
-            const items = [...cat.lista].sort(() => 0.5 - Math.random()).slice(0, totalToMatch);
+            const chosen = [...cat.lista].sort(() => 0.5 - Math.random()).slice(0, totalToMatch);
 
-            const sCont = document.getElementById('shadows-cont');
-            const iCont = document.getElementById('items-cont');
-            sCont.innerHTML = ''; iCont.innerHTML = '';
+            const tGrid = document.getElementById('targets-grid');
+            const dGrid = document.getElementById('drags-grid');
+            tGrid.innerHTML = ''; dGrid.innerHTML = '';
 
-            // Sombras
-            [...items].sort(() => 0.5 - Math.random()).forEach(imgName => {
+            // Criar Sombras
+            [...chosen].sort(() => 0.5 - Math.random()).forEach(img => {
                 const div = document.createElement('div');
-                div.className = 'drop-target';
-                div.dataset.id = imgName;
-                div.innerHTML = `<img src="${cat.caminho + imgName}">`;
-                sCont.appendChild(div);
+                div.className = 'target-box';
+                div.dataset.id = img;
+                div.innerHTML = `<img src="${cat.caminho + img}">`;
+                tGrid.appendChild(div);
             });
 
-            // Animais Arrastáveis
-            items.forEach(imgName => {
+            // Criar Itens
+            chosen.forEach(img => {
                 const div = document.createElement('div');
-                div.className = 'draggable-item';
-                div.dataset.id = imgName;
-                div.innerHTML = `<img src="${cat.caminho + imgName}">`;
+                div.className = 'item-drag';
+                div.dataset.id = img;
+                div.style.position = 'relative';
+                div.innerHTML = `<img src="${cat.caminho + img}">`;
                 
-                div.addEventListener('touchstart', onTStart, {passive: false});
-                div.addEventListener('touchmove', onTMove, {passive: false});
-                div.addEventListener('touchend', onTEnd);
+                // Eventos Unificados (PC e Mobile)
+                div.addEventListener('mousedown', startDrag);
+                div.addEventListener('touchstart', startDrag, {passive: false});
                 
-                iCont.appendChild(div);
+                dGrid.appendChild(div);
             });
         }
 
-        // --- Drag & Drop Touch ---
-        function onTStart(e) {
-            dragItem = this;
-            const touch = e.touches[0];
-            const rect = dragItem.getBoundingClientRect();
-            offsetX = touch.clientX - rect.left;
-            offsetY = touch.clientY - rect.top;
-            dragItem.classList.add('dragging');
-        }
-
-        function onTMove(e) {
-            if(!dragItem) return;
+        // --- Lógica Drag & Drop Robusta ---
+        function startDrag(e) {
             e.preventDefault();
-            const touch = e.touches[0];
-            dragItem.style.position = 'fixed';
-            dragItem.style.left = (touch.clientX - offsetX) + 'px';
-            dragItem.style.top = (touch.clientY - offsetY) + 'px';
+            dragElement = this;
+            const event = e.type === 'touchstart' ? e.touches[0] : e;
+            const rect = dragElement.getBoundingClientRect();
+            
+            startX = event.clientX - rect.left;
+            startY = event.clientY - rect.top;
+            
+            dragElement.classList.add('dragging');
+            dragElement.style.width = rect.width + 'px';
+            dragElement.style.height = rect.height + 'px';
+            dragElement.style.position = 'fixed';
+            moveAt(event.clientX, event.clientY);
+
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('touchmove', onMove, {passive: false});
+            document.addEventListener('mouseup', stopDrag);
+            document.addEventListener('touchend', stopDrag);
         }
 
-        function onTEnd(e) {
-            if(!dragItem) return;
-            dragItem.classList.remove('dragging');
-            const touch = e.changedTouches[0];
-            const target = document.elementFromPoint(touch.clientX, touch.clientY)?.closest('.drop-target');
+        function onMove(e) {
+            const event = e.type === 'touchmove' ? e.touches[0] : e;
+            moveAt(event.clientX, event.clientY);
+        }
 
-            if(target && target.dataset.id === dragItem.dataset.id && !target.classList.contains('success')) {
-                target.classList.add('success');
-                dragItem.style.display = 'none';
-                points += 10;
+        function moveAt(clientX, clientY) {
+            if(!dragElement) return;
+            dragElement.style.left = (clientX - startX) + 'px';
+            dragElement.style.top = (clientY - startY) + 'px';
+        }
+
+        function stopDrag(e) {
+            if(!dragElement) return;
+            
+            const event = e.type === 'touchend' ? e.changedTouches[0] : e;
+            dragElement.hidden = true; // Esconder para detectar o que está por baixo
+            const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
+            dragElement.hidden = false;
+
+            const target = elemBelow ? elemBelow.closest('.target-box') : null;
+
+            if(target && target.dataset.id === dragElement.dataset.id && !target.classList.contains('filled')) {
+                // SUCESSO
+                target.classList.add('filled');
+                dragElement.remove();
+                points += 20;
                 document.getElementById('points').innerText = points;
                 matchedCount++;
-                checkProgress();
+                updateStars();
+                if(matchedCount === totalToMatch) nextLevel();
             } else {
-                dragItem.style.position = 'static';
+                // FALHOU - Volta para o lugar
+                dragElement.classList.remove('dragging');
+                dragElement.style.position = 'relative';
+                dragElement.style.left = '0';
+                dragElement.style.top = '0';
+                dragElement.style.width = '';
+                dragElement.style.height = '';
             }
-            dragItem = null;
+
+            dragElement = null;
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('touchmove', onMove);
+            document.removeEventListener('mouseup', stopDrag);
+            document.removeEventListener('touchend', stopDrag);
         }
 
-        function checkProgress() {
-            // Atualizar Estrelas baseado no progresso
+        function updateStars() {
             const stars = document.querySelectorAll('.star');
-            let starIndex = Math.floor((matchedCount / totalToMatch) * 5) - 1;
-            if(starIndex >= 0) stars[starIndex].classList.add('correct');
+            const percent = matchedCount / totalToMatch;
+            const starToFill = Math.floor(percent * 5) - 1;
+            if(starToFill >= 0 && stars[starToFill]) stars[starToFill].classList.add('correct');
+        }
 
-            if(matchedCount === totalToMatch) {
-                setTimeout(() => {
-                    if(currentLevel === 1) {
-                        currentLevel = 2;
-                        initStars();
-                        loadLevel();
-                    } else {
-                        endGame();
-                    }
-                }, 600);
-            }
+        function nextLevel() {
+            setTimeout(() => {
+                if(currentLevel === 1) {
+                    currentLevel = 2;
+                    initStars();
+                    loadLevel();
+                } else {
+                    endGame();
+                }
+            }, 600);
         }
 
         function endGame() {
             clearInterval(timerInterval);
-            document.getElementById('modal-msg').innerHTML = `
-                <p>Pontos: <b>${points}</b></p>
-                <p>Tempo: <b>${document.getElementById('timer').innerText}</b></p>
-            `;
+            document.getElementById('modal-msg').innerHTML = `<p>Pontos: <b>${points}</b></p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p>`;
             document.getElementById('modal').style.display = 'flex';
         }
     </script>
