@@ -40,9 +40,10 @@
             background: white; border-radius: 30px; padding: 10px; 
             border: 4px solid var(--cor-principal);
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
+            position: relative;
         }
 
-        /* --- Explicação Animada (Original) --- */
+        /* --- Explicação Animada --- */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
         .anim-item { width: 80px; position: absolute; z-index: 5; animation: slideAnim 3s infinite; }
         .anim-shadow { width: 90px; filter: brightness(0); opacity: 0.15; }
@@ -56,12 +57,19 @@
         .game-title { color: var(--cor-principal); text-align: center; font-size: 1.4rem; margin: 5px 0; font-weight: bold; }
 
         /* --- Botoes Intro --- */
-        .intro-controls { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
-        .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 12px 35px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; }
+        .intro-controls { display: flex; align-items: center; gap: 10px; margin-top: 10px; width: 100%; }
+        .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 12px 35px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; flex: 1; transition: transform 0.2s; }
+        .btn-jogar:active { transform: scale(0.95); }
+        
         .gear-btn { width: 45px; height: 45px; cursor: pointer; position: relative; }
-        .gear-menu { position: absolute; bottom: 55px; right: 0; background: white; border: 3px solid var(--cor-principal); border-radius: 15px; display: none; flex-direction: column; min-width: 120px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        /* Botão RD flutuante no jogo */
+        .rd-float { position: absolute; bottom: 15px; right: 15px; z-index: 100; }
+
+        .gear-menu { position: absolute; bottom: 55px; right: 0; background: white; border: 3px solid var(--cor-principal); border-radius: 15px; display: none; flex-direction: row; gap: 10px; padding: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .gear-menu.active { display: flex; }
-        .gear-opt { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; text-align: center; color: var(--cor-texto); font-weight: bold; }
+        .gear-opt { cursor: pointer; border: 2px solid #eee; border-radius: 10px; padding: 5px; transition: 0.2s; }
+        .gear-opt:hover { border-color: var(--cor-principal); background: #fff0f3; }
+        .gear-opt img { width: 50px; height: 50px; object-fit: contain; }
 
         /* --- Jogo --- */
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; font-size: 0.85rem; }
@@ -70,26 +78,31 @@
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
 
         .game-area { 
-            flex: 1; display: grid; grid-template-rows: 1fr 1fr; gap: 10px; padding: 5px;
-            background: #fffafa; border-radius: 20px; border: 2px dashed #ffc1d1;
+            flex: 1; display: grid; grid-template-rows: 1fr 1fr; gap: 10px; padding: 10px;
+            background: var(--cor-principal); border-radius: 20px; transition: background 0.3s;
         }
+        /* Feedback de Erro */
+        .game-area.error-flash { background: var(--cor-erro) !important; }
 
-        .drop-grid, .drag-grid { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 10px; }
+        .drop-grid, .drag-grid { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 10px; border-radius: 15px; padding: 5px; }
+        .drag-grid { background: rgba(255, 255, 255, 0.3); } /* Rosa mais claro para contraste */
         
         .target-box { 
             width: clamp(60px, 12vw, 85px); height: clamp(60px, 12vw, 85px); 
-            border: 2px dashed #ccc; border-radius: 15px; display: flex; align-items: center; justify-content: center;
+            border: 2px dashed rgba(255,255,255,0.5); border-radius: 15px; display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.1);
         }
-        .target-box img { width: 80%; filter: brightness(0); opacity: 0.15; pointer-events: none; }
-        .target-box.filled { border: 2px solid var(--cor-jogo-verde); background: #e8f9f4; }
+        .target-box img { width: 80%; filter: brightness(0); opacity: 0.2; pointer-events: none; }
+        .target-box.filled { border: 2px solid var(--cor-jogo-verde); background: white; }
         .target-box.filled img { filter: none; opacity: 1; }
 
         .item-drag { 
             width: clamp(55px, 11vw, 80px); height: clamp(55px, 11vw, 80px); 
             cursor: grab; touch-action: none; z-index: 100;
+            background: white; border-radius: 12px; padding: 5px; box-shadow: 0 4px 0 rgba(0,0,0,0.1);
         }
         .item-drag img { width: 100%; pointer-events: none; }
-        .dragging { opacity: 0.8; transform: scale(1.1); z-index: 1000; }
+        .dragging { opacity: 0.8; transform: scale(1.1); z-index: 1000; position: fixed !important; }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 90%; max-width: 400px; }
@@ -132,10 +145,9 @@
                 <div class="intro-controls">
                     <button class="btn-jogar" onclick="startGame()">JOGAR</button>
                     <div class="gear-btn">
-                        <img id="gear-img" src="" style="width:100%;" onclick="toggleGear()">
+                        <img class="gear-img-src" src="" style="width:100%;" onclick="toggleGear()">
                         <div id="gear-menu" class="gear-menu">
-                            <div class="gear-opt" onclick="setTheme('animais')">Animais</div>
-                            <div class="gear-opt" onclick="setTheme('frutas')">Frutas</div>
+                            <!-- Ícones das categorias carregados via JS -->
                         </div>
                     </div>
                 </div>
@@ -149,9 +161,13 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div>PTS: <span id="points">0</span></div>
                 </div>
-                <div class="game-area">
+                <div id="main-game-area" class="game-area">
                     <div id="targets-grid" class="drop-grid"></div>
-                    <div id="drags-grid" class="drag-grid" style="background:#fff2f5; border-radius:15px;"></div>
+                    <div id="drags-grid" class="drag-grid"></div>
+                </div>
+                <!-- Botão RD no fundo à direita -->
+                <div class="gear-btn rd-float">
+                    <img class="gear-img-src" src="" style="width:100%;" onclick="location.reload()">
                 </div>
             </div>
         </section>
@@ -161,7 +177,7 @@
         <div class="modal-content">
             <h2 id="modal-title" style="color:var(--cor-principal);">Parabéns!</h2>
             <div id="modal-msg" style="margin: 20px 0;"></div>
-            <button class="btn-jogar" onclick="location.reload()">Jogar de Novo</button>
+            <button class="btn-jogar" style="width:100%" onclick="location.reload()">Jogar de Novo</button>
         </div>
     </div>
 
@@ -180,8 +196,22 @@
             document.getElementById('side-2').src = p + JOGO_CONFIG.iconesMenu.ano2;
             document.getElementById('side-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
             document.getElementById('side-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
-            document.getElementById('gear-img').src = g + "rd.png";
             
+            // Botões RD
+            const gearImgs = document.querySelectorAll('.gear-img-src');
+            gearImgs.forEach(img => img.src = g + "rd.png");
+            
+            // Setup Menu Categorias com Imagens
+            const menuCat = document.getElementById('gear-menu');
+            Object.keys(JOGO_CONFIG.categorias).forEach(key => {
+                const cat = JOGO_CONFIG.categorias[key];
+                const div = document.createElement('div');
+                div.className = 'gear-opt';
+                div.onclick = () => setTheme(key);
+                div.innerHTML = `<img src="${cat.caminho + cat.lista[0]}" title="${key}">`;
+                menuCat.appendChild(div);
+            });
+
             // Setup Animação Inicial
             const firstAni = JOGO_CONFIG.categorias.animais;
             document.getElementById('anim-shadow-img').src = firstAni.caminho + firstAni.lista[0];
@@ -190,7 +220,7 @@
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function toggleGear() { document.getElementById('gear-menu').classList.toggle('active'); }
-        function setTheme(t) { selectedTheme = t; toggleGear(); alert("Tema: " + t); }
+        function setTheme(t) { selectedTheme = t; toggleGear(); }
 
         function startGame() {
             document.getElementById('intro-screen').classList.remove('active');
@@ -210,7 +240,7 @@
 
         function loadLevel() {
             matchedCount = 0;
-            totalToMatch = currentLevel === 1 ? 6 : 9;
+            totalToMatch = currentLevel === 1 ? 6 : 8;
             const cat = JOGO_CONFIG.categorias[selectedTheme];
             const chosen = [...cat.lista].sort(() => 0.5 - Math.random()).slice(0, totalToMatch);
 
@@ -218,7 +248,6 @@
             const dGrid = document.getElementById('drags-grid');
             tGrid.innerHTML = ''; dGrid.innerHTML = '';
 
-            // Criar Sombras
             [...chosen].sort(() => 0.5 - Math.random()).forEach(img => {
                 const div = document.createElement('div');
                 div.className = 'target-box';
@@ -227,36 +256,28 @@
                 tGrid.appendChild(div);
             });
 
-            // Criar Itens
             chosen.forEach(img => {
                 const div = document.createElement('div');
                 div.className = 'item-drag';
                 div.dataset.id = img;
-                div.style.position = 'relative';
                 div.innerHTML = `<img src="${cat.caminho + img}">`;
-                
-                // Eventos Unificados (PC e Mobile)
                 div.addEventListener('mousedown', startDrag);
                 div.addEventListener('touchstart', startDrag, {passive: false});
-                
                 dGrid.appendChild(div);
             });
         }
 
-        // --- Lógica Drag & Drop Robusta ---
         function startDrag(e) {
             e.preventDefault();
             dragElement = this;
             const event = e.type === 'touchstart' ? e.touches[0] : e;
             const rect = dragElement.getBoundingClientRect();
-            
             startX = event.clientX - rect.left;
             startY = event.clientY - rect.top;
             
             dragElement.classList.add('dragging');
             dragElement.style.width = rect.width + 'px';
             dragElement.style.height = rect.height + 'px';
-            dragElement.style.position = 'fixed';
             moveAt(event.clientX, event.clientY);
 
             document.addEventListener('mousemove', onMove);
@@ -280,14 +301,14 @@
             if(!dragElement) return;
             
             const event = e.type === 'touchend' ? e.changedTouches[0] : e;
-            dragElement.hidden = true; // Esconder para detectar o que está por baixo
+            dragElement.hidden = true;
             const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
             dragElement.hidden = false;
 
             const target = elemBelow ? elemBelow.closest('.target-box') : null;
 
             if(target && target.dataset.id === dragElement.dataset.id && !target.classList.contains('filled')) {
-                // SUCESSO
+                // ACERTO
                 target.classList.add('filled');
                 dragElement.remove();
                 points += 20;
@@ -296,7 +317,8 @@
                 updateStars();
                 if(matchedCount === totalToMatch) nextLevel();
             } else {
-                // FALHOU - Volta para o lugar
+                // ERRO
+                triggerError();
                 dragElement.classList.remove('dragging');
                 dragElement.style.position = 'relative';
                 dragElement.style.left = '0';
@@ -312,11 +334,17 @@
             document.removeEventListener('touchend', stopDrag);
         }
 
+        function triggerError() {
+            const area = document.getElementById('main-game-area');
+            area.classList.add('error-flash');
+            setTimeout(() => area.classList.remove('error-flash'), 300);
+        }
+
         function updateStars() {
             const stars = document.querySelectorAll('.star');
             const percent = matchedCount / totalToMatch;
-            const starToFill = Math.floor(percent * 5) - 1;
-            if(starToFill >= 0 && stars[starToFill]) stars[starToFill].classList.add('correct');
+            const starIndex = Math.floor(percent * 5) - 1;
+            if(starIndex >= 0 && stars[starIndex]) stars[starIndex].classList.add('correct');
         }
 
         function nextLevel() {
