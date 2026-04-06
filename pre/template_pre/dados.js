@@ -10,17 +10,12 @@ const JOGO_CONFIG = {
         ano4: "icon4.png"
     },
 
-    // Caminho para as imagens do trator/reboque (usadas na animação)
-    caminhoImg: "../../img/geral/", 
+    // Caminho para as imagens do trator/reboque
+    caminhoImg: "../../img/", 
     
     veiculos: {
         trator: "trator.png",
-        reboque: "reboque.png"
-    },
-    
-    numeros: [
-        { valor: 3, imagem: "n3.png" },
-        { valor: 4, imagem: "n4.png" },
-        { valor: 5, imagem: "n5.png" }
-    ]
+        reboque: "reboque.png",
+        roda: "rd.png"
+    }
 };
