@@ -3,220 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sequências do Trator</title>
+    <title>1º Ano - Matemática - Sequências do Trator</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --cor-principal: #ff9100;   
-            --cor-vibrante: #ff7300;  
-            --cor-fundo: #e8f9f4;      
-            --cor-texto: #8a6436;      
-            --cor-jogo-verde: #45cfa8;  
+            --cor-principal: #e691a7; /* Rosa (Cor do botão Voltar e Sidebar Hover) */
+            --cor-vibrante: #d47a92;  
+            --cor-fundo: #fff5f7;      
+            --cor-texto: #555555;      
+            --cor-vermelho: #ff4757; /* Cor do botão JOGAR */
             --header-height: 70px;
+            --cor-jogo-verde: #45cfa8;  
+            --cor-erro: #ff4757;
         }
 
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* --- Sidebar (Menu Hambúrguer) --- */
-        .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 3000; padding-top: 10px; }
-        .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; }
-        .sidebar-item:hover { background-color: var(--cor-principal); color: white; }
-        .sidebar-item img { width: 30px; height: 30px; margin-right: 12px; }
+        /* --- Header --- */
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
 
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 2500; }
+        /* --- Sidebars --- */
+        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
+        .sidebar.active { left: 0; }
+        
+        /* Menu RD (Abre para cima) */
+        .sidebar-rd { position: fixed; bottom: -300px; left: 0; width: 100%; height: 250px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
+        .sidebar-rd.active { bottom: 0; }
+
+        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
+        .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
+        .sidebar-item img { width: 28px; height: 28px; margin-right: 12px; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* --- Header --- */
-        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; }
-        .menu-btn { background: none; border: none; font-size: 30px; color: var(--cor-principal); cursor: pointer; padding: 10px; }
-
-        /* --- Gestão de Ecrãs --- */
-        .screen { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; padding: 15px; width: 100%; height: calc(100% - var(--header-height)); box-sizing: border-box; }
+        /* --- Layout --- */
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
 
-        /* --- Card Principal --- */
         .game-card {
-            background: white; border-radius: 30px; padding: 20px; border: 4px solid var(--cor-jogo-verde);
-            display: flex; flex-direction: column; width: 100%; max-width: 850px; height: 100%; position: relative; box-sizing: border-box;
+            background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-jogo-verde);
+            display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Animação de Introdução --- */
-        .explanation-box { background: #f0fdf9; border-radius: 20px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-around; overflow: hidden; padding: 15px; border: 2px dashed #b2dfdb; }
-        .anim-line-train { width: 100%; height: 120px; position: relative; display: flex; align-items: flex-end; justify-content: center; }
+        .explanation-box { background: #fff; border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 15px; border: 2px solid #fce4ec; }
+        
+        .anim-line-2 { width: 100%; height: 110px; position: relative; display: flex; align-items: flex-end; justify-content: center; }
         .anim-train-wrap { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; animation: animDriveIn 2s ease-out forwards; }
-        
-        @keyframes animDriveIn { from { left: -400px; transform: translateX(0); } to { left: 50%; transform: translateX(-50%); } }
+        @keyframes animDriveIn { from { left: -400px; } to { left: 50%; } }
 
-        .wagon { display: flex; flex-direction: column; align-items: center; width: clamp(70px, 12vw, 100px); }
-        .wagon img { width: 100%; }
-        .lacuna-wagon { width: 35px; height: 35px; border: 3px dashed var(--cor-principal); border-radius: 8px; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--cor-vibrante); }
-        .num-holder { height: 50px; display: flex; align-items: center; }
-
-        .anim-options { display: flex; gap: 10px; opacity: 0; animation: fadeIn 0.5s forwards 2s; }
+        .anim-options { display: flex; gap: 15px; opacity: 0; animation: fadeIn 0.5s forwards 2s; }
         @keyframes fadeIn { to { opacity: 1; } }
-        .anim-opt { width: 50px; height: 50px; border: 3px solid var(--cor-jogo-verde); background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: bold; color: var(--cor-texto); }
-        .anim-opt.correct { animation: pulse 2s infinite 2.5s; }
-        @keyframes pulse { 0%, 100% { background: white; transform: scale(1); } 50% { background: var(--cor-jogo-verde); color: white; transform: scale(1.1); } }
+        .anim-opt { width: 50px; height: 50px; border: 3px solid var(--cor-jogo-verde); background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: var(--cor-texto); }
+        .correct-anim { animation: selectAnim 2s infinite 2.5s; }
+        @keyframes selectAnim { 50% { background: var(--cor-jogo-verde); color: white; transform: scale(1.1); } }
 
-        /* --- Controlos Inferiores --- */
-        .controls-row { display: flex; gap: 15px; width: 100%; margin-top: 15px; position: relative; }
+        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 5px 0; }
+
+        /* Botões Intro */
+        .intro-btns { display: flex; gap: 10px; width: 100%; }
+        .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
+        .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-rd img { width: 35px; height: 35px; }
+
+        /* --- Jogo --- */
+        .game-area { flex: 1; display: flex; flex-direction: column; background: white; border-radius: 20px; border: 2px dashed var(--cor-principal); position: relative; padding: 10px; }
+        .road { height: 40%; position: relative; overflow: hidden; display: flex; align-items: center; }
+        .tractor-train { display: flex; align-items: flex-end; position: absolute; left: -1200px; }
+        .tractor-train.at-center { left: 50%; transform: translateX(-50%); transition: left 0.8s ease-out; }
+        .tractor-train.exit { left: 120%; transition: left 0.8s ease-in; }
+
+        .wagon { width: clamp(80px, 13vw, 110px); display: flex; flex-direction: column; align-items: center; }
+        .wagon img.vehicle { width: 100%; height: auto; }
+        .num-holder { height: 60px; display: flex; justify-content: center; align-items: center; font-size: 2.2rem; font-weight: bold; color: var(--cor-texto); }
+        .lacuna-wagon { width: 50px; height: 50px; border: 3px dashed var(--cor-principal); border-radius: 10px; background: white; display: flex; align-items: center; justify-content: center; color: var(--cor-vibrante); }
+
+        .options-area { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 10px; width: 100%; max-width: 400px; margin: 0 auto; }
+        .opt-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-texto); height: 65px; border-radius: 15px; cursor: pointer; font-size: 1.8rem; font-weight: 700; font-family: 'Fredoka'; }
         
-        .play-btn { flex: 1; background: var(--cor-jogo-verde); color: white; border: none; padding: 18px; border-radius: 20px; font-size: 1.5rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; transition: 0.2s; }
-        .play-btn:hover { background: #3bb896; transform: scale(1.02); }
+        .error-shake { animation: shake 0.4s; border-color: var(--cor-erro) !important; }
+        @keyframes shake { 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
 
-        /* Botão RD e Menu Suspenso */
-        .rd-container { position: relative; width: 80px; }
-        .rd-btn { width: 100%; height: 100%; background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); border-radius: 20px; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.2s; }
-        
-        .rd-menu-up {
-            position: absolute; bottom: 110%; left: 0; width: 100%;
-            background: white; border: 3px solid var(--cor-jogo-verde); border-radius: 15px;
-            display: flex; flex-direction: column; padding: 10px 0; gap: 10px; align-items: center;
-            opacity: 0; visibility: hidden; transform: translateY(10px); transition: 0.3s; z-index: 100;
-        }
-        .rd-menu-up.active { opacity: 1; visibility: visible; transform: translateY(0); }
-        .rd-item { width: 45px; height: 45px; background: #f0f0f0; border-radius: 10px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.3rem; transition: 0.2s; }
-        .rd-item:hover { background: var(--cor-jogo-verde); color: white; }
-
-        /* --- Ecrã do Jogo (Simulação) --- */
-        #game-screen { background: #fff; }
-        .game-placeholder { text-align: center; color: var(--cor-texto); }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); width: 90%; max-width: 350px; }
     </style>
 </head>
 <body>
 
-    <!-- Menu Lateral e Overlay -->
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+    
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
-            <button onclick="toggleSidebar()" style="border:none; background:none; cursor:pointer; font-size:24px;">✕</button>
+            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer;">✕</button>
         </div>
-        <a href="#" class="sidebar-item">🏠 Início</a>
+        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
         <a href="#" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
         <a href="#" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
         <a href="#" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
+        <a href="#" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
+        <a href="#" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
+    </div>
+
+    <div class="sidebar-rd" id="sidebar-rd">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0; color:var(--cor-principal);">Opções</h3>
+            <button onclick="toggleRD()" style="border:none; background:none; font-size:20px;">✕</button>
+        </div>
+        <div class="sidebar-item">⚙️ Configurações</div>
+        <div class="sidebar-item">🔊 Som</div>
     </div>
 
     <header class="nav-bar">
-        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
         <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin: 0;">
             <img id="header-icon" src="" style="height:32px; width: auto;"> Matemática - 1º Ano
         </h1>
-        <a href="#" onclick="location.reload()" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
+        <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
 
-    <!-- ECRÃ 1: INTRODUÇÃO -->
-    <main id="intro-screen" class="screen active">
-        <div class="game-card">
-            <div class="explanation-box">
-                <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.4rem; margin: 0;">Completa a sequência:</p>
-                
-                <div class="anim-line-train" id="train-container">
-                    <!-- Gerado por JS -->
-                </div>
-
-                <div class="anim-options">
-                    <div class="anim-opt">3</div>
-                    <div class="anim-opt correct">4</div>
-                    <div class="anim-opt">5</div>
-                </div>
-            </div>
-
-            <h2 style="color:var(--cor-jogo-verde); text-align:center; font-size:1.8rem; margin: 15px 0;">O Trator das Sequências</h2>
-
-            <div class="controls-row">
-                <!-- Botão RD com Menu para cima -->
-                <div class="rd-container">
-                    <div class="rd-menu-up" id="rdMenu">
-                        <a href="#" class="rd-item">📺</a>
-                        <a href="#" class="rd-item">📄</a>
-                        <a href="#" class="rd-item">ℹ️</a>
+    <main class="main-content">
+        <section id="intro-screen" class="screen active">
+            <div class="game-card">
+                <div class="explanation-box">
+                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin: 0;">Completa a sequência:</p>
+                    <div class="anim-line-2"><div class="anim-train-wrap" id="intro-train"></div></div>
+                    <div class="anim-options">
+                        <div class="anim-opt">3</div>
+                        <div class="anim-opt correct-anim">4</div>
+                        <div class="anim-opt">5</div>
                     </div>
-                    <button class="rd-btn" onclick="toggleRD(event)">RD</button>
                 </div>
-                
-                <button class="play-btn" onclick="openGame()">JOGAR</button>
+                <h2 class="game-title">O Trator das Sequências</h2>
+                <div class="intro-btns">
+                    <button class="btn-play" onclick="startGame()">JOGAR</button>
+                    <button class="btn-rd" onclick="toggleRD()"><img id="btn-rd-img" src=""></button>
+                </div>
             </div>
-        </div>
+        </section>
+
+        <section id="game-screen" class="screen">
+            <div class="game-card">
+                <div style="display:flex; justify-content:space-between; padding:5px 10px; font-size:0.9rem;">
+                    <div>⏳ <span id="timer">00:00</span></div>
+                    <div id="stars-bar" style="display:flex; gap:4px;"></div>
+                    <div>PTS: <span id="points">0</span></div>
+                </div>
+                <div style="text-align:center; font-weight:bold; color:var(--cor-texto); margin:5px;">Clica no número que falta!</div>
+                <div class="game-area">
+                    <div class="road"><div id="train" class="tractor-train"></div></div>
+                    <div id="options-pad" class="options-area"></div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- ECRÃ 2: O JOGO -->
-    <main id="game-screen" class="screen">
-        <div class="game-card">
-            <div class="game-placeholder">
-                <h1>🎮 O Jogo Começou!</h1>
-                <p>O ecrã do jogo ficaria aqui.</p>
-                <button class="play-btn" onclick="location.reload()">Sair do Jogo</button>
-            </div>
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 id="modal-title" style="color:var(--cor-jogo-verde);">Relatório</h2>
+            <div id="modal-msg" style="margin-bottom:20px;"></div>
+            <button class="btn-play" onclick="location.reload()" style="background:var(--cor-jogo-verde);">Jogar de Novo</button>
         </div>
-    </main>
+    </div>
 
     <script src="dados.js"></script>
     <script>
-        // Inicialização
+        let level = 1, points = 0, seconds = 0, timerInterval, questionNum = 1, targetValue = 0, isRoundActive = false;
+
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
             const i = JOGO_CONFIG.iconesMenu;
-            
-            // Carregar ícones dinâmicos
             document.getElementById('header-icon').src = p + i.ano1;
             document.getElementById('side-pre').src = p + i.pre;
             document.getElementById('side-1').src = p + i.ano1;
             document.getElementById('side-2').src = p + i.ano2;
-
-            renderIntroAnimation();
+            document.getElementById('side-3').src = p + i.ano3;
+            document.getElementById('side-4').src = p + i.ano4;
+            document.getElementById('btn-rd-img').src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.roda;
+            buildIntroTrain();
         };
 
-        // Renderiza a animação do trator na intro
-        function renderIntroAnimation() {
-            const container = document.getElementById('train-container');
-            const wrap = document.createElement('div');
-            wrap.className = 'anim-train-wrap';
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
 
-            // Criar 2 reboques (o segundo é a lacuna)
-            for(let i=0; i<2; i++) {
-                const w = document.createElement('div');
-                w.className = 'wagon';
-                w.innerHTML = `
-                    <div class="num-holder">${i===1 ? '<div class="lacuna-wagon">?</div>' : `<img src="${JOGO_CONFIG.caminhoImg}n3.png">`}</div>
-                    <img src="${JOGO_CONFIG.caminhoImg}${JOGO_CONFIG.veiculos.reboque}">
-                `;
-                wrap.appendChild(w);
-            }
-            
-            // Adicionar Trator
-            const tractor = document.createElement('div');
-            tractor.className = 'wagon';
-            tractor.innerHTML = `<div class="num-holder"></div><img src="${JOGO_CONFIG.caminhoImg}${JOGO_CONFIG.veiculos.trator}">`;
-            wrap.appendChild(tractor);
-            
-            container.appendChild(wrap);
+        function buildIntroTrain() {
+            const intro = document.getElementById('intro-train');
+            [3, 4, 5].forEach((n, idx) => {
+                const w = document.createElement('div'); w.className = 'wagon';
+                w.innerHTML = `<div class="num-holder">${idx === 1 ? '?' : n}</div><img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.reboque}" class="vehicle">`;
+                intro.appendChild(w);
+            });
+            const t = document.createElement('div'); t.className = 'wagon';
+            t.innerHTML = `<div class="num-holder"></div><img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.trator}" class="vehicle">`;
+            intro.appendChild(t);
         }
 
-        // --- Funções de Interface ---
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        function toggleRD(event) {
-            event.stopPropagation();
-            document.getElementById('rdMenu').classList.toggle('active');
-        }
-
-        function openGame() {
+        function startGame() {
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
+            timerInterval = setInterval(() => { seconds++; document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; }, 1000);
+            initStars(); loadQuestion();
         }
 
-        // Fechar menus ao clicar fora
-        window.onclick = () => {
-            document.getElementById('rdMenu').classList.remove('active');
-        };
+        function initStars() {
+            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
+            for(let i=0; i<5; i++) { const s = document.createElement('div'); s.style.cssText="width:18px;height:18px;border:1px solid #ccc;border-radius:50%;"; bar.appendChild(s); }
+        }
+
+        function loadQuestion() {
+            const train = document.getElementById('train');
+            const pad = document.getElementById('options-pad');
+            train.className = 'tractor-train'; train.innerHTML = ''; pad.innerHTML = '';
+            
+            let sequence = [], step = (level === 1) ? 1 : (Math.random() > 0.5 ? 1 : 2);
+            let start = Math.floor(Math.random() * (11 - (step * 2)));
+            for(let i=0; i<3; i++) sequence.push(start + (i * step));
+            let hiddenIdx = Math.floor(Math.random() * 3);
+            targetValue = sequence[hiddenIdx];
+
+            sequence.forEach((num, idx) => {
+                const w = document.createElement('div'); w.className = 'wagon';
+                w.innerHTML = `<div class="num-holder">${idx === hiddenIdx ? '<div class="lacuna-wagon" id="lacuna">?</div>' : num}</div><img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.reboque}" class="vehicle">`;
+                train.appendChild(w);
+            });
+            const t = document.createElement('div'); t.className = 'wagon';
+            t.innerHTML = `<div class="num-holder"></div><img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.trator}" class="vehicle">`;
+            train.appendChild(t);
+
+            let opts = [targetValue];
+            while(opts.length < 9) { let r = Math.floor(Math.random() * 11); if(!opts.includes(r)) opts.push(r); }
+            opts.sort(() => Math.random() - 0.5).forEach(o => {
+                const b = document.createElement('button'); b.className = 'opt-btn'; b.innerText = o;
+                b.onclick = () => checkAnswer(o); pad.appendChild(b);
+            });
+            setTimeout(() => { train.classList.add('at-center'); isRoundActive = true; }, 50);
+        }
+
+        function checkAnswer(ans) {
+            if (!isRoundActive) return; isRoundActive = false;
+            const lacuna = document.getElementById('lacuna');
+            if (ans === targetValue) { points += 20; lacuna.innerText = ans; lacuna.style.borderColor = "var(--cor-jogo-verde)"; } 
+            else { lacuna.innerText = "!"; lacuna.classList.add('error-shake'); }
+            document.getElementById('points').innerText = points;
+            setTimeout(() => {
+                document.getElementById('train').classList.add('exit');
+                setTimeout(() => {
+                    questionNum++;
+                    if (questionNum > 5) { if (level === 1) { level = 2; questionNum = 1; initStars(); loadQuestion(); } else endGame(); } 
+                    else loadQuestion();
+                }, 800);
+            }, 1200);
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            document.getElementById('modal-msg').innerHTML = `<p>Pontos: ${points}</p><p>Tempo: ${document.getElementById('timer').innerText}</p>`;
+            document.getElementById('modal').style.display = 'flex';
+        }
     </script>
 </body>
 </html>
