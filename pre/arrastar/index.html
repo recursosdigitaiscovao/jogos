@@ -34,15 +34,15 @@
         .overlay.active { display: block; }
 
         /* ÁREA PRINCIPAL */
-        .main-content { flex: 1; padding: 5px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; }
         .screen.active { display: flex; }
 
         .game-card {
-            background: white; border-radius: 25px; padding: 10px; 
+            background: white; border-radius: 25px; padding: 10px; /* Rigoroso: Padding interior do card de 10px */
             border: 4px solid var(--cor-principal);
             display: flex; flex-direction: column; 
-            width: 100%; max-width: 1100px; height: 98%; 
+            width: 100%; max-width: 1100px; height: 100%; /* Ajustado para 100% devido ao padding de 10px no main-content */
             position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
@@ -221,7 +221,19 @@
             document.getElementById('anim-shadow-img').src = cat.caminho + cat.lista[0];
             document.getElementById('anim-animal-img').src = cat.caminho + cat.lista[0];
             document.getElementById('shared-gear-menu').style.display = 'none';
-            if(document.getElementById('game-screen').classList.contains('active')) loadRound();
+            
+            // RIGOROSO: Voltar sempre para o Nível 1 e reiniciar progresso
+            currentRound = 1;
+            points = 0;
+            matchedCount = 0;
+            document.getElementById('points').innerText = '0';
+            
+            // Se o jogo já estiver a decorrer, reinicia a partida visualmente
+            if(document.getElementById('game-screen').classList.contains('active')) {
+                initStars();
+                startTimer();
+                loadRound();
+            }
         }
 
         function startGame() {
