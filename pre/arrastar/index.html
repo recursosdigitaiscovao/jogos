@@ -53,8 +53,8 @@
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; font-size: 0.9rem; }
         .info-top { display: flex; gap: 15px; align-items: center; font-weight: bold; color: var(--cor-principal); }
         
-        .stars-container { display: flex; gap: 5px; }
-        .star { width: 26px; height: 26px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; color: transparent; background: white; }
+        .stars-container { display: flex; gap: 3px; }
+        .star { width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: transparent; background: white; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.correct::after { content: '✓'; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
@@ -68,7 +68,7 @@
         .drop-grid, .drag-grid { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 8px; }
         
         .target-box { 
-            width: clamp(60px, 11vw, 90px); height: clamp(60px, 11vw, 90px); 
+            width: clamp(55px, 10vw, 85px); height: clamp(55px, 10vw, 85px); 
             border: 3px dashed var(--cor-principal); border-radius: 15px; display: flex; align-items: center; justify-content: center;
             background: white; padding: 5px;
         }
@@ -77,7 +77,7 @@
         .target-box.filled img { filter: none; opacity: 1; }
 
         .item-drag { 
-            width: clamp(55px, 10vw, 85px); height: clamp(55px, 10vw, 85px); 
+            width: clamp(50px, 9vw, 80px); height: clamp(50px, 9vw, 80px); 
             cursor: grab; touch-action: none; background: white; border-radius: 15px; 
             padding: 5px; box-shadow: 0 4px 0 rgba(0,0,0,0.05); border: 2px solid #eee;
             display: flex; align-items: center; justify-content: center;
@@ -145,7 +145,7 @@
             <div class="game-card">
                 <div class="card-header">
                     <div class="info-top">
-                        <span>Tempo: <span id="lbl-timer">00:00</span></span>
+                        <span>⏱️ <span id="lbl-timer">00:00</span></span>
                     </div>
                     <div class="stars-container" id="stars-bar"></div>
                     <div>PTS: <span id="points">0</span></div>
@@ -170,16 +170,16 @@
     </div>
 
     <!-- ÁUDIOS CURTOS -->
-    <audio id="snd-correct" src="https://assets.mixkit.co/active_storage/sfx/605/605-preview.mp3"></audio>
-    <audio id="snd-wrong" src="https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3"></audio>
+    <audio id="snd-correct" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+    <audio id="snd-wrong" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio>
 
     <script src="dados.js"></script>
     <script>
-        let currentLevel = 1, currentRound = 1, points = 0;
+        let currentRound = 1, points = 0;
         let selectedTheme = 'animais', matchedCount = 0;
         let dragElement = null, startX, startY;
         let timerInterval, seconds = 0;
-        const MAX_ROUNDS = 6;
+        const MAX_ROUNDS = 10; // 5 Nível 1 + 5 Nível 2
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
@@ -229,52 +229,48 @@
 
         function setTheme(t) { 
             selectedTheme = t; 
-            currentLevel = 1; // Sempre começa no nível 1 ao mudar tema
             currentRound = 1;
-            
             const menu = document.getElementById('shared-gear-menu');
-            menu.classList.remove('active');
-            menu.style.display = 'none';
-
+            menu.classList.remove('active'); menu.style.display = 'none';
             const cat = JOGO_CONFIG.categorias[t];
             document.getElementById('anim-shadow-img').src = cat.caminho + cat.lista[0];
             document.getElementById('anim-animal-img').src = cat.caminho + cat.lista[0];
-            
-            if(document.getElementById('game-screen').classList.contains('active')) {
-                loadRound();
-                startTimer();
-            }
+            if(document.getElementById('game-screen').classList.contains('active')) { loadRound(); startTimer(); }
         }
 
         function startGame() {
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
             startTimer();
+            initStars();
             loadRound();
+        }
+
+        function initStars() {
+            const bar = document.getElementById('stars-bar');
+            bar.innerHTML = '';
+            for(let i=0; i<MAX_ROUNDS; i++) {
+                const s = document.createElement('div');
+                s.className = 'star';
+                bar.appendChild(s);
+            }
         }
 
         function loadRound() {
             matchedCount = 0;
-            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
-            for(let i=0; i<MAX_ROUNDS; i++) { 
-                const s = document.createElement('div'); 
-                s.className = 'star'; 
-                if(i < currentRound - 1) s.classList.add('correct');
-                bar.appendChild(s); 
-            }
-
             const cat = JOGO_CONFIG.categorias[selectedTheme];
             let allItems = [...cat.lista].sort(() => 0.5 - Math.random());
             
             let targets = [], drags = [];
 
-            if(currentLevel === 1) {
-                targets = allItems.slice(0, 6);
+            // Nível 1: Rondas 1 a 5 | Nível 2: Rondas 6 a 10
+            if(currentRound <= 5) {
+                targets = allItems.slice(0, 5);
                 drags = [...targets].sort(() => 0.5 - Math.random());
             } else {
-                let selection = allItems.slice(0, 9);
+                let selection = allItems.slice(0, 8);
                 drags = [...selection].sort(() => 0.5 - Math.random());
-                targets = selection.slice(0, 6).sort(() => 0.5 - Math.random());
+                targets = selection.slice(0, 5).sort(() => 0.5 - Math.random());
             }
 
             const tGrid = document.getElementById('targets-grid');
@@ -329,39 +325,50 @@
             
             const target = elemBelow ? elemBelow.closest('.target-box') : null;
 
-            if(target && target.dataset.id === dragElement.dataset.id && !target.classList.contains('filled')) {
-                playSound('snd-correct');
-                target.classList.add('filled');
-                dragElement.remove();
-                points += 20;
-                document.getElementById('points').innerText = points;
-                matchedCount++;
-                if(matchedCount === 6) {
-                    updateVisualFeedback(true);
+            if(target && !target.classList.contains('filled')) {
+                if(target.dataset.id === dragElement.dataset.id) {
+                    playSound('snd-correct');
+                    target.classList.add('filled');
+                    dragElement.remove();
+                    points += 20;
+                    document.getElementById('points').innerText = points;
+                    matchedCount++;
+                    if(matchedCount === 5) {
+                        updateVisualFeedback(true);
+                        setTimeout(nextRound, 600);
+                    }
+                } else {
+                    // ERRO: Errou a sombra, pula ronda
+                    playSound('snd-wrong');
+                    updateVisualFeedback(false);
                     setTimeout(nextRound, 600);
                 }
+            } else if (!target && elemBelow && !elemBelow.closest('.drag-grid')) {
+                 // Se soltar fora de um target mas noutra área
+                 dragReset();
             } else {
-                // ERRO - Conta como uma ronda perdida
-                playSound('snd-wrong');
-                updateVisualFeedback(false);
-                setTimeout(nextRound, 600);
+                dragReset();
             }
 
+            if(dragElement) dragReset();
+            
+            document.removeEventListener('mousemove', onMove); document.removeEventListener('touchmove', onMove);
+            document.removeEventListener('mouseup', stopDrag); document.removeEventListener('touchend', stopDrag);
+        }
+
+        function dragReset() {
             if(dragElement) {
                 dragElement.classList.remove('dragging');
                 dragElement.style.position = 'relative';
                 dragElement.style.left = '0'; dragElement.style.top = '0';
+                dragElement = null;
             }
-            
-            dragElement = null;
-            document.removeEventListener('mousemove', onMove); document.removeEventListener('touchmove', onMove);
-            document.removeEventListener('mouseup', stopDrag); document.removeEventListener('touchend', stopDrag);
         }
 
         function playSound(id) {
             const s = document.getElementById(id);
             s.currentTime = 0;
-            s.play().catch(e => console.log("Erro som:", e));
+            s.play().catch(e => {});
         }
 
         function updateVisualFeedback(isCorrect) {
@@ -375,8 +382,6 @@
         function nextRound() {
             if(currentRound < MAX_ROUNDS) {
                 currentRound++;
-                // Alterna nível a meio do jogo para variedade
-                if(currentRound > 3) currentLevel = 2;
                 loadRound();
             } else {
                 endGame();
