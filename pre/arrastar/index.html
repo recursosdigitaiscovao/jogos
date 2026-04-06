@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --cor-principal: #e691a7;   /* Rosa */
+            --cor-principal: #e691a7;
             --cor-vibrante: #d47a92;  
             --cor-fundo: #fff5f7;      
             --cor-texto: #555555;      
@@ -21,22 +21,18 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* --- Header & Sidebar --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: all 0.3s ease; cursor: pointer; font-weight: 500; }
-        .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; padding-left: 35px; }
-        
-        /* CORREÇÃO: Imagens do menu lateral não mais largas que o necessário */
-        .sidebar-item img { width: 32px; height: 32px; margin-right: 12px; object-fit: contain; flex-shrink: 0; }
+        .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; }
+        .sidebar-item img { width: 32px; height: 32px; margin-right: 12px; object-fit: contain; }
         
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* --- Layout --- */
-        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; height: calc(100% - var(--header-height)); }
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow: hidden; }
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
 
         .game-card {
@@ -46,80 +42,56 @@
             position: relative;
         }
 
-        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        .anim-item { width: 100px; position: absolute; z-index: 5; animation: slideAnim 3s infinite; }
-        .anim-shadow { width: 110px; filter: brightness(0); opacity: 0.15; }
-        @keyframes slideAnim {
-            0% { transform: translate(120px, 0); opacity: 0; }
-            20% { opacity: 1; }
-            80% { transform: translate(0, 0); opacity: 1; }
-            100% { transform: translate(0, 0); opacity: 0; }
-        }
-
-        .game-title { color: var(--cor-principal); text-align: center; font-size: 1.4rem; margin: 5px 0; font-weight: bold; }
-
-        /* --- Controlos --- */
-        .intro-controls { display: flex; align-items: center; gap: 10px; margin-top: 10px; width: 100%; position: relative; }
-        .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 12px 35px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; flex: 1; }
-        
-        .gear-btn { width: 45px; height: 45px; cursor: pointer; z-index: 100; }
-        .rd-float { position: absolute; bottom: 15px; right: 15px; }
-
-        /* CORREÇÃO: Menu de escolha */
+        /* Menu de Escolha */
         .gear-menu { 
-            position: fixed; background: white; 
-            border: 3px solid var(--cor-principal); border-radius: 15px; 
-            display: none; flex-direction: row; gap: 10px; padding: 10px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 5000;
+            position: fixed; background: white; border: 3px solid var(--cor-principal); border-radius: 15px; 
+            display: none; flex-direction: row; gap: 10px; padding: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 5000;
         }
         .gear-menu.active { display: flex; }
-        .gear-opt { cursor: pointer; border: 2px solid #eee; border-radius: 10px; padding: 5px; transition: 0.2s; background: white; display: flex; align-items: center; justify-content: center; }
-        .gear-opt:hover { border-color: var(--cor-principal); background: #fff0f3; }
+        .gear-opt { cursor: pointer; border: 2px solid #eee; border-radius: 10px; padding: 5px; background: white; }
         .gear-opt img { width: 50px; height: 50px; object-fit: contain; pointer-events: none; }
 
-        /* --- Jogo --- */
-        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; font-size: 0.85rem; }
-        .stars-container { display: flex; gap: 6px; }
-        
-        /* CORREÇÃO: Estímulo Visual de Certo/Errado nas bolinhas */
-        .star { width: 28px; height: 28px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; color: transparent; background: white; font-weight: bold; transition: 0.2s; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; font-size: 0.9rem; }
+        .stars-container { display: flex; gap: 5px; }
+        .star { width: 26px; height: 26px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; color: transparent; background: white; font-weight: bold; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.correct::after { content: '✓'; }
-        .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; animation: shake 0.3s; }
+        .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
         .star.wrong::after { content: '✕'; }
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-4px); }
-            75% { transform: translateX(4px); }
-        }
-
         .game-area { 
-            flex: 1; display: grid; grid-template-rows: 1.2fr 1fr; gap: 15px; padding: 15px;
-            background: var(--cor-fundo); border-radius: 20px; border: 2px solid #ffdeeb; transition: background 0.2s;
+            flex: 1; display: grid; grid-template-rows: 1fr 1fr; gap: 10px; padding: 10px;
+            background: var(--cor-fundo); border-radius: 20px; transition: background 0.2s; overflow: hidden;
         }
 
-        .drop-grid, .drag-grid { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 15px; }
+        .drop-grid, .drag-grid { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 10px; }
         
-        /* CORREÇÃO: Cartões maiores para as imagens */
         .target-box { 
-            width: clamp(85px, 16vw, 120px); height: clamp(85px, 16vw, 120px); 
-            border: 3px dashed var(--cor-principal); border-radius: 20px; display: flex; align-items: center; justify-content: center;
-            background: white; padding: 5px; box-sizing: border-box;
+            width: clamp(70px, 13vw, 100px); height: clamp(70px, 13vw, 100px); 
+            border: 3px dashed var(--cor-principal); border-radius: 15px; display: flex; align-items: center; justify-content: center;
+            background: white; padding: 5px;
         }
-        .target-box img { width: 90%; height: 90%; object-fit: contain; filter: brightness(0); opacity: 0.15; pointer-events: none; }
+        .target-box img { width: 85%; height: 85%; object-fit: contain; filter: brightness(0); opacity: 0.15; pointer-events: none; }
         .target-box.filled { border: 3px solid var(--cor-jogo-verde); background: #e8f9f4; }
         .target-box.filled img { filter: none; opacity: 1; }
 
         .item-drag { 
-            width: clamp(80px, 15vw, 115px); height: clamp(80px, 15vw, 115px); 
-            cursor: grab; touch-action: none; z-index: 100;
-            background: white; border-radius: 18px; padding: 8px; box-shadow: 0 6px 0 rgba(0,0,0,0.05);
-            display: flex; align-items: center; justify-content: center; box-sizing: border-box;
-            border: 2px solid #eee;
+            width: clamp(65px, 12vw, 95px); height: clamp(65px, 12vw, 95px); 
+            cursor: grab; touch-action: none; background: white; border-radius: 15px; 
+            padding: 5px; box-shadow: 0 4px 0 rgba(0,0,0,0.05); border: 2px solid #eee;
+            display: flex; align-items: center; justify-content: center;
         }
-        .item-drag img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-        .dragging { opacity: 0.8; transform: scale(1.1); z-index: 1000; position: fixed !important; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+        .item-drag img { width: 90%; height: 90%; object-fit: contain; pointer-events: none; }
+        .dragging { opacity: 0.8; transform: scale(1.1); z-index: 1000; position: fixed !important; pointer-events: none; }
+
+        /* Estilos da Intro */
+        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .anim-item { width: 90px; position: absolute; animation: slideAnim 3s infinite; }
+        .anim-shadow { width: 100px; filter: brightness(0); opacity: 0.15; }
+        @keyframes slideAnim { 0% { transform: translate(100px, 0); opacity: 0; } 20% { opacity: 1; } 80% { transform: translate(0, 0); opacity: 1; } 100% { transform: translate(0, 0); opacity: 0; } }
+        .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 12px 35px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; flex: 1; }
+        .gear-btn { width: 45px; height: 45px; cursor: pointer; }
+        .rd-float { position: absolute; bottom: 15px; right: 15px; }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 90%; max-width: 400px; }
@@ -128,7 +100,6 @@
 <body>
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-    
     <div class="sidebar" id="sidebar">
         <div style="padding:15px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
             <span style="font-weight:bold; color:var(--cor-principal);">MENU</span>
@@ -160,10 +131,10 @@
                     <img id="anim-animal-img" src="" class="anim-item">
                     <p style="color:var(--cor-texto); font-weight:bold; margin-top:15px;">De quem é esta sombra?</p>
                 </div>
-                <h2 class="game-title">Sombras Misteriosas</h2>
-                <div class="intro-controls">
+                <h2 style="color:var(--cor-principal); text-align:center; margin:10px 0;">Sombras Misteriosas</h2>
+                <div class="intro-controls" style="display:flex; gap:10px; width:100%;">
                     <button class="btn-jogar" onclick="startGame()">JOGAR</button>
-                    <div class="gear-btn" id="gear-anchor-intro" onclick="toggleGear(this)">
+                    <div class="gear-btn" onclick="toggleGear(this)">
                         <img class="gear-img-src" src="" style="width:100%;">
                     </div>
                 </div>
@@ -181,7 +152,7 @@
                     <div id="targets-grid" class="drop-grid"></div>
                     <div id="drags-grid" class="drag-grid"></div>
                 </div>
-                <div class="gear-btn rd-float" id="gear-anchor-game" onclick="toggleGear(this)">
+                <div class="gear-btn rd-float" onclick="toggleGear(this)">
                     <img class="gear-img-src" src="" style="width:100%;">
                 </div>
             </div>
@@ -211,7 +182,6 @@
             document.getElementById('side-2').src = p + JOGO_CONFIG.iconesMenu.ano2;
             document.getElementById('side-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
             document.getElementById('side-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
-            
             document.querySelectorAll('.gear-img-src').forEach(img => img.src = g + "rd.png");
             
             const menuCat = document.getElementById('shared-gear-menu');
@@ -219,50 +189,37 @@
                 const cat = JOGO_CONFIG.categorias[key];
                 const div = document.createElement('div');
                 div.className = 'gear-opt';
-                div.onclick = (e) => { e.stopPropagation(); setTheme(key); };
+                div.onclick = () => setTheme(key);
                 div.innerHTML = `<img src="${cat.caminho + cat.lista[0]}">`;
                 menuCat.appendChild(div);
             });
-
-            const firstAni = JOGO_CONFIG.categorias.animais;
-            document.getElementById('anim-shadow-img').src = firstAni.caminho + firstAni.lista[0];
-            document.getElementById('anim-animal-img').src = firstAni.caminho + firstAni.lista[0];
+            setTheme('animais');
         };
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         
-        // CORREÇÃO: Posicionamento do menu de temas
         function toggleGear(btn) { 
             const menu = document.getElementById('shared-gear-menu');
+            if(menu.classList.contains('active')) { menu.classList.remove('active'); return; }
             const rect = btn.getBoundingClientRect();
-            
-            if (menu.classList.contains('active')) {
-                menu.classList.remove('active');
-            } else {
-                menu.style.display = 'flex'; // Força exibição para calcular tamanho
-                const menuRect = menu.getBoundingClientRect();
-                menu.style.left = (rect.left - menuRect.width + rect.width) + "px";
-                menu.style.top = (rect.top - menuRect.height - 10) + "px";
-                menu.classList.add('active');
-            }
+            menu.style.display = 'flex';
+            menu.style.left = (rect.left - menu.offsetWidth + rect.width) + "px";
+            menu.style.top = (rect.top - menu.offsetHeight - 10) + "px";
+            menu.classList.add('active');
         }
 
         function setTheme(t) { 
             selectedTheme = t; 
             document.getElementById('shared-gear-menu').classList.remove('active');
-            if(document.getElementById('game-screen').classList.contains('active')) {
-                loadLevel();
-            } else {
-                const cat = JOGO_CONFIG.categorias[t];
-                document.getElementById('anim-shadow-img').src = cat.caminho + cat.lista[0];
-                document.getElementById('anim-animal-img').src = cat.caminho + cat.lista[0];
-            }
+            const cat = JOGO_CONFIG.categorias[t];
+            document.getElementById('anim-shadow-img').src = cat.caminho + cat.lista[0];
+            document.getElementById('anim-animal-img').src = cat.caminho + cat.lista[0];
+            if(document.getElementById('game-screen').classList.contains('active')) loadLevel();
         }
 
         function startGame() {
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            initStars();
             loadLevel();
             timerInterval = setInterval(() => {
                 seconds++;
@@ -270,17 +227,13 @@
             }, 1000);
         }
 
-        function initStars() {
-            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
-            // Criamos 5 ou 6 bolinhas dependendo do nível
-            const count = (currentLevel === 1) ? 6 : 8;
-            for(let i=0; i<count; i++) { const s = document.createElement('div'); s.className = 'star'; bar.appendChild(s); }
-        }
-
         function loadLevel() {
             matchedCount = 0;
-            totalToMatch = currentLevel === 1 ? 6 : 8;
-            initStars();
+            totalToMatch = (currentLevel === 1) ? 6 : 9;
+            
+            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
+            for(let i=0; i<totalToMatch; i++) { const s = document.createElement('div'); s.className = 'star'; bar.appendChild(s); }
+
             const cat = JOGO_CONFIG.categorias[selectedTheme];
             const chosen = [...cat.lista].sort(() => 0.5 - Math.random()).slice(0, totalToMatch);
 
@@ -314,11 +267,9 @@
             const rect = dragElement.getBoundingClientRect();
             startX = event.clientX - rect.left;
             startY = event.clientY - rect.top;
-            
             dragElement.classList.add('dragging');
             dragElement.style.width = rect.width + 'px';
             dragElement.style.height = rect.height + 'px';
-            
             moveAt(event.clientX, event.clientY);
             document.addEventListener('mousemove', onMove);
             document.addEventListener('touchmove', onMove, {passive: false});
@@ -342,36 +293,29 @@
                 dragElement.remove();
                 points += 20;
                 document.getElementById('points').innerText = points;
-                updateStars(true);
+                updateVisualFeedback(true);
                 matchedCount++;
                 if(matchedCount === totalToMatch) nextLevel();
             } else {
-                updateStars(false);
+                updateVisualFeedback(false);
                 dragElement.classList.remove('dragging');
                 dragElement.style.position = 'relative';
                 dragElement.style.left = '0'; dragElement.style.top = '0';
-                dragElement.style.width = ''; dragElement.style.height = '';
             }
             dragElement = null;
             document.removeEventListener('mousemove', onMove); document.removeEventListener('touchmove', onMove);
             document.removeEventListener('mouseup', stopDrag); document.removeEventListener('touchend', stopDrag);
         }
 
-        // CORREÇÃO: Estimulo visual X e V nas bolinhas
-        function updateStars(isCorrect) {
+        function updateVisualFeedback(isCorrect) {
             const stars = document.querySelectorAll('.star');
             if(isCorrect) {
-                // Encontra a primeira bolinha vazia e marca como correta
                 for(let s of stars) {
-                    if(!s.classList.contains('correct')) {
-                        s.classList.add('correct');
-                        break;
-                    }
+                    if(!s.classList.contains('correct')) { s.classList.add('correct'); break; }
                 }
             } else {
-                // Encontra a primeira bolinha vazia, pisca o X e remove
                 for(let s of stars) {
-                    if(!s.classList.contains('correct') && !s.classList.contains('wrong')) {
+                    if(!s.classList.contains('correct')) {
                         s.classList.add('wrong');
                         setTimeout(() => s.classList.remove('wrong'), 500);
                         break;
