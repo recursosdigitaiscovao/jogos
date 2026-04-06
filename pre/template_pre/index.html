@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sequências do Trator - Introdução</title>
+    <title>Sequências do Trator</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --cor-principal: #e691a7;   
-            --cor-vibrante: #ff3385; /* Rosa Vibrante solicitado */  
-            --cor-fundo: #fdf2f5;      
-            --cor-texto: #8a4b5b;      
+            --cor-principal: #ff9100;   
+            --cor-vibrante: #ff7300;  
+            --cor-fundo: #e8f9f4;      
+            --cor-texto: #8a6436;      
             --cor-jogo-verde: #45cfa8;  
             --header-height: 70px;
         }
@@ -18,97 +18,86 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* --- Header --- */
-        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; }
-        .menu-btn { background: none; border: none; font-size: 26px; color: var(--cor-principal); cursor: pointer; }
-
-        /* --- Sidebar Lateral --- */
-        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
+        /* --- Sidebar (Menu Hambúrguer) --- */
+        .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 3000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; }
         .sidebar-item:hover { background-color: var(--cor-principal); color: white; }
-        .sidebar-item img { width: 28px; height: 28px; margin-right: 12px; }
+        .sidebar-item img { width: 30px; height: 30px; margin-right: 12px; }
 
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 2500; }
         .overlay.active { display: block; }
 
-        /* --- Layout Principal --- */
-        .main-content { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        
+        /* --- Header --- */
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; }
+        .menu-btn { background: none; border: none; font-size: 30px; color: var(--cor-principal); cursor: pointer; padding: 10px; }
+
+        /* --- Gestão de Ecrãs --- */
+        .screen { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; padding: 15px; width: 100%; height: calc(100% - var(--header-height)); box-sizing: border-box; }
+        .screen.active { display: flex; }
+
+        /* --- Card Principal --- */
         .game-card {
-            background: white; border-radius: 30px; padding: 20px; 
-            border: 4px solid var(--cor-jogo-verde);
-            display: flex; flex-direction: column; width: 100%; max-width: 800px; height: 90%; position: relative;
+            background: white; border-radius: 30px; padding: 20px; border: 4px solid var(--cor-jogo-verde);
+            display: flex; flex-direction: column; width: 100%; max-width: 850px; height: 100%; position: relative; box-sizing: border-box;
         }
 
-        /* --- Explicação Animada --- */
-        .explanation-box { background: #f0fdf9; border-radius: 20px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-around; overflow: hidden; padding: 20px; border: 2px dashed #b2dfdb; }
-        
-        .anim-line-2 { width: 100%; height: 120px; position: relative; display: flex; align-items: flex-end; justify-content: center; }
+        /* --- Animação de Introdução --- */
+        .explanation-box { background: #f0fdf9; border-radius: 20px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-around; overflow: hidden; padding: 15px; border: 2px dashed #b2dfdb; }
+        .anim-line-train { width: 100%; height: 120px; position: relative; display: flex; align-items: flex-end; justify-content: center; }
         .anim-train-wrap { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: flex-end; animation: animDriveIn 2s ease-out forwards; }
+        
         @keyframes animDriveIn { from { left: -400px; transform: translateX(0); } to { left: 50%; transform: translateX(-50%); } }
 
-        .wagon { display: flex; flex-direction: column; align-items: center; width: 90px; }
-        .wagon img.vehicle { width: 100%; height: auto; }
-        .num-holder { height: 50px; display: flex; justify-content: center; align-items: center; }
-        .num-holder img { max-height: 90%; }
+        .wagon { display: flex; flex-direction: column; align-items: center; width: clamp(70px, 12vw, 100px); }
+        .wagon img { width: 100%; }
         .lacuna-wagon { width: 35px; height: 35px; border: 3px dashed var(--cor-principal); border-radius: 8px; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--cor-vibrante); }
+        .num-holder { height: 50px; display: flex; align-items: center; }
 
-        .anim-options { display: flex; gap: 15px; opacity: 0; animation: fadeIn 0.5s forwards 2s; }
+        .anim-options { display: flex; gap: 10px; opacity: 0; animation: fadeIn 0.5s forwards 2s; }
         @keyframes fadeIn { to { opacity: 1; } }
-        .anim-opt { width: 55px; height: 55px; border: 3px solid var(--cor-jogo-verde); background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; color: var(--cor-texto); }
-        .anim-opt.correct-anim { animation: selectAnim 2s infinite 2.5s; }
-        @keyframes selectAnim { 0%, 100% { background: white; transform: scale(1); } 50% { background: var(--cor-jogo-verde); color: white; transform: scale(1.1); } }
+        .anim-opt { width: 50px; height: 50px; border: 3px solid var(--cor-jogo-verde); background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: bold; color: var(--cor-texto); }
+        .anim-opt.correct { animation: pulse 2s infinite 2.5s; }
+        @keyframes pulse { 0%, 100% { background: white; transform: scale(1); } 50% { background: var(--cor-jogo-verde); color: white; transform: scale(1.1); } }
 
-        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.6rem; margin: 15px 0; font-weight: bold; }
-
-        /* --- Botões e Menu RD --- */
-        .controls-row { display: flex; gap: 15px; width: 100%; position: relative; }
+        /* --- Controlos Inferiores --- */
+        .controls-row { display: flex; gap: 15px; width: 100%; margin-top: 15px; position: relative; }
         
-        .play-btn { 
-            flex: 1; background: var(--cor-jogo-verde); color: white; border: none; 
-            padding: 15px; border-radius: 15px; font-size: 1.4rem; font-weight: bold; 
-            cursor: pointer; font-family: 'Fredoka'; transition: 0.2s;
-        }
-        .play-btn:hover { background: #3bb896; transform: translateY(-2px); }
+        .play-btn { flex: 1; background: var(--cor-jogo-verde); color: white; border: none; padding: 18px; border-radius: 20px; font-size: 1.5rem; font-weight: bold; cursor: pointer; font-family: 'Fredoka'; transition: 0.2s; }
+        .play-btn:hover { background: #3bb896; transform: scale(1.02); }
 
-        .rd-btn {
-            background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde);
-            width: 60px; border-radius: 15px; font-weight: bold; font-size: 1.2rem;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
-        }
-
-        /* Menu RD que sobe */
-        .rd-menu {
-            position: absolute; bottom: 85px; left: 0; width: 60px;
-            background: white; border: 3px solid var(--cor-jogo-verde);
-            border-radius: 15px; display: flex; flex-direction: column;
-            padding: 10px 0; gap: 15px; align-items: center;
-            transform: translateY(20px); opacity: 0; visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 100;
-        }
-        .rd-menu.active { transform: translateY(0); opacity: 1; visibility: visible; }
+        /* Botão RD e Menu Suspenso */
+        .rd-container { position: relative; width: 80px; }
+        .rd-btn { width: 100%; height: 100%; background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); border-radius: 20px; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.2s; }
         
-        .rd-menu-item { width: 40px; height: 40px; background: #f0f0f0; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem; }
-        .rd-menu-item:hover { background: var(--cor-jogo-verde); color: white; }
+        .rd-menu-up {
+            position: absolute; bottom: 110%; left: 0; width: 100%;
+            background: white; border: 3px solid var(--cor-jogo-verde); border-radius: 15px;
+            display: flex; flex-direction: column; padding: 10px 0; gap: 10px; align-items: center;
+            opacity: 0; visibility: hidden; transform: translateY(10px); transition: 0.3s; z-index: 100;
+        }
+        .rd-menu-up.active { opacity: 1; visibility: visible; transform: translateY(0); }
+        .rd-item { width: 45px; height: 45px; background: #f0f0f0; border-radius: 10px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.3rem; transition: 0.2s; }
+        .rd-item:hover { background: var(--cor-jogo-verde); color: white; }
 
+        /* --- Ecrã do Jogo (Simulação) --- */
+        #game-screen { background: #fff; }
+        .game-placeholder { text-align: center; color: var(--cor-texto); }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
-    
-    <!-- Sidebar Lateral -->
+    <!-- Menu Lateral e Overlay -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
-            <button onclick="toggleSidebar()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
+            <button onclick="toggleSidebar()" style="border:none; background:none; cursor:pointer; font-size:24px;">✕</button>
         </div>
-        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
-        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
-        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
+        <a href="#" class="sidebar-item">🏠 Início</a>
+        <a href="#" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
+        <a href="#" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
+        <a href="#" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
     </div>
 
     <header class="nav-bar">
@@ -116,113 +105,115 @@
         <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin: 0;">
             <img id="header-icon" src="" style="height:32px; width: auto;"> Matemática - 1º Ano
         </h1>
-        <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
+        <a href="#" onclick="location.reload()" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
     </header>
 
-    <main class="main-content">
+    <!-- ECRÃ 1: INTRODUÇÃO -->
+    <main id="intro-screen" class="screen active">
         <div class="game-card">
             <div class="explanation-box">
-                <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.3rem; margin: 0;">Completa a sequência:</p>
+                <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.4rem; margin: 0;">Completa a sequência:</p>
                 
-                <div class="anim-line-2">
-                    <div class="anim-train-wrap" id="intro-train">
-                        <!-- Gerado via JS -->
-                    </div>
+                <div class="anim-line-train" id="train-container">
+                    <!-- Gerado por JS -->
                 </div>
 
                 <div class="anim-options">
                     <div class="anim-opt">3</div>
-                    <div class="anim-opt correct-anim">4</div>
+                    <div class="anim-opt correct">4</div>
                     <div class="anim-opt">5</div>
                 </div>
             </div>
 
-            <h2 class="game-title">O Trator das Sequências</h2>
+            <h2 style="color:var(--cor-jogo-verde); text-align:center; font-size:1.8rem; margin: 15px 0;">O Trator das Sequências</h2>
 
             <div class="controls-row">
-                <!-- Menu RD (Sobe) -->
-                <div class="rd-menu" id="rdMenu">
-                    <a href="#" class="rd-menu-item" title="Vídeo">📺</a>
-                    <a href="#" class="rd-menu-item" title="PDF">📄</a>
-                    <a href="#" class="rd-menu-item" title="Info">ℹ️</a>
+                <!-- Botão RD com Menu para cima -->
+                <div class="rd-container">
+                    <div class="rd-menu-up" id="rdMenu">
+                        <a href="#" class="rd-item">📺</a>
+                        <a href="#" class="rd-item">📄</a>
+                        <a href="#" class="rd-item">ℹ️</a>
+                    </div>
+                    <button class="rd-btn" onclick="toggleRD(event)">RD</button>
                 </div>
                 
-                <button class="rd-btn" onclick="toggleRDMenu(event)">RD</button>
-                <button class="play-btn" onclick="goToGame()">JOGAR</button>
+                <button class="play-btn" onclick="openGame()">JOGAR</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- ECRÃ 2: O JOGO -->
+    <main id="game-screen" class="screen">
+        <div class="game-card">
+            <div class="game-placeholder">
+                <h1>🎮 O Jogo Começou!</h1>
+                <p>O ecrã do jogo ficaria aqui.</p>
+                <button class="play-btn" onclick="location.reload()">Sair do Jogo</button>
             </div>
         </div>
     </main>
 
     <script src="dados.js"></script>
     <script>
+        // Inicialização
         window.onload = () => {
-            if(typeof JOGO_CONFIG !== 'undefined') {
-                const p = JOGO_CONFIG.caminhoIcons;
-                const i = JOGO_CONFIG.iconesMenu;
-                
-                // Carregar ícones
-                document.getElementById('header-icon').src = p + i.ano1;
-                document.getElementById('side-pre').src = p + i.pre;
-                document.getElementById('side-1').src = p + i.ano1;
-                document.getElementById('side-2').src = p + i.ano2;
+            const p = JOGO_CONFIG.caminhoIcons;
+            const i = JOGO_CONFIG.iconesMenu;
+            
+            // Carregar ícones dinâmicos
+            document.getElementById('header-icon').src = p + i.ano1;
+            document.getElementById('side-pre').src = p + i.pre;
+            document.getElementById('side-1').src = p + i.ano1;
+            document.getElementById('side-2').src = p + i.ano2;
 
-                buildIntroTrain();
-            }
+            renderIntroAnimation();
         };
 
-        function buildIntroTrain() {
-            const intro = document.getElementById('intro-train');
-            const seq = [3, 4, 5];
-            
-            seq.forEach((n, idx) => {
-                const w = document.createElement('div'); w.className = 'wagon';
-                const nh = document.createElement('div'); nh.className = 'num-holder';
-                
-                if(idx === 1) {
-                    nh.innerHTML = '<div class="lacuna-wagon">?</div>';
-                } else {
-                    // Tenta carregar a imagem se existir no JOGO_CONFIG
-                    const numImg = JOGO_CONFIG.numeros.find(x => x.valor === n)?.imagem;
-                    nh.innerHTML = numImg ? `<img src="${JOGO_CONFIG.caminhoImg + numImg}">` : `<span>${n}</span>`;
-                }
-                
-                w.appendChild(nh);
-                const vehicle = document.createElement('img');
-                vehicle.className = 'vehicle';
-                vehicle.src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.reboque;
-                w.appendChild(vehicle);
-                intro.appendChild(w);
-            });
+        // Renderiza a animação do trator na intro
+        function renderIntroAnimation() {
+            const container = document.getElementById('train-container');
+            const wrap = document.createElement('div');
+            wrap.className = 'anim-train-wrap';
 
+            // Criar 2 reboques (o segundo é a lacuna)
+            for(let i=0; i<2; i++) {
+                const w = document.createElement('div');
+                w.className = 'wagon';
+                w.innerHTML = `
+                    <div class="num-holder">${i===1 ? '<div class="lacuna-wagon">?</div>' : `<img src="${JOGO_CONFIG.caminhoImg}n3.png">`}</div>
+                    <img src="${JOGO_CONFIG.caminhoImg}${JOGO_CONFIG.veiculos.reboque}">
+                `;
+                wrap.appendChild(w);
+            }
+            
+            // Adicionar Trator
             const tractor = document.createElement('div');
             tractor.className = 'wagon';
-            tractor.innerHTML = `<div class="num-holder"></div><img src="${JOGO_CONFIG.caminhoImg + JOGO_CONFIG.veiculos.trator}" class="vehicle">`;
-            intro.appendChild(tractor);
+            tractor.innerHTML = `<div class="num-holder"></div><img src="${JOGO_CONFIG.caminhoImg}${JOGO_CONFIG.veiculos.trator}">`;
+            wrap.appendChild(tractor);
+            
+            container.appendChild(wrap);
         }
 
-        // Funções de Navegação e Menus
+        // --- Funções de Interface ---
+
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        function toggleRDMenu(event) {
+        function toggleRD(event) {
             event.stopPropagation();
             document.getElementById('rdMenu').classList.toggle('active');
         }
 
-        function closeMenus() {
-            document.getElementById('sidebar').classList.remove('active');
-            document.getElementById('rdMenu').classList.remove('active');
-            document.getElementById('overlay').classList.remove('active');
+        function openGame() {
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
         }
 
-        function goToGame() {
-            // Altera para o nome do teu ficheiro de jogo real
-            window.location.href = "jogo.html";
-        }
-
-        // Fechar menu RD ao clicar fora
+        // Fechar menus ao clicar fora
         window.onclick = () => {
             document.getElementById('rdMenu').classList.remove('active');
         };
