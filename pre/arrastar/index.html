@@ -52,11 +52,10 @@
         .gear-opt img { width: 40px; height: 40px; object-fit: contain; pointer-events: none; }
 
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; }
-        .info-top { display: flex; gap: 15px; align-items: center; font-weight: bold; color: var(--cor-principal); }
-        .level-badge { background: var(--cor-principal); color: white; padding: 2px 12px; border-radius: 10px; font-size: 0.9rem; }
-
+        .info-top { display: flex; gap: 20px; align-items: center; font-weight: bold; color: var(--cor-principal); flex: 1; }
+        
         .stars-container { display: flex; gap: 6px; }
-        .star { width: 24px; height: 24px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; color: transparent; background: white; }
+        .star { width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: transparent; background: white; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.correct::after { content: '✓'; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
@@ -69,7 +68,6 @@
 
         .drop-grid, .drag-grid { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 10px; }
         
-        /* Ajuste de tamanho para caber 5 e 8 itens */
         .target-box { 
             width: clamp(65px, 12vw, 95px); height: clamp(65px, 12vw, 95px); 
             border: 3px dashed var(--cor-principal); border-radius: 20px; display: flex; align-items: center; justify-content: center;
@@ -149,11 +147,10 @@
             <div class="game-card">
                 <div class="card-header">
                     <div class="info-top">
-                        <span class="level-badge" id="lbl-level">Nível 1</span>
-                        <div class="stars-container" id="stars-bar"></div>
                         <span>⏱️ <span id="lbl-timer">00:00</span></span>
+                        <div class="stars-container" id="stars-bar"></div>
+                        <div style="font-weight: bold; color:var(--cor-principal)">PTS: <span id="points">0</span></div>
                     </div>
-                    <div style="font-weight: bold; color:var(--cor-principal)">PTS: <span id="points">0</span></div>
                 </div>
                 <div id="main-game-area" class="game-area">
                     <div id="targets-grid" class="drop-grid"></div>
@@ -174,9 +171,9 @@
         </div>
     </div>
 
-    <!-- ÁUDIOS CURTOS (Bips) -->
-    <audio id="snd-correct" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
-    <audio id="snd-wrong" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3"></audio>
+    <!-- ÁUDIOS DE BIP -->
+    <audio id="snd-correct" src="https://assets.mixkit.co/active_storage/sfx/600/600-preview.mp3"></audio>
+    <audio id="snd-wrong" src="https://assets.mixkit.co/active_storage/sfx/603/603-preview.mp3"></audio>
 
     <script src="dados.js"></script>
     <script>
@@ -265,9 +262,7 @@
         function loadRound() {
             matchedCount = 0;
             const level = currentRound <= 5 ? 1 : 2;
-            document.getElementById('lbl-level').innerText = `Nível ${level}`;
             
-            // Se for o início do nível 2, limpa as bolas
             if(currentRound === 6) initStars();
 
             const cat = JOGO_CONFIG.categorias[selectedTheme];
@@ -276,14 +271,11 @@
             let targets = [], drags = [];
 
             if(level === 1) {
-                // Nível 1: 5 sombras e 5 imagens
                 targets = allItems.slice(0, 5);
                 drags = [...targets].sort(() => 0.5 - Math.random());
             } else {
-                // Nível 2: 5 sombras e 8 imagens (3 distratores)
                 let selection = allItems.slice(0, 8);
                 drags = [...selection].sort(() => 0.5 - Math.random());
-                // As sombras são apenas das 5 primeiras do baralho misturado
                 targets = selection.slice(0, 5).sort(() => 0.5 - Math.random());
             }
 
@@ -379,14 +371,13 @@
             const s = document.getElementById(id);
             if(s) {
                 s.currentTime = 0;
-                s.volume = 0.4;
+                s.volume = 0.3;
                 s.play().catch(e => {});
             }
         }
 
         function updateVisualFeedback(isCorrect) {
             const stars = document.querySelectorAll('.star');
-            // Calcula o índice 0-4 baseado na ronda atual (1-5 ou 6-10)
             const idx = (currentRound - 1) % ROUNDS_PER_LEVEL;
             if(stars[idx]) {
                 stars[idx].classList.add(isCorrect ? 'correct' : 'wrong');
