@@ -18,17 +18,17 @@
             --cor-caixa-info: #fff0f3;
         }
 
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* NAVEGAÇÃO / MENU HAMBURGER */
+        /* NAVEGAÇÃO */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         
         .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 5000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 18px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f5f5f5; font-weight: 500; transition: 0.2s; }
-        .sidebar-item:hover { background-color: var(--cor-fundo); color: var(--cor-principal); }
-        .sidebar-item img { width: 30px; height: 30px; margin-right: 12px; object-fit: contain; }
         
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 4000; backdrop-filter: blur(2px); }
         .overlay.active { display: block; }
@@ -43,84 +43,93 @@
             background: white; border-radius: 30px; padding: 15px; 
             border: 4px solid var(--cor-principal);
             display: flex; flex-direction: column; 
-            width: 98%; max-width: 1100px; height: 98%; 
-            box-sizing: border-box; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            width: 100%; max-width: 1100px; height: 100%; 
+            position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
-        /* HEADER INTERNO */
         .card-header { 
             display: flex; flex-direction: row; align-items: center; justify-content: space-between; 
-            padding-bottom: 12px; border-bottom: 2px solid #f0f0f0; margin-bottom: 10px; flex-shrink: 0;
+            padding-bottom: 10px; border-bottom: 2px solid #f0f0f0; flex-shrink: 0;
         }
-        .info-header { font-weight: bold; color: var(--cor-principal); font-size: clamp(14px, 3vw, 18px); white-space: nowrap; display: flex; align-items: center; flex: 1; }
         
-        .stars-container { display: flex; gap: clamp(4px, 1.5vw, 10px); justify-content: center; align-items: center; flex: 2; }
+        .stars-container { display: flex; gap: 5px; justify-content: center; align-items: center; }
         .star { 
-            width: clamp(18px, 4vw, 30px); height: clamp(18px, 4vw, 30px); 
+            width: clamp(20px, 5vw, 30px); height: clamp(20px, 5vw, 30px); 
             border: 2px solid #ddd; border-radius: 50%; display: flex; 
-            align-items: center; justify-content: center; font-size: 12px; background: white; flex-shrink: 0;
+            align-items: center; justify-content: center; font-size: 14px; background: white;
         }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.correct::after { content: '✓'; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
         .star.wrong::after { content: '✕'; }
 
-        /* GRELHA DE JOGO - AJUSTADA PARA CABER EM TODOS OS ECRÃS */
+        /* GRELHA DE JOGO - RESPONSIVA */
         .game-area { 
-            flex: 1; display: grid; grid-template-rows: 1fr 1fr; gap: 10px; padding: 10px;
-            background: var(--cor-fundo); border-radius: 20px; overflow: hidden; align-items: center;
+            flex: 1; display: flex; flex-direction: column; justify-content: space-evenly;
+            padding: 10px 5px; background: var(--cor-fundo); border-radius: 20px; 
+            margin-top: 10px; overflow: hidden;
         }
-        .drop-grid, .drag-grid { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: clamp(8px, 2vh, 25px); }
+
+        .drop-grid, .drag-grid { 
+            display: flex; justify-content: center; align-items: center; 
+            gap: 1.5vw; width: 100%; flex-wrap: nowrap;
+        }
         
-        /* Box de Destino (Sombras) - Usa vh para garantir que as duas filas caibam */
-        .target-box { 
-            width: clamp(70px, 14vh, 130px); height: clamp(70px, 14vh, 130px); 
-            border: 3px dashed var(--cor-principal); border-radius: 20px; 
-            display: flex; align-items: center; justify-content: center; background: white; padding: 5px;
-            box-sizing: border-box;
+        /* Ajuste Dinâmico dos Quadrados */
+        .target-box, .item-drag { 
+            width: calc(18vw - 10px); 
+            max-width: 140px;
+            aspect-ratio: 1 / 1; 
+            background: white; border-radius: 15%; 
+            display: flex; align-items: center; justify-content: center; 
+            padding: 8px; box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-        .target-box img { width: 90%; height: 90%; object-fit: contain; filter: brightness(0); opacity: 0.15; pointer-events: none; }
-        .target-box.filled { border: 4px solid var(--cor-jogo-verde); background: #fff; transform: scale(1.05); }
+
+        .target-box { border: 3px dashed var(--cor-principal); }
+        .target-box img { width: 100%; height: 100%; object-fit: contain; filter: brightness(0); opacity: 0.15; }
+        
+        .target-box.filled { border: 4px solid var(--cor-jogo-verde); transform: scale(1.05); }
         .target-box.filled img { filter: none; opacity: 1; }
 
-        /* Box de Origem (Itens Arrastáveis) */
-        .item-drag { 
-            width: clamp(65px, 13vh, 120px); height: clamp(65px, 13vh, 120px); 
-            background: white; border-radius: 18px; border: 2px solid #eee; box-shadow: 0 4px 0 rgba(0,0,0,0.05);
-            display: flex; align-items: center; justify-content: center; touch-action: none; padding: 5px; cursor: grab;
-            box-sizing: border-box;
+        .item-drag { border: 2px solid #eee; cursor: grab; position: relative; z-index: 10; }
+        .item-drag img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+        
+        .dragging { 
+            opacity: 0.8; 
+            z-index: 9999 !important; 
+            position: fixed !important; 
+            pointer-events: none; 
+            transform: scale(1.2); 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
         }
-        .item-drag img { width: 90%; height: 90%; object-fit: contain; pointer-events: none; }
-        .dragging { opacity: 0.9; z-index: 1000; position: fixed !important; pointer-events: none; transform: scale(1.1); box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
 
         /* INTRO SCREEN */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 25px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; width: 100%; margin-bottom: 20px; }
-        .anim-item { width: clamp(80px, 15vw, 120px); position: absolute; animation: slideAnim 3s infinite; }
-        .anim-shadow { width: clamp(90px, 18vw, 140px); filter: brightness(0); opacity: 0.15; }
+        .anim-item { width: 100px; position: absolute; animation: slideAnim 3s infinite; }
+        .anim-shadow { width: 110px; filter: brightness(0); opacity: 0.15; }
         @keyframes slideAnim { 0% { transform: translate(100px, 0); opacity: 0; } 20% { opacity: 1; } 80% { transform: translate(0, 0); opacity: 1; } 100% { transform: translate(0, 0); opacity: 0; } }
         
         .btn-jogar { 
-            background: var(--cor-vermelho); color: white; border: none; padding: 20px; 
-            border-radius: 50px; font-size: 1.5rem; font-weight: bold; cursor: pointer; 
+            background: var(--cor-vermelho); color: white; border: none; padding: 15px 25px; 
+            border-radius: 50px; font-size: 1.4rem; font-weight: bold; cursor: pointer; 
             width: 100%; transition: 0.3s; box-shadow: 0 6px 0 #d63031;
         }
-        .btn-jogar:active { transform: translateY(4px); box-shadow: 0 2px 0 #d63031; }
 
-        .gear-btn { width: 55px; height: 55px; cursor: pointer; flex-shrink: 0; }
-        .rd-float { position: absolute; bottom: 20px; right: 20px; }
+        .gear-btn { width: 50px; height: 50px; cursor: pointer; flex-shrink: 0; }
+        .rd-float { position: absolute; bottom: 15px; right: 15px; z-index: 100; }
 
-        /* MENU ENGRENAGEM (MODIFICADO PARA VERTICAL) */
+        /* MENU ENGRENAGEM */
         .gear-menu {
             position: fixed; display: none; background: white; 
             border: 3px solid var(--cor-principal); border-radius: 15px; 
             padding: 10px; z-index: 9000; gap: 10px; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            flex-direction: column; align-items: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); flex-direction: column;
         }
 
         /* MODAL */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 10000; }
-        .modal-content { background: white; padding: 40px 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 90%; max-width: 400px; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 90%; max-width: 400px; }
     </style>
 </head>
 <body>
@@ -135,17 +144,14 @@
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
         <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
         <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
-        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
-        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
-        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:30px; color:var(--cor-principal); cursor:pointer;">☰</button>
-        <h1 style="display:flex; align-items:center; gap:10px; font-size:clamp(0.9rem, 4vw, 1.2rem); color:var(--cor-principal); margin: 0;">
-            <img id="header-icon" src="" style="height:35px;"> Sombras Misteriosas
+        <h1 style="display:flex; align-items:center; gap:10px; font-size:1rem; color:var(--cor-principal); margin: 0;">
+            <img id="header-icon" src="" style="height:30px;"> Sombras Misteriosas
         </h1>
-        <a href="../" style="background:var(--cor-principal); color:white; padding:10px 18px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
+        <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.75rem;">⬅ Voltar</a>
     </header>
 
     <main class="main-content">
@@ -156,10 +162,10 @@
                 <div class="explanation-box">
                     <img id="anim-shadow-img" src="" class="anim-shadow">
                     <img id="anim-animal-img" src="" class="anim-item">
-                    <p style="color:var(--cor-texto); font-weight:bold; margin-top:20px; font-size: 1.3rem;">De quem é esta sombra?</p>
+                    <p style="color:var(--cor-texto); font-weight:bold; margin-top:20px; font-size: 1.2rem;">De quem é esta sombra?</p>
                 </div>
-                <div style="display:flex; gap:15px; width:100%; align-items:center;">
-                    <button class="btn-jogar" onclick="startGame()">JOGAR AGORA</button>
+                <div style="display:flex; gap:10px; width:100%; align-items:center;">
+                    <button class="btn-jogar" onclick="startGame()">JOGAR</button>
                     <div class="gear-btn" onclick="toggleGear(this)"><img class="gear-img-src" src="" style="width:100%;"></div>
                 </div>
             </div>
@@ -168,9 +174,9 @@
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
-                    <div class="info-header" style="justify-content: flex-start;">⏱️ <span id="lbl-timer" style="margin-left:5px">00:00</span></div>
+                    <div style="color:var(--cor-principal); font-weight:bold; font-size:0.9rem;">⏱️ <span id="lbl-timer">00:00</span></div>
                     <div class="stars-container" id="stars-bar"></div>
-                    <div class="info-header" style="justify-content: flex-end;">PTS: <span id="points" style="margin-left:5px">0</span></div>
+                    <div style="color:var(--cor-principal); font-weight:bold; font-size:0.9rem;">PTS: <span id="points">0</span></div>
                 </div>
 
                 <div id="main-game-area" class="game-area">
@@ -185,8 +191,8 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 style="color:var(--cor-principal); font-size: 2.2rem; margin-bottom: 10px;">Boa! 🌟</h2>
-            <div id="modal-msg" style="margin: 20px 0; font-size: 1.2rem; color: #666;"></div>
+            <h2 style="color:var(--cor-principal); font-size: 2rem;">Boa! 🌟</h2>
+            <div id="modal-msg" style="margin: 20px 0; font-size: 1.1rem; color: #666;"></div>
             <button class="btn-jogar" onclick="location.reload()">Jogar Novamente</button>
         </div>
     </div>
@@ -201,15 +207,15 @@
         const ROUNDS_PER_LEVEL = 5, TOTAL_ROUNDS = 10;
 
         window.onload = () => {
+            if(typeof JOGO_CONFIG === 'undefined') {
+                alert("Erro: dados.js não carregado corretamente.");
+                return;
+            }
             const p = JOGO_CONFIG.caminhoIcons;
             const g = JOGO_CONFIG.caminhoGeralImg;
             
             document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
             document.getElementById('side-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
-            document.getElementById('side-1').src = p + JOGO_CONFIG.iconesMenu.ano1;
-            document.getElementById('side-2').src = p + JOGO_CONFIG.iconesMenu.ano2;
-            document.getElementById('side-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
-            document.getElementById('side-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
             document.querySelectorAll('.gear-img-src').forEach(img => img.src = g + "rd.png");
             
             const menuCat = document.getElementById('shared-gear-menu');
@@ -218,29 +224,24 @@
                 const div = document.createElement('div');
                 div.style.cursor = 'pointer';
                 div.onclick = () => setTheme(key);
-                div.innerHTML = `<img src="${cat.caminho + cat.lista[0]}" style="width:45px; height:45px; border-radius:10px; border:2px solid #f0f0f0;">`;
+                div.innerHTML = `<img src="${cat.caminho + cat.lista[0]}" style="width:40px; height:40px; border-radius:8px; border:2px solid #eee;">`;
                 menuCat.appendChild(div);
             });
             setTheme('animais');
         };
 
         function toggleMenu() {
-            const side = document.getElementById('sidebar');
-            const over = document.getElementById('overlay');
-            side.classList.toggle('active');
-            over.classList.toggle('active');
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
         }
         
         function toggleGear(btn) {
             const menu = document.getElementById('shared-gear-menu');
             if(menu.style.display === 'flex') { menu.style.display = 'none'; return; }
-            
             menu.style.display = 'flex';
             const rect = btn.getBoundingClientRect();
-            
-            // Centraliza horizontalmente e posiciona acima do botão
-            menu.style.left = (rect.left + (rect.width / 2) - (menu.offsetWidth / 2)) + "px";
-            menu.style.top = (rect.top - menu.offsetHeight - 10) + "px";
+            menu.style.left = (rect.left - 10) + "px";
+            menu.style.bottom = (window.innerHeight - rect.top + 10) + "px";
         }
 
         function setTheme(t) {
@@ -249,11 +250,6 @@
             document.getElementById('anim-shadow-img').src = cat.caminho + cat.lista[0];
             document.getElementById('anim-animal-img').src = cat.caminho + cat.lista[0];
             document.getElementById('shared-gear-menu').style.display = 'none';
-            if(document.getElementById('game-screen').classList.contains('active')) {
-                currentRound = 1; points = 0;
-                document.getElementById('points').innerText = "0";
-                initStars(); loadRound(); startTimer();
-            }
         }
 
         function startGame() {
@@ -321,13 +317,18 @@
             dragElement = this;
             const event = e.type === 'touchstart' ? e.touches[0] : e;
             const rect = dragElement.getBoundingClientRect();
+            
+            // Grava a distância entre o toque e o canto da caixa para não "saltar"
             startX = event.clientX - rect.left;
             startY = event.clientY - rect.top;
             
-            dragElement.classList.add('dragging');
             dragElement.style.width = rect.width + 'px';
             dragElement.style.height = rect.height + 'px';
+            dragElement.classList.add('dragging');
             
+            // Posicionamento inicial imediato
+            onMove(e);
+
             document.addEventListener('mousemove', onMove);
             document.addEventListener('touchmove', onMove, {passive: false});
             document.addEventListener('mouseup', stopDrag);
@@ -335,16 +336,16 @@
         }
 
         function onMove(e) {
+            if(!dragElement) return;
             const event = e.type === 'touchmove' ? e.touches[0] : e;
-            if(dragElement) {
-                dragElement.style.left = (event.clientX - startX) + 'px';
-                dragElement.style.top = (event.clientY - startY) + 'px';
-            }
+            dragElement.style.left = (event.clientX - startX) + 'px';
+            dragElement.style.top = (event.clientY - startY) + 'px';
         }
 
         function stopDrag(e) {
             if(!dragElement) return;
             const event = e.type === 'touchend' ? e.changedTouches[0] : e;
+            
             dragElement.hidden = true;
             const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
             dragElement.hidden = false;
@@ -380,7 +381,7 @@
         }
 
         function updateVisualFeedback(isCorrect) {
-            const stars = document.querySelectorAll('.star');
+            const stars = document.getElementById('stars-bar').children;
             const idx = (currentRound - 1) % ROUNDS_PER_LEVEL;
             if(stars[idx]) stars[idx].classList.add(isCorrect ? 'correct' : 'wrong');
         }
