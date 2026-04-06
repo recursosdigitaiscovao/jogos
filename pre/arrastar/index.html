@@ -67,18 +67,18 @@
         .game-area { 
             flex: 1; display: flex; flex-direction: column; justify-content: space-evenly;
             padding: 10px 5px; background: var(--cor-fundo); border-radius: 20px; 
-            margin-top: 10px; overflow: hidden;
+            margin-top: 10px; overflow: hidden; gap: 10px;
         }
 
         .drop-grid, .drag-grid { 
             display: flex; justify-content: center; align-items: center; 
-            gap: 1.5vw; width: 100%; flex-wrap: nowrap;
+            gap: 1.5vw; width: 100%; flex-wrap: wrap;
         }
         
-        /* Ajuste Dinâmico dos Quadrados */
+        /* 1 - IMAGENS E SOMBRAS MAIORES */
         .target-box, .item-drag { 
-            width: calc(18vw - 10px); 
-            max-width: 140px;
+            width: calc(19vw - 5px); 
+            max-width: 165px;
             aspect-ratio: 1 / 1; 
             background: white; border-radius: 15%; 
             display: flex; align-items: center; justify-content: center; 
@@ -244,12 +244,18 @@
             menu.style.bottom = (window.innerHeight - rect.top + 10) + "px";
         }
 
+        // 3 - ALTERA TEMA MESMO DURANTE O JOGO
         function setTheme(t) {
             selectedTheme = t;
             const cat = JOGO_CONFIG.categorias[t];
             document.getElementById('anim-shadow-img').src = cat.caminho + cat.lista[0];
             document.getElementById('anim-animal-img').src = cat.caminho + cat.lista[0];
             document.getElementById('shared-gear-menu').style.display = 'none';
+            
+            // Se o jogo já estiver a decorrer, recarrega a ronda atual com o novo tema
+            if(document.getElementById('game-screen').classList.contains('active')) {
+                loadRound();
+            }
         }
 
         function startGame() {
@@ -281,13 +287,30 @@
             }
         }
 
+        // 2 - LÓGICA DE NÍVEIS (5 VS 5 E 5 VS 8)
         function loadRound() {
             matchedCount = 0;
-            if(currentRound === 6) initStars();
+            if(currentRound === 6 && document.getElementById('stars-bar').children[0].classList.contains('correct') || document.getElementById('stars-bar').children[0].classList.contains('wrong')) {
+                initStars();
+            }
+            
             const cat = JOGO_CONFIG.categorias[selectedTheme];
             let allItems = [...cat.lista].sort(() => 0.5 - Math.random());
+            
+            // Escolhe sempre 5 para as sombras
             let targets = allItems.slice(0, 5);
-            let drags = [...targets].sort(() => 0.5 - Math.random());
+            
+            // Define quantas imagens aparecem em baixo
+            let numDrags = (currentRound <= 5) ? 5 : 8;
+            let drags;
+            
+            if(numDrags === 5) {
+                drags = [...targets].sort(() => 0.5 - Math.random());
+            } else {
+                // Pega as 5 corretas + 3 aleatórias diferentes das corretas
+                let distractors = allItems.filter(item => !targets.includes(item)).slice(0, 3);
+                drags = [...targets, ...distractors].sort(() => 0.5 - Math.random());
+            }
 
             const tGrid = document.getElementById('targets-grid');
             const dGrid = document.getElementById('drags-grid');
@@ -318,7 +341,6 @@
             const event = e.type === 'touchstart' ? e.touches[0] : e;
             const rect = dragElement.getBoundingClientRect();
             
-            // Grava a distância entre o toque e o canto da caixa para não "saltar"
             startX = event.clientX - rect.left;
             startY = event.clientY - rect.top;
             
@@ -326,7 +348,6 @@
             dragElement.style.height = rect.height + 'px';
             dragElement.classList.add('dragging');
             
-            // Posicionamento inicial imediato
             onMove(e);
 
             document.addEventListener('mousemove', onMove);
