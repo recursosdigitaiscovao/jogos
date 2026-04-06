@@ -42,7 +42,6 @@
             position: relative;
         }
 
-        /* Menu de Escolha */
         .gear-menu { 
             position: fixed; background: white; border: 3px solid var(--cor-principal); border-radius: 15px; 
             display: none; flex-direction: row; gap: 10px; padding: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 5000;
@@ -52,8 +51,10 @@
         .gear-opt img { width: 50px; height: 50px; object-fit: contain; pointer-events: none; }
 
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; font-size: 0.9rem; }
+        .info-top { display: flex; gap: 15px; align-items: center; font-weight: bold; color: var(--cor-principal); }
+        
         .stars-container { display: flex; gap: 5px; }
-        .star { width: 26px; height: 26px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; color: transparent; background: white; font-weight: bold; }
+        .star { width: 26px; height: 26px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; color: transparent; background: white; }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
         .star.correct::after { content: '✓'; }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
@@ -61,13 +62,13 @@
 
         .game-area { 
             flex: 1; display: grid; grid-template-rows: 1fr 1fr; gap: 10px; padding: 10px;
-            background: var(--cor-fundo); border-radius: 20px; transition: background 0.2s; overflow: hidden;
+            background: var(--cor-fundo); border-radius: 20px; overflow: hidden;
         }
 
-        .drop-grid, .drag-grid { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 10px; }
+        .drop-grid, .drag-grid { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 8px; }
         
         .target-box { 
-            width: clamp(70px, 13vw, 100px); height: clamp(70px, 13vw, 100px); 
+            width: clamp(60px, 11vw, 90px); height: clamp(60px, 11vw, 90px); 
             border: 3px dashed var(--cor-principal); border-radius: 15px; display: flex; align-items: center; justify-content: center;
             background: white; padding: 5px;
         }
@@ -76,7 +77,7 @@
         .target-box.filled img { filter: none; opacity: 1; }
 
         .item-drag { 
-            width: clamp(65px, 12vw, 95px); height: clamp(65px, 12vw, 95px); 
+            width: clamp(55px, 10vw, 85px); height: clamp(55px, 10vw, 85px); 
             cursor: grab; touch-action: none; background: white; border-radius: 15px; 
             padding: 5px; box-shadow: 0 4px 0 rgba(0,0,0,0.05); border: 2px solid #eee;
             display: flex; align-items: center; justify-content: center;
@@ -84,7 +85,6 @@
         .item-drag img { width: 90%; height: 90%; object-fit: contain; pointer-events: none; }
         .dragging { opacity: 0.8; transform: scale(1.1); z-index: 1000; position: fixed !important; pointer-events: none; }
 
-        /* Estilos da Intro */
         .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
         .anim-item { width: 90px; position: absolute; animation: slideAnim 3s infinite; }
         .anim-shadow { width: 100px; filter: brightness(0); opacity: 0.15; }
@@ -144,7 +144,10 @@
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
-                    <div>⏳ <span id="timer">00:00</span></div>
+                    <div class="info-top">
+                        <span>Nível <span id="lbl-level">1</span></span>
+                        <span>Ronda <span id="lbl-round">1</span>/5</span>
+                    </div>
                     <div class="stars-container" id="stars-bar"></div>
                     <div>PTS: <span id="points">0</span></div>
                 </div>
@@ -167,11 +170,16 @@
         </div>
     </div>
 
+    <!-- ÁUDIOS -->
+    <audio id="snd-correct" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
+    <audio id="snd-wrong" src="https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3"></audio>
+
     <script src="dados.js"></script>
     <script>
-        let currentLevel = 1, points = 0, seconds = 0, timerInterval;
-        let selectedTheme = 'animais', matchedCount = 0, totalToMatch = 6;
+        let currentLevel = 1, currentRound = 1, points = 0;
+        let selectedTheme = 'animais', matchedCount = 0;
         let dragElement = null, startX, startY;
+        const MAX_ROUNDS = 5;
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
@@ -200,7 +208,7 @@
         
         function toggleGear(btn) { 
             const menu = document.getElementById('shared-gear-menu');
-            if(menu.classList.contains('active')) { menu.classList.remove('active'); return; }
+            if(menu.classList.contains('active')) { menu.style.display = 'none'; menu.classList.remove('active'); return; }
             const rect = btn.getBoundingClientRect();
             menu.style.display = 'flex';
             menu.style.left = (rect.left - menu.offsetWidth + rect.width) + "px";
@@ -210,38 +218,54 @@
 
         function setTheme(t) { 
             selectedTheme = t; 
-            document.getElementById('shared-gear-menu').classList.remove('active');
+            const menu = document.getElementById('shared-gear-menu');
+            menu.classList.remove('active');
+            menu.style.display = 'none';
+
             const cat = JOGO_CONFIG.categorias[t];
             document.getElementById('anim-shadow-img').src = cat.caminho + cat.lista[0];
             document.getElementById('anim-animal-img').src = cat.caminho + cat.lista[0];
-            if(document.getElementById('game-screen').classList.contains('active')) loadLevel();
+            if(document.getElementById('game-screen').classList.contains('active')) {
+                currentRound = 1; 
+                loadRound();
+            }
         }
 
         function startGame() {
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            loadLevel();
-            timerInterval = setInterval(() => {
-                seconds++;
-                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
-            }, 1000);
+            loadRound();
         }
 
-        function loadLevel() {
+        function loadRound() {
             matchedCount = 0;
-            totalToMatch = (currentLevel === 1) ? 6 : 9;
+            document.getElementById('lbl-level').innerText = currentLevel;
+            document.getElementById('lbl-round').innerText = currentRound;
             
             const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
-            for(let i=0; i<totalToMatch; i++) { const s = document.createElement('div'); s.className = 'star'; bar.appendChild(s); }
+            for(let i=0; i<6; i++) { const s = document.createElement('div'); s.className = 'star'; bar.appendChild(s); }
 
             const cat = JOGO_CONFIG.categorias[selectedTheme];
-            const chosen = [...cat.lista].sort(() => 0.5 - Math.random()).slice(0, totalToMatch);
+            let allItems = [...cat.lista].sort(() => 0.5 - Math.random());
+            
+            let targets = [], drags = [];
+
+            if(currentLevel === 1) {
+                // Nível 1: 6 imagens e 6 sombras
+                targets = allItems.slice(0, 6);
+                drags = [...targets].sort(() => 0.5 - Math.random());
+            } else {
+                // Nível 2: 6 sombras e 9 imagens (3 não têm sombra)
+                let selection = allItems.slice(0, 9);
+                drags = [...selection].sort(() => 0.5 - Math.random());
+                targets = selection.slice(0, 6).sort(() => 0.5 - Math.random());
+            }
 
             const tGrid = document.getElementById('targets-grid');
             const dGrid = document.getElementById('drags-grid');
             tGrid.innerHTML = ''; dGrid.innerHTML = '';
 
-            [...chosen].sort(() => 0.5 - Math.random()).forEach(img => {
+            targets.forEach(img => {
                 const div = document.createElement('div');
                 div.className = 'target-box';
                 div.dataset.id = img;
@@ -249,7 +273,7 @@
                 tGrid.appendChild(div);
             });
 
-            chosen.forEach(img => {
+            drags.forEach(img => {
                 const div = document.createElement('div');
                 div.className = 'item-drag';
                 div.dataset.id = img;
@@ -286,25 +310,41 @@
             dragElement.hidden = true;
             const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
             dragElement.hidden = false;
+            
             const target = elemBelow ? elemBelow.closest('.target-box') : null;
 
             if(target && target.dataset.id === dragElement.dataset.id && !target.classList.contains('filled')) {
+                // ACERTO
+                playSound('snd-correct');
                 target.classList.add('filled');
                 dragElement.remove();
                 points += 20;
                 document.getElementById('points').innerText = points;
                 updateVisualFeedback(true);
                 matchedCount++;
-                if(matchedCount === totalToMatch) nextLevel();
+                if(matchedCount === 6) nextRound();
             } else {
+                // ERRO - Passa logo de ronda
+                playSound('snd-wrong');
                 updateVisualFeedback(false);
+                setTimeout(nextRound, 600);
+            }
+
+            if(dragElement) {
                 dragElement.classList.remove('dragging');
                 dragElement.style.position = 'relative';
                 dragElement.style.left = '0'; dragElement.style.top = '0';
             }
+            
             dragElement = null;
             document.removeEventListener('mousemove', onMove); document.removeEventListener('touchmove', onMove);
             document.removeEventListener('mouseup', stopDrag); document.removeEventListener('touchend', stopDrag);
+        }
+
+        function playSound(id) {
+            const s = document.getElementById(id);
+            s.currentTime = 0;
+            s.play().catch(e => console.log("Erro som:", e));
         }
 
         function updateVisualFeedback(isCorrect) {
@@ -317,23 +357,29 @@
                 for(let s of stars) {
                     if(!s.classList.contains('correct')) {
                         s.classList.add('wrong');
-                        setTimeout(() => s.classList.remove('wrong'), 500);
                         break;
                     }
                 }
             }
         }
 
-        function nextLevel() {
-            setTimeout(() => {
-                if(currentLevel === 1) { currentLevel = 2; loadLevel(); } 
-                else { endGame(); }
-            }, 800);
+        function nextRound() {
+            if(currentRound < MAX_ROUNDS) {
+                currentRound++;
+                loadRound();
+            } else {
+                if(currentLevel < 2) {
+                    currentLevel++;
+                    currentRound = 1;
+                    loadRound();
+                } else {
+                    endGame();
+                }
+            }
         }
 
         function endGame() {
-            clearInterval(timerInterval);
-            document.getElementById('modal-msg').innerHTML = `<p>Pontos: <b>${points}</b></p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p>`;
+            document.getElementById('modal-msg').innerHTML = `<h2>Fantástico!</h2><p>Pontos: <b>${points}</b></p>`;
             document.getElementById('modal').style.display = 'flex';
         }
     </script>
