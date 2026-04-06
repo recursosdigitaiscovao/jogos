@@ -1,355 +1,296 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar - Sombras</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --cor-principal: #e691a7;
-            --cor-vibrante: #d47a92;  
-            --cor-fundo: #fff5f7;      
-            --cor-texto: #555555;      
-            --cor-vermelho: #ff4757;    
-            --header-height: 70px;
-            --cor-jogo-verde: #45cfa8;
-            --cor-erro: #ff4757;
-            --cor-caixa-info: #fff0f3;
-        }
-
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
-        body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
-
-        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
-        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
-        .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: all 0.3s ease; cursor: pointer; font-weight: 500; }
-        .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; }
-        .sidebar-item img { width: 32px; height: 32px; margin-right: 12px; object-fit: contain; }
-        
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
-        .overlay.active { display: block; }
-
-        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
-        .screen.active { display: flex; }
-
-        .game-card {
-            background: white; border-radius: 30px; padding: 15px; 
-            border: 4px solid var(--cor-principal);
-            display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
-            position: relative;
-        }
-
-        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; font-size: 0.9rem; }
-        .info-top { display: flex; gap: 15px; align-items: center; font-weight: bold; color: var(--cor-principal); }
-        
-        .level-badge { background: var(--cor-principal); color: white; padding: 2px 10px; border-radius: 10px; font-size: 0.8rem; }
-
-        .stars-container { display: flex; gap: 4px; }
-        .star { width: 24px; height: 24px; border: 2px solid #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; color: transparent; background: white; }
-        .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
-        .star.correct::after { content: '✓'; }
-        .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
-        .star.wrong::after { content: '✕'; }
-
-        .game-area { 
-            flex: 1; display: grid; grid-template-rows: 1.2fr 1fr; gap: 15px; padding: 15px;
-            background: var(--cor-fundo); border-radius: 20px; overflow: hidden;
-        }
-
-        .drop-grid, .drag-grid { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 12px; }
-        
-        /* Aumento das imagens */
-        .target-box { 
-            width: clamp(80px, 15vw, 115px); height: clamp(80px, 15vw, 115px); 
-            border: 3px dashed var(--cor-principal); border-radius: 20px; display: flex; align-items: center; justify-content: center;
-            background: white; padding: 8px; transition: transform 0.2s;
-        }
-        .target-box img { width: 90%; height: 90%; object-fit: contain; filter: brightness(0); opacity: 0.15; pointer-events: none; }
-        .target-box.filled { border: 4px solid var(--cor-jogo-verde); background: white; }
-        .target-box.filled img { filter: none; opacity: 1; transform: scale(1.1); }
-
-        .item-drag { 
-            width: clamp(70px, 13vw, 105px); height: clamp(70px, 13vw, 105px); 
-            cursor: grab; touch-action: none; background: white; border-radius: 20px; 
-            padding: 8px; box-shadow: 0 6px 0 rgba(0,0,0,0.05); border: 2px solid #eee;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .item-drag img { width: 90%; height: 90%; object-fit: contain; pointer-events: none; }
-        .dragging { opacity: 0.9; transform: scale(1.15); z-index: 1000; position: fixed !important; pointer-events: none; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 90%; max-width: 400px; box-sizing: border-box; }
-
-        .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 15px 35px; border-radius: 50px; font-size: 1.3rem; font-weight: bold; cursor: pointer; width: 100%; }
-        
-        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        .anim-item { width: 100px; position: absolute; animation: slideAnim 3s infinite; }
-        .anim-shadow { width: 110px; filter: brightness(0); opacity: 0.15; }
-        @keyframes slideAnim { 0% { transform: translate(100px, 0); opacity: 0; } 20% { opacity: 1; } 80% { transform: translate(0, 0); opacity: 1; } 100% { transform: translate(0, 0); opacity: 0; } }
-    </style>
-</head>
-<body>
-
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-    <div class="sidebar" id="sidebar">
-        <div style="padding:15px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-weight:bold; color:var(--cor-principal);">MENU</span>
-            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
-        </div>
-        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div class="sidebar" id="sidebar">
+    <div style="padding:15px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-weight:bold; color:var(--cor-principal);">MENU</span>
+        <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
     </div>
+    <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+    <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
+    <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
+    <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
+    <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
+    <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
+</div>
 
-    <header class="nav-bar">
-        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
-        <h1 style="display:flex; align-items:center; gap:10px; font-size:1rem; color:var(--cor-principal); margin: 0;">
-            <img id="header-icon" src="" style="height:32px;"> Pré-Escolar - Sombras
-        </h1>
-        <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
-    </header>
+<header class="nav-bar">
+    <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
+    <h1 style="display:flex; align-items:center; gap:10px; font-size:1rem; color:var(--cor-principal); margin: 0;">
+        <img id="header-icon" src="" style="height:32px;"> Pré-Escolar - Sombras
+    </h1>
+    <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
+</header>
 
-    <main class="main-content">
-        <section id="intro-screen" class="screen active">
-            <div class="game-card">
-                <div class="explanation-box">
-                    <img id="anim-shadow-img" src="" class="anim-shadow">
-                    <img id="anim-animal-img" src="" class="anim-item">
-                    <p style="color:var(--cor-texto); font-weight:bold; margin-top:15px;">De quem é esta sombra?</p>
-                </div>
-                <h2 style="color:var(--cor-principal); text-align:center; margin:15px 0;">Sombras Misteriosas</h2>
+<main class="main-content">
+    <div id="shared-gear-menu" class="gear-menu"></div>
+
+    <section id="intro-screen" class="screen active">
+        <div class="game-card">
+            <div class="explanation-box">
+                <img id="anim-shadow-img" src="" class="anim-shadow">
+                <img id="anim-animal-img" src="" class="anim-item">
+                <p style="color:var(--cor-texto); font-weight:bold; margin-top:15px;">De quem é esta sombra?</p>
+            </div>
+            <h2 style="color:var(--cor-principal); text-align:center; margin:10px 0;">Sombras Misteriosas</h2>
+            <div class="intro-controls" style="display:flex; gap:10px; width:100%;">
                 <button class="btn-jogar" onclick="startGame()">JOGAR</button>
-            </div>
-        </section>
-
-        <section id="game-screen" class="screen">
-            <div class="game-card">
-                <div class="card-header">
-                    <div class="info-top">
-                        <span class="level-badge" id="lbl-level">Nível 1</span>
-                        <span>⏱️ <span id="lbl-timer">00:00</span></span>
-                    </div>
-                    <div class="stars-container" id="stars-bar"></div>
-                    <div style="font-weight: bold; color:var(--cor-principal)">PTS: <span id="points">0</span></div>
-                </div>
-                <div id="main-game-area" class="game-area">
-                    <div id="targets-grid" class="drop-grid"></div>
-                    <div id="drags-grid" class="drag-grid"></div>
+                <div class="gear-btn" onclick="toggleGear(this)">
+                    <img class="gear-img-src" src="" style="width:100%;">
                 </div>
             </div>
-        </section>
-    </main>
-
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--cor-principal); margin-bottom: 10px;">Parabéns!</h2>
-            <div id="modal-msg" style="margin: 20px 0; font-size: 1.1rem; line-height: 1.5;"></div>
-            <button class="btn-jogar" onclick="location.reload()">Jogar de Novo</button>
         </div>
+    </section>
+
+    <section id="game-screen" class="screen">
+        <div class="game-card">
+            <div class="card-header">
+                <div class="info-top">
+                    <span>⏱️ <span id="lbl-timer">00:00</span></span>
+                </div>
+                <div class="stars-container" id="stars-bar"></div>
+                <div>PTS: <span id="points">0</span></div>
+            </div>
+            <div id="main-game-area" class="game-area">
+                <div id="targets-grid" class="drop-grid"></div>
+                <div id="drags-grid" class="drag-grid"></div>
+            </div>
+            <div class="gear-btn rd-float" onclick="toggleGear(this)">
+                <img class="gear-img-src" src="" style="width:100%;">
+            </div>
+        </div>
+    </section>
+</main>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h2 id="modal-title" style="color:var(--cor-principal);">Parabéns!</h2>
+        <div id="modal-msg" style="margin: 20px 0;"></div>
+        <button class="btn-jogar" style="width:100%" onclick="location.reload()">Jogar de Novo</button>
     </div>
+</div>
 
-    <!-- ÁUDIOS CURTOS E SECOS (Bips) -->
-    <audio id="snd-correct" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
-    <audio id="snd-wrong" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3"></audio>
+<!-- ÁUDIOS CURTOS -->
+<audio id="snd-correct" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+<audio id="snd-wrong" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio>
 
-    <script src="dados.js"></script>
-    <script>
-        let currentRound = 1, points = 0;
-        let selectedTheme = 'animais', matchedCount = 0;
-        let dragElement = null, startX, startY;
-        let timerInterval, seconds = 0;
-        const MAX_ROUNDS = 10; 
+<script src="dados.js"></script>
+<script>
+    let currentRound = 1, points = 0;
+    let selectedTheme = 'animais', matchedCount = 0;
+    let dragElement = null, startX, startY;
+    let timerInterval, seconds = 0;
+    const MAX_ROUNDS = 10; // 5 Nível 1 + 5 Nível 2
 
-        window.onload = () => {
-            const p = JOGO_CONFIG.caminhoIcons;
-            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
-            document.getElementById('side-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
-            
-            const cat = JOGO_CONFIG.categorias[selectedTheme];
-            document.getElementById('anim-shadow-img').src = cat.caminho + cat.lista[0];
-            document.getElementById('anim-animal-img').src = cat.caminho + cat.lista[0];
-        };
-
-        function startTimer() {
-            clearInterval(timerInterval);
-            seconds = 0;
-            timerInterval = setInterval(() => {
-                seconds++;
-                const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
-                const secs = (seconds % 60).toString().padStart(2, '0');
-                document.getElementById('lbl-timer').innerText = `${mins}:${secs}`;
-            }, 1000);
-        }
-
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+    window.onload = () => {
+        const p = JOGO_CONFIG.caminhoIcons;
+        const g = JOGO_CONFIG.caminhoGeralImg;
+        document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
+        document.getElementById('side-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
+        document.getElementById('side-1').src = p + JOGO_CONFIG.iconesMenu.ano1;
+        document.getElementById('side-2').src = p + JOGO_CONFIG.iconesMenu.ano2;
+        document.getElementById('side-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
+        document.getElementById('side-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
+        document.querySelectorAll('.gear-img-src').forEach(img => img.src = g + "rd.png");
         
-        function startGame() {
-            document.getElementById('intro-screen').classList.remove('active');
-            document.getElementById('game-screen').classList.add('active');
-            startTimer();
-            initStars();
-            loadRound();
+        const menuCat = document.getElementById('shared-gear-menu');
+        Object.keys(JOGO_CONFIG.categorias).forEach(key => {
+            const cat = JOGO_CONFIG.categorias[key];
+            const div = document.createElement('div');
+            div.className = 'gear-opt';
+            div.onclick = () => setTheme(key);
+            div.innerHTML = `<img src="${cat.caminho + cat.lista[0]}">`;
+            menuCat.appendChild(div);
+        });
+        setTheme('animais');
+    };
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        seconds = 0;
+        timerInterval = setInterval(() => {
+            seconds++;
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('lbl-timer').innerText = `${mins}:${secs}`;
+        }, 1000);
+    }
+
+    function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+    
+    function toggleGear(btn) { 
+        const menu = document.getElementById('shared-gear-menu');
+        if(menu.classList.contains('active')) { menu.style.display = 'none'; menu.classList.remove('active'); return; }
+        const rect = btn.getBoundingClientRect();
+        menu.style.display = 'flex';
+        menu.style.left = (rect.left - menu.offsetWidth + rect.width) + "px";
+        menu.style.top = (rect.top - menu.offsetHeight - 10) + "px";
+        menu.classList.add('active');
+    }
+
+    function setTheme(t) { 
+        selectedTheme = t; 
+        currentRound = 1;
+        const menu = document.getElementById('shared-gear-menu');
+        menu.classList.remove('active'); menu.style.display = 'none';
+        const cat = JOGO_CONFIG.categorias[t];
+        document.getElementById('anim-shadow-img').src = cat.caminho + cat.lista[0];
+        document.getElementById('anim-animal-img').src = cat.caminho + cat.lista[0];
+        if(document.getElementById('game-screen').classList.contains('active')) { loadRound(); startTimer(); }
+    }
+
+    function startGame() {
+        document.getElementById('intro-screen').classList.remove('active');
+        document.getElementById('game-screen').classList.add('active');
+        startTimer();
+        initStars();
+        loadRound();
+    }
+
+    function initStars() {
+        const bar = document.getElementById('stars-bar');
+        bar.innerHTML = '';
+        for(let i=0; i<MAX_ROUNDS; i++) {
+            const s = document.createElement('div');
+            s.className = 'star';
+            bar.appendChild(s);
+        }
+    }
+
+    function loadRound() {
+        matchedCount = 0;
+        const cat = JOGO_CONFIG.categorias[selectedTheme];
+        let allItems = [...cat.lista].sort(() => 0.5 - Math.random());
+        
+        let targets = [], drags = [];
+
+        // Nível 1: Rondas 1 a 5 | Nível 2: Rondas 6 a 10
+        if(currentRound <= 5) {
+            targets = allItems.slice(0, 5);
+            drags = [...targets].sort(() => 0.5 - Math.random());
+        } else {
+            let selection = allItems.slice(0, 8);
+            drags = [...selection].sort(() => 0.5 - Math.random());
+            targets = selection.slice(0, 5).sort(() => 0.5 - Math.random());
         }
 
-        function initStars() {
-            const bar = document.getElementById('stars-bar');
-            bar.innerHTML = '';
-            for(let i=0; i<MAX_ROUNDS; i++) {
-                const s = document.createElement('div');
-                s.className = 'star';
-                bar.appendChild(s);
-            }
-        }
+        const tGrid = document.getElementById('targets-grid');
+        const dGrid = document.getElementById('drags-grid');
+        tGrid.innerHTML = ''; dGrid.innerHTML = '';
 
-        function loadRound() {
-            matchedCount = 0;
-            const level = currentRound <= 5 ? 1 : 2;
-            document.getElementById('lbl-level').innerText = `Nível ${level}`;
-            
-            const cat = JOGO_CONFIG.categorias[selectedTheme];
-            let allItems = [...cat.lista].sort(() => 0.5 - Math.random());
-            
-            let targets = [], drags = [];
+        targets.forEach(img => {
+            const div = document.createElement('div');
+            div.className = 'target-box';
+            div.dataset.id = img;
+            div.innerHTML = `<img src="${cat.caminho + img}">`;
+            tGrid.appendChild(div);
+        });
 
-            if(level === 1) {
-                // Nível 1: 4 itens para emparelhar (Mais limpo)
-                targets = allItems.slice(0, 4);
-                drags = [...targets].sort(() => 0.5 - Math.random());
-            } else {
-                // Nível 2: 5 itens para emparelhar + 2 distratores
-                let selection = allItems.slice(0, 7);
-                drags = [...selection].sort(() => 0.5 - Math.random());
-                targets = selection.slice(0, 5).sort(() => 0.5 - Math.random());
-            }
+        drags.forEach(img => {
+            const div = document.createElement('div');
+            div.className = 'item-drag';
+            div.dataset.id = img;
+            div.innerHTML = `<img src="${cat.caminho + img}">`;
+            div.addEventListener('mousedown', startDrag);
+            div.addEventListener('touchstart', startDrag, {passive: false});
+            dGrid.appendChild(div);
+        });
+    }
 
-            const tGrid = document.getElementById('targets-grid');
-            const dGrid = document.getElementById('drags-grid');
-            tGrid.innerHTML = ''; dGrid.innerHTML = '';
+    function startDrag(e) {
+        e.preventDefault();
+        dragElement = this;
+        const event = e.type === 'touchstart' ? e.touches[0] : e;
+        const rect = dragElement.getBoundingClientRect();
+        startX = event.clientX - rect.left;
+        startY = event.clientY - rect.top;
+        dragElement.classList.add('dragging');
+        dragElement.style.width = rect.width + 'px';
+        dragElement.style.height = rect.height + 'px';
+        moveAt(event.clientX, event.clientY);
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('touchmove', onMove, {passive: false});
+        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('touchend', stopDrag);
+    }
 
-            targets.forEach(img => {
-                const div = document.createElement('div');
-                div.className = 'target-box';
-                div.dataset.id = img;
-                div.innerHTML = `<img src="${cat.caminho + img}">`;
-                tGrid.appendChild(div);
-            });
+    function onMove(e) { const event = e.type === 'touchmove' ? e.touches[0] : e; moveAt(event.clientX, event.clientY); }
+    function moveAt(clientX, clientY) { if(dragElement) { dragElement.style.left = (clientX - startX) + 'px'; dragElement.style.top = (clientY - startY) + 'px'; } }
 
-            drags.forEach(img => {
-                const div = document.createElement('div');
-                div.className = 'item-drag';
-                div.dataset.id = img;
-                div.innerHTML = `<img src="${cat.caminho + img}">`;
-                div.addEventListener('mousedown', startDrag);
-                div.addEventListener('touchstart', startDrag, {passive: false});
-                dGrid.appendChild(div);
-            });
-        }
+    function stopDrag(e) {
+        if(!dragElement) return;
+        const event = e.type === 'touchend' ? e.changedTouches[0] : e;
+        dragElement.hidden = true;
+        const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
+        dragElement.hidden = false;
+        
+        const target = elemBelow ? elemBelow.closest('.target-box') : null;
 
-        function startDrag(e) {
-            e.preventDefault();
-            dragElement = this;
-            const event = e.type === 'touchstart' ? e.touches[0] : e;
-            const rect = dragElement.getBoundingClientRect();
-            startX = event.clientX - rect.left;
-            startY = event.clientY - rect.top;
-            
-            dragElement.style.width = rect.width + 'px';
-            dragElement.style.height = rect.height + 'px';
-            dragElement.classList.add('dragging');
-            
-            moveAt(event.clientX, event.clientY);
-            document.addEventListener('mousemove', onMove);
-            document.addEventListener('touchmove', onMove, {passive: false});
-            document.addEventListener('mouseup', stopDrag);
-            document.addEventListener('touchend', stopDrag);
-        }
-
-        function onMove(e) { const event = e.type === 'touchmove' ? e.touches[0] : e; moveAt(event.clientX, event.clientY); }
-        function moveAt(clientX, clientY) { if(dragElement) { dragElement.style.left = (clientX - startX) + 'px'; dragElement.style.top = (clientY - startY) + 'px'; } }
-
-        function stopDrag(e) {
-            if(!dragElement) return;
-            const event = e.type === 'touchend' ? e.changedTouches[0] : e;
-            dragElement.hidden = true;
-            const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
-            dragElement.hidden = false;
-            
-            const target = elemBelow ? elemBelow.closest('.target-box') : null;
-            const level = currentRound <= 5 ? 1 : 2;
-            const neededToWin = level === 1 ? 4 : 5;
-
-            if(target && !target.classList.contains('filled')) {
-                if(target.dataset.id === dragElement.dataset.id) {
-                    playSound('snd-correct');
-                    target.classList.add('filled');
-                    dragElement.remove();
-                    points += 10;
-                    document.getElementById('points').innerText = points;
-                    matchedCount++;
-                    if(matchedCount === neededToWin) {
-                        updateVisualFeedback(true);
-                        setTimeout(nextRound, 800);
-                    }
-                } else {
-                    playSound('snd-wrong');
-                    updateVisualFeedback(false);
-                    setTimeout(nextRound, 800);
+        if(target && !target.classList.contains('filled')) {
+            if(target.dataset.id === dragElement.dataset.id) {
+                playSound('snd-correct');
+                target.classList.add('filled');
+                dragElement.remove();
+                points += 20;
+                document.getElementById('points').innerText = points;
+                matchedCount++;
+                if(matchedCount === 5) {
+                    updateVisualFeedback(true);
+                    setTimeout(nextRound, 600);
                 }
             } else {
-                dragReset();
+                // ERRO: Errou a sombra, pula ronda
+                playSound('snd-wrong');
+                updateVisualFeedback(false);
+                setTimeout(nextRound, 600);
             }
-
-            if(dragElement) dragReset();
-            document.removeEventListener('mousemove', onMove); document.removeEventListener('touchmove', onMove);
-            document.removeEventListener('mouseup', stopDrag); document.removeEventListener('touchend', stopDrag);
+        } else if (!target && elemBelow && !elemBelow.closest('.drag-grid')) {
+             // Se soltar fora de um target mas noutra área
+             dragReset();
+        } else {
+            dragReset();
         }
 
-        function dragReset() {
-            if(dragElement) {
-                dragElement.classList.remove('dragging');
-                dragElement.style.position = 'relative';
-                dragElement.style.left = '0'; dragElement.style.top = '0';
-                dragElement = null;
-            }
-        }
+        if(dragElement) dragReset();
+        
+        document.removeEventListener('mousemove', onMove); document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('mouseup', stopDrag); document.removeEventListener('touchend', stopDrag);
+    }
 
-        function playSound(id) {
-            const s = document.getElementById(id);
-            s.currentTime = 0;
-            s.volume = 0.5;
-            s.play().catch(e => {});
+    function dragReset() {
+        if(dragElement) {
+            dragElement.classList.remove('dragging');
+            dragElement.style.position = 'relative';
+            dragElement.style.left = '0'; dragElement.style.top = '0';
+            dragElement = null;
         }
+    }
 
-        function updateVisualFeedback(isCorrect) {
-            const stars = document.querySelectorAll('.star');
-            const targetStar = stars[currentRound - 1];
-            if(targetStar) {
-                targetStar.classList.add(isCorrect ? 'correct' : 'wrong');
-            }
-        }
+    function playSound(id) {
+        const s = document.getElementById(id);
+        s.currentTime = 0;
+        s.play().catch(e => {});
+    }
 
-        function nextRound() {
-            if(currentRound < MAX_ROUNDS) {
-                currentRound++;
-                loadRound();
-            } else {
-                endGame();
-            }
+    function updateVisualFeedback(isCorrect) {
+        const stars = document.querySelectorAll('.star');
+        const targetStar = stars[currentRound - 1];
+        if(targetStar) {
+            targetStar.classList.add(isCorrect ? 'correct' : 'wrong');
         }
+    }
 
-        function endGame() {
-            clearInterval(timerInterval);
-            const finalTime = document.getElementById('lbl-timer').innerText;
-            document.getElementById('modal-msg').innerHTML = `
-                <div style="background:#f8f8f8; padding:15px; border-radius:15px;">
-                    <p>Pontuação Total: <br><strong style="font-size:2rem; color:var(--cor-jogo-verde)">${points}</strong></p>
-                    <p>Tempo de Jogo: <strong>${finalTime}</strong></p>
-                </div>
-            `;
-            document.getElementById('modal').style.display = 'flex';
+    function nextRound() {
+        if(currentRound < MAX_ROUNDS) {
+            currentRound++;
+            loadRound();
+        } else {
+            endGame();
         }
-    </script>
-</body>
-</html>
+    }
+
+    function endGame() {
+        clearInterval(timerInterval);
+        const finalTime = document.getElementById('lbl-timer').innerText;
+        document.getElementById('modal-msg').innerHTML = `<h2>Fantástico!</h2><p>Pontos: <b>${points}</b></p><p>Tempo: <b>${finalTime}</b></p>`;
+        document.getElementById('modal').style.display = 'flex';
+    }
+</script>
