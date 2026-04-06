@@ -7,31 +7,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --cor-principal: #6fbaf0; /* Azul céu como na imagem */
-            --cor-vibrante: #4a90e2;  
-            --cor-fundo: #e3f2fd;      
+            --cor-principal: #e691a7;
+            --cor-vibrante: #d47a92;  
+            --cor-fundo: #fff5f7;      
             --cor-texto: #555555;      
             --cor-vermelho: #ff4757;    
             --header-height: 70px;
             --cor-jogo-verde: #45cfa8;
             --cor-erro: #ff4757;
+            --cor-caixa-info: #fff0f3;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
         /* NAVEGAÇÃO */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        
         .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 5000; }
         .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 18px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f5f5f5; font-weight: 500; gap: 10px; }
+        /* Ajuste no tamanho dos ícones do menu */
+        .sidebar-item { display: flex; align-items: center; padding: 15px 20px; color: #555; text-decoration: none; border-bottom: 1px solid #f5f5f5; font-weight: 500; gap: 12px; font-size: 0.9rem; }
+        .sidebar-item img { width: 24px !important; height: 24px !important; object-fit: contain; }
+        
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 4000; backdrop-filter: blur(2px); }
         .overlay.active { display: block; }
 
-        /* ÁREA DE JOGO */
-        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+        /* ÁREA PRINCIPAL */
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; }
         .screen.active { display: flex; }
 
@@ -43,25 +48,28 @@
             position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
-        /* PALCO DOS OBJETOS (CÉU) */
+        /* PALCO DO JOGO */
         .game-canvas {
-            flex: 1; background: #87CEEB url('https://www.transparenttextures.com/patterns/clouds.png');
+            flex: 1; background: var(--cor-caixa-info);
             border-radius: 20px; margin-top: 10px; position: relative; overflow: hidden;
-            border: 2px solid #b3e5fc;
+            border: 2px dashed var(--cor-principal);
         }
 
         .game-object {
-            position: absolute; width: clamp(60px, 12vmin, 100px); height: clamp(60px, 12vmin, 100px);
-            cursor: pointer; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: absolute; 
+            width: clamp(55px, 10vmin, 90px); 
+            height: clamp(55px, 10vmin, 90px);
+            cursor: pointer; transition: transform 0.2s;
             display: flex; align-items: center; justify-content: center;
+            z-index: 10;
         }
-        .game-object img { width: 90%; height: 90%; object-fit: contain; }
-        .game-object:active { transform: scale(0.8); }
-
-        .correct-fdb { border: 4px solid var(--cor-jogo-verde) !important; border-radius: 50%; box-shadow: 0 0 20px var(--cor-jogo-verde); }
-        .wrong-fdb { border: 4px solid var(--cor-erro) !important; border-radius: 50%; animation: shake 0.4s; }
+        .game-object img { width: 85%; height: 85%; object-fit: contain; pointer-events: none; }
+        
+        .correct-fdb { border: 4px solid var(--cor-jogo-verde); border-radius: 50%; background: rgba(69, 207, 168, 0.2); z-index: 20; }
+        .wrong-fdb { border: 4px solid var(--cor-erro); border-radius: 50%; animation: shake 0.4s; }
 
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
+        @keyframes slideAnim { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
         /* HEADER INTERNO */
         .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 5px; border-bottom: 2px solid #f0f0f0; }
@@ -72,16 +80,12 @@
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
         .star.wrong::after { content: '✕'; }
 
-        /* ANIMAÇÃO EXPLICAÇÃO */
-        @keyframes slideAnim {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 15px; border-radius: 50px; font-size: 1.4rem; font-weight: bold; width: 100%; cursor: pointer; box-shadow: 0 6px 0 #d63031; margin-top: 10px; }
-        .gear-btn { width: 45px; height: 45px; cursor: pointer; }
-        .gear-menu { position: fixed; display: none; background: white; border: 3px solid var(--cor-principal); border-radius: 15px; padding: 10px; z-index: 9000; flex-direction: column; gap: 8px; }
+        /* BOTÕES E MENUS */
+        .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 15px; border-radius: 50px; font-size: 1.4rem; font-weight: bold; width: 100%; cursor: pointer; box-shadow: 0 6px 0 #d63031; }
+        .gear-btn { width: 45px; height: 45px; cursor: pointer; flex-shrink: 0; z-index: 100; }
+        .rd-float { position: absolute; bottom: 15px; right: 15px; }
+        .gear-menu { position: fixed; display: none; background: white; border: 3px solid var(--cor-principal); border-radius: 15px; padding: 10px; z-index: 9000; flex-direction: column; gap: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 10000; }
         .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 90%; max-width: 400px; }
     </style>
@@ -96,16 +100,16 @@
             <button onclick="toggleMenu()" style="border:none; background:none; font-size:24px;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" width="30"> Pré-Escolar</a>
-        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" width="30"> 1º Ano</a>
-        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" width="30"> 2º Ano</a>
-        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" width="30"> 3º Ano</a>
-        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" width="30"> 4º Ano</a>
+        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre"> Pré-Escolar</a>
+        <a href="/jogos/1/" class="sidebar-item"><img id="side-1"> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img id="side-2"> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img id="side-3"> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img id="side-4"> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:30px; color:var(--cor-principal);">☰</button>
-        <h1 id="game-title" style="font-size:0.9rem; color:var(--cor-principal); margin: 0; display:flex; align-items:center; gap:8px;">
+        <h1 style="font-size:0.9rem; color:var(--cor-principal); margin: 0; display:flex; align-items:center; gap:8px;">
             <img id="header-icon" src="" style="height:25px;"> Encontra o Único
         </h1>
         <a href="../" style="background:var(--cor-principal); color:white; padding:8px 12px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.7rem;">⬅ Voltar</a>
@@ -116,15 +120,13 @@
 
         <section id="intro-screen" class="screen active">
             <div class="game-card">
-                <div style="background: #f0f9ff; border-radius: 25px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;">
-                    <div style="position:relative; width:150px; height:150px;">
-                        <img id="anim-obj-1" src="" style="width:70px; position:absolute; top:0; left:0;">
-                        <img id="anim-obj-2" src="" style="width:70px; position:absolute; top:0; right:0;">
-                        <img id="anim-target" src="" style="width:80px; position:absolute; bottom:10px; left:35px; animation: slideAnim 2s infinite; border: 3px solid var(--cor-jogo-verde); border-radius:50%;">
+                <div style="background: var(--cor-caixa-info); border-radius: 25px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;">
+                    <div style="position:relative; width:160px; height:120px; display:flex; justify-content:center; align-items:center;">
+                        <img id="anim-target" src="" style="width:90px; animation: slideAnim 2s infinite; border: 4px solid var(--cor-jogo-verde); border-radius:50%; padding:5px; background:white;">
                     </div>
-                    <p style="color:var(--cor-texto); font-weight:bold; font-size:1.2rem; margin-top:20px;">Qual destes objetos não tem um par?</p>
+                    <p style="color:var(--cor-texto); font-weight:bold; font-size:1.2rem; margin-top:20px;">Encontra o objeto que não tem par!</p>
                 </div>
-                <div style="display:flex; gap:10px; width:100%;">
+                <div style="display:flex; gap:10px; width:100%; margin-top:10px;">
                     <button class="btn-jogar" onclick="startGame()">JOGAR</button>
                     <div class="gear-btn" onclick="toggleGear(this)"><img class="gear-img-src" src="" style="width:100%;"></div>
                 </div>
@@ -139,15 +141,15 @@
                     <div style="color:var(--cor-principal); font-weight:bold; font-size:0.8rem;">PTS: <span id="points">0</span></div>
                 </div>
                 <div id="game-canvas" class="game-canvas"></div>
-                <div class="gear-btn" onclick="toggleGear(this)" style="position:absolute; bottom:20px; right:20px;"><img class="gear-img-src" src="" style="width:100%;"></div>
+                <div class="gear-btn rd-float" onclick="toggleGear(this)"><img class="gear-img-src" src="" style="width:100%;"></div>
             </div>
         </section>
     </main>
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--cor-principal);"></h2>
-            <div id="modal-msg"></div>
+            <h2 style="color:var(--cor-principal);">Boa! 🌟</h2>
+            <div id="modal-msg" style="margin:20px 0;"></div>
             <button class="btn-jogar" onclick="location.reload()">Jogar Novamente</button>
         </div>
     </div>
@@ -177,9 +179,12 @@
             Object.keys(JOGO_CONFIG.categorias).forEach(key => {
                 const cat = JOGO_CONFIG.categorias[key];
                 const div = document.createElement('div');
-                div.style.cursor = 'pointer';
+                div.style.cssText = "cursor:pointer; display:flex; align-items:center; gap:10px; padding:5px; border-bottom:1px solid #eee;";
                 div.onclick = () => setTheme(key);
-                div.innerHTML = `<img src="${cat.caminho + cat.lista[0]}" style="width:40px; height:40px; border-radius:8px; border:2px solid #eee;">`;
+                div.innerHTML = `
+                    <img src="${cat.caminho + cat.lista[0]}" style="width:35px; height:35px; border-radius:5px;">
+                    <span style="font-size:0.8rem; font-weight:bold; color:#555;">${cat.nome}</span>
+                `;
                 menuGear.appendChild(div);
             });
             setTheme('animais');
@@ -202,10 +207,17 @@
         function setTheme(t) {
             selectedTheme = t;
             const cat = JOGO_CONFIG.categorias[t];
-            document.getElementById('anim-obj-1').src = cat.caminho + cat.lista[0];
-            document.getElementById('anim-obj-2').src = cat.caminho + cat.lista[0];
-            document.getElementById('anim-target').src = cat.caminho + cat.lista[1];
+            document.getElementById('anim-target').src = cat.caminho + cat.lista[0];
             document.getElementById('shared-gear-menu').style.display = 'none';
+            
+            // Reiniciar se trocar de tema
+            currentRound = 1; points = 0;
+            document.getElementById('points').innerText = '0';
+            if(document.getElementById('game-screen').classList.contains('active')) {
+                initStars();
+                startTimer();
+                loadRound();
+            }
         }
 
         function startGame() {
@@ -227,7 +239,7 @@
         }
 
         function startTimer() {
-            seconds = 0;
+            seconds = 0; clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 seconds++;
                 const mins = Math.floor(seconds/60).toString().padStart(2,'0');
@@ -244,16 +256,15 @@
             const cat = JOGO_CONFIG.categorias[selectedTheme];
             const shuffled = [...cat.lista].sort(() => 0.5 - Math.random());
             
-            // Dificuldade: aumenta número de objetos conforme as rondas
-            const numPairs = currentRound <= 3 ? 3 : (currentRound <= 7 ? 5 : 7);
+            // MAIS OBJETOS: Começa com 4 pares (9 itens) e sobe até 9 pares (19 itens)
+            const numPairs = currentRound <= 2 ? 4 : (currentRound <= 5 ? 6 : (currentRound <= 8 ? 8 : 10));
             
-            const targetObj = shuffled[0]; // O único
-            const pairObjs = shuffled.slice(1, numPairs + 1); // Os pares
+            const targetObj = shuffled[0]; 
+            const pairObjs = shuffled.slice(1, numPairs + 1); 
             
             let allItems = [{id: targetObj, isTarget: true}];
             pairObjs.forEach(img => {
-                allItems.push({id: img, isTarget: false});
-                allItems.push({id: img, isTarget: false});
+                allItems.push({id: img, isTarget: false}, {id: img, isTarget: false});
             });
 
             allItems.sort(() => 0.5 - Math.random());
@@ -263,20 +274,17 @@
                 div.className = 'game-object';
                 div.innerHTML = `<img src="${cat.caminho + item.id}">`;
                 
-                // Posição aleatória sem sobrepor muito (simplificado)
-                const posX = Math.random() * 85;
-                const posY = Math.random() * 85;
-                div.style.left = posX + "%";
-                div.style.top = posY + "%";
+                // Distribuição aleatória com margens para não colarem às bordas
+                div.style.left = (Math.random() * 88) + "%";
+                div.style.top = (Math.random() * 88) + "%";
                 
-                div.onclick = () => checkChoice(item.isTarget, div);
+                div.onclick = (e) => checkChoice(item.isTarget, div);
                 canvas.appendChild(div);
             });
         }
 
         function checkChoice(isCorrect, element) {
             if(!canClick) return;
-            
             if(isCorrect) {
                 canClick = false;
                 playSound('snd-correct');
@@ -284,14 +292,11 @@
                 points += 10;
                 document.getElementById('points').innerText = points;
                 updateStar(true);
-                setTimeout(nextRound, 1200);
+                setTimeout(nextRound, 1000);
             } else {
                 playSound('snd-wrong');
                 element.classList.add('wrong-fdb');
                 setTimeout(() => element.classList.remove('wrong-fdb'), 500);
-                // Erro não avança, mas podes penalizar pontos se quiseres
-                if(points > 0) points -= 2;
-                document.getElementById('points').innerText = points;
             }
         }
 
@@ -319,7 +324,6 @@
         function endGame() {
             clearInterval(timerInterval);
             const tempo = document.getElementById('lbl-timer').innerText;
-            document.getElementById('modal-title').innerText = JOGO_CONFIG.relatorio.titulo;
             document.getElementById('modal-msg').innerHTML = `
                 <p>${JOGO_CONFIG.relatorio.pontosTotal} <b>${points}</b></p>
                 <p>${JOGO_CONFIG.relatorio.tempoTotal} <b>${tempo}</b></p>
