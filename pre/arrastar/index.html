@@ -145,8 +145,7 @@
             <div class="game-card">
                 <div class="card-header">
                     <div class="info-top">
-                        <span>Nível <span id="lbl-level">1</span></span>
-                        <span>Ronda <span id="lbl-round">1</span>/5</span>
+                        <span>Tempo: <span id="lbl-timer">00:00</span></span>
                     </div>
                     <div class="stars-container" id="stars-bar"></div>
                     <div>PTS: <span id="points">0</span></div>
@@ -170,16 +169,17 @@
         </div>
     </div>
 
-    <!-- ÁUDIOS -->
-    <audio id="snd-correct" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
-    <audio id="snd-wrong" src="https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3"></audio>
+    <!-- ÁUDIOS CURTOS -->
+    <audio id="snd-correct" src="https://assets.mixkit.co/active_storage/sfx/605/605-preview.mp3"></audio>
+    <audio id="snd-wrong" src="https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3"></audio>
 
     <script src="dados.js"></script>
     <script>
         let currentLevel = 1, currentRound = 1, points = 0;
         let selectedTheme = 'animais', matchedCount = 0;
         let dragElement = null, startX, startY;
-        const MAX_ROUNDS = 5;
+        let timerInterval, seconds = 0;
+        const MAX_ROUNDS = 6;
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
@@ -204,6 +204,17 @@
             setTheme('animais');
         };
 
+        function startTimer() {
+            clearInterval(timerInterval);
+            seconds = 0;
+            timerInterval = setInterval(() => {
+                seconds++;
+                const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const secs = (seconds % 60).toString().padStart(2, '0');
+                document.getElementById('lbl-timer').innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         
         function toggleGear(btn) { 
@@ -218,6 +229,9 @@
 
         function setTheme(t) { 
             selectedTheme = t; 
+            currentLevel = 1; // Sempre começa no nível 1 ao mudar tema
+            currentRound = 1;
+            
             const menu = document.getElementById('shared-gear-menu');
             menu.classList.remove('active');
             menu.style.display = 'none';
@@ -225,25 +239,29 @@
             const cat = JOGO_CONFIG.categorias[t];
             document.getElementById('anim-shadow-img').src = cat.caminho + cat.lista[0];
             document.getElementById('anim-animal-img').src = cat.caminho + cat.lista[0];
+            
             if(document.getElementById('game-screen').classList.contains('active')) {
-                currentRound = 1; 
                 loadRound();
+                startTimer();
             }
         }
 
         function startGame() {
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
+            startTimer();
             loadRound();
         }
 
         function loadRound() {
             matchedCount = 0;
-            document.getElementById('lbl-level').innerText = currentLevel;
-            document.getElementById('lbl-round').innerText = currentRound;
-            
             const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
-            for(let i=0; i<6; i++) { const s = document.createElement('div'); s.className = 'star'; bar.appendChild(s); }
+            for(let i=0; i<MAX_ROUNDS; i++) { 
+                const s = document.createElement('div'); 
+                s.className = 'star'; 
+                if(i < currentRound - 1) s.classList.add('correct');
+                bar.appendChild(s); 
+            }
 
             const cat = JOGO_CONFIG.categorias[selectedTheme];
             let allItems = [...cat.lista].sort(() => 0.5 - Math.random());
@@ -251,11 +269,9 @@
             let targets = [], drags = [];
 
             if(currentLevel === 1) {
-                // Nível 1: 6 imagens e 6 sombras
                 targets = allItems.slice(0, 6);
                 drags = [...targets].sort(() => 0.5 - Math.random());
             } else {
-                // Nível 2: 6 sombras e 9 imagens (3 não têm sombra)
                 let selection = allItems.slice(0, 9);
                 drags = [...selection].sort(() => 0.5 - Math.random());
                 targets = selection.slice(0, 6).sort(() => 0.5 - Math.random());
@@ -314,17 +330,18 @@
             const target = elemBelow ? elemBelow.closest('.target-box') : null;
 
             if(target && target.dataset.id === dragElement.dataset.id && !target.classList.contains('filled')) {
-                // ACERTO
                 playSound('snd-correct');
                 target.classList.add('filled');
                 dragElement.remove();
                 points += 20;
                 document.getElementById('points').innerText = points;
-                updateVisualFeedback(true);
                 matchedCount++;
-                if(matchedCount === 6) nextRound();
+                if(matchedCount === 6) {
+                    updateVisualFeedback(true);
+                    setTimeout(nextRound, 600);
+                }
             } else {
-                // ERRO - Passa logo de ronda
+                // ERRO - Conta como uma ronda perdida
                 playSound('snd-wrong');
                 updateVisualFeedback(false);
                 setTimeout(nextRound, 600);
@@ -349,37 +366,27 @@
 
         function updateVisualFeedback(isCorrect) {
             const stars = document.querySelectorAll('.star');
-            if(isCorrect) {
-                for(let s of stars) {
-                    if(!s.classList.contains('correct')) { s.classList.add('correct'); break; }
-                }
-            } else {
-                for(let s of stars) {
-                    if(!s.classList.contains('correct')) {
-                        s.classList.add('wrong');
-                        break;
-                    }
-                }
+            const targetStar = stars[currentRound - 1];
+            if(targetStar) {
+                targetStar.classList.add(isCorrect ? 'correct' : 'wrong');
             }
         }
 
         function nextRound() {
             if(currentRound < MAX_ROUNDS) {
                 currentRound++;
+                // Alterna nível a meio do jogo para variedade
+                if(currentRound > 3) currentLevel = 2;
                 loadRound();
             } else {
-                if(currentLevel < 2) {
-                    currentLevel++;
-                    currentRound = 1;
-                    loadRound();
-                } else {
-                    endGame();
-                }
+                endGame();
             }
         }
 
         function endGame() {
-            document.getElementById('modal-msg').innerHTML = `<h2>Fantástico!</h2><p>Pontos: <b>${points}</b></p>`;
+            clearInterval(timerInterval);
+            const finalTime = document.getElementById('lbl-timer').innerText;
+            document.getElementById('modal-msg').innerHTML = `<h2>Fantástico!</h2><p>Pontos: <b>${points}</b></p><p>Tempo: <b>${finalTime}</b></p>`;
             document.getElementById('modal').style.display = 'flex';
         }
     </script>
