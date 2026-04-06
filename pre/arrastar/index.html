@@ -18,30 +18,129 @@
             --cor-caixa-info: #fff0f3;
         }
 
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
-        body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
+        /* RESET E ESTRUTURA BASE */
+        html, body { 
+            height: 100%; margin: 0; padding: 0; overflow: hidden; 
+            -webkit-user-select: none; user-select: none; touch-action: none; 
+        }
+        body { 
+            background: var(--cor-fundo); 
+            font-family: 'Fredoka', sans-serif; 
+            display: flex; flex-direction: column; 
+        }
 
-        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        /* NAVEGAÇÃO */
+        .nav-bar { 
+            background: white; padding: 0 15px; display: flex; align-items: center; 
+            justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            height: var(--header-height); z-index: 1000; flex-shrink: 0; 
+        }
         
-        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
+        .sidebar { 
+            position: fixed; top: 0; left: -260px; width: 240px; height: 100%; 
+            background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); 
+            transition: 0.3s; z-index: 2000; padding-top: 10px; 
+        }
         .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: all 0.3s ease; cursor: pointer; font-weight: 500; }
+        .sidebar-item { 
+            display: flex; align-items: center; padding: 15px 25px; color: #555; 
+            text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; 
+            cursor: pointer; font-weight: 500; 
+        }
         .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; }
         .sidebar-item img { width: 32px; height: 32px; margin-right: 12px; object-fit: contain; }
         
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
+        .overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.3); display: none; z-index: 1500; 
+        }
         .overlay.active { display: block; }
 
-        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
+        /* ÁREA PRINCIPAL */
+        .main-content { 
+            flex: 1; padding: 10px; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; position: relative; overflow: hidden; 
+        }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; }
         .screen.active { display: flex; }
 
+        /* CARD DO JOGO RESPONSIVO */
         .game-card {
             background: white; border-radius: 30px; padding: 15px; 
             border: 4px solid var(--cor-principal);
-            display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
-            position: relative;
+            display: flex; flex-direction: column; 
+            width: 95%; max-width: 1100px; height: 95%; 
+            box-sizing: border-box; overflow: hidden; position: relative;
         }
+
+        /* HEADER DO JOGO (AJUSTADO PARA OCUPAR O ESPAÇO) */
+        .card-header { 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding-bottom: 15px; border-bottom: 2px solid #f0f0f0; margin-bottom: 10px; flex-shrink: 0;
+        }
+        .info-item { 
+            flex: 1; display: flex; align-items: center; font-weight: bold; 
+            color: var(--cor-principal); font-size: clamp(1rem, 2.5vw, 1.4rem); 
+        }
+        .info-timer { justify-content: flex-start; min-width: 100px; }
+        .info-points { justify-content: flex-end; min-width: 100px; }
+
+        /* BOLAS/ESTRELAS RESPONSIVAS */
+        .stars-container { 
+            flex: 2; display: flex; gap: clamp(5px, 1.5vw, 15px); 
+            justify-content: center; align-items: center; 
+        }
+        .star { 
+            width: clamp(22px, 4.5vw, 40px); height: clamp(22px, 4.5vw, 40px); 
+            border: 2px solid #ddd; border-radius: 50%; display: flex; 
+            align-items: center; justify-content: center; font-size: 14px; 
+            color: transparent; background: white; transition: 0.3s;
+        }
+        .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; transform: scale(1.1); }
+        .star.correct::after { content: '✓'; font-weight: bold; }
+        .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
+        .star.wrong::after { content: '✕'; font-weight: bold; }
+
+        /* GRELHAS DE JOGO */
+        .game-area { 
+            flex: 1; display: grid; grid-template-rows: 1fr 1fr; gap: 15px; padding: 10px;
+            background: var(--cor-fundo); border-radius: 20px; overflow: hidden; align-items: center;
+        }
+        .drop-grid, .drag-grid { 
+            display: flex; flex-wrap: wrap; justify-content: center; align-content: center; 
+            gap: clamp(10px, 2vw, 25px); 
+        }
+        
+        .target-box { 
+            width: clamp(75px, 14vw, 120px); height: clamp(75px, 14vw, 120px); 
+            border: 3px dashed var(--cor-principal); border-radius: 20px; 
+            display: flex; align-items: center; justify-content: center;
+            background: white; padding: 5px; box-sizing: border-box;
+        }
+        .target-box img { width: 85%; height: 85%; object-fit: contain; filter: brightness(0); opacity: 0.15; pointer-events: none; }
+        .target-box.filled { border: 4px solid var(--cor-jogo-verde); background: #fff; transform: scale(1.05); }
+        .target-box.filled img { filter: none; opacity: 1; }
+
+        .item-drag { 
+            width: clamp(65px, 12vw, 110px); height: clamp(65px, 12vw, 110px); 
+            cursor: grab; touch-action: none; background: white; border-radius: 18px; 
+            padding: 5px; box-shadow: 0 4px 0 rgba(0,0,0,0.05); border: 2px solid #eee;
+            display: flex; align-items: center; justify-content: center; box-sizing: border-box;
+        }
+        .item-drag img { width: 85%; height: 85%; object-fit: contain; pointer-events: none; }
+        .dragging { opacity: 0.9; transform: scale(1.1); z-index: 1000; position: fixed !important; pointer-events: none; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+
+        /* OUTROS ELEMENTOS */
+        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; width: 100%; }
+        .anim-item { width: clamp(60px, 10vw, 100px); position: absolute; animation: slideAnim 3s infinite; }
+        .anim-shadow { width: clamp(70px, 12vw, 110px); filter: brightness(0); opacity: 0.15; }
+        @keyframes slideAnim { 0% { transform: translate(100px, 0); opacity: 0; } 20% { opacity: 1; } 80% { transform: translate(0, 0); opacity: 1; } 100% { transform: translate(0, 0); opacity: 0; } }
+        
+        .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 15px 40px; border-radius: 50px; font-size: 1.3rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-jogar:hover { transform: scale(1.05); filter: brightness(1.1); }
+        
+        .gear-btn { width: 50px; height: 50px; cursor: pointer; }
+        .rd-float { position: absolute; bottom: 15px; right: 15px; }
 
         .gear-menu { 
             position: fixed; background: white; border: 3px solid var(--cor-principal); border-radius: 15px; 
@@ -51,50 +150,6 @@
         .gear-opt { cursor: pointer; border: 2px solid #eee; border-radius: 10px; padding: 5px; background: white; }
         .gear-opt img { width: 40px; height: 40px; object-fit: contain; pointer-events: none; }
 
-        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; }
-        .info-top { display: flex; gap: 20px; align-items: center; font-weight: bold; color: var(--cor-principal); flex: 1; }
-        
-        .stars-container { display: flex; gap: 6px; }
-        .star { width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: transparent; background: white; }
-        .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
-        .star.correct::after { content: '✓'; }
-        .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
-        .star.wrong::after { content: '✕'; }
-
-        .game-area { 
-            flex: 1; display: grid; grid-template-rows: 1fr 1fr; gap: 10px; padding: 10px;
-            background: var(--cor-fundo); border-radius: 20px; overflow: hidden;
-        }
-
-        .drop-grid, .drag-grid { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 10px; }
-        
-        .target-box { 
-            width: clamp(65px, 12vw, 95px); height: clamp(65px, 12vw, 95px); 
-            border: 3px dashed var(--cor-principal); border-radius: 20px; display: flex; align-items: center; justify-content: center;
-            background: white; padding: 5px;
-        }
-        .target-box img { width: 80%; height: 80%; object-fit: contain; filter: brightness(0); opacity: 0.15; pointer-events: none; }
-        .target-box.filled { border: 4px solid var(--cor-jogo-verde); background: #fff; }
-        .target-box.filled img { filter: none; opacity: 1; }
-
-        .item-drag { 
-            width: clamp(55px, 10vw, 85px); height: clamp(55px, 10vw, 85px); 
-            cursor: grab; touch-action: none; background: white; border-radius: 18px; 
-            padding: 5px; box-shadow: 0 4px 0 rgba(0,0,0,0.05); border: 2px solid #eee;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .item-drag img { width: 85%; height: 85%; object-fit: contain; pointer-events: none; }
-        .dragging { opacity: 0.9; transform: scale(1.1); z-index: 1000; position: fixed !important; pointer-events: none; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-
-        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        .anim-item { width: 80px; position: absolute; animation: slideAnim 3s infinite; }
-        .anim-shadow { width: 90px; filter: brightness(0); opacity: 0.15; }
-        @keyframes slideAnim { 0% { transform: translate(100px, 0); opacity: 0; } 20% { opacity: 1; } 80% { transform: translate(0, 0); opacity: 1; } 100% { transform: translate(0, 0); opacity: 0; } }
-        
-        .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 12px 35px; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; flex: 1; }
-        .gear-btn { width: 45px; height: 45px; cursor: pointer; }
-        .rd-float { position: absolute; bottom: 15px; right: 15px; }
-
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 90%; max-width: 400px; box-sizing: border-box; }
     </style>
@@ -102,6 +157,7 @@
 <body>
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    
     <div class="sidebar" id="sidebar">
         <div style="padding:15px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
             <span style="font-weight:bold; color:var(--cor-principal);">MENU</span>
@@ -117,7 +173,7 @@
 
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
-        <h1 style="display:flex; align-items:center; gap:10px; font-size:1rem; color:var(--cor-principal); margin: 0;">
+        <h1 style="display:flex; align-items:center; gap:10px; font-size:clamp(0.8rem, 3vw, 1.1rem); color:var(--cor-principal); margin: 0;">
             <img id="header-icon" src="" style="height:32px;"> Pré-Escolar - Sombras
         </h1>
         <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
@@ -126,16 +182,17 @@
     <main class="main-content">
         <div id="shared-gear-menu" class="gear-menu"></div>
 
+        <!-- ECRÃ INICIAL -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
                     <img id="anim-shadow-img" src="" class="anim-shadow">
                     <img id="anim-animal-img" src="" class="anim-item">
-                    <p style="color:var(--cor-texto); font-weight:bold; margin-top:15px;">De quem é esta sombra?</p>
+                    <p style="color:var(--cor-texto); font-weight:bold; margin-top:15px; font-size: 1.2rem;">De quem é esta sombra?</p>
                 </div>
-                <h2 style="color:var(--cor-principal); text-align:center; margin:10px 0;">Sombras Misteriosas</h2>
-                <div class="intro-controls" style="display:flex; gap:10px; width:100%;">
-                    <button class="btn-jogar" onclick="startGame()">JOGAR</button>
+                <h2 style="color:var(--cor-principal); text-align:center; margin:15px 0; font-size: 1.8rem;">Sombras Misteriosas</h2>
+                <div class="intro-controls" style="display:flex; gap:15px; width:100%; justify-content: center; padding-bottom: 20px;">
+                    <button class="btn-jogar" style="width: 70%;" onclick="startGame()">JOGAR</button>
                     <div class="gear-btn" onclick="toggleGear(this)">
                         <img class="gear-img-src" src="" style="width:100%;">
                     </div>
@@ -143,19 +200,28 @@
             </div>
         </section>
 
+        <!-- ECRÃ DE JOGO -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
-                    <div class="info-top">
-                        <span>⏱️ <span id="lbl-timer">00:00</span></span>
-                        <div class="stars-container" id="stars-bar"></div>
-                        <div style="font-weight: bold; color:var(--cor-principal)">PTS: <span id="points">0</span></div>
+                    <div class="info-item info-timer">
+                        ⏱️ <span id="lbl-timer" style="margin-left: 8px;">00:00</span>
+                    </div>
+                    
+                    <div class="stars-container" id="stars-bar">
+                        <!-- Bolas geradas via JS -->
+                    </div>
+
+                    <div class="info-item info-points">
+                        PTS: <span id="points" style="margin-left: 8px;">0</span>
                     </div>
                 </div>
+
                 <div id="main-game-area" class="game-area">
                     <div id="targets-grid" class="drop-grid"></div>
                     <div id="drags-grid" class="drag-grid"></div>
                 </div>
+
                 <div class="gear-btn rd-float" onclick="toggleGear(this)">
                     <img class="gear-img-src" src="" style="width:100%;">
                 </div>
@@ -163,18 +229,20 @@
         </section>
     </main>
 
+    <!-- MODAL FINAL -->
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--cor-principal);">Parabéns!</h2>
-            <div id="modal-msg" style="margin: 20px 0;"></div>
+            <h2 id="modal-title" style="color:var(--cor-principal); font-size: 2rem;">Parabéns!</h2>
+            <div id="modal-msg" style="margin: 20px 0; font-size: 1.2rem;"></div>
             <button class="btn-jogar" style="width:100%" onclick="location.reload()">Jogar de Novo</button>
         </div>
     </div>
 
-    <!-- ÁUDIOS ATUALIZADOS -->
+    <!-- ÁUDIOS -->
     <audio id="snd-correct" src="https://assets.mixkit.co/active_storage/sfx/600/600-preview.mp3"></audio>
     <audio id="snd-wrong" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
 
+    <!-- LÓGICA DO JOGO -->
     <script src="dados.js"></script>
     <script>
         let currentRound = 1, points = 0;
@@ -185,6 +253,10 @@
         const TOTAL_ROUNDS = 10; 
 
         window.onload = () => {
+            if (typeof JOGO_CONFIG === 'undefined') {
+                console.error("Erro: dados.js não carregado!");
+                return;
+            }
             const p = JOGO_CONFIG.caminhoIcons;
             const g = JOGO_CONFIG.caminhoGeralImg;
             document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
@@ -218,7 +290,10 @@
             }, 1000);
         }
 
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function toggleMenu() { 
+            document.getElementById('sidebar').classList.toggle('active'); 
+            document.getElementById('overlay').classList.toggle('active'); 
+        }
         
         function toggleGear(btn) { 
             const menu = document.getElementById('shared-gear-menu');
@@ -262,14 +337,12 @@
         function loadRound() {
             matchedCount = 0;
             const level = currentRound <= 5 ? 1 : 2;
-            
             if(currentRound === 6) initStars();
 
             const cat = JOGO_CONFIG.categorias[selectedTheme];
             let allItems = [...cat.lista].sort(() => 0.5 - Math.random());
             
             let targets = [], drags = [];
-
             if(level === 1) {
                 targets = allItems.slice(0, 5);
                 drags = [...targets].sort(() => 0.5 - Math.random());
@@ -319,8 +392,17 @@
             document.addEventListener('touchend', stopDrag);
         }
 
-        function onMove(e) { const event = e.type === 'touchmove' ? e.touches[0] : e; moveAt(event.clientX, event.clientY); }
-        function moveAt(clientX, clientY) { if(dragElement) { dragElement.style.left = (clientX - startX) + 'px'; dragElement.style.top = (clientY - startY) + 'px'; } }
+        function onMove(e) { 
+            const event = e.type === 'touchmove' ? e.touches[0] : e; 
+            moveAt(event.clientX, event.clientY); 
+        }
+
+        function moveAt(clientX, clientY) { 
+            if(dragElement) { 
+                dragElement.style.left = (clientX - startX) + 'px'; 
+                dragElement.style.top = (clientY - startY) + 'px'; 
+            } 
+        }
 
         function stopDrag(e) {
             if(!dragElement) return;
@@ -354,8 +436,10 @@
             }
 
             if(dragElement) dragReset();
-            document.removeEventListener('mousemove', onMove); document.removeEventListener('touchmove', onMove);
-            document.removeEventListener('mouseup', stopDrag); document.removeEventListener('touchend', stopDrag);
+            document.removeEventListener('mousemove', onMove); 
+            document.removeEventListener('touchmove', onMove);
+            document.removeEventListener('mouseup', stopDrag); 
+            document.removeEventListener('touchend', stopDrag);
         }
 
         function dragReset() {
@@ -369,11 +453,7 @@
 
         function playSound(id) {
             const s = document.getElementById(id);
-            if(s) {
-                s.currentTime = 0;
-                s.volume = 0.4;
-                s.play().catch(e => {});
-            }
+            if(s) { s.currentTime = 0; s.volume = 0.4; s.play().catch(e => {}); }
         }
 
         function updateVisualFeedback(isCorrect) {
@@ -397,10 +477,9 @@
             clearInterval(timerInterval);
             const finalTime = document.getElementById('lbl-timer').innerText;
             document.getElementById('modal-msg').innerHTML = `
-                <div style="background:#f8f8f8; padding:15px; border-radius:15px;">
-                    <p>Fim do Jogo!</p>
-                    <p>Pontos: <b>${points}</b></p>
-                    <p>Tempo: <b>${finalTime}</b></p>
+                <div style="background:#f8f8f8; padding:20px; border-radius:20px;">
+                    <p>🎯 Pontuação: <b>${points}</b></p>
+                    <p>⏱️ Tempo: <b>${finalTime}</b></p>
                 </div>`;
             document.getElementById('modal').style.display = 'flex';
         }
