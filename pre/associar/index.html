@@ -69,7 +69,7 @@
         .btn-rd-mini img { width: 20px; height: 20px; }
 
         /* --- Jogo --- */
-        .game-area { flex: 1; display: flex; flex-wrap: wrap; content-content: center; align-items: center; justify-content: center; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 10px; gap: 10px; overflow-y: auto; }
+        .game-area { flex: 1; display: flex; flex-wrap: wrap; align-content: center; align-items: center; justify-content: center; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 10px; gap: 10px; overflow-y: auto; }
         
         .game-item { 
             width: clamp(65px, 18vw, 110px); 
@@ -209,11 +209,8 @@
                 const cat = JOGO_CONFIG.categorias[key];
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
-                
-                // Usar a primeira imagem da categoria como ícone
                 const iconImg = cat.caminho + cat.lista[0];
                 item.innerHTML = `<img src="${iconImg}"> <span>${cat.nome}</span>`;
-                
                 item.onclick = () => selectCategory(key);
                 container.appendChild(item);
             });
@@ -262,7 +259,7 @@
             const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
             for(let i=0; i<5; i++) { 
                 const s = document.createElement('div'); 
-                s.style.cssText="width:18px;height:18px;border:2px solid #ccc;border-radius:50%; background: white;"; 
+                s.style.cssText="width:20px;height:20px;border:2px solid #ccc;border-radius:50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: white;"; 
                 bar.appendChild(s); 
             }
         }
@@ -276,7 +273,6 @@
             let items = [...cat.lista].sort(() => 0.5 - Math.random());
             
             let numPares = (level === 1) ? 5 : 8;
-            
             let paresSelecionados = items.slice(0, numPares);
             targetItem = items[numPares];
             
@@ -286,7 +282,6 @@
                 deck.push({img: img, pair: true});
             });
             deck.push({img: targetItem, pair: false});
-            
             deck.sort(() => 0.5 - Math.random());
             
             deck.forEach(obj => {
@@ -300,49 +295,45 @@
 
         function checkAnswer(imgName, element) {
             if (!isRoundActive) return;
+            isRoundActive = false; // Impede múltiplos cliques na mesma ronda
+
             const stars = document.getElementById('stars-bar').children;
+            const starAtual = stars[currentQuestion-1];
 
             if (imgName === targetItem) {
-                isRoundActive = false;
                 points += 20;
-                document.getElementById('points').innerText = points;
-                
-                // Feedback Bola Verde
-                stars[currentQuestion-1].style.background = "var(--cor-acerto)";
-                stars[currentQuestion-1].style.borderColor = "var(--cor-acerto)";
-                
-                // Feedback Visual Verde no item
+                // Feedback de Acerto (Bola Verde com V)
+                starAtual.style.background = "var(--cor-acerto)";
+                starAtual.style.borderColor = "var(--cor-acerto)";
+                starAtual.innerText = "V";
                 element.classList.add('item-correct');
-                
-                setTimeout(() => {
-                    currentQuestion++;
-                    if (currentQuestion > 5) {
-                        if (level === 1) {
-                            level = 2;
-                            currentQuestion = 1;
-                            initStars();
-                            loadLevel();
-                        } else {
-                            endGame();
-                        }
-                    } else {
-                        loadLevel();
-                    }
-                }, 800);
             } else {
-                // Feedback Bola Vermelha
-                stars[currentQuestion-1].style.background = "var(--cor-erro)";
-                stars[currentQuestion-1].style.borderColor = "var(--cor-erro)";
-
-                // Feedback Visual Vermelho
-                element.classList.add('item-wrong', 'error-shake');
-                setTimeout(() => {
-                    element.classList.remove('error-shake', 'item-wrong');
-                }, 400);
-                
                 if(points > 0) points -= 2;
-                document.getElementById('points').innerText = points;
+                // Feedback de Erro (Bola Vermelha com X)
+                starAtual.style.background = "var(--cor-erro)";
+                starAtual.style.borderColor = "var(--cor-erro)";
+                starAtual.innerText = "X";
+                element.classList.add('item-wrong', 'error-shake');
             }
+
+            document.getElementById('points').innerText = points;
+            
+            // Avança para a próxima ronda após um pequeno delay (em ambos os casos)
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion > 5) {
+                    if (level === 1) {
+                        level = 2;
+                        currentQuestion = 1;
+                        initStars();
+                        loadLevel();
+                    } else {
+                        endGame();
+                    }
+                } else {
+                    loadLevel();
+                }
+            }, 800);
         }
 
         function endGame() {
