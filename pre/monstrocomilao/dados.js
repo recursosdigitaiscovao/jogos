@@ -1,12 +1,12 @@
 const JOGO_CONFIG = {
-    caminhoImg: "img/",
-    caminhoIcons: "img/icons/",
+    caminhoImg: "../../img/",
+    caminhoIcons: "../..//icons/",
     iconesMenu: {
-        pre: "pre.png",
-        ano1: "1.png",
-        ano2: "2.png",
-        ano3: "3.png",
-        ano4: "4.png"
+        pre: "iconpre.png",
+        ano1: "icon1.png",
+        ano2: "icon2.png",
+        ano3: "icon3.png",
+        ano4: "icon4.png"
     },
     categorias: {
         nivel1: {
