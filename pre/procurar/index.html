@@ -71,17 +71,22 @@
         .btn-rd-mini { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; margin-left: 10px; }
         .btn-rd-mini img { width: 20px; height: 20px; }
 
-        /* Ajuste: Target Header dentro do espaço do jogo */
-        .target-header { width: 100%; text-align: center; padding: 5px 0 15px 0; border-bottom: 2px dashed var(--cor-principal); margin-bottom: 15px; }
+        /* Estilo Alvo */
+        .target-header { width: 100%; text-align: center; padding: 5px 0 15px 0; border-bottom: 2px dashed var(--cor-principal); }
         .target-header h2 { color: var(--cor-vermelho); margin: 0; font-size: 1.6rem; display: flex; align-items: center; justify-content: center; gap: 15px; }
         .target-img-main { width: 70px; height: 70px; object-fit: contain; }
 
         .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 10px; overflow-y: auto; }
-        .grid-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; }
+        
+        /* Ajuste 1: Padding/Margin de 40px no topo da grelha após a linha */
+        .grid-container { 
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; 
+            margin-top: 40px; 
+        }
         
         .game-item { 
-            width: clamp(70px, 20vw, 110px); 
-            height: clamp(70px, 20vw, 110px); 
+            width: clamp(70px, 18vw, 110px); 
+            height: clamp(70px, 18vw, 110px); 
             background: white; 
             border: 4px solid var(--cor-principal); 
             border-radius: 20px; 
@@ -132,7 +137,6 @@
 
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:30px; font-weight:bold; color:var(--cor-principal); cursor:pointer; line-height:1;">☰</button>
-        <!-- Ajuste: Nome alterado para Pré-Escolar -->
         <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin: 0;">
             <img id="header-icon" src="" style="height:32px; width: auto;"> Pré-Escolar
         </h1>
@@ -168,8 +172,6 @@
                         <button class="btn-rd-mini" onclick="toggleRD()"><img class="btn-rd-img-ref" src=""></button>
                     </div>
                 </div>
-
-                <!-- O Bloco "Encontra" foi movido para dentro da game-area via JS no loadLevel -->
                 <div class="game-area" id="game-area"></div>
             </div>
         </section>
@@ -189,6 +191,10 @@
         let targetItem = ""; 
         let currentCatKey = "animais";
         let isRoundActive = false;
+
+        // Ajuste 2: Inicialização dos Sons
+        const somAcerto = new Audio('../../sons/acerto.mp3');
+        const somErro = new Audio('../../sons/erro.mp3');
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
@@ -220,9 +226,7 @@
 
         function selectCategory(key) {
             currentCatKey = key;
-            closeMenus();
-            resetGame();
-            updateIntroImages();
+            closeMenus(); resetGame(); updateIntroImages();
             document.getElementById('display-categoria').innerText = JOGO_CONFIG.categorias[key].nome;
         }
 
@@ -252,8 +256,7 @@
                 seconds++; 
                 document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; 
             }, 1000);
-            initStars(); 
-            loadLevel();
+            initStars(); loadLevel();
         }
 
         function initStars() {
@@ -268,7 +271,7 @@
         function loadLevel() {
             isRoundActive = true;
             const area = document.getElementById('game-area');
-            area.innerHTML = ''; // Limpa tudo, inclusive o cabeçalho antigo
+            area.innerHTML = '';
             
             const cat = JOGO_CONFIG.categorias[currentCatKey];
             let items = [...cat.lista].sort(() => 0.5 - Math.random());
@@ -276,13 +279,11 @@
             let pool = items.slice(0, numTotal);
             targetItem = pool[Math.floor(Math.random() * pool.length)];
             
-            // Recriar Cabeçalho de Alvo dentro da game-area
             const header = document.createElement('div');
             header.className = 'target-header';
             header.innerHTML = `<h2>Encontra: <img class="target-img-main" src="${cat.caminho + targetItem}"></h2>`;
             area.appendChild(header);
 
-            // Criar container para os itens
             const grid = document.createElement('div');
             grid.className = 'grid-container';
             
@@ -302,19 +303,29 @@
             isRoundActive = false;
             const stars = document.getElementById('stars-bar').children;
             const starAtual = stars[currentQuestion-1];
+
             if (imgName === targetItem) {
+                // Tocar som de acerto
+                somAcerto.currentTime = 0;
+                somAcerto.play().catch(e => console.log("Erro áudio acerto"));
+
                 points += 20;
                 starAtual.style.background = "var(--cor-acerto)";
                 starAtual.style.borderColor = "var(--cor-acerto)";
                 starAtual.innerText = "✔";
                 element.classList.add('item-correct');
             } else {
+                // Tocar som de erro
+                somErro.currentTime = 0;
+                somErro.play().catch(e => console.log("Erro áudio erro"));
+
                 if(points > 0) points -= 2;
                 starAtual.style.background = "var(--cor-erro)";
                 starAtual.style.borderColor = "var(--cor-erro)";
                 starAtual.innerText = "✖";
                 element.classList.add('item-wrong', 'error-shake');
             }
+
             document.getElementById('points').innerText = points;
             setTimeout(() => {
                 currentQuestion++;
