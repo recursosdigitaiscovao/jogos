@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pré Escolar - Copia as Cores</title>
+    <title>Pré Escolar - Copia o Padrão</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -21,7 +21,7 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* --- Header & Sidebars (Template Original) --- */
+        /* --- Header & Sidebars (Template Fiel) --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
@@ -29,39 +29,46 @@
         .sidebar-rd { position: fixed; bottom: -300px; left: 0; width: 100%; height: 300px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
         .sidebar-rd.active { bottom: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
-        .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; }
+        .sidebar-item img { width: 40px; height: 40px; margin-right: 12px; object-fit: contain; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* --- Layout de Jogo --- */
+        /* --- Layout --- */
         .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
-        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-jogo-verde); display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden; }
 
-        /* Área das Grelhas */
-        .game-area { flex: 1; display: flex; flex-direction: row; align-items: center; justify-content: space-evenly; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 10px; gap: 10px; overflow-y: auto; }
+        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-jogo-verde); display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden; }
+        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center;}
+        
+        /* Intro Animation */
+        .intro-example { display: flex; gap: 10px; margin-top: 15px; align-items: center; }
+        .grid-mini { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; background: #ddd; padding: 2px; }
+        .grid-mini div { width: 20px; height: 20px; background: white; }
+        .item-ex.unique { border: 3px solid var(--cor-vermelho); animation: pulse 1s infinite; }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.1);} 100% {transform: scale(1);} }
+
+        /* Jogo Grelhas */
+        .game-area { flex: 1; display: flex; align-items: center; justify-content: space-evenly; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 10px; gap: 10px; overflow-y: auto; }
         @media (max-width: 600px) { .game-area { flex-direction: column; } }
 
-        .grid-container { text-align: center; }
-        .grid-label { font-size: 0.7rem; font-weight: bold; color: var(--cor-texto); margin-bottom: 4px; text-transform: uppercase; }
-        
         .pixel-grid { display: grid; background: #ccc; border: 2px solid #aaa; gap: 1px; width: fit-content; }
-        .cell { width: clamp(30px, 9vw, 55px); height: clamp(30px, 9vw, 55px); background: white; cursor: pointer; }
+        .cell { width: clamp(30px, 8vw, 50px); height: clamp(30px, 8vw, 50px); background: white; cursor: pointer; }
 
-        /* Ferramentas */
-        .tools-container { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px 0; }
-        .palette { display: flex; gap: 10px; justify-content: center; }
-        .color-opt { width: 35px; height: 35px; border-radius: 50%; border: 3px solid #eee; cursor: pointer; transition: 0.2s; }
-        .color-opt.active { border-color: #555; transform: scale(1.1); }
-        .btn-verify { background: var(--cor-acerto); color: white; border: none; font-family: 'Fredoka'; font-weight: bold; padding: 10px 30px; border-radius: 15px; cursor: pointer; font-size: 1.1rem; }
-        .btn-clear { background: #eee; color: #666; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-family: 'Fredoka'; font-size: 0.8rem; }
-
-        /* Botões do Template */
-        .intro-btns { display: flex; gap: 10px; width: 100%; margin-top: 10px; }
+        /* Botões */
+        .intro-btns { display: flex; gap: 10px; width: 100%; }
         .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
         .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
         .btn-rd img { width: 35px; height: 35px; }
+
+        /* Ferramentas */
+        .palette { display: flex; gap: 8px; justify-content: center; padding: 10px 0; }
+        .color-opt { width: 32px; height: 32px; border-radius: 50%; border: 3px solid #eee; cursor: pointer; }
+        .color-opt.active { border-color: var(--cor-principal); transform: scale(1.1); }
+        .btn-verify { background: var(--cor-acerto); color: white; border: none; font-family: 'Fredoka'; font-weight: bold; padding: 8px 25px; border-radius: 15px; cursor: pointer; }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); width: 90%; max-width: 350px; }
     </style>
 </head>
 <body>
@@ -77,14 +84,17 @@
     </div>
 
     <div class="sidebar-rd" id="sidebar-rd">
-        <h3 style="margin:0 0 15px 0; color:var(--cor-principal);">Escolhe o Nível</h3>
-        <div id="categorias-list"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0; color:var(--cor-principal);">Escolhe o Nível</h3>
+            <button onclick="toggleRD()" style="border:none; background:none; font-size:20px;">✕</button>
+        </div>
+        <div id="categorias-list" style="max-height: 220px; overflow-y: auto;"></div>
     </div>
 
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
         <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin: 0;">
-            <img id="header-icon" src="" style="height:32px; width: auto;"> Pré Escolar
+            <img id="header-icon" src="" style="height:32px;"> Pré Escolar
         </h1>
         <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
@@ -92,11 +102,20 @@
     <main class="main-content">
         <section id="intro-screen" class="screen active">
             <div class="game-card">
-                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding: 20px;">
-                    <h2 style="color:var(--cor-principal)">Copia as Cores</h2>
-                    <p style="color:#888;">Olha para o modelo da esquerda e pinta a grelha da direita exatamente igual!</p>
+                <div class="explanation-box">
+                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin: 0;">Copia o modelo:</p>
+                    <div class="intro-example">
+                        <div class="grid-mini">
+                            <div style="background:red"></div><div></div><div></div><div style="background:blue"></div>
+                        </div>
+                        <span style="font-size: 1.5rem;">➡️</span>
+                        <div class="grid-mini item-ex unique">
+                            <div style="background:red"></div><div></div><div></div><div style="background:blue"></div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.9rem; margin-top: 15px; color: #888;">Pinta a tua grelha exatamente igual à do modelo!</p>
                 </div>
-                <h2 class="game-title" id="display-categoria" style="text-align:center; color:var(--cor-principal)">Nível 1</h2>
+                <h2 class="game-title" id="display-categoria">Nível 1</h2>
                 <div class="intro-btns">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
                     <button class="btn-rd" onclick="toggleRD()"><img class="btn-rd-img-ref" src=""></button>
@@ -108,26 +127,25 @@
             <div class="game-card">
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem;">
                     <div>⏳ <span id="timer">00:00</span></div>
-                    <button class="btn-clear" onclick="clearPlayerGrid()">Limpar</button>
+                    <div id="stars-bar" style="display:flex; gap:4px;"></div>
                     <div style="display:flex; align-items:center;">
-                        <button class="btn-rd" style="width:35px; height:35px; border-radius:8px;" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:20px; height:20px;"></button>
+                        PTS: <span id="points">0</span>
+                        <button class="btn-rd" style="width:30px; height:30px; margin-left:10px; border-radius:8px;" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:18px; height:18px;"></button>
                     </div>
                 </div>
-
-                <div class="game-area" id="game-area">
-                    <div class="grid-container">
-                        <div class="grid-label">Modelo</div>
-                        <div id="grid-model" class="pixel-grid"></div>
+                <div class="game-area">
+                    <div style="text-align:center">
+                        <div style="font-size:0.6rem; color:#888; margin-bottom:2px;">MODELO</div>
+                        <div id="grid-target" class="pixel-grid"></div>
                     </div>
-                    <div class="grid-container">
-                        <div class="grid-label">O Teu Desenho</div>
+                    <div style="text-align:center">
+                        <div style="font-size:0.6rem; color:#888; margin-bottom:2px;">O TEU DESENHO</div>
                         <div id="grid-player" class="pixel-grid"></div>
                     </div>
                 </div>
-
-                <div class="tools-container">
+                <div class="palette-container" style="text-align:center; padding-bottom:10px;">
                     <div class="palette" id="palette"></div>
-                    <button class="btn-verify" onclick="checkGrid()">VERIFICAR</button>
+                    <button class="btn-verify" onclick="checkRound()">VERIFICAR</button>
                 </div>
             </div>
         </section>
@@ -135,7 +153,7 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--cor-acerto);">Parabéns!</h2>
+            <h2 id="modal-title" style="color:var(--cor-acerto);">Boa!</h2>
             <div id="modal-msg" style="margin-bottom:20px;"></div>
             <button class="btn-play" onclick="location.reload()" style="background:var(--cor-acerto);">Jogar de Novo</button>
         </div>
@@ -143,20 +161,15 @@
 
     <script src="dados.js"></script>
     <script>
-        let currentLevel = "nivel1";
-        let selectedColor = JOGO_CONFIG.coresJogo[0];
-        let modelPattern = [];
-        let timerInterval, seconds = 0;
+        let currentQuestion = 1, points = 0, seconds = 0, timerInterval;
+        let currentCatKey = "nivel1";
+        let selectedColor = JOGO_CONFIG.coresPaleta[0];
+        let targetColors = [];
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
-            const i = JOGO_CONFIG.iconesMenu;
-            document.getElementById('header-icon').src = p + i.pre;
-            
-            // RD Img via caminhoImg + "rd.png"
-            const rdImgs = document.querySelectorAll('.btn-rd-img-ref');
-            rdImgs.forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
-            
+            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
+            document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             setupRDMenu();
             setupPalette();
         };
@@ -167,26 +180,19 @@
                 const cat = JOGO_CONFIG.categorias[key];
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
-                item.innerHTML = `<span>${cat.nome}</span>`;
-                item.onclick = () => {
-                    currentLevel = key;
-                    document.getElementById('display-categoria').innerText = cat.nome;
-                    closeMenus();
-                    if(document.getElementById('game-screen').classList.contains('active')) startGame();
-                };
+                item.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + cat.img}"> <span>${cat.nome}</span>`;
+                item.onclick = () => { currentCatKey = key; document.getElementById('display-categoria').innerText = cat.nome; closeMenus(); resetGame(); };
                 container.appendChild(item);
             });
         }
 
         function setupPalette() {
             const pal = document.getElementById('palette');
-            JOGO_CONFIG.coresJogo.forEach((color, idx) => {
+            JOGO_CONFIG.coresPaleta.forEach((color, idx) => {
                 const opt = document.createElement('div');
                 opt.className = 'color-opt';
                 opt.style.backgroundColor = color;
-                if(color === "#ffffff") opt.innerHTML = "✖"; // Borracha
-                opt.style.display = "flex"; opt.style.alignItems = "center"; opt.style.justifyContent = "center"; opt.style.fontSize = "12px";
-                
+                if(color === "#ffffff") { opt.innerHTML = "✖"; opt.style.display="flex"; opt.style.alignItems="center"; opt.style.justifyContent="center"; opt.style.fontSize="10px"; }
                 if(idx === 0) opt.classList.add('active');
                 opt.onclick = () => {
                     selectedColor = color;
@@ -197,36 +203,42 @@
             });
         }
 
+        function initStars() {
+            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const s = document.createElement('div');
+                s.style.cssText="width:18px;height:18px;border:2px solid #ccc;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;font-size:10px;color:white;";
+                bar.appendChild(s);
+            }
+        }
+
         function startGame() {
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            
-            resetTimer();
-            createGrids();
+            timerInterval = setInterval(() => {
+                seconds++;
+                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
+            }, 1000);
+            initStars();
+            loadRound();
         }
 
-        function createGrids() {
-            const size = JOGO_CONFIG.categorias[currentLevel].tamanho;
-            const gModel = document.getElementById('grid-model');
+        function loadRound() {
+            const size = JOGO_CONFIG.categorias[currentCatKey].tamanho;
+            const gTarget = document.getElementById('grid-target');
             const gPlayer = document.getElementById('grid-player');
-            
-            gModel.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+            gTarget.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
             gPlayer.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-            
-            gModel.innerHTML = '';
-            gPlayer.innerHTML = '';
-            modelPattern = [];
+            gTarget.innerHTML = ''; gPlayer.innerHTML = '';
+            targetColors = [];
 
             for(let i=0; i < size*size; i++) {
-                // Modelo
-                const color = JOGO_CONFIG.coresJogo[Math.floor(Math.random() * (JOGO_CONFIG.coresJogo.length - 1))];
-                modelPattern.push(color);
-                const cellM = document.createElement('div');
-                cellM.className = 'cell';
-                cellM.style.backgroundColor = color;
-                gModel.appendChild(cellM);
+                const color = JOGO_CONFIG.coresPaleta[Math.floor(Math.random() * (JOGO_CONFIG.coresPaleta.length - 1))];
+                targetColors.push(color);
+                const cellT = document.createElement('div');
+                cellT.className = 'cell'; cellT.style.backgroundColor = color;
+                gTarget.appendChild(cellT);
 
-                // Jogador
                 const cellP = document.createElement('div');
                 cellP.className = 'cell';
                 cellP.onclick = () => cellP.style.backgroundColor = selectedColor;
@@ -234,49 +246,54 @@
             }
         }
 
-        function clearPlayerGrid() {
-            document.querySelectorAll('#grid-player .cell').forEach(c => c.style.backgroundColor = '#ffffff');
-        }
-
-        function checkGrid() {
+        function checkRound() {
             const playerCells = document.querySelectorAll('#grid-player .cell');
-            let match = true;
-
+            let win = true;
             playerCells.forEach((cell, idx) => {
-                const pCol = rgbToHex(cell.style.backgroundColor) || "#ffffff";
-                const mCol = modelPattern[idx].toLowerCase();
-                if(pCol !== mCol) match = false;
+                const pColor = rgbToHex(cell.style.backgroundColor) || "#ffffff";
+                const tColor = targetColors[idx].toLowerCase();
+                if(pColor !== tColor) win = false;
             });
 
-            if(match) {
-                clearInterval(timerInterval);
-                const rel = JOGO_CONFIG.relatorio;
-                document.getElementById('modal-title').innerText = rel.titulo;
-                document.getElementById('modal-msg').innerHTML = `<p>${rel.tempoTotal} ${document.getElementById('timer').innerText}</p>`;
-                document.getElementById('modal').style.display = 'flex';
+            const stars = document.getElementById('stars-bar').children;
+            const star = stars[currentQuestion-1];
+
+            if(win) {
+                points += 20;
+                star.style.background = "var(--cor-acerto)"; star.innerText = "✔";
+                document.getElementById('points').innerText = points;
+                currentQuestion++;
+                if(currentQuestion > 5) endGame(); else loadRound();
             } else {
-                alert("Ainda não está igual! Verifica as cores.");
+                alert("Ainda não está igual! Tenta de novo.");
             }
         }
 
-        function resetTimer() {
+        function endGame() {
             clearInterval(timerInterval);
-            seconds = 0;
-            timerInterval = setInterval(() => {
-                seconds++;
-                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
-            }, 1000);
+            const rel = JOGO_CONFIG.relatorio;
+            document.getElementById('modal-title').innerText = rel.titulo;
+            document.getElementById('modal-msg').innerHTML = `<p>${rel.pontosTotal} ${points}</p><p>${rel.tempoTotal} ${document.getElementById('timer').innerText}</p>`;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function resetGame() {
+            points = 0; seconds = 0; currentQuestion = 1;
+            clearInterval(timerInterval);
+            document.getElementById('points').innerText = "0";
+            document.getElementById('timer').innerText = "00:00";
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('intro-screen').classList.add('active');
         }
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
-
         function rgbToHex(rgb) {
             if (!rgb || rgb === "transparent") return "#ffffff";
             if (rgb.startsWith('#')) return rgb.toLowerCase();
-            const vals = rgb.match(/\d+/g);
-            return "#" + vals.map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
+            const res = rgb.match(/\d+/g);
+            return res ? "#" + res.map(x => parseInt(x).toString(16).padStart(2, '0')).join('') : "#ffffff";
         }
     </script>
 </body>
