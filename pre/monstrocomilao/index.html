@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pré Escolar - Monstro Comilão</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -17,54 +17,59 @@
             --cor-acerto: #2ed573;
         }
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
-        body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
-
-        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
-        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; font-family: 'Fredoka', sans-serif; background: var(--cor-fundo); }
         
-        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
-        .sidebar.active { left: 0; }
-        .sidebar-rd { position: fixed; bottom: -300px; left: 0; width: 100%; height: 300px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
-        .sidebar-rd.active { bottom: 0; }
-        
-        .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
-        .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; }
-        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
-
+        /* Sidebar e Overlay */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
+        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
+        .sidebar.active { left: 0; }
+        .sidebar-rd { position: fixed; bottom: -300px; left: 0; width: 100%; height: 300px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; }
+        .sidebar-rd.active { bottom: 0; }
+        .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-weight: 500; cursor: pointer; }
+        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
 
-        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
-        .screen.active { display: flex; }
+        /* Header */
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; }
+        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
 
-        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-jogo-verde); display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden; }
-        .game-area { flex: 1; display: flex; align-items: center; justify-content: space-around; background: var(--cor-fundo); border-radius: 20px; padding: 20px; position: relative; }
+        /* Estrutura Principal */
+        .main-content { height: calc(100% - var(--header-height)); padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
+        .screen.active { display: flex; animation: fadeIn 0.5s ease-out; }
+
+        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-jogo-verde); display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; overflow: hidden; }
         
-        .monster-container { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; align-items: center; }
-        #monstro-img { width: clamp(120px, 25vw, 200px); height: auto; object-fit: contain; }
-        
-        .bubble-speech { background: white; border-radius: 20px; padding: 10px 15px; border: 3px solid var(--cor-principal); position: relative; margin-bottom: 10px; font-weight: bold; color: #555; font-size: 1.1rem; }
-        .bubble-speech::after { content: ''; position: absolute; bottom: -15px; left: 50%; border-width: 15px 15px 0; border-style: solid; border-color: var(--cor-principal) transparent; transform: translateX(-50%); }
+        /* Área do Jogo Ajustável */
+        .game-area { flex: 1; display: flex; flex-direction: row; align-items: center; justify-content: space-evenly; background: var(--cor-fundo); border-radius: 20px; padding: 10px; gap: 10px; position: relative; overflow: hidden; }
+        @media (max-width: 600px) { .game-area { flex-direction: column; } }
 
-        .options-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .number-option { width: clamp(60px, 15vw, 90px); height: clamp(60px, 15vw, 90px); background: white; border: 4px solid var(--cor-principal); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: bold; color: var(--cor-principal); cursor: pointer; animation: float 3s infinite ease-in-out; }
+        /* Monstro e Balão */
+        .monster-container { display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); max-width: 50%; }
+        #monstro-img { width: 100%; max-width: 180px; height: auto; object-fit: contain; }
+        .bubble-speech { background: white; border-radius: 20px; padding: 8px 12px; border: 3px solid var(--cor-principal); position: relative; margin-bottom: 10px; font-weight: bold; font-size: 1rem; text-align: center; white-space: nowrap; }
+        .bubble-speech::after { content: ''; position: absolute; bottom: -12px; left: 50%; border-width: 12px 12px 0; border-style: solid; border-color: var(--cor-principal) transparent; transform: translateX(-50%); }
 
+        /* Opções de Números */
+        .options-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; align-content: center; }
+        .number-option { 
+            width: clamp(65px, 18vw, 95px); height: clamp(65px, 18vw, 95px); 
+            background: white; border: 4px solid var(--cor-principal); border-radius: 20px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 2.2rem; font-weight: bold; color: var(--cor-principal); cursor: pointer; 
+            box-shadow: 0 4px 0 var(--cor-principal);
+        }
+        .number-option:active { transform: translateY(4px); box-shadow: none; }
+
+        /* Botões */
         .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
         .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 
+        /* Feedback Visual */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Modal */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); width: 90%; max-width: 350px; }
     </style>
@@ -102,10 +107,10 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px;">
-                    <img id="monstro-intro" src="" style="width:150px;">
-                    <p style="color:var(--cor-texto); font-weight:bold; text-align:center; padding: 0 20px;">O monstro tem muita fome! Ajuda-o a comer o número correto.</p>
+                    <img id="monstro-intro" src="" style="width:140px;">
+                    <p style="color:var(--cor-texto); font-weight:bold; text-align:center; padding: 0 30px; font-size: 1.2rem;">O monstro tem muita fome! Dá-lhe o número certo.</p>
                 </div>
-                <div style="display:flex; gap:10px; padding:20px;">
+                <div style="display:flex; gap:10px; padding:15px;">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
                     <button class="btn-rd" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:30px;"></button>
                 </div>
@@ -114,7 +119,7 @@
 
         <section id="game-screen" class="screen">
             <div class="game-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem; font-weight: bold; color: #777;">
                     <div>⏳ <span id="timer">00:00</span></div>
                     <div id="stars-bar" style="display:flex; gap:4px;"></div>
                     <div style="display:flex; align-items:center;">
@@ -124,7 +129,7 @@
                 </div>
                 <div class="game-area">
                     <div class="monster-container" id="monstro-box">
-                        <div class="bubble-speech">Quero o número <span id="target-number">?</span></div>
+                        <div class="bubble-speech">Quero o <span id="target-number" style="color:var(--cor-vermelho); font-size:1.4rem;">?</span></div>
                         <img id="monstro-img" src="">
                     </div>
                     <div class="options-container" id="options-grid"></div>
@@ -136,7 +141,7 @@
     <div class="modal" id="modal">
         <div class="modal-content">
             <h2 id="modal-title" style="color:var(--cor-acerto);">Boa!</h2>
-            <div id="modal-msg" style="margin-bottom:20px;"></div>
+            <div id="modal-msg" style="margin-bottom:20px; font-size: 1.1rem;"></div>
             <button class="btn-play" onclick="location.reload()" style="background:var(--cor-acerto);">Jogar de Novo</button>
         </div>
     </div>
@@ -156,7 +161,6 @@
             document.getElementById('header-icon').src = iconsPath + JOGO_CONFIG.iconesMenu.pre;
             document.querySelector('.menu-pre').src = iconsPath + JOGO_CONFIG.iconesMenu.pre;
             
-            // Imagens principais
             document.getElementById('monstro-intro').src = imgPath + "monstro.png";
             document.getElementById('monstro-img').src = imgPath + "monstro.png";
             document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = imgPath + "rd.png");
@@ -171,7 +175,8 @@
                 const cat = JOGO_CONFIG.categorias[key];
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
-                item.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + cat.img}"> <span>${cat.nome}</span>`;
+                // Usa rd.png no menu de categorias para consistência
+                item.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}rd.png"> <span>${cat.nome}</span>`;
                 item.onclick = () => { currentCatKey = key; closeMenus(); resetGame(); };
                 container.appendChild(item);
             });
@@ -181,7 +186,7 @@
             const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
             for(let i=0; i<5; i++) {
                 const s = document.createElement('div');
-                s.style.cssText="width:18px;height:18px;border:2px solid #ccc;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;font-size:10px;color:white;font-weight:bold;";
+                s.style.cssText="width:16px;height:16px;border:2px solid #ccc;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;font-size:9px;color:white;font-weight:bold;";
                 bar.appendChild(s);
             }
         }
@@ -196,7 +201,7 @@
 
             let nums = [targetNum];
             while(nums.length < config.quantidadeOpcoes) {
-                let r = Math.floor(Math.random() * (config.maxNum + 2)) + 1;
+                let r = Math.floor(Math.random() * (config.maxNum + 3)) + 1;
                 if(!nums.includes(r)) nums.push(r);
             }
             nums.sort(() => Math.random() - 0.5);
@@ -217,13 +222,16 @@
             if(isCorrect) {
                 sndCerto.play();
                 points++;
-                monsterScale += 0.12;
+                // Crescimento limitado para não quebrar o layout
+                if(monsterScale < 1.6) monsterScale += 0.12;
                 document.getElementById('monstro-box').style.transform = `scale(${monsterScale})`;
                 stars[currentQuestion-1].style.background = "var(--cor-acerto)";
+                stars[currentQuestion-1].style.borderColor = "var(--cor-acerto)";
                 stars[currentQuestion-1].innerText = "✔";
             } else {
                 sndErro.play();
                 stars[currentQuestion-1].style.background = "var(--cor-erro)";
+                stars[currentQuestion-1].style.borderColor = "var(--cor-erro)";
                 stars[currentQuestion-1].innerText = "X";
             }
 
@@ -233,7 +241,7 @@
             setTimeout(() => {
                 if(currentQuestion > 5) endGame();
                 else loadRound();
-            }, 600);
+            }, 500);
         }
 
         function startGame() {
@@ -250,7 +258,7 @@
         function endGame() {
             clearInterval(timerInterval);
             const rel = JOGO_CONFIG.relatorio;
-            document.getElementById('modal-title').innerText = points >= 3 ? rel.titulo : "Tenta de novo!";
+            document.getElementById('modal-title').innerText = points >= 3 ? rel.titulo : "Fim de Jogo!";
             document.getElementById('modal-msg').innerHTML = `<p>${rel.pontosTotal} ${points}/5</p><p>${rel.tempoTotal} ${document.getElementById('timer').innerText}</p>`;
             document.getElementById('modal').style.display = 'flex';
         }
