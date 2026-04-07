@@ -1,1 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pré Escolar - Monstro Comilão</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cor-principal: #e691a7; 
+            --cor-fundo: #fff5f7;      
+            --cor-texto: #e691a7;      
+            --cor-vermelho: #ff4757; 
+            --header-height: 70px;
+            --cor-jogo-verde: #e691a7;  
+            --cor-erro: #ff4757;
+            --cor-acerto: #2ed573;
+        }
 
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
+        body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
+
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
+        
+        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
+        .sidebar.active { left: 0; }
+        .sidebar-rd { position: fixed; bottom: -300px; left: 0; width: 100%; height: 300px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
+        .sidebar-rd.active { bottom: 0; }
+        
+        .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
+        .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; }
+        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
+        .overlay.active { display: block; }
+
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
+        .screen.active { display: flex; }
+
+        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-jogo-verde); display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden; }
+        
+        .game-area { flex: 1; display: flex; align-items: center; justify-content: space-around; background: var(--cor-fundo); border-radius: 20px; padding: 20px; position: relative; }
+        
+        .monster-container { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; align-items: center; }
+        #monstro-img { width: 180px; height: auto; object-fit: contain; }
+        
+        .bubble-speech { background: white; border-radius: 20px; padding: 10px 15px; border: 3px solid var(--cor-principal); position: relative; margin-bottom: 10px; font-weight: bold; color: #555; font-size: 1.1rem; }
+        .bubble-speech::after { content: ''; position: absolute; bottom: -15px; left: 50%; border-width: 15px 15px 0; border-style: solid; border-color: var(--cor-principal) transparent; transform: translateX(-50%); }
+
+        .options-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .number-option { width: 80px; height: 80px; background: white; border: 4px solid var(--cor-principal); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; color: var(--cor-principal); cursor: pointer; animation: float 3s infinite ease-in-out; }
+        .number-option:nth-child(even) { animation-delay: 0.5s; }
+
+        .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
+        .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); width: 90%; max-width: 350px; }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+    
+    <div class="sidebar" id="sidebar">
+        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
+            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer;">✕</button>
+        </div>
+        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+        <a href="/jogos/pre" class="sidebar-item"><img class="menu-pre" src=""> Pré-Escolar</a>
+    </div>
+
+    <div class="sidebar-rd" id="sidebar-rd">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0; color:var(--cor-principal);">Escolhe o Nível</h3>
+            <button onclick="toggleRD()" style="border:none; background:none; font-size:20px;">✕</button>
+        </div>
+        <div id="categorias-list" style="max-height: 220px; overflow-y: auto;"></div>
+    </div>
+
+    <header class="nav-bar">
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
+        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin: 0;">
+            <img id="header-icon" src="" style="height:32px;"> Monstro Comilão
+        </h1>
+        <a href="../" class="back-btn">⬅ Voltar</a>
+    </header>
+
+    <main class="main-content">
+        <section id="intro-screen" class="screen active">
+            <div class="game-card">
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px;">
+                    <img id="monstro-intro" src="" style="width:150px;">
+                    <p style="color:var(--cor-texto); font-weight:bold; text-align:center; padding: 0 20px;">O monstro tem muita fome! Ajuda-o a comer apenas o número que ele pedir.</p>
+                </div>
+                <div style="display:flex; gap:10px; padding:20px;">
+                    <button class="btn-play" onclick="startGame()">JOGAR</button>
+                    <button class="btn-rd" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:30px;"></button>
+                </div>
+            </div>
+        </section>
+
+        <section id="game-screen" class="screen">
+            <div class="game-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem;">
+                    <div>⏳ <span id="timer">00:00</span></div>
+                    <div id="stars-bar" style="display:flex; gap:4px;"></div>
+                    <div>PTS: <span id="points">0</span></div>
+                </div>
+                <div class="game-area">
+                    <div class="monster-container" id="monstro-box">
+                        <div class="bubble-speech">Quero comer o: <span id="target-number">?</span></div>
+                        <img id="monstro-img" src="">
+                    </div>
+                    <div class="options-container" id="options-grid"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 id="modal-title" style="color:var(--cor-acerto);">Boa!</h2>
+            <div id="modal-msg" style="margin-bottom:20px;"></div>
+            <button class="btn-play" onclick="location.reload()" style="background:var(--cor-acerto);">Jogar de Novo</button>
+        </div>
+    </div>
+
+    <script src="dados.js"></script>
+    <script>
+        let currentQuestion = 1, points = 0, seconds = 0, timerInterval;
+        let currentCatKey = "nivel1", targetNum = 0, monsterScale = 1;
+        
+        const sndCerto = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+        const sndErro = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
+
+        window.onload = () => {
+            const p = JOGO_CONFIG.caminhoIcons;
+            const imgPath = JOGO_CONFIG.caminhoImg;
+            
+            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
+            document.querySelector('.menu-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
+            document.getElementById('monstro-intro').src = imgPath + "monstro.png";
+            document.getElementById('monstro-img').src = imgPath + "monstro.png";
+            document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = imgPath + "rd.png");
+            
+            setupRDMenu();
+        };
+
+        function setupRDMenu() {
+            const container = document.getElementById('categorias-list');
+            container.innerHTML = '';
+            Object.keys(JOGO_CONFIG.categorias).forEach(key => {
+                const cat = JOGO_CONFIG.categorias[key];
+                const item = document.createElement('div');
+                item.className = 'sidebar-item';
+                item.innerHTML = `<span>${cat.nome}</span>`;
+                item.onclick = () => { currentCatKey = key; closeMenus(); resetGame(); };
+                container.appendChild(item);
+            });
+        }
+
+        function initStars() {
+            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const s = document.createElement('div');
+                s.style.cssText="width:18px;height:18px;border:2px solid #ccc;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;font-size:10px;color:white;font-weight:bold;";
+                bar.appendChild(s);
+            }
+        }
+
+        function loadRound() {
+            const config = JOGO_CONFIG.categorias[currentCatKey];
+            targetNum = Math.floor(Math.random() * config.maxNum) + 1;
+            document.getElementById('target-number').innerText = targetNum;
+
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+
+            let nums = [targetNum];
+            while(nums.length < config.quantidadeOpcoes) {
+                let r = Math.floor(Math.random() * (config.maxNum + 2)) + 1;
+                if(!nums.includes(r)) nums.push(r);
+            }
+            nums.sort(() => Math.random() - 0.5);
+
+            nums.forEach(n => {
+                const btn = document.createElement('div');
+                btn.className = 'number-option';
+                btn.innerText = n;
+                btn.onclick = () => checkAnswer(n);
+                grid.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(chosen) {
+            const stars = document.getElementById('stars-bar').children;
+            const isCorrect = chosen === targetNum;
+
+            if(isCorrect) {
+                sndCerto.play();
+                points++;
+                monsterScale += 0.1;
+                document.getElementById('monstro-box').style.transform = `scale(${monsterScale})`;
+                stars[currentQuestion-1].style.background = "var(--cor-acerto)";
+                stars[currentQuestion-1].innerText = "✔";
+            } else {
+                sndErro.play();
+                stars[currentQuestion-1].style.background = "var(--cor-erro)";
+                stars[currentQuestion-1].innerText = "X";
+            }
+
+            document.getElementById('points').innerText = points;
+            currentQuestion++;
+            
+            setTimeout(() => {
+                if(currentQuestion > 5) endGame();
+                else loadRound();
+            }, 600);
+        }
+
+        function startGame() {
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            timerInterval = setInterval(() => {
+                seconds++;
+                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
+            }, 1000);
+            initStars();
+            loadRound();
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            const rel = JOGO_CONFIG.relatorio;
+            document.getElementById('modal-title').innerText = points >= 3 ? rel.titulo : "Tenta de novo!";
+            document.getElementById('modal-msg').innerHTML = `<p>${rel.pontosTotal} ${points}/5</p><p>${rel.tempoTotal} ${document.getElementById('timer').innerText}</p>`;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function resetGame() {
+            points = 0; seconds = 0; currentQuestion = 1; monsterScale = 1;
+            clearInterval(timerInterval);
+            document.getElementById('monstro-box').style.transform = `scale(1)`;
+            document.getElementById('points').innerText = "0";
+            document.getElementById('timer').innerText = "00:00";
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('intro-screen').classList.add('active');
+        }
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
+    </script>
+</body>
+</html>
