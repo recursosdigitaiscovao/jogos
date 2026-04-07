@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pré Escolar - Encontra o Objeto</title>
+    <title>Pré Escolar - Encontra o Igual</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -21,9 +21,11 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
+        /* --- Header --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
 
+        /* --- Sidebars --- */
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         
@@ -37,6 +39,7 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
+        /* --- Layout --- */
         .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
@@ -46,51 +49,64 @@
             display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Estilo da Área Superior (Igual à Imagem) --- */
-        .target-container {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 10px; border-bottom: 2px dashed #ffc1d1; margin-bottom: 15px; flex-shrink: 0;
-        }
-        .target-box { display: flex; align-items: center; gap: 15px; }
-        .target-text { font-size: 1.8rem; font-weight: 700; color: #ff74a4; }
-        .target-img { width: 80px; height: 80px; object-fit: contain; }
+        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center;}
+        
+        /* Intro Animation Rigorosa */
+        .intro-example { display: flex; align-items: center; gap: 20px; margin-top: 15px; }
+        .item-ex { width: 60px; height: 60px; border: 2px solid var(--cor-principal); border-radius: 10px; background: white; padding: 5px; display: flex; align-items: center; justify-content: center; }
+        .item-ex img { max-width: 90%; max-height: 90%; object-fit: contain; }
+        .item-ex.unique { border: 4px solid var(--cor-vermelho); animation: pulse 1s infinite; }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.1);} 100% {transform: scale(1);} }
 
-        .game-area { flex: 1; display: flex; flex-wrap: wrap; align-content: center; align-items: center; justify-content: center; background: white; padding: 10px; gap: 10px; overflow-y: auto; }
+        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 5px 0; }
+
+        /* Botões */
+        .intro-btns { display: flex; gap: 10px; width: 100%; }
+        .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
+        .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+        .btn-rd img { width: 35px; height: 35px; }
+        .btn-rd-mini { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; margin-left: 10px; }
+        .btn-rd-mini img { width: 20px; height: 20px; }
+
+        /* --- Área de Jogo Adaptada à imagem --- */
+        .target-display { text-align: center; padding: 10px; border-bottom: 2px dashed var(--cor-principal); margin-bottom: 10px; flex-shrink: 0; }
+        .target-display h2 { color: var(--cor-vermelho); margin: 0; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 15px; }
+        .target-img-main { width: 70px; height: 70px; object-fit: contain; }
+
+        .game-area { flex: 1; display: flex; flex-wrap: wrap; align-content: center; align-items: center; justify-content: center; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 10px; gap: 10px; overflow-y: auto; }
         
         .game-item { 
-            width: clamp(70px, 20vw, 120px); 
-            height: clamp(70px, 20vw, 120px); 
+            width: clamp(65px, 18vw, 110px); 
+            height: clamp(65px, 18vw, 110px); 
             background: white; 
-            border: 2px solid #f0f0f0; 
+            border: 4px solid var(--cor-principal); 
             border-radius: 20px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             cursor: pointer;
-            transition: transform 0.2s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            padding: 12px;
+            transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
             box-sizing: border-box;
+            padding: 8px;
         }
         .game-item:active { transform: scale(0.9); }
         .game-item img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 
-        /* Feedbacks */
-        .item-correct { border-color: var(--cor-acerto) !important; background-color: #e8f5e9 !important; transform: scale(1.1); }
+        /* Feedback */
+        .item-correct { border-color: var(--cor-acerto) !important; background-color: #e8f5e9 !important; }
         .item-wrong { border-color: var(--cor-erro) !important; background-color: #ffebee !important; }
         .error-shake { animation: shake 0.4s; }
         @keyframes shake { 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); width: 90%; max-width: 350px; }
-        .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; width: 100%; font-family: 'Fredoka'; }
     </style>
 </head>
 <body>
 
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
     
-    <!-- Sidebar Principal -->
+    <!-- Sidebar Principal (Hamburger) -->
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
@@ -98,6 +114,10 @@
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
         <a href="/jogos/pre" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
+        <a href="/jogos/1" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
+        <a href="/jogos/2" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
+        <a href="/jogos/3" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
+        <a href="/jogos/4" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
     </div>
 
     <!-- Sidebar RD (Categorias) -->
@@ -118,55 +138,51 @@
     </header>
 
     <main class="main-content">
-        <!-- Tela Inicial -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
-                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center;">
-                    <h2 style="color:var(--cor-texto); font-size: 2rem; margin-bottom: 20px;">Encontra o Par!</h2>
-                    <p style="color: #888; font-size: 1.1rem;">Olha para o objeto no topo e encontra-o na grelha.</p>
+                <div class="explanation-box">
+                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin: 0;">Encontra o igual:</p>
+                    <div class="intro-example">
+                        <span style="font-size:1.5rem; color:var(--cor-vermelho);">Encontra:</span>
+                        <div class="item-ex unique"><img src="" class="ex-img-unique"></div>
+                    </div>
+                    <p style="font-size: 0.9rem; margin-top: 20px; color: #888;">Clica no objeto que é igual ao que aparece no topo!</p>
                 </div>
-                <div style="padding: 20px; display: flex; gap: 10px;">
+                <h2 class="game-title" id="display-categoria">Jogo dos Pares</h2>
+                <div class="intro-btns">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
-                    <button style="width:60px; height:58px; border-radius:15px; border:3px solid var(--cor-principal); background:white; cursor:pointer;" onclick="toggleRD()">
-                        <img class="btn-rd-img-ref" src="" style="width:35px;">
-                    </button>
+                    <button class="btn-rd" onclick="toggleRD()"><img class="btn-rd-img-ref" src=""></button>
                 </div>
             </div>
         </section>
 
-        <!-- Tela do Jogo -->
         <section id="game-screen" class="screen">
             <div class="game-card">
-                <!-- Info Bar -->
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 15px; font-size:0.9rem;">
+                <!-- Barra de Status -->
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem;">
                     <div>⏳ <span id="timer">00:00</span></div>
                     <div id="stars-bar" style="display:flex; gap:4px;"></div>
                     <div style="display:flex; align-items:center;">
                         PTS: <span id="points">0</span>
-                        <button style="width:28px; height:28px; border-radius:5px; border:1px solid var(--cor-principal); background:white; margin-left:10px; cursor:pointer;" onclick="toggleRD()">
-                            <img class="btn-rd-img-ref" src="" style="width:18px;">
-                        </button>
+                        <button class="btn-rd-mini" onclick="toggleRD()"><img class="btn-rd-img-ref" src=""></button>
                     </div>
                 </div>
 
-                <!-- Cabeçalho de "Encontra" (Conforme Imagem) -->
-                <div class="target-container">
-                    <div class="target-box">
-                        <span class="target-text">Encontra:</span>
-                        <img id="target-image-display" class="target-img" src="">
-                    </div>
+                <!-- Display do Alvo (Conforme a imagem enviada) -->
+                <div class="target-display">
+                    <h2>Encontra: <img id="target-image" class="target-img-main" src=""></h2>
                 </div>
 
-                <!-- Grelha do Jogo -->
+                <!-- Área de Grelha -->
                 <div class="game-area" id="game-area"></div>
             </div>
         </section>
     </main>
 
-    <!-- Modal de Fim -->
+    <!-- Modal Final -->
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--cor-jogo-verde);">Fim do Jogo</h2>
+            <h2 id="modal-title" style="color:var(--cor-jogo-verde);">Relatório</h2>
             <div id="modal-msg" style="margin-bottom:20px;"></div>
             <button class="btn-play" onclick="location.reload()" style="background:var(--cor-jogo-verde);">Jogar de Novo</button>
         </div>
@@ -175,20 +191,26 @@
     <script src="dados.js"></script>
     <script>
         let level = 1, points = 0, seconds = 0, timerInterval, currentQuestion = 1;
-        let targetImgName = ""; 
+        let targetItem = ""; 
         let currentCatKey = "animais";
         let isRoundActive = false;
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
             const i = JOGO_CONFIG.iconesMenu;
+            
             document.getElementById('header-icon').src = p + i.pre;
             document.getElementById('side-pre').src = p + i.pre;
+            document.getElementById('side-1').src = p + i.ano1;
+            document.getElementById('side-2').src = p + i.ano2;
+            document.getElementById('side-3').src = p + i.ano3;
+            document.getElementById('side-4').src = p + i.ano4;
             
             const rdImgs = document.querySelectorAll('.btn-rd-img-ref');
             rdImgs.forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             
             setupRDMenu();
+            updateIntroImages();
         };
 
         function setupRDMenu() {
@@ -198,10 +220,25 @@
                 const cat = JOGO_CONFIG.categorias[key];
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
-                item.innerHTML = `<img src="${cat.caminho + cat.lista[0]}"> <span>${cat.nome}</span>`;
-                item.onclick = () => { currentCatKey = key; closeMenus(); resetGame(); };
+                const iconImg = cat.caminho + cat.lista[0];
+                item.innerHTML = `<img src="${iconImg}"> <span>${cat.nome}</span>`;
+                item.onclick = () => selectCategory(key);
                 container.appendChild(item);
             });
+        }
+
+        function selectCategory(key) {
+            currentCatKey = key;
+            closeMenus();
+            resetGame();
+            updateIntroImages();
+            document.getElementById('display-categoria').innerText = JOGO_CONFIG.categorias[key].nome;
+        }
+
+        function updateIntroImages() {
+            const cat = JOGO_CONFIG.categorias[currentCatKey];
+            const imgs = [...cat.lista].sort(() => 0.5 - Math.random());
+            document.querySelector('.ex-img-unique').src = cat.caminho + imgs[0];
         }
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
@@ -232,7 +269,7 @@
             const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
             for(let i=0; i<5; i++) { 
                 const s = document.createElement('div'); 
-                s.style.cssText="width:20px;height:20px;border:2px solid #ccc;border-radius:50%; background: white; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold; color:white;"; 
+                s.style.cssText="width:20px;height:20px;border:2px solid #ccc;border-radius:50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; color: white;"; 
                 bar.appendChild(s); 
             }
         }
@@ -243,44 +280,43 @@
             area.innerHTML = '';
             
             const cat = JOGO_CONFIG.categorias[currentCatKey];
+            let items = [...cat.lista].sort(() => 0.5 - Math.random());
             
-            // Define o número de itens na grelha: Nível 1 = 8 itens | Nível 2 = 12 itens
-            let numItens = (level === 1) ? 8 : 12;
+            // Dificuldade: nível 1 (8 itens) | nível 2 (12 itens - como na imagem)
+            let numTotal = (level === 1) ? 8 : 12;
+            let pool = items.slice(0, numTotal);
             
-            // Embaralha a lista e pega os primeiros N itens
-            let pool = [...cat.lista].sort(() => 0.5 - Math.random()).slice(0, numItens);
+            // Escolhe um alvo do pool
+            targetItem = pool[Math.floor(Math.random() * pool.length)];
+            document.getElementById('target-image').src = cat.caminho + targetItem;
             
-            // Escolhe um desses itens para ser o alvo
-            targetImgName = pool[Math.floor(Math.random() * pool.length)];
+            // Embaralha para mostrar na grelha
+            pool.sort(() => 0.5 - Math.random());
             
-            // Atualiza a imagem de exibição do alvo
-            document.getElementById('target-image-display').src = cat.caminho + targetImgName;
-            
-            // Cria a grelha
-            pool.forEach(imgName => {
+            pool.forEach(img => {
                 const div = document.createElement('div');
                 div.className = 'game-item';
-                div.innerHTML = `<img src="${cat.caminho + imgName}">`;
-                div.onclick = () => checkAnswer(imgName, div);
+                div.innerHTML = `<img src="${cat.caminho + img}">`;
+                div.onclick = () => checkAnswer(img, div);
                 area.appendChild(div);
             });
         }
 
-        function checkAnswer(imgClicked, element) {
+        function checkAnswer(imgName, element) {
             if (!isRoundActive) return;
             isRoundActive = false;
 
             const stars = document.getElementById('stars-bar').children;
             const starAtual = stars[currentQuestion-1];
 
-            if (imgClicked === targetImgName) {
+            if (imgName === targetItem) {
                 points += 20;
                 starAtual.style.background = "var(--cor-acerto)";
                 starAtual.style.borderColor = "var(--cor-acerto)";
                 starAtual.innerText = "✔";
                 element.classList.add('item-correct');
             } else {
-                if(points > 0) points -= 5;
+                if(points > 0) points -= 2;
                 starAtual.style.background = "var(--cor-erro)";
                 starAtual.style.borderColor = "var(--cor-erro)";
                 starAtual.innerText = "✖";
@@ -293,8 +329,7 @@
                 currentQuestion++;
                 if (currentQuestion > 5) {
                     if (level === 1) {
-                        level = 2; currentQuestion = 1;
-                        initStars(); loadLevel();
+                        level = 2; currentQuestion = 1; initStars(); loadLevel();
                     } else { endGame(); }
                 } else { loadLevel(); }
             }, 800);
