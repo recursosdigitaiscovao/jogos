@@ -51,7 +51,7 @@
 
         .game-card {
             background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-jogo-verde);
-            display: flex; flex-direction: column; width: 100%; max-width: 1000px; height: 100%; box-sizing: border-box; overflow: hidden;
+            display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
         .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center;}
@@ -72,35 +72,35 @@
         .btn-rd-mini img { width: 20px; height: 20px; }
 
         /* Estilo Alvo */
-        .target-header { width: 100%; text-align: center; padding: 5px 0 15px 0; border-bottom: 2px dashed var(--cor-principal); }
-        .target-header h2 { color: var(--cor-vermelho); margin: 0; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; gap: 15px; }
-        
-        /* ALTERAÇÃO: Tamanho do alvo aumentado */
-        .target-img-main { width: 100px; height: 100px; object-fit: contain; }
+        .target-header { width: 100%; text-align: center; padding: 5px 0 10px 0; border-bottom: 2px dashed var(--cor-principal); }
+        .target-header h2 { color: var(--cor-vermelho); margin: 0; font-size: 1.6rem; display: flex; align-items: center; justify-content: center; gap: 15px; }
+        .target-img-main { width: 80px; height: 80px; object-fit: contain; }
 
-        .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 15px; overflow-y: auto; }
+        .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 10px; overflow: hidden; }
         
         .grid-container { 
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; 
-            margin-top: 30px; 
+            display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 10px; width: 100%; 
+            margin-top: 20px; flex: 1;
         }
         
-        /* ALTERAÇÃO: Tamanho dos itens aumentado para ocupar mais espaço */
+        /* Ajuste de tamanho: Nível 1 */
         .game-item { 
-            width: clamp(90px, 22vw, 150px); 
-            height: clamp(90px, 22vw, 150px); 
-            background: white; 
-            border: 4px solid var(--cor-principal); 
-            border-radius: 25px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
-            box-sizing: border-box;
-            padding: 12px;
+            width: clamp(80px, 20vw, 120px); 
+            height: clamp(80px, 20vw, 120px); 
+            background: white; border: 4px solid var(--cor-principal); border-radius: 20px; 
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: transform 0.2s; box-sizing: border-box; padding: 10px;
         }
-        .game-item:active { transform: scale(0.95); }
+
+        /* AJUSTE NÍVEL 2: Reduz o tamanho para não haver scroll */
+        .grid-level-2 .game-item {
+            width: clamp(65px, 16vw, 95px);
+            height: clamp(65px, 16vw, 95px);
+            padding: 8px;
+            border-width: 3px;
+        }
+
+        .game-item:active { transform: scale(0.9); }
         .game-item img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 
         .item-correct { border-color: var(--cor-acerto) !important; background-color: #e8f5e9 !important; }
@@ -194,7 +194,7 @@
         let currentCatKey = "animais";
         let isRoundActive = false;
 
-        // Sons configurados
+        // Sons
         const somAcerto = new Audio('../../sons/acerto.mp3');
         const somErro = new Audio('../../sons/erro.mp3');
 
@@ -287,7 +287,8 @@
             area.appendChild(header);
 
             const grid = document.createElement('div');
-            grid.className = 'grid-container';
+            // Aplica classe específica se for nível 2 para ajustar tamanho
+            grid.className = 'grid-container' + (level === 2 ? ' grid-level-2' : '');
             
             pool.sort(() => 0.5 - Math.random());
             pool.forEach(img => {
@@ -307,20 +308,16 @@
             const starAtual = stars[currentQuestion-1];
 
             if (imgName === targetItem) {
-                // Tocar som de acerto
                 somAcerto.currentTime = 0;
-                somAcerto.play().catch(e => console.log("Erro áudio acerto"));
-
+                somAcerto.play().catch(e => console.log("Erro áudio"));
                 points += 20;
                 starAtual.style.background = "var(--cor-acerto)";
                 starAtual.style.borderColor = "var(--cor-acerto)";
                 starAtual.innerText = "✔";
                 element.classList.add('item-correct');
             } else {
-                // Tocar som de erro
                 somErro.currentTime = 0;
-                somErro.play().catch(e => console.log("Erro áudio erro"));
-
+                somErro.play().catch(e => console.log("Erro áudio"));
                 if(points > 0) points -= 2;
                 starAtual.style.background = "var(--cor-erro)";
                 starAtual.style.borderColor = "var(--cor-erro)";
