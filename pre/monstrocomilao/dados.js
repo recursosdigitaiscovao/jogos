@@ -11,13 +11,13 @@ const JOGO_CONFIG = {
     categorias: {
         nivel1: {
             nome: "Nível 1",
-            img: "123.png", // Imagem representativa de números
+            img: "123.png", 
             maxNum: 5,
             tipo: "numero"
         },
         nivel2: {
             nome: "Nível 2",
-            img: "bolacha.png", // Imagem da bolacha
+            img: "bolacha.png", 
             maxNum: 10,
             tipo: "quantidade"
         }
