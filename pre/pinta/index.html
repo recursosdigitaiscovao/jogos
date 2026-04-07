@@ -18,10 +18,10 @@
             --cor-acerto: #2ed573;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        /* Animação para o tutorial */
+        @keyframes tutorialPaint {
+            0%, 20% { background-color: white; }
+            50%, 100% { background-color: #ff4757; }
         }
 
         @keyframes fadeIn {
@@ -52,8 +52,14 @@
         .screen.active { display: flex; }
 
         .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-jogo-verde); display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden; }
-        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center;}
         
+        /* Ajuste na explicação para a animação */
+        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center;}
+        .tutorial-grid-container { display: flex; gap: 20px; align-items: center; margin-top: 10px; }
+        .tut-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; background: #ddd; padding: 2px; }
+        .tut-cell { width: 25px; height: 25px; background: white; }
+        .tut-paint { animation: tutorialPaint 2s infinite; }
+
         .game-area { flex: 1; display: flex; align-items: center; justify-content: space-evenly; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 10px; gap: 10px; overflow-y: auto; }
         @media (max-width: 600px) { .game-area { flex-direction: column; } }
 
@@ -77,7 +83,8 @@
         .color-opt.active { border-color: var(--cor-principal); transform: scale(1.1); }
 
         .intro-btns { display: flex; gap: 10px; width: 100%; align-items: center; }
-        .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; animation: pulse 2s infinite; }
+        /* Removida animação pulse do btn-play */
+        .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
         .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .btn-rd-img-ref { width: 35px; height: 35px; object-fit: contain; }
 
@@ -123,9 +130,16 @@
             <div class="game-card">
                 <div class="explanation-box">
                     <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin: 0;">Copia o modelo:</p>
-                    <div style="display:grid; grid-template-columns: repeat(2,1fr); gap:2px; background:#ddd; padding:2px; margin-top:10px;">
-                        <div style="width:20px;height:20px;background:red"></div><div style="width:20px;height:20px;background:white"></div>
-                        <div style="width:20px;height:20px;background:white"></div><div style="width:20px;height:20px;background:blue"></div>
+                    <div class="tutorial-grid-container">
+                        <div class="tut-grid">
+                            <div class="tut-cell" style="background:#ff4757"></div><div class="tut-cell"></div>
+                            <div class="tut-cell"></div><div class="tut-cell"></div>
+                        </div>
+                        <span style="font-size: 20px;">➔</span>
+                        <div class="tut-grid">
+                            <div class="tut-cell tut-paint"></div><div class="tut-cell"></div>
+                            <div class="tut-cell"></div><div class="tut-cell"></div>
+                        </div>
                     </div>
                 </div>
                 <h2 class="game-title" id="display-categoria" style="text-align:center; color:var(--cor-principal);">Pinta Igual</h2>
@@ -163,7 +177,7 @@
         <div class="modal-content">
             <h2 id="modal-title" style="color:var(--cor-acerto);">Boa!</h2>
             <div id="modal-msg" style="margin-bottom:20px;"></div>
-            <button class="btn-play" onclick="location.reload()" style="background:var(--cor-acerto); animation:none;">Jogar de Novo</button>
+            <button class="btn-play" onclick="location.reload()" style="background:var(--cor-acerto);">Jogar de Novo</button>
         </div>
     </div>
 
@@ -173,6 +187,10 @@
         let currentCatKey = "nivel1";
         let selectedColor = JOGO_CONFIG.coresPaleta[0];
         let targetColors = [];
+
+        // Sons
+        const sndCerto = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+        const sndErro = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
@@ -195,11 +213,14 @@
         function setupRDMenu() {
             const container = document.getElementById('categorias-list');
             container.innerHTML = '';
-            Object.keys(JOGO_CONFIG.categorias).forEach(key => {
+            // Nomes fixos como Nível 1, 2, 3
+            const niveisNomes = ["Nível 1", "Nível 2", "Nível 3"];
+            
+            Object.keys(JOGO_CONFIG.categorias).forEach((key, index) => {
                 const cat = JOGO_CONFIG.categorias[key];
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
-                item.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + cat.img}"> <span>${cat.nome}</span>`;
+                item.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + cat.img}"> <span>${niveisNomes[index] || cat.nome}</span>`;
                 item.onclick = () => { currentCatKey = key; closeMenus(); resetGame(); };
                 container.appendChild(item);
             });
@@ -208,7 +229,6 @@
         function setupPalette() {
             const pal = document.getElementById('palette');
             pal.innerHTML = '';
-            // Retira a última cor da paleta conforme pedido
             const coresReduzidas = JOGO_CONFIG.coresPaleta.slice(0, -1);
             
             coresReduzidas.forEach((color, idx) => {
@@ -247,9 +267,7 @@
             gT.innerHTML = ''; gP.innerHTML = '';
             targetColors = [];
 
-            // Regra específica: Se for nivel 3, não mostra números
             const deveMostrarNumeros = (currentCatKey === 'nivel3') ? false : cat.mostrarNumeros;
-
             const coresDisponiveis = JOGO_CONFIG.coresPaleta.slice(0, -1);
 
             for(let i=0; i < size*size; i++) {
@@ -281,24 +299,30 @@
             const stars = document.getElementById('stars-bar').children;
             
             if(match) {
+                sndCerto.play();
                 points++;
                 if(currentQuestion <= 5) {
                     stars[currentQuestion-1].style.background = "var(--cor-acerto)";
                     stars[currentQuestion-1].style.borderColor = "var(--cor-acerto)";
                     stars[currentQuestion-1].innerText = "✔";
                 }
-                document.getElementById('points').innerText = points;
-                currentQuestion++;
-                if(currentQuestion > 5) endGame(); else loadRound();
             } else {
-                // Bola vermelha se estiver errado
+                sndErro.play();
+                // Bola vermelha e passa para a próxima ronda mesmo errando
                 if(currentQuestion <= 5) {
                     stars[currentQuestion-1].style.background = "var(--cor-erro)";
                     stars[currentQuestion-1].style.borderColor = "var(--cor-erro)";
                     stars[currentQuestion-1].innerText = "X";
                 }
-                // Opcional: Feedback visual de erro sem avançar
             }
+
+            document.getElementById('points').innerText = points;
+            currentQuestion++;
+            
+            setTimeout(() => {
+                if(currentQuestion > 5) endGame(); 
+                else loadRound();
+            }, 400);
         }
 
         function clearPlayerGrid() {
@@ -319,7 +343,7 @@
         function endGame() {
             clearInterval(timerInterval);
             const rel = JOGO_CONFIG.relatorio;
-            document.getElementById('modal-title').innerText = rel.titulo;
+            document.getElementById('modal-title').innerText = points >= 3 ? rel.titulo : "Fim de Jogo!";
             document.getElementById('modal-msg').innerHTML = `<p>${rel.pontosTotal} ${points}</p><p>${rel.tempoTotal} ${document.getElementById('timer').innerText}</p>`;
             document.getElementById('modal').style.display = 'flex';
         }
@@ -338,7 +362,7 @@
         function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
         
         function rgbToHex(rgb) {
-            if (!rgb || rgb === "transparent" || rgb === "white") return "#ffffff";
+            if (!rgb || rgb === "transparent" || rgb === "white" || rgb === "rgb(255, 255, 255)") return "#ffffff";
             if (rgb.startsWith('#')) return rgb.toLowerCase();
             const res = rgb.match(/\d+/g);
             return res ? "#" + res.map(x => parseInt(x).toString(16).padStart(2, '0')).join('') : "#ffffff";
