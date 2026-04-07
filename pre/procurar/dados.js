@@ -24,16 +24,14 @@ const JOGO_CONFIG = {
             caminho: "../../img/materialescolar/",
             lista: ["cola.png", "folha.png", "tesoura.png", "capa.png", "estojo.png", "livro.png", "esquadro.png", "regua.png", "mochila.png", "borracha.png", "caneta.png", "pincel.png", "lapis.png", "afia.png"]
         },
-        // --- NOVA CATEGORIA: NÚMEROS ---
         numeros: {
             nome: "Números",
-            caminho: "../../img/numeros/", // Ajuste a pasta se for diferente
+            caminho: "../../img/numeros/",
             lista: ["zero.png", "um.png", "dois.png", "tres.png", "quatro.png", "cinco.png", "seis.png", "sete.png", "oito.png", "nove.png", "dez.png"]
         },
-        // --- NOVA CATEGORIA: LETRAS ---
         letras: {
             nome: "Letras",
-            caminho: "../../img/letras/", // Ajuste a pasta se for diferente
+            caminho: "../../img/letras/",
             lista: [
                 "letra_a.png", "letra_b.png", "letra_c.png", "letra_d.png", "letra_e.png", 
                 "letra_f.png", "letra_g.png", "letra_h.png", "letra_i.png", "letra_j.png", 
