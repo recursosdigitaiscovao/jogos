@@ -23,6 +23,11 @@
             100% { transform: translateY(0px); }
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
@@ -46,21 +51,19 @@
         .screen.active { display: flex; }
 
         .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-jogo-verde); display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden; }
-        
         .game-area { flex: 1; display: flex; align-items: center; justify-content: space-around; background: var(--cor-fundo); border-radius: 20px; padding: 20px; position: relative; }
         
         .monster-container { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; align-items: center; }
-        #monstro-img { width: 180px; height: auto; object-fit: contain; }
+        #monstro-img { width: clamp(120px, 25vw, 200px); height: auto; object-fit: contain; }
         
         .bubble-speech { background: white; border-radius: 20px; padding: 10px 15px; border: 3px solid var(--cor-principal); position: relative; margin-bottom: 10px; font-weight: bold; color: #555; font-size: 1.1rem; }
         .bubble-speech::after { content: ''; position: absolute; bottom: -15px; left: 50%; border-width: 15px 15px 0; border-style: solid; border-color: var(--cor-principal) transparent; transform: translateX(-50%); }
 
         .options-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .number-option { width: 80px; height: 80px; background: white; border: 4px solid var(--cor-principal); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; color: var(--cor-principal); cursor: pointer; animation: float 3s infinite ease-in-out; }
-        .number-option:nth-child(even) { animation-delay: 0.5s; }
+        .number-option { width: clamp(60px, 15vw, 90px); height: clamp(60px, 15vw, 90px); background: white; border: 4px solid var(--cor-principal); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: bold; color: var(--cor-principal); cursor: pointer; animation: float 3s infinite ease-in-out; }
 
         .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
-        .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); width: 90%; max-width: 350px; }
@@ -100,7 +103,7 @@
             <div class="game-card">
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px;">
                     <img id="monstro-intro" src="" style="width:150px;">
-                    <p style="color:var(--cor-texto); font-weight:bold; text-align:center; padding: 0 20px;">O monstro tem muita fome! Ajuda-o a comer apenas o número que ele pedir.</p>
+                    <p style="color:var(--cor-texto); font-weight:bold; text-align:center; padding: 0 20px;">O monstro tem muita fome! Ajuda-o a comer o número correto.</p>
                 </div>
                 <div style="display:flex; gap:10px; padding:20px;">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
@@ -114,11 +117,14 @@
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem;">
                     <div>⏳ <span id="timer">00:00</span></div>
                     <div id="stars-bar" style="display:flex; gap:4px;"></div>
-                    <div>PTS: <span id="points">0</span></div>
+                    <div style="display:flex; align-items:center;">
+                        PTS: <span id="points">0</span>
+                        <button class="btn-rd" style="width:30px; height:30px; margin-left:10px; border-radius:8px;" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:18px; height:18px;"></button>
+                    </div>
                 </div>
                 <div class="game-area">
                     <div class="monster-container" id="monstro-box">
-                        <div class="bubble-speech">Quero comer o: <span id="target-number">?</span></div>
+                        <div class="bubble-speech">Quero o número <span id="target-number">?</span></div>
                         <img id="monstro-img" src="">
                     </div>
                     <div class="options-container" id="options-grid"></div>
@@ -144,11 +150,13 @@
         const sndErro = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
 
         window.onload = () => {
-            const p = JOGO_CONFIG.caminhoIcons;
+            const iconsPath = JOGO_CONFIG.caminhoIcons;
             const imgPath = JOGO_CONFIG.caminhoImg;
             
-            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
-            document.querySelector('.menu-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
+            document.getElementById('header-icon').src = iconsPath + JOGO_CONFIG.iconesMenu.pre;
+            document.querySelector('.menu-pre').src = iconsPath + JOGO_CONFIG.iconesMenu.pre;
+            
+            // Imagens principais
             document.getElementById('monstro-intro').src = imgPath + "monstro.png";
             document.getElementById('monstro-img').src = imgPath + "monstro.png";
             document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = imgPath + "rd.png");
@@ -163,7 +171,7 @@
                 const cat = JOGO_CONFIG.categorias[key];
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
-                item.innerHTML = `<span>${cat.nome}</span>`;
+                item.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + cat.img}"> <span>${cat.nome}</span>`;
                 item.onclick = () => { currentCatKey = key; closeMenus(); resetGame(); };
                 container.appendChild(item);
             });
@@ -204,12 +212,12 @@
 
         function checkAnswer(chosen) {
             const stars = document.getElementById('stars-bar').children;
-            const isCorrect = chosen === targetNum;
+            const isCorrect = (chosen === targetNum);
 
             if(isCorrect) {
                 sndCerto.play();
                 points++;
-                monsterScale += 0.1;
+                monsterScale += 0.12;
                 document.getElementById('monstro-box').style.transform = `scale(${monsterScale})`;
                 stars[currentQuestion-1].style.background = "var(--cor-acerto)";
                 stars[currentQuestion-1].innerText = "✔";
