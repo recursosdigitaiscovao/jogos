@@ -122,7 +122,7 @@
             <h3 style="margin:0; color:var(--cor-principal);">Escolhe o Tema</h3>
             <button onclick="toggleRD()" style="border:none; background:none; font-size:20px;">✕</button>
         </div>
-        <div id="categorias-list"></div>
+        <div id="categorias-list" style="max-height: 220px; overflow-y: auto;"></div>
     </div>
 
     <header class="nav-bar">
@@ -204,10 +204,16 @@
 
         function setupRDMenu() {
             const container = document.getElementById('categorias-list');
+            container.innerHTML = '';
             Object.keys(JOGO_CONFIG.categorias).forEach(key => {
+                const cat = JOGO_CONFIG.categorias[key];
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
-                item.innerText = JOGO_CONFIG.categorias[key].nome;
+                
+                // Usar a primeira imagem da categoria como ícone
+                const iconImg = cat.caminho + cat.lista[0];
+                item.innerHTML = `<img src="${iconImg}"> <span>${cat.nome}</span>`;
+                
                 item.onclick = () => selectCategory(key);
                 container.appendChild(item);
             });
@@ -256,15 +262,8 @@
             const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
             for(let i=0; i<5; i++) { 
                 const s = document.createElement('div'); 
-                s.style.cssText="width:18px;height:18px;border:1px solid #ccc;border-radius:50%; background: white;"; 
+                s.style.cssText="width:18px;height:18px;border:2px solid #ccc;border-radius:50%; background: white;"; 
                 bar.appendChild(s); 
-            }
-        }
-
-        function updateStars() {
-            const stars = document.getElementById('stars-bar').children;
-            if(currentQuestion <= 5) {
-                stars[currentQuestion-1].style.background = "var(--cor-principal)";
             }
         }
 
@@ -301,16 +300,19 @@
 
         function checkAnswer(imgName, element) {
             if (!isRoundActive) return;
+            const stars = document.getElementById('stars-bar').children;
 
             if (imgName === targetItem) {
                 isRoundActive = false;
                 points += 20;
                 document.getElementById('points').innerText = points;
                 
-                // Feedback Visual Verde
-                element.classList.add('item-correct');
+                // Feedback Bola Verde
+                stars[currentQuestion-1].style.background = "var(--cor-acerto)";
+                stars[currentQuestion-1].style.borderColor = "var(--cor-acerto)";
                 
-                updateStars();
+                // Feedback Visual Verde no item
+                element.classList.add('item-correct');
                 
                 setTimeout(() => {
                     currentQuestion++;
@@ -328,6 +330,10 @@
                     }
                 }, 800);
             } else {
+                // Feedback Bola Vermelha
+                stars[currentQuestion-1].style.background = "var(--cor-erro)";
+                stars[currentQuestion-1].style.borderColor = "var(--cor-erro)";
+
                 // Feedback Visual Vermelho
                 element.classList.add('item-wrong', 'error-shake');
                 setTimeout(() => {
