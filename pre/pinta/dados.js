@@ -9,21 +9,9 @@ const JOGO_CONFIG = {
         ano4: "icon4.png"
     },
     categorias: {
-        nivel1: { 
-            nome: "Nível 1 (3x3)", 
-            tamanho: 3, 
-            img: "nivel1.png" // Imagem que aparecerá no menu RD
-        },
-        nivel2: { 
-            nome: "Nível 2 (4x4)", 
-            tamanho: 4, 
-            img: "nivel2.png" 
-        },
-        nivel3: { 
-            nome: "Nível 3 (5x5)", 
-            tamanho: 5, 
-            img: "nivel3.png" 
-        }
+        nivel1: { nome: "Pinta Igual", tamanho: 3, img: "nivel1.png" },
+        nivel2: { nome: "Pinta Igual", tamanho: 4, img: "nivel2.png" },
+        nivel3: { nome: "Pinta Igual", tamanho: 5, img: "nivel3.png", mostrarNumeros: true }
     },
     coresPaleta: ["#ff4757", "#2ed573", "#1e90ff", "#ffa502", "#ffffff"],
     relatorio: {
