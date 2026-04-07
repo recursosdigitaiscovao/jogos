@@ -1,362 +1,293 @@
 <!DOCTYPE html>
-<html lang="pt-pt">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar - Pinta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pré Escolar - Copia as Cores</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-
-        body {
-            background-color: rgba(255, 179, 198, 0.4); 
-            color: #2c3e50;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            height: 100vh;
-            height: 100svh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+        :root {
+            --cor-principal: #e691a7; 
+            --cor-fundo: #fff5f7;      
+            --cor-texto: #e691a7;      
+            --header-height: 70px;
+            --cor-acerto: #2ed573;
+            --cor-erro: #ff4757;
         }
 
-        /* HEADER */
-        header {
-            width: 100%; background-color: white; padding: 10px 15px;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid rgba(0,0,0,0.05); flex-shrink: 0; z-index: 100;
-        }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
+        body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        .header-left { display: flex; align-items: center; gap: 10px; }
-        .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; padding: 5px; }
-        header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; }
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
 
-        .btn-voltar-3d {
-            text-decoration: none; color: #2d3436; background-color: #ffb3c6;
-            font-weight: bold; font-size: 0.75rem; padding: 8px 14px;
-            border-radius: 8px; border: 1px solid #ef87a1;
-            box-shadow: 0 3px 0 #ef87a1; cursor: pointer;
-            display: flex; align-items: center; gap: 5px;
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed; left: -280px; top: 0; width: 260px; height: 100%;
-            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
-            transition: 0.3s; z-index: 200; padding: 20px; display: flex; flex-direction: column;
-        }
+        .sidebar, .sidebar-rd { position: fixed; background: white; transition: 0.3s; z-index: 2000; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+        .sidebar { top: 0; left: -260px; width: 240px; height: 100%; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        .sidebar-item {
-            text-decoration: none; color: #636e72; font-weight: 600;
-            padding: 12px; border-radius: 12px; display: flex; align-items: center; gap: 12px; 
-            margin-bottom: 6px; border: 1px solid #eee; transition: 0.2s;
-        }
-        .sidebar-item:hover { background-color: #ffb3c6; color: white; border-color: #ef87a1; }
+        .sidebar-rd { bottom: -300px; left: 0; width: 100%; height: 300px; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
+        .sidebar-rd.active { bottom: 0; }
 
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); display: none; z-index: 150;
-        }
+        .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; cursor: pointer; font-weight: 500; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* JOGO PRINCIPAL */
-        main {
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
-            justify-content: center;
-            padding: 50px 10px;
-            gap: 15px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
+        .screen.active { display: flex; }
+
+        .game-card {
+            background: white; border-radius: 30px; padding: 15px; border: 4px solid var(--cor-principal);
+            display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box;
         }
 
-        .area-desenho { display: flex; gap: 15px; justify-content: center; align-items: center; flex-wrap: wrap; }
-
-        .quadro {
-            background: white; padding: 8px; border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.08); border: 3px solid #fff;
+        /* Layout Grelhas */
+        .grids-container {
+            display: flex; gap: 20px; justify-content: center; align-items: center; flex: 1; margin: 10px 0;
         }
-        .quadro.alvo { border-color: #ffb3c6; }
-        .quadro.interativo { border-color: #7bed9f; }
+        @media (max-width: 768px) { .grids-container { flex-direction: column; gap: 10px; } }
 
-        .grid {
-            display: grid; grid-template-columns: repeat(4, 50px); grid-template-rows: repeat(4, 50px); 
-            gap: 1px; background: #eee; border: 1px solid #ddd;
+        .grid-box { text-align: center; }
+        .grid-title { font-size: 0.8rem; font-weight: bold; color: #888; margin-bottom: 5px; }
+        
+        .pixel-grid {
+            display: grid; background: #ddd; border: 2px solid #aaa; gap: 1px;
+            width: fit-content; margin: 0 auto;
         }
+        .cell { width: clamp(30px, 8vw, 50px); height: clamp(30px, 8vw, 50px); background: white; cursor: pointer; }
 
-        .cell { width: 100%; height: 100%; background: white; cursor: pointer; }
+        /* Paleta */
+        .tools-area { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+        .palette { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .color-circle { width: 35px; height: 35px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; }
+        .color-circle.active { border-color: #555; transform: scale(1.1); }
+        
+        .btn-action { padding: 10px 20px; border-radius: 15px; border: none; font-family: 'Fredoka'; font-weight: bold; cursor: pointer; }
+        .btn-verify { background: var(--cor-acerto); color: white; font-size: 1.1rem; }
+        .btn-clear { background: #eee; color: #555; }
 
-        /* BARRA DE FERRAMENTAS */
-        .barra-ferramentas {
-            display: flex; align-items: center; background: white;
-            padding: 10px 18px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-top: 15px;
-        }
+        .btn-play { background: var(--cor-erro); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 15px; border-radius: 15px; cursor: pointer; width: 100%; font-family: 'Fredoka'; }
 
-        .paleta { display: flex; gap: 6px; align-items: center; }
-        .cor-btn { width: 38px; height: 38px; border-radius: 50%; border: 3px solid #f0f0f0; cursor: pointer; }
-        .cor-btn.active { border-color: #2d3436; transform: scale(1.1); }
-
-        .espacador { width: 30px; }
-        .grupo-acoes { display: flex; gap: 10px; }
-
-        .btn-quadrado-cinza {
-            width: 40px; height: 40px; border-radius: 10px; border: none;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; transition: 0.1s;
-        }
-
-        .btn-vassoura-cinza { background: #7f8c8d; box-shadow: 0 4px 0 #606c6d; color: white; }
-        .btn-vassoura-cinza span { filter: brightness(0) invert(1); }
-        .btn-visto-cinza { background: #95a5a6; box-shadow: 0 4px 0 #7a8a8b; color: white; }
-        .btn-quadrado-cinza:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.2); }
-
-        /* INFO & RONDAS */
-        .container-info {
-            display: flex; align-items: center; gap: 12px; margin-top: 5px;
-        }
-
-        .btn-info-rosa {
-            width: 28px; height: 28px; background-color: #ffb3c6; color: white;
-            border-radius: 50%; border: 1px solid #ef87a1; font-weight: bold;
-            font-style: italic; font-family: 'Georgia', serif; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 2px 0 #ef87a1; transition: 0.2s;
-        }
-        .btn-info-rosa:active { transform: translateY(2px); box-shadow: none; }
-
-        /* MODAIS */
-        .modal-custom {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 85%; max-width: 320px; background: white; padding: 25px; border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 400; text-align: center; border: 3px solid #ffb3c6;
-        }
-        .modal-custom.active { display: block; }
-        .modal-erro { border-color: #fab1a0; }
-        .modal-info { border-color: #a29bfe; }
-
-        #final-panel {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 179, 198, 0.98); z-index: 300;
-            flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center;
-        }
-
-        /* FOOTER */
-        footer { 
-            width: 100%; padding: 12px; background: white; text-align: center; 
-            font-size: 0.8rem; border-top: 1px solid #eee; flex-shrink: 0;
-            color: #7f8c8d; position: relative; z-index: 10;
-        }
-
-        @media (max-width: 600px) {
-            .grid { grid-template-columns: repeat(4, 40px); grid-template-rows: repeat(4, 40px); }
-            .area-desenho { flex-direction: column; gap: 8px; }
-            main { padding: 40px 5px 20px 5px; }
-        }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-acerto); width: 90%; max-width: 350px; }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="fecharModais()"></div>
-
-    <div id="modal-info" class="modal-custom modal-info">
-        <div style="font-size: 3rem;">ℹ️</div>
-        <h2 style="color: #6c5ce7; margin-top: 10px;">Como jogar?</h2>
-        <div style="text-align: left; margin: 15px 0; color: #636e72; font-size: 0.9rem; line-height: 1.5;">
-            <p>1. Observa o desenho no quadro da esquerda.</p>
-            <p>2. Escolhe uma cor na paleta em baixo.</p>
-            <p>3. Pinta os quadrados no quadro da direita até ficar igual!</p>
-            <p>4. No fim, clica no visto (✔) para verificar.</p>
-        </div>
-        <button class="btn-visto-cinza" style="width: 100%; height: 45px; border-radius: 12px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fecharModais()">ENTENDI!</button>
-    </div>
-
-    <div id="modal-sucesso" class="modal-custom">
-        <div style="font-size: 3.5rem;">🌟</div>
-        <h2 style="color: #2ecc71; margin-top: 10px;">Boa conseguiste</h2>
-        <p style="margin: 15px 0; font-weight: 600; line-height: 1.4;">⭐</p>
-        <button class="btn-visto-cinza" style="width: 100%; height: 45px; border-radius: 12px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="proximaRonda()">PRÓXIMO</button>
-    </div>
-
-    <div id="modal-erro" class="modal-custom modal-erro">
-        <div style="font-size: 3.5rem;">🤔</div>
-        <h2 style="color: #e17055; margin-top: 10px;">Ainda não está igual</h2>
-        <p style="margin: 15px 0; font-weight: 600; color: #636e72;">Tenta outra vez! 😊</p>
-        <button class="btn-vassoura-cinza" style="width: 100%; height: 45px; border-radius: 12px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="fecharModais()">TENTAR NOVAMENTE</button>
-    </div>
-
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+    
     <div class="sidebar" id="sidebar">
-        <h3 style="margin-bottom: 20px; border-bottom: 2px solid #ffb3c6; color: #ff6b81;">Menu Escolar</h3>
-        <nav>
-            <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-            <a href="/jogos/pre/" class="sidebar-item">🦒 Pré-Escolar</a>
-            <a href="/jogos/1/" class="sidebar-item">🐥 1º Ano</a>
-            <a href="/jogos/2/" class="sidebar-item">🐢 2º Ano</a>
-            <a href="/jogos/3/" class="sidebar-item">🦁 3º Ano</a>
-            <a href="/jogos/4/" class="sidebar-item">🐘 4º Ano</a>
-        </nav>
+        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+            <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
+            <button onclick="toggleMenu()" style="border:none; background:none;">✕</button>
+        </div>
+        <a href="/jogos/pre" class="sidebar-item">🏠 Início</a>
     </div>
 
-    <header>
-        <div class="header-left">
-            <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <span style="font-size: 1.3rem;">🎨</span>
-            <h1>Pinta</h1>
-        </div>
-        <a href="/jogos/pre/" class="btn-voltar-3d">⬅ VOLTAR</a>
+    <div class="sidebar-rd" id="sidebar-rd">
+        <h3 style="margin:0 0 15px 0; color:var(--cor-principal);">Escolhe o Nível</h3>
+        <div id="categorias-list"></div>
+    </div>
+
+    <header class="nav-bar">
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal);">☰</button>
+        <h1 style="font-size:1.1rem; color:var(--cor-principal); margin: 0;">Colorir a Grelha</h1>
+        <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
 
-    <main>
-        <div class="area-desenho">
-            <div class="quadro alvo"><div class="grid" id="grid-modelo"></div></div>
-            <div class="quadro interativo"><div class="grid" id="grid-pintura"></div></div>
-        </div>
-
-        <div class="barra-ferramentas">
-            <div class="paleta" id="paleta"></div>
-            <div class="espacador"></div>
-            <div class="grupo-acoes">
-                <button class="btn-quadrado-cinza btn-vassoura-cinza" onclick="limparQuadro()" title="Limpar">
-                    <span>🧹</span>
-                </button>
-                <button class="btn-quadrado-cinza btn-visto-cinza" onclick="verificar()" title="Verificar">✔</button>
+    <main class="main-content">
+        <section id="intro-screen" class="screen active">
+            <div class="game-card" style="justify-content: center;">
+                <div style="text-align:center; margin-bottom: 20px;">
+                    <h2 style="color:var(--cor-principal)">Copia o desenho!</h2>
+                    <p>Pinta os quadrados da direita com as mesmas cores do modelo da esquerda.</p>
+                </div>
+                <button class="btn-play" onclick="startGame()">JOGAR</button>
+                <button class="btn-action" style="margin-top:10px;" onclick="toggleRD()">Mudar Nível</button>
             </div>
-        </div>
+        </section>
 
-        <div class="container-info">
-            <p style="font-weight: bold; color: #7f8c8d; font-size: 0.85rem;">Ronda <span id="ronda-atual">1</span> / 5</p>
-            <button class="btn-info-rosa" onclick="abrirInfo()">i</button>
-        </div>
+        <section id="game-screen" class="screen">
+            <div class="game-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <div id="timer">00:00</div>
+                    <div style="font-weight:bold; color:var(--cor-principal)" id="current-level-name">Nível 1</div>
+                    <button class="btn-action" onclick="toggleRD()" style="padding:5px 10px">⚙️</button>
+                </div>
+
+                <div class="grids-container">
+                    <div class="grid-box">
+                        <div class="grid-title">MODELO</div>
+                        <div id="grid-target" class="pixel-grid"></div>
+                    </div>
+                    <div class="grid-box">
+                        <div class="grid-title">O TEU DESENHO</div>
+                        <div id="grid-player" class="pixel-grid"></div>
+                    </div>
+                </div>
+
+                <div class="tools-area">
+                    <div class="palette" id="palette"></div>
+                    <div style="display:flex; gap:10px; width:100%">
+                        <button class="btn-action btn-clear" onclick="clearGrid()" style="flex:1">Apagar Tudo</button>
+                        <button class="btn-action btn-verify" onclick="verifyGrid()" style="flex:2">VERIFICAR</button>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <div id="final-panel">
-        <div style="font-size: 5rem;">🏆</div>
-        <h1>Boa concluíste todas as rondas.</h1>
-        <button class="btn-voltar-3d" style="background: white; padding: 15px 40px; margin-top: 25px; justify-content: center;" onclick="location.reload()">REPETIR 🔄</button>
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 id="modal-title" style="color:var(--cor-acerto);">Boa!</h2>
+            <div id="modal-msg"></div>
+            <button class="btn-play" onclick="location.reload()" style="background:var(--cor-acerto); margin-top:20px;">Jogar de Novo</button>
+        </div>
     </div>
 
-    <footer><span>Recursos Digitais Covão</span> • <span>Professor Luís</span></footer>
-
+    <script src="dados.js"></script>
     <script>
-        const B = '#0984e3', R = '#ff7675', Y = '#f1c40f', G = '#2ecc71', P = '#a29bfe', O = '#e17055', W = '#ffffff';
-        const dbDesenhos = [
-            { c: [B, R], m: [[W,B,B,W],[B,R,R,B],[B,R,R,B],[W,B,B,W]] },
-            { c: [G, Y], m: [[G,W,W,W],[G,G,W,W],[G,G,G,W],[G,G,G,G]] },
-            { c: [R, B], m: [[R,R,R,R],[W,W,W,W],[B,B,B,B],[W,W,W,W]] },
-            { c: [Y, P], m: [[Y,W,W,P],[W,Y,P,W],[W,P,Y,W],[P,W,W,Y]] },
-            { c: [B, G], m: [[B,B,G,G],[B,B,G,G],[G,G,B,B],[G,G,B,B]] },
-            { c: [R, Y], m: [[W,Y,Y,W],[Y,R,R,Y],[Y,R,R,Y],[W,Y,Y,W]] },
-            { c: [P, O], m: [[P,P,P,P],[O,O,O,O],[P,P,P,P],[O,O,O,O]] },
-            { c: [G, B], m: [[G,W,G,W],[W,B,W,B],[G,W,G,W],[W,B,W,B]] }
-        ];
+        let currentLevel = "nivel1";
+        let selectedColor = JOGO_CONFIG.coresPaleta[0];
+        let targetColors = [];
+        let timerInterval, seconds = 0;
 
-        let nivelAtual = 0;
-        let corSelecionada = '';
-        let sequenciaJogo = [];
+        window.onload = () => {
+            setupRDMenu();
+            setupPalette();
+        };
 
-        function inicializarJogo() {
-            sequenciaJogo = [...dbDesenhos].sort(() => 0.5 - Math.random()).slice(0, 5);
-            carregarRonda();
+        function setupRDMenu() {
+            const container = document.getElementById('categorias-list');
+            Object.keys(JOGO_CONFIG.categorias).forEach(key => {
+                const item = document.createElement('div');
+                item.className = 'sidebar-item';
+                item.innerText = JOGO_CONFIG.categorias[key].nome;
+                item.onclick = () => { currentLevel = key; closeMenus(); startGame(); };
+                container.appendChild(item);
+            });
         }
 
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        function abrirInfo() {
-            document.getElementById('overlay').classList.add('active');
-            document.getElementById('modal-info').classList.add('active');
-        }
-
-        function fecharModais() {
-            document.querySelectorAll('.modal-custom, .sidebar, .overlay').forEach(el => el.classList.remove('active'));
-        }
-
-        function carregarRonda() {
-            fecharModais();
-            const dados = sequenciaJogo[nivelAtual];
-            document.getElementById('ronda-atual').innerText = nivelAtual + 1;
-            
-            const paleta = document.getElementById('paleta');
-            paleta.innerHTML = '';
-            [...dados.c, W].forEach(cor => {
-                const b = document.createElement('div');
-                b.className = 'cor-btn';
-                b.style.backgroundColor = cor;
-                if(cor === W) b.style.border = "1px solid #ddd";
-                b.onclick = () => {
-                    corSelecionada = cor;
-                    document.querySelectorAll('.cor-btn').forEach(x => x.classList.remove('active'));
-                    b.classList.add('active');
+        function setupPalette() {
+            const container = document.getElementById('palette');
+            // Cores
+            JOGO_CONFIG.coresPaleta.forEach(color => {
+                const div = document.createElement('div');
+                div.className = 'color-circle';
+                div.style.backgroundColor = color;
+                div.onclick = () => {
+                    selectedColor = color;
+                    document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('active'));
+                    div.classList.add('active');
                 };
-                paleta.appendChild(b);
+                container.appendChild(div);
             });
-            corSelecionada = dados.c[0]; 
-            if(paleta.firstChild) paleta.firstChild.classList.add('active');
+            // Borracha (Branco)
+            const eraser = document.createElement('div');
+            eraser.className = 'color-circle';
+            eraser.style.backgroundColor = '#ffffff';
+            eraser.innerHTML = '❌';
+            eraser.style.display = 'flex';
+            eraser.style.alignItems = 'center';
+            eraser.style.justifyContent = 'center';
+            eraser.onclick = () => {
+                selectedColor = '#ffffff';
+                document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('active'));
+                eraser.classList.add('active');
+            };
+            container.appendChild(eraser);
+            container.firstChild.classList.add('active');
+        }
 
-            const gMod = document.getElementById('grid-modelo');
-            const gPin = document.getElementById('grid-pintura');
-            gMod.innerHTML = ''; gPin.innerHTML = '';
+        function startGame() {
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            document.getElementById('current-level-name').innerText = JOGO_CONFIG.categorias[currentLevel].nome;
+            
+            resetTimer();
+            generateGrids();
+        }
 
-            for(let i=0; i<16; i++) {
-                const r = Math.floor(i / 4);
-                const col = i % 4;
-                const cM = document.createElement('div');
-                cM.className = 'cell';
-                cM.style.backgroundColor = dados.m[r][col];
-                gMod.appendChild(cM);
+        function generateGrids() {
+            const size = JOGO_CONFIG.categorias[currentLevel].tamanho;
+            const targetEl = document.getElementById('grid-target');
+            const playerEl = document.getElementById('grid-player');
+            
+            targetEl.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+            playerEl.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+            
+            targetEl.innerHTML = '';
+            playerEl.innerHTML = '';
+            targetColors = [];
 
-                const cP = document.createElement('div');
-                cP.className = 'cell';
-                cP.onclick = function() { this.style.backgroundColor = corSelecionada; };
-                gPin.appendChild(cP);
+            for (let i = 0; i < size * size; i++) {
+                // Criar Alvo
+                const randomColor = JOGO_CONFIG.coresPaleta[Math.floor(Math.random() * JOGO_CONFIG.coresPaleta.length)];
+                targetColors.push(randomColor);
+                const cellT = document.createElement('div');
+                cellT.className = 'cell';
+                cellT.style.backgroundColor = randomColor;
+                targetEl.appendChild(cellT);
+
+                // Criar Jogador
+                const cellP = document.createElement('div');
+                cellP.className = 'cell';
+                cellP.onclick = () => cellP.style.backgroundColor = selectedColor;
+                playerEl.appendChild(cellP);
             }
         }
 
-        function limparQuadro() {
-            document.querySelectorAll('#grid-pintura .cell').forEach(c => c.style.backgroundColor = W);
+        function clearGrid() {
+            document.querySelectorAll('#grid-player .cell').forEach(c => c.style.backgroundColor = '#ffffff');
         }
 
-        function verificar() {
-            const cellsPin = document.querySelectorAll('#grid-pintura .cell');
-            const mapa = sequenciaJogo[nivelAtual].m;
-            let correto = true;
+        function verifyGrid() {
+            const playerCells = document.querySelectorAll('#grid-player .cell');
+            let isCorrect = true;
 
-            cellsPin.forEach((c, idx) => {
-                const r = Math.floor(idx / 4);
-                const col = idx % 4;
-                const corCelia = rgbToHex(c.style.backgroundColor) || '#ffffff';
-                if(corCelia !== mapa[r][col]) correto = false;
+            playerCells.forEach((cell, index) => {
+                const playerColor = rgbToHex(cell.style.backgroundColor) || "#ffffff";
+                const targetColor = targetColors[index].toLowerCase();
+                
+                if (playerColor !== targetColor) {
+                    isCorrect = false;
+                }
             });
 
-            if(correto) {
-                document.getElementById('overlay').classList.add('active');
-                document.getElementById('modal-sucesso').classList.add('active');
+            if (isCorrect) {
+                endGame();
             } else {
-                document.getElementById('overlay').classList.add('active');
-                document.getElementById('modal-erro').classList.add('active');
+                alert("Ainda não está igual! Tenta de novo.");
             }
         }
 
-        function proximaRonda() {
-            nivelAtual++;
-            if(nivelAtual < 5) {
-                carregarRonda();
-            } else {
-                fecharModais();
-                document.getElementById('final-panel').style.display = 'flex';
-            }
+        function endGame() {
+            clearInterval(timerInterval);
+            document.getElementById('modal-msg').innerHTML = `Tempo: ${document.getElementById('timer').innerText}`;
+            document.getElementById('modal').style.display = 'flex';
         }
 
+        function resetTimer() {
+            clearInterval(timerInterval);
+            seconds = 0;
+            timerInterval = setInterval(() => {
+                seconds++;
+                const m = Math.floor(seconds/60).toString().padStart(2,'0');
+                const s = (seconds%60).toString().padStart(2,'0');
+                document.getElementById('timer').innerText = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
+
+        // Helper para converter cor do browser para Hex
         function rgbToHex(rgb) {
-            if(!rgb || rgb.startsWith('#')) return rgb;
-            const vals = rgb.match(/\d+/g);
-            if(!vals) return '#ffffff';
-            return "#" + vals.map(x => parseInt(x).toString(16).padStart(2, '0')).join("");
+            if (!rgb) return "#ffffff";
+            if (rgb.startsWith('#')) return rgb.toLowerCase();
+            const res = rgb.match(/\d+/g);
+            return res ? "#" + res.map(x => parseInt(x).toString(16).padStart(2, '0')).join('') : "#ffffff";
         }
-
-        inicializarJogo();
     </script>
 </body>
 </html>
