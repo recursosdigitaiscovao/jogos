@@ -10,14 +10,14 @@ const JOGO_CONFIG = {
     },
     categorias: {
         nivel1: {
-            nome: "Nível 1 (Números)",
-            img: "monstro.png", // Imagem que aparece no menu RD
+            nome: "Nível 1",
+            img: "123.png", // Imagem representativa de números
             maxNum: 5,
             tipo: "numero"
         },
         nivel2: {
-            nome: "Nível 2 (Bolachas)",
-            img: "bolacha.png", // Imagem que aparece no menu RD
+            nome: "Nível 2",
+            img: "bolacha.png", // Imagem da bolacha
             maxNum: 10,
             tipo: "quantidade"
         }
