@@ -79,7 +79,6 @@
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         
-        /* Alteração solicitada: Efeito no botão inteiro com a cor do botão voltar */
         .sidebar-item { 
             display: flex; 
             align-items: center;
@@ -91,15 +90,15 @@
         }
 
         .sidebar-item img {
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             margin-right: 12px;
             object-fit: contain;
         }
 
         .sidebar-item:hover {
             color: white !important;
-            background-color: var(--cor-principal); /* Cor Laranja do botão voltar */
+            background-color: var(--cor-principal); 
             padding-left: 35px;
             font-weight: bold;
         }
@@ -133,7 +132,7 @@
         .game-card {
             background: white;
             border-radius: 20px;
-            padding: 10px;
+            padding: 12px;
             text-align: center;
             border: 3px solid var(--cor-principal);
             display: flex;
@@ -143,36 +142,45 @@
         }
 
         .game-img {
-            width: 100%; height: 90px;
+            width: 100%; height: 100px;
             background: var(--cor-bg-icon);
             border-radius: 15px; margin-bottom: 8px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 2.2rem;
+            overflow: hidden;
+        }
+
+        .game-img img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
         }
 
         h2 { 
-            font-size: 0.85rem; 
+            font-size: 0.9rem; 
             color: var(--cor-principal); 
-            min-height: 35px; 
+            min-height: 40px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             margin: 5px 0; 
             font-weight: 700;
+            line-height: 1.1;
         }
 
         .play-btn {
             background: var(--cor-estudo); 
             color: white; 
             border: none; 
-            padding: 8px 0;
+            padding: 10px 0;
             width: 100%; 
             border-radius: 12px;
-            font-size: 0.75rem; 
+            font-size: 0.8rem; 
             cursor: pointer; 
             font-family: 'Fredoka'; 
             font-weight: bold;
             transition: 0.2s;
+            text-decoration: none;
+            display: block;
         }
         .play-btn:hover {
             background: #e03e4d; 
@@ -192,7 +200,7 @@
         }
 
         h1 img {
-            height: 28px;
+            height: 32px;
             width: auto;
         }
 
@@ -216,11 +224,11 @@
             <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size: 18px;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src="" class="img-icon-sidebar"> Pré-Escolar</a>
-        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src="" class="img-icon-sidebar"> 1º Ano</a>
-        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src="" class="img-icon-sidebar"> 2º Ano</a>
-        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src="" class="img-icon-sidebar"> 3º Ano</a>
-        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src="" class="img-icon-sidebar"> 4º Ano</a>
+        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
+        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
@@ -235,37 +243,15 @@
     <main class="main-content">
         <p class="intro-text">Descobre o mundo à tua volta, o teu corpo e a natureza!</p>
         
-        <div class="games-grid">
-            <div class="game-card">
-                <div class="game-img">👤</div>
-                <h2>O Corpo Humano</h2>
-                <button class="play-btn">JOGAR</button>
-            </div>
-            <div class="game-card">
-                <div class="game-img">🐶</div>
-                <h2>Animais e Plantas</h2>
-                <button class="play-btn">JOGAR</button>
-            </div>
-            <div class="game-card">
-                <div class="game-img">🏠</div>
-                <h2>A Minha Família</h2>
-                <button class="play-btn">JOGAR</button>
-            </div>
-            <div class="game-card">
-                <div class="game-img">👁️</div>
-                <h2>Os Cinco Sentidos</h2>
-                <button class="play-btn">JOGAR</button>
-            </div>
-            <div class="game-card">
-                <div class="game-img">🏫</div>
-                <h2>A Minha Escola</h2>
-                <button class="play-btn">JOGAR</button>
-            </div>
+        <!-- O ID gamesGrid é onde o JS vai injetar os jogos -->
+        <div class="games-grid" id="gamesGrid">
+            <!-- Os cards serão criados automaticamente aqui -->
         </div>
     </main>
 
     <footer>Recursos Digitais Covão</footer>
 
+    <!-- Importante: O arquivo dados.js deve vir antes do script principal -->
     <script src="dados.js"></script>
     <script>
         function toggleMenu() {
@@ -275,22 +261,45 @@
             overlay.classList.toggle('active');
         }
 
-        window.onload = () => {
+        function carregarInterface() {
             if (typeof JOGO_CONFIG !== 'undefined') {
-                const p = JOGO_CONFIG.caminhoIcons;
-                const i = JOGO_CONFIG.icones;
+                const pathMenu = JOGO_CONFIG.caminhoIconsMenu;
+                const icons = JOGO_CONFIG.iconesMenu;
 
-                // Carregar ícones da sidebar
-                document.getElementById('side-pre').src = p + i.pre;
-                document.getElementById('side-1').src = p + i.ano1;
-                document.getElementById('side-2').src = p + i.ano2;
-                document.getElementById('side-3').src = p + i.ano3;
-                document.getElementById('side-4').src = p + i.ano4;
+                // 1. Carregar ícones da sidebar
+                document.getElementById('side-pre').src = pathMenu + icons.pre;
+                document.getElementById('side-1').src = pathMenu + icons.ano1;
+                document.getElementById('side-2').src = pathMenu + icons.ano2;
+                document.getElementById('side-3').src = pathMenu + icons.ano3;
+                document.getElementById('side-4').src = pathMenu + icons.ano4;
 
-                // Carregar ícone do header (Ano 1)
-                document.getElementById('header-icon').src = p + i.ano1;
+                // 2. Carregar ícone do header (Ano 1 neste caso)
+                document.getElementById('header-icon').src = pathMenu + icons.ano1;
+
+                // 3. Gerar a grelha de jogos
+                const grid = document.getElementById('gamesGrid');
+                grid.innerHTML = ''; // Limpa o conteúdo estático
+
+                JOGO_CONFIG.listaJogos.forEach(jogo => {
+                    const card = document.createElement('div');
+                    card.className = 'game-card';
+                    
+                    // Constrói o caminho completo do ícone do jogo
+                    const iconJogoPath = JOGO_CONFIG.caminhoIconsJogos + jogo.icon;
+
+                    card.innerHTML = `
+                        <div class="game-img">
+                            <img src="${iconJogoPath}" alt="${jogo.nome}">
+                        </div>
+                        <h2>${jogo.nome}</h2>
+                        <a href="${jogo.link}" class="play-btn">JOGAR</a>
+                    `;
+                    grid.appendChild(card);
+                });
             }
-        };
+        }
+
+        window.onload = carregarInterface;
     </script>
 
 </body>
