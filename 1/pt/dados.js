@@ -18,8 +18,8 @@ const JOGO_CONFIG = {
     listaJogos: [
         { nome: "jogo1", icon: "1.png", link: "nome1/" },
         { nome: "jogo2", icon: "2.png", link: "nome2/" },
-        { nome: "jogo3", icon: "3", link: "nome3/" },
-        { nome: "jogo4", icon: "4", link: "nome4/" },
+        { nome: "jogo3", icon: "3.png", link: "nome3/" },
+        { nome: "jogo4", icon: "4.png", link: "nome4/" },
 
     ]
 };
