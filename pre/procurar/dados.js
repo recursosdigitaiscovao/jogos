@@ -1,4 +1,4 @@
-const JOGO_CONFIG = {
+var JOGO_CONFIG = {
     caminhoIcons: "../../icons/", 
     caminhoImg: "../../img/",
     iconesMenu: {
@@ -26,13 +26,13 @@ const JOGO_CONFIG = {
         },
         numeros: {
             nome: "Números",
-            iconeEspecial: "123.png", // Ícone localizado em ../../img/
+            iconeEspecial: "123.png",
             caminho: "../../img/numeros/",
             lista: ["zero.png", "um.png", "dois.png", "tres.png", "quatro.png", "cinco.png", "seis.png", "sete.png", "oito.png", "nove.png", "dez.png"]
         },
         letras: {
             nome: "Letras",
-            iconeEspecial: "abc.png", // Ícone localizado em ../../img/
+            iconeEspecial: "abc.png",
             caminho: "../../img/letras/",
             lista: [
                 "letra_a.png", "letra_b.png", "letra_c.png", "letra_d.png", "letra_e.png", 
