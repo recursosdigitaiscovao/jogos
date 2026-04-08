@@ -25,13 +25,15 @@
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
 
-        /* Menus Laterais */
+        /* Sidebar & Menus */
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
+        .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
+        .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
+        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
+
         .sidebar-rd { position: fixed; bottom: -100%; left: 0; width: 100%; height: auto; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px 20px 30px 20px; box-sizing: border-box; }
         .sidebar-rd.active { bottom: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
-        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
         #categorias-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         #categorias-list .sidebar-item { flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 2px solid #fff0f3; border-radius: 20px; padding: 8px; }
         #categorias-list .sidebar-item img { width: 40px; height: 40px; margin-bottom: 5px; margin-right: 0; }
@@ -39,7 +41,7 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* Content */
+        /* Main */
         .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
@@ -49,44 +51,55 @@
             display: flex; flex-direction: column; width: 100%; max-width: 1100px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* Jogo de Sombras - Áreas */
-        .game-split { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; flex: 1; width: 100%; overflow: hidden; padding: 10px; box-sizing: border-box; }
+        /* Explicação & Intro */
+        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; text-align: center;}
+        .item-ex { width: 80px; height: 80px; border: 3px solid var(--cor-principal); border-radius: 20px; background: white; display: flex; align-items: center; justify-content: center; margin: 10px; }
+        .item-ex img { max-width: 80%; max-height: 80%; object-fit: contain; }
+        .pulse { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); border-color: var(--cor-vermelho); } 100% { transform: scale(1); } }
         
-        .drop-zone-container, .drag-items-container { 
-            display: grid; gap: 10px; align-content: center; justify-items: center; 
-            background: rgba(230, 145, 167, 0.05); border-radius: 20px; padding: 10px;
+        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 10px 0; }
+        .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
+
+        /* Área de Jogo Adaptativa */
+        .game-split { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; flex: 1; width: 100%; overflow: hidden; padding: 5px; box-sizing: border-box; }
+        
+        @media (max-width: 768px) {
+            .game-split { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; gap: 10px; }
         }
 
-        /* Nível 1: 6 itens (2 colunas x 3 linhas) */
-        .grid-6 { grid-template-columns: repeat(2, 1fr); }
-        /* Nível 2: 9 itens (3 colunas x 3 linhas) */
+        .container-area { 
+            display: grid; gap: 8px; align-content: center; justify-items: center; 
+            background: rgba(230, 145, 167, 0.05); border-radius: 20px; padding: 10px; overflow-y: auto;
+        }
+
+        /* Grelhas Níveis */
+        .grid-6 { grid-template-columns: repeat(3, 1fr); }
         .grid-9 { grid-template-columns: repeat(3, 1fr); }
 
-        .shadow-box, .drag-box {
+        .item-box {
             width: 80px; height: 80px; background: white; border: 2px solid #eee; border-radius: 15px;
-            display: flex; align-items: center; justify-content: center; position: relative;
+            display: flex; align-items: center; justify-content: center; position: relative; box-sizing: border-box;
         }
-
-        .shadow-box img { max-width: 85%; max-height: 85%; filter: brightness(0) opacity(0.2); }
-        .drag-box { border-color: var(--cor-principal); cursor: grab; z-index: 10; touch-action: none; }
-        .drag-box img { max-width: 85%; max-height: 85%; pointer-events: none; }
-        
-        .drag-box.dragging { opacity: 0.5; transform: scale(1.1); z-index: 100; }
-        .drag-box.matched { visibility: hidden; pointer-events: none; }
-        .shadow-box.matched { border-color: var(--cor-acerto); background: #e8f5e9; }
-        .shadow-box.matched img { filter: none; opacity: 1; }
-
-        /* Intro & Buttons */
-        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; text-align: center;}
-        .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; width: 100%; font-family: 'Fredoka'; }
-        
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); width: 80%; max-width: 300px; }
 
         @media (max-width: 600px) {
-            .shadow-box, .drag-box { width: 60px; height: 60px; }
-            .grid-9 .shadow-box, .grid-9 .drag-box { width: 50px; height: 50px; }
+            .item-box { width: 65px; height: 65px; }
+            .grid-9 .item-box { width: 55px; height: 55px; }
         }
+
+        .shadow-box img { max-width: 85%; max-height: 85%; filter: brightness(0) opacity(0.25); }
+        .drag-box { border: 3px solid var(--cor-principal); cursor: grab; z-index: 10; }
+        .drag-box img { max-width: 85%; max-height: 85%; pointer-events: none; }
+        
+        .drag-box.dragging { opacity: 0.5; transform: scale(1.1); z-index: 1000; }
+        .drag-box.matched { visibility: hidden; pointer-events: none; }
+        .shadow-box.matched { border-color: var(--cor-acerto); background: #e8f5e9; border-width: 3px; }
+        .shadow-box.matched img { filter: none; opacity: 1; }
+
+        /* Modal */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); width: 85%; max-width: 320px; }
+
     </style>
 </head>
 <body>
@@ -117,7 +130,7 @@
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:30px; font-weight:bold; color:var(--cor-principal); cursor:pointer;">☰</button>
         <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin: 0;">
-            <img id="header-icon" src="" style="height:32px;"> Sombras Mágicas
+            <img id="header-icon" src="" style="height:32px;"> Pré-Escolar
         </h1>
         <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
@@ -126,17 +139,20 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <h2 style="color:var(--cor-principal)">Como Jogar?</h2>
-                    <p>Arrasta cada imagem para a sua sombra correta!</p>
-                    <div style="display:flex; gap:10px; margin-top:10px;">
-                        <div class="drag-box" style="cursor:default"><img id="ex-img" src=""></div>
-                        <div style="font-size:30px; align-self:center">➔</div>
-                        <div class="shadow-box"><img id="ex-shd" src=""></div>
+                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin: 0;">Encontra a Sombra:</p>
+                    <div style="display:flex; align-items:center; justify-content:center;">
+                        <div class="item-ex pulse"><img id="ex-img" src=""></div>
+                        <span style="font-size:2rem; color:var(--cor-principal)">➔</span>
+                        <div class="item-ex" style="border-color:#ddd"><img id="ex-shd" src="" style="filter:brightness(0) opacity(0.2)"></div>
                     </div>
+                    <p style="font-size: 0.9rem; margin-top: 10px; color: #888;">Arrasta as imagens para as suas sombras!</p>
                 </div>
+                
+                <h2 class="game-title">Sombras Mágicas</h2>
+                
                 <div style="padding:10px; display:flex; gap:10px;">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
-                    <button onclick="toggleRD()" style="width:60px; border-radius:15px; border:3px solid var(--cor-principal); background:white; cursor:pointer;">
+                    <button onclick="toggleRD()" style="width:60px; height:58px; border-radius:15px; border:3px solid var(--cor-principal); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center;">
                         <img class="btn-rd-img-ref" src="" style="width:30px;">
                     </button>
                 </div>
@@ -145,15 +161,17 @@
 
         <section id="game-screen" class="screen">
             <div class="game-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; flex-shrink:0;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 15px; font-size:0.9rem; flex-shrink:0; border-bottom: 2px dashed #eee;">
                     <div>⏳ <span id="timer">00:00</span></div>
                     <div style="font-weight:bold; color:var(--cor-principal)">Nível <span id="lvl-txt">1</span></div>
                     <div>PTS: <span id="points">0</span></div>
                 </div>
                 
                 <div class="game-split">
-                    <div id="drag-container" class="drag-items-container"></div>
-                    <div id="drop-container" class="drop-zone-container"></div>
+                    <!-- Imagens para arrastar -->
+                    <div id="drag-container" class="container-area"></div>
+                    <!-- Sombras para receber -->
+                    <div id="drop-container" class="container-area"></div>
                 </div>
             </div>
         </section>
@@ -161,18 +179,19 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--cor-acerto);">Boa!</h2>
+            <h2 id="modal-title" style="color:var(--cor-acerto);">Excelente!</h2>
             <div id="modal-msg"></div>
-            <button class="btn-play" onclick="location.reload()" style="margin-top:20px; background:var(--cor-principal)">Repetir</button>
+            <button class="btn-play" onclick="location.reload()" style="margin-top:20px; background:var(--cor-jogo-verde)">Jogar de Novo</button>
         </div>
     </div>
 
     <script src="dados.js"></script>
     <script>
         let currentLevel = 1, points = 0, seconds = 0, timerInterval;
-        let currentCatKey = "animais";
-        let matchesInLevel = 0, totalNeeded = 6;
+        let currentCatKey = "animais", matchesInLevel = 0, totalNeeded = 6;
         let draggedElement = null;
+
+        const somAcerto = new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3');
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
@@ -205,9 +224,9 @@
 
         function updateIntro() {
             const cat = JOGO_CONFIG.categorias[currentCatKey];
-            const img = cat.caminho + cat.lista[0];
-            document.getElementById('ex-img').src = img;
-            document.getElementById('ex-shd').src = img;
+            const imgPath = cat.caminho + cat.lista[0];
+            document.getElementById('ex-img').src = imgPath;
+            document.getElementById('ex-shd').src = imgPath;
         }
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
@@ -217,17 +236,11 @@
         function startGame() {
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            startTimer();
-            loadLevel();
-        }
-
-        function startTimer() {
             timerInterval = setInterval(() => {
                 seconds++;
-                const m = Math.floor(seconds/60).toString().padStart(2,'0');
-                const s = (seconds%60).toString().padStart(2,'0');
-                document.getElementById('timer').innerText = `${m}:${s}`;
+                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
             }, 1000);
+            loadLevel();
         }
 
         function loadLevel() {
@@ -237,75 +250,47 @@
             
             const dragContainer = document.getElementById('drag-container');
             const dropContainer = document.getElementById('drop-container');
-            dragContainer.innerHTML = '';
-            dropContainer.innerHTML = '';
+            dragContainer.innerHTML = ''; dropContainer.innerHTML = '';
             
-            // Configurar grid
             const gridClass = (currentLevel === 1) ? 'grid-6' : 'grid-9';
-            dragContainer.className = `drag-items-container ${gridClass}`;
-            dropContainer.className = `drop-zone-container ${gridClass}`;
+            dragContainer.className = `container-area ${gridClass}`;
+            dropContainer.className = `container-area ${gridClass}`;
 
             const cat = JOGO_CONFIG.categorias[currentCatKey];
-            let items = [...cat.lista].sort(() => 0.5 - Math.random()).slice(0, totalNeeded);
+            let levelItems = [...cat.lista].sort(() => 0.5 - Math.random()).slice(0, totalNeeded);
             
-            // Criar Sombras (Lado Direito) - Baralhado
-            let shadowItems = [...items].sort(() => 0.5 - Math.random());
-            shadowItems.forEach(name => {
+            // Sombras (Direita/Baixo)
+            [...levelItems].sort(() => 0.5 - Math.random()).forEach(name => {
                 const box = document.createElement('div');
-                box.className = 'shadow-box';
+                box.className = 'item-box shadow-box';
                 box.dataset.id = name;
                 box.innerHTML = `<img src="${cat.caminho + name}">`;
                 dropContainer.appendChild(box);
             });
 
-            // Criar Imagens (Lado Esquerdo) - Baralhado
-            let dragItems = [...items].sort(() => 0.5 - Math.random());
-            dragItems.forEach(name => {
+            // Imagens (Esquerda/Cima)
+            [...levelItems].sort(() => 0.5 - Math.random()).forEach(name => {
                 const box = document.createElement('div');
-                box.className = 'drag-box';
+                box.className = 'item-box drag-box';
                 box.dataset.id = name;
                 box.draggable = true;
                 box.innerHTML = `<img src="${cat.caminho + name}">`;
                 
-                // Eventos Mouse/Desktop
-                box.addEventListener('dragstart', handleDragStart);
-                box.addEventListener('dragend', handleDragEnd);
-                
-                // Eventos Touch/Mobile
+                box.addEventListener('dragstart', (e) => { draggedElement = box; box.classList.add('dragging'); });
+                box.addEventListener('dragend', () => box.classList.remove('dragging'));
                 box.addEventListener('pointerdown', handlePointerDown);
 
                 dragContainer.appendChild(box);
             });
 
-            // Configurar Drop Zones
             document.querySelectorAll('.shadow-box').forEach(sb => {
                 sb.addEventListener('dragover', (e) => e.preventDefault());
-                sb.addEventListener('drop', handleDrop);
+                sb.addEventListener('drop', (e) => {
+                    if (draggedElement && sb.dataset.id === draggedElement.dataset.id) processMatch(draggedElement, sb);
+                });
             });
         }
 
-        // --- LÓGICA DE DRAG AND DROP ---
-
-        function handleDragStart(e) {
-            draggedElement = this;
-            this.classList.add('dragging');
-        }
-
-        function handleDragEnd() {
-            this.classList.remove('dragging');
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            const targetId = this.dataset.id;
-            const draggedId = draggedElement.dataset.id;
-
-            if (targetId === draggedId && !this.classList.contains('matched')) {
-                processMatch(draggedElement, this);
-            }
-        }
-
-        // Suporte Mobile (Pointer Events)
         function handlePointerDown(e) {
             const el = e.currentTarget;
             if (el.classList.contains('matched')) return;
@@ -313,39 +298,39 @@
             draggedElement = el;
             el.classList.add('dragging');
             el.style.position = 'fixed';
+            el.style.zIndex = '1000';
             el.style.pointerEvents = 'none';
-            moveAt(e.clientX, e.clientY);
 
-            function moveAt(x, y) {
+            const moveAt = (x, y) => {
                 el.style.left = x - el.offsetWidth / 2 + 'px';
                 el.style.top = y - el.offsetHeight / 2 + 'px';
-            }
+            };
 
-            function onPointerMove(ev) {
-                moveAt(ev.clientX, ev.clientY);
-            }
+            moveAt(e.clientX, e.clientY);
 
-            function onPointerUp(ev) {
+            const onMove = (ev) => moveAt(ev.clientX, ev.clientY);
+            const onUp = (ev) => {
                 el.classList.remove('dragging');
                 el.style.position = 'static';
                 el.style.pointerEvents = 'auto';
                 
                 const target = document.elementFromPoint(ev.clientX, ev.clientY);
-                const shadowBox = target ? target.closest('.shadow-box') : null;
+                const shadow = target ? target.closest('.shadow-box') : null;
 
-                if (shadowBox && shadowBox.dataset.id === el.dataset.id) {
-                    processMatch(el, shadowBox);
+                if (shadow && shadow.dataset.id === el.dataset.id && !shadow.classList.contains('matched')) {
+                    processMatch(el, shadow);
                 }
+                document.removeEventListener('pointermove', onMove);
+                document.removeEventListener('pointerup', onUp);
+            };
 
-                document.removeEventListener('pointermove', onPointerMove);
-                document.removeEventListener('pointerup', onPointerUp);
-            }
-
-            document.addEventListener('pointermove', onPointerMove);
-            document.addEventListener('pointerup', onPointerUp);
+            document.addEventListener('pointermove', onMove);
+            document.addEventListener('pointerup', onUp);
         }
 
         function processMatch(dragEl, dropEl) {
+            if (dropEl.classList.contains('matched')) return;
+            somAcerto.currentTime = 0; somAcerto.play().catch(e=>{});
             dropEl.classList.add('matched');
             dragEl.classList.add('matched');
             points += 10;
@@ -353,27 +338,17 @@
             matchesInLevel++;
 
             if (matchesInLevel === totalNeeded) {
-                setTimeout(nextStep, 500);
-            }
-        }
-
-        function nextStep() {
-            if (currentLevel === 1) {
-                currentLevel = 2;
-                loadLevel();
-            } else {
-                endGame();
+                setTimeout(() => {
+                    if (currentLevel === 1) { currentLevel = 2; loadLevel(); }
+                    else { endGame(); }
+                }, 600);
             }
         }
 
         function endGame() {
             clearInterval(timerInterval);
             const rel = JOGO_CONFIG.relatorio;
-            document.getElementById('modal-title').innerText = rel.titulo;
-            document.getElementById('modal-msg').innerHTML = `
-                <p>${rel.pontosTotal} ${points}</p>
-                <p>${rel.tempoTotal} ${document.getElementById('timer').innerText}</p>
-            `;
+            document.getElementById('modal-msg').innerHTML = `<p>${rel.pontosTotal} ${points}</p><p>${rel.tempoTotal} ${document.getElementById('timer').innerText}</p>`;
             document.getElementById('modal').style.display = 'flex';
         }
     </script>
