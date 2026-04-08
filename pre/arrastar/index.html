@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar - Sombras</title>
+    <title>Pré-Escolar - Encontra o Igual</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,22 +13,22 @@
             --cor-texto: #555555;      
             --cor-vermelho: #ff4757;    
             --header-height: 70px;
-            --cor-jogo-verde: #45cfa8;
+            --cor-jogo-verde: #2ed573;
             --cor-erro: #ff4757;
             --cor-caixa-info: #fff0f3;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* NAVEGAÇÃO E MENU */
+        /* NAVEGAÇÃO */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         
         .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 5000; }
         .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 18px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f5f5f5; font-weight: 500; gap: 10px; }
+        .sidebar-item { display: flex; align-items: center; padding: 18px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f5f5f5; font-weight: 500; gap: 10px; cursor: pointer; }
         
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 4000; backdrop-filter: blur(2px); }
         .overlay.active { display: block; }
@@ -48,74 +48,80 @@
 
         .card-header { 
             display: flex; flex-direction: row; align-items: center; justify-content: space-between; 
-            padding-bottom: 5px; border-bottom: 2px solid #f0f0f0; flex-shrink: 0;
+            padding: 5px 10px; border-bottom: 2px solid #f0f0f0; flex-shrink: 0;
         }
         
         .stars-container { display: flex; gap: 5px; }
         .star { 
-            width: clamp(22px, 4vw, 30px); height: clamp(22px, 4vw, 30px); 
+            width: 25px; height: 25px; 
             border: 2px solid #ddd; border-radius: 50%; display: flex; 
-            align-items: center; justify-content: center; font-size: 16px; background: white;
-            font-weight: bold;
+            align-items: center; justify-content: center; font-size: 14px; background: white;
+            font-weight: bold; color: white;
         }
-        .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
-        .star.correct::after { content: '✓'; }
-        .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
-        .star.wrong::after { content: '✕'; }
+        .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); }
+        .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); }
 
         /* JOGO */
         .game-area { 
-            flex: 1; display: flex; flex-direction: column; justify-content: space-evenly;
-            padding: 5px; background: var(--cor-fundo); border-radius: 20px; 
+            flex: 1; display: flex; flex-direction: column; align-items: center;
+            padding: 10px; background: var(--cor-fundo); border-radius: 20px; 
             margin-top: 5px; overflow: hidden;
         }
 
-        .drop-grid, .drag-grid { 
-            display: flex; justify-content: center; align-items: center; 
-            gap: 1.5vmin; width: 100%; flex-wrap: wrap;
+        /* ALVO ATUAL */
+        .target-display {
+            text-align: center; margin-bottom: 10px; flex-shrink: 0;
         }
+        .target-display h2 { margin: 0; color: var(--cor-vermelho); font-size: 1.2rem; }
+        .target-img-box {
+            width: 100px; height: 100px; background: white; border: 3px solid var(--cor-principal);
+            border-radius: 20px; display: flex; align-items: center; justify-content: center;
+            margin: 5px auto; padding: 10px;
+        }
+        .target-img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        /* GRELHA DE OPÇÕES */
+        .options-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            width: 100%; height: 100%; justify-items: center; align-content: center;
+        }
+
+        .option-item {
+            width: 100%; max-width: 120px; aspect-ratio: 1/1;
+            background: white; border: 3px solid #eee; border-radius: 15%;
+            display: flex; align-items: center; justify-content: center; padding: 10px;
+            cursor: pointer; transition: 0.2s;
+        }
+        .option-item:active { transform: scale(0.9); }
+        .option-item img { max-width: 100%; max-height: 100%; object-fit: contain; }
         
-        .target-box, .item-drag { 
-            width: clamp(70px, 17vmin, 160px);
-            height: clamp(70px, 17vmin, 160px);
-            background: white; border-radius: 15%; 
-            display: flex; align-items: center; justify-content: center; 
-            padding: 8px; box-sizing: border-box;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            position: relative;
-        }
+        .item-correct { border-color: var(--cor-jogo-verde) !important; background: #e8f5e9; }
+        .item-wrong { border-color: var(--cor-erro) !important; background: #ffebee; animation: shake 0.4s; }
 
-        .target-box { border: 3px dashed var(--cor-principal); }
-        .target-box img { width: 90%; height: 90%; object-fit: contain; filter: brightness(0); opacity: 0.15; }
-        .target-box.filled { border: 4px solid var(--cor-jogo-verde); transform: scale(1.05); }
-        .target-box.filled img { filter: none; opacity: 1; }
+        @keyframes shake { 25% {transform:translateX(-5px);} 75% {transform:translateX(5px);} }
 
-        .item-drag { border: 2px solid #eee; cursor: grab; touch-action: none; z-index: 10; }
-        .item-drag img { width: 90%; height: 90%; object-fit: contain; pointer-events: none; }
-        
-        .dragging { 
-            opacity: 0.9; 
-            z-index: 9999 !important; 
-            position: fixed !important; 
-            pointer-events: none;
-            transform: scale(1.1); 
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-        }
-
-        /* ANIMAÇÃO EXPLICAÇÃO */
-        @keyframes slideAnim {
-            0% { transform: translateX(-60px); opacity: 0; }
-            50% { transform: translateX(0); opacity: 1; }
-            100% { transform: translateX(60px); opacity: 0; }
-        }
-
-        /* OUTROS */
-        .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 15px; border-radius: 50px; font-size: 1.4rem; font-weight: bold; width: 100%; cursor: pointer; box-shadow: 0 6px 0 #d63031; }
+        /* MENU CATEGORIAS (GEAR) */
         .gear-btn { width: 45px; height: 45px; cursor: pointer; flex-shrink: 0; }
-        .rd-float { position: absolute; bottom: 10px; right: 10px; z-index: 100; }
-        .gear-menu { position: fixed; display: none; background: white; border: 3px solid var(--cor-principal); border-radius: 15px; padding: 10px; z-index: 9000; flex-direction: column; gap: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .gear-menu { 
+            position: fixed; display: none; background: white; border: 3px solid var(--cor-principal); 
+            border-radius: 15px; padding: 10px; z-index: 9000; flex-direction: column; gap: 8px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
+        }
+        .gear-menu div { border: 2px solid #eee; border-radius: 8px; padding: 2px; }
+
+        /* MODAL */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 10000; }
-        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 90%; max-width: 400px; }
+        .modal-content { 
+            background: white; padding: 30px 25px; border-radius: 30px; text-align: center; 
+            border: 5px solid var(--cor-principal); width: 90%; max-width: 400px; box-sizing: border-box;
+        }
+
+        .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 15px; border-radius: 50px; font-size: 1.4rem; font-weight: bold; width: 100%; cursor: pointer; box-shadow: 0 6px 0 #d63031; font-family: 'Fredoka'; }
+        
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: repeat(3, 1fr); }
+            .option-item { max-width: 90px; }
+        }
     </style>
 </head>
 <body>
@@ -138,7 +144,7 @@
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:30px; color:var(--cor-principal); cursor:pointer;">☰</button>
         <h1 style="font-size:0.9rem; color:var(--cor-principal); margin: 0; display:flex; align-items:center; gap:8px;">
-            <img id="header-icon" src="" style="height:25px;"> Sombras Misteriosas
+            <img id="header-icon" src="" style="height:25px;"> Encontra o Igual
         </h1>
         <a href="../" style="background:var(--cor-principal); color:white; padding:8px 12px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.7rem;">⬅ Voltar</a>
     </header>
@@ -146,12 +152,15 @@
     <main class="main-content">
         <div id="shared-gear-menu" class="gear-menu"></div>
 
+        <!-- INTRO -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
-                <div style="background: var(--cor-caixa-info); border-radius: 25px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-bottom: 10px; position: relative;">
-                    <img id="anim-shadow-img" src="" style="width:110px; filter:brightness(0); opacity:0.15;">
-                    <img id="anim-animal-img" src="" style="width:100px; position:absolute; animation: slideAnim 3s infinite;">
-                    <p style="color:var(--cor-texto); font-weight:bold; margin-top:20px; font-size: 1.2rem;">De quem é esta sombra?</p>
+                <div style="background: var(--cor-caixa-info); border-radius: 25px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-bottom: 10px; padding: 20px; text-align: center;">
+                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.4rem; margin-bottom: 10px;">Consegues encontrar o igual?</p>
+                    <div class="target-img-box" style="width: 120px; height: 120px; border-width: 5px;">
+                        <img id="intro-img-target" src="">
+                    </div>
+                    <p style="color: #888; margin-top: 15px;">Vê o desenho no topo e clica no que é igual em baixo!</p>
                 </div>
                 <div style="display:flex; gap:10px; width:100%;">
                     <button class="btn-jogar" onclick="startGame()">JOGAR</button>
@@ -160,6 +169,7 @@
             </div>
         </section>
 
+        <!-- JOGO -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
@@ -167,57 +177,71 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div style="color:var(--cor-principal); font-weight:bold; font-size:0.8rem;">PTS: <span id="points">0</span></div>
                 </div>
-                <div id="main-game-area" class="game-area">
-                    <div id="targets-grid" class="drop-grid"></div>
-                    <div id="drags-grid" class="drag-grid"></div>
+                
+                <div class="game-area">
+                    <div class="target-display">
+                        <h2>Encontra:</h2>
+                        <div class="target-img-box" id="current-target-box">
+                            <img id="img-alvo" src="">
+                        </div>
+                    </div>
+                    <div id="options-container" class="options-grid"></div>
                 </div>
-                <div class="gear-btn rd-float" onclick="toggleGear(this)"><img class="gear-img-src" src="" style="width:100%;"></div>
+
+                <div class="gear-btn" style="position: absolute; bottom: 10px; right: 10px;" onclick="toggleGear(this)">
+                    <img class="gear-img-src" src="" style="width:100%;">
+                </div>
             </div>
         </section>
     </main>
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 style="color:var(--cor-principal); font-size: 2rem;">Boa! 🌟</h2>
+            <h2 id="modal-titulo" style="color:var(--cor-principal); font-size: 2rem;">Boa! 🌟</h2>
             <div id="modal-msg" style="margin: 20px 0; font-size: 1.1rem;"></div>
             <button class="btn-jogar" onclick="location.reload()">Jogar Novamente</button>
         </div>
     </div>
 
-    <audio id="snd-correct" src="https://assets.mixkit.co/active_storage/sfx/600/600-preview.mp3"></audio>
-    <audio id="snd-wrong" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
-
-    <script src="dados.js"></script>
     <script>
-        let currentRound = 1, points = 0, selectedTheme = 'animais', matchedCount = 0;
-        let dragElement = null, startX, startY, timerInterval, seconds = 0;
+        let currentRound = 1, points = 0, selectedTheme = 'animais', targetItem = "";
+        let timerInterval, seconds = 0, isRoundActive = false;
         const ROUNDS_PER_LEVEL = 5, TOTAL_ROUNDS = 10;
+
+        const sndAcerto = new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3');
+        const sndErro = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
-            const g = JOGO_CONFIG.caminhoGeralImg;
+            const i = JOGO_CONFIG.iconesMenu;
             
-            // Icones Menu e Header
-            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
-            document.getElementById('side-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
-            document.getElementById('side-1').src = p + JOGO_CONFIG.iconesMenu.ano1;
-            document.getElementById('side-2').src = p + JOGO_CONFIG.iconesMenu.ano2;
-            document.getElementById('side-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
-            document.getElementById('side-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
+            document.getElementById('header-icon').src = p + i.pre;
+            document.getElementById('side-pre').src = p + i.pre;
+            document.getElementById('side-1').src = p + i.ano1;
+            document.getElementById('side-2').src = p + i.ano2;
+            document.getElementById('side-3').src = p + i.ano3;
+            document.getElementById('side-4').src = p + i.ano4;
             
-            document.querySelectorAll('.gear-img-src').forEach(img => img.src = g + "rd.png");
+            document.querySelectorAll('.gear-img-src').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             
-            const menuCat = document.getElementById('shared-gear-menu');
+            setupThemeMenu();
+            setTheme('animais');
+        };
+
+        function setupThemeMenu() {
+            const menu = document.getElementById('shared-gear-menu');
             Object.keys(JOGO_CONFIG.categorias).forEach(key => {
                 const cat = JOGO_CONFIG.categorias[key];
+                // LÓGICA DAS IMAGENS 123 E ABC
+                const iconPath = cat.iconeEspecial ? JOGO_CONFIG.caminhoImg + cat.iconeEspecial : cat.caminho + cat.lista[0];
+                
                 const div = document.createElement('div');
                 div.style.cursor = 'pointer';
                 div.onclick = () => setTheme(key);
-                div.innerHTML = `<img src="${cat.caminho + cat.lista[0]}" style="width:40px; height:40px; border-radius:8px; border:2px solid #eee;">`;
-                menuCat.appendChild(div);
+                div.innerHTML = `<img src="${iconPath}" style="width:45px; height:45px; object-fit:contain;">`;
+                menu.appendChild(div);
             });
-            setTheme('animais');
-        };
+        }
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -235,19 +259,17 @@
 
         function setTheme(t) {
             selectedTheme = t;
-            const cat = JOGO_CONFIG.categorias[t];
-            document.getElementById('anim-shadow-img').src = cat.caminho + cat.lista[0];
-            document.getElementById('anim-animal-img').src = cat.caminho + cat.lista[0];
             document.getElementById('shared-gear-menu').style.display = 'none';
-            
-            currentRound = 1;
-            points = 0;
-            matchedCount = 0;
+            const cat = JOGO_CONFIG.categorias[t];
+            document.getElementById('intro-img-target').src = cat.caminho + cat.lista[0];
+            resetGameStates();
+        }
+
+        function resetGameStates() {
+            currentRound = 1; points = 0; seconds = 0;
             document.getElementById('points').innerText = '0';
-            
             if(document.getElementById('game-screen').classList.contains('active')) {
                 initStars();
-                startTimer();
                 loadRound();
             }
         }
@@ -263,7 +285,7 @@
         function initStars() {
             const bar = document.getElementById('stars-bar');
             bar.innerHTML = '';
-            for(let i=0; i<ROUNDS_PER_LEVEL; i++) {
+            for(let i=0; i < ROUNDS_PER_LEVEL; i++) {
                 const s = document.createElement('div');
                 s.className = 'star';
                 bar.appendChild(s);
@@ -281,126 +303,74 @@
         }
 
         function loadRound() {
-            matchedCount = 0;
-            if(currentRound === 6 && !document.getElementById('stars-bar').querySelector('.star:not(.correct):not(.wrong)')) initStars();
-
+            isRoundActive = true;
             const cat = JOGO_CONFIG.categorias[selectedTheme];
             let allItems = [...cat.lista].sort(() => 0.5 - Math.random());
-            let targets = allItems.slice(0, 5);
-            let numDrags = (currentRound <= 5) ? 5 : 8;
-            let drags = (numDrags === 5) ? [...targets] : [...targets, ...allItems.filter(x => !targets.includes(x)).slice(0, 3)];
-            drags.sort(() => 0.5 - Math.random());
-
-            const tGrid = document.getElementById('targets-grid');
-            const dGrid = document.getElementById('drags-grid');
-            tGrid.innerHTML = ''; dGrid.innerHTML = '';
-
-            targets.forEach(img => {
-                const div = document.createElement('div');
-                div.className = 'target-box';
-                div.dataset.id = img;
-                div.innerHTML = `<img src="${cat.caminho + img}">`;
-                tGrid.appendChild(div);
-            });
-
-            drags.forEach(img => {
-                const div = document.createElement('div');
-                div.className = 'item-drag';
-                div.dataset.id = img;
-                div.innerHTML = `<img src="${cat.caminho + img}">`;
-                div.addEventListener('mousedown', startDrag);
-                div.addEventListener('touchstart', startDrag, {passive: false});
-                dGrid.appendChild(div);
-            });
-        }
-
-        function startDrag(e) {
-            e.preventDefault();
-            dragElement = this;
-            const event = e.type === 'touchstart' ? e.touches[0] : e;
-            const rect = dragElement.getBoundingClientRect();
-            startX = event.clientX - rect.left;
-            startY = event.clientY - rect.top;
             
-            dragElement.style.width = rect.width + 'px';
-            dragElement.style.height = rect.height + 'px';
-            dragElement.classList.add('dragging');
+            // Dificuldade: 4 opções nos primeiros 5 rounds, 8 opções depois
+            let numOptions = (currentRound <= 5) ? 4 : 8;
+            let pool = allItems.slice(0, numOptions);
+            
+            targetItem = pool[Math.floor(Math.random() * pool.length)];
+            document.getElementById('img-alvo').src = cat.caminho + targetItem;
 
-            document.addEventListener('mousemove', onMove);
-            document.addEventListener('touchmove', onMove, {passive: false});
-            document.addEventListener('mouseup', stopDrag);
-            document.addEventListener('touchend', stopDrag);
-            onMove(e);
+            const grid = document.getElementById('options-container');
+            grid.innerHTML = '';
+            
+            pool.forEach(img => {
+                const div = document.createElement('div');
+                div.className = 'option-item';
+                div.innerHTML = `<img src="${cat.caminho + img}">`;
+                div.onclick = () => checkAnswer(img, div);
+                grid.appendChild(div);
+            });
         }
 
-        function onMove(e) {
-            if(!dragElement) return;
-            const event = e.type === 'touchmove' ? e.touches[0] : e;
-            dragElement.style.left = (event.clientX - startX) + 'px';
-            dragElement.style.top = (event.clientY - startY) + 'px';
-        }
+        function checkAnswer(imgClicked, element) {
+            if(!isRoundActive) return;
+            isRoundActive = false;
 
-        function stopDrag(e) {
-            if(!dragElement) return;
-            const event = e.type === 'touchend' ? e.changedTouches[0] : e;
-            const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
-            const target = elemBelow ? elemBelow.closest('.target-box') : null;
-
-            if(target && !target.classList.contains('filled') && target.dataset.id === dragElement.dataset.id) {
-                playSound('snd-correct');
-                target.classList.add('filled');
-                dragElement.remove();
-                points += 10;
-                document.getElementById('points').innerText = points;
-                matchedCount++;
-                if(matchedCount === 5) {
-                    updateVisualFeedback(true);
-                    setTimeout(nextRound, 800);
-                }
-            } else if(target && target.dataset.id !== dragElement.dataset.id) {
-                playSound('snd-wrong');
-                updateVisualFeedback(false);
-                setTimeout(nextRound, 800);
-            } else {
-                dragElement.classList.remove('dragging');
-                dragElement.style.position = 'relative';
-                dragElement.style.left = '0'; dragElement.style.top = '0';
-                dragElement.style.width = ''; dragElement.style.height = '';
-            }
-
-            document.removeEventListener('mousemove', onMove);
-            document.removeEventListener('touchmove', onMove);
-            document.removeEventListener('mouseup', stopDrag);
-            document.removeEventListener('touchend', stopDrag);
-            dragElement = null;
-        }
-
-        function updateVisualFeedback(isCorrect) {
             const stars = document.getElementById('stars-bar').children;
-            const idx = (currentRound - 1) % ROUNDS_PER_LEVEL;
-            if(stars[idx]) {
-                stars[idx].className = isCorrect ? 'star correct' : 'star wrong';
-            }
-        }
+            const starIdx = (currentRound - 1) % ROUNDS_PER_LEVEL;
 
-        function nextRound() {
-            if(currentRound < TOTAL_ROUNDS) {
-                currentRound++;
-                loadRound();
+            if(imgClicked === targetItem) {
+                sndAcerto.currentTime = 0; sndAcerto.play().catch(e=>{});
+                points += 20;
+                element.classList.add('item-correct');
+                if(stars[starIdx]) {
+                    stars[starIdx].classList.add('correct');
+                    stars[starIdx].innerText = '✓';
+                }
             } else {
-                endGame();
+                sndErro.currentTime = 0; sndErro.play().catch(e=>{});
+                if(points > 0) points -= 5;
+                element.classList.add('item-wrong');
+                if(stars[starIdx]) {
+                    stars[starIdx].classList.add('wrong');
+                    stars[starIdx].innerText = '✕';
+                }
             }
-        }
 
-        function playSound(id) {
-            const s = document.getElementById(id);
-            if(s) { s.currentTime = 0; s.play().catch(e=>{}); }
+            document.getElementById('points').innerText = points;
+
+            setTimeout(() => {
+                if(currentRound === 5) initStars(); // Reset estrelas para o nível 2
+
+                if(currentRound < TOTAL_ROUNDS) {
+                    currentRound++;
+                    loadRound();
+                } else {
+                    endGame();
+                }
+            }, 1000);
         }
 
         function endGame() {
             clearInterval(timerInterval);
             const tempo = document.getElementById('lbl-timer').innerText;
-            document.getElementById('modal-msg').innerHTML = `<p>Fizeste <b>${points}</b> pontos em <b>${tempo}</b>!</p>`;
+            const rel = JOGO_CONFIG.relatorio;
+            document.getElementById('modal-titulo').innerText = rel.titulo;
+            document.getElementById('modal-msg').innerHTML = `<p>${rel.pontosTotal} <b>${points}</b></p><p>${rel.tempoTotal} <b>${tempo}</b></p>`;
             document.getElementById('modal').style.display = 'flex';
         }
     </script>
