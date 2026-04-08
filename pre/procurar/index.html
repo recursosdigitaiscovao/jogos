@@ -71,20 +71,16 @@
         .btn-rd-mini { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; margin-left: 10px; }
         .btn-rd-mini img { width: 20px; height: 20px; }
 
-        /* Estilo Alvo - Reduzido padding para dar espaço às imagens */
         .target-header { width: 100%; text-align: center; padding: 5px 0; border-bottom: 2px dashed var(--cor-principal); flex-shrink: 0; }
         .target-header h2 { color: var(--cor-vermelho); margin: 0; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .target-img-main { height: 18vh; max-height: 100px; width: auto; object-fit: contain; }
 
-        /* Área de Jogo - Ocupar máximo possível */
         .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 5px; overflow: hidden; }
         
-        /* Container Grelha - Ajustado para preencher altura sem scroll */
         .grid-container { 
             display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 8px; width: 100%; height: 100%; flex: 1; padding: 5px; box-sizing: border-box; 
         }
         
-        /* Itens Dinâmicos: ocupam espaço proporcional à altura disponível */
         .game-item { 
             width: calc(22% - 10px); height: calc(28% - 10px); max-height: 20vh;
             background: white; border: 4px solid var(--cor-principal); border-radius: 20px; 
@@ -92,7 +88,6 @@
             transition: transform 0.2s; box-sizing: border-box; padding: 8px;
         }
 
-        /* Nível 2: Reduzir um pouco para caber 12 sem scroll */
         .grid-level-2 .game-item {
             width: calc(18% - 8px); height: calc(23% - 8px); max-height: 18vh;
             padding: 5px; border-width: 3px;
@@ -197,7 +192,6 @@
         let currentCatKey = "animais";
         let isRoundActive = false;
 
-        // Sons da Internet (Mixkit - Public Assets)
         const somAcerto = new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3');
         const somErro = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
 
@@ -221,9 +215,16 @@
             container.innerHTML = '';
             Object.keys(JOGO_CONFIG.categorias).forEach(key => {
                 const cat = JOGO_CONFIG.categorias[key];
+                
+                // Lógica de ícone: se houver ícone especial, usa a pasta img raiz.
+                // Se não, usa a primeira imagem da lista da categoria.
+                let iconSrc = cat.iconeEspecial 
+                    ? JOGO_CONFIG.caminhoImg + cat.iconeEspecial 
+                    : cat.caminho + cat.lista[0];
+
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
-                item.innerHTML = `<img src="${cat.caminho + cat.lista[0]}"> <span style="font-size:0.8rem; font-weight:700;">${cat.nome}</span>`;
+                item.innerHTML = `<img src="${iconSrc}"> <span style="font-size:0.8rem; font-weight:700;">${cat.nome}</span>`;
                 item.onclick = () => selectCategory(key);
                 container.appendChild(item);
             });
