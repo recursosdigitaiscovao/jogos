@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pré-Escolar - Encontra o Igual</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -12,18 +12,18 @@
             --cor-fundo: #fff5f7;      
             --cor-texto: #e691a7;      
             --cor-vermelho: #ff4757; 
-            --header-height: 60px;
+            --header-height: 70px;
             --cor-jogo-verde: #e691a7;  
             --cor-erro: #ff4757;
             --cor-acerto: #2ed573;
         }
 
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: manipulation; }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
         /* --- Header --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
-        .back-btn { background: var(--cor-principal); color: white; padding: 6px 12px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.75rem; }
+        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
 
         /* --- Sidebars --- */
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
@@ -33,88 +33,96 @@
         .sidebar-rd.active { bottom: 0; }
 
         .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
-        .sidebar-item img { width: 30px; height: 30px; margin-right: 12px; object-fit: contain; }
+        .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
+        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
 
-        #categorias-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 5px 0; }
-        #categorias-list .sidebar-item { flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 2px solid #fff0f3; border-radius: 20px; padding: 10px; }
-        #categorias-list .sidebar-item img { width: 45px; height: 45px; margin-right: 0; margin-bottom: 5px; display: block; }
+        #categorias-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; overflow: visible; padding: 5px 0; }
+        #categorias-list .sidebar-item { flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 2px solid #fff0f3; border-radius: 20px; padding: 8px; }
+        #categorias-list .sidebar-item img { width: 40px; height: 40px; margin-right: 0; margin-bottom: 5px; }
+        #categorias-list .sidebar-item:hover { padding-left: 0; transform: translateY(-2px); background-color: var(--cor-fundo); color: var(--cor-principal) !important; border-color: var(--cor-principal); }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
         /* --- Layout --- */
-        .main-content { flex: 1; padding: 8px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; height: calc(100vh - var(--header-height)); }
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; }
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
 
         .game-card {
-            background: white; border-radius: 25px; padding: 10px; border: 4px solid var(--cor-jogo-verde);
-            display: flex; flex-direction: column; width: 100%; height: 100%; box-sizing: border-box; overflow: hidden;
+            background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-jogo-verde);
+            display: flex; flex-direction: column; width: 100%; max-width: 1100px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* --- Jogo --- */
+        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center;}
+        
+        .intro-example { display: flex; align-items: center; gap: 15px; margin-top: 15px; }
+        .item-ex { width: 70px; height: 70px; border: 2px solid var(--cor-principal); border-radius: 15px; background: white; padding: 5px; display: flex; align-items: center; justify-content: center; }
+        .item-ex img { max-width: 90%; max-height: 90%; object-fit: contain; }
+        .item-ex.unique { border: 4px solid var(--cor-vermelho); animation: pulse 1s infinite; }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.1);} 100% {transform: scale(1);} }
+
+        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 5px 0; }
+
+        .intro-btns { display: flex; gap: 10px; width: 100%; }
+        .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
+        .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+        .btn-rd img { width: 35px; height: 35px; }
+        .btn-rd-mini { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; margin-left: 10px; }
+        .btn-rd-mini img { width: 20px; height: 20px; }
+
+        /* Estilo Alvo - Reduzido padding para dar espaço às imagens */
         .target-header { width: 100%; text-align: center; padding: 5px 0; border-bottom: 2px dashed var(--cor-principal); flex-shrink: 0; }
-        .target-header h2 { color: var(--cor-vermelho); margin: 0; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .target-img-main { height: 60px; width: 60px; object-fit: contain; }
+        .target-header h2 { color: var(--cor-vermelho); margin: 0; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .target-img-main { height: 18vh; max-height: 100px; width: auto; object-fit: contain; }
 
-        .game-area { flex: 1; display: flex; flex-direction: column; background: var(--cor-fundo); border-radius: 15px; margin-top: 5px; padding: 5px; overflow: hidden; }
+        /* Área de Jogo - Ocupar máximo possível */
+        .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 5px; overflow: hidden; }
         
-        /* Grelha em CSS GRID para Mobile */
+        /* Container Grelha - Ajustado para preencher altura sem scroll */
         .grid-container { 
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 8px;
-            width: 100%;
-            height: 100%;
-            padding: 5px;
-            box-sizing: border-box;
+            display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 8px; width: 100%; height: 100%; flex: 1; padding: 5px; box-sizing: border-box; 
         }
         
-        /* Ajuste Nível 2 (12 itens: 3 colunas x 4 linhas no telemóvel) */
-        .grid-level-2 {
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(4, 1fr);
-        }
-
+        /* Itens Dinâmicos: ocupam espaço proporcional à altura disponível */
         .game-item { 
-            background: white; 
-            border: 3px solid var(--cor-principal); 
-            border-radius: 15px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 5px;
-            box-sizing: border-box;
-            min-height: 0; /* Importante para o Grid */
+            width: calc(22% - 10px); height: calc(28% - 10px); max-height: 20vh;
+            background: white; border: 4px solid var(--cor-principal); border-radius: 20px; 
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: transform 0.2s; box-sizing: border-box; padding: 8px;
         }
 
-        .game-item img { 
-            max-width: 100%; 
-            max-height: 100%; 
-            object-fit: contain; 
-            display: block;
+        /* Nível 2: Reduzir um pouco para caber 12 sem scroll */
+        .grid-level-2 .game-item {
+            width: calc(18% - 8px); height: calc(23% - 8px); max-height: 18vh;
+            padding: 5px; border-width: 3px;
         }
+
+        @media (max-width: 600px) {
+            .game-item { width: calc(30% - 10px); height: calc(20% - 10px); }
+            .grid-level-2 .game-item { width: calc(23% - 8px); height: calc(18% - 8px); }
+        }
+
+        .game-item:active { transform: scale(0.9); }
+        .game-item img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 
         .item-correct { border-color: var(--cor-acerto) !important; background-color: #e8f5e9 !important; }
         .item-wrong { border-color: var(--cor-erro) !important; background-color: #ffebee !important; }
+        .error-shake { animation: shake 0.4s; }
+        @keyframes shake { 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
 
-        /* --- Modal --- */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 20px; border-radius: 25px; text-align: center; border: 5px solid var(--cor-jogo-verde); width: 85%; }
-        
-        .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.2rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; width: 100%; font-family: 'Fredoka'; }
+        .modal-content { background: white; padding: 30px 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); width: 90%; max-width: 350px; }
     </style>
 </head>
 <body>
 
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
     
-    <!-- Sidebar Principal -->
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
-            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
+            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
         <a href="/jogos/pre" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
@@ -124,7 +132,6 @@
         <a href="/jogos/4" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
     </div>
 
-    <!-- Sidebar de Categorias (Rodapé) -->
     <div class="sidebar-rd" id="sidebar-rd">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <h3 style="margin:0; color:var(--cor-principal);">Escolhe o Tema</h3>
@@ -134,53 +141,52 @@
     </div>
 
     <header class="nav-bar">
-        <button onclick="toggleMenu()" style="background:none; border:none; font-size:25px; color:var(--cor-principal); cursor:pointer;">☰</button>
-        <h1 style="display:flex; align-items:center; gap:8px; font-size:1rem; color:var(--cor-principal); margin: 0;">
-            <img id="header-icon" src="" style="height:28px; width: auto;"> Pré-Escolar
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:30px; font-weight:bold; color:var(--cor-principal); cursor:pointer; line-height:1;">☰</button>
+        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin: 0;">
+            <img id="header-icon" src="" style="height:32px; width: auto;"> Pré-Escolar
         </h1>
         <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
 
     <main class="main-content">
-        <!-- ECRÃ INICIAL -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
-                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:10px;">
-                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.1rem; margin-bottom:15px;">Encontra o igual:</p>
-                    <div style="width:100px; height:100px; border:4px solid var(--cor-principal); border-radius:20px; display:flex; align-items:center; justify-content:center; background:white;">
-                        <img src="" class="ex-img-unique" style="max-width:80%; max-height:80%; object-fit:contain;">
+                <div class="explanation-box">
+                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin: 0;">Encontra o igual:</p>
+                    <div class="intro-example">
+                        <span style="font-size:1.6rem; color:var(--cor-vermelho); font-weight:bold;">Encontra:</span>
+                        <div class="item-ex unique"><img src="" class="ex-img-unique"></div>
                     </div>
-                    <p style="font-size: 0.85rem; margin-top: 15px; color: #888;">Clica no objeto igual ao que aparece no topo!</p>
+                    <p style="font-size: 0.9rem; margin-top: 20px; color: #888;">Olha para o objeto no topo e clica no igual!</p>
                 </div>
-                <h2 class="game-title" id="display-categoria" style="font-size:1.2rem; color:var(--cor-principal); text-align:center;">Animais</h2>
-                <div style="display:flex; gap:10px; margin-top:10px;">
+                <h2 class="game-title" id="display-categoria">Jogo de Atenção</h2>
+                <div class="intro-btns">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
-                    <button onclick="toggleRD()" style="width:60px; border-radius:15px; border:2px solid var(--cor-principal); background:white;">
-                        <img class="btn-rd-img-ref" src="" style="width:30px;">
-                    </button>
+                    <button class="btn-rd" onclick="toggleRD()"><img class="btn-rd-img-ref" src=""></button>
                 </div>
             </div>
         </section>
 
-        <!-- ECRÃ DE JOGO -->
         <section id="game-screen" class="screen">
             <div class="game-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.8rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem; flex-shrink: 0;">
                     <div>⏳ <span id="timer">00:00</span></div>
-                    <div id="stars-bar" style="display:flex; gap:3px;"></div>
-                    <div>PTS: <span id="points">0</span></div>
+                    <div id="stars-bar" style="display:flex; gap:4px;"></div>
+                    <div style="display:flex; align-items:center;">
+                        PTS: <span id="points">0</span>
+                        <button class="btn-rd-mini" onclick="toggleRD()"><img class="btn-rd-img-ref" src=""></button>
+                    </div>
                 </div>
                 <div class="game-area" id="game-area"></div>
             </div>
         </section>
     </main>
 
-    <!-- MODAL FINAL -->
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--cor-jogo-verde); margin-top:0;">Fim do Jogo!</h2>
-            <div id="modal-msg" style="margin: 15px 0; font-weight:bold;"></div>
-            <button class="btn-play" onclick="location.reload()">Jogar de Novo</button>
+            <h2 id="modal-title" style="color:var(--cor-jogo-verde);">Relatório</h2>
+            <div id="modal-msg" style="margin-bottom:20px;"></div>
+            <button class="btn-play" onclick="location.reload()" style="background:var(--cor-jogo-verde);">Jogar de Novo</button>
         </div>
     </div>
 
@@ -191,6 +197,7 @@
         let currentCatKey = "animais";
         let isRoundActive = false;
 
+        // Sons da Internet (Mixkit - Public Assets)
         const somAcerto = new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3');
         const somErro = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
 
@@ -203,10 +210,8 @@
             document.getElementById('side-2').src = p + i.ano2;
             document.getElementById('side-3').src = p + i.ano3;
             document.getElementById('side-4').src = p + i.ano4;
-            
             const rdImgs = document.querySelectorAll('.btn-rd-img-ref');
             rdImgs.forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
-            
             setupRDMenu();
             updateIntroImages();
         };
@@ -216,15 +221,9 @@
             container.innerHTML = '';
             Object.keys(JOGO_CONFIG.categorias).forEach(key => {
                 const cat = JOGO_CONFIG.categorias[key];
-                
-                // Lógica dos Ícones 123 e ABC na pasta img
-                let iconSrc = cat.iconeEspecial 
-                    ? JOGO_CONFIG.caminhoImg + cat.iconeEspecial 
-                    : cat.caminho + cat.lista[0];
-
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
-                item.innerHTML = `<img src="${iconSrc}"> <span style="font-size:0.75rem; font-weight:700;">${cat.nome}</span>`;
+                item.innerHTML = `<img src="${cat.caminho + cat.lista[0]}"> <span style="font-size:0.8rem; font-weight:700;">${cat.nome}</span>`;
                 item.onclick = () => selectCategory(key);
                 container.appendChild(item);
             });
@@ -232,9 +231,7 @@
 
         function selectCategory(key) {
             currentCatKey = key;
-            closeMenus(); 
-            resetGame(); 
-            updateIntroImages();
+            closeMenus(); resetGame(); updateIntroImages();
             document.getElementById('display-categoria').innerText = JOGO_CONFIG.categorias[key].nome;
         }
 
@@ -264,15 +261,14 @@
                 seconds++; 
                 document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; 
             }, 1000);
-            initStars(); 
-            loadLevel();
+            initStars(); loadLevel();
         }
 
         function initStars() {
             const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
             for(let i=0; i<5; i++) { 
                 const s = document.createElement('div'); 
-                s.style.cssText="width:14px;height:14px;border:1.5px solid #ccc;border-radius:50%; background:white;"; 
+                s.style.cssText="width:20px;height:20px;border:2px solid #ccc;border-radius:50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; color: white;"; 
                 bar.appendChild(s); 
             }
         }
@@ -318,13 +314,17 @@
                 somAcerto.play().catch(e => {});
                 points += 20;
                 starAtual.style.background = "var(--cor-acerto)";
+                starAtual.style.borderColor = "var(--cor-acerto)";
+                starAtual.innerText = "✔";
                 element.classList.add('item-correct');
             } else {
                 somErro.currentTime = 0;
                 somErro.play().catch(e => {});
                 if(points > 0) points -= 2;
                 starAtual.style.background = "var(--cor-erro)";
-                element.classList.add('item-wrong');
+                starAtual.style.borderColor = "var(--cor-erro)";
+                starAtual.innerText = "✖";
+                element.classList.add('item-wrong', 'error-shake');
             }
 
             document.getElementById('points').innerText = points;
@@ -335,12 +335,13 @@
                         level = 2; currentQuestion = 1; initStars(); loadLevel();
                     } else { endGame(); }
                 } else { loadLevel(); }
-            }, 600);
+            }, 800);
         }
 
         function endGame() {
             clearInterval(timerInterval);
             const rel = JOGO_CONFIG.relatorio;
+            document.getElementById('modal-title').innerText = rel.titulo;
             document.getElementById('modal-msg').innerHTML = `<p>${rel.pontosTotal} ${points}</p><p>${rel.tempoTotal} ${document.getElementById('timer').innerText}</p>`;
             document.getElementById('modal').style.display = 'flex';
         }
