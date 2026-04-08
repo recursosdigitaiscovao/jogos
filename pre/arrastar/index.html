@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar - Encontra o Igual</title>
+    <title>Pré-Escolar - Sombras Misteriosas</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -20,7 +20,7 @@
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
         /* NAVEGAÇÃO */
@@ -53,74 +53,64 @@
         
         .stars-container { display: flex; gap: 5px; }
         .star { 
-            width: 25px; height: 25px; 
-            border: 2px solid #ddd; border-radius: 50%; display: flex; 
-            align-items: center; justify-content: center; font-size: 14px; background: white;
-            font-weight: bold; color: white;
+            width: 25px; height: 25px; border: 2px solid #ddd; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; font-size: 14px; 
+            background: white; font-weight: bold; color: white;
         }
         .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); }
         .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); }
 
-        /* JOGO */
+        /* JOGO DE ARRASTAR */
         .game-area { 
-            flex: 1; display: flex; flex-direction: column; align-items: center;
+            flex: 1; display: flex; flex-direction: column; justify-content: space-evenly;
             padding: 10px; background: var(--cor-fundo); border-radius: 20px; 
             margin-top: 5px; overflow: hidden;
         }
 
-        /* ALVO ATUAL */
-        .target-display {
-            text-align: center; margin-bottom: 10px; flex-shrink: 0;
+        .drop-grid, .drag-grid { 
+            display: flex; justify-content: center; align-items: center; 
+            gap: 10px; width: 100%; flex-wrap: wrap;
         }
-        .target-display h2 { margin: 0; color: var(--cor-vermelho); font-size: 1.2rem; }
-        .target-img-box {
-            width: 100px; height: 100px; background: white; border: 3px solid var(--cor-principal);
-            border-radius: 20px; display: flex; align-items: center; justify-content: center;
-            margin: 5px auto; padding: 10px;
-        }
-        .target-img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-
-        /* GRELHA DE OPÇÕES */
-        .options-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
-            width: 100%; height: 100%; justify-items: center; align-content: center;
-        }
-
-        .option-item {
-            width: 100%; max-width: 120px; aspect-ratio: 1/1;
-            background: white; border: 3px solid #eee; border-radius: 15%;
-            display: flex; align-items: center; justify-content: center; padding: 10px;
-            cursor: pointer; transition: 0.2s;
-        }
-        .option-item:active { transform: scale(0.9); }
-        .option-item img { max-width: 100%; max-height: 100%; object-fit: contain; }
         
-        .item-correct { border-color: var(--cor-jogo-verde) !important; background: #e8f5e9; }
-        .item-wrong { border-color: var(--cor-erro) !important; background: #ffebee; animation: shake 0.4s; }
-
-        @keyframes shake { 25% {transform:translateX(-5px);} 75% {transform:translateX(5px);} }
-
-        /* MENU CATEGORIAS (GEAR) */
-        .gear-btn { width: 45px; height: 45px; cursor: pointer; flex-shrink: 0; }
-        .gear-menu { 
-            position: fixed; display: none; background: white; border: 3px solid var(--cor-principal); 
-            border-radius: 15px; padding: 10px; z-index: 9000; flex-direction: column; gap: 8px; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
+        .target-box, .item-drag { 
+            width: clamp(65px, 15vmin, 130px);
+            height: clamp(65px, 15vmin, 130px);
+            background: white; border-radius: 15%; 
+            display: flex; align-items: center; justify-content: center; 
+            padding: 8px; box-sizing: border-box;
+            position: relative;
         }
-        .gear-menu div { border: 2px solid #eee; border-radius: 8px; padding: 2px; }
 
-        /* MODAL */
+        .target-box { border: 3px dashed var(--cor-principal); }
+        .target-box img { width: 85%; height: 85%; object-fit: contain; filter: brightness(0); opacity: 0.15; }
+        .target-box.filled { border: 4px solid var(--cor-jogo-verde); background: #e8f5e9; }
+        .target-box.filled img { filter: none; opacity: 1; }
+
+        .item-drag { border: 2px solid #eee; cursor: grab; touch-action: none; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .item-drag img { width: 85%; height: 85%; object-fit: contain; pointer-events: none; }
+        
+        .dragging { 
+            opacity: 0.9; z-index: 9999 !important; position: fixed !important; 
+            pointer-events: none; transform: scale(1.1); box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        /* ANIMAÇÃO EXPLICAÇÃO INTRO */
+        @keyframes slideAnim {
+            0% { transform: translateX(-60px); opacity: 0; }
+            50% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(60px); opacity: 0; }
+        }
+
+        /* COMPONENTES GERAIS */
+        .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 15px; border-radius: 50px; font-size: 1.4rem; font-weight: bold; width: 100%; cursor: pointer; box-shadow: 0 6px 0 #d63031; font-family: 'Fredoka'; }
+        .gear-btn { width: 45px; height: 45px; cursor: pointer; flex-shrink: 0; }
+        .gear-menu { position: fixed; display: none; background: white; border: 3px solid var(--cor-principal); border-radius: 15px; padding: 10px; z-index: 9000; flex-direction: column; gap: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        
+        /* MODAL COM PADDING DE 25PX */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 10000; }
         .modal-content { 
             background: white; padding: 30px 25px; border-radius: 30px; text-align: center; 
             border: 5px solid var(--cor-principal); width: 90%; max-width: 400px; box-sizing: border-box;
-        }
-
-        .btn-jogar { background: var(--cor-vermelho); color: white; border: none; padding: 15px; border-radius: 50px; font-size: 1.4rem; font-weight: bold; width: 100%; cursor: pointer; box-shadow: 0 6px 0 #d63031; font-family: 'Fredoka'; }
-        
-        @media (max-width: 600px) {
-            .options-grid { grid-template-columns: repeat(3, 1fr); }
-            .option-item { max-width: 90px; }
         }
     </style>
 </head>
@@ -144,7 +134,7 @@
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:30px; color:var(--cor-principal); cursor:pointer;">☰</button>
         <h1 style="font-size:0.9rem; color:var(--cor-principal); margin: 0; display:flex; align-items:center; gap:8px;">
-            <img id="header-icon" src="" style="height:25px;"> Encontra o Igual
+            <img id="header-icon" src="" style="height:25px;"> Sombras Misteriosas
         </h1>
         <a href="../" style="background:var(--cor-principal); color:white; padding:8px 12px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.7rem;">⬅ Voltar</a>
     </header>
@@ -152,15 +142,14 @@
     <main class="main-content">
         <div id="shared-gear-menu" class="gear-menu"></div>
 
-        <!-- INTRO -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
-                <div style="background: var(--cor-caixa-info); border-radius: 25px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-bottom: 10px; padding: 20px; text-align: center;">
-                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.4rem; margin-bottom: 10px;">Consegues encontrar o igual?</p>
-                    <div class="target-img-box" style="width: 120px; height: 120px; border-width: 5px;">
-                        <img id="intro-img-target" src="">
+                <div style="background: var(--cor-caixa-info); border-radius: 25px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-bottom: 10px; position: relative;">
+                    <div style="position:relative; width: 120px; height: 120px;">
+                        <img id="anim-shadow-img" src="" style="width:100%; filter:brightness(0); opacity:0.15;">
+                        <img id="anim-animal-img" src="" style="width:100%; position:absolute; left:0; top:0; animation: slideAnim 3s infinite;">
                     </div>
-                    <p style="color: #888; margin-top: 15px;">Vê o desenho no topo e clica no que é igual em baixo!</p>
+                    <p style="color:var(--cor-texto); font-weight:bold; margin-top:20px; font-size: 1.2rem;">Leva cada um à sua sombra!</p>
                 </div>
                 <div style="display:flex; gap:10px; width:100%;">
                     <button class="btn-jogar" onclick="startGame()">JOGAR</button>
@@ -169,7 +158,6 @@
             </div>
         </section>
 
-        <!-- JOGO -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="card-header">
@@ -177,17 +165,10 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div style="color:var(--cor-principal); font-weight:bold; font-size:0.8rem;">PTS: <span id="points">0</span></div>
                 </div>
-                
                 <div class="game-area">
-                    <div class="target-display">
-                        <h2>Encontra:</h2>
-                        <div class="target-img-box" id="current-target-box">
-                            <img id="img-alvo" src="">
-                        </div>
-                    </div>
-                    <div id="options-container" class="options-grid"></div>
+                    <div id="targets-grid" class="drop-grid"></div>
+                    <div id="drags-grid" class="drag-grid"></div>
                 </div>
-
                 <div class="gear-btn" style="position: absolute; bottom: 10px; right: 10px;" onclick="toggleGear(this)">
                     <img class="gear-img-src" src="" style="width:100%;">
                 </div>
@@ -203,9 +184,10 @@
         </div>
     </div>
 
+    <script src="dados.js"></script>
     <script>
-        let currentRound = 1, points = 0, selectedTheme = 'animais', targetItem = "";
-        let timerInterval, seconds = 0, isRoundActive = false;
+        let currentRound = 1, points = 0, selectedTheme = 'animais', matchedCount = 0;
+        let dragElement = null, startX, startY, timerInterval, seconds = 0;
         const ROUNDS_PER_LEVEL = 5, TOTAL_ROUNDS = 10;
 
         const sndAcerto = new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3');
@@ -213,35 +195,27 @@
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
-            const i = JOGO_CONFIG.iconesMenu;
-            
-            document.getElementById('header-icon').src = p + i.pre;
-            document.getElementById('side-pre').src = p + i.pre;
-            document.getElementById('side-1').src = p + i.ano1;
-            document.getElementById('side-2').src = p + i.ano2;
-            document.getElementById('side-3').src = p + i.ano3;
-            document.getElementById('side-4').src = p + i.ano4;
+            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
+            document.getElementById('side-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
+            document.getElementById('side-1').src = p + JOGO_CONFIG.iconesMenu.ano1;
+            document.getElementById('side-2').src = p + JOGO_CONFIG.iconesMenu.ano2;
+            document.getElementById('side-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
+            document.getElementById('side-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
             
             document.querySelectorAll('.gear-img-src').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             
-            setupThemeMenu();
-            setTheme('animais');
-        };
-
-        function setupThemeMenu() {
-            const menu = document.getElementById('shared-gear-menu');
+            const menuCat = document.getElementById('shared-gear-menu');
             Object.keys(JOGO_CONFIG.categorias).forEach(key => {
                 const cat = JOGO_CONFIG.categorias[key];
-                // LÓGICA DAS IMAGENS 123 E ABC
                 const iconPath = cat.iconeEspecial ? JOGO_CONFIG.caminhoImg + cat.iconeEspecial : cat.caminho + cat.lista[0];
-                
                 const div = document.createElement('div');
                 div.style.cursor = 'pointer';
                 div.onclick = () => setTheme(key);
-                div.innerHTML = `<img src="${iconPath}" style="width:45px; height:45px; object-fit:contain;">`;
-                menu.appendChild(div);
+                div.innerHTML = `<img src="${iconPath}" style="width:40px; height:40px; object-fit:contain;">`;
+                menuCat.appendChild(div);
             });
-        }
+            setTheme('animais');
+        };
 
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -259,19 +233,12 @@
 
         function setTheme(t) {
             selectedTheme = t;
-            document.getElementById('shared-gear-menu').style.display = 'none';
             const cat = JOGO_CONFIG.categorias[t];
-            document.getElementById('intro-img-target').src = cat.caminho + cat.lista[0];
-            resetGameStates();
-        }
-
-        function resetGameStates() {
-            currentRound = 1; points = 0; seconds = 0;
+            document.getElementById('anim-shadow-img').src = cat.caminho + cat.lista[0];
+            document.getElementById('anim-animal-img').src = cat.caminho + cat.lista[0];
+            document.getElementById('shared-gear-menu').style.display = 'none';
+            points = 0; currentRound = 1;
             document.getElementById('points').innerText = '0';
-            if(document.getElementById('game-screen').classList.contains('active')) {
-                initStars();
-                loadRound();
-            }
         }
 
         function startGame() {
@@ -285,7 +252,7 @@
         function initStars() {
             const bar = document.getElementById('stars-bar');
             bar.innerHTML = '';
-            for(let i=0; i < ROUNDS_PER_LEVEL; i++) {
+            for(let i=0; i<ROUNDS_PER_LEVEL; i++) {
                 const s = document.createElement('div');
                 s.className = 'star';
                 bar.appendChild(s);
@@ -303,66 +270,121 @@
         }
 
         function loadRound() {
-            isRoundActive = true;
+            matchedCount = 0;
             const cat = JOGO_CONFIG.categorias[selectedTheme];
-            let allItems = [...cat.lista].sort(() => 0.5 - Math.random());
+            let items = [...cat.lista].sort(() => 0.5 - Math.random());
             
-            // Dificuldade: 4 opções nos primeiros 5 rounds, 8 opções depois
-            let numOptions = (currentRound <= 5) ? 4 : 8;
-            let pool = allItems.slice(0, numOptions);
+            // 5 Alvos
+            let targets = items.slice(0, 5);
             
-            targetItem = pool[Math.floor(Math.random() * pool.length)];
-            document.getElementById('img-alvo').src = cat.caminho + targetItem;
+            // Dificuldade: 5 opções no nível 1, 8 opções no nível 2
+            let numDrags = (currentRound <= 5) ? 5 : 8;
+            let drags = (numDrags === 5) ? [...targets] : [...targets, ...items.filter(x => !targets.includes(x)).slice(0, 3)];
+            
+            drags.sort(() => 0.5 - Math.random());
 
-            const grid = document.getElementById('options-container');
-            grid.innerHTML = '';
-            
-            pool.forEach(img => {
+            const tGrid = document.getElementById('targets-grid');
+            const dGrid = document.getElementById('drags-grid');
+            tGrid.innerHTML = ''; dGrid.innerHTML = '';
+
+            targets.forEach(img => {
                 const div = document.createElement('div');
-                div.className = 'option-item';
+                div.className = 'target-box';
+                div.dataset.id = img;
                 div.innerHTML = `<img src="${cat.caminho + img}">`;
-                div.onclick = () => checkAnswer(img, div);
-                grid.appendChild(div);
+                tGrid.appendChild(div);
+            });
+
+            drags.forEach(img => {
+                const div = document.createElement('div');
+                div.className = 'item-drag';
+                div.dataset.id = img;
+                div.innerHTML = `<img src="${cat.caminho + img}">`;
+                div.addEventListener('mousedown', startDrag);
+                div.addEventListener('touchstart', startDrag, {passive: false});
+                dGrid.appendChild(div);
             });
         }
 
-        function checkAnswer(imgClicked, element) {
-            if(!isRoundActive) return;
-            isRoundActive = false;
+        function startDrag(e) {
+            e.preventDefault();
+            dragElement = this;
+            const event = e.type === 'touchstart' ? e.touches[0] : e;
+            const rect = dragElement.getBoundingClientRect();
+            startX = event.clientX - rect.left;
+            startY = event.clientY - rect.top;
+            
+            dragElement.style.width = rect.width + 'px';
+            dragElement.style.height = rect.height + 'px';
+            dragElement.classList.add('dragging');
 
-            const stars = document.getElementById('stars-bar').children;
-            const starIdx = (currentRound - 1) % ROUNDS_PER_LEVEL;
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('touchmove', onMove, {passive: false});
+            document.addEventListener('mouseup', stopDrag);
+            document.addEventListener('touchend', stopDrag);
+        }
 
-            if(imgClicked === targetItem) {
+        function onMove(e) {
+            if(!dragElement) return;
+            const event = e.type === 'touchmove' ? e.touches[0] : e;
+            dragElement.style.left = (event.clientX - startX) + 'px';
+            dragElement.style.top = (event.clientY - startY) + 'px';
+        }
+
+        function stopDrag(e) {
+            if(!dragElement) return;
+            const event = e.type === 'touchend' ? e.changedTouches[0] : e;
+            const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
+            const target = elemBelow ? elemBelow.closest('.target-box') : null;
+
+            if(target && !target.classList.contains('filled') && target.dataset.id === dragElement.dataset.id) {
                 sndAcerto.currentTime = 0; sndAcerto.play().catch(e=>{});
-                points += 20;
-                element.classList.add('item-correct');
-                if(stars[starIdx]) {
-                    stars[starIdx].classList.add('correct');
-                    stars[starIdx].innerText = '✓';
+                target.classList.add('filled');
+                dragElement.remove();
+                points += 10;
+                document.getElementById('points').innerText = points;
+                matchedCount++;
+                
+                if(matchedCount === 5) {
+                    updateStar(true);
+                    setTimeout(nextRound, 800);
                 }
-            } else {
+            } else if(target && target.dataset.id !== dragElement.dataset.id) {
                 sndErro.currentTime = 0; sndErro.play().catch(e=>{});
-                if(points > 0) points -= 5;
-                element.classList.add('item-wrong');
-                if(stars[starIdx]) {
-                    stars[starIdx].classList.add('wrong');
-                    stars[starIdx].innerText = '✕';
-                }
+                updateStar(false);
+                setTimeout(nextRound, 800);
+            } else {
+                dragElement.classList.remove('dragging');
+                dragElement.style.position = 'relative';
+                dragElement.style.left = '0'; dragElement.style.top = '0';
+                dragElement.style.width = ''; dragElement.style.height = '';
             }
 
-            document.getElementById('points').innerText = points;
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('touchmove', onMove);
+            document.removeEventListener('mouseup', stopDrag);
+            document.removeEventListener('touchend', stopDrag);
+            dragElement = null;
+        }
 
-            setTimeout(() => {
-                if(currentRound === 5) initStars(); // Reset estrelas para o nível 2
+        function updateStar(isCorrect) {
+            const stars = document.getElementById('stars-bar').children;
+            const idx = (currentRound - 1) % ROUNDS_PER_LEVEL;
+            if(stars[idx]) {
+                stars[idx].className = isCorrect ? 'star correct' : 'star wrong';
+                stars[idx].innerText = isCorrect ? '✓' : '✕';
+            }
+        }
 
-                if(currentRound < TOTAL_ROUNDS) {
-                    currentRound++;
-                    loadRound();
-                } else {
-                    endGame();
-                }
-            }, 1000);
+        function nextRound() {
+            if(currentRound === 5) initStars(); // Reset estrelas para nível 2
+
+            if(currentRound < TOTAL_ROUNDS) {
+                currentRound++;
+                loadRound();
+            } else {
+                endGame();
+            }
         }
 
         function endGame() {
