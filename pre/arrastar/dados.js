@@ -8,6 +8,11 @@ var JOGO_CONFIG = {
         ano3: "icon3.png",
         ano4: "icon4.png"
     },
+    // Configuração de itens por nível
+    niveis: {
+        1: { itens: 6 },
+        2: { itens: 8 }
+    },
     categorias: {
         animais: {
             nome: "Animais",
