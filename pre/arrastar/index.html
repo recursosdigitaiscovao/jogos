@@ -3,42 +3,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo das Sombras</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Jogo das Sombras - Educativo</title>
+    <style>
+        /* CSS INTEGRADO */
+        :root {
+            --primaria: #4A90E2;
+            --secundaria: #F5A623;
+            --sucesso: #7ED321;
+            --fundo: #f0f2f5;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--fundo);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #game-container {
+            width: 95%;
+            max-width: 1000px;
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Menu de Categorias */
+        .grid-categorias {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .card-categoria {
+            padding: 20px;
+            border: 3px solid var(--primaria);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .card-categoria:hover {
+            transform: scale(1.05);
+            background: var(--primaria);
+            color: white;
+        }
+
+        /* Área do Jogo */
+        .painel-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background: #eee;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .match-area {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .coluna {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Organiza em 2 colunas internas para caber 8 itens */
+            gap: 15px;
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 10px;
+            min-width: 250px;
+        }
+
+        /* Peças Arrastáveis */
+        .peca {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            cursor: grab;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        .peca:active { cursor: grabbing; }
+
+        /* Sombras (Alvos) */
+        .dropzone {
+            width: 90px;
+            height: 90px;
+            border: 2px dashed #bbb;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            position: relative;
+        }
+
+        .img-sombra {
+            width: 75px;
+            height: 75px;
+            object-fit: contain;
+            filter: brightness(0); /* Transforma a imagem em sombra preta */
+            opacity: 0.2;
+        }
+
+        .acertou {
+            border: 2px solid var(--sucesso) !important;
+            background: #e8f5e9 !important;
+        }
+
+        .acertou .img-sombra {
+            filter: none !important;
+            opacity: 1 !important;
+        }
+
+        /* Modal Final */
+        #modal-fim {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        button {
+            padding: 12px 25px;
+            background: var(--secundaria);
+            border: none;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
-    <div id="game-container">
-        <!-- Menu de Categorias -->
-        <div id="menu-categorias">
-            <h1>Escolha uma Categoria</h1>
-            <div id="lista-categorias"></div>
-        </div>
 
-        <!-- Área do Jogo -->
-        <div id="jogo-area" class="hidden">
-            <div id="header-jogo">
-                <span id="label-nivel">Nível 1</span>
-                <span id="label-tempo">Tempo: 0s</span>
-            </div>
-            
-            <div class="match-container">
-                <div id="coluna-objetos" class="dropzone-container"></div>
-                <div id="coluna-sombras" class="dropzone-container"></div>
-            </div>
-        </div>
+<div id="game-container">
+    <!-- Menu Inicial -->
+    <div id="menu-principal">
+        <h1>Jogo das Sombras</h1>
+        <p>Escolhe uma categoria para começar:</p>
+        <div id="grid-categorias" class="grid-categorias"></div>
+    </div>
 
-        <!-- Modal de Relatório -->
-        <div id="modal-fim" class="hidden">
-            <div class="modal-content">
-                <h2 id="res-titulo"></h2>
-                <p id="res-pontos"></p>
-                <p id="res-tempo"></p>
-                <button onclick="location.reload()">Jogar Novamente</button>
-            </div>
+    <!-- Área de Jogo -->
+    <div id="jogo-layout" class="hidden">
+        <div class="painel-info">
+            <div id="info-nivel">Nível: 1</div>
+            <div id="info-tempo">Tempo: 0s</div>
+            <div id="info-pontos">Pontos: 0</div>
+        </div>
+        
+        <div class="match-area">
+            <div id="coluna-objetos" class="coluna"></div>
+            <div id="coluna-sombras" class="coluna"></div>
         </div>
     </div>
 
-    <script src="dados.js"></script>
-    <script src="script.js"></script>
+    <!-- Relatório Final -->
+    <div id="modal-fim" class="hidden">
+        <div class="modal-content">
+            <h2 id="res-titulo"></h2>
+            <p id="res-pontos"></p>
+            <p id="res-tempo"></p>
+            <button onclick="location.reload()">Jogar Novamente</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* DADOS.JS INTEGRADO */
+    var JOGO_CONFIG = {
+        caminhoIcons: "../../icons/", 
+        caminhoImg: "../../img/",
+        iconesMenu: {
+            pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png"
+        },
+        categorias: {
+            animais: {
+                nome: "Animais",
+                caminho: "../../img/animaisdomesticos/",
+                lista: ["galinha.png", "cabra.png", "ovelha.png", "coelho.png", "burro.png", "peru.png", "porco.png", "cavalo.png", "vaca.png", "pato.png", "gato.png", "cao.png"]
+            },
+            frutas: {
+                nome: "Frutas",
+                caminho: "../../img/frutas/",
+                lista: ["ananas.png", "banana.png", "cereja.png", "kiwi.png", "laranja.png", "maca.png", "melancia.png", "morango.png", "papaia.png", "pera.png", "uvas.png"]
+            },
+            materialescolar: {
+                nome: "Material Escolar",
+                caminho: "../../img/materialescolar/",
+                lista: ["cola.png", "folha.png", "tesoura.png", "capa.png", "estojo.png", "livro.png", "esquadro.png", "regua.png", "mochila.png", "borracha.png", "caneta.png", "pincel.png", "lapis.png", "afia.png"]
+            },
+            numeros: {
+                nome: "Números",
+                iconeEspecial: "123.png",
+                caminho: "../../img/numeros/",
+                lista: ["zero.png", "um.png", "dois.png", "tres.png", "quatro.png", "cinco.png", "seis.png", "sete.png", "oito.png", "nove.png", "dez.png"]
+            },
+            letras: {
+                nome: "Letras",
+                iconeEspecial: "abc.png",
+                caminho: "../../img/letras/",
+                lista: [
+                    "letra_a.png", "letra_b.png", "letra_c.png", "letra_d.png", "letra_e.png", 
+                    "letra_f.png", "letra_g.png", "letra_h.png", "letra_i.png", "letra_j.png", 
+                    "letra_k.png", "letra_l.png", "letra_m.png", "letra_n.png", "letra_o.png", 
+                    "letra_p.png", "letra_q.png", "letra_r.png", "letra_s.png", "letra_t.png", 
+                    "letra_u.png", "letra_v.png", "letra_w.png", "letra_x.png", "letra_y.png", "letra_z.png"
+                ]
+            }
+        },
+        relatorio: {
+            titulo: "Fim do Jogo!",
+            pontosTotal: "Pontos:",
+            tempoTotal: "Tempo:"
+        }
+    };
+
+    /* LÓGICA DO JOGO */
+    let nivelAtual = 1;
+    let categoriaAtiva = null;
+    let acertosNoNivel = 0;
+    let totalPontos = 0;
+    let segundos = 0;
+    let timerInterval;
+
+    // Inicializar Menu
+    const gridCat = document.getElementById('grid-categorias');
+    for (let id in JOGO_CONFIG.categorias) {
+        let cat = JOGO_CONFIG.categorias[id];
+        let card = document.createElement('div');
+        card.className = 'card-categoria';
+        card.innerHTML = `<h3>${cat.nome}</h3>`;
+        card.onclick = () => iniciarJogo(id);
+        gridCat.appendChild(card);
+    }
+
+    function iniciarJogo(idCat) {
+        categoriaAtiva = JOGO_CONFIG.categorias[idCat];
+        document.getElementById('menu-principal').classList.add('hidden');
+        document.getElementById('jogo-layout').classList.remove('hidden');
+        iniciarCronometro();
+        carregarNivel();
+    }
+
+    function iniciarCronometro() {
+        timerInterval = setInterval(() => {
+            segundos++;
+            document.getElementById('info-tempo').innerText = `Tempo: ${segundos}s`;
+        }, 1000);
+    }
+
+    function carregarNivel() {
+        acertosNoNivel = 0;
+        const qtdItens = (nivelAtual === 1) ? 6 : 8;
+        document.getElementById('info-nivel').innerText = `Nível: ${nivelAtual}`;
+
+        // Selecionar itens aleatórios
+        let listaSorteada = [...categoriaAtiva.lista]
+            .sort(() => Math.random() - 0.5)
+            .slice(0, qtdItens);
+
+        const colObjetos = document.getElementById('coluna-objetos');
+        const colSombras = document.getElementById('coluna-sombras');
+        colObjetos.innerHTML = '';
+        colSombras.innerHTML = '';
+
+        // 1. Criar Coluna de Objetos (Embaralhada)
+        let objetosEmbaralhados = [...listaSorteada].sort(() => Math.random() - 0.5);
+        objetosEmbaralhados.forEach(nomeImg => {
+            let img = document.createElement('img');
+            img.src = categoriaAtiva.caminho + nomeImg;
+            img.className = 'peca';
+            img.id = 'img-' + nomeImg;
+            img.draggable = true;
+            img.ondragstart = (e) => e.dataTransfer.setData("id_imagem", nomeImg);
+            colObjetos.appendChild(img);
+        });
+
+        // 2. Criar Coluna de Sombras (Embaralhada)
+        let sombrasEmbaralhadas = [...listaSorteada].sort(() => Math.random() - 0.5);
+        sombrasEmbaralhadas.forEach(nomeImg => {
+            let box = document.createElement('div');
+            box.className = 'dropzone';
+            box.dataset.correta = nomeImg;
+            box.innerHTML = `<img src="${categoriaAtiva.caminho + nomeImg}" class="img-sombra">`;
+
+            box.ondragover = (e) => e.preventDefault();
+            box.ondrop = (e) => {
+                e.preventDefault();
+                let idArrastado = e.dataTransfer.getData("id_imagem");
+                
+                if (idArrastado === box.dataset.correta && !box.classList.contains('acertou')) {
+                    box.classList.add('acertou');
+                    document.getElementById('img-' + idArrastado).style.visibility = 'hidden';
+                    totalPontos += 10;
+                    acertosNoNivel++;
+                    document.getElementById('info-pontos').innerText = `Pontos: ${totalPontos}`;
+                    
+                    if (acertosNoNivel === qtdItens) {
+                        proximoPasso();
+                    }
+                }
+            };
+            colSombras.appendChild(box);
+        });
+    }
+
+    function proximoPasso() {
+        if (nivelAtual === 1) {
+            setTimeout(() => {
+                alert("Nível 1 concluído! Vamos para o Nível 2 (8 imagens).");
+                nivelAtual = 2;
+                carregarNivel();
+            }, 500);
+        } else {
+            finalizarJogo();
+        }
+    }
+
+    function finalizarJogo() {
+        clearInterval(timerInterval);
+        document.getElementById('modal-fim').classList.remove('hidden');
+        document.getElementById('res-titulo').innerText = JOGO_CONFIG.relatorio.titulo;
+        document.getElementById('res-pontos').innerText = `${JOGO_CONFIG.relatorio.pontosTotal} ${totalPontos}`;
+        document.getElementById('res-tempo').innerText = `${JOGO_CONFIG.relatorio.tempoTotal} ${segundos} segundos`;
+    }
+</script>
+
 </body>
 </html>
