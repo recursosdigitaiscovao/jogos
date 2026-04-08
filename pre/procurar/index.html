@@ -37,7 +37,6 @@
         #categorias-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; overflow: visible; padding: 5px 0; }
         #categorias-list .sidebar-item { flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 2px solid #fff0f3; border-radius: 20px; padding: 8px; }
         #categorias-list .sidebar-item img { width: 40px; height: 40px; margin-right: 0; margin-bottom: 5px; }
-        #categorias-list .sidebar-item:hover { padding-left: 0; transform: translateY(-2px); background-color: var(--cor-fundo); color: var(--cor-principal) !important; border-color: var(--cor-principal); }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
@@ -57,36 +56,54 @@
         .item-ex { width: 70px; height: 70px; border: 2px solid var(--cor-principal); border-radius: 15px; background: white; padding: 5px; display: flex; align-items: center; justify-content: center; }
         .item-ex img { max-width: 90%; max-height: 90%; object-fit: contain; }
         .item-ex.unique { border: 4px solid var(--cor-vermelho); animation: pulse 1s infinite; }
-        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.1);} 100% {transform: scale(1);} }
 
         .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 5px 0; }
 
         .intro-btns { display: flex; gap: 10px; width: 100%; }
         .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
-        .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+        .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .btn-rd img { width: 35px; height: 35px; }
 
-        .target-header { width: 100%; text-align: center; padding: 5px 0; border-bottom: 2px dashed var(--cor-principal); flex-shrink: 0; }
-        .target-header h2 { color: var(--cor-vermelho); margin: 0; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .target-img-main { height: 18vh; max-height: 100px; width: auto; object-fit: contain; }
+        /* HEADER DO ALVO - Reduzi para dar espaço */
+        .target-header { width: 100%; text-align: center; padding: 5px 0; border-bottom: 2px dashed var(--cor-principal); flex-shrink: 0; margin-bottom: 5px; }
+        .target-header h2 { color: var(--cor-vermelho); margin: 0; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .target-img-main { height: 60px; width: auto; object-fit: contain; }
 
         .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 5px; overflow: hidden; }
         
-        .grid-container { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 8px; width: 100%; height: 100%; flex: 1; padding: 5px; box-sizing: border-box; }
+        /* GRELHA CORRIGIDA COM CSS GRID */
+        .grid-container { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); /* 4 colunas fixas */
+            gap: 10px; 
+            width: 100%; 
+            height: 100%;
+            max-height: 60vh;
+            padding: 10px; 
+            box-sizing: border-box; 
+            justify-items: center; 
+            align-items: center;
+        }
         
         .game-item { 
-            width: calc(22% - 10px); height: calc(28% - 10px); max-height: 20vh;
+            width: 100%;
+            max-width: 110px; /* Impede que fiquem gigantes */
+            aspect-ratio: 1 / 1; /* Mantém sempre quadrado */
             background: white; border: 4px solid var(--cor-principal); border-radius: 20px; 
             display: flex; align-items: center; justify-content: center; cursor: pointer;
             transition: transform 0.2s; box-sizing: border-box; padding: 8px;
         }
 
-        .grid-level-2 .game-item { width: calc(18% - 8px); height: calc(23% - 8px); max-height: 18vh; padding: 5px; border-width: 3px; }
+        /* Nível 2 - 12 itens */
+        .grid-level-2 .game-item { max-width: 85px; border-width: 3px; }
 
         @media (max-width: 600px) {
-            .game-item { width: calc(30% - 10px); height: calc(20% - 10px); }
-            .grid-level-2 .game-item { width: calc(23% - 8px); height: calc(18% - 8px); }
+            .grid-container { grid-template-columns: repeat(3, 1fr); } /* 3 colunas em telemóveis */
+            .game-item { max-width: 80px; }
+            .grid-level-2 .game-item { max-width: 65px; }
         }
+
+        .game-item img { max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none; }
 
         .item-correct { border-color: var(--cor-acerto) !important; background-color: #e8f5e9 !important; }
         .item-wrong { border-color: var(--cor-erro) !important; background-color: #ffebee !important; }
@@ -97,7 +114,7 @@
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { 
             background: white; 
-            padding: 30px 25px; /* Topo/Baixo 30px, Esquerda/Direita 25px */
+            padding: 30px 25px; 
             border-radius: 30px; 
             text-align: center; 
             border: 5px solid var(--cor-jogo-verde); 
@@ -201,10 +218,7 @@
             document.getElementById('side-2').src = p + i.ano2;
             document.getElementById('side-3').src = p + i.ano3;
             document.getElementById('side-4').src = p + i.ano4;
-            
-            const rdImgs = document.querySelectorAll('.btn-rd-img-ref');
-            rdImgs.forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
-            
+            document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             setupRDMenu();
             updateIntroImages();
         };
@@ -214,12 +228,7 @@
             container.innerHTML = '';
             Object.keys(JOGO_CONFIG.categorias).forEach(key => {
                 const cat = JOGO_CONFIG.categorias[key];
-                
-                // CORREÇÃO: Verifica se tem ícone especial (123 ou abc) na pasta raiz img
-                const iconPath = cat.iconeEspecial 
-                    ? JOGO_CONFIG.caminhoImg + cat.iconeEspecial 
-                    : cat.caminho + cat.lista[0];
-
+                const iconPath = cat.iconeEspecial ? JOGO_CONFIG.caminhoImg + cat.iconeEspecial : cat.caminho + cat.lista[0];
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
                 item.innerHTML = `<img src="${iconPath}"> <span style="font-size:0.8rem; font-weight:700;">${cat.nome}</span>`;
@@ -236,15 +245,9 @@
 
         function updateIntroImages() {
             const cat = JOGO_CONFIG.categorias[currentCatKey];
-            const imgExemplo = document.querySelector('.ex-img-unique');
-            
-            // CORREÇÃO: No intro também mostra o ícone especial se existir
-            if (cat.iconeEspecial) {
-                imgExemplo.src = JOGO_CONFIG.caminhoImg + cat.iconeEspecial;
-            } else {
-                const imgs = [...cat.lista].sort(() => 0.5 - Math.random());
-                imgExemplo.src = cat.caminho + imgs[0];
-            }
+            const imgEx = document.querySelector('.ex-img-unique');
+            if (cat.iconeEspecial) imgEx.src = JOGO_CONFIG.caminhoImg + cat.iconeEspecial;
+            else imgEx.src = cat.caminho + cat.lista[0];
         }
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
@@ -283,7 +286,6 @@
             isRoundActive = true;
             const area = document.getElementById('game-area');
             area.innerHTML = '';
-            
             const cat = JOGO_CONFIG.categorias[currentCatKey];
             let items = [...cat.lista].sort(() => 0.5 - Math.random());
             let numTotal = (level === 1) ? 8 : 12;
@@ -316,18 +318,14 @@
             const starAtual = stars[currentQuestion-1];
 
             if (imgName === targetItem) {
-                somAcerto.currentTime = 0; somAcerto.play().catch(e => {});
+                somAcerto.currentTime = 0; somAcerto.play().catch(e=>{});
                 points += 20;
-                starAtual.style.background = "var(--cor-acerto)";
-                starAtual.style.borderColor = "var(--cor-acerto)";
-                starAtual.innerText = "✔";
+                starAtual.style.background = "var(--cor-acerto)"; starAtual.style.borderColor = "var(--cor-acerto)"; starAtual.innerText = "✔";
                 element.classList.add('item-correct');
             } else {
-                somErro.currentTime = 0; somErro.play().catch(e => {});
+                somErro.currentTime = 0; somErro.play().catch(e=>{});
                 if(points > 0) points -= 2;
-                starAtual.style.background = "var(--cor-erro)";
-                starAtual.style.borderColor = "var(--cor-erro)";
-                starAtual.innerText = "✖";
+                starAtual.style.background = "var(--cor-erro)"; starAtual.style.borderColor = "var(--cor-erro)"; starAtual.innerText = "✖";
                 element.classList.add('item-wrong', 'error-shake');
             }
 
@@ -335,9 +333,8 @@
             setTimeout(() => {
                 currentQuestion++;
                 if (currentQuestion > 5) {
-                    if (level === 1) {
-                        level = 2; currentQuestion = 1; initStars(); loadLevel();
-                    } else { endGame(); }
+                    if (level === 1) { level = 2; currentQuestion = 1; initStars(); loadLevel(); } 
+                    else { endGame(); }
                 } else { loadLevel(); }
             }, 800);
         }
