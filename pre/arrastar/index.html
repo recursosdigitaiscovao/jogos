@@ -25,7 +25,7 @@
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
 
-        /* Sidebar & Menus */
+        /* Menus Laterais */
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
@@ -36,12 +36,13 @@
         .sidebar-rd.active { bottom: 0; }
         #categorias-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         #categorias-list .sidebar-item { flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 2px solid #fff0f3; border-radius: 20px; padding: 8px; }
+        #categorias-list .sidebar-item:hover { padding-left: 8px; }
         #categorias-list .sidebar-item img { width: 40px; height: 40px; margin-bottom: 5px; margin-right: 0; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* Main */
+        /* Content */
         .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
@@ -51,59 +52,54 @@
             display: flex; flex-direction: column; width: 100%; max-width: 1100px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        /* Explicação & Intro */
+        /* Explicação Animação */
         .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; text-align: center;}
-        .item-ex { width: 80px; height: 80px; border: 3px solid var(--cor-principal); border-radius: 20px; background: white; display: flex; align-items: center; justify-content: center; margin: 10px; }
-        .item-ex img { max-width: 80%; max-height: 80%; object-fit: contain; }
+        .item-ex { width: 80px; height: 80px; border: 3px solid var(--cor-principal); border-radius: 20px; background: white; display: flex; align-items: center; justify-content: center; }
         .pulse { animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); border-color: var(--cor-vermelho); } 100% { transform: scale(1); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); border-color: var(--cor-vermelho); } 100% { transform: scale(1); } }
         
-        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 10px 0; }
+        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 5px 0; }
         .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
 
-        /* Área de Jogo Adaptativa */
+        /* Jogo Grelha */
         .game-split { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; flex: 1; width: 100%; overflow: hidden; padding: 5px; box-sizing: border-box; }
-        
         @media (max-width: 768px) {
-            .game-split { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; gap: 10px; }
+            .game-split { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
         }
 
-        .container-area { 
-            display: grid; gap: 8px; align-content: center; justify-items: center; 
-            background: rgba(230, 145, 167, 0.05); border-radius: 20px; padding: 10px; overflow-y: auto;
-        }
-
-        /* Grelhas Níveis */
+        .area-content { display: grid; gap: 10px; align-content: center; justify-items: center; background: rgba(230, 145, 167, 0.05); border-radius: 20px; padding: 10px; }
         .grid-6 { grid-template-columns: repeat(3, 1fr); }
         .grid-9 { grid-template-columns: repeat(3, 1fr); }
 
-        .item-box {
-            width: 80px; height: 80px; background: white; border: 2px solid #eee; border-radius: 15px;
-            display: flex; align-items: center; justify-content: center; position: relative; box-sizing: border-box;
-        }
+        .box { width: 75px; height: 75px; background: white; border: 2px solid #eee; border-radius: 15px; display: flex; align-items: center; justify-content: center; position: relative; }
+        @media (max-width: 600px) { .box { width: 60px; height: 60px; } .grid-9 .box { width: 50px; height: 50px; } }
 
-        @media (max-width: 600px) {
-            .item-box { width: 65px; height: 65px; }
-            .grid-9 .item-box { width: 55px; height: 55px; }
-        }
-
-        .shadow-box img { max-width: 85%; max-height: 85%; filter: brightness(0) opacity(0.25); }
-        .drag-box { border: 3px solid var(--cor-principal); cursor: grab; z-index: 10; }
-        .drag-box img { max-width: 85%; max-height: 85%; pointer-events: none; }
+        .shadow-box img { max-width: 80%; max-height: 80%; filter: brightness(0) opacity(0.2); }
+        .drag-box { border: 3px solid var(--cor-principal); cursor: grab; touch-action: none; z-index: 10; }
+        .drag-box img { max-width: 80%; max-height: 80%; pointer-events: none; }
+        .drag-box.dragging { opacity: 0; } /* Escondemos o original enquanto arrastamos a cópia visual */
         
-        .drag-box.dragging { opacity: 0.5; transform: scale(1.1); z-index: 1000; }
-        .drag-box.matched { visibility: hidden; pointer-events: none; }
-        .shadow-box.matched { border-color: var(--cor-acerto); background: #e8f5e9; border-width: 3px; }
-        .shadow-box.matched img { filter: none; opacity: 1; }
+        .shadow-box.correct { border-color: var(--cor-acerto); background: #e8f5e9; }
+        .shadow-box.correct img { filter: none; opacity: 1; }
+        .shadow-box.wrong { border-color: var(--cor-erro); background: #ffebee; animation: shake 0.4s; }
 
-        /* Modal */
+        @keyframes shake { 25% {transform:translateX(-5px);} 75% {transform:translateX(5px);} }
+
+        /* Estrelas/Bolas */
+        .stars-bar { display: flex; gap: 5px; }
+        .star { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #ddd; background: white; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: white; }
+
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); width: 85%; max-width: 320px; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); width: 80%; max-width: 300px; }
 
+        /* Elemento de arrasto visual */
+        #drag-proxy { position: fixed; pointer-events: none; z-index: 9999; display: none; width: 75px; height: 75px; }
+        #drag-proxy img { width: 100%; height: 100%; object-fit: contain; }
     </style>
 </head>
 <body>
 
+    <div id="drag-proxy"><img></div>
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
     
     <div class="sidebar" id="sidebar">
@@ -139,18 +135,16 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin: 0;">Encontra a Sombra:</p>
-                    <div style="display:flex; align-items:center; justify-content:center;">
+                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin: 0;">Encontra o Igual:</p>
+                    <div style="display:flex; align-items:center; gap:15px; margin: 15px 0;">
                         <div class="item-ex pulse"><img id="ex-img" src=""></div>
                         <span style="font-size:2rem; color:var(--cor-principal)">➔</span>
-                        <div class="item-ex" style="border-color:#ddd"><img id="ex-shd" src="" style="filter:brightness(0) opacity(0.2)"></div>
+                        <div class="item-ex" style="border-color:#eee"><img id="ex-shd" src="" style="filter:brightness(0) opacity(0.2)"></div>
                     </div>
-                    <p style="font-size: 0.9rem; margin-top: 10px; color: #888;">Arrasta as imagens para as suas sombras!</p>
+                    <p style="font-size: 0.9rem; color: #888;">Arrasta os objetos para as sombras certas!</p>
                 </div>
-                
                 <h2 class="game-title">Sombras Mágicas</h2>
-                
-                <div style="padding:10px; display:flex; gap:10px;">
+                <div style="display:flex; gap:10px; padding:10px;">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
                     <button onclick="toggleRD()" style="width:60px; height:58px; border-radius:15px; border:3px solid var(--cor-principal); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center;">
                         <img class="btn-rd-img-ref" src="" style="width:30px;">
@@ -161,17 +155,14 @@
 
         <section id="game-screen" class="screen">
             <div class="game-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 15px; font-size:0.9rem; flex-shrink:0; border-bottom: 2px dashed #eee;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem; flex-shrink:0;">
                     <div>⏳ <span id="timer">00:00</span></div>
-                    <div style="font-weight:bold; color:var(--cor-principal)">Nível <span id="lvl-txt">1</span></div>
+                    <div id="stars-bar" class="stars-bar"></div>
                     <div>PTS: <span id="points">0</span></div>
                 </div>
-                
                 <div class="game-split">
-                    <!-- Imagens para arrastar -->
-                    <div id="drag-container" class="container-area"></div>
-                    <!-- Sombras para receber -->
-                    <div id="drop-container" class="container-area"></div>
+                    <div id="drag-area" class="area-content"></div>
+                    <div id="drop-area" class="area-content"></div>
                 </div>
             </div>
         </section>
@@ -179,19 +170,20 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--cor-acerto);">Excelente!</h2>
+            <h2 id="modal-title" style="color:var(--cor-jogo-verde);">Fim!</h2>
             <div id="modal-msg"></div>
-            <button class="btn-play" onclick="location.reload()" style="margin-top:20px; background:var(--cor-jogo-verde)">Jogar de Novo</button>
+            <button class="btn-play" onclick="location.reload()" style="margin-top:20px; background:var(--cor-jogo-verde)">Repetir</button>
         </div>
     </div>
 
     <script src="dados.js"></script>
     <script>
-        let currentLevel = 1, points = 0, seconds = 0, timerInterval;
-        let currentCatKey = "animais", matchesInLevel = 0, totalNeeded = 6;
-        let draggedElement = null;
+        let level = 1, round = 1, points = 0, seconds = 0, timerInterval;
+        let currentCatKey = "animais", matchesInRound = 0, totalInRound = 6;
+        let isActive = false;
 
         const somAcerto = new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3');
+        const somErro = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
@@ -203,7 +195,6 @@
             document.getElementById('side-3').src = p + i.ano3;
             document.getElementById('side-4').src = p + i.ano4;
             document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
-            
             setupRDMenu();
             updateIntro();
         };
@@ -224,9 +215,8 @@
 
         function updateIntro() {
             const cat = JOGO_CONFIG.categorias[currentCatKey];
-            const imgPath = cat.caminho + cat.lista[0];
-            document.getElementById('ex-img').src = imgPath;
-            document.getElementById('ex-shd').src = imgPath;
+            document.getElementById('ex-img').src = cat.caminho + cat.lista[0];
+            document.getElementById('ex-shd').src = cat.caminho + cat.lista[0];
         }
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
@@ -240,108 +230,134 @@
                 seconds++;
                 document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
             }, 1000);
-            loadLevel();
+            initStars();
+            loadRound();
         }
 
-        function loadLevel() {
-            matchesInLevel = 0;
-            totalNeeded = (currentLevel === 1) ? 6 : 9;
-            document.getElementById('lvl-txt').innerText = currentLevel;
-            
-            const dragContainer = document.getElementById('drag-container');
-            const dropContainer = document.getElementById('drop-container');
-            dragContainer.innerHTML = ''; dropContainer.innerHTML = '';
-            
-            const gridClass = (currentLevel === 1) ? 'grid-6' : 'grid-9';
-            dragContainer.className = `container-area ${gridClass}`;
-            dropContainer.className = `container-area ${gridClass}`;
+        function initStars() {
+            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const s = document.createElement('div'); s.className = 'star';
+                bar.appendChild(s);
+            }
+        }
+
+        function loadRound() {
+            isActive = true;
+            matchesInRound = 0;
+            totalInRound = (level === 1) ? 6 : 9;
+            const dragArea = document.getElementById('drag-area');
+            const dropArea = document.getElementById('drop-area');
+            dragArea.innerHTML = ''; dropArea.innerHTML = '';
+
+            const gridClass = (level === 1) ? 'grid-6' : 'grid-9';
+            dragArea.className = `area-content ${gridClass}`;
+            dropArea.className = `area-content ${gridClass}`;
 
             const cat = JOGO_CONFIG.categorias[currentCatKey];
-            let levelItems = [...cat.lista].sort(() => 0.5 - Math.random()).slice(0, totalNeeded);
-            
-            // Sombras (Direita/Baixo)
-            [...levelItems].sort(() => 0.5 - Math.random()).forEach(name => {
+            let items = [...cat.lista].sort(() => 0.5 - Math.random()).slice(0, totalInRound);
+
+            // Criar Sombras
+            [...items].sort(() => 0.5 - Math.random()).forEach(name => {
                 const box = document.createElement('div');
-                box.className = 'item-box shadow-box';
+                box.className = 'box shadow-box';
                 box.dataset.id = name;
                 box.innerHTML = `<img src="${cat.caminho + name}">`;
-                dropContainer.appendChild(box);
+                dropArea.appendChild(box);
             });
 
-            // Imagens (Esquerda/Cima)
-            [...levelItems].sort(() => 0.5 - Math.random()).forEach(name => {
+            // Criar Draggables
+            [...items].sort(() => 0.5 - Math.random()).forEach(name => {
                 const box = document.createElement('div');
-                box.className = 'item-box drag-box';
+                box.className = 'box drag-box';
                 box.dataset.id = name;
-                box.draggable = true;
                 box.innerHTML = `<img src="${cat.caminho + name}">`;
-                
-                box.addEventListener('dragstart', (e) => { draggedElement = box; box.classList.add('dragging'); });
-                box.addEventListener('dragend', () => box.classList.remove('dragging'));
-                box.addEventListener('pointerdown', handlePointerDown);
-
-                dragContainer.appendChild(box);
-            });
-
-            document.querySelectorAll('.shadow-box').forEach(sb => {
-                sb.addEventListener('dragover', (e) => e.preventDefault());
-                sb.addEventListener('drop', (e) => {
-                    if (draggedElement && sb.dataset.id === draggedElement.dataset.id) processMatch(draggedElement, sb);
-                });
+                box.onpointerdown = startDragging;
+                dragArea.appendChild(box);
             });
         }
 
-        function handlePointerDown(e) {
-            const el = e.currentTarget;
-            if (el.classList.contains('matched')) return;
-            
-            draggedElement = el;
-            el.classList.add('dragging');
-            el.style.position = 'fixed';
-            el.style.zIndex = '1000';
-            el.style.pointerEvents = 'none';
+        // --- SISTEMA DE ARRASTO ROBUSTO ---
+        let currentDragging = null;
+        const proxy = document.getElementById('drag-proxy');
 
-            const moveAt = (x, y) => {
-                el.style.left = x - el.offsetWidth / 2 + 'px';
-                el.style.top = y - el.offsetHeight / 2 + 'px';
+        function startDragging(e) {
+            if (!isActive || e.target.classList.contains('matched')) return;
+            currentDragging = this;
+            
+            proxy.querySelector('img').src = this.querySelector('img').src;
+            proxy.style.display = 'block';
+            proxy.style.left = e.clientX - 35 + 'px';
+            proxy.style.top = e.clientY - 35 + 'px';
+            
+            this.classList.add('dragging');
+
+            document.onpointermove = (ev) => {
+                proxy.style.left = ev.clientX - 35 + 'px';
+                proxy.style.top = ev.clientY - 35 + 'px';
             };
 
-            moveAt(e.clientX, e.clientY);
+            document.onpointerup = (ev) => {
+                document.onpointermove = null;
+                document.onpointerup = null;
+                proxy.style.display = 'none';
+                currentDragging.classList.remove('dragging');
 
-            const onMove = (ev) => moveAt(ev.clientX, ev.clientY);
-            const onUp = (ev) => {
-                el.classList.remove('dragging');
-                el.style.position = 'static';
-                el.style.pointerEvents = 'auto';
-                
                 const target = document.elementFromPoint(ev.clientX, ev.clientY);
                 const shadow = target ? target.closest('.shadow-box') : null;
 
-                if (shadow && shadow.dataset.id === el.dataset.id && !shadow.classList.contains('matched')) {
-                    processMatch(el, shadow);
+                if (shadow) {
+                    checkMatch(currentDragging, shadow);
                 }
-                document.removeEventListener('pointermove', onMove);
-                document.removeEventListener('pointerup', onUp);
             };
-
-            document.addEventListener('pointermove', onMove);
-            document.addEventListener('pointerup', onUp);
         }
 
-        function processMatch(dragEl, dropEl) {
-            if (dropEl.classList.contains('matched')) return;
-            somAcerto.currentTime = 0; somAcerto.play().catch(e=>{});
-            dropEl.classList.add('matched');
-            dragEl.classList.add('matched');
-            points += 10;
-            document.getElementById('points').innerText = points;
-            matchesInLevel++;
+        function checkMatch(dragged, shadow) {
+            if (shadow.classList.contains('correct')) return;
 
-            if (matchesInLevel === totalNeeded) {
-                setTimeout(() => {
-                    if (currentLevel === 1) { currentLevel = 2; loadLevel(); }
-                    else { endGame(); }
-                }, 600);
+            const stars = document.getElementById('stars-bar').children;
+            const currentStar = stars[round - 1];
+
+            if (dragged.dataset.id === shadow.dataset.id) {
+                // ACERTO
+                somAcerto.currentTime = 0; somAcerto.play().catch(e=>{});
+                shadow.classList.add('correct');
+                dragged.style.visibility = 'hidden';
+                dragged.classList.add('matched');
+                points += 10;
+                document.getElementById('points').innerText = points;
+                matchesInRound++;
+
+                if (matchesInRound === totalInRound) {
+                    isActive = false;
+                    currentStar.style.background = "var(--cor-acerto)";
+                    currentStar.style.borderColor = "var(--cor-acerto)";
+                    currentStar.innerText = "✔";
+                    setTimeout(nextRound, 800);
+                }
+            } else {
+                // ERRO - Ronda termina
+                isActive = false;
+                somErro.currentTime = 0; somErro.play().catch(e=>{});
+                shadow.classList.add('wrong');
+                currentStar.style.background = "var(--cor-erro)";
+                currentStar.style.borderColor = "var(--cor-erro)";
+                currentStar.innerText = "✖";
+                setTimeout(nextRound, 1000);
+            }
+        }
+
+        function nextRound() {
+            round++;
+            if (round > 5) {
+                if (level === 1) {
+                    level = 2; round = 1;
+                    initStars(); loadRound();
+                } else {
+                    endGame();
+                }
+            } else {
+                loadRound();
             }
         }
 
