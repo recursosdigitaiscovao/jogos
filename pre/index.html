@@ -81,7 +81,7 @@
             display: flex; 
             align-items: center;
             padding: 15px 25px; 
-            color: var(--cor-texto); /* Texto mantém a cor base */
+            color: var(--cor-texto);
             text-decoration: none; 
             border-bottom: 1px solid #f9f9f9;
             transition: all 0.3s ease;
@@ -89,9 +89,8 @@
         }
 
         .sidebar-item:hover {
-            background-color: var(--cor-principal); /* Fundo igual ao botão Voltar */
-            padding-left: 35px; /* Efeito de deslize */
-            /* A cor do texto não muda conforme pedido */
+            background-color: var(--cor-principal);
+            padding-left: 35px;
         }
 
         .sidebar-item img {
@@ -144,7 +143,13 @@
             background: #fdf0f3; 
             border-radius: 15px; margin-bottom: 8px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 2.2rem;
+            overflow: hidden;
+        }
+
+        .game-img img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
         }
 
         h2 { 
@@ -159,7 +164,7 @@
         }
 
         .play-btn {
-            background: var(--cor-vermelho); /* Cor Vermelha */
+            background: var(--cor-vermelho);
             color: white; 
             border: none; 
             padding: 8px 0;
@@ -170,6 +175,8 @@
             font-family: 'Fredoka'; 
             font-weight: bold;
             transition: 0.2s;
+            text-decoration: none;
+            display: block;
         }
         .play-btn:hover {
             opacity: 0.9;
@@ -232,33 +239,8 @@
     <main class="main-content">
         <p class="intro-text">Vamos brincar com os números, as cores e as formas!</p>
         
-        <div class="games-grid">
-            <div class="game-card">
-                <div class="game-img">🔢</div>
-                <h2>Contar até 10</h2>
-                <button class="play-btn">JOGAR</button>
-            </div>
-            <div class="game-card">
-                <div class="game-img">🎨</div>
-                <h2>Cores Divertidas</h2>
-                <button class="play-btn">JOGAR</button>
-            </div>
-            <div class="game-card">
-                <div class="game-img">🔷</div>
-                <h2>Formas Básicas</h2>
-                <button class="play-btn">JOGAR</button>
-            </div>
-            <div class="game-card">
-                <div class="game-img">📏</div>
-                <h2>Maior ou Menor</h2>
-                <button class="play-btn">JOGAR</button>
-            </div>
-            <div class="game-card">
-                <div class="game-img">🧩</div>
-                <h2>Padrões Simples</h2>
-                <button class="play-btn">JOGAR</button>
-            </div>
-        </div>
+        <!-- O conteúdo desta div será preenchido pelo JavaScript abaixo -->
+        <div class="games-grid" id="gamesGrid"></div>
     </main>
 
     <footer>
@@ -266,12 +248,55 @@
     </footer>
 
     <script>
+        const JOGO_CONFIG = {
+            caminhoIconsMenu: "../icons/",
+            caminhoIconsJogos: "iconjogos/",
+            
+            iconesMenu: {
+                pre: "iconpre.png",
+                ano1: "icon1.png",
+                ano2: "icon2.png",
+                ano3: "icon3.png",
+                ano4: "icon4.png"
+            },
+
+            listaJogos: [
+                { nome: "Encontra o Par", icon: "encontraopar.png", link: "encontraopar/" },
+                { nome: "Monstro Comilão", icon: "mostrocomilao.png", link: "mostrocomilao/" },
+                { nome: "Pintar", icon: "pinta.png", link: "pinta/" },
+                { nome: "Sem Par", icon: "sem_par.png", link: "sem_par/" },
+                { nome: "Sombras Mágicas", icon: "sombrasmagicas.png", link: "sombrasmagicas/" }
+            ]
+        };
+
+        // Função para carregar os cards dinamicamente
+        function carregarJogos() {
+            const grid = document.getElementById('gamesGrid');
+            grid.innerHTML = ""; // Limpa cartões estáticos
+
+            JOGO_CONFIG.listaJogos.forEach(jogo => {
+                const card = `
+                    <div class="game-card">
+                        <div class="game-img">
+                            <img src="${JOGO_CONFIG.caminhoIconsJogos}${jogo.icon}" alt="${jogo.nome}">
+                        </div>
+                        <h2>${jogo.nome}</h2>
+                        <a href="${jogo.link}" class="play-btn">JOGAR</a>
+                    </div>
+                `;
+                grid.innerHTML += card;
+            });
+        }
+
         function toggleMenu() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
         }
+
+        // Executa ao carregar a página
+        window.onload = carregarJogos;
     </script>
 
 </body>
