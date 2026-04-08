@@ -1,1 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pré-Escolar - Sombras Mágicas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cor-principal: #e691a7; 
+            --cor-vibrante: #d47a92;  
+            --cor-fundo: #fff5f7;      
+            --cor-texto: #e691a7;      
+            --cor-vermelho: #ff4757; 
+            --header-height: 70px;
+            --cor-jogo-verde: #e691a7;  
+            --cor-erro: #ff4757;
+            --cor-acerto: #2ed573;
+        }
 
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
+        body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
+
+        /* Barra de Navegação */
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
+
+        /* Menus */
+        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
+        .sidebar.active { left: 0; }
+        .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
+        .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
+        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
+
+        .sidebar-rd { position: fixed; bottom: -100%; left: 0; width: 100%; height: auto; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px 20px 30px 20px; box-sizing: border-box; }
+        .sidebar-rd.active { bottom: 0; }
+        #categorias-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        #categorias-list .sidebar-item { flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 2px solid #fff0f3; border-radius: 20px; padding: 8px; }
+        #categorias-list .sidebar-item:hover { padding-left: 8px; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
+        .overlay.active { display: block; }
+
+        /* Main Content */
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
+        .screen.active { display: flex; }
+
+        .game-card {
+            background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-jogo-verde);
+            display: flex; flex-direction: column; width: 100%; max-width: 1100px; height: 100%; box-sizing: border-box; overflow: hidden;
+        }
+
+        /* Explicação Animação */
+        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; text-align: center;}
+        .item-ex { width: 85px; height: 85px; border: 4px solid var(--cor-principal); border-radius: 20px; background: white; display: flex; align-items: center; justify-content: center; }
+        .item-ex img { max-width: 80%; max-height: 80%; object-fit: contain; }
+        .pulse { animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); border-color: var(--cor-vermelho); } 100% { transform: scale(1); } }
+        
+        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 5px 0; }
+        .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
+
+        /* ÁREA DE JOGO COM MARGENS DE 40PX */
+        .game-split { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; flex: 1; width: 100%; overflow: hidden; padding: 5px; box-sizing: border-box; }
+        @media (max-width: 768px) {
+            .game-split { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; gap: 10px; }
+        }
+
+        .area-content { 
+            display: grid; gap: 15px; align-content: center; justify-items: center; 
+            background: rgba(230, 145, 167, 0.05); border-radius: 20px; 
+            padding: 40px 15px; /* MARGEM DE 40PX NO CIMO E FUNDO */
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* Grelhas */
+        .grid-6 { grid-template-columns: repeat(3, 1fr); }
+        .grid-9 { grid-template-columns: repeat(3, 1fr); }
+
+        .box { 
+            width: 100px; height: 100px; /* Tamanho uniforme no PC */
+            background: white; border: 3px solid #eee; border-radius: 20px; 
+            display: flex; align-items: center; justify-content: center; position: relative;
+        }
+
+        @media (max-width: 600px) { 
+            .box { width: 75px; height: 75px; border-radius: 15px; } 
+            .grid-9 .box { width: 60px; height: 60px; }
+            .area-content { padding: 30px 10px; } /* Ajuste ligeiro para ecrãs muito pequenos */
+        }
+
+        .shadow-box img { max-width: 80%; max-height: 80%; filter: brightness(0) opacity(0.2); pointer-events: none;}
+        .drag-box { border: 4px solid var(--cor-principal); cursor: grab; touch-action: none; z-index: 10; }
+        .drag-box img { max-width: 80%; max-height: 80%; pointer-events: none; }
+        .drag-box.dragging { opacity: 0; } 
+        
+        .shadow-box.correct { border-color: var(--cor-acerto); background: #e8f5e9; border-width: 4px; }
+        .shadow-box.correct img { filter: none; opacity: 1; }
+        .shadow-box.wrong { border-color: var(--cor-erro); background: #ffebee; animation: shake 0.4s; border-width: 4px; }
+
+        @keyframes shake { 25% {transform:translateX(-5px);} 75% {transform:translateX(5px);} }
+
+        /* HUD */
+        .stars-bar { display: flex; gap: 6px; }
+        .star { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #ddd; background: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: white; }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); width: 85%; max-width: 320px; }
+
+        /* Proxy de arrasto visual */
+        #drag-proxy { position: fixed; pointer-events: none; z-index: 9999; display: none; width: 100px; height: 100px; }
+        @media (max-width:600px) { #drag-proxy { width: 75px; height: 75px; } }
+        #drag-proxy img { width: 100%; height: 100%; object-fit: contain; }
+    </style>
+</head>
+<body>
+
+    <div id="drag-proxy"><img></div>
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+    
+    <div class="sidebar" id="sidebar">
+        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
+            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer;">✕</button>
+        </div>
+        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+        <a href="/jogos/pre" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
+        <a href="/jogos/1" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
+        <a href="/jogos/2" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
+        <a href="/jogos/3" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
+        <a href="/jogos/4" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
+    </div>
+
+    <div class="sidebar-rd" id="sidebar-rd">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0; color:var(--cor-principal);">Escolhe o Tema</h3>
+            <button onclick="toggleRD()" style="border:none; background:none; font-size:20px;">✕</button>
+        </div>
+        <div id="categorias-list"></div>
+    </div>
+
+    <header class="nav-bar">
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:30px; font-weight:bold; color:var(--cor-principal); cursor:pointer;">☰</button>
+        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin: 0;">
+            <img id="header-icon" src="" style="height:32px;"> Pré-Escolar
+        </h1>
+        <a href="../" class="back-btn">⬅ Voltar</a>
+    </header>
+
+    <main class="main-content">
+        <section id="intro-screen" class="screen active">
+            <div class="game-card">
+                <div class="explanation-box">
+                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin: 0;">Encontra a Sombra:</p>
+                    <div style="display:flex; align-items:center; gap:15px; margin: 20px 0;">
+                        <div class="item-ex pulse"><img id="ex-img" src=""></div>
+                        <span style="font-size:2.5rem; color:var(--cor-principal)">➔</span>
+                        <div class="item-ex" style="border-color:#eee"><img id="ex-shd" src="" style="filter:brightness(0) opacity(0.2)"></div>
+                    </div>
+                    <p style="font-size: 0.95rem; color: #888;">Arrasta os desenhos para as sombras certas!</p>
+                </div>
+                <h2 class="game-title">Sombras Mágicas</h2>
+                <div style="display:flex; gap:10px; padding:10px;">
+                    <button class="btn-play" onclick="startGame()">JOGAR</button>
+                    <button onclick="toggleRD()" style="width:65px; height:58px; border-radius:15px; border:3px solid var(--cor-principal); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+                        <img class="btn-rd-img-ref" src="" style="width:35px; height:35px;">
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="game-screen" class="screen">
+            <div class="game-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 15px; font-size:1rem; flex-shrink:0;">
+                    <div>⏳ <span id="timer">00:00</span></div>
+                    <div id="stars-bar" class="stars-bar"></div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <b>PTS: <span id="points">0</span></b>
+                        <button onclick="toggleRD()" style="border:2px solid var(--cor-principal); background:white; border-radius:10px; padding:4px; cursor:pointer; display:flex; align-items:center;">
+                            <img class="btn-rd-img-ref" src="" style="width:24px; height:24px;">
+                        </button>
+                    </div>
+                </div>
+                <div class="game-split">
+                    <div id="drag-area" class="area-content"></div>
+                    <div id="drop-area" class="area-content"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 id="modal-title" style="color:var(--cor-jogo-verde);">Fim do Jogo!</h2>
+            <div id="modal-msg"></div>
+            <button class="btn-play" onclick="location.reload()" style="margin-top:20px; background:var(--cor-jogo-verde); width:100%;">Recomeçar</button>
+        </div>
+    </div>
+
+    <script src="dados.js"></script>
+    <script>
+        let level = 1, round = 1, points = 0, seconds = 0, timerInterval;
+        let currentCatKey = "animais", matchesInRound = 0, totalInRound = 6;
+        let isActive = false;
+        let currentDragging = null;
+        const proxy = document.getElementById('drag-proxy');
+
+        const somAcerto = new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3');
+        const somErro = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+
+        window.onload = () => {
+            const p = JOGO_CONFIG.caminhoIcons;
+            const i = JOGO_CONFIG.iconesMenu;
+            document.getElementById('header-icon').src = p + i.pre;
+            document.getElementById('side-pre').src = p + i.pre;
+            document.getElementById('side-1').src = p + i.ano1;
+            document.getElementById('side-2').src = p + i.ano2;
+            document.getElementById('side-3').src = p + i.ano3;
+            document.getElementById('side-4').src = p + i.ano4;
+            document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
+            setupRDMenu();
+            updateIntro();
+        };
+
+        function setupRDMenu() {
+            const container = document.getElementById('categorias-list');
+            container.innerHTML = '';
+            Object.keys(JOGO_CONFIG.categorias).forEach(key => {
+                const cat = JOGO_CONFIG.categorias[key];
+                const icon = cat.iconeEspecial ? JOGO_CONFIG.caminhoImg + cat.iconeEspecial : cat.caminho + cat.lista[0];
+                const item = document.createElement('div');
+                item.className = 'sidebar-item';
+                item.innerHTML = `<img src="${icon}"> <span>${cat.nome}</span>`;
+                item.onclick = () => { 
+                    currentCatKey = key; 
+                    closeMenus(); 
+                    updateIntro(); 
+                    if(document.getElementById('game-screen').classList.contains('active')) {
+                        level=1; round=1; points=0; document.getElementById('points').innerText="0"; 
+                        initStars(); loadRound(); 
+                    }
+                };
+                container.appendChild(item);
+            });
+        }
+
+        function updateIntro() {
+            const cat = JOGO_CONFIG.categorias[currentCatKey];
+            document.getElementById('ex-img').src = cat.caminho + cat.lista[0];
+            document.getElementById('ex-shd').src = cat.caminho + cat.lista[0];
+        }
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
+
+        function startGame() {
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            timerInterval = setInterval(() => {
+                seconds++;
+                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
+            }, 1000);
+            initStars();
+            loadRound();
+        }
+
+        function initStars() {
+            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const s = document.createElement('div'); s.className = 'star';
+                bar.appendChild(s);
+            }
+        }
+
+        function loadRound() {
+            isActive = true;
+            matchesInRound = 0;
+            totalInRound = (level === 1) ? 6 : 9;
+            const dragArea = document.getElementById('drag-area');
+            const dropArea = document.getElementById('drop-area');
+            dragArea.innerHTML = ''; dropArea.innerHTML = '';
+
+            const gridClass = (level === 1) ? 'grid-6' : 'grid-9';
+            dragArea.className = `area-content ${gridClass}`;
+            dropArea.className = `area-content ${gridClass}`;
+
+            const cat = JOGO_CONFIG.categorias[currentCatKey];
+            let items = [...cat.lista].sort(() => 0.5 - Math.random()).slice(0, totalInRound);
+
+            // Sombras
+            [...items].sort(() => 0.5 - Math.random()).forEach(name => {
+                const box = document.createElement('div');
+                box.className = 'box shadow-box';
+                box.dataset.id = name;
+                box.innerHTML = `<img src="${cat.caminho + name}">`;
+                dropArea.appendChild(box);
+            });
+
+            // Draggables
+            [...items].sort(() => 0.5 - Math.random()).forEach(name => {
+                const box = document.createElement('div');
+                box.className = 'box drag-box';
+                box.dataset.id = name;
+                box.innerHTML = `<img src="${cat.caminho + name}">`;
+                box.onpointerdown = startDragging;
+                dragArea.appendChild(box);
+            });
+        }
+
+        function startDragging(e) {
+            if (!isActive) return;
+            currentDragging = this;
+            
+            const rect = this.getBoundingClientRect();
+            proxy.querySelector('img').src = this.querySelector('img').src;
+            proxy.style.display = 'block';
+            proxy.style.left = e.clientX - (proxy.offsetWidth / 2) + 'px';
+            proxy.style.top = e.clientY - (proxy.offsetHeight / 2) + 'px';
+            
+            this.classList.add('dragging');
+
+            document.onpointermove = (ev) => {
+                proxy.style.left = ev.clientX - (proxy.offsetWidth / 2) + 'px';
+                proxy.style.top = ev.clientY - (proxy.offsetHeight / 2) + 'px';
+            };
+
+            document.onpointerup = (ev) => {
+                document.onpointermove = null;
+                document.onpointerup = null;
+                proxy.style.display = 'none';
+                currentDragging.classList.remove('dragging');
+
+                const target = document.elementFromPoint(ev.clientX, ev.clientY);
+                const shadow = target ? target.closest('.shadow-box') : null;
+
+                if (shadow) checkMatch(currentDragging, shadow);
+            };
+        }
+
+        function checkMatch(dragged, shadow) {
+            if (shadow.classList.contains('correct')) return;
+            const stars = document.getElementById('stars-bar').children;
+            const currentStar = stars[round - 1];
+
+            if (dragged.dataset.id === shadow.dataset.id) {
+                somAcerto.currentTime = 0; somAcerto.play().catch(e=>{});
+                shadow.classList.add('correct');
+                dragged.style.visibility = 'hidden';
+                dragged.classList.add('matched');
+                points += 10;
+                document.getElementById('points').innerText = points;
+                matchesInRound++;
+
+                if (matchesInRound === totalInRound) {
+                    isActive = false;
+                    currentStar.style.background = "var(--cor-acerto)";
+                    currentStar.style.borderColor = "var(--cor-acerto)";
+                    currentStar.innerText = "✔";
+                    setTimeout(nextRound, 800);
+                }
+            } else {
+                isActive = false;
+                somErro.currentTime = 0; somErro.play().catch(e=>{});
+                shadow.classList.add('wrong');
+                currentStar.style.background = "var(--cor-erro)";
+                currentStar.style.borderColor = "var(--cor-erro)";
+                currentStar.innerText = "✖";
+                setTimeout(nextRound, 1000);
+            }
+        }
+
+        function nextRound() {
+            round++;
+            if (round > 5) {
+                if (level === 1) { level = 2; round = 1; initStars(); loadRound(); }
+                else { endGame(); }
+            } else { loadRound(); }
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            const rel = JOGO_CONFIG.relatorio;
+            document.getElementById('modal-msg').innerHTML = `<p>${rel.pontosTotal} ${points}</p><p>${rel.tempoTotal} ${document.getElementById('timer').innerText}</p>`;
+            document.getElementById('modal').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
