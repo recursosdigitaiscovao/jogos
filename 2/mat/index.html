@@ -47,7 +47,6 @@
             font-size: 26px; 
             cursor: pointer; 
             color: var(--cor-principal); 
-            font-weight: 700;
         }
 
         .back-btn {
@@ -58,11 +57,26 @@
             border: none;
             font-weight: bold;
             font-size: 0.85rem;
-            cursor: pointer;
             text-decoration: none;
             transition: 0.3s;
         }
         .back-btn:hover { background: var(--cor-vibrante); transform: scale(1.05); }
+
+        h1 { 
+            color: var(--cor-principal); 
+            margin: 0; 
+            font-size: 1.1rem; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        h1 img {
+            height: 35px; /* Tamanho do ícone no título */
+            width: auto;
+        }
 
         /* --- Sidebar --- */
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
@@ -76,21 +90,9 @@
             text-decoration: none; 
             border-bottom: 1px solid #f9f9f9;
             transition: 0.3s;
-            font-size: 0.95rem;
         }
-
-        .sidebar-item img {
-            width: 30px;
-            height: 30px;
-            margin-right: 12px;
-            object-fit: contain;
-        }
-
-        .sidebar-item:hover {
-            color: var(--cor-principal);
-            background-color: var(--cor-fundo);
-            padding-left: 30px;
-        }
+        .sidebar-item img { width: 25px; height: 25px; margin-right: 12px; }
+        .sidebar-item:hover { color: var(--cor-principal); background-color: var(--cor-fundo); padding-left: 30px; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
@@ -117,19 +119,27 @@
             .games-grid { grid-template-columns: repeat(5, 1fr); gap: 20px; }
         }
 
+        /* O Card agora é um botão (link) */
         .game-card {
             background: white;
             border-radius: 20px;
             padding: 15px;
             text-align: center;
             border: 3px solid var(--cor-principal);
+            text-decoration: none;
             display: flex;
             flex-direction: column;
-            transition: 0.3s;
-            text-decoration: none;
+            align-items: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
-        .game-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .game-card:hover {
+            transform: translateY(-8px);
+            background: white;
+            box-shadow: 0 10px 20px rgba(69, 207, 168, 0.2);
+            border-color: var(--cor-vibrante);
+        }
 
         .game-img {
             width: 100%; 
@@ -140,31 +150,25 @@
             display: flex; 
             align-items: center; 
             justify-content: center;
-            overflow: hidden;
         }
 
         .game-img img {
-            max-width: 80%;
-            max-height: 80%;
+            max-width: 70%;
+            max-height: 70%;
             object-fit: contain;
+            transition: 0.3s;
         }
 
-        h2 { font-size: 0.9rem; color: var(--cor-texto); min-height: 40px; margin: 5px 0; display: flex; align-items: center; justify-content: center; }
-
-        .play-btn {
-            background: var(--cor-principal);
-            color: white; 
-            border: none; 
-            padding: 10px 0;
-            width: 100%; 
-            border-radius: 12px;
-            font-size: 0.8rem; 
-            cursor: pointer; 
-            font-family: 'Fredoka'; 
-            font-weight: bold;
+        .game-card:hover .game-img img {
+            transform: scale(1.1);
         }
 
-        h1 { color: var(--cor-principal); margin: 0; font-size: 1.1rem; text-align: center; flex-grow: 1; }
+        h2 { 
+            font-size: 0.95rem; 
+            color: var(--cor-texto); 
+            margin: 5px 0; 
+            font-weight: 700;
+        }
 
         footer {
             background: white;
@@ -180,7 +184,6 @@
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     
-    <!-- Sidebar será preenchida pelo JavaScript -->
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
@@ -191,14 +194,15 @@
 
     <header class="nav-bar">
         <button class="menu-btn" onclick="toggleMenu()">☰</button>
-        <h1>🐢 Matemática - 2º Ano</h1>
+        <h1 id="header-title">
+            <!-- Ícone e texto inseridos pelo JS -->
+            Matemática - 2º Ano
+        </h1>
         <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
 
     <main class="main-content">
         <p class="intro-text">Resolve os desafios e torna-te um mestre dos números!</p>
-        
-        <!-- Grid de jogos será preenchida pelo JavaScript -->
         <div class="games-grid" id="games-grid"></div>
     </main>
 
@@ -206,22 +210,23 @@
         Recursos Digitais Covão
     </footer>
 
-    <!-- Importante: Carregar o ficheiro de dados primeiro -->
+    <!-- Importação do ficheiro de dados -->
     <script src="dados.js"></script>
 
     <script>
-        // Função para abrir/fechar menu
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        // Função para carregar o conteúdo dinâmico
-        function inicializarSite() {
-            const menuContainer = document.getElementById('menu-items');
-            const gamesGrid = document.getElementById('games-grid');
+        function inicializar() {
+            // 1. Atualizar Ícone do Título (Header)
+            const headerTitle = document.getElementById('header-title');
+            const iconPath = JOGO_CONFIG.caminhoIconsMenu + JOGO_CONFIG.iconesMenu.ano2;
+            headerTitle.innerHTML = `<img src="${iconPath}" alt="Ícone 2º Ano"> Matemática - 2º Ano`;
 
-            // 1. Renderizar Sidebar (Menu)
+            // 2. Renderizar Sidebar
+            const menuContainer = document.getElementById('menu-items');
             const menuHtml = `
                 <a href="/jogos/" class="sidebar-item">🏠 Início</a>
                 <a href="/jogos/pre/" class="sidebar-item"><img src="${JOGO_CONFIG.caminhoIconsMenu}${JOGO_CONFIG.iconesMenu.pre}"> Pré-Escolar</a>
@@ -232,8 +237,10 @@
             `;
             menuContainer.innerHTML = menuHtml;
 
-            // 2. Renderizar Cards de Jogos
-            gamesGrid.innerHTML = ''; // Limpa o grid
+            // 3. Renderizar Grid de Jogos (Cards como Botões)
+            const gamesGrid = document.getElementById('games-grid');
+            gamesGrid.innerHTML = ''; 
+
             JOGO_CONFIG.listaJogos.forEach(jogo => {
                 const card = document.createElement('a');
                 card.href = jogo.link;
@@ -244,14 +251,13 @@
                         <img src="${JOGO_CONFIG.caminhoIconsJogos}${jogo.icon}" alt="${jogo.nome}">
                     </div>
                     <h2>${jogo.nome}</h2>
-                    <button class="play-btn">JOGAR</button>
                 `;
                 gamesGrid.appendChild(card);
             });
         }
 
-        // Executa ao carregar a página
-        window.onload = inicializarSite;
+        // Iniciar quando a página carregar
+        window.onload = inicializar;
     </script>
 
 </body>
