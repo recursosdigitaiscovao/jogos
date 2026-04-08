@@ -16,14 +16,10 @@ const JOGO_CONFIG = {
 
     // Lista de jogos - O sistema vai criar os cards sozinho
     listaJogos: [
-        { nome: "Contar os Números", icon: "conta.png", link: "conta/" },
-        { nome: "Formas Geométricas", icon: "formas.png", link: "formas/" },
-        { nome: "Somas Divertidas", icon: "soma.png", link: "soma/" },
-        { nome: "Subtração", icon: "subtrair.png", link: "subtrair/" },
-        { nome: "Liga os Pontos", icon: "liga.png", link: "liga/" },
-        { nome: "Compara Números", icon: "compara.png", link: "compara/" },
-        { nome: "Sequências", icon: "sequencias.png", link: "sequencias/" },
-        { nome: "Par ou Ímpar", icon: "parouimpar.png", link: "parouimpar/" },
-        { nome: "As Dezenas", icon: "dezenas.png", link: "dezenas/" }
+        { nome: "jogo1", icon: "1.png", link: "nome1/" },
+        { nome: "jogo2", icon: "2.png", link: "nome2/" },
+        { nome: "jogo3", icon: "3.png", link: "nome3/" },
+        { nome: "jogo4", icon: "4.png", link: "nome4/" },
+
     ]
 };
