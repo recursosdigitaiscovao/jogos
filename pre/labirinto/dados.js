@@ -1,5 +1,5 @@
 const JOGO_CONFIG = {
-    caminhoIcons: "../../icons/",
+    caminhoIcons: "../../icons/", 
     caminhoImg: "../../img/",
     iconesMenu: {
         pre: "iconpre.png",
@@ -8,32 +8,32 @@ const JOGO_CONFIG = {
         ano3: "icon3.png",
         ano4: "icon4.png"
     },
-    // Nova estrutura para o Labirinto
+    // Configuração específica para o labirinto
     labirinto: {
         caminho: "../../img/labirinto/",
         categorias: {
             cao: {
                 nome: "Cão",
-                player: "l_cao.png",
-                food: "l_comida_cao.png",
-                wall: "l_parede_cao.png"
+                sprite: "l_cao.png",
+                objetivo: "l_comida_cao.png",
+                parede: "l_parede_cao.png"
             },
             gato: {
                 nome: "Gato",
-                player: "l_gato.png",
-                food: "l_comida_gato.png",
-                wall: "l_parede_gato.png"
+                sprite: "l_gato.png",
+                objetivo: "l_comida_gato.png",
+                parede: "l_parede_gato.png"
             },
             passaro: {
                 nome: "Pássaro",
-                player: "l_passaro.png",
-                food: "l_comida_passaro.png",
-                wall: "l_parede_passaro.png"
+                sprite: "l_passaro.png",
+                objetivo: "l_comida_passaro.png",
+                parede: "l_parede_passaro.png"
             }
         }
     },
     relatorio: {
-        titulo: "Exploração Concluída!",
+        titulo: "Parabéns!",
         pontosTotal: "Pontos:",
         tempoTotal: "Tempo:"
     }
