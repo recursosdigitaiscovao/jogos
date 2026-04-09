@@ -1,6 +1,6 @@
 const JOGO_CONFIG = {
     // Caminho para os icons do menu (sobe dois níveis para jogos/icons/)
-    caminhoIconsMenu: "../../icons/",
+    caminhoIconsMenu: "../icons/",
     
     // Caminho para os icons dos jogos (dentro da pasta local iconjogos/)
     caminhoIconsJogos: "iconjogos/",
