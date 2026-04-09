@@ -20,6 +20,6 @@ const JOGO_CONFIG = {
         { nome: "jogo2", icon: "2.png", link: "nome2/" },
         { nome: "jogo3", icon: "3.png", link: "nome3/" },
         { nome: "jogo4", icon: "4.png", link: "nome4/" },
-
+        { nome: "jogo5", icon: "5.png", link: "nome4/" },
     ]
 };
