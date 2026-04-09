@@ -1,238 +1,319 @@
 <!DOCTYPE html>
-<html lang="pt-pt">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar - Labirinto Progressivo</title>
+    <title>Pré Escolar - Labirinto dos Animais</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-
-        body {
-            background-color: rgba(255, 179, 198, 0.25); 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            height: 100vh; height: 100svh;
-            display: flex; flex-direction: column; overflow: hidden;
+        :root {
+            --cor-principal: #e691a7; 
+            --cor-vibrante: #d47a92;  
+            --cor-fundo: #fff5f7;      
+            --cor-texto: #e691a7;      
+            --cor-vermelho: #ff4757; 
+            --header-height: 70px;
+            --cor-jogo-verde: #2ed573;  
+            --cor-erro: #ff4757;
+            --cor-acerto: #2ed573;
         }
 
-        /* Header - Sem linha rosa, apenas sombra leve */
-        header {
-            width: 100%; background: #fff; padding: 12px 20px;
-            display: flex; align-items: center; justify-content: space-between;
-            z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
+        body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
+
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
+
+        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
+        .sidebar.active { left: 0; }
+        .sidebar-rd { position: fixed; bottom: -300px; left: 0; width: 100%; height: 300px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
+        .sidebar-rd.active { bottom: 0; }
+        .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
+        .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; }
+        .sidebar-item img { width: 30px; height: 30px; margin-right: 12px; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
+        .overlay.active { display: block; }
+
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
+        .screen.active { display: flex; }
+
+        .game-card {
+            background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal);
+            display: flex; flex-direction: column; width: 100%; max-width: 800px; height: 100%; box-sizing: border-box; overflow: hidden;
         }
 
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        header h1 { font-size: 1rem; color: #2d3436; font-weight: 800; text-transform: uppercase; }
-
-        /* Botões Rosa 3D com Texto Branco */
-        .btn-rosa-3d {
-            text-decoration: none; color: white !important; background-color: #ffb3c6;
-            font-weight: bold; border-radius: 10px; display: flex; align-items: center;
-            justify-content: center; gap: 8px; border: 1px solid #ef87a1;
-            box-shadow: 0 4px 0 #ef87a1; transition: all 0.1s ease; cursor: pointer;
+        /* Labirinto Grid */
+        #maze-container {
+            flex: 1;
+            display: grid;
+            gap: 2px;
+            background: #eee;
+            border: 5px solid var(--cor-principal);
+            border-radius: 10px;
+            margin: 10px auto;
+            position: relative;
+            aspect-ratio: 1/1;
+            max-height: 50vh;
         }
+        .cell { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: white; }
+        .cell img { width: 90%; height: 90%; object-fit: contain; }
+        .wall { background-size: cover; background-position: center; }
 
-        .btn-rosa-3d:active { transform: translateY(2px); box-shadow: 0 2px 0 #ef87a1; }
-        .btn-voltar { padding: 8px 15px; font-size: 0.75rem; }
+        /* Controlos */
+        .controls { display: grid; grid-template-columns: repeat(3, 60px); grid-template-rows: repeat(2, 60px); gap: 10px; justify-content: center; margin-top: 10px; }
+        .btn-ctrl { background: var(--cor-principal); color: white; border: none; border-radius: 15px; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #c07a8c; }
+        .btn-ctrl:active { transform: translateY(4px); box-shadow: none; }
 
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px; }
-
-        /* Estrelas */
-        .stars-container { display: flex; gap: 10px; margin: 15px 0; }
-        .star { font-size: 2.2rem; color: transparent; -webkit-text-stroke: 2px #ffb3c6; transition: 0.4s; }
-        .star.filled { color: #ffb3c6; -webkit-text-stroke: 1px #ef87a1; transform: scale(1.1); }
-
-        /* Labirinto */
-        #maze-container { position: relative; margin-bottom: 10px; }
-        #maze { 
-            background: white; border-radius: 15px; display: grid; 
-            border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .maze-cell { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; }
-        .maze-wall { background-color: #ef87a1; border-radius: 3px; }
-        .maze-path { background-color: white; }
-
-        /* Feedback Visual */
-        #feedback-msg {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #fff; padding: 15px 30px; border-radius: 50px;
-            border: 3px solid #ffb3c6; color: #ff6b81; font-weight: 800;
-            font-size: 1.5rem; display: none; z-index: 10; pointer-events: none;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-
-        /* Controlos de Direção */
-        #controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 160px; margin-top: 5px; }
-        .btn-control { width: 45px; height: 45px; border-radius: 12px; font-size: 1.2rem; }
-        #btn-up { grid-column: 2; }
-        #btn-left { grid-column: 1; grid-row: 2; }
-        #btn-down { grid-column: 2; grid-row: 2; }
-        #btn-right { grid-column: 3; grid-row: 2; }
-
-        /* Footer - Fundo Branco e Texto Cinzento Discreto */
-        footer { 
-            width: 100%; 
-            padding: 15px; 
-            background-color: rgba(255, 255, 255, 0.8); 
-            text-align: center; 
-            color: #95a5a6; 
-            font-size: 0.85rem; 
-            font-weight: normal;
-        }
-
-        /* Modais */
-        .modal-custom {
-            display: none; position: fixed; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); width: 85%; max-width: 320px;
-            background: white; padding: 30px; border-radius: 30px;
-            z-index: 400; text-align: center; border: 5px solid #ffb3c6;
-        }
-
-        #certificado-container { display: none; flex: 1; align-items: center; justify-content: center; padding: 20px; }
-        #certificado { background: white; padding: 40px; border: 15px double #ffb3c6; text-align: center; width: 100%; max-width: 500px; }
-        .nome-aluno { font-family: 'Georgia', serif; font-size: 2rem; border-bottom: 3px solid #ffb3c6; margin: 20px 0; display: inline-block; min-width: 200px; }
+        .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 15px; border-radius: 15px; cursor: pointer; width: 100%; font-family: 'Fredoka'; }
+        
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-acerto); width: 90%; max-width: 350px; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-left">
-            <div style="font-size: 1.5rem;">🧩</div>
-            <h1>Labirinto do Gatinho</h1>
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+    
+    <div class="sidebar" id="sidebar">
+        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
+            <button onclick="toggleMenu()" style="border:none; background:none;">✕</button>
         </div>
-        <a href="/jogos/pre/" class="btn-rosa-3d btn-voltar">⬅ VOLTAR</a>
+        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+        <a href="#" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
+    </div>
+
+    <div class="sidebar-rd" id="sidebar-rd">
+        <h3 style="margin:0 0 15px 0; color:var(--cor-principal);">Escolhe o teu Animal:</h3>
+        <div id="categorias-list"></div>
+    </div>
+
+    <header class="nav-bar">
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal);">☰</button>
+        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal);">
+            <img id="header-icon" src="" style="height:32px;"> Labirinto
+        </h1>
+        <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
 
-    <main id="game-main">
-        <div class="stars-container">
-            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-        </div>
+    <main class="main-content">
+        <section id="intro-screen" class="screen active">
+            <div class="game-card" style="justify-content: center; align-items: center; text-align: center;">
+                <img id="intro-img" src="" style="width: 150px; margin-bottom: 20px;">
+                <h2 style="color: var(--cor-principal);">Ajuda o <span id="txt-animal">Cão</span> a chegar à comida!</h2>
+                <p>Usa as setas ou os botões para andar pelo labirinto.</p>
+                <button class="btn-play" onclick="startGame()">COMEÇAR</button>
+                <button onclick="toggleRD()" style="margin-top:20px; background:none; border:2px solid var(--cor-principal); padding:10px; border-radius:15px; color:var(--cor-principal); cursor:pointer;">Trocar Animal</button>
+            </div>
+        </section>
 
-        <div id="maze-container">
-            <div id="feedback-msg">MUITO BEM! 🐱✨</div>
-            <div id="maze"></div>
-        </div>
+        <section id="game-screen" class="screen">
+            <div class="game-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px;">
+                    <div style="font-weight:bold;">Nível <span id="lvl-num">1</span>/5</div>
+                    <div>⏳ <span id="timer">00:00</span></div>
+                    <div id="stars-bar" style="display:flex; gap:3px;"></div>
+                </div>
+                
+                <div id="maze-container"></div>
 
-        <div id="controls">
-            <button id="btn-up" class="btn-rosa-3d btn-control" onclick="movePlayer('up')">↑</button>
-            <button id="btn-left" class="btn-rosa-3d btn-control" onclick="movePlayer('left')">←</button>
-            <button id="btn-down" class="btn-rosa-3d btn-control" onclick="movePlayer('down')">↓</button>
-            <button id="btn-right" class="btn-rosa-3d btn-control" onclick="movePlayer('right')">→</button>
-        </div>
+                <div class="controls">
+                    <div style="grid-column: 2;"><button class="btn-ctrl" onclick="move(0, -1)">▲</button></div>
+                    <div style="grid-row: 2;"><button class="btn-ctrl" onclick="move(-1, 0)">◀</button></div>
+                    <div style="grid-row: 2;"><button class="btn-ctrl" onclick="move(0, 1)">▼</button></div>
+                    <div style="grid-row: 2;"><button class="btn-ctrl" onclick="move(1, 0)">▶</button></div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <div id="modal-nome" class="modal-custom">
-        <h2 style="color: #ff6b81;">PARABÉNS! 🌟</h2>
-        <p style="margin:15px 0; color: #636e72;">Completaste todos os níveis! Escreve o teu nome:</p>
-        <input type="text" id="input-nome" placeholder="Teu nome" style="width:100%; padding:15px; margin-bottom:20px; border-radius:12px; border:3px solid #ffb3c6; text-align:center; outline: none;">
-        <button class="btn-rosa-3d" style="width: 100%; padding: 15px;" onclick="gerarCertificado()">GERAR DIPLOMA</button>
-    </div>
-
-    <div id="certificado-container">
-        <div id="certificado">
-            <h1 style="color:#ffb3c6; font-size: 2.5rem;">DIPLOMA</h1>
-            <div class="nome-aluno" id="display-nome">_________</div>
-            <p style="color: #636e72;">Venceu os labirintos com sucesso!</p>
-            <button class="btn-rosa-3d" onclick="window.print()" style="margin-top: 30px; background:#34495e; border-color:#2c3e50; padding:12px 30px;">IMPRIMIR</button>
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 id="modal-title" style="color:var(--cor-acerto);">Parabéns!</h2>
+            <div id="modal-msg"></div>
+            <button class="btn-play" onclick="location.reload()">Jogar de Novo</button>
         </div>
     </div>
 
-    <footer>Recursos Digitais Covão • Professor Luís</footer>
-
+    <script src="dados.js"></script>
     <script>
-        let acertos = 0;
-        let gridSize = 7; 
-        let mazeData = [];
-        let playerPos = { r: 1, c: 1 };
-        let goalPos = { r: 0, c: 0 };
+        let currentLevel = 1;
+        let currentCat = "cao";
+        let playerPos = { x: 0, y: 0 };
+        let exitPos = { x: 0, y: 0 };
+        let maze = [];
+        let timerInterval, seconds = 0;
+        let points = 0;
 
-        function generateMaze() {
-            if (acertos === 1) gridSize = 9;
-            if (acertos === 2) gridSize = 11;
-            if (acertos === 3) gridSize = 13;
-            if (acertos === 4) gridSize = 15;
+        // Definição dos Labirintos (0: caminho, 1: parede, 2: entrada, 3: saída)
+        const levels = [
+            // Nível 1 - 5x5
+            [[2,0,1,0,0],[1,0,1,0,1],[0,0,0,0,1],[0,1,1,0,0],[0,0,0,1,3]],
+            // Nível 2 - 7x7
+            [[2,0,0,0,1,0,0],[1,1,1,0,1,0,1],[0,0,0,0,0,0,1],[0,1,1,1,1,1,1],[0,0,0,0,0,0,0],[1,1,1,1,1,1,0],[3,0,0,0,0,0,0]],
+            // Nível 3 - 9x9
+            [[2,1,0,0,0,0,0,0,0],[0,1,0,1,1,1,1,1,0],[0,1,0,1,0,0,0,1,0],[0,0,0,1,0,1,0,1,0],[1,1,0,1,0,1,0,1,0],[0,0,0,0,0,1,0,0,0],[0,1,1,1,1,1,1,1,1],[0,0,0,0,0,0,0,0,3]],
+            // Nível 4 - 11x11 (Resumido por brevidade)
+            [[2,0,0,1,0,0,0,0,0,0,0],[1,1,0,1,0,1,1,1,1,1,0],[0,0,0,0,0,1,0,0,0,0,0],[0,1,1,1,1,1,0,1,1,1,1],[0,1,0,0,0,0,0,1,0,0,0],[0,1,0,1,1,1,1,1,0,1,0],[0,0,0,1,0,0,0,0,0,1,0],[1,1,1,1,0,1,1,1,1,1,0],[0,0,0,0,0,0,0,0,0,1,0],[0,1,1,1,1,1,1,1,0,1,0],[0,0,0,0,0,0,0,0,0,0,3]],
+            // Nível 5 - 13x13
+            [[2,0,1,0,0,0,1,0,0,0,0,0,0],[0,0,1,0,1,0,1,0,1,1,1,1,0],[1,0,0,0,1,0,0,0,1,0,0,0,0],[1,1,1,1,1,1,1,1,1,0,1,1,1],[0,0,0,0,0,0,0,0,0,0,1,0,0],[0,1,1,1,1,1,1,1,1,1,1,0,1],[0,1,0,0,0,0,0,0,0,0,0,0,1],[0,1,0,1,1,1,1,1,1,1,1,1,1],[0,1,0,1,0,0,0,0,0,0,0,0,0],[0,1,0,1,0,1,1,1,1,1,1,1,0],[0,1,0,1,0,1,0,0,0,0,0,1,0],[0,0,0,1,0,0,0,1,1,1,0,0,0],[1,1,1,1,1,1,1,1,1,1,1,1,3]]
+        ];
 
-            mazeData = Array(gridSize).fill().map(() => Array(gridSize).fill(1));
+        window.onload = () => {
+            const p = JOGO_CONFIG.caminhoIcons;
+            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
+            document.getElementById('side-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
+            setupRDMenu();
+            selectCategory('cao');
+        };
 
-            function carve(r, c) {
-                mazeData[r][c] = 0;
-                const dirs = [[0, -2], [0, 2], [-2, 0], [2, 0]].sort(() => Math.random() - 0.5);
-                dirs.forEach(([dr, dc]) => {
-                    const nr = r + dr, nc = c + dc;
-                    if (nr > 0 && nr < gridSize-1 && nc > 0 && nc < gridSize-1 && mazeData[nr][nc] === 1) {
-                        mazeData[r + dr / 2][c + dc / 2] = 0;
-                        carve(nr, nc);
-                    }
-                });
-            }
-            carve(1, 1);
-            playerPos = { r: 1, c: 1 };
-            goalPos = { r: gridSize - 2, c: gridSize - 2 };
-            renderMaze();
+        function setupRDMenu() {
+            const container = document.getElementById('categorias-list');
+            const cats = JOGO_CONFIG.labirinto.categorias;
+            Object.keys(cats).forEach(key => {
+                const div = document.createElement('div');
+                div.className = 'sidebar-item';
+                div.innerHTML = `<img src="${JOGO_CONFIG.labirinto.caminho + cats[key].player}"> <span>${cats[key].nome}</span>`;
+                div.onclick = () => selectCategory(key);
+                container.appendChild(div);
+            });
         }
 
-        function renderMaze() {
-            const mazeEl = document.getElementById('maze');
-            const size = Math.min(window.innerWidth * 0.85, 320);
-            const cellSize = size / gridSize;
+        function selectCategory(key) {
+            currentCat = key;
+            const catData = JOGO_CONFIG.labirinto.categorias[key];
+            document.getElementById('txt-animal').innerText = catData.nome;
+            document.getElementById('intro-img').src = JOGO_CONFIG.labirinto.caminho + catData.player;
+            closeMenus();
+        }
 
-            mazeEl.style.gridTemplateColumns = `repeat(${gridSize}, ${cellSize}px)`;
-            mazeEl.innerHTML = '';
+        function startGame() {
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            currentLevel = 1;
+            points = 0;
+            seconds = 0;
+            initStars();
+            loadLevel();
+            startTimer();
+        }
 
-            for (let r = 0; r < gridSize; r++) {
-                for (let c = 0; c < gridSize; c++) {
+        function initStars() {
+            const bar = document.getElementById('stars-bar');
+            bar.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const s = document.createElement('div');
+                s.style.width="15px"; s.style.height="15px"; s.style.borderRadius="50%"; s.style.background="#ddd";
+                bar.appendChild(s);
+            }
+        }
+
+        function loadLevel() {
+            const mazeData = levels[currentLevel - 1];
+            const container = document.getElementById('maze-container');
+            const size = mazeData.length;
+            
+            container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+            container.innerHTML = '';
+            
+            const cat = JOGO_CONFIG.labirinto.categorias[currentCat];
+            const path = JOGO_CONFIG.labirinto.caminho;
+
+            for(let y=0; y<size; y++) {
+                for(let x=0; x<size; x++) {
                     const cell = document.createElement('div');
-                    cell.className = 'maze-cell ' + (mazeData[r][c] === 1 ? 'maze-wall' : 'maze-path');
-                    if (r === playerPos.r && c === playerPos.c) cell.innerText = "🐱";
-                    if (r === goalPos.r && c === goalPos.c) cell.innerText = "🏠";
-                    cell.style.fontSize = (cellSize * 0.7) + "px";
-                    mazeEl.appendChild(cell);
+                    cell.className = 'cell';
+                    cell.id = `cell-${x}-${y}`;
+                    
+                    const val = mazeData[y][x];
+                    if(val === 1) {
+                        cell.classList.add('wall');
+                        cell.style.backgroundImage = `url(${path + cat.wall})`;
+                    } else if(val === 2) {
+                        playerPos = {x, y};
+                        cell.innerHTML = `<img id="player" src="${path + cat.player}">`;
+                    } else if(val === 3) {
+                        exitPos = {x, y};
+                        cell.innerHTML = `<img src="${path + cat.food}">`;
+                    }
+                    container.appendChild(cell);
+                }
+            }
+            document.getElementById('lvl-num').innerText = currentLevel;
+        }
+
+        function move(dx, dy) {
+            const newX = playerPos.x + dx;
+            const newY = playerPos.y + dy;
+            const mazeData = levels[currentLevel - 1];
+
+            // Validar limites e paredes
+            if(newY >= 0 && newY < mazeData.length && newX >= 0 && newX < mazeData[0].length) {
+                if(mazeData[newY][newX] !== 1) {
+                    // Mover visualmente
+                    const oldCell = document.getElementById(`cell-${playerPos.x}-${playerPos.y}`);
+                    const newCell = document.getElementById(`cell-${newX}-${newY}`);
+                    const playerImg = document.getElementById('player');
+                    
+                    newCell.appendChild(playerImg);
+                    playerPos = {x: newX, y: newY};
+
+                    // Verificar vitória
+                    if(playerPos.x === exitPos.x && playerPos.y === exitPos.y) {
+                        levelWin();
+                    }
                 }
             }
         }
 
-        function movePlayer(dir) {
-            let n = { ...playerPos };
-            if (dir === 'up') n.r--; if (dir === 'down') n.r++;
-            if (dir === 'left') n.c--; if (dir === 'right') n.c++;
-
-            if (n.r >= 0 && n.r < gridSize && n.c >= 0 && n.c < gridSize && mazeData[n.r][n.c] === 0) {
-                playerPos = n;
-                renderMaze();
-                if (playerPos.r === goalPos.r && playerPos.c === goalPos.c) vitoriaRonda();
+        function levelWin() {
+            points += 100;
+            const star = document.getElementById('stars-bar').children[currentLevel-1];
+            star.style.background = "var(--cor-acerto)";
+            
+            if(currentLevel < 5) {
+                currentLevel++;
+                setTimeout(loadLevel, 500);
+            } else {
+                endGame();
             }
         }
 
-        function vitoriaRonda() {
-            const feed = document.getElementById('feedback-msg');
-            feed.style.display = 'block';
-            document.querySelectorAll('.star')[acertos].classList.add('filled');
-            acertos++;
-
-            setTimeout(() => {
-                feed.style.display = 'none';
-                if (acertos === 5) {
-                    document.getElementById('modal-nome').style.display = 'block';
-                } else {
-                    generateMaze();
-                }
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                seconds++;
+                let m = Math.floor(seconds/60).toString().padStart(2,'0');
+                let s = (seconds%60).toString().padStart(2,'0');
+                document.getElementById('timer').innerText = `${m}:${s}`;
             }, 1000);
         }
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key.includes('Arrow')) movePlayer(e.key.replace('Arrow', '').toLowerCase());
-        });
-
-        function gerarCertificado() {
-            const nome = document.getElementById('input-nome').value;
-            if(!nome) return;
-            document.getElementById('display-nome').innerText = nome;
-            document.getElementById('game-main').style.display = 'none';
-            document.getElementById('modal-nome').style.display = 'none';
-            document.getElementById('certificado-container').style.display = 'flex';
+        function endGame() {
+            clearInterval(timerInterval);
+            const rel = JOGO_CONFIG.relatorio;
+            document.getElementById('modal-msg').innerHTML = `
+                <p>${rel.pontosTotal} ${points}</p>
+                <p>${rel.tempoTotal} ${document.getElementById('timer').innerText}</p>
+            `;
+            document.getElementById('modal').style.display = 'flex';
         }
 
-        generateMaze();
+        // Teclado
+        window.onkeydown = (e) => {
+            if(document.getElementById('game-screen').classList.contains('active')) {
+                if(e.key === "ArrowUp") move(0, -1);
+                if(e.key === "ArrowDown") move(0, 1);
+                if(e.key === "ArrowLeft") move(-1, 0);
+                if(e.key === "ArrowRight") move(1, 0);
+            }
+        };
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
     </script>
 </body>
 </html>
