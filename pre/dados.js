@@ -17,7 +17,7 @@ const JOGO_CONFIG = {
     // Lista de jogos atualizada com os novos ficheiros
     listaJogos: [
         { nome: "O meu par?", icon: "encontraopar.png", link: "encontraopar/" },
-        { nome: "Monstro Comilão", icon: "mostrocomilao.png", link: "monstrocomilao/" },
+        { nome: "Monstro Comilão", icon: "monstrocomilao.png", link: "monstrocomilao/" },
         { nome: "Colorir", icon: "pinta.png", link: "pinta/" },
         { nome: "Não tenho pa!", icon: "sem_par.png", link: "sem_par/" },
         { nome: "Sombras Mágicas", icon: "sombrasmagicas.png", link: "sombrasmagicas/" }
