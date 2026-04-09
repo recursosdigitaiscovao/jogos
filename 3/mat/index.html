@@ -8,9 +8,9 @@
     <style>
         :root {
             --cor-principal: #5EA2E6;  /* Azul solicitado */
-            --cor-vibrante: #4a8cd1;   /* Azul um pouco mais escuro para hover */
+            --cor-hover: #4a8cd1;      /* Azul um pouco mais escuro para o hover */
             --cor-fundo: #F0F7FF;      /* Fundo azul suave solicitado */
-            --cor-texto: #5EA2E6;      /* Texto em azul */
+            --cor-texto: #5EA2E6;      
             --header-height: 70px;
         }
 
@@ -46,11 +46,13 @@
             border: none; 
             font-size: 26px; 
             cursor: pointer; 
-            color: var(--cor-principal); /* Cor azul no hamburger */
+            color: var(--cor-principal); 
+            display: flex;
+            align-items: center;
         }
         
         .back-btn {
-            background: var(--cor-principal); /* Botão voltar azul */
+            background: var(--cor-principal);
             color: white;
             padding: 8px 18px;
             border-radius: 50px;
@@ -59,7 +61,7 @@
             font-size: 0.85rem;
             transition: 0.3s;
         }
-        .back-btn:hover { background: var(--cor-vibrante); transform: scale(1.05); }
+        .back-btn:hover { background: var(--cor-hover); transform: scale(1.05); }
 
         h1 { 
             color: var(--cor-principal); 
@@ -76,9 +78,33 @@
         /* --- Sidebar --- */
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 12px 20px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; }
-        .sidebar-item img { width: 25px; height: 25px; margin-right: 12px; }
-        .sidebar-item:hover { color: var(--cor-principal); background-color: var(--cor-fundo); padding-left: 30px; }
+        
+        .sidebar-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 20px; 
+            color: #555; 
+            text-decoration: none; 
+            border-bottom: 1px solid #f4f4f4; 
+            transition: 0.3s; 
+        }
+        
+        /* Ajuste das imagens no menu para não ficarem largas */
+        .sidebar-item img { 
+            height: 28px; 
+            width: auto; 
+            max-width: 30px; 
+            margin-right: 12px; 
+            object-fit: contain;
+        }
+
+        /* Hover da sidebar com a cor do botão */
+        .sidebar-item:hover { 
+            color: white; 
+            background-color: var(--cor-principal); 
+            padding-left: 30px; 
+        }
+        
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
@@ -88,10 +114,9 @@
             overflow-y: auto; 
             padding: 20px 15px; 
             text-align: center; 
-            background: var(--cor-fundo); 
         }
         
-        .intro-text { color: var(--cor-texto); font-size: 1.1rem; margin-bottom: 25px; }
+        .intro-text { color: var(--cor-texto); font-size: 1.1rem; margin-bottom: 25px; font-weight: bold; }
 
         .games-grid {
             display: grid;
@@ -107,11 +132,11 @@
 
         /* --- Card --- */
         .game-card {
-            background: var(--cor-fundo); /* Fundo do card azul suave */
+            background: var(--cor-fundo); 
             border-radius: 25px;
             padding: 15px 15px 10px 15px; 
             text-align: center;
-            border: 3px solid var(--cor-principal); /* Limite do card azul */
+            border: 3px solid var(--cor-principal); 
             text-decoration: none;
             display: flex;
             flex-direction: column;
@@ -120,16 +145,17 @@
             box-sizing: border-box;
         }
 
+        /* Hover do Card - muda para a cor do botão */
         .game-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 10px 20px rgba(94, 162, 230, 0.2);
-            background: white; 
+            box-shadow: 0 10px 20px rgba(94, 162, 230, 0.3);
+            background: white;
+            border-color: var(--cor-hover);
         }
 
         .game-img {
             width: 100%; 
             height: 110px;
-            background: transparent;
             display: flex;
             align-items: flex-start;
             justify-content: center;
@@ -178,7 +204,7 @@
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
-            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size: 18px;">✕</button>
+            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size: 18px; color: var(--cor-principal);">✕</button>
         </div>
         <div id="menu-items"></div>
     </div>
@@ -196,7 +222,6 @@
 
     <footer>Recursos Digitais Covão</footer>
 
-    <!-- Importante: o dados.js deve estar na mesma pasta ou caminho correto -->
     <script src="dados.js"></script>
 
     <script>
@@ -206,7 +231,7 @@
         }
 
         function inicializar() {
-            // Header dinâmico - Puxa o ícone do 3º ano
+            // Header dinâmico
             const headerTitle = document.getElementById('header-title');
             const iconPath = JOGO_CONFIG.caminhoIconsMenu + JOGO_CONFIG.iconesMenu.ano3;
             headerTitle.innerHTML = `<img src="${iconPath}" alt="Icon"> Matemática - 3º Ano`;
