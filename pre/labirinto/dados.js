@@ -17,7 +17,7 @@ const JOGO_CONFIG = {
         }
     },
     relatorio: {
-        titulo: "Fim do Labirinto!",
+        titulo: "Exploração Concluída!",
         pontosTotal: "Pontos:",
         tempoTotal: "Tempo:"
     }
