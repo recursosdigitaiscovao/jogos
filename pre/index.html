@@ -41,7 +41,7 @@
             z-index: 1000;
         }
 
-        /* Botão Hamburger - Corrigido para não encolher */
+        /* Botão Hamburger - Protegido contra compressão vertical e horizontal */
         .menu-btn { 
             background: none; 
             border: none; 
@@ -49,16 +49,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 45px; 
-            height: 45px;
-            flex-shrink: 0; /* Impede que seja esmagado */
+            width: 40px; 
+            height: 40px;
+            flex-shrink: 0; 
             padding: 0;
+            margin-right: 10px;
         }
         
         .menu-btn svg {
             fill: var(--cor-principal);
-            width: 35px;
-            height: 35px;
+            width: 32px;
+            height: 32px;
+            display: block; /* Garante que não se comporta como texto */
         }
         
         .back-btn {
@@ -71,10 +73,11 @@
             font-size: 0.85rem;
             transition: 0.3s;
             flex-shrink: 0;
+            white-space: nowrap;
         }
         .back-btn:hover { background: var(--cor-vibrante); transform: scale(1.05); }
 
-        /* Título com Icon */
+        /* Título Central */
         h1 { 
             color: var(--cor-principal); 
             margin: 0; 
@@ -84,11 +87,13 @@
             justify-content: center; 
             gap: 10px; 
             flex-grow: 1; 
+            text-align: center;
         }
+        
         h1 img { 
             height: 40px; 
             width: auto; 
-            display: block;
+            flex-shrink: 0;
         }
 
         /* --- Sidebar --- */
@@ -97,6 +102,7 @@
         .sidebar-item { display: flex; align-items: center; padding: 12px 20px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; }
         .sidebar-item img { width: 25px; height: 25px; margin-right: 12px; }
         .sidebar-item:hover { color: var(--cor-principal); background-color: var(--cor-fundo); padding-left: 30px; }
+        
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
@@ -108,12 +114,13 @@
             text-align: center; 
         }
         
-        /* Texto de introdução com a cor rosa e peso normal */
+        /* Texto de introdução - Cor Rosa e Fonte normal */
         .intro-text { 
             color: var(--cor-principal); 
             font-size: 1.1rem; 
             margin-bottom: 25px; 
             font-weight: 400; 
+            line-height: 1.4;
         }
 
         .games-grid {
@@ -167,7 +174,7 @@
         @media (max-width: 600px) {
             .game-img { height: 85px; }
             .game-card { padding: 12px 12px 8px 12px; border-radius: 20px; }
-            h1 { font-size: 1rem; }
+            h1 { font-size: 1rem; gap: 6px; }
             h1 img { height: 32px; }
         }
 
@@ -180,6 +187,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            line-height: 1.2;
         }
 
         footer {
@@ -205,14 +213,16 @@
     </div>
 
     <header class="nav-bar">
-        <button class="menu-btn" onclick="toggleMenu()">
-            <svg viewBox="0 0 24 24">
+        <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">
+            <svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
                 <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
             </svg>
         </button>
+        
         <h1 id="header-title">
-            <!-- Icon e Texto inseridos via JS -->
+            <!-- Injetado pelo JS -->
         </h1>
+
         <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
 
@@ -234,12 +244,12 @@
         function inicializar() {
             if (typeof JOGO_CONFIG === 'undefined') return;
 
-            // 1. Header com Icon antes do Título
+            // 1. Título com ícone (iconpre.png) vindo da pasta ../icons/
             const headerTitle = document.getElementById('header-title');
             const iconPath = JOGO_CONFIG.caminhoIconsMenu + JOGO_CONFIG.iconesMenu.pre;
             headerTitle.innerHTML = `<img src="${iconPath}" alt=""> <span>Pré-Escolar</span>`;
 
-            // 2. Sidebar dinâmica
+            // 2. Sidebar
             const menuContainer = document.getElementById('menu-items');
             const iconsPath = JOGO_CONFIG.caminhoIconsMenu;
             menuContainer.innerHTML = `
