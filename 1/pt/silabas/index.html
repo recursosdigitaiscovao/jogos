@@ -44,9 +44,7 @@
 
         .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-jogo-verde); display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden; }
         
-        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center;}
-        
-        /* ÁREA DE JOGO - MOLDURA PRETA INTERNA */
+        /* MOLDURA PRETA INTERNA */
         .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 10px; overflow: hidden; }
         
         .silabas-card {
@@ -61,51 +59,64 @@
             overflow: hidden;
         }
 
+        /* HEADER DO CARD */
         .silabas-header {
-            height: 80px;
+            min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
+            font-size: 2.2rem;
             font-weight: 900;
             color: #000;
             border-bottom: 4px solid #000;
-            letter-spacing: 5px;
+            text-align: center;
             text-transform: uppercase;
         }
 
+        /* IMAGEM CENTRAL */
         .silabas-img-box {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 10px;
+            background: #fff;
         }
-        .silabas-img-box img { max-width: 90%; max-height: 90%; object-fit: contain; }
+        .silabas-img-box img { max-width: 85%; max-height: 85%; object-fit: contain; }
 
-        .silabas-footer {
-            height: 100px;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+        /* SLOTS DE RESPOSTA (ORDENAR) */
+        .answer-slots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background: #eee;
             border-top: 4px solid #000;
         }
+        .slot {
+            width: 60px; height: 60px; border: 3px solid #000; background: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 1.2rem; border-radius: 8px;
+        }
+        .slot.filled { background: #2ed573; color: white; border-color: #27ae60; }
 
-        .sil-btn {
-            background: white;
-            border: none;
-            font-size: 3rem;
-            font-weight: 900;
-            color: #000;
-            cursor: pointer;
+        /* FOOTER COM OPÇÕES */
+        .silabas-footer {
+            height: 100px;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            border-top: 4px solid #000;
+        }
+        .sil-btn, .order-btn {
+            flex: 1; background: white; border: none; font-size: 2rem; font-weight: 900;
+            color: #000; cursor: pointer; display: flex; align-items: center; justify-content: center;
             transition: 0.2s;
         }
-        .sil-btn:not(:last-child) { border-right: 4px solid #000; }
-        .sil-btn:hover { background: #f0f0f0; }
-        .sil-btn:active { background: var(--cor-principal); color: white; }
+        .sil-btn:not(:last-child), .order-btn:not(:last-child) { border-right: 4px solid #000; }
+        .order-btn { font-size: 1.4rem; padding: 5px; }
+        .sil-btn:active, .order-btn:active { background: var(--cor-principal); color: white; }
 
+        /* INTRO */
+        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center;}
         .intro-btns { display: flex; gap: 10px; width: 100%; align-items: center; }
         .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
         .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; }
@@ -118,7 +129,6 @@
 <body>
 
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
-    
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
@@ -126,15 +136,11 @@
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
         <a href="#" class="sidebar-item"><img class="menu-pre" src=""> Pré-Escolar</a>
-        <a href="#" class="sidebar-item"><img class="menu-1" src=""> 1º Ano</a>
-        <a href="#" class="sidebar-item"><img class="menu-2" src=""> 2º Ano</a>
-        <a href="#" class="sidebar-item"><img class="menu-3" src=""> 3º Ano</a>
-        <a href="#" class="sidebar-item"><img class="menu-4" src=""> 4º Ano</a>
     </div>
 
     <div class="sidebar-rd" id="sidebar-rd">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3 style="margin:0; color:var(--cor-principal);">Escolhe o Tema</h3>
+            <h3 style="margin:0; color:var(--cor-principal);">Escolhe o Modo</h3>
             <button onclick="toggleRD()" style="border:none; background:none; font-size:20px;">✕</button>
         </div>
         <div id="categorias-list" style="max-height: 220px; overflow-y: auto;"></div>
@@ -153,10 +159,9 @@
             <div class="game-card">
                 <div class="explanation-box">
                     <img id="cat-preview-img" src="" style="width:100px; margin-bottom:10px;">
-                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin: 0;">Quantas Sílabas?</p>
-                    <p>Clica no número certo de sílabas da palavra.</p>
+                    <p id="cat-desc" style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin: 0;"></p>
                 </div>
-                <h2 class="game-title" id="display-categoria" style="text-align:center; color:var(--cor-principal);">Escolhe um Tema</h2>
+                <h2 class="game-title" id="display-categoria" style="text-align:center; color:var(--cor-principal);">Carregando...</h2>
                 <div class="intro-btns">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
                     <button class="btn-rd" onclick="toggleRD()"><img class="btn-rd-img-ref" src=""></button>
@@ -169,23 +174,16 @@
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem;">
                     <div>⏳ <span id="timer">00:00</span></div>
                     <div id="stars-bar" style="display:flex; gap:4px;"></div>
-                    <div style="display:flex; align-items:center;">
-                        PTS: <span id="points">0</span>
-                        <button class="btn-rd" style="width:30px; height:30px; margin-left:10px; border-radius:8px;" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:18px; height:18px;"></button>
-                    </div>
+                    <div>PTS: <span id="points">0</span></div>
                 </div>
                 <div class="game-area">
                     <div class="silabas-card">
-                        <div class="silabas-header" id="current-word">---</div>
+                        <div class="silabas-header" id="current-title">---</div>
                         <div class="silabas-img-box">
                             <img id="current-img" src="">
                         </div>
-                        <div class="silabas-footer">
-                            <button class="sil-btn" onclick="checkAnswer(1)">1</button>
-                            <button class="sil-btn" onclick="checkAnswer(2)">2</button>
-                            <button class="sil-btn" onclick="checkAnswer(3)">3</button>
-                            <button class="sil-btn" onclick="checkAnswer(4)">4</button>
-                        </div>
+                        <div id="answer-zone" class="answer-slots" style="display:none;"></div>
+                        <div id="options-zone" class="silabas-footer"></div>
                     </div>
                 </div>
             </div>
@@ -203,26 +201,16 @@
     <script src="dados.js"></script>
     <script>
         let currentQuestion = 1, points = 0, seconds = 0, timerInterval;
-        let currentCatKey = "animais";
-        let currentItem = null;
-        let usedItems = [];
+        let currentCatKey = "contar", currentItem = null, usedItems = [];
+        let playerSyllables = [];
 
         const sndCerto = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
         const sndErro = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
 
         window.onload = () => {
-            const p = JOGO_CONFIG.caminhoIcons;
-            const imgPath = JOGO_CONFIG.caminhoImg;
-            
-            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
-            document.querySelector('.menu-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
-            document.querySelector('.menu-1').src = p + JOGO_CONFIG.iconesMenu.ano1;
-            document.querySelector('.menu-2').src = p + JOGO_CONFIG.iconesMenu.ano2;
-            document.querySelector('.menu-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
-            document.querySelector('.menu-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
-            
-            document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = imgPath + "rd.png");
-            
+            document.getElementById('header-icon').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.pre;
+            document.querySelector('.menu-pre').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.pre;
+            document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             setupRDMenu();
             updateIntro();
         };
@@ -244,6 +232,7 @@
             const cat = JOGO_CONFIG.categorias[currentCatKey];
             document.getElementById('display-categoria').innerText = cat.nome;
             document.getElementById('cat-preview-img').src = JOGO_CONFIG.caminhoImg + cat.img;
+            document.getElementById('cat-desc').innerText = cat.tipo === "contar" ? "Quantas sílabas tem a palavra?" : "Ordena as sílabas corretamente!";
         }
 
         function startGame() {
@@ -262,7 +251,7 @@
             const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
             for(let i=0; i<5; i++) {
                 const s = document.createElement('div');
-                s.style.cssText="width:16px;height:16px;border:2px solid #ccc;border-radius:50%;background:white;";
+                s.style.cssText="width:14px;height:14px;border:2px solid #ccc;border-radius:50%;background:white;";
                 bar.appendChild(s);
             }
         }
@@ -271,21 +260,74 @@
             const cat = JOGO_CONFIG.categorias[currentCatKey];
             let available = cat.itens.filter(i => !usedItems.includes(i.nome));
             if(available.length === 0) { usedItems = []; available = cat.itens; }
-            
             currentItem = available[Math.floor(Math.random() * available.length)];
             usedItems.push(currentItem.nome);
 
-            document.getElementById('current-word').innerText = currentItem.nome;
-            document.getElementById('current-img').src = JOGO_CONFIG.caminhoImg + cat.pasta + currentItem.img;
+            document.getElementById('current-img').src = JOGO_CONFIG.caminhoImg + currentItem.img;
+            
+            const optionsZone = document.getElementById('options-zone');
+            const answerZone = document.getElementById('answer-zone');
+            optionsZone.innerHTML = '';
+            answerZone.innerHTML = '';
+            playerSyllables = [];
+
+            if(cat.tipo === "contar") {
+                document.getElementById('current-title').innerText = currentItem.nome;
+                answerZone.style.display = 'none';
+                for(let i=1; i<=4; i++) {
+                    const btn = document.createElement('button');
+                    btn.className = 'sil-btn'; btn.innerText = i;
+                    btn.onclick = () => checkAnswer(i);
+                    optionsZone.appendChild(btn);
+                }
+            } else {
+                document.getElementById('current-title').innerText = "???";
+                answerZone.style.display = 'flex';
+                const syllables = currentItem.divisao.split('-');
+                syllables.forEach(() => {
+                    const slot = document.createElement('div');
+                    slot.className = 'slot'; slot.innerText = '';
+                    answerZone.appendChild(slot);
+                });
+
+                const shuffled = [...syllables].sort(() => Math.random() - 0.5);
+                shuffled.forEach(s => {
+                    const btn = document.createElement('button');
+                    btn.className = 'order-btn'; btn.innerText = s;
+                    btn.onclick = () => fillSlot(s, btn);
+                    optionsZone.appendChild(btn);
+                });
+            }
         }
 
-        function checkAnswer(num) {
+        function fillSlot(syllable, btn) {
+            const slots = document.querySelectorAll('.slot');
+            if(playerSyllables.length < slots.length) {
+                const currentSlot = slots[playerSyllables.length];
+                currentSlot.innerText = syllable;
+                currentSlot.classList.add('filled');
+                playerSyllables.push(syllable);
+                btn.style.visibility = 'hidden';
+
+                if(playerSyllables.length === slots.length) {
+                    setTimeout(() => checkAnswer(playerSyllables.join('-')), 300);
+                }
+            }
+        }
+
+        function checkAnswer(userVal) {
+            const cat = JOGO_CONFIG.categorias[currentCatKey];
             const stars = document.getElementById('stars-bar').children;
-            const correct = currentItem.silabas === num;
+            let correct = false;
+
+            if(cat.tipo === "contar") {
+                correct = currentItem.divisao.split('-').length === userVal;
+            } else {
+                correct = currentItem.divisao === userVal;
+            }
 
             if(correct) {
-                sndCerto.play();
-                points++;
+                sndCerto.play(); points++;
                 stars[currentQuestion-1].style.background = "var(--cor-acerto)";
                 stars[currentQuestion-1].style.borderColor = "var(--cor-acerto)";
             } else {
@@ -296,18 +338,15 @@
 
             document.getElementById('points').innerText = points;
             currentQuestion++;
-
             setTimeout(() => {
-                if(currentQuestion > 5) endGame();
-                else loadRound();
+                if(currentQuestion > 5) endGame(); else loadRound();
             }, 600);
         }
 
         function endGame() {
             clearInterval(timerInterval);
-            const rel = JOGO_CONFIG.relatorio;
-            document.getElementById('modal-title').innerText = points >= 3 ? rel.titulo : "Tenta de novo!";
-            document.getElementById('modal-msg').innerHTML = `<p>${rel.pontosTotal} ${points}/5</p><p>${rel.tempoTotal} ${document.getElementById('timer').innerText}</p>`;
+            document.getElementById('modal-title').innerText = points >= 3 ? JOGO_CONFIG.relatorio.titulo : "Tenta de novo!";
+            document.getElementById('modal-msg').innerHTML = `<p>${JOGO_CONFIG.relatorio.pontosTotal} ${points}/5</p><p>${JOGO_CONFIG.relatorio.tempoTotal} ${document.getElementById('timer').innerText}</p>`;
             document.getElementById('modal').style.display = 'flex';
         }
 
