@@ -1,11 +1,11 @@
 const JOGO_CONFIG = {
-    // Caminho para os icons do menu (estando em jogos/pre/, sobe para jogos/ e entra em icons/)
+    // Caminho para os icons do menu
     caminhoIconsMenu: "../icons/",
     
-    // Caminho para os icons dos jogos (dentro da pasta local jogos/pre/iconjogos/)
+    // Caminho para os icons dos jogos
     caminhoIconsJogos: "iconjogos/",
 
-    // Nomes dos ficheiros de ícones do menu/sidebar
+    // Nomes dos ficheiros de ícones do menu
     iconesMenu: {
         pre: "iconpre.png",
         ano1: "icon1.png",
@@ -14,7 +14,7 @@ const JOGO_CONFIG = {
         ano4: "icon4.png"
     },
 
-    // Lista de jogos (7 jogos no total)
+    // Lista de jogos - ATENÇÃO ÀS VÍRGULAS NO FINAL DE CADA LINHA
     listaJogos: [
         { nome: "O meu par?", icon: "encontraopar.png", link: "encontraopar/" },
         { nome: "Monstro Comilão", icon: "monstrocomilao.png", link: "monstrocomilao/" },
