@@ -10,6 +10,7 @@ const JOGO_CONFIG = {
     },
     labirinto: {
         caminho: "../../img/labirinto/",
+        obstaculos: ["pedra.png", "buraco.png"],
         categorias: {
             cao: { nome: "Cão", sprite: "l_cao.png", objetivo: "l_comida_cao.png", corParede: "#e691a7" },
             gato: { nome: "Gato", sprite: "l_gato.png", objetivo: "l_comida_gato.png", corParede: "#d47a92" },
@@ -17,7 +18,7 @@ const JOGO_CONFIG = {
         }
     },
     relatorio: {
-        titulo: "Labirinto Concluído!",
+        titulo: "Fim da Aventura!",
         pontosTotal: "Pontos:",
         tempoTotal: "Tempo:"
     }
