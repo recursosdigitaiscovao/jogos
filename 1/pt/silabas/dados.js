@@ -9,62 +9,29 @@ const JOGO_CONFIG = {
         ano4: "icon4.png"
     },
     categorias: {
-        animais: {
-            nome: "Animais",
-            img: "animaisdomesticos/gato.png",
-            pasta: "animaisdomesticos/",
+        contar: {
+            nome: "Quantas Sílabas?",
+            img: "frutas/maca.png", // Ícone Categoria 1
+            tipo: "contar",
             itens: [
-                { nome: "BURRO", img: "burro.png", silabas: 2 },
-                { nome: "CABRA", img: "cabra.png", silabas: 2 },
-                { nome: "CÃO", img: "cao.png", silabas: 1 },
-                { nome: "CAVALO", img: "cavalo.png", silabas: 3 },
-                { nome: "COELHO", img: "coelho.png", silabas: 3 },
-                { nome: "GALINHA", img: "galinha.png", silabas: 3 },
-                { nome: "GATO", img: "gato.png", silabas: 2 },
-                { nome: "OVELHA", img: "ovelha.png", silabas: 3 },
-                { nome: "PATO", img: "pato.png", silabas: 2 },
-                { nome: "PERU", img: "peru.png", silabas: 2 },
-                { nome: "PORCO", img: "porco.png", silabas: 2 },
-                { nome: "VACA", img: "vaca.png", silabas: 2 }
+                { nome: "MACACO", img: "animaisdomesticos/macaco.png", divisao: "MA-CA-CO" },
+                { nome: "VACA", img: "animaisdomesticos/vaca.png", divisao: "VA-CA" },
+                { nome: "PATO", img: "animaisdomesticos/pato.png", divisao: "PA-TO" },
+                { nome: "BANANA", img: "frutas/banana.png", divisao: "BA-NA-NA" },
+                { nome: "MOCHILA", img: "materialescolar/mochila.png", divisao: "MO-CHI-LA" }
             ]
         },
-        material: {
-            nome: "Escola",
-            img: "materialescolar/mochila.png",
-            pasta: "materialescolar/",
+        ordenar: {
+            nome: "Ordena as Sílabas",
+            img: "animaisdomesticos/cao.png", // Ícone Categoria 2
+            tipo: "ordenar",
             itens: [
-                { nome: "AFIA", img: "afia.png", silabas: 3 },
-                { nome: "BORRACHA", img: "borracha.png", silabas: 3 },
-                { nome: "CANETA", img: "caneta.png", silabas: 3 },
-                { nome: "CAPA", img: "capa.png", silabas: 2 },
-                { nome: "COLA", img: "cola.png", silabas: 2 },
-                { nome: "ESQUADRO", img: "esquadro.png", silabas: 3 },
-                { nome: "ESTOJO", img: "estojo.png", silabas: 3 },
-                { nome: "FOLHA", img: "folha.png", silabas: 2 },
-                { nome: "LÁPIS", img: "lapis.png", silabas: 2 },
-                { nome: "LIVRO", img: "livro.png", silabas: 2 },
-                { nome: "MOCHILA", img: "mochila.png", silabas: 3 },
-                { nome: "PINCEL", img: "pincel.png", silabas: 2 },
-                { nome: "RÉGUA", img: "regua.png", silabas: 2 },
-                { nome: "TESOURA", img: "tesoura.png", silabas: 3 }
-            ]
-        },
-        frutas: {
-            nome: "Frutas",
-            img: "frutas/maca.png",
-            pasta: "frutas/",
-            itens: [
-                { nome: "ANANÁS", img: "ananas.png", silabas: 3 },
-                { nome: "BANANA", img: "banana.png", silabas: 3 },
-                { nome: "CEREJA", img: "cereja.png", silabas: 3 },
-                { nome: "KIWI", img: "kiwi.png", silabas: 2 },
-                { nome: "LARANJA", img: "laranja.png", silabas: 3 },
-                { nome: "MAÇÃ", img: "maca.png", silabas: 2 },
-                { nome: "MELANCIA", img: "melancia.png", silabas: 4 },
-                { nome: "MORANGO", img: "morango.png", silabas: 3 },
-                { nome: "PAPAIA", img: "papaia.png", silabas: 3 },
-                { nome: "PERA", img: "pera.png", silabas: 2 },
-                { nome: "UVAS", img: "uvas.png", silabas: 2 }
+                { nome: "PORCO", img: "animaisdomesticos/porco.png", divisao: "POR-CO" },
+                { nome: "CARRO", img: "carro.png", divisao: "CAR-RO" },
+                { nome: "MASSA", img: "massa.png", divisao: "MAS-SA" },
+                { nome: "CAVALO", img: "animaisdomesticos/cavalo.png", divisao: "CA-VA-LO" },
+                { nome: "GALINHA", img: "animaisdomesticos/galinha.png", divisao: "GA-LI-NHA" },
+                { nome: "MORANGO", img: "frutas/morango.png", divisao: "MO-RAN-GO" }
             ]
         }
     },
