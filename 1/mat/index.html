@@ -65,41 +65,45 @@
         .back-btn:hover { background: var(--cor-nav-hover); transform: scale(1.05); }
 
         /* --- Sidebar (Menu Lateral) --- */
-        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
+        .sidebar { 
+            position: fixed; 
+            top: 0; 
+            left: -260px; 
+            width: 240px; 
+            height: 100%; 
+            background: white; 
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1); 
+            transition: 0.3s; 
+            z-index: 2000; 
+            padding-top: 10px; 
+        }
         .sidebar.active { left: 0; }
         
         .sidebar-item { 
             display: flex; 
             align-items: center; 
-            padding: 12px 20px; 
-            color: #555; 
+            padding: 15px 20px; 
+            color: #444; /* Cor do texto */
             text-decoration: none; 
-            border-bottom: 1px solid #f9f9f9; 
-            transition: 0.2s all ease-in-out; 
+            border-bottom: 1px solid #f0f0f0; 
+            transition: 0.2s background-color ease; 
             font-weight: 500;
-            margin: 4px 10px;
-            border-radius: 12px;
+            margin: 0; /* Removida a margem para ocupar toda a largura */
+            border-radius: 0; /* CANTOS RETOS */
         }
 
-        /* Ajuste para as imagens não ficarem "flats" */
         .sidebar-item img { 
             width: 30px; 
             height: 30px; 
             margin-right: 12px; 
-            object-fit: contain; /* Garante que a imagem mantém a proporção */
+            object-fit: contain; 
             flex-shrink: 0;
         }
 
-        /* HOVER TIPO BOTÃO: Fundo laranja vibrante e texto branco */
+        /* HOVER: Fundo muda, mas texto e ícone continuam originais */
         .sidebar-item:hover { 
-            color: white !important; 
             background-color: var(--cor-nav); 
-            transform: translateX(5px);
-        }
-        
-        /* Garante que o icon também mude (se for SVG/CSS) ou não suma */
-        .sidebar-item:hover img {
-            filter: brightness(0) invert(1); /* Torna o ícone branco no hover para combinar */
+            /* Removido o color: white e o filter: invert */
         }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
@@ -221,35 +225,38 @@
         }
 
         function inicializar() {
-            const headerTitle = document.getElementById('header-title');
-            const iconPath = JOGO_CONFIG.caminhoIconsMenu + JOGO_CONFIG.iconesMenu.ano1;
-            headerTitle.innerHTML = `<img src="${iconPath}" alt="Icon"> Matemática - 1º Ano`;
+            // Verifica se a JOGO_CONFIG existe (carregada do dados.js)
+            if (typeof JOGO_CONFIG !== 'undefined') {
+                const headerTitle = document.getElementById('header-title');
+                const iconPath = JOGO_CONFIG.caminhoIconsMenu + JOGO_CONFIG.iconesMenu.ano1;
+                headerTitle.innerHTML = `<img src="${iconPath}" alt="Icon"> Matemática - 1º Ano`;
 
-            const menuContainer = document.getElementById('menu-items');
-            menuContainer.innerHTML = `
-                <a href="/jogos/" class="sidebar-item">🏠 &nbsp; Início</a>
-                <a href="/jogos/pre/" class="sidebar-item"><img src="${JOGO_CONFIG.caminhoIconsMenu}${JOGO_CONFIG.iconesMenu.pre}"> Pré-Escolar</a>
-                <a href="/jogos/1/" class="sidebar-item"><img src="${JOGO_CONFIG.caminhoIconsMenu}${JOGO_CONFIG.iconesMenu.ano1}"> 1º Ano</a>
-                <a href="/jogos/2/" class="sidebar-item"><img src="${JOGO_CONFIG.caminhoIconsMenu}${JOGO_CONFIG.iconesMenu.ano2}"> 2º Ano</a>
-                <a href="/jogos/3/" class="sidebar-item"><img src="${JOGO_CONFIG.caminhoIconsMenu}${JOGO_CONFIG.iconesMenu.ano3}"> 3º Ano</a>
-                <a href="/jogos/4/" class="sidebar-item"><img src="${JOGO_CONFIG.caminhoIconsMenu}${JOGO_CONFIG.iconesMenu.ano4}"> 4º Ano</a>
-            `;
-
-            const gamesGrid = document.getElementById('games-grid');
-            gamesGrid.innerHTML = ''; 
-
-            JOGO_CONFIG.listaJogos.forEach(jogo => {
-                const card = document.createElement('a');
-                card.href = jogo.link;
-                card.className = 'game-card';
-                card.innerHTML = `
-                    <div class="game-img">
-                        <img src="${JOGO_CONFIG.caminhoIconsJogos}${jogo.icon}" alt="${jogo.nome}">
-                    </div>
-                    <h2>${jogo.nome}</h2>
+                const menuContainer = document.getElementById('menu-items');
+                menuContainer.innerHTML = `
+                    <a href="/jogos/" class="sidebar-item">🏠 &nbsp; Início</a>
+                    <a href="/jogos/pre/" class="sidebar-item"><img src="${JOGO_CONFIG.caminhoIconsMenu}${JOGO_CONFIG.iconesMenu.pre}"> Pré-Escolar</a>
+                    <a href="/jogos/1/" class="sidebar-item"><img src="${JOGO_CONFIG.caminhoIconsMenu}${JOGO_CONFIG.iconesMenu.ano1}"> 1º Ano</a>
+                    <a href="/jogos/2/" class="sidebar-item"><img src="${JOGO_CONFIG.caminhoIconsMenu}${JOGO_CONFIG.iconesMenu.ano2}"> 2º Ano</a>
+                    <a href="/jogos/3/" class="sidebar-item"><img src="${JOGO_CONFIG.caminhoIconsMenu}${JOGO_CONFIG.iconesMenu.ano3}"> 3º Ano</a>
+                    <a href="/jogos/4/" class="sidebar-item"><img src="${JOGO_CONFIG.caminhoIconsMenu}${JOGO_CONFIG.iconesMenu.ano4}"> 4º Ano</a>
                 `;
-                gamesGrid.appendChild(card);
-            });
+
+                const gamesGrid = document.getElementById('games-grid');
+                gamesGrid.innerHTML = ''; 
+
+                JOGO_CONFIG.listaJogos.forEach(jogo => {
+                    const card = document.createElement('a');
+                    card.href = jogo.link;
+                    card.className = 'game-card';
+                    card.innerHTML = `
+                        <div class="game-img">
+                            <img src="${JOGO_CONFIG.caminhoIconsJogos}${jogo.icon}" alt="${jogo.nome}">
+                        </div>
+                        <h2>${jogo.nome}</h2>
+                    `;
+                    gamesGrid.appendChild(card);
+                });
+            }
         }
         window.onload = inicializar;
     </script>
