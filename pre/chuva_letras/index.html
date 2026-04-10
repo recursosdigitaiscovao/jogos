@@ -57,45 +57,44 @@
             padding: 10px; border: 2px solid #fce4ec; text-align: center;
         }
 
-        /* Ajuste: Áreas 90% (Rain) e 110% (Keyboard) */
+        /* Ajuste Vertical: 95% Area de Queda */
         .rain-area { 
-            flex: 0.9; 
+            flex: 0.95; 
             width: 100%; position: relative; background: var(--cor-fundo); 
             border-radius: 20px; border: 2px dashed var(--cor-principal); margin-top: 5px; overflow: hidden;
         }
         .falling-letter { 
             position: absolute; 
-            font-size: clamp(2.2rem, 6vh, 3rem); 
+            font-size: clamp(2.5rem, 7vh, 3.5rem); 
             font-weight: bold; 
             color: var(--cor-principal); 
             text-shadow: 2px 2px 0px white; 
             pointer-events: none; 
             white-space: nowrap;
-            letter-spacing: 4px; /* Letras uniformes */
-            text-transform: none;
+            letter-spacing: 5px;
         }
 
+        /* Ajuste Vertical: 105% Teclado */
         .keyboard { 
-            flex: 1.1; 
+            flex: 1.05; 
             display: flex; flex-direction: column; justify-content: space-evenly;
-            gap: 8px; padding: 12px 8px; width: 100%; background: #f2f2f2; 
+            gap: 6px; padding: 8px; width: 100%; background: #f2f2f2; 
             border-radius: 15px; margin-top: 8px; flex-shrink: 0; box-sizing: border-box;
         }
-        .kb-row { display: flex; justify-content: center; gap: 6px; height: 30%; }
+        .kb-row { display: flex; justify-content: center; gap: 4px; height: 31%; }
         .key { 
-            background: white; border: 1px solid #ccc; border-radius: 10px; 
+            background: white; border: 1px solid #ccc; border-radius: 8px; 
             flex: 1; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 1.3rem; cursor: pointer; 
-            box-shadow: 0 4px 0 #ddd; transition: 0.1s; color: #444; height: 100%;
-            max-width: 60px; /* Mantém uniformidade visual */
+            font-weight: bold; font-size: 1.2rem; cursor: pointer; 
+            box-shadow: 0 3px 0 #ddd; transition: 0.1s; color: #444; height: 100%;
+            max-width: 55px;
         }
         .key:active { transform: translateY(2px); box-shadow: none; background: var(--cor-principal); color: white; }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { 
             background: white; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); 
-            width: calc(100% - 50px);
-            max-width: 400px; padding: 35px 25px; box-sizing: border-box;
+            width: calc(100% - 50px); max-width: 400px; padding: 35px 25px; box-sizing: border-box;
         }
 
         .anim-float { animation: float 2.5s infinite ease-in-out; }
@@ -147,7 +146,7 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.1rem; margin-bottom: 15px;">Clica nas letras que estão a cair!</p>
+                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.1rem; margin-bottom: 15px;">Clica nas teclas das letras que estão a cair!</p>
                     <div class="anim-float" id="preview-letter" style="font-size: 4rem; font-weight: bold; color: var(--cor-principal); text-shadow: 2px 2px 0 white;">abc</div>
                 </div>
                 <h2 style="color:var(--cor-principal); text-align:center; font-size:1.3rem; margin:10px 0; font-weight:bold;">Chuva de Letras</h2>
@@ -297,13 +296,11 @@
             const el = document.createElement('div');
             el.className = 'falling-letter'; 
             el.innerText = charList.join("");
-            el.style.left = Math.random() * (container.clientWidth - 120) + 20 + 'px';
+            el.style.left = Math.random() * (container.clientWidth - 130) + 20 + 'px';
             el.style.top = '-60px';
             container.appendChild(el);
             
-            // Agora guardamos o array de caracteres restantes
             fallingItems.push({ el, charsRemaining: charList, y: -60 });
-            
             spawnTimeout = setTimeout(spawnLoop, Math.max(2600, 5000 - (currentLevel * 400)));
         }
 
@@ -320,7 +317,7 @@
                 if (item.y > containerHeight) {
                     item.el.remove();
                     fallingItems.splice(i, 1);
-                    handleResult(false);
+                    handleResult(false); // ERRO: SÓ AQUI TOCA O SOM DE ERRO E BOLA VERMELHA
                 }
             }
             animationId = requestAnimationFrame(fallLoop);
@@ -331,7 +328,7 @@
             let foundIdx = -1;
             let maxY = -100;
 
-            // Procurar o item mais baixo que contenha a letra
+            // Procurar o item mais baixo que contém a letra pressionada
             fallingItems.forEach((item, idx) => {
                 if(item.charsRemaining.includes(pressedChar) && item.y > maxY) {
                     maxY = item.y; foundIdx = idx;
@@ -340,26 +337,23 @@
 
             if(foundIdx !== -1) {
                 const item = fallingItems[foundIdx];
-                // Remover apenas a primeira ocorrência daquela letra no item
                 const charIdx = item.charsRemaining.indexOf(pressedChar);
                 item.charsRemaining.splice(charIdx, 1);
                 
-                // Atualizar o texto visual
+                // Feedback Sonoro de ACERTO imediato
+                document.getElementById('sound-win').currentTime = 0;
+                document.getElementById('sound-win').play().catch(()=>{});
+
                 item.el.innerText = item.charsRemaining.join("");
 
-                // Se não sobrarem letras no item, ganha o ponto
+                // Se todas as letras do item foram clicadas
                 if(item.charsRemaining.length === 0) {
                     item.el.remove();
                     fallingItems.splice(foundIdx, 1);
-                    handleResult(true);
+                    handleResult(true); // BOLA VERDE E PONTOS
                 }
-            } else {
-                // Erro imediato se clicar em letra errada
-                document.getElementById('sound-lose').currentTime = 0;
-                document.getElementById('sound-lose').play().catch(()=>{});
-                // Penalização visual na bola atual se quiseres que clique errado também conte como falha:
-                // handleResult(false); 
             }
+            // NOTA: Se o clique for errado, não fazemos nada. A criança pode tentar de novo.
         }
 
         function handleResult(success) {
@@ -369,13 +363,13 @@
 
             if(success) {
                 points += 10;
-                document.getElementById('sound-win').currentTime = 0;
-                document.getElementById('sound-win').play().catch(()=>{});
+                // Bola Verde
                 star.style.background = "var(--cor-acerto)";
                 star.style.borderColor = "var(--cor-acerto)";
                 star.innerText = "✔";
             } else {
                 if(points > 0) points -= 2;
+                // Som de Erro e Bola Vermelha apenas quando a letra foge
                 document.getElementById('sound-lose').currentTime = 0;
                 document.getElementById('sound-lose').play().catch(()=>{});
                 star.style.background = "var(--cor-erro)";
