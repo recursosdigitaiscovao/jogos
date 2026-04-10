@@ -7,15 +7,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --cor-principal: #FF9100; /* Alterado para a cor solicitada */
-            --cor-vibrante: #d47a92;  
-            --cor-fundo: #fff5f7;      
+            --cor-principal: #FF9100; /* Cor do Header (mantida conforme pedido anterior) */
+            --cor-azul-tema: #5EAAEA;  /* Nova cor solicitada */
+            --cor-fundo: #EBF4FF;      /* Nova cor de fundo solicitada */
             --cor-texto: #e691a7;      
             --cor-vermelho: #ff4757; 
             --header-height: 70px;
-            --cor-jogo-verde: #e691a7;  
-            --cor-erro: #ff4757;
             --cor-acerto: #2ed573;
+            --cor-erro: #ff4757;
         }
 
         @keyframes fadeIn {
@@ -27,36 +26,34 @@
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
-        
-        /* Botão Voltar com a cor solicitada */
         .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; box-shadow: 0 3px 0 #e68200; transition: 0.2s; }
-        .back-btn:active { transform: translateY(2px); box-shadow: none; }
         
-        /* Menu Lateral (Hamburger) */
+        /* Menu Lateral */
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        .sidebar-rd { position: fixed; bottom: -300px; left: 0; width: 100%; height: 300px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
-        .sidebar-rd.active { bottom: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
-        .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; }
-        
-        /* Imagens do menu corrigidas (não largas) */
-        .sidebar-item img { width: 24px; height: 24px; object-fit: contain; margin-right: 12px; filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.1)); }
+        .sidebar-item:hover { background-color: var(--cor-azul-tema); color: white !important; }
+        .sidebar-item img { width: 24px; height: 24px; object-fit: contain; margin-right: 12px; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
+        .main-content { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
         .screen.active { display: flex; }
 
-        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-jogo-verde); display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden; position: relative; }
+        /* Card Principal com fundo e bordas novas */
+        .game-card { background: var(--cor-fundo); border-radius: 30px; padding: 20px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden; position: relative; }
         
-        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center;}
-        .intro-btns { display: flex; gap: 10px; width: 100%; align-items: center; margin-top: auto; padding-top: 10px; border-top: 2px dashed #fce4ec; }
+        /* Caixa de explicação (branca para contrastar com o fundo do card) */
+        .explanation-box { background: white; border-radius: 20px; flex: 1; margin-bottom: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #d0e4f7; text-align: center;}
+        
+        #intro-cat-title { color: var(--cor-azul-tema); font-size: 2rem; margin: 0 0 15px 0; font-weight: 900; text-align: center; }
 
-        /* Timer e Pontos sem bold */
-        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; font-size: 0.9rem; font-weight: normal; margin-bottom: 10px; border-bottom: 1px solid #eee; }
+        .intro-btns { display: flex; gap: 15px; width: 100%; align-items: center; padding-top: 15px; border-top: 2px dashed #d0e4f7; }
+
+        /* Jogo UI */
+        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; font-size: 0.9rem; font-weight: normal; margin-bottom: 10px; border-bottom: 1px solid #d0e4f7; }
         .stars-container { display: flex; gap: 6px; }
         .star-dot { width: 18px; height: 18px; border: 2px solid #ddd; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; font-weight: bold; }
         
@@ -64,30 +61,25 @@
         .game-title-header { width: 100%; background: white; border: 4px solid #000; text-align: center; font-size: 1.8rem; font-weight: 900; margin-bottom: 15px; padding: 8px; box-shadow: 4px 4px 0 rgba(0,0,0,0.1); }
         
         .img-display { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
-        .img-display img, #intro-cat-img { max-width: 85%; max-height: 280px; object-fit: contain; filter: drop-shadow(8px 10px 10px rgba(0,0,0,0.2)); }
+        .img-display img, #intro-cat-img { max-width: 85%; max-height: 250px; object-fit: contain; filter: drop-shadow(8px 10px 10px rgba(0,0,0,0.15)); }
 
         .game-footer { width: 100%; margin-top: 10px; }
 
+        /* Botões Numéricos */
         .contar-container { display: flex; width: 100%; border: 4px solid #000; border-radius: 10px; overflow: hidden; box-shadow: 0 6px 0 #000; }
         .btn-num { flex: 1; height: 80px; background: white; border-right: 4px solid #000; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 900; cursor: pointer; transition: 0.1s; }
         .btn-num:last-child { border-right: none; }
         .btn-num:active { background: #eee; transform: translateY(2px); }
 
-        .slots-area { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; }
-        .slot { width: 70px; height: 65px; border: 4px solid #000; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.05); }
-        .slot.filled { background: var(--cor-acerto); color: white; border-color: #000; }
+        /* Botão Jogar com cor azul solicitada */
+        .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 16px; border-radius: 20px; cursor: pointer; flex: 1; font-family: 'Fredoka'; box-shadow: 0 5px 0 #4a96d1; transition: 0.2s; }
+        .btn-play:active { transform: translateY(3px); box-shadow: 0 2px 0 #4a96d1; }
         
-        .syllable-options { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-        .syllable-btn { min-width: 70px; height: 65px; border: 4px solid #000; background: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 900; cursor: pointer; padding: 0 12px; box-shadow: 6px 6px 0 #000; transition: 0.1s; border-radius: 5px; }
-        .syllable-btn:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0 #000; }
-        .syllable-btn.used { visibility: hidden; }
+        .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
 
-        .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 14px; border-radius: 20px; cursor: pointer; flex: 1; font-family: 'Fredoka'; box-shadow: 0 5px 0 #d63031; transition: 0.2s; }
-        .btn-play:active { transform: translateY(3px); box-shadow: 0 2px 0 #d63031; }
-        
-        /* Botão RD apenas com a imagem (limpo) */
-        .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; box-shadow: none; }
-        .btn-rd-ui img { width: 45px; height: 45px; object-fit: contain; }
+        /* Sidebar RD */
+        .sidebar-rd { position: fixed; bottom: -300px; left: 0; width: 100%; height: 300px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
+        .sidebar-rd.active { bottom: 0; }
 
         .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 6px solid var(--cor-acerto); box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
     </style>
@@ -96,7 +88,6 @@
 
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
     
-    <!-- Menu Lateral Hamburguer -->
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
@@ -105,45 +96,41 @@
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
         <a href="/jogos/pre" class="sidebar-item"><img class="menu-pre" src=""> Pré-Escolar</a>
         <a href="/jogos/1" class="sidebar-item"><img class="menu-1" src=""> 1º Ano</a>
-        <a href="/jogos/2" class="sidebar-item"><img class="menu-2" src=""> 2º Ano</a>
-        <a href="/jogos/3" class="sidebar-item"><img class="menu-3" src=""> 3º Ano</a>
-        <a href="/jogos/4" class="sidebar-item"><img class="menu-4" src=""> 4º Ano</a>
     </div>
 
-    <!-- Sidebar RD (Níveis) -->
     <div class="sidebar-rd" id="sidebar-rd">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3 style="margin:0; color:var(--cor-principal);">Escolhe o Jogo</h3>
+            <h3 style="margin:0; color:var(--cor-azul-tema);">Escolhe o Jogo</h3>
             <button onclick="toggleRD()" style="border:none; background:none; font-size:24px;">✕</button>
         </div>
         <div id="categorias-list" style="max-height: 220px; overflow-y: auto;"></div>
     </div>
 
     <header class="nav-bar">
-        <!-- Cor do ícone Hamburger alterada -->
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:#FF9100; cursor:pointer;">☰</button>
         <div style="display:flex; align-items:center; gap:10px;">
-            <img id="header-icon" src="" style="height:32px; filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.1));">
-            <!-- Título alterado e cor ajustada -->
+            <img id="header-icon" src="" style="height:32px;">
             <h1 style="font-size:1.1rem; color:#FF9100; margin: 0;">Português - 1º Ano</h1>
         </div>
         <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
 
     <main class="main-content">
+        <!-- Tela Inicial Reorganizada -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
                     <img id="intro-cat-img" src="">
-                    <h2 id="intro-cat-title" style="color:var(--cor-texto); font-size: 1.8rem; margin: 15px 0 0 0;"></h2>
-                    <p style="color:#aaa;">Estás pronto?</p>
+                    <p style="color:#aaa; margin-top: 10px;">Estás pronto?</p>
                 </div>
                 
+                <!-- Título movido para fora da caixa e acima do botão -->
+                <h2 id="intro-cat-title"></h2>
+
                 <div class="intro-btns">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
-                    <!-- Botão RD Limpo -->
                     <button class="btn-rd-ui" onclick="toggleRD()">
-                        <img class="btn-rd-img-ref" src="" style="width:60px; height:60px;">
+                        <img class="btn-rd-img-ref" src="" style="width:55px; height:55px;">
                     </button>
                 </div>
             </div>
@@ -156,7 +143,6 @@
                     <div class="stars-container" id="stars-bar"></div>
                     <div style="display:flex; align-items:center; gap:12px;">
                         PTS: <span id="points">0</span>
-                        <!-- Botão RD Limpo no Topo -->
                         <button class="btn-rd-ui" onclick="toggleRD()">
                             <img class="btn-rd-img-ref" src="" style="width:30px; height:30px;">
                         </button>
@@ -194,9 +180,6 @@
             document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
             document.querySelector('.menu-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
             document.querySelector('.menu-1').src = p + JOGO_CONFIG.iconesMenu.ano1;
-            document.querySelector('.menu-2').src = p + JOGO_CONFIG.iconesMenu.ano2;
-            document.querySelector('.menu-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
-            document.querySelector('.menu-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
             
             document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             setupRDMenu();
@@ -246,12 +229,8 @@
             const footer = document.getElementById('game-interaction-area');
             const header = document.getElementById('word-header');
             
-            if(cat.tipo === 'ordenar') {
-                header.style.display = 'none';
-            } else {
-                header.style.display = 'block';
-                header.innerText = item.nome;
-            }
+            if(cat.tipo === 'ordenar') header.style.display = 'none';
+            else { header.style.display = 'block'; header.innerText = item.nome; }
 
             document.getElementById('current-img').src = JOGO_CONFIG.caminhoImg + item.img;
             footer.innerHTML = '';
@@ -269,10 +248,10 @@
                 });
                 footer.appendChild(grid);
             } else {
+                // Lógica de ordenar sílabas (mesma do código original)
                 const slotsArea = document.createElement('div');
                 slotsArea.className = 'slots-area';
                 const syllaArray = item.divisao.split('-');
-                
                 syllaArray.forEach(() => {
                     const slot = document.createElement('div');
                     slot.className = 'slot';
@@ -319,14 +298,11 @@
                 points++;
                 document.getElementById('points').innerText = points;
                 dots[currentQuestion].style.background = "var(--cor-acerto)";
-                dots[currentQuestion].style.borderColor = "var(--cor-acerto)";
                 dots[currentQuestion].innerText = "✔";
             } else {
                 dots[currentQuestion].style.background = "var(--cor-erro)";
-                dots[currentQuestion].style.borderColor = "var(--cor-erro)";
                 dots[currentQuestion].innerText = "X";
             }
-
             currentQuestion++;
             setTimeout(() => {
                 if(currentQuestion < 5) loadRound();
@@ -344,16 +320,13 @@
 
         function endGame() {
             clearInterval(timerInterval);
-            const rel = JOGO_CONFIG.relatorio;
-            document.getElementById('modal-msg').innerHTML = `<p>${rel.pontosTotal} ${points}/5</p><p>${rel.tempoTotal} <b>${document.getElementById('timer').innerText}</b></p>`;
+            document.getElementById('modal-msg').innerHTML = `<p>Pontos: ${points}/5</p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p>`;
             document.getElementById('modal').style.display = 'flex';
         }
 
         function resetGame() {
             currentQuestion = 0; points = 0; seconds = 0;
             clearInterval(timerInterval);
-            document.getElementById('timer').innerText = "00:00";
-            document.getElementById('points').innerText = "0";
             document.getElementById('intro-screen').classList.add('active');
             document.getElementById('game-screen').classList.remove('active');
             document.getElementById('modal').style.display = 'none';
