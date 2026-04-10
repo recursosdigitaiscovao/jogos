@@ -26,7 +26,7 @@
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; cursor: pointer; transition: 0.2s; font-weight: 500; }
-        .sidebar-item:hover { background-color: var(--cor-principal) !important; color: white !important; } /* Hover Rosa */
+        .sidebar-item:hover { background-color: var(--cor-principal) !important; color: white !important; }
         .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
 
         .sidebar-rd { position: fixed; bottom: -300px; left: 0; width: 100%; height: 300px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
@@ -34,17 +34,21 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* --- Layout & Game Area --- */
+        /* --- Layout --- */
         .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; }
         .screen.active { display: flex; }
-        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal); width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; }
+        
+        .game-card { 
+            background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal); 
+            width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; 
+            display: flex; flex-direction: column; overflow: hidden;
+        }
 
-        /* --- Labirinto Estilo Blueprint --- */
+        /* --- Labirinto Blueprint --- */
         .maze-outer { 
             flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; overflow: hidden; 
-            background: var(--cor-fundo); /* Rosa da animação */
-            border-radius: 20px; border: 2px solid #fce4ec; margin-top: 5px;
+            background: var(--cor-fundo); border-radius: 20px; border: 2px solid #fce4ec; margin-top: 5px;
         }
         #maze-container { 
             display: grid; background: white; 
@@ -59,17 +63,16 @@
         .w-b { border-bottom: 4px solid var(--maze-color, #333); }
         .w-l { border-left: 4px solid var(--maze-color, #333); }
 
-        /* --- Controlos Minimalistas (Setas Cinzentas) --- */
+        /* --- Controlos --- */
         .d-pad { display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(2, 50px); gap: 15px; justify-content: center; margin: 10px 0; flex-shrink: 0; }
         .btn-dir { background: none; border: none; color: #888; font-size: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; touch-action: none; transition: 0.1s; }
         .btn-dir:active { transform: scale(0.9); color: var(--cor-principal); }
 
-        /* --- Popups & Feedback --- */
-        .help-card { padding-left: 25px; padding-right: 25px; } /* Padding L/R 25px */
+        /* --- Áreas de Feedback & Explicação --- */
         .explanation-box { 
             background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            padding: 10px 10px 0 10px; /* Padding Topo e L/R 10px */
+            padding: 10px; /* Requisito: Padding 10px em todo o lado (igual ao topo) */
             border: 2px solid #fce4ec; text-align: center;
         }
         
@@ -77,7 +80,7 @@
         .modal-content { 
             background: white; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); 
             width: 85%; max-width: 350px; 
-            padding: 30px 25px; /* Padding Feedback 25px L/R */
+            padding: 30px 25px; /* Requisito: Padding 25px Esquerda e Direita */
         }
 
         .anim-pula { animation: jump 1.2s infinite ease-in-out; }
@@ -124,7 +127,7 @@
 
     <main class="main-content">
         <section id="intro-screen" class="screen active">
-            <div class="game-card help-card">
+            <div class="game-card">
                 <div class="explanation-box">
                     <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin-bottom: 20px;">Leva o animal até à comida!</p>
                     <div style="display:flex; gap:35px; align-items:center;">
@@ -317,34 +320,23 @@
             if((dx===0 && dy===-1 && c.walls.t) || (dx===1 && dy===0 && c.walls.r) || (dx===0 && dy===1 && c.walls.b) || (dx===-1 && dy===0 && c.walls.l)) return false;
             let nx = playerPos.x + dx, ny = playerPos.y + dy;
             if(nx<0 || ny<0 || nx>=mazeGrid.length || ny>=mazeGrid.length) return false;
-            
             playerPos = {x:nx, y:ny};
             
-            // Se tocar no alimento, ele desaparece ANTES de mover o player para cima
             if(nx===exitPos.x && ny===exitPos.y) {
-                const f = document.getElementById('food-img'); 
-                if(f) f.style.display = 'none'; // Requisito: Alimento desaparece
+                const f = document.getElementById('food-img'); if(f) f.style.display = 'none';
                 document.getElementById(`c-${nx}-${ny}`).appendChild(document.getElementById('player-img'));
-                endRound(true); 
-                return false; 
+                endRound(true); return false; 
             }
             
             document.getElementById(`c-${nx}-${ny}`).appendChild(document.getElementById('player-img'));
-            
             if(mazeGrid[ny][nx].obstacle) { endRound(false); return false; }
             return true;
         }
 
         function endRound(success) {
             canMove = false; handleMoveStop();
-            if(success) { 
-                points += 20; 
-                document.getElementById('sound-win').play().catch(()=>{}); 
-            } else { 
-                if(points > 0) points -= 5; 
-                document.getElementById('sound-lose').play().catch(()=>{});
-                document.getElementById('player-img').style.opacity = '0.4'; 
-            }
+            if(success) { points += 20; document.getElementById('sound-win').play().catch(()=>{}); } 
+            else { if(points > 0) points -= 5; document.getElementById('sound-lose').play().catch(()=>{}); document.getElementById('player-img').style.opacity = '0.4'; }
             document.getElementById('points').innerText = points;
             const star = document.getElementById('stars-bar').children[currentLevel-1];
             star.style.background = success ? "var(--cor-acerto)" : "var(--cor-erro)";
