@@ -14,15 +14,15 @@ const JOGO_CONFIG = {
         categorias: {
             cao: { 
                 nome: "Cão", sprite: "l_cao.png", objetivo: "l_comida_cao.png", 
-                corLabirinto: "#3498db" // Azul para o cão
+                corLabirinto: "#3498db" 
             },
             gato: { 
                 nome: "Gato", sprite: "l_gato.png", objetivo: "l_comida_gato.png", 
-                corLabirinto: "#e67e22" // Laranja para o gato
+                corLabirinto: "#e67e22" 
             },
             passaro: { 
                 nome: "Pássaro", sprite: "l_passaro.png", objetivo: "l_comida_passaro.png", 
-                corLabirinto: "#27ae60" // Verde para o pássaro
+                corLabirinto: "#27ae60" 
             }
         }
     },
