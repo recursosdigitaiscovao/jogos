@@ -14,6 +14,7 @@
             --cor-vermelho: #ff4757; 
             --header-height: 70px;
             --cor-acerto: #2ed573;
+            --cor-erro: #ff4757;
         }
 
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
@@ -37,16 +38,11 @@
         .screen.active { display: flex; }
         .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal); width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* --- Maze Centralizado (Adaptação a qualquer monitor) --- */
+        /* --- Labirinto --- */
         .maze-area { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; overflow: hidden; }
         .maze-grid { 
-            display: grid; 
-            background: white; 
-            border: 2px dashed var(--cor-principal); 
-            border-radius: 15px; 
-            width: 90vmin; height: 90vmin; 
-            max-width: 48vh; max-height: 48vh; 
-            margin: auto;
+            display: grid; background: white; border: 2px dashed var(--cor-principal); border-radius: 15px; 
+            width: 90vmin; height: 90vmin; max-width: 46vh; max-height: 46vh; margin: auto;
         }
         .cell { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
         .cell img { max-width: 80%; max-height: 80%; object-fit: contain; position: absolute; z-index: 5; }
@@ -54,23 +50,21 @@
 
         /* D-Pad */
         .d-pad { display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(2, 50px); gap: 10px; justify-content: center; margin-top: 10px; padding-bottom: 5px; flex-shrink: 0; }
-        .btn-dir { background: var(--cor-principal); color: white; border: none; border-radius: 12px; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #c07a8c; }
+        .btn-dir { background: var(--cor-principal); color: white; border: none; border-radius: 12px; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #c07a8c; touch-action: none; }
         .btn-dir:active { transform: translateY(3px); box-shadow: none; background: var(--cor-vibrante); }
 
-        /* UI */
+        /* Intro */
         .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center;}
-        .anim-jump { animation: jump 1.5s infinite; }
+        .anim-pula { animation: jump 1.5s infinite; }
         @keyframes jump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
         .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
         .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        
-        /* RD Mini Corrigido */
-        .btn-rd-mini { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 10px; flex-shrink: 0; }
+        .btn-rd-mini { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 10px; }
         .btn-rd-mini img { width: 20px !important; height: 20px !important; margin: 0 !important; }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-acerto); width: 85%; max-width: 350px; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 85%; max-width: 350px; }
     </style>
 </head>
 <body>
@@ -108,12 +102,13 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin-bottom: 20px;">Leva o animal até à comida!</p>
-                    <div style="display:flex; gap:35px; align-items:center;">
-                        <img id="intro-sprite" class="anim-jump" src="" style="width:80px;">
+                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem;">Leva o animal até à comida!</p>
+                    <div style="display:flex; gap:30px; align-items:center; margin-top:15px;">
+                        <img id="intro-sprite" class="anim-pula" src="" style="width:80px;">
                         <span style="font-size:28px; color:var(--cor-principal);">➔</span>
                         <img id="intro-food" src="" style="width:80px;">
                     </div>
+                    <p style="font-size:0.85rem; color:#888; margin-top:15px;">Cuidado com as pedras e buracos!</p>
                 </div>
                 <h2 style="color:var(--cor-principal); text-align:center; font-size:1.4rem; margin:10px 0; font-weight:bold;">O Labirinto</h2>
                 <div style="display:flex; gap:10px; width:100%;">
@@ -137,10 +132,10 @@
                     <div id="maze-container" class="maze-grid"></div>
                 </div>
                 <div class="d-pad">
-                    <div style="grid-column:2"><button class="btn-dir" onmousedown="startContinuousMove(0,-1)" onmouseup="stopMove()" ontouchstart="startContinuousMove(0,-1)" ontouchend="stopMove()">▲</button></div>
-                    <div style="grid-row:2"><button class="btn-dir" onmousedown="startContinuousMove(-1,0)" onmouseup="stopMove()" ontouchstart="startContinuousMove(-1,0)" ontouchend="stopMove()">◀</button></div>
-                    <div style="grid-row:2"><button class="btn-dir" onmousedown="startContinuousMove(0,1)" onmouseup="stopMove()" ontouchstart="startContinuousMove(0,1)" ontouchend="stopMove()">▼</button></div>
-                    <div style="grid-row:2"><button class="btn-dir" onmousedown="startContinuousMove(1,0)" onmouseup="stopMove()" ontouchstart="startContinuousMove(1,0)" ontouchend="stopMove()">▶</button></div>
+                    <div style="grid-column:2"><button class="btn-dir" onmousedown="handleMovePress(0,-1)" onmouseup="handleMoveRelease()" ontouchstart="handleMovePress(0,-1)" ontouchend="handleMoveRelease()">▲</button></div>
+                    <div style="grid-row:2"><button class="btn-dir" onmousedown="handleMovePress(-1,0)" onmouseup="handleMoveRelease()" ontouchstart="handleMovePress(-1,0)" ontouchend="handleMoveRelease()">◀</button></div>
+                    <div style="grid-row:2"><button class="btn-dir" onmousedown="handleMovePress(0,1)" onmouseup="handleMoveRelease()" ontouchstart="handleMovePress(0,1)" ontouchend="handleMoveRelease()">▼</button></div>
+                    <div style="grid-row:2"><button class="btn-dir" onmousedown="handleMovePress(1,0)" onmouseup="handleMoveRelease()" ontouchstart="handleMovePress(1,0)" ontouchend="handleMoveRelease()">▶</button></div>
                 </div>
             </div>
         </section>
@@ -148,9 +143,9 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 style="color:var(--cor-acerto);">Parabéns!</h2>
+            <h2 id="modal-title" style="color:var(--cor-acerto);">Parabéns!</h2>
             <div id="modal-msg" style="margin: 20px 0;"></div>
-            <button class="btn-play" onclick="location.reload()" style="background:var(--cor-acerto);">Jogar de Novo</button>
+            <button class="btn-play" onclick="location.reload()" style="background:var(--cor-principal);">Jogar de Novo</button>
         </div>
     </div>
 
@@ -158,7 +153,7 @@
     <script>
         let currentLevel = 1, points = 0, seconds = 0, timerInterval;
         let catKey = "cao", playerPos = {x:0, y:0}, exitPos = {x:0, y:0};
-        let canMove = true, currentMazeData = [], moveTimer = null;
+        let canMove = true, currentMazeData = [], moveTimer = null, delayTimer = null;
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
@@ -180,7 +175,7 @@
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
                 item.innerHTML = `<img src="${JOGO_CONFIG.labirinto.caminho + cat.sprite}"> ${cat.nome}`;
-                item.onclick = () => { selectCategory(k); resetGameTotal(); };
+                item.onclick = () => { selectCategory(k); if(document.getElementById('game-screen').classList.contains('active')) resetGameTotal(); };
                 list.appendChild(item);
             });
         }
@@ -194,7 +189,6 @@
         }
 
         function resetGameTotal() {
-            if(!document.getElementById('game-screen').classList.contains('active')) return;
             clearInterval(timerInterval);
             currentLevel = 1; points = 0; seconds = 0;
             document.getElementById('points').innerText = "0";
@@ -225,7 +219,6 @@
             }
         }
 
-        // Algoritmo Robusto de Geração de Labirintos (Tamanho Ímpar obrigatório para paredes corretas)
         function generateMaze(size) {
             let maze = Array(size).fill().map(() => Array(size).fill(1));
             function walk(x, y) {
@@ -234,22 +227,29 @@
                 for(let [dx, dy] of dirs) {
                     let nx = x + dx, ny = y + dy;
                     if(nx >= 0 && nx < size && ny >= 0 && ny < size && maze[ny][nx] === 1) {
-                        maze[y + dy/2][x + dx/2] = 0;
-                        walk(nx, ny);
+                        maze[y + dy/2][x + dx/2] = 0; walk(nx, ny);
                     }
                 }
             }
             walk(0, 0);
-            maze[0][0] = 2; // Entrada
-            maze[size-1][size-1] = 3; // Saída
-            // Garantir caminho para a saída
+            maze[0][0] = 2; maze[size-1][size-1] = 3;
             if(maze[size-2][size-1] === 1 && maze[size-1][size-2] === 1) maze[size-2][size-1] = 0;
+
+            // Adicionar Obstáculos em caminhos livres (valor 0)
+            let numObstaculos = currentLevel - 1; 
+            while(numObstaculos > 0) {
+                let rx = Math.floor(Math.random() * size);
+                let ry = Math.floor(Math.random() * size);
+                if(maze[ry][rx] === 0 && (rx !== 0 || ry !== 0) && (rx !== size-1 || ry !== size-1)) {
+                    maze[ry][rx] = 4; // 4 = Obstáculo
+                    numObstaculos--;
+                }
+            }
             return maze;
         }
 
         function loadLevel() {
             canMove = true;
-            // Tamanhos Ímpares para Ronda 1-5: 7, 9, 11, 13, 15
             const size = 5 + (currentLevel * 2);
             currentMazeData = generateMaze(size);
             const container = document.getElementById('maze-container');
@@ -275,50 +275,84 @@
                     } else if(val === 3) {
                         exitPos = {x,y};
                         cell.innerHTML = `<img id="food-img" src="${path + cat.objetivo}">`;
+                    } else if(val === 4) {
+                        const obs = JOGO_CONFIG.labirinto.obstaculos[Math.floor(Math.random() * 2)];
+                        cell.innerHTML = `<img src="${path + obs}">`;
                     }
                     container.appendChild(cell);
                 }
             }
         }
 
-        function startContinuousMove(dx, dy) {
-            stopMove();
-            if(!move(dx, dy)) return;
-            moveTimer = setInterval(() => { if(!move(dx, dy)) stopMove(); }, 90);
+        // Lógica de Movimento Refinada
+        function handleMovePress(dx, dy) {
+            if(!canMove) return;
+            move(dx, dy); // Um passo imediato
+            delayTimer = setTimeout(() => {
+                moveTimer = setInterval(() => { if(!move(dx, dy)) handleMoveRelease(); }, 90);
+            }, 300); // Se segurar mais de 300ms, começa a deslizar
         }
 
-        function stopMove() { clearInterval(moveTimer); }
+        function handleMoveRelease() {
+            clearTimeout(delayTimer);
+            clearInterval(moveTimer);
+        }
 
         function move(dx, dy) {
             if(!canMove) return false;
             const nX = playerPos.x + dx, nY = playerPos.y + dy;
-            if(nY >= 0 && nY < currentMazeData.length && nX >= 0 && nX < currentMazeData[0].length && currentMazeData[nY][nX] !== 1) {
-                const newCell = document.getElementById(`c-${nX}-${nY}`);
-                newCell.appendChild(document.getElementById('player-img'));
-                playerPos = {x: nX, y: nY};
-                if(nX === exitPos.x && nY === exitPos.y) { winLevel(); return false; }
-                return true;
+            if(nY >= 0 && nY < currentMazeData.length && nX >= 0 && nX < currentMazeData[0].length) {
+                const val = currentMazeData[nY][nX];
+                if(val !== 1) {
+                    const newCell = document.getElementById(`c-${nX}-${nY}`);
+                    newCell.appendChild(document.getElementById('player-img'));
+                    playerPos = {x: nX, y: nY};
+                    
+                    if(val === 3) { winLevel(); return false; } // Comida
+                    if(val === 4) { loseLevel(); return false; } // Obstáculo
+                    return true;
+                }
             }
             return false;
         }
 
         function winLevel() {
-            canMove = false; stopMove();
+            canMove = false; handleMoveRelease();
             points += 20;
             document.getElementById('points').innerText = points;
             document.getElementById('sound-win').play().catch(()=>{});
             const food = document.getElementById('food-img');
             if(food) food.style.display = 'none';
 
-            const star = document.getElementById('stars-bar').children[currentLevel-1];
-            star.style.background = "var(--cor-acerto)";
-            star.style.borderColor = "var(--cor-acerto)";
-            star.innerText = "✔";
+            updateStar(currentLevel - 1, true);
+            advanceRound();
+        }
 
+        function loseLevel() {
+            canMove = false; handleMoveRelease();
+            if(points > 0) points -= 5;
+            document.getElementById('points').innerText = points;
+            
+            updateStar(currentLevel - 1, false);
+            const pImg = document.getElementById('player-img');
+            if(pImg) pImg.style.opacity = "0.5";
+            
+            advanceRound();
+        }
+
+        function updateStar(idx, success) {
+            const star = document.getElementById('stars-bar').children[idx];
+            star.style.background = success ? "var(--cor-acerto)" : "var(--cor-erro)";
+            star.style.borderColor = success ? "var(--cor-acerto)" : "var(--cor-erro)";
+            star.innerText = success ? "✔" : "✖";
+        }
+
+        function advanceRound() {
             setTimeout(() => {
                 if(currentLevel < 5) { currentLevel++; loadLevel(); } 
                 else {
                     clearInterval(timerInterval);
+                    document.getElementById('modal-title').innerText = points >= 60 ? "Parabéns!" : "Fim do Jogo!";
                     document.getElementById('modal-msg').innerHTML = `<p>Pontos: ${points}</p><p>Tempo: ${document.getElementById('timer').innerText}</p>`;
                     document.getElementById('modal').style.display = 'flex';
                 }
