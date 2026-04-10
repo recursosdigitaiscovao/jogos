@@ -11,7 +11,7 @@ const JOGO_CONFIG = {
     categorias: {
         contar: {
             nome: "Contar Sílabas",
-            img: "maca.png",
+            img: "vaca.png",
             tipo: "contar",
             itens: [
                 { nome: "VACA", img: "animaisdomesticos/vaca.png", divisao: "VA-CA" },
@@ -24,7 +24,7 @@ const JOGO_CONFIG = {
         },
         ordenar: {
             nome: "Ordenar Sílabas",
-            img: "cao.png",
+            img: "caneta.png",
             tipo: "ordenar",
             itens: [
                 { nome: "PORCO", img: "animaisdomesticos/porco.png", divisao: "POR-CO" },
