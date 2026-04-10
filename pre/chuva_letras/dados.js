@@ -10,9 +10,12 @@ const JOGO_CONFIG = {
     },
     letras: {
         categorias: {
-            vogais: { nome: "Vogais", lista: "AEIOU" },
-            consoantes: { nome: "Consoantes", lista: "BCDFGHJKLMNPQRSTVWXYZ" },
-            alfabeto: { nome: "Alfabeto", lista: "ABCDEFGHIJKLMNOPQRSTUVWXYZ" }
+            vogais_min: { nome: "Vogais (abc)", lista: "aeiou", modo: "min" },
+            vogais_mai: { nome: "Vogais (ABC)", lista: "AEIOU", modo: "mai" },
+            consoantes_min: { nome: "Consoantes (abc)", lista: "bcdfghjklmnpqrstvwxyz", modo: "min" },
+            consoantes_mai: { nome: "Consoantes (ABC)", lista: "BCDFGHJKLMNPQRSTVWXYZ", modo: "mai" },
+            alfabeto_min: { nome: "Alfabeto (abc)", lista: "abcdefghijklmnopqrstuvwxyz", modo: "min" },
+            alfabeto_mai: { nome: "Alfabeto (ABC)", lista: "ABCDEFGHIJKLMNOPQRSTUVWXYZ", modo: "mai" }
         }
     },
     relatorio: {
