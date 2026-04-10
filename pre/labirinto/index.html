@@ -8,9 +8,7 @@
     <style>
         :root {
             --cor-principal: #e691a7; 
-            --cor-vibrante: #d47a92;  
             --cor-fundo: #fff5f7;      
-            --cor-texto: #e691a7;      
             --cor-vermelho: #ff4757; 
             --header-height: 70px;
             --cor-acerto: #2ed573;
@@ -20,9 +18,9 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* --- Header & Sidebars --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
+        
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         .sidebar-rd { position: fixed; bottom: -300px; left: 0; width: 100%; height: 300px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
@@ -32,36 +30,35 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* --- Layout --- */
         .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
-        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal); width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; }
+        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal); width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; }
 
-        /* --- Labirinto --- */
-        .maze-area { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; overflow: hidden; }
-        .maze-grid { 
+        /* --- Maze Responsive --- */
+        .maze-outer { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; min-height: 0; }
+        #maze-container { 
             display: grid; background: white; border: 2px dashed var(--cor-principal); border-radius: 15px; 
-            width: 90vmin; height: 90vmin; max-width: 46vh; max-height: 46vh; margin: auto;
+            width: min(85vw, 45vh); height: min(85vw, 45vh); margin: auto;
         }
         .cell { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
-        .cell img { max-width: 80%; max-height: 80%; object-fit: contain; position: absolute; z-index: 5; }
-        .wall { width: 100%; height: 100%; z-index: 1; border-radius: 2px; }
+        .cell img { width: 80%; height: 80%; object-fit: contain; position: absolute; }
+        .wall { width: 100%; height: 100%; border-radius: 2px; }
 
-        /* D-Pad */
-        .d-pad { display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(2, 50px); gap: 10px; justify-content: center; margin-top: 10px; padding-bottom: 5px; flex-shrink: 0; }
+        /* --- D-Pad --- */
+        .d-pad { display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(2, 50px); gap: 10px; justify-content: center; margin: 10px 0; flex-shrink: 0; }
         .btn-dir { background: var(--cor-principal); color: white; border: none; border-radius: 12px; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #c07a8c; touch-action: none; }
-        .btn-dir:active { transform: translateY(3px); box-shadow: none; background: var(--cor-vibrante); }
+        .btn-dir:active { transform: translateY(3px); box-shadow: none; }
 
-        /* Intro */
+        /* --- UI --- */
         .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center;}
         .anim-pula { animation: jump 1.5s infinite; }
         @keyframes jump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
         .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
         .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .btn-rd-mini { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 10px; }
-        .btn-rd-mini img { width: 20px !important; height: 20px !important; margin: 0 !important; }
+        .btn-rd-mini { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 10px; flex-shrink: 0; }
+        .btn-rd-mini img { width: 18px !important; height: 18px !important; margin: 0 !important; }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 85%; max-width: 350px; }
@@ -78,7 +75,7 @@
             <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="#" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
+        <a href="#" class="sidebar-item" id="side-pre-btn"><img id="side-pre" src=""> Pré-Escolar</a>
         <a href="#" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
         <a href="#" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
         <a href="#" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
@@ -102,13 +99,12 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem;">Leva o animal até à comida!</p>
-                    <div style="display:flex; gap:30px; align-items:center; margin-top:15px;">
+                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin-bottom: 20px;">Leva o animal até à comida!</p>
+                    <div style="display:flex; gap:30px; align-items:center;">
                         <img id="intro-sprite" class="anim-pula" src="" style="width:80px;">
-                        <span style="font-size:28px; color:var(--cor-principal);">➔</span>
+                        <span style="font-size:30px; color:var(--cor-principal);">➔</span>
                         <img id="intro-food" src="" style="width:80px;">
                     </div>
-                    <p style="font-size:0.85rem; color:#888; margin-top:15px;">Cuidado com as pedras e buracos!</p>
                 </div>
                 <h2 style="color:var(--cor-principal); text-align:center; font-size:1.4rem; margin:10px 0; font-weight:bold;">O Labirinto</h2>
                 <div style="display:flex; gap:10px; width:100%;">
@@ -128,8 +124,8 @@
                         <button class="btn-rd-mini" onclick="toggleRD()"><img id="rd-mini-icon" src=""></button>
                     </div>
                 </div>
-                <div class="maze-area">
-                    <div id="maze-container" class="maze-grid"></div>
+                <div class="maze-outer">
+                    <div id="maze-container"></div>
                 </div>
                 <div class="d-pad">
                     <div style="grid-column:2"><button class="btn-dir" onmousedown="handleMovePress(0,-1)" onmouseup="handleMoveRelease()" ontouchstart="handleMovePress(0,-1)" ontouchend="handleMoveRelease()">▲</button></div>
@@ -143,7 +139,7 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--cor-acerto);">Parabéns!</h2>
+            <h2 id="modal-title" style="color:var(--cor-acerto);">Fantástico!</h2>
             <div id="modal-msg" style="margin: 20px 0;"></div>
             <button class="btn-play" onclick="location.reload()" style="background:var(--cor-principal);">Jogar de Novo</button>
         </div>
@@ -153,7 +149,7 @@
     <script>
         let currentLevel = 1, points = 0, seconds = 0, timerInterval;
         let catKey = "cao", playerPos = {x:0, y:0}, exitPos = {x:0, y:0};
-        let canMove = true, currentMazeData = [], moveTimer = null, delayTimer = null;
+        let canMove = true, currentMaze = [], moveTimer = null, delayTimer = null;
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
@@ -175,7 +171,7 @@
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
                 item.innerHTML = `<img src="${JOGO_CONFIG.labirinto.caminho + cat.sprite}"> ${cat.nome}`;
-                item.onclick = () => { selectCategory(k); if(document.getElementById('game-screen').classList.contains('active')) resetGameTotal(); };
+                item.onclick = () => { selectCategory(k); resetGame(); };
                 list.appendChild(item);
             });
         }
@@ -188,26 +184,31 @@
             closeMenus();
         }
 
-        function resetGameTotal() {
+        function resetGame() {
+            if(!document.getElementById('game-screen').classList.contains('active')) return;
             clearInterval(timerInterval);
             currentLevel = 1; points = 0; seconds = 0;
             document.getElementById('points').innerText = "0";
             document.getElementById('timer').innerText = "00:00";
             initStars();
-            startGame();
+            loadLevel();
+            startClock();
         }
 
         function startGame() {
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            if(currentLevel === 1) {
-                initStars();
-                timerInterval = setInterval(() => {
-                    seconds++;
-                    document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
-                }, 1000);
-            }
+            initStars();
             loadLevel();
+            startClock();
+        }
+
+        function startClock() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                seconds++;
+                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
+            }, 1000);
         }
 
         function initStars() {
@@ -235,14 +236,12 @@
             maze[0][0] = 2; maze[size-1][size-1] = 3;
             if(maze[size-2][size-1] === 1 && maze[size-1][size-2] === 1) maze[size-2][size-1] = 0;
 
-            // Adicionar Obstáculos em caminhos livres (valor 0)
-            let numObstaculos = currentLevel - 1; 
-            while(numObstaculos > 0) {
-                let rx = Math.floor(Math.random() * size);
-                let ry = Math.floor(Math.random() * size);
-                if(maze[ry][rx] === 0 && (rx !== 0 || ry !== 0) && (rx !== size-1 || ry !== size-1)) {
-                    maze[ry][rx] = 4; // 4 = Obstáculo
-                    numObstaculos--;
+            // Add obstacles (stone/hole) starting from level 2
+            let obsCount = currentLevel - 1;
+            while(obsCount > 0) {
+                let rx = Math.floor(Math.random()*size), ry = Math.floor(Math.random()*size);
+                if(maze[ry][rx] === 0 && maze[ry][rx] !== 2 && maze[ry][rx] !== 3) {
+                    maze[ry][rx] = 4; obsCount--;
                 }
             }
             return maze;
@@ -251,7 +250,7 @@
         function loadLevel() {
             canMove = true;
             const size = 5 + (currentLevel * 2);
-            currentMazeData = generateMaze(size);
+            currentMaze = generateMaze(size);
             const container = document.getElementById('maze-container');
             container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
             container.style.gridTemplateRows = `repeat(${size}, 1fr)`;
@@ -263,12 +262,10 @@
             for(let y=0; y<size; y++){
                 for(let x=0; x<size; x++){
                     const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.id = `c-${x}-${y}`;
-                    const val = currentMazeData[y][x];
+                    cell.className = 'cell'; cell.id = `c-${x}-${y}`;
+                    const val = currentMaze[y][x];
                     if(val === 1) {
-                        cell.classList.add('wall');
-                        cell.style.backgroundColor = cat.corParede;
+                        cell.classList.add('wall'); cell.style.backgroundColor = cat.corParede;
                     } else if(val === 2) {
                         playerPos = {x,y};
                         cell.innerHTML = `<img id="player-img" src="${path + cat.sprite}">`;
@@ -276,7 +273,7 @@
                         exitPos = {x,y};
                         cell.innerHTML = `<img id="food-img" src="${path + cat.objetivo}">`;
                     } else if(val === 4) {
-                        const obs = JOGO_CONFIG.labirinto.obstaculos[Math.floor(Math.random() * 2)];
+                        const obs = JOGO_CONFIG.labirinto.obstaculos[Math.floor(Math.random()*2)];
                         cell.innerHTML = `<img src="${path + obs}">`;
                     }
                     container.appendChild(cell);
@@ -284,75 +281,54 @@
             }
         }
 
-        // Lógica de Movimento Refinada
         function handleMovePress(dx, dy) {
             if(!canMove) return;
-            move(dx, dy); // Um passo imediato
+            move(dx, dy); // Step 1
             delayTimer = setTimeout(() => {
-                moveTimer = setInterval(() => { if(!move(dx, dy)) handleMoveRelease(); }, 90);
-            }, 300); // Se segurar mais de 300ms, começa a deslizar
+                moveTimer = setInterval(() => { if(!move(dx, dy)) handleMoveRelease(); }, 80);
+            }, 250);
         }
 
-        function handleMoveRelease() {
-            clearTimeout(delayTimer);
-            clearInterval(moveTimer);
-        }
+        function handleMoveRelease() { clearTimeout(delayTimer); clearInterval(moveTimer); }
 
         function move(dx, dy) {
             if(!canMove) return false;
             const nX = playerPos.x + dx, nY = playerPos.y + dy;
-            if(nY >= 0 && nY < currentMazeData.length && nX >= 0 && nX < currentMazeData[0].length) {
-                const val = currentMazeData[nY][nX];
+            if(nY >= 0 && nY < currentMaze.length && nX >= 0 && nX < currentMaze.length) {
+                const val = currentMaze[nY][nX];
                 if(val !== 1) {
                     const newCell = document.getElementById(`c-${nX}-${nY}`);
                     newCell.appendChild(document.getElementById('player-img'));
                     playerPos = {x: nX, y: nY};
-                    
-                    if(val === 3) { winLevel(); return false; } // Comida
-                    if(val === 4) { loseLevel(); return false; } // Obstáculo
+                    if(val === 3) { endRound(true); return false; }
+                    if(val === 4) { endRound(false); return false; }
                     return true;
                 }
             }
             return false;
         }
 
-        function winLevel() {
+        function endRound(success) {
             canMove = false; handleMoveRelease();
-            points += 20;
+            if(success) {
+                points += 20; document.getElementById('sound-win').play().catch(()=>{});
+                const food = document.getElementById('food-img'); if(food) food.style.display = 'none';
+            } else {
+                if(points > 0) points -= 5;
+                document.getElementById('player-img').style.opacity = '0.4';
+            }
             document.getElementById('points').innerText = points;
-            document.getElementById('sound-win').play().catch(()=>{});
-            const food = document.getElementById('food-img');
-            if(food) food.style.display = 'none';
 
-            updateStar(currentLevel - 1, true);
-            advanceRound();
-        }
-
-        function loseLevel() {
-            canMove = false; handleMoveRelease();
-            if(points > 0) points -= 5;
-            document.getElementById('points').innerText = points;
-            
-            updateStar(currentLevel - 1, false);
-            const pImg = document.getElementById('player-img');
-            if(pImg) pImg.style.opacity = "0.5";
-            
-            advanceRound();
-        }
-
-        function updateStar(idx, success) {
-            const star = document.getElementById('stars-bar').children[idx];
+            const star = document.getElementById('stars-bar').children[currentLevel-1];
             star.style.background = success ? "var(--cor-acerto)" : "var(--cor-erro)";
             star.style.borderColor = success ? "var(--cor-acerto)" : "var(--cor-erro)";
             star.innerText = success ? "✔" : "✖";
-        }
 
-        function advanceRound() {
             setTimeout(() => {
-                if(currentLevel < 5) { currentLevel++; loadLevel(); } 
+                if(currentLevel < 5) { currentLevel++; loadLevel(); }
                 else {
                     clearInterval(timerInterval);
-                    document.getElementById('modal-title').innerText = points >= 60 ? "Parabéns!" : "Fim do Jogo!";
+                    document.getElementById('modal-title').innerText = points >= 60 ? "Incrível!" : "Bom trabalho!";
                     document.getElementById('modal-msg').innerHTML = `<p>Pontos: ${points}</p><p>Tempo: ${document.getElementById('timer').innerText}</p>`;
                     document.getElementById('modal').style.display = 'flex';
                 }
@@ -364,10 +340,8 @@
         function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
 
         window.onkeydown = (e) => {
-            if(e.key === "ArrowUp") move(0,-1);
-            if(e.key === "ArrowDown") move(0,1);
-            if(e.key === "ArrowLeft") move(-1,0);
-            if(e.key === "ArrowRight") move(1,0);
+            if(e.key === "ArrowUp") move(0,-1); if(e.key === "ArrowDown") move(0,1);
+            if(e.key === "ArrowLeft") move(-1,0); if(e.key === "ArrowRight") move(1,0);
         };
     </script>
 </body>
