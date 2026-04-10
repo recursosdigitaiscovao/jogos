@@ -50,46 +50,52 @@
             display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box;
         }
 
-        /* Ajuste 1: Margem da caixa de explicação uniforme (10px conforme o topo) */
         .explanation-box { 
             background: var(--cor-fundo); border-radius: 20px; flex: 1; 
-            margin: 0 10px 10px 10px; /* Mesma margem em todo o lado */
+            margin: 0 10px 10px 10px; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             padding: 10px; border: 2px solid #fce4ec; text-align: center;
         }
 
-        /* Ajuste 5: Áreas de jogo e teclado (Redução de 10% na área de chuva e aumento no teclado) */
+        /* Ajuste: Áreas 90% (Rain) e 110% (Keyboard) */
         .rain-area { 
-            flex: 0.85; /* Reduzido */
+            flex: 0.9; 
             width: 100%; position: relative; background: var(--cor-fundo); 
             border-radius: 20px; border: 2px dashed var(--cor-principal); margin-top: 5px; overflow: hidden;
         }
-        .falling-letter { position: absolute; font-size: clamp(2.2rem, 6vh, 3.2rem); font-weight: bold; color: var(--cor-principal); text-shadow: 2px 2px 0px white; pointer-events: none; white-space: nowrap; }
+        .falling-letter { 
+            position: absolute; 
+            font-size: clamp(2.2rem, 6vh, 3rem); 
+            font-weight: bold; 
+            color: var(--cor-principal); 
+            text-shadow: 2px 2px 0px white; 
+            pointer-events: none; 
+            white-space: nowrap;
+            letter-spacing: 4px; /* Letras uniformes */
+            text-transform: none;
+        }
 
-        /* Teclado Ampliado */
         .keyboard { 
-            flex: 1.15; /* Aumentado */
+            flex: 1.1; 
             display: flex; flex-direction: column; justify-content: space-evenly;
-            gap: 8px; padding: 15px 10px; width: 100%; background: #f2f2f2; 
+            gap: 8px; padding: 12px 8px; width: 100%; background: #f2f2f2; 
             border-radius: 15px; margin-top: 8px; flex-shrink: 0; box-sizing: border-box;
         }
         .kb-row { display: flex; justify-content: center; gap: 6px; height: 30%; }
         .key { 
             background: white; border: 1px solid #ccc; border-radius: 10px; 
             flex: 1; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 1.4rem; cursor: pointer; 
+            font-weight: bold; font-size: 1.3rem; cursor: pointer; 
             box-shadow: 0 4px 0 #ddd; transition: 0.1s; color: #444; height: 100%;
+            max-width: 60px; /* Mantém uniformidade visual */
         }
         .key:active { transform: translateY(2px); box-shadow: none; background: var(--cor-principal); color: white; }
 
-        /* Ajuste 2: Modal com margem de 25px */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { 
             background: white; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); 
-            width: calc(100% - 50px); /* Margem de 25px cada lado */
-            max-width: 400px; 
-            padding: 35px 25px; 
-            box-sizing: border-box;
+            width: calc(100% - 50px);
+            max-width: 400px; padding: 35px 25px; box-sizing: border-box;
         }
 
         .anim-float { animation: float 2.5s infinite ease-in-out; }
@@ -141,7 +147,7 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.1rem; margin-bottom: 15px;">Clica na tecla de uma das letras que estão a cair!</p>
+                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.1rem; margin-bottom: 15px;">Clica nas letras que estão a cair!</p>
                     <div class="anim-float" id="preview-letter" style="font-size: 4rem; font-weight: bold; color: var(--cor-principal); text-shadow: 2px 2px 0 white;">abc</div>
                 </div>
                 <h2 style="color:var(--cor-principal); text-align:center; font-size:1.3rem; margin:10px 0; font-weight:bold;">Chuva de Letras</h2>
@@ -191,7 +197,6 @@
             document.getElementById('side-2').src = p + iconRef.ano2;
             document.getElementById('side-3').src = p + iconRef.ano3;
             document.getElementById('side-4').src = p + iconRef.ano4;
-            
             document.getElementById('btn-rd-icon').src = JOGO_CONFIG.caminhoImg + "rd.png";
             document.getElementById('rd-mini-icon').src = JOGO_CONFIG.caminhoImg + "rd.png";
             setupRDMenu();
@@ -233,7 +238,6 @@
 
         function updatePreview() {
             const cat = JOGO_CONFIG.letras.categorias[catKey];
-            // Ajuste 3: Preview mostra 3 letras se for alfabeto
             if(catKey.includes('alfabeto')) {
                 document.getElementById('preview-letter').innerText = cat.modo === 'min' ? "abc" : "ABC";
             } else {
@@ -282,31 +286,31 @@
             const cat = JOGO_CONFIG.letras.categorias[catKey];
             const pool = cat.lista;
             
-            // Ajuste 3: Gerar 3 letras se for alfabeto
-            let charDisplay = "";
+            let charList = [];
             if(catKey.includes('alfabeto')) {
-                for(let i=0; i<3; i++) {
-                    charDisplay += pool[Math.floor(Math.random() * pool.length)];
-                }
+                for(let i=0; i<3; i++) charList.push(pool[Math.floor(Math.random() * pool.length)]);
             } else {
-                charDisplay = pool[Math.floor(Math.random() * pool.length)];
+                charList.push(pool[Math.floor(Math.random() * pool.length)]);
             }
 
             const container = document.getElementById('rain-container');
             const el = document.createElement('div');
-            el.className = 'falling-letter'; el.innerText = charDisplay;
-            el.style.left = Math.random() * (container.clientWidth - 100) + 20 + 'px';
+            el.className = 'falling-letter'; 
+            el.innerText = charList.join("");
+            el.style.left = Math.random() * (container.clientWidth - 120) + 20 + 'px';
             el.style.top = '-60px';
             container.appendChild(el);
-            fallingItems.push({ el, char: charDisplay, y: -60 });
             
-            spawnTimeout = setTimeout(spawnLoop, Math.max(2500, 5000 - (currentLevel * 400)));
+            // Agora guardamos o array de caracteres restantes
+            fallingItems.push({ el, charsRemaining: charList, y: -60 });
+            
+            spawnTimeout = setTimeout(spawnLoop, Math.max(2600, 5000 - (currentLevel * 400)));
         }
 
         function fallLoop() {
             if(!gameActive) return;
             const containerHeight = document.getElementById('rain-container').clientHeight;
-            const speed = 0.4 + (currentLevel * 0.15); 
+            const speed = 0.38 + (currentLevel * 0.14); 
 
             for (let i = fallingItems.length - 1; i >= 0; i--) {
                 let item = fallingItems[i];
@@ -316,7 +320,7 @@
                 if (item.y > containerHeight) {
                     item.el.remove();
                     fallingItems.splice(i, 1);
-                    handleResult(false); // Erro por deixar cair
+                    handleResult(false);
                 }
             }
             animationId = requestAnimationFrame(fallLoop);
@@ -327,20 +331,34 @@
             let foundIdx = -1;
             let maxY = -100;
 
-            // Ajuste 3: Verificar se a letra premida existe na string a cair
+            // Procurar o item mais baixo que contenha a letra
             fallingItems.forEach((item, idx) => {
-                if(item.char.includes(pressedChar) && item.y > maxY) {
+                if(item.charsRemaining.includes(pressedChar) && item.y > maxY) {
                     maxY = item.y; foundIdx = idx;
                 }
             });
 
             if(foundIdx !== -1) {
-                fallingItems[foundIdx].el.remove();
-                fallingItems.splice(foundIdx, 1);
-                handleResult(true);
+                const item = fallingItems[foundIdx];
+                // Remover apenas a primeira ocorrência daquela letra no item
+                const charIdx = item.charsRemaining.indexOf(pressedChar);
+                item.charsRemaining.splice(charIdx, 1);
+                
+                // Atualizar o texto visual
+                item.el.innerText = item.charsRemaining.join("");
+
+                // Se não sobrarem letras no item, ganha o ponto
+                if(item.charsRemaining.length === 0) {
+                    item.el.remove();
+                    fallingItems.splice(foundIdx, 1);
+                    handleResult(true);
+                }
             } else {
-                // Ajuste 4: Som de erro e bola vermelha se clicar na letra errada (opcional, dependendo se queres penalizar cliques aleatórios)
-                handleResult(false);
+                // Erro imediato se clicar em letra errada
+                document.getElementById('sound-lose').currentTime = 0;
+                document.getElementById('sound-lose').play().catch(()=>{});
+                // Penalização visual na bola atual se quiseres que clique errado também conte como falha:
+                // handleResult(false); 
             }
         }
 
@@ -381,7 +399,10 @@
         }
 
         window.onkeydown = (e) => {
-            if(e.key.length === 1) handleInput(catKey.includes('mai') ? e.key.toUpperCase() : e.key.toLowerCase());
+            if(e.key.length === 1) {
+                const isMin = JOGO_CONFIG.letras.categorias[catKey].modo === "min";
+                handleInput(isMin ? e.key.toLowerCase() : e.key.toUpperCase());
+            }
         };
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
