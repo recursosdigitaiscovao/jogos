@@ -44,30 +44,38 @@
 
         .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-jogo-verde); display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden; }
         
-        /* AREA JOGO COM MOLDURA PRETA */
-        .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 10px; overflow: hidden; }
+        .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 10px; overflow: hidden; position: relative; }
         
-        .silabas-frame {
-            background: white; border: 4px solid #000; border-radius: 25px;
-            width: 100%; max-width: 450px; height: 95%; display: flex; flex-direction: column; overflow: hidden;
-        }
-
+        .sil-frame { background: white; border: 4px solid #000; border-radius: 25px; width: 100%; max-width: 450px; height: 95%; display: flex; flex-direction: column; overflow: hidden; }
         .sil-header { height: 60px; border-bottom: 4px solid #000; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 900; color: #000; letter-spacing: 2px; }
-        .sil-img-box { flex: 1; display: flex; align-items: center; justify-content: center; padding: 15px; }
-        .sil-img-box img { max-width: 90%; max-height: 90%; object-fit: contain; }
+        .sil-img-box { flex: 1; display: flex; align-items: center; justify-content: center; padding: 10px; }
+        .sil-img-box img { max-width: 85%; max-height: 85%; object-fit: contain; }
 
-        /* ZONA DE RESPOSTA (SLOTS) */
-        .drop-zone { height: 80px; background: #f0f0f0; border-top: 4px solid #000; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 5px; }
-        .slot { width: 65px; height: 65px; border: 3px solid #000; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; cursor: pointer; transition: 0.2s; }
-        .slot.active { border-color: var(--cor-principal); background: #fff5f7; }
+        /* DROP ZONE (SLOTS) */
+        .drop-zone { min-height: 80px; background: #f7f7f7; border-top: 4px solid #000; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; }
+        .slot { 
+            width: 70px; height: 70px; border: 3px solid #000; background: #fff; 
+            border-radius: 12px; display: flex; align-items: center; justify-content: center; 
+            font-weight: 900; font-size: 1.3rem; transition: 0.2s; cursor: pointer;
+        }
+        .slot.hover { background: #fff5f7; border-color: var(--cor-principal); }
 
-        /* POOL DE SÍLABAS / BOTÕES NÚMERO */
-        .sil-footer { height: 100px; border-top: 4px solid #000; display: flex; background: #fff; }
-        .sil-btn, .part-btn { flex: 1; border: none; background: #fff; font-size: 2.2rem; font-weight: 900; color: #000; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .sil-btn:not(:last-child), .part-btn:not(:last-child) { border-right: 4px solid #000; }
-        .part-btn { font-size: 1.4rem; padding: 5px; text-transform: uppercase; }
-        .sil-btn:active, .part-btn:active { background: #eee; }
-        .part-btn.hidden { visibility: hidden; pointer-events: none; }
+        /* PIECES (SÍLABAS) */
+        .pieces-pool { height: 110px; border-top: 4px solid #000; display: flex; align-items: center; justify-content: center; gap: 15px; padding: 10px; background: white; }
+        .piece { 
+            background: var(--cor-principal); color: white; padding: 15px 10px; 
+            border-radius: 12px; border: 2px solid #333; font-weight: 900; font-size: 1.3rem; 
+            cursor: grab; min-width: 60px; text-align: center; box-shadow: 0 4px 0 #333;
+            text-transform: uppercase;
+        }
+        .piece:active { cursor: grabbing; transform: translateY(2px); box-shadow: 0 2px 0 #333; }
+        .piece.hidden { opacity: 0; pointer-events: none; }
+
+        /* BUTTONS NUMBERS */
+        .numbers-grid { height: 100px; border-top: 4px solid #000; display: flex; }
+        .num-btn { flex: 1; border: none; background: #fff; font-size: 2.5rem; font-weight: 900; color: #000; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .num-btn:not(:last-child) { border-right: 4px solid #000; }
+        .num-btn:active { background: #eee; }
 
         /* INTRO */
         .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center;}
@@ -112,10 +120,10 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <img id="intro-img" src="" style="width:100px; margin-bottom:10px;">
-                    <p id="intro-desc" style="color:var(--cor-texto); font-weight:bold;"></p>
+                    <img id="intro-preview-img" src="" style="width:110px; margin-bottom:10px;">
+                    <p id="intro-text" style="color:var(--cor-texto); font-weight:bold;"></p>
                 </div>
-                <h2 id="display-categoria" style="text-align:center; color:var(--cor-principal);"></h2>
+                <h2 id="display-categoria" style="text-align:center; color:var(--cor-principal); margin-bottom:15px;"></h2>
                 <div class="intro-btns">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
                     <button class="btn-rd" onclick="toggleRD()"><img class="btn-rd-img-ref" src=""></button>
@@ -125,19 +133,22 @@
 
         <section id="game-screen" class="screen">
             <div class="game-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px; font-size:0.8rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem;">
                     <div>⏳ <span id="timer">00:00</span></div>
-                    <div id="stars-bar" style="display:flex; gap:3px;"></div>
-                    <div>PTS: <span id="points">0</span></div>
+                    <div id="stars-bar" style="display:flex; gap:4px;"></div>
+                    <div style="display:flex; align-items:center;">
+                        PTS: <span id="points">0</span>
+                        <button class="btn-rd" style="width:30px; height:30px; margin-left:10px; border-radius:8px;" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:18px; height:18px;"></button>
+                    </div>
                 </div>
                 <div class="game-area">
-                    <div class="silabas-frame">
-                        <div class="sil-header" id="word-title">---</div>
+                    <div class="sil-frame">
+                        <div class="sil-header" id="game-title">---</div>
                         <div class="sil-img-box">
                             <img id="game-img" src="">
                         </div>
-                        <div id="answer-zone" class="drop-zone" style="display:none;"></div>
-                        <div id="footer-zone" class="sil-footer"></div>
+                        <div id="drop-area" class="drop-zone" style="display:none;"></div>
+                        <div id="controls-area"></div>
                     </div>
                 </div>
             </div>
@@ -157,6 +168,7 @@
         let currentQuestion = 1, points = 0, seconds = 0, timerInterval;
         let currentCatKey = "contar", currentItem = null, usedItems = [];
         let playerSyllables = [];
+        let draggedSyllable = null;
 
         const sndCerto = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
         const sndErro = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
@@ -170,14 +182,13 @@
         };
 
         function setupRDMenu() {
-            const container = document.getElementById('categorias-list');
-            container.innerHTML = '';
+            const container = document.getElementById('categorias-list'); container.innerHTML = '';
             Object.keys(JOGO_CONFIG.categorias).forEach(key => {
                 const cat = JOGO_CONFIG.categorias[key];
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
                 item.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + cat.img}"> <span>${cat.nome}</span>`;
-                item.onclick = () => { currentCatKey = key; updateIntro(); closeMenus(); };
+                item.onclick = () => { currentCatKey = key; updateIntro(); closeMenus(); if(document.getElementById('game-screen').classList.contains('active')) startGame(); };
                 container.appendChild(item);
             });
         }
@@ -185,14 +196,15 @@
         function updateIntro() {
             const cat = JOGO_CONFIG.categorias[currentCatKey];
             document.getElementById('display-categoria').innerText = cat.nome;
-            document.getElementById('intro-img').src = JOGO_CONFIG.caminhoImg + cat.img;
-            document.getElementById('intro-desc').innerText = cat.tipo === "contar" ? "Quantas sílabas têm?" : "Clica para ordenar as sílabas!";
+            document.getElementById('intro-preview-img').src = JOGO_CONFIG.caminhoImg + cat.img;
+            document.getElementById('intro-text').innerText = cat.tipo === "contar" ? "Conta as sílabas!" : "Arrasta as sílabas para ordenar!";
         }
 
         function startGame() {
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
             points = 0; currentQuestion = 1; seconds = 0; usedItems = [];
+            clearInterval(timerInterval);
             initStars(); loadRound();
             timerInterval = setInterval(() => {
                 seconds++;
@@ -217,72 +229,79 @@
             usedItems.push(currentItem.nome);
 
             document.getElementById('game-img').src = JOGO_CONFIG.caminhoImg + currentItem.img;
-            const footer = document.getElementById('footer-zone');
-            const answers = document.getElementById('answer-zone');
-            footer.innerHTML = ''; answers.innerHTML = ''; playerSyllables = [];
+            const controls = document.getElementById('controls-area');
+            const drops = document.getElementById('drop-area');
+            controls.innerHTML = ''; drops.innerHTML = ''; playerSyllables = [];
 
             if(cat.tipo === "contar") {
-                document.getElementById('word-title').innerText = currentItem.nome;
-                answers.style.display = 'none';
+                document.getElementById('game-title').innerText = currentItem.nome;
+                drops.style.display = 'none';
+                controls.className = "numbers-grid";
                 for(let i=1; i<=4; i++) {
                     const b = document.createElement('button');
-                    b.className = 'sil-btn'; b.innerText = i;
-                    b.onclick = () => checkResult(i);
-                    footer.appendChild(b);
+                    b.className = 'num-btn'; b.innerText = i;
+                    b.onclick = () => finalizeRound(i);
+                    controls.appendChild(b);
                 }
             } else {
-                document.getElementById('word-title').innerText = "???";
-                answers.style.display = 'flex';
-                const syls = currentItem.divisao.split('-');
-                syls.forEach((_, idx) => {
-                    const slot = document.createElement('div');
-                    slot.className = 'slot'; slot.dataset.idx = idx;
-                    slot.onclick = () => removeSyllable(idx);
-                    answers.appendChild(slot);
-                });
-
-                const shuffled = [...syls].sort(() => Math.random() - 0.5);
-                shuffled.forEach((s, idx) => {
-                    const b = document.createElement('button');
-                    b.className = 'part-btn'; b.innerText = s; b.dataset.sid = idx;
-                    b.onclick = () => addSyllable(s, idx);
-                    footer.appendChild(b);
-                });
-            }
-        }
-
-        function addSyllable(text, btnId) {
-            const slots = document.querySelectorAll('.slot');
-            if(playerSyllables.length < slots.length) {
-                const nextSlot = slots[playerSyllables.length];
-                nextSlot.innerText = text;
-                nextSlot.dataset.btnref = btnId;
-                playerSyllables.push(text);
-                document.querySelector(`[data-sid="${btnId}"]`).classList.add('hidden');
+                document.getElementById('game-title').innerText = "???";
+                drops.style.display = 'flex';
+                controls.className = "pieces-pool";
+                const parts = currentItem.divisao.split('-');
                 
-                if(playerSyllables.length === slots.length) {
-                    setTimeout(() => checkResult(playerSyllables.join('-')), 300);
-                }
+                parts.forEach((_, idx) => {
+                    const slot = document.createElement('div');
+                    slot.className = 'slot';
+                    slot.ondragover = e => e.preventDefault();
+                    slot.ondrop = e => handleDrop(idx);
+                    slot.onclick = () => removePiece(idx);
+                    drops.appendChild(slot);
+                });
+
+                const shuffled = [...parts].sort(() => Math.random() - 0.5);
+                shuffled.forEach((txt, idx) => {
+                    const p = document.createElement('div');
+                    p.className = 'piece'; p.innerText = txt; p.draggable = true;
+                    p.id = `piece-${idx}`;
+                    p.onclick = () => handlePieceClick(txt, p.id); // Compatibilidade telemóvel
+                    p.ondragstart = () => draggedSyllable = { text: txt, id: p.id };
+                    controls.appendChild(p);
+                });
             }
         }
 
-        function removeSyllable(slotIdx) {
-            const slots = Array.from(document.querySelectorAll('.slot'));
-            // Só permite remover se for o último slot preenchido
-            if(slotIdx === playerSyllables.length - 1 && playerSyllables.length > 0) {
-                const btnRef = slots[slotIdx].dataset.btnref;
-                document.querySelector(`[data-sid="${btnRef}"]`).classList.remove('hidden');
-                slots[slotIdx].innerText = '';
+        function handleDrop(slotIdx) {
+            const slots = document.querySelectorAll('.slot');
+            if(slotIdx === playerSyllables.length && draggedSyllable) {
+                const s = slots[slotIdx];
+                s.innerText = draggedSyllable.text;
+                s.dataset.refId = draggedSyllable.id;
+                playerSyllables.push(draggedSyllable.text);
+                document.getElementById(draggedSyllable.id).classList.add('hidden');
+                draggedSyllable = null;
+                if(playerSyllables.length === slots.length) finalizeRound(playerSyllables.join('-'));
+            }
+        }
+
+        function handlePieceClick(text, id) {
+            draggedSyllable = { text, id };
+            handleDrop(playerSyllables.length);
+        }
+
+        function removePiece(idx) {
+            if(idx === playerSyllables.length - 1 && playerSyllables.length > 0) {
+                const slots = document.querySelectorAll('.slot');
+                const refId = slots[idx].dataset.refId;
+                document.getElementById(refId).classList.remove('hidden');
+                slots[idx].innerText = '';
                 playerSyllables.pop();
             }
         }
 
-        function checkResult(val) {
+        function finalizeRound(val) {
             const cat = JOGO_CONFIG.categorias[currentCatKey];
             const stars = document.getElementById('stars-bar').children;
-            const correct = (cat.tipo === "contar") ? 
-                            (currentItem.divisao.split('-').length === val) : 
-                            (currentItem.divisao === val);
+            const correct = (cat.tipo === "contar") ? (currentItem.divisao.split('-').length === val) : (currentItem.divisao === val);
 
             if(correct) {
                 sndCerto.play(); points++;
@@ -296,14 +315,12 @@
 
             document.getElementById('points').innerText = points;
             currentQuestion++;
-            setTimeout(() => {
-                if(currentQuestion > 5) endGame(); else loadRound();
-            }, 600);
+            setTimeout(() => { if(currentQuestion > 5) endGame(); else loadRound(); }, 600);
         }
 
         function endGame() {
             clearInterval(timerInterval);
-            document.getElementById('modal-title').innerText = points >= 3 ? "Espetáculo!" : "Quase lá!";
+            document.getElementById('modal-title').innerText = points >= 3 ? "Espetacular!" : "Tenta de novo!";
             document.getElementById('modal-msg').innerHTML = `<p>Acertaste: ${points}/5</p><p>Tempo: ${document.getElementById('timer').innerText}</p>`;
             document.getElementById('modal').style.display = 'flex';
         }
