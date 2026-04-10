@@ -1,272 +1,301 @@
 <!DOCTYPE html>
-<html lang="pt-pt">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>1º Ano - Sílabas Animais</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pré Escolar - Quantas Sílabas?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Reset e Estilo Geral - Template_1 */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-
-        body {
-            background-color: #fff4e6;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            height: 100vh; height: 100svh;
-            display: flex; flex-direction: column;
-            overflow: hidden; touch-action: manipulation;
+        :root {
+            --cor-principal: #e691a7; 
+            --cor-vibrante: #d47a92;  
+            --cor-fundo: #fff5f7;      
+            --cor-texto: #e691a7;      
+            --cor-vermelho: #ff4757; 
+            --header-height: 70px;
+            --cor-jogo-verde: #e691a7;  
+            --cor-erro: #ff4757;
+            --cor-acerto: #2ed573;
         }
 
-        /* HEADER */
-        header {
-            width: 100%; background: white; padding: 12px 20px;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; z-index: 100;
-        }
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; }
-        header h1 { font-size: 1.0rem; color: #2d3436; font-weight: 700; }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
+        body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* ÍCONE LOGO PERSONALIZADO: LO ● BO - ALTERADO PARA FUNDO BRANCO */
-        .logo-silabas {
-            display: flex; align-items: center; justify-content: center;
-            background: #ffffff; color: #ff9f43; font-weight: 900;
-            font-size: 0.75rem; padding: 6px 10px; border-radius: 10px;
-            border: 2px solid #333; gap: 6px; box-shadow: 0 2px 0 #333;
-        }
-        .logo-dot { width: 6px; height: 6px; background: #ff9f43; border-radius: 50%; }
-
-        .btn-voltar-3d {
-            text-decoration: none; color: #000; background-color: #ff9f43;
-            font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
-            border-radius: 8px; border: 1px solid #e67e22; box-shadow: 0 3px 0 #e67e22;
-            cursor: pointer; display: flex; align-items: center; gap: 8px;
-            transition: all 0.1s;
-        }
-        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
-
-        /* SIDEBAR COMPLETA */
-        .sidebar {
-            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
-            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.2);
-            transition: 0.3s ease; z-index: 200; padding: 20px;
-            display: flex; flex-direction: column;
-        }
+        /* NAV & SIDEBARS */
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
+        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        .sidebar h3 { margin: 10px 0 20px 0; color: #e67e22; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        
-        .sidebar-nav { flex: 1; overflow-y: auto; }
-        .sidebar-item {
-            text-decoration: none; color: #2d3436; font-weight: 600;
-            padding: 12px 15px; border-radius: 12px; background: #f8f9fa;
-            display: flex; align-items: center; gap: 15px; margin-bottom: 10px; 
-            border: 1px solid #eee; transition: 0.2s;
-        }
-        .sidebar-item:hover { background-color: #ff9f43; color: white; border-color: #e67e22; }
-
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); display: none; z-index: 150;
-        }
+        .sidebar-rd { position: fixed; bottom: -300px; left: 0; width: 100%; height: 300px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
+        .sidebar-rd.active { bottom: 0; }
+        .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
+        .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; }
+        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* CONTEÚDO PRINCIPAL */
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
+        .screen.active { display: flex; }
 
-        .instruction-container { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-        .instruction { color: #d35400; font-size: 1.4rem; font-weight: 800; text-align: center; }
+        /* JOGO STYLE (MACACO) */
+        .game-card { background: white; border-radius: 30px; padding: 15px; border: 4px solid var(--cor-jogo-verde); display: flex; flex-direction: column; width: 100%; max-width: 500px; height: 100%; box-sizing: border-box; }
         
-        .btn-info-circle {
-            background: #ff9f43; color: white; border: 2px solid #333; width: 30px; height: 30px;
-            border-radius: 50%; font-weight: bold; cursor: pointer; font-size: 1.1rem;
-            display: flex; align-items: center; justify-content: center;
+        .syllable-container {
+            border: 3px solid #333;
+            border-radius: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: white;
         }
 
-        /* ÁREA DO CARD */
-        .game-card {
-            background: white; width: 100%; max-width: 400px;
-            border-radius: 20px; border: 3px solid #333;
-            overflow: hidden; display: flex; flex-direction: column;
-            box-shadow: 0 10px 0 rgba(0,0,0,0.05);
+        .word-header {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 900;
+            color: black;
+            border-bottom: 3px solid #333;
+            letter-spacing: 5px;
         }
 
-        .card-word {
-            background: #fcfcfc; padding: 20px; text-align: center;
-            font-size: 2.5rem; font-weight: 900; letter-spacing: 3px;
-            border-bottom: 3px solid #333; text-transform: uppercase;
+        .image-body {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .image-body img { max-width: 80%; max-height: 80%; object-fit: contain; }
+
+        .numbers-footer {
+            height: 100px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border-top: 3px solid #333;
         }
 
-        .card-visual { height: 220px; display: flex; align-items: center; justify-content: center; font-size: 8rem; background: #fff; }
-
-        .options-row { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 3px solid #333; }
-
-        .opt-btn {
-            padding: 25px 0; font-size: 2rem; font-weight: 900;
-            background: white; border: none; cursor: pointer;
-            border-right: 3px solid #333; transition: 0.2s;
+        .num-btn {
+            border: none;
+            background: white;
+            font-size: 2.5rem;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            color: black;
         }
-        .opt-btn:last-child { border-right: none; }
-        .opt-btn.correct { background: #2ecc71 !important; color: white; }
-        .opt-btn.wrong { background: #e74c3c !important; color: white; }
+        .num-btn:not(:last-child) { border-right: 3px solid #333; }
+        .num-btn:hover { background: #f0f0f0; }
+        .num-btn:active { background: var(--cor-principal); color: white; }
 
-        /* MODAIS */
-        .modal-custom {
-            display: none; position: fixed; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); width: 85%; max-width: 380px;
-            background: white; padding: 35px; border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4); z-index: 400; text-align: center;
-            border: 4px solid #ff9f43;
-        }
+        /* OUTROS */
+        .intro-btns { display: flex; gap: 10px; width: 100%; margin-top: 15px; }
+        .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
+        .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        footer { width: 100%; padding: 12px; background: white; text-align: center; color: #95a5a6; font-size: 0.8rem; border-top: 1px solid #eee; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); width: 90%; max-width: 350px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="fecharModais()"></div>
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
     
-    <div id="modal-info" class="modal-custom">
-        <h2 style="color: #e67e22; margin-bottom: 15px;">Como Jogar</h2>
-        <p style="color: #2d3436; line-height: 1.5; font-weight: 500;">Ouve a palavra e conta quantas vezes abres a boca para a dizer! <br><br> Clica no número de <b>sílabas</b> correto.</p>
-        <button class="btn-voltar-3d" style="width: 100%; margin-top: 25px; justify-content: center; font-size: 1rem;" onclick="fecharModais()">VAMOS A ISSO!</button>
-    </div>
-
-    <div id="end-modal" class="modal-custom">
-        <div style="font-size: 5rem; margin-bottom: 10px;">🏆</div>
-        <h2 style="margin-bottom: 10px;">Excelente!</h2>
-        <p style="color: #636e72; font-weight: bold; margin-bottom: 30px;">Acabaste as 10 rondas dos animais!</p>
-        <button class="btn-voltar-3d" style="width: 100%; justify-content: center;" onclick="reiniciarJogo()">JOGAR NOVAMENTE</button>
-    </div>
-
     <div class="sidebar" id="sidebar">
-        <h3>Menu de Jogos</h3>
-        <div class="sidebar-nav">
-            <a href="../../../" class="sidebar-item">🏠 Início</a>
-            <a href="../../../pre" class="sidebar-item">🖍️ Pré-Escolar</a>
-            <a href="../../../1" class="sidebar-item" style="background: #fff4e6; border-color: #ff9f43;">🐥 1º Ano</a>
-            <a href="../../../2" class="sidebar-item">🥈 2º Ano</a>
-            <a href="../../../3" class="sidebar-item">🥉 3º Ano</a>
-            <a href="../../../4" class="sidebar-item">🎓 4º Ano</a>
-            <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
-                <a href="#" class="sidebar-item" onclick="abrirInfo()">ℹ️ Ajuda / Info</a>
-            </div>
+        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
+            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer;">✕</button>
         </div>
+        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+        <a href="#" class="sidebar-item"><img class="menu-pre" src=""> Pré-Escolar</a>
     </div>
 
-    <header>
-        <div class="header-left">
-            <span class="menu-icon" onclick="toggleMenu()">☰</span>
-            <div class="logo-silabas">LO <div class="logo-dot"></div> BO</div>
-            <h1>Quantas Sílabas</h1>
+    <div class="sidebar-rd" id="sidebar-rd">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0; color:var(--cor-principal);">Escolhe o Tema</h3>
+            <button onclick="toggleRD()" style="border:none; background:none; font-size:20px;">✕</button>
         </div>
-        <button class="btn-voltar-3d" onclick="window.location.href='../'">⬅ Voltar</button>
+        <div id="categorias-list" style="max-height: 220px; overflow-y: auto;"></div>
+    </div>
+
+    <header class="nav-bar">
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
+        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin: 0;">
+            <img id="header-icon" src="" style="height:32px;"> Sílabas
+        </h1>
+        <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
 
-    <main>
-        <div class="instruction-container">
-            <div class="instruction">Quantas sílabas tem?</div>
-            <button class="btn-info-circle" onclick="abrirInfo()">i</button>
-        </div>
-
-        <div class="game-card">
-            <div class="card-word" id="display-word">...</div>
-            <div class="card-visual" id="display-icon">...</div>
-            <div class="options-row">
-                <button class="opt-btn" onclick="checkAnswer(1)">1</button>
-                <button class="opt-btn" onclick="checkAnswer(2)">2</button>
-                <button class="opt-btn" onclick="checkAnswer(3)">3</button>
-                <button class="opt-btn" onclick="checkAnswer(4)">4</button>
+    <main class="main-content">
+        <!-- TELA INICIAL -->
+        <section id="intro-screen" class="screen active">
+            <div class="game-card">
+                <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+                    <img id="cat-preview-img" src="" style="width:120px; margin-bottom:20px;">
+                    <h2 id="display-categoria" style="color:var(--cor-principal); margin:0;">Quantas Sílabas?</h2>
+                    <p style="color:#888;">Clica no número certo de sílabas da palavra.</p>
+                </div>
+                <div class="intro-btns">
+                    <button class="btn-play" onclick="startGame()">JOGAR</button>
+                    <button class="btn-rd" onclick="toggleRD()"><img class="btn-rd-img-ref" src=""></button>
+                </div>
             </div>
-        </div>
-        
-        <div id="progress" style="margin-top: 25px; color: #7f8c8d; font-size: 1.1rem; font-weight: bold;">
-            Desafio <span id="current-idx" style="color: #e67e22;">1</span> de 10
-        </div>
+        </section>
+
+        <!-- TELA DE JOGO -->
+        <section id="game-screen" class="screen">
+            <div class="game-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:0 5px 10px 5px;">
+                    <div style="font-size:0.9rem;">⏳ <span id="timer">00:00</span></div>
+                    <div id="stars-bar" style="display:flex; gap:4px;"></div>
+                    <div style="font-size:0.9rem;">PTS: <span id="points">0</span></div>
+                </div>
+
+                <div class="syllable-container">
+                    <div class="word-header" id="word-display">MACACO</div>
+                    <div class="image-body">
+                        <img id="item-image" src="">
+                    </div>
+                    <div class="numbers-footer">
+                        <button class="num-btn" onclick="checkAnswer(1)">1</button>
+                        <button class="num-btn" onclick="checkAnswer(2)">2</button>
+                        <button class="num-btn" onclick="checkAnswer(3)">3</button>
+                        <button class="num-btn" onclick="checkAnswer(4)">4</button>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <footer>Recursos Digitais Covão • Professor Luís</footer>
+    <!-- MODAL FINAL -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2 id="modal-title" style="color:var(--cor-acerto);">Boa!</h2>
+            <div id="modal-msg" style="margin-bottom:20px;"></div>
+            <button class="btn-play" onclick="location.reload()" style="background:var(--cor-acerto);">Jogar de Novo</button>
+        </div>
+    </div>
 
+    <script src="dados.js"></script>
     <script>
-        const animais = [
-            { w: "CÃO", i: "🐶", s: 1 }, { w: "GATO", i: "🐱", s: 2 }, { w: "RATO", i: "🐭", s: 2 },
-            { w: "PATO", i: "🦆", s: 2 }, { w: "LEÃO", i: "🦁", s: 2 }, { w: "SAPO", i: "🐸", s: 2 },
-            { w: "VACA", i: "🐮", s: 2 }, { w: "ZEBRA", i: "🦓", s: 2 }, { w: "TIGRE", i: "🐯", s: 2 },
-            { w: "MACACO", i: "🐒", s: 3 }, { w: "COELHO", i: "🐰", s: 3 }, { w: "CAVALO", i: "🐴", s: 3 },
-            { w: "GIRAFA", i: "🦒", s: 3 }, { w: "OVELHA", i: "🐑", s: 3 }, { w: "GALINHA", i: "🐔", s: 3 },
-            { w: "BALEIA", i: "🐳", s: 3 }, { w: "CORUJA", i: "🦉", s: 3 }, { w: "RAPOSA", i: "🦊", s: 3 },
-            { w: "PANDA", i: "🐼", s: 2 }, { w: "ELEFANTE", i: "🐘", s: 4 }, { w: "TARTARUGA", i: "🐢", s: 4 },
-            { w: "HIPOPÓTAMO", i: "🦛", s: 5 }, { w: "BORBOLETA", i: "🦋", s: 4 }, { w: "CROCODILO", i: "🐊", s: 4 },
-            { w: "RINOCERONTE", i: "🦏", s: 5 }, { w: "CARANGUEJO", i: "🦀", s: 4 }, { w: "FORMIGA", i: "🐜", s: 3 },
-            { w: "ABELHA", i: "🐝", s: 3 }, { w: "ARANHA", i: "🕷️", s: 3 }, { w: "PEIXE", i: "🐟", s: 2 }
-        ];
+        let currentQuestion = 1, points = 0, seconds = 0, timerInterval;
+        let currentCatKey = "animais";
+        let currentItem = null;
+        let usedItems = [];
 
-        let jogoAtual = [];
-        let currentIndex = 0;
-        let canClick = true;
+        const sndCerto = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+        const sndErro = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
 
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
+        window.onload = () => {
+            const p = JOGO_CONFIG.caminhoIcons;
+            const imgPath = JOGO_CONFIG.caminhoImg;
+            
+            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
+            document.querySelector('.menu-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
+            document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = imgPath + "rd.png");
+            
+            setupRDMenu();
+            updateIntro();
+        };
+
+        function setupRDMenu() {
+            const container = document.getElementById('categorias-list');
+            container.innerHTML = '';
+            Object.keys(JOGO_CONFIG.categorias).forEach(key => {
+                const cat = JOGO_CONFIG.categorias[key];
+                const item = document.createElement('div');
+                item.className = 'sidebar-item';
+                item.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + cat.img}"> <span>${cat.nome}</span>`;
+                item.onclick = () => { currentCatKey = key; updateIntro(); closeMenus(); };
+                container.appendChild(item);
+            });
         }
 
-        function abrirInfo() {
-            fecharModais();
-            document.getElementById('modal-info').style.display = 'block';
-            document.getElementById('overlay').classList.add('active');
+        function updateIntro() {
+            const cat = JOGO_CONFIG.categorias[currentCatKey];
+            document.getElementById('display-categoria').innerText = cat.nome;
+            document.getElementById('cat-preview-img').src = JOGO_CONFIG.caminhoImg + cat.img;
         }
 
-        function fecharModais() {
-            document.getElementById('modal-info').style.display = 'none';
-            document.getElementById('end-modal').style.display = 'none';
-            document.getElementById('overlay').classList.remove('active');
-            document.getElementById('sidebar').classList.remove('active');
+        function startGame() {
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            usedItems = [];
+            points = 0; currentQuestion = 1; seconds = 0;
+            initStars();
+            loadRound();
+            timerInterval = setInterval(() => {
+                seconds++;
+                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
+            }, 1000);
         }
 
-        function prepararJogo() {
-            jogoAtual = [...animais].sort(() => 0.5 - Math.random()).slice(0, 10);
-            currentIndex = 0;
-            loadChallenge();
-        }
-
-        function loadChallenge() {
-            canClick = true;
-            const item = jogoAtual[currentIndex];
-            document.getElementById('display-word').innerText = item.w;
-            document.getElementById('display-icon').innerText = item.i;
-            document.getElementById('current-idx').innerText = currentIndex + 1;
-            document.querySelectorAll('.opt-btn').forEach(btn => btn.classList.remove('correct', 'wrong'));
-        }
-
-        function checkAnswer(num) {
-            if (!canClick) return;
-            const correct = jogoAtual[currentIndex].s;
-            const buttons = document.querySelectorAll('.opt-btn');
-            const target = correct >= 4 ? 4 : correct;
-
-            if (num === target) {
-                canClick = false;
-                buttons[num - 1].classList.add('correct');
-                setTimeout(() => {
-                    currentIndex++;
-                    if (currentIndex < 10) loadChallenge();
-                    else showFinalModal();
-                }, 800);
-            } else {
-                buttons[num - 1].classList.add('wrong');
-                setTimeout(() => buttons[num - 1].classList.remove('wrong'), 500);
+        function initStars() {
+            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const s = document.createElement('div');
+                s.style.cssText="width:14px;height:14px;border:2px solid #ccc;border-radius:50%;background:white;";
+                bar.appendChild(s);
             }
         }
 
-        function showFinalModal() {
-            document.getElementById('end-modal').style.display = 'block';
-            document.getElementById('overlay').classList.add('active');
+        function loadRound() {
+            const cat = JOGO_CONFIG.categorias[currentCatKey];
+            let available = cat.itens.filter(i => !usedItems.includes(i.nome));
+            
+            if(available.length === 0) { usedItems = []; available = cat.itens; }
+            
+            currentItem = available[Math.floor(Math.random() * available.length)];
+            usedItems.push(currentItem.nome);
+
+            document.getElementById('word-display').innerText = currentItem.nome;
+            document.getElementById('item-image').src = JOGO_CONFIG.caminhoImg + cat.pasta + currentItem.img;
         }
 
-        function reiniciarJogo() {
-            fecharModais();
-            prepararJogo();
+        function checkAnswer(num) {
+            const stars = document.getElementById('stars-bar').children;
+            const correct = currentItem.silabas === num;
+
+            if(correct) {
+                sndCerto.play();
+                points++;
+                stars[currentQuestion-1].style.background = "var(--cor-acerto)";
+                stars[currentQuestion-1].style.borderColor = "var(--cor-acerto)";
+            } else {
+                sndErro.play();
+                stars[currentQuestion-1].style.background = "var(--cor-erro)";
+                stars[currentQuestion-1].style.borderColor = "var(--cor-erro)";
+            }
+
+            document.getElementById('points').innerText = points;
+            currentQuestion++;
+
+            setTimeout(() => {
+                if(currentQuestion > 5) endGame();
+                else loadRound();
+            }, 500);
         }
 
-        prepararJogo();
+        function endGame() {
+            clearInterval(timerInterval);
+            const rel = JOGO_CONFIG.relatorio;
+            document.getElementById('modal-title').innerText = points >= 3 ? rel.titulo : "Fim de Jogo!";
+            document.getElementById('modal-msg').innerHTML = `<p>${rel.pontosTotal} ${points}/5</p><p>${rel.tempoTotal} ${document.getElementById('timer').innerText}</p>`;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
     </script>
 </body>
 </html>
