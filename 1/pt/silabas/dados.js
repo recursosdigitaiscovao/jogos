@@ -1,6 +1,6 @@
 const JOGO_CONFIG = {
-    caminhoImg: "../../img/",
-    caminhoIcons: "../../icons/",
+    caminhoImg: "../../../img/",
+    caminhoIcons: "../../../icons/",
     iconesMenu: {
         pre: "iconpre.png",
         ano1: "icon1.png",
@@ -29,11 +29,11 @@ const JOGO_CONFIG = {
             ]
         },
         material: {
-            nome: "Material Escolar",
+            nome: "Escola",
             img: "materialescolar/mochila.png",
             pasta: "materialescolar/",
             itens: [
-                { nome: "AFIA", img: "afia.png", silabas: 2 },
+                { nome: "AFIA", img: "afia.png", silabas: 3 },
                 { nome: "BORRACHA", img: "borracha.png", silabas: 3 },
                 { nome: "CANETA", img: "caneta.png", silabas: 3 },
                 { nome: "CAPA", img: "capa.png", silabas: 2 },
@@ -69,7 +69,7 @@ const JOGO_CONFIG = {
         }
     },
     relatorio: {
-        titulo: "Incrível!",
+        titulo: "Muito Bem!",
         pontosTotal: "Acertaste:",
         tempoTotal: "Tempo:"
     }
