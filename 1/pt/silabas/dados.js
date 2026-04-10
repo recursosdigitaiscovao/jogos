@@ -19,7 +19,17 @@ const JOGO_CONFIG = {
                 { nome: "BANANA", img: "frutas/banana.png", divisao: "BA-NA-NA" },
                 { nome: "MOCHILA", img: "materialescolar/mochila.png", divisao: "MO-CHI-LA" },
                 { nome: "TESOURA", img: "materialescolar/tesoura.png", divisao: "TE-SOU-RA" },
-                { nome: "CAVALO", img: "animaisdomesticos/cavalo.png", divisao: "CA-VA-LO" }
+                { nome: "CAVALO", img: "animaisdomesticos/cavalo.png", divisao: "CA-VA-LO" },
+                { nome: "OVELHA", img: "animaisdomesticos/ovelha.png", divisao: "O-VE-LHA" },
+                { nome: "PERU", img: "animaisdomesticos/peru.png", divisao: "PE-RU" },
+                { nome: "PATO", img: "animaisdomesticos/pato.png", divisao: "PA-TO" },
+                { nome: "COELHO", img: "animaisdomesticos/coelho.png", divisao: "CO-E-LHO" },
+                { nome: "CABRA", img: "animaisdomesticos/cabra.png", divisao: "CA-BRA" },
+                { nome: "cÃO", img: "animaisdomesticos/cao.png", divisao: "cÃO" },
+                { nome: "CEREJA", img: "frutas/cereja.png", divisao: "CE-RE-JA" },
+                { nome: "LARANKA", img: "frutas/banana.png", divisao: "LA-RAN-JA" }
+                { nome: "PAPAIA", img: "frutas/papaia.png", divisao: "PA-PAI-A" }
+
             ]
         },
         ordenar: {
@@ -27,12 +37,21 @@ const JOGO_CONFIG = {
             img: "materialescolar/caneta.png",
             tipo: "ordenar",
             itens: [
-                { nome: "PORCO", img: "animaisdomesticos/porco.png", divisao: "POR-CO" },
-                { nome: "BURRO", img: "animaisdomesticos/burro.png", divisao: "BU-RRO" },
-                { nome: "BORRACHA", img: "materialescolar/borracha.png", divisao: "BO-RRA-CHA" },
-                { nome: "GALINHA", img: "animaisdomesticos/galinha.png", divisao: "GA-LI-NHA" },
-                { nome: "MORANGO", img: "frutas/morango.png", divisao: "MO-RAN-GO" },
-                { nome: "CANETA", img: "materialescolar/caneta.png", divisao: "CA-NE-TA" }
+                { nome: "VACA", img: "animaisdomesticos/vaca.png", divisao: "VA-CA" },
+                { nome: "GATO", img: "animaisdomesticos/gato.png", divisao: "GA-TO" },
+                { nome: "BANANA", img: "frutas/banana.png", divisao: "BA-NA-NA" },
+                { nome: "MOCHILA", img: "materialescolar/mochila.png", divisao: "MO-CHI-LA" },
+                { nome: "TESOURA", img: "materialescolar/tesoura.png", divisao: "TE-SOU-RA" },
+                { nome: "CAVALO", img: "animaisdomesticos/cavalo.png", divisao: "CA-VA-LO" },
+                { nome: "OVELHA", img: "animaisdomesticos/ovelha.png", divisao: "O-VE-LHA" },
+                { nome: "PERU", img: "animaisdomesticos/peru.png", divisao: "PE-RU" },
+                { nome: "PATO", img: "animaisdomesticos/pato.png", divisao: "PA-TO" },
+                { nome: "COELHO", img: "animaisdomesticos/coelho.png", divisao: "CO-E-LHO" },
+                { nome: "CABRA", img: "animaisdomesticos/cabra.png", divisao: "CA-BRA" },
+                { nome: "cÃO", img: "animaisdomesticos/cao.png", divisao: "cÃO" },
+                { nome: "CEREJA", img: "frutas/cereja.png", divisao: "CE-RE-JA" },
+                { nome: "LARANKA", img: "frutas/banana.png", divisao: "LA-RAN-JA" }
+                { nome: "PAPAIA", img: "frutas/papaia.png", divisao: "PA-PAI-A" }
             ]
         }
     },
