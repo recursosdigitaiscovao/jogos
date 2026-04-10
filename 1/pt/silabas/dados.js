@@ -28,8 +28,8 @@ const JOGO_CONFIG = {
             tipo: "ordenar",
             itens: [
                 { nome: "PORCO", img: "animaisdomesticos/porco.png", divisao: "POR-CO" },
-                { nome: "BURRO", img: "animaisdomesticos/burro.png", divisao: "BUR-RO" },
-                { nome: "BORRACHA", img: "materialescolar/borracha.png", divisao: "BOR-RA-CHA" },
+                { nome: "BURRO", img: "animaisdomesticos/burro.png", divisao: "BU-RRO" },
+                { nome: "BORRACHA", img: "materialescolar/borracha.png", divisao: "BO-RRA-CHA" },
                 { nome: "GALINHA", img: "animaisdomesticos/galinha.png", divisao: "GA-LI-NHA" },
                 { nome: "MORANGO", img: "frutas/morango.png", divisao: "MO-RAN-GO" },
                 { nome: "CANETA", img: "materialescolar/caneta.png", divisao: "CA-NE-TA" }
