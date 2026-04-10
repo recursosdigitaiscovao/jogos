@@ -33,25 +33,40 @@
         .overlay.active { display: block; }
 
         .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; }
         .screen.active { display: flex; }
-        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal); width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; }
-
-        .maze-area { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; overflow: hidden; }
-        #maze-container { 
-            display: grid; background: white; border: 2px dashed var(--cor-principal); border-radius: 15px; 
-            width: min(85vw, 45vh); height: min(85vw, 45vh); margin: auto;
+        
+        .game-card { 
+            background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal); 
+            width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; 
+            display: flex; flex-direction: column; overflow: hidden;
         }
-        .cell { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
-        .cell img { width: 80%; height: 80%; object-fit: contain; position: absolute; z-index: 5; }
-        .wall { width: 100%; height: 100%; z-index: 1; border-radius: 2px; }
 
+        /* Labirinto Clássico com Linhas */
+        .maze-outer { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; overflow: hidden; }
+        #maze-container { 
+            display: grid; background: white; 
+            width: min(90vw, 55vh); height: min(90vw, 55vh); /* Aumentado para ecrãs maiores */
+            margin: auto; border: 2px solid black; box-sizing: border-box;
+        }
+        .cell { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box; position: relative; }
+        .cell img { width: 85%; height: 85%; object-fit: contain; z-index: 5; }
+        
+        /* Estilo das paredes (linhas pretas finas) */
+        .w-t { border-top: 2px solid black; }
+        .w-r { border-right: 2px solid black; }
+        .w-b { border-bottom: 2px solid black; }
+        .w-l { border-left: 2px solid black; }
+
+        /* Controles */
         .d-pad { display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(2, 50px); gap: 10px; justify-content: center; margin: 10px 0; flex-shrink: 0; }
         .btn-dir { background: var(--cor-principal); color: white; border: none; border-radius: 12px; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #c07a8c; touch-action: none; }
         .btn-dir:active { transform: translateY(3px); box-shadow: none; }
 
-        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center;}
-        .anim-pula { animation: jump 1.2s infinite ease-in-out; }
+        /* Popup Ajuda / Intro */
+        .help-card { padding-left: 25px; padding-right: 25px; } /* Requisito: Padding 25px L/R */
+        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center; }
+        .anim-jump { animation: jump 1.2s infinite ease-in-out; }
         @keyframes jump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
         .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
@@ -95,15 +110,17 @@
     </header>
 
     <main class="main-content">
+        <!-- Intro Screen (Popup Ajuda) -->
         <section id="intro-screen" class="screen active">
-            <div class="game-card">
+            <div class="game-card help-card">
                 <div class="explanation-box">
                     <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin-bottom: 20px;">Leva o animal até à comida!</p>
                     <div style="display:flex; gap:35px; align-items:center;">
-                        <img id="intro-sprite" class="anim-pula" src="" style="width:80px;">
+                        <img id="intro-sprite" class="anim-jump" src="" style="width:80px;">
                         <span style="font-size:30px; color:var(--cor-principal);">➔</span>
                         <img id="intro-food" src="" style="width:80px;">
                     </div>
+                    <p style="font-size:0.85rem; color:#888; margin-top:15px;">Usa os botões para andar. Evita os obstáculos!</p>
                 </div>
                 <h2 style="color:var(--cor-principal); text-align:center; font-size:1.4rem; margin:10px 0; font-weight:bold;">O Labirinto</h2>
                 <div style="display:flex; gap:10px; width:100%;">
@@ -113,9 +130,10 @@
             </div>
         </section>
 
+        <!-- Game Screen -->
         <section id="game-screen" class="screen">
             <div class="game-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem; flex-shrink: 0;">
                     <div>⏳ <span id="timer">00:00</span></div>
                     <div id="stars-bar" style="display:flex; gap:4px;"></div>
                     <div style="display:flex; align-items:center;">
@@ -123,14 +141,14 @@
                         <button class="btn-rd-mini" onclick="toggleRD()"><img id="rd-mini-icon" src=""></button>
                     </div>
                 </div>
-                <div class="maze-area">
+                <div class="maze-outer">
                     <div id="maze-container"></div>
                 </div>
                 <div class="d-pad">
-                    <div style="grid-column:2"><button class="btn-dir" onmousedown="handleMovePress(0,-1)" onmouseup="handleMoveRelease()" ontouchstart="handleMovePress(0,-1)" ontouchend="handleMoveRelease()">▲</button></div>
-                    <div style="grid-row:2"><button class="btn-dir" onmousedown="handleMovePress(-1,0)" onmouseup="handleMoveRelease()" ontouchstart="handleMovePress(-1,0)" ontouchend="handleMoveRelease()">◀</button></div>
-                    <div style="grid-row:2"><button class="btn-dir" onmousedown="handleMovePress(0,1)" onmouseup="handleMoveRelease()" ontouchstart="handleMovePress(0,1)" ontouchend="handleMoveRelease()">▼</button></div>
-                    <div style="grid-row:2"><button class="btn-dir" onmousedown="handleMovePress(1,0)" onmouseup="handleMoveRelease()" ontouchstart="handleMovePress(1,0)" ontouchend="handleMoveRelease()">▶</button></div>
+                    <div style="grid-column:2"><button class="btn-dir" onmousedown="handleMoveStart(0,-1)" onmouseup="handleMoveStop()" ontouchstart="handleMoveStart(0,-1)" ontouchend="handleMoveStop()">▲</button></div>
+                    <div style="grid-row:2"><button class="btn-dir" onmousedown="handleMoveStart(-1,0)" onmouseup="handleMoveStop()" ontouchstart="handleMoveStart(-1,0)" ontouchend="handleMoveStop()">◀</button></div>
+                    <div style="grid-row:2"><button class="btn-dir" onmousedown="handleMoveStart(0,1)" onmouseup="handleMoveStop()" ontouchstart="handleMoveStart(0,1)" ontouchend="handleMoveStop()">▼</button></div>
+                    <div style="grid-row:2"><button class="btn-dir" onmousedown="handleMoveStart(1,0)" onmouseup="handleMoveStop()" ontouchstart="handleMoveStart(1,0)" ontouchend="handleMoveStop()">▶</button></div>
                 </div>
             </div>
         </section>
@@ -138,7 +156,7 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--cor-acerto);">Fantástico!</h2>
+            <h2 id="modal-title" style="color:var(--cor-acerto);">Parabéns!</h2>
             <div id="modal-msg" style="margin: 20px 0;"></div>
             <button class="btn-play" onclick="location.reload()" style="background:var(--cor-principal);">Jogar de Novo</button>
         </div>
@@ -148,14 +166,14 @@
     <script>
         let currentLevel = 1, points = 0, seconds = 0, timerInterval;
         let catKey = "cao", playerPos = {x:0, y:0}, exitPos = {x:0, y:0};
-        let canMove = true, currentMaze = [], moveTimer = null, delayTimer = null;
+        let canMove = true, mazeData = [], moveInterval = null, holdTimeout = null;
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
             document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
             ['side-pre','side-1','side-2','side-3','side-4'].forEach((id, i) => {
                 const icon = i === 0 ? 'pre' : `ano${i}`;
-                document.getElementById(id).src = p + JOGO_CONFIG.iconesMenu[icon];
+                const el = document.getElementById(id); if(el) el.src = p + JOGO_CONFIG.iconesMenu[icon];
             });
             document.getElementById('btn-rd-icon').src = JOGO_CONFIG.caminhoImg + "rd.png";
             document.getElementById('rd-mini-icon').src = JOGO_CONFIG.caminhoImg + "rd.png";
@@ -170,7 +188,7 @@
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
                 item.innerHTML = `<img src="${JOGO_CONFIG.labirinto.caminho + cat.sprite}"> ${cat.nome}`;
-                item.onclick = () => { selectCategory(k); if(document.getElementById('game-screen').classList.contains('active')) resetGameTotal(); };
+                item.onclick = () => { selectCategory(k); if(document.getElementById('game-screen').classList.contains('active')) resetGame(); };
                 list.appendChild(item);
             });
         }
@@ -183,29 +201,25 @@
             closeMenus();
         }
 
-        function resetGameTotal() {
+        function resetGame() {
             clearInterval(timerInterval);
             currentLevel = 1; points = 0; seconds = 0;
             document.getElementById('points').innerText = "0";
             document.getElementById('timer').innerText = "00:00";
-            initStars();
-            startGame();
+            initStars(); startGame();
         }
 
         function startGame() {
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            initStars();
+            if(currentLevel === 1) {
+                initStars();
+                timerInterval = setInterval(() => {
+                    seconds++;
+                    document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
+                }, 1000);
+            }
             loadLevel();
-            startClock();
-        }
-
-        function startClock() {
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                seconds++;
-                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
-            }, 1000);
         }
 
         function initStars() {
@@ -217,70 +231,71 @@
             }
         }
 
-        // --- Algoritmo de Geração com Validador de Caminho Seguro ---
+        // Algoritmo de Geração de Labirinto (Linhas) com Caminho Seguro Garantido
         function generateMaze(size) {
-            let maze = Array(size).fill().map(() => Array(size).fill(1));
-            function walk(x, y) {
-                maze[y][x] = 0;
-                let dirs = [[0,2],[0,-2],[2,0],[-2,0]].sort(() => Math.random() - 0.5);
-                for(let [dx, dy] of dirs) {
-                    let nx = x + dx, ny = y + dy;
-                    if(nx >= 0 && nx < size && ny >= 0 && ny < size && maze[ny][nx] === 1) {
-                        maze[y + dy/2][x + dx/2] = 0; walk(nx, ny);
-                    }
-                }
+            let maze = [];
+            for(let y=0; y<size; y++) {
+                let row = [];
+                for(let x=0; x<size; x++) row.push({x, y, walls:{t:1, r:1, b:1, l:1}, visited:false, obstacle:null});
+                maze.push(row);
             }
-            walk(0, 0);
-            maze[0][0] = 2; // Início
-            maze[size-1][size-1] = 3; // Fim
-            if(maze[size-2][size-1] === 1 && maze[size-1][size-2] === 1) maze[size-2][size-1] = 0;
-
-            // Encontrar o caminho da solução usando BFS para marcar como seguro
-            let solutionPath = findPath(maze, size);
-            
-            // Colocar obstáculos apenas em células de caminho (0) que NÃO pertencem ao caminho da solução
-            let maxObs = currentLevel + 1;
-            let currentObs = 0;
-            let floorCells = [];
+            let stack = []; let current = maze[0][0]; current.visited = true;
+            while(true) {
+                let neighbors = getUnvisitedNeighbors(current, maze, size);
+                if(neighbors.length > 0) {
+                    let next = neighbors[Math.floor(Math.random() * neighbors.length)];
+                    removeWalls(current, next);
+                    stack.push(current); current = next; current.visited = true;
+                } else if(stack.length > 0) { current = stack.pop(); } else break;
+            }
+            let path = findSolution(maze, size);
+            // Adicionar obstáculos (pedra/buraco) apenas em caminhos sem saída
+            let obsCount = currentLevel;
+            let available = [];
             for(let y=0; y<size; y++) {
                 for(let x=0; x<size; x++) {
-                    if(maze[y][x] === 0 && !solutionPath.some(p => p.x === x && p.y === y)) {
-                        floorCells.push({x, y});
-                    }
+                    if(!path.some(p => p.x === x && p.y === y) && (x!==0 || y!==0)) available.push(maze[y][x]);
                 }
             }
-            floorCells.sort(() => Math.random() - 0.5);
-            while(currentObs < maxObs && floorCells.length > 0) {
-                let cell = floorCells.pop();
-                maze[cell.y][cell.x] = 4; // Obstáculo
-                currentObs++;
+            available.sort(() => Math.random() - 0.5);
+            for(let i=0; i<Math.min(obsCount, available.length); i++) {
+                available[i].obstacle = JOGO_CONFIG.labirinto.obstaculos[Math.floor(Math.random() * 2)];
             }
             return maze;
         }
 
-        function findPath(maze, size) {
-            let queue = [{x:0, y:0, path:[]}];
-            let visited = new Set();
-            while(queue.length > 0) {
-                let {x, y, path} = queue.shift();
-                if(x === size-1 && y === size-1) return [...path, {x, y}];
-                let key = `${x},${y}`;
-                if(visited.has(key)) continue;
-                visited.add(key);
-                [[0,1],[0,-1],[1,0],[-1,0]].forEach(([dx, dy]) => {
-                    let nx = x + dx, ny = y + dy;
-                    if(nx>=0 && nx<size && ny>=0 && ny<size && maze[ny][nx] !== 1) {
-                        queue.push({x: nx, y: ny, path: [...path, {x, y}]});
-                    }
-                });
+        function getUnvisitedNeighbors(c, m, s) {
+            let ns = [];
+            if(c.y>0 && !m[c.y-1][c.x].visited) ns.push(m[c.y-1][c.x]);
+            if(c.x<s-1 && !m[c.y][c.x+1].visited) ns.push(m[c.y][c.x+1]);
+            if(c.y<s-1 && !m[c.y+1][c.x].visited) ns.push(m[c.y+1][c.x]);
+            if(c.x>0 && !m[c.y][c.x-1].visited) ns.push(m[c.y][c.x-1]);
+            return ns;
+        }
+
+        function removeWalls(a, b) {
+            if(a.x === b.x) { if(a.y > b.y) { a.walls.t = 0; b.walls.b = 0; } else { a.walls.b = 0; b.walls.t = 0; } }
+            else { if(a.x > b.x) { a.walls.l = 0; b.walls.r = 0; } else { a.walls.r = 0; b.walls.l = 0; } }
+        }
+
+        function findSolution(m, s) {
+            let q = [{x:0, y:0, path:[]}]; let visited = new Set();
+            while(q.length > 0) {
+                let {x, y, path} = q.shift();
+                if(x === s-1 && y === s-1) return [...path, {x, y}];
+                let key = `${x},${y}`; if(visited.has(key)) continue; visited.add(key);
+                let c = m[y][x];
+                if(!c.walls.t && y>0) q.push({x, y:y-1, path:[...path, {x, y}]});
+                if(!c.walls.r && x<s-1) q.push({x:x+1, y, path:[...path, {x, y}]});
+                if(!c.walls.b && y<s-1) q.push({x, y:y+1, path:[...path, {x, y}]});
+                if(!c.walls.l && x>0) q.push({x:x-1, y, path:[...path, {x, y}]});
             }
             return [];
         }
 
         function loadLevel() {
-            canMove = true;
-            const size = 5 + (currentLevel * 2);
-            currentMaze = generateMaze(size);
+            canMove = true; let size = 4 + currentLevel; // 5, 6, 7, 8, 9
+            mazeData = generateMaze(size);
             const container = document.getElementById('maze-container');
             container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
             container.style.gridTemplateRows = `repeat(${size}, 1fr)`;
@@ -289,60 +304,68 @@
             const cat = JOGO_CONFIG.labirinto.categorias[catKey];
             const path = JOGO_CONFIG.labirinto.caminho;
 
-            for(let y=0; y<size; y++){
-                for(let x=0; x<size; x++){
+            for(let y=0; y<size; y++) {
+                for(let x=0; x<size; x++) {
+                    const cData = mazeData[y][x];
                     const cell = document.createElement('div');
                     cell.className = 'cell'; cell.id = `c-${x}-${y}`;
-                    const val = currentMaze[y][x];
-                    if(val === 1) {
-                        cell.classList.add('wall'); cell.style.backgroundColor = cat.corParede;
-                    } else if(val === 2) {
-                        playerPos = {x,y};
+                    if(cData.walls.t) cell.classList.add('w-t');
+                    if(cData.walls.r) cell.classList.add('w-r');
+                    if(cData.walls.b) cell.classList.add('w-b');
+                    if(cData.walls.l) cell.classList.add('w-l');
+                    
+                    if(x === 0 && y === 0) {
+                        playerPos = {x, y};
                         cell.innerHTML = `<img id="player-img" src="${path + cat.sprite}">`;
-                    } else if(val === 3) {
-                        exitPos = {x,y};
+                    } else if(x === size-1 && y === size-1) {
+                        exitPos = {x, y};
                         cell.innerHTML = `<img id="food-img" src="${path + cat.objetivo}">`;
-                    } else if(val === 4) {
-                        const obs = JOGO_CONFIG.labirinto.obstaculos[Math.floor(Math.random()*2)];
-                        cell.innerHTML = `<img src="${path + obs}">`;
+                    } else if(cData.obstacle) {
+                        cell.innerHTML = `<img src="${path + cData.obstacle}">`;
                     }
                     container.appendChild(cell);
                 }
             }
         }
 
-        function handleMovePress(dx, dy) {
+        // Movimentação Avançada (Um clique = 1 passo / Manter = Deslizar)
+        function handleMoveStart(dx, dy) {
             if(!canMove) return;
-            move(dx, dy); 
-            delayTimer = setTimeout(() => {
-                moveTimer = setInterval(() => { if(!move(dx, dy)) handleMoveRelease(); }, 80);
-            }, 250);
+            move(dx, dy); // Primeiro passo
+            holdTimeout = setTimeout(() => {
+                moveInterval = setInterval(() => { if(!move(dx, dy)) handleMoveStop(); }, 120);
+            }, 300);
         }
 
-        function handleMoveRelease() { clearTimeout(delayTimer); clearInterval(moveTimer); }
+        function handleMoveStop() { clearTimeout(holdTimeout); clearInterval(moveInterval); }
 
         function move(dx, dy) {
             if(!canMove) return false;
-            const nX = playerPos.x + dx, nY = playerPos.y + dy;
-            if(nY >= 0 && nY < currentMaze.length && nX >= 0 && nX < currentMaze.length) {
-                const val = currentMaze[nY][nX];
-                if(val !== 1) {
-                    const newCell = document.getElementById(`c-${nX}-${nY}`);
-                    newCell.appendChild(document.getElementById('player-img'));
-                    playerPos = {x: nX, y: nY};
-                    if(val === 3) { endRound(true); return false; }
-                    if(val === 4) { endRound(false); return false; }
-                    return true;
-                }
-            }
-            return false;
+            let currentCell = mazeData[playerPos.y][playerPos.x];
+            // Verificar paredes
+            if(dx === 0 && dy === -1 && currentCell.walls.t) return false;
+            if(dx === 1 && dy === 0 && currentCell.walls.r) return false;
+            if(dx === 0 && dy === 1 && currentCell.walls.b) return false;
+            if(dx === -1 && dy === 0 && currentCell.walls.l) return false;
+
+            let nx = playerPos.x + dx; let ny = playerPos.y + dy;
+            if(nx < 0 || ny < 0 || nx >= mazeData.length || ny >= mazeData.length) return false;
+
+            playerPos = {x: nx, y: ny};
+            const pImg = document.getElementById('player-img');
+            document.getElementById(`c-${nx}-${ny}`).appendChild(pImg);
+
+            let cell = mazeData[ny][nx];
+            if(nx === exitPos.x && ny === exitPos.y) { endRound(true); return false; }
+            if(cell.obstacle) { endRound(false); return false; }
+            return true;
         }
 
         function endRound(success) {
-            canMove = false; handleMoveRelease();
+            canMove = false; handleMoveStop();
             if(success) {
                 points += 20; document.getElementById('sound-win').play().catch(()=>{});
-                const food = document.getElementById('food-img'); if(food) food.style.display = 'none';
+                const f = document.getElementById('food-img'); if(f) f.style.display = 'none';
             } else {
                 if(points > 0) points -= 5;
                 document.getElementById('player-img').style.opacity = '0.4';
@@ -357,7 +380,6 @@
                 if(currentLevel < 5) { currentLevel++; loadLevel(); }
                 else {
                     clearInterval(timerInterval);
-                    document.getElementById('modal-title').innerText = points >= 60 ? "Aventura Concluída!" : "Bom Trabalho!";
                     document.getElementById('modal-msg').innerHTML = `<p>Pontos: ${points}</p><p>Tempo: ${document.getElementById('timer').innerText}</p>`;
                     document.getElementById('modal').style.display = 'flex';
                 }
@@ -367,12 +389,6 @@
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
-
-        window.onkeydown = (e) => {
-            if(!canMove) return;
-            if(e.key === "ArrowUp") move(0,-1); if(e.key === "ArrowDown") move(0,1);
-            if(e.key === "ArrowLeft") move(-1,0); if(e.key === "ArrowRight") move(1,0);
-        };
     </script>
 </body>
 </html>
