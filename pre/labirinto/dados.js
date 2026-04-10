@@ -11,9 +11,24 @@ const JOGO_CONFIG = {
     labirinto: {
         caminho: "../../img/labirinto/",
         categorias: {
-            cao: { nome: "Cão", sprite: "l_cao.png", objetivo: "l_comida_cao.png", corParede: "#e691a7" },
-            gato: { nome: "Gato", sprite: "l_gato.png", objetivo: "l_comida_gato.png", corParede: "#d47a92" },
-            passaro: { nome: "Pássaro", sprite: "l_passaro.png", objetivo: "l_comida_passaro.png", corParede: "#8db596" }
+            cao: { 
+                nome: "Cão", 
+                sprite: "l_cao.png", 
+                objetivo: "l_comida_cao.png", 
+                corParede: "#e691a7" 
+            },
+            gato: { 
+                nome: "Gato", 
+                sprite: "l_gato.png", 
+                objetivo: "l_comida_gato.png", 
+                corParede: "#d47a92" 
+            },
+            passaro: { 
+                nome: "Pássaro", 
+                sprite: "l_passaro.png", 
+                objetivo: "l_comida_passaro.png", 
+                corParede: "#8db596" 
+            }
         }
     },
     relatorio: {
