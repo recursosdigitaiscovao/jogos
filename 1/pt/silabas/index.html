@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pré Escolar - Sílabas</title>
+    <title>Português 1º Ano - Sílabas</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --cor-principal: #e691a7; 
-            --cor-vibrante: #d47a92;  
-            --cor-fundo: #fff5f7;      
-            --cor-texto: #e691a7;      
+            --cor-principal: #FF9100; /* Laranja solicitado */
+            --cor-fundo: #fff9f2;      
+            --cor-texto: #555;      
             --cor-vermelho: #ff4757; 
             --header-height: 70px;
-            --cor-jogo-verde: #e691a7;  
-            --cor-erro: #ff4757;
             --cor-acerto: #2ed573;
+            --cor-erro: #ff4757;
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -24,8 +22,9 @@
         body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
-        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
-        
+        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; transition: 0.3s; }
+        .back-btn:hover { transform: scale(1.05); }
+
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         .sidebar-rd { position: fixed; bottom: -300px; left: 0; width: 100%; height: 300px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
@@ -42,50 +41,47 @@
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
         .screen.active { display: flex; }
 
-        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-jogo-verde); display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden; }
+        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; overflow: hidden; }
         
-        .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--cor-fundo); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 10px; overflow: hidden; position: relative; }
+        /* ÁREA DE JOGO */
+        .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fffcf8; border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 5px; overflow: hidden; position: relative; }
         
-        .sil-frame { background: white; border: 4px solid #000; border-radius: 25px; width: 100%; max-width: 450px; height: 95%; display: flex; flex-direction: column; overflow: hidden; }
-        .sil-header { height: 60px; border-bottom: 4px solid #000; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 900; color: #000; letter-spacing: 2px; }
-        .sil-img-box { flex: 1; display: flex; align-items: center; justify-content: center; padding: 10px; }
-        .sil-img-box img { max-width: 85%; max-height: 85%; object-fit: contain; }
+        .sil-frame { background: white; border: 4px solid #000; border-radius: 25px; width: 100%; max-width: 400px; height: 98%; display: flex; flex-direction: column; overflow: hidden; }
+        
+        .sil-header { height: 15%; min-height: 50px; border-bottom: 4px solid #000; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 900; color: #000; letter-spacing: 2px; }
+        
+        .sil-img-box { flex: 1; display: flex; align-items: center; justify-content: center; padding: 10px; min-height: 100px; }
+        .sil-img-box img { max-width: 90%; max-height: 100%; object-fit: contain; }
 
-        /* DROP ZONE (SLOTS) */
-        .drop-zone { min-height: 80px; background: #f7f7f7; border-top: 4px solid #000; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px; }
+        /* ZONA DE DROP / RESPOSTA */
+        .drop-zone { height: 18%; min-height: 70px; background: #f7f7f7; border-top: 4px solid #000; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 5px; }
         .slot { 
-            width: 70px; height: 70px; border: 3px solid #000; background: #fff; 
-            border-radius: 12px; display: flex; align-items: center; justify-content: center; 
-            font-weight: 900; font-size: 1.3rem; transition: 0.2s; cursor: pointer;
+            width: 60px; height: 60px; border: 3px solid #000; background: #fff; 
+            border-radius: 10px; display: flex; align-items: center; justify-content: center; 
+            font-weight: 900; font-size: 1.2rem; cursor: pointer;
         }
-        .slot.hover { background: #fff5f7; border-color: var(--cor-principal); }
 
-        /* PIECES (SÍLABAS) */
-        .pieces-pool { height: 110px; border-top: 4px solid #000; display: flex; align-items: center; justify-content: center; gap: 15px; padding: 10px; background: white; }
+        /* PAINEL DE BOTÕES */
+        .controls-area { height: 20%; min-height: 80px; border-top: 4px solid #000; display: flex; align-items: center; justify-content: center; background: white; gap: 10px; padding: 5px; }
         .piece { 
-            background: var(--cor-principal); color: white; padding: 15px 10px; 
-            border-radius: 12px; border: 2px solid #333; font-weight: 900; font-size: 1.3rem; 
-            cursor: grab; min-width: 60px; text-align: center; box-shadow: 0 4px 0 #333;
-            text-transform: uppercase;
+            background: var(--cor-principal); color: white; padding: 10px; 
+            border-radius: 10px; border: 2px solid #000; font-weight: 900; font-size: 1.2rem; 
+            cursor: pointer; min-width: 60px; text-align: center; box-shadow: 0 4px 0 #000;
         }
-        .piece:active { cursor: grabbing; transform: translateY(2px); box-shadow: 0 2px 0 #333; }
-        .piece.hidden { opacity: 0; pointer-events: none; }
-
-        /* BUTTONS NUMBERS */
-        .numbers-grid { height: 100px; border-top: 4px solid #000; display: flex; }
-        .num-btn { flex: 1; border: none; background: #fff; font-size: 2.5rem; font-weight: 900; color: #000; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .piece.hidden { visibility: hidden; pointer-events: none; }
+        
+        .num-grid { display: flex; width: 100%; height: 100%; }
+        .num-btn { flex: 1; border: none; background: #fff; font-size: 2rem; font-weight: 900; color: #000; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .num-btn:not(:last-child) { border-right: 4px solid #000; }
-        .num-btn:active { background: #eee; }
 
         /* INTRO */
-        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center;}
+        .explanation-box { background: #fff9f2; border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #ffe0b2; text-align: center;}
         .intro-btns { display: flex; gap: 10px; width: 100%; align-items: center; }
-        .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
+        .btn-play { background: var(--cor-principal); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
         .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .btn-rd-img-ref { width: 35px; height: 35px; object-fit: contain; }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); width: 90%; max-width: 350px; }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 90%; max-width: 350px; }
     </style>
 </head>
 <body>
@@ -111,7 +107,7 @@
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
         <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin: 0;">
-            <img id="header-icon" src="" style="height:32px;"> Sílabas
+            <img id="header-icon" src="" style="height:32px;"> Português - 1º Ano
         </h1>
         <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
@@ -121,12 +117,12 @@
             <div class="game-card">
                 <div class="explanation-box">
                     <img id="intro-preview-img" src="" style="width:110px; margin-bottom:10px;">
-                    <p id="intro-text" style="color:var(--cor-texto); font-weight:bold;"></p>
+                    <p id="intro-text" style="color:#555; font-weight:bold; font-size:1.2rem;"></p>
                 </div>
                 <h2 id="display-categoria" style="text-align:center; color:var(--cor-principal); margin-bottom:15px;"></h2>
                 <div class="intro-btns">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
-                    <button class="btn-rd" onclick="toggleRD()"><img class="btn-rd-img-ref" src=""></button>
+                    <button class="btn-rd" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:35px;"></button>
                 </div>
             </div>
         </section>
@@ -148,7 +144,7 @@
                             <img id="game-img" src="">
                         </div>
                         <div id="drop-area" class="drop-zone" style="display:none;"></div>
-                        <div id="controls-area"></div>
+                        <div id="controls-area" class="controls-area"></div>
                     </div>
                 </div>
             </div>
@@ -159,7 +155,7 @@
         <div class="modal-content">
             <h2 id="modal-title" style="color:var(--cor-acerto);">Boa!</h2>
             <div id="modal-msg" style="margin-bottom:20px;"></div>
-            <button class="btn-play" onclick="location.reload()" style="background:var(--cor-acerto);">Novo Jogo</button>
+            <button class="btn-play" onclick="location.reload()">Jogar de Novo</button>
         </div>
     </div>
 
@@ -168,15 +164,13 @@
         let currentQuestion = 1, points = 0, seconds = 0, timerInterval;
         let currentCatKey = "contar", currentItem = null, usedItems = [];
         let playerSyllables = [];
-        let draggedSyllable = null;
 
         const sndCerto = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
         const sndErro = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
 
         window.onload = () => {
-            const p = JOGO_CONFIG.caminhoIcons;
-            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
-            document.querySelector('.menu-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
+            document.getElementById('header-icon').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1;
+            document.querySelector('.menu-pre').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.pre;
             document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             setupRDMenu(); updateIntro();
         };
@@ -188,7 +182,7 @@
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
                 item.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + cat.img}"> <span>${cat.nome}</span>`;
-                item.onclick = () => { currentCatKey = key; updateIntro(); closeMenus(); if(document.getElementById('game-screen').classList.contains('active')) startGame(); };
+                item.onclick = () => { currentCatKey = key; updateIntro(); closeMenus(); };
                 container.appendChild(item);
             });
         }
@@ -197,14 +191,13 @@
             const cat = JOGO_CONFIG.categorias[currentCatKey];
             document.getElementById('display-categoria').innerText = cat.nome;
             document.getElementById('intro-preview-img').src = JOGO_CONFIG.caminhoImg + cat.img;
-            document.getElementById('intro-text').innerText = cat.tipo === "contar" ? "Conta as sílabas!" : "Arrasta as sílabas para ordenar!";
+            document.getElementById('intro-text').innerText = cat.tipo === "contar" ? "Conta quantas sílabas tem a palavra!" : "Clica nas sílabas para ordenar!";
         }
 
         function startGame() {
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
             points = 0; currentQuestion = 1; seconds = 0; usedItems = [];
-            clearInterval(timerInterval);
             initStars(); loadRound();
             timerInterval = setInterval(() => {
                 seconds++;
@@ -223,96 +216,78 @@
 
         function loadRound() {
             const cat = JOGO_CONFIG.categorias[currentCatKey];
-            let available = cat.itens.filter(i => !usedItems.includes(i.nome));
-            if(available.length === 0) { usedItems = []; available = cat.itens; }
-            currentItem = available[Math.floor(Math.random() * available.length)];
+            let av = cat.itens.filter(i => !usedItems.includes(i.nome));
+            if(av.length === 0) { usedItems = []; av = cat.itens; }
+            currentItem = av[Math.floor(Math.random() * av.length)];
             usedItems.push(currentItem.nome);
 
             document.getElementById('game-img').src = JOGO_CONFIG.caminhoImg + currentItem.img;
-            const controls = document.getElementById('controls-area');
-            const drops = document.getElementById('drop-area');
-            controls.innerHTML = ''; drops.innerHTML = ''; playerSyllables = [];
+            const ctrl = document.getElementById('controls-area');
+            const drop = document.getElementById('drop-area');
+            ctrl.innerHTML = ''; drop.innerHTML = ''; playerSyllables = [];
 
             if(cat.tipo === "contar") {
                 document.getElementById('game-title').innerText = currentItem.nome;
-                drops.style.display = 'none';
-                controls.className = "numbers-grid";
+                drop.style.display = 'none';
+                ctrl.className = "num-grid";
                 for(let i=1; i<=4; i++) {
                     const b = document.createElement('button');
                     b.className = 'num-btn'; b.innerText = i;
-                    b.onclick = () => finalizeRound(i);
-                    controls.appendChild(b);
+                    b.onclick = () => check(i);
+                    ctrl.appendChild(b);
                 }
             } else {
                 document.getElementById('game-title').innerText = "???";
-                drops.style.display = 'flex';
-                controls.className = "pieces-pool";
+                drop.style.display = 'flex';
+                ctrl.className = "controls-area";
                 const parts = currentItem.divisao.split('-');
-                
                 parts.forEach((_, idx) => {
-                    const slot = document.createElement('div');
-                    slot.className = 'slot';
-                    slot.ondragover = e => e.preventDefault();
-                    slot.ondrop = e => handleDrop(idx);
-                    slot.onclick = () => removePiece(idx);
-                    drops.appendChild(slot);
+                    const s = document.createElement('div');
+                    s.className = 'slot'; s.onclick = () => removePiece(idx);
+                    drop.appendChild(s);
                 });
-
-                const shuffled = [...parts].sort(() => Math.random() - 0.5);
-                shuffled.forEach((txt, idx) => {
+                const shuf = [...parts].sort(() => Math.random() - 0.5);
+                shuf.forEach((t, i) => {
                     const p = document.createElement('div');
-                    p.className = 'piece'; p.innerText = txt; p.draggable = true;
-                    p.id = `piece-${idx}`;
-                    p.onclick = () => handlePieceClick(txt, p.id); // Compatibilidade telemóvel
-                    p.ondragstart = () => draggedSyllable = { text: txt, id: p.id };
-                    controls.appendChild(p);
+                    p.className = 'piece'; p.innerText = t; p.id = `p-${i}`;
+                    p.onclick = () => addPiece(t, p.id);
+                    ctrl.appendChild(p);
                 });
             }
         }
 
-        function handleDrop(slotIdx) {
+        function addPiece(txt, id) {
             const slots = document.querySelectorAll('.slot');
-            if(slotIdx === playerSyllables.length && draggedSyllable) {
-                const s = slots[slotIdx];
-                s.innerText = draggedSyllable.text;
-                s.dataset.refId = draggedSyllable.id;
-                playerSyllables.push(draggedSyllable.text);
-                document.getElementById(draggedSyllable.id).classList.add('hidden');
-                draggedSyllable = null;
-                if(playerSyllables.length === slots.length) finalizeRound(playerSyllables.join('-'));
+            if(playerSyllables.length < slots.length) {
+                const s = slots[playerSyllables.length];
+                s.innerText = txt; s.dataset.ref = id;
+                playerSyllables.push(txt);
+                document.getElementById(id).classList.add('hidden');
+                if(playerSyllables.length === slots.length) setTimeout(() => check(playerSyllables.join('-')), 300);
             }
-        }
-
-        function handlePieceClick(text, id) {
-            draggedSyllable = { text, id };
-            handleDrop(playerSyllables.length);
         }
 
         function removePiece(idx) {
             if(idx === playerSyllables.length - 1 && playerSyllables.length > 0) {
                 const slots = document.querySelectorAll('.slot');
-                const refId = slots[idx].dataset.refId;
-                document.getElementById(refId).classList.remove('hidden');
-                slots[idx].innerText = '';
-                playerSyllables.pop();
+                const rid = slots[idx].dataset.ref;
+                document.getElementById(rid).classList.remove('hidden');
+                slots[idx].innerText = ''; playerSyllables.pop();
             }
         }
 
-        function finalizeRound(val) {
+        function check(val) {
             const cat = JOGO_CONFIG.categorias[currentCatKey];
             const stars = document.getElementById('stars-bar').children;
             const correct = (cat.tipo === "contar") ? (currentItem.divisao.split('-').length === val) : (currentItem.divisao === val);
-
+            
             if(correct) {
                 sndCerto.play(); points++;
                 stars[currentQuestion-1].style.background = "var(--cor-acerto)";
-                stars[currentQuestion-1].style.borderColor = "var(--cor-acerto)";
             } else {
                 sndErro.play();
                 stars[currentQuestion-1].style.background = "var(--cor-erro)";
-                stars[currentQuestion-1].style.borderColor = "var(--cor-erro)";
             }
-
             document.getElementById('points').innerText = points;
             currentQuestion++;
             setTimeout(() => { if(currentQuestion > 5) endGame(); else loadRound(); }, 600);
@@ -320,7 +295,7 @@
 
         function endGame() {
             clearInterval(timerInterval);
-            document.getElementById('modal-title').innerText = points >= 3 ? "Espetacular!" : "Tenta de novo!";
+            document.getElementById('modal-title').innerText = points >= 3 ? "Excelente!" : "Bom trabalho!";
             document.getElementById('modal-msg').innerHTML = `<p>Acertaste: ${points}/5</p><p>Tempo: ${document.getElementById('timer').innerText}</p>`;
             document.getElementById('modal').style.display = 'flex';
         }
