@@ -11,12 +11,12 @@ const JOGO_CONFIG = {
     letras: {
         caminho: "../../img/chuva_letras/",
         categorias: {
-            vogais_min: { nome: "Vogais (abc)", lista: "aeiou", modo: "min", img: "vogais_min.png" },
-            vogais_mai: { nome: "Vogais (ABC)", lista: "AEIOU", modo: "mai", img: "vogais_mai.png" },
-            consoantes_min: { nome: "Consoantes (abc)", lista: "bcdfghjklmnpqrstvwxyz", modo: "min", img: "consoantes_min.png" },
-            consoantes_mai: { nome: "Consoantes (ABC)", lista: "BCDFGHJKLMNPQRSTVWXYZ", modo: "mai", img: "consoantes_mai.png" },
-            alfabeto_min: { nome: "Alfabeto (abc)", lista: "abcdefghijklmnopqrstuvwxyz", modo: "min", img: "alfabeto_min.png" },
-            alfabeto_mai: { nome: "Alfabeto (ABC)", lista: "ABCDEFGHIJKLMNOPQRSTUVWXYZ", modo: "mai", img: "alfabeto_mai.png" }
+            vogais_min: { nome: "Vogais (abc)", lista: "aeiou", modo: "min", img: "vogal_minuscula.png" },
+            vogais_mai: { nome: "Vogais (ABC)", lista: "AEIOU", modo: "mai", img: "vogal_maiuscula.png" },
+            consoantes_min: { nome: "Consoantes (abc)", lista: "bcdfghjklmnpqrstvwxyz", modo: "min", img: "consoante_minuscula.png" },
+            consoantes_mai: { nome: "Consoantes (ABC)", lista: "BCDFGHJKLMNPQRSTVWXYZ", modo: "mai", img: "consoante_maiuscula.png" },
+            alfabeto_min: { nome: "Alfabeto (abc)", lista: "abcdefghijklmnopqrstuvwxyz", modo: "min", img: "alfabeto_minusculo.png" },
+            alfabeto_mai: { nome: "Alfabeto (ABC)", lista: "ABCDEFGHIJKLMNOPQRSTUVWXYZ", modo: "mai", img: "alfabeto_maiusculo.png" }
         }
     },
     relatorio: {
