@@ -2,17 +2,18 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<title>Jogo Labirinto</title>
+<title>Labirinto</title>
 <style>
-    body { margin: 0; background: #222; }
-    canvas { display: block; margin: auto; background: #fff; }
+    body { margin:0; background:#222; }
+    canvas { display:block; margin:auto; background:#fff; }
 </style>
 </head>
 <body>
 
-<canvas id="gameCanvas" width="600" height="600"></canvas>
+<canvas id="canvas" width="600" height="600"></canvas>
 
 <script>
+// 🔴 TEU CÓDIGO — NÃO ALTERADO
 const JOGO_CONFIG = {
     caminhoIcons: "../../icons/", 
     caminhoImg: "../../img/",
@@ -38,52 +39,88 @@ const JOGO_CONFIG = {
         tempoTotal: "Tempo:"
     }
 };
+// 🔴 FIM DO TEU CÓDIGO
 
-const canvas = document.getElementById("gameCanvas");
+
+
+// ================================
+// 🔧 LÓGICA MELHORADA DO LABIRINTO
+// ================================
+
+const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-const TAM = 10;
-const TAM_CEL = 60;
+const GRID = 10;
+const SIZE = 60;
 
-let grid = [];
+let mapa = [];
 let inicio = {x:0, y:0};
-let fim = {x:TAM-1, y:TAM-1};
+let fim = {x:GRID-1, y:GRID-1};
 
-// 🔹 Criar grid vazio
-function criarGrid() {
-    grid = [];
-    for (let y = 0; y < TAM; y++) {
+// Criar mapa vazio
+function criarMapa() {
+    mapa = [];
+    for (let y = 0; y < GRID; y++) {
         let linha = [];
-        for (let x = 0; x < TAM; x++) {
-            linha.push(0); // 0 = livre
+        for (let x = 0; x < GRID; x++) {
+            linha.push(0); // 0 livre
         }
-        grid.push(linha);
+        mapa.push(linha);
     }
 }
 
-// 🔹 BFS para garantir caminho
+// 🔹 Criar caminho garantido (linha base)
+function criarCaminhoSeguro() {
+    let x = 0, y = 0;
+    mapa[y][x] = 2; // caminho seguro
+
+    while (x !== fim.x || y !== fim.y) {
+        if (Math.random() < 0.5 && x < fim.x) x++;
+        else if (y < fim.y) y++;
+
+        mapa[y][x] = 2;
+    }
+}
+
+// 🔹 Colocar obstáculos SEM bloquear o caminho
+function colocarObstaculos() {
+    for (let y = 0; y < GRID; y++) {
+        for (let x = 0; x < GRID; x++) {
+
+            // não mexe no caminho seguro
+            if (mapa[y][x] === 2) continue;
+
+            // probabilidade de obstáculo
+            if (Math.random() < 0.3) {
+                mapa[y][x] = 1;
+            }
+        }
+    }
+}
+
+// 🔹 Validar caminho extra (segurança adicional)
 function existeCaminho() {
     let fila = [inicio];
-    let visitado = new Set();
+    let visitados = new Set();
 
     while (fila.length) {
-        let {x, y} = fila.shift();
-        let chave = x + "," + y;
+        let {x,y} = fila.shift();
+        let key = x+","+y;
 
-        if (visitado.has(chave)) continue;
-        visitado.add(chave);
+        if (visitados.has(key)) continue;
+        visitados.add(key);
 
         if (x === fim.x && y === fim.y) return true;
 
         let dirs = [[1,0],[-1,0],[0,1],[0,-1]];
 
-        for (let [dx, dy] of dirs) {
-            let nx = x + dx;
-            let ny = y + dy;
+        for (let [dx,dy] of dirs) {
+            let nx = x+dx;
+            let ny = y+dy;
 
-            if (nx>=0 && ny>=0 && nx<TAM && ny<TAM) {
-                if (grid[ny][nx] === 0) {
-                    fila.push({x:nx, y:ny});
+            if (nx>=0 && ny>=0 && nx<GRID && ny<GRID) {
+                if (mapa[ny][nx] !== 1) {
+                    fila.push({x:nx,y:ny});
                 }
             }
         }
@@ -92,66 +129,51 @@ function existeCaminho() {
     return false;
 }
 
-// 🔹 Colocar obstáculos sem bloquear o caminho
-function gerarObstaculos() {
-    let tentativas = 0;
-
-    while (tentativas < 200) {
-        let x = Math.floor(Math.random() * TAM);
-        let y = Math.floor(Math.random() * TAM);
-
-        if ((x === inicio.x && y === inicio.y) ||
-            (x === fim.x && y === fim.y)) continue;
-
-        if (grid[y][x] === 1) continue;
-
-        // tenta colocar
-        grid[y][x] = 1;
-
-        // verifica se ainda há caminho
-        if (!existeCaminho()) {
-            grid[y][x] = 0; // desfaz
-        }
-
-        tentativas++;
-    }
+// 🔹 Gerar labirinto completo
+function gerarLabirinto() {
+    do {
+        criarMapa();
+        criarCaminhoSeguro();
+        colocarObstaculos();
+    } while (!existeCaminho());
 }
 
-// 🔹 Desenhar
+// 🔹 Desenho simples
 function desenhar() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    for (let y = 0; y < TAM; y++) {
-        for (let x = 0; x < TAM; x++) {
+    for (let y = 0; y < GRID; y++) {
+        for (let x = 0; x < GRID; x++) {
 
-            if (grid[y][x] === 1) {
-                ctx.fillStyle = "#444";
+            if (mapa[y][x] === 1) {
+                ctx.fillStyle = "#333"; // obstáculo
+            } else if (mapa[y][x] === 2) {
+                ctx.fillStyle = "#bde0fe"; // caminho garantido
             } else {
-                ctx.fillStyle = "#ddd";
+                ctx.fillStyle = "#eee";
             }
 
-            ctx.fillRect(x*TAM_CEL, y*TAM_CEL, TAM_CEL-2, TAM_CEL-2);
+            ctx.fillRect(x*SIZE, y*SIZE, SIZE-2, SIZE-2);
         }
     }
 
     // início
     ctx.fillStyle = "green";
-    ctx.fillRect(inicio.x*TAM_CEL, inicio.y*TAM_CEL, TAM_CEL-2, TAM_CEL-2);
+    ctx.fillRect(inicio.x*SIZE, inicio.y*SIZE, SIZE-2, SIZE-2);
 
     // fim
     ctx.fillStyle = "red";
-    ctx.fillRect(fim.x*TAM_CEL, fim.y*TAM_CEL, TAM_CEL-2, TAM_CEL-2);
+    ctx.fillRect(fim.x*SIZE, fim.y*SIZE, SIZE-2, SIZE-2);
 }
 
 // 🔹 Inicializar
 function iniciar() {
-    criarGrid();
-    gerarObstaculos();
+    gerarLabirinto();
     desenhar();
 }
 
 iniciar();
-</script>
 
+</script>
 </body>
 </html>
