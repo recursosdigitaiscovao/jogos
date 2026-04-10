@@ -23,4 +23,3 @@ const JOGO_CONFIG = {
         tempoTotal: "Tempo:"
     }
 };
-};
