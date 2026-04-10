@@ -11,28 +11,28 @@ const JOGO_CONFIG = {
     categorias: {
         contar: {
             nome: "Contar Sílabas",
-            img: "maca.png", // Imagem pedida
+            img: "maca.png",
             tipo: "contar",
             itens: [
-                { nome: "MACACO", img: "animaisdomesticos/macaco.png", divisao: "MA-CA-CO" },
                 { nome: "VACA", img: "animaisdomesticos/vaca.png", divisao: "VA-CA" },
+                { nome: "GATO", img: "animaisdomesticos/gato.png", divisao: "GA-TO" },
+                { nome: "BANANA", img: "frutas/banana.png", divisao: "BA-NA-NA" },
                 { nome: "MOCHILA", img: "materialescolar/mochila.png", divisao: "MO-CHI-LA" },
-                { nome: "PATO", img: "animaisdomesticos/pato.png", divisao: "PA-TO" },
-                { nome: "BANANA", img: "frutas/banana.png", divisao: "BA-NA-NA" }
+                { nome: "TESOURA", img: "materialescolar/tesoura.png", divisao: "TE-SOU-RA" },
+                { nome: "CAVALO", img: "animaisdomesticos/cavalo.png", divisao: "CA-VA-LO" }
             ]
         },
         ordenar: {
             nome: "Ordenar Sílabas",
-            img: "cao.png", // Imagem pedida
+            img: "cao.png",
             tipo: "ordenar",
             itens: [
                 { nome: "PORCO", img: "animaisdomesticos/porco.png", divisao: "POR-CO" },
-                { nome: "CARRO", img: "animaisdomesticos/carro.png", divisao: "CAR-RO" },
-                { nome: "MASSA", img: "animaisdomesticos/massa.png", divisao: "MAS-SA" },
-                { nome: "CAVALO", img: "animaisdomesticos/cavalo.png", divisao: "CA-VA-LO" },
+                { nome: "BURRO", img: "animaisdomesticos/burro.png", divisao: "BUR-RO" },
+                { nome: "BORRACHA", img: "materialescolar/borracha.png", divisao: "BOR-RA-CHA" },
                 { nome: "GALINHA", img: "animaisdomesticos/galinha.png", divisao: "GA-LI-NHA" },
                 { nome: "MORANGO", img: "frutas/morango.png", divisao: "MO-RAN-GO" },
-                { nome: "TESOURA", img: "materialescolar/tesoura.png", divisao: "TE-SOU-RA" }
+                { nome: "CANETA", img: "materialescolar/caneta.png", divisao: "CA-NE-TA" }
             ]
         }
     },
