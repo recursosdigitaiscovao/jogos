@@ -3,135 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Português - 1º Ano</title>
+    <title>1º Ano - Matemática - Maior, Menor ou Igual</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --cor-principal: #FF9100; /* Laranja solicitado */
-            --cor-fundo-site: #fff9f2; 
-            --cor-header-height: 70px;
-            --cor-acerto: #2ed573;
+            --cor-principal: #5EA2E6;   /* Azul solicitado */
+            --cor-vibrante: #4a8cd1;  
+            --cor-fundo: #EBF4FF;      /* Fundo da página solicitado */
+            --cor-texto: #506d85;      
+            --header-height: 70px;
+            --cor-jogo-azul: #5EA2E6;  /* Cor dos botões e bordas */
             --cor-erro: #ff4757;
+            --cor-caixa-info: #EBF4FF; /* Fundo interno solicitado */
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
-        body { background: var(--cor-fundo-site); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
+        body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--cor-header-height); z-index: 1000; flex-shrink: 0; }
-        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
-        
+        /* --- Sidebar & Nav --- */
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        .sidebar-rd { position: fixed; bottom: -300px; left: 0; width: 100%; height: 300px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
-        .sidebar-rd.active { bottom: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
-        .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; }
+        
+        .sidebar-item { 
+            display: flex; align-items: center; padding: 15px 25px; 
+            color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9;
+            transition: all 0.3s ease; cursor: pointer; font-weight: 500;
+        }
+        .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
+        .sidebar-item img { width: 28px; height: 28px; margin-right: 12px; object-fit: contain; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
+        /* --- Layout --- */
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; height: calc(100% - var(--header-height)); }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow: hidden; }
         .screen.active { display: flex; }
 
-        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; overflow: hidden; }
-        
-        .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fffcf8; border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 5px; overflow: hidden; }
-        
-        /* MOLDURA PRETA INTERNA */
-        .sil-frame { background: white; border: 4px solid #000; border-radius: 25px; width: 100%; max-width: 420px; height: 98%; display: flex; flex-direction: column; overflow: hidden; }
-        
-        .sil-header { height: 15%; min-height: 50px; border-bottom: 4px solid #000; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 900; color: #000; letter-spacing: 5px; text-transform: uppercase; }
-        
-        .sil-img-box { flex: 1; display: flex; align-items: center; justify-content: center; padding: 15px; }
-        .sil-img-box img { max-width: 90%; max-height: 100%; object-fit: contain; }
+        /* Limite do card em azul #5EA2E6 */
+        .game-card {
+            background: white; border-radius: 30px; padding: 10px; 
+            border: 4px solid var(--cor-jogo-azul);
+            display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; overflow: hidden;
+        }
 
-        /* RODAPÉS */
-        .numbers-footer { height: 20%; min-height: 80px; border-top: 4px solid #000; display: flex; }
-        .num-btn { flex: 1; border: none; background: #fff; font-size: 2.5rem; font-weight: 900; color: #000; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .num-btn:not(:last-child) { border-right: 4px solid #000; }
-        .num-btn:active { background: #eee; }
-
-        .drop-zone { height: 18%; min-height: 75px; background: #f7f7f7; border-top: 4px solid #000; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 5px; }
-        .slot { width: 65px; height: 65px; border: 3px solid #000; background: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; cursor: pointer; }
+        /* Fundo #EBF4FF e sem limite (borda) */
+        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 10px; border: none; }
         
-        .pieces-footer { height: 20%; min-height: 80px; border-top: 4px solid #000; display: flex; align-items: center; justify-content: center; gap: 15px; padding: 10px; background: white; }
-        .piece { background: var(--cor-principal); color: white; padding: 12px 10px; border-radius: 12px; border: 2px solid #000; font-weight: 900; font-size: 1.3rem; cursor: pointer; min-width: 65px; text-align: center; box-shadow: 0 4px 0 #000; text-transform: uppercase; }
-        .piece.hidden { visibility: hidden; pointer-events: none; }
+        .anim-comp-container { display: flex; align-items: center; gap: clamp(15px, 4vw, 40px); font-size: 2.5rem; font-weight: bold; color: var(--cor-texto); }
+        .anim-box { width: 70px; height: 70px; background: white; border: 3px solid var(--cor-principal); border-radius: 15px; display: flex; align-items: center; justify-content: center; }
+        .anim-symbol { font-size: 4rem; color: var(--cor-vibrante); animation: symbolPop 2s infinite; }
+        @keyframes symbolPop { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
 
-        /* INTRO SCREEN */
-        .explanation-box { background: white; border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid var(--cor-principal); text-align: center;}
-        .intro-btns { display: flex; gap: 10px; width: 100%; align-items: center; }
-        .btn-play { background: var(--cor-principal); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
-        .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        /* --- Jogo --- */
+        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 5px; flex-shrink: 0; padding: 0 10px 8px 10px; }
+        .stars-container { display: flex; gap: 4px; }
+        .star { width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
+        .star.correct { background: var(--cor-principal); border-color: var(--cor-principal); color: white; }
+        .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
 
+        .instruction-area { text-align: center; font-size: 1.1rem; font-weight: bold; color: var(--cor-texto); margin-bottom: 5px; flex-shrink: 0; }
+
+        /* Fundo #EBF4FF e sem limite (borda) na área do jogo */
+        .game-area { 
+            flex: 1; display: flex; flex-direction: column; width: 100%; overflow: hidden;
+            background: var(--cor-caixa-info); border-radius: 20px; min-height: 0;
+            box-sizing: border-box; justify-content: center; align-items: center; gap: 15px;
+            border: none;
+        }
+
+        .comparison-row { display: flex; align-items: center; justify-content: center; gap: clamp(10px, 3vw, 30px); width: 100%; }
+        
+        .comp-card {
+            background: white; border: 3.5px solid #eee; border-radius: 20px;
+            width: clamp(120px, 30vw, 280px); height: clamp(150px, 40vh, 320px);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); padding: 10px; box-sizing: border-box;
+        }
+
+        .fruit-grid { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; align-items: center; width: 100%; max-height: 100%; }
+        .fruit-grid img { width: clamp(24px, 5vh, 45px); height: auto; object-fit: contain; }
+
+        .comp-img-num { max-height: 90%; max-width: 90%; object-fit: contain; }
+
+        .symbol-lacuna {
+            width: clamp(60px, 15vw, 100px); height: clamp(60px, 15vw, 100px);
+            border: 4px dashed var(--cor-principal); border-radius: 20px;
+            background: white; display: flex; align-items: center; justify-content: center;
+            font-size: clamp(2.5rem, 8vh, 4rem); font-weight: bold; color: var(--cor-vibrante);
+        }
+
+        .symbol-pad { display: flex; gap: clamp(10px, 2vw, 20px); margin-top: 5px; flex-shrink: 0; }
+        .sym-btn {
+            background: white; border: 3px solid var(--cor-jogo-azul); color: var(--cor-texto);
+            font-size: 2.5rem; font-weight: bold; width: clamp(70px, 12vh, 100px); height: clamp(70px, 12vh, 100px);
+            border-radius: 20px; cursor: pointer; transition: 0.1s; display: flex; align-items: center; justify-content: center;
+        }
+        .sym-btn:active { background: var(--cor-jogo-azul) !important; color: white !important; transform: scale(0.95); }
+
+        .error-shake { animation: shake 0.4s; border-color: var(--cor-erro) !important; }
+        @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
+
+        /* Cor do botão jogar: #5EA2E6 */
+        .option-btn { 
+            background: var(--cor-jogo-azul); border: 3px solid var(--cor-jogo-azul); color: white; 
+            font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; 
+            cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; 
+        }
+        .option-btn:hover { filter: brightness(1.1); }
+        
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 90%; max-width: 350px; }
+        .modal-content { background: white; padding: 25px 20px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-azul); max-width: 360px; width: 90%; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
-            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer;">✕</button>
+            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-    </div>
-
-    <div class="sidebar-rd" id="sidebar-rd">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3 style="margin:0; color:var(--cor-principal);">Modo de Jogo</h3>
-            <button onclick="toggleRD()" style="border:none; background:none; font-size:20px;">✕</button>
-        </div>
-        <div id="categorias-list" style="max-height: 220px; overflow-y: auto;"></div>
+        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre" src=""> Pré-Escolar</a>
+        <a href="/jogos/1/" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
+        <a href="/jogos/2/" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
+        <a href="/jogos/3/" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
+        <a href="/jogos/4/" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
     </div>
 
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
         <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin: 0;">
-            <img id="header-icon" src="" style="height:32px;"> Português - 1º Ano
+            <img id="header-icon" src="" style="height:32px; width: auto;"> Matemática - 1º Ano
         </h1>
-        <a href="../" class="back-btn">⬅ Voltar</a>
+        <a href="../" style="background:var(--cor-principal); color:white; padding:8px 15px; border-radius:50px; text-decoration:none; font-weight:bold; font-size:0.8rem;">⬅ Voltar</a>
     </header>
 
     <main class="main-content">
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <img id="intro-preview-img" src="" style="width:110px; margin-bottom:10px;">
-                    <p id="intro-text" style="color:#555; font-weight:bold; font-size:1.2rem;"></p>
+                    <p style="color:var(--cor-texto); font-weight:bold; margin-bottom: 20px; font-size: 1.4rem;">Vê qual é o maior:</p>
+                    <div class="anim-comp-container">
+                        <div class="anim-box">5</div>
+                        <div class="anim-symbol">></div>
+                        <div class="anim-box">2</div>
+                    </div>
                 </div>
-                <h2 id="display-categoria" style="text-align:center; color:var(--cor-principal); margin-bottom:15px;"></h2>
-                <div class="intro-btns">
-                    <button class="btn-play" onclick="startGame()">JOGAR</button>
-                    <button class="btn-rd" onclick="toggleRD()"><img id="intro-rd-img" src="" style="width:35px;"></button>
-                </div>
+                <h2 style="color:var(--cor-jogo-azul); text-align:center; font-weight: bold;">Maior, Menor ou Igual</h2>
+                <button class="option-btn" onclick="startGame()">JOGAR</button>
             </div>
         </section>
 
         <section id="game-screen" class="screen">
             <div class="game-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem;">
-                    <div>⏳ <span id="timer">00:00</span></div>
-                    <div id="stars-bar" style="display:flex; gap:4px;"></div>
-                    <div style="display:flex; align-items:center;">
-                        PTS: <span id="points">0</span>
-                        <button class="btn-rd" style="width:30px; height:30px; margin-left:10px; border-radius:8px;" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:18px; height:18px;"></button>
-                    </div>
+                <div class="card-header">
+                    <div class="status-item">⏳ <span id="timer">00:00</span></div>
+                    <div class="stars-container" id="stars-bar"></div>
+                    <div class="status-item">PTS: <span id="points">0</span></div>
                 </div>
+                <div class="instruction-area" id="instruction-text">Compara as quantidades!</div>
+                
                 <div class="game-area">
-                    <div class="sil-frame">
-                        <div class="sil-header" id="game-title">---</div>
-                        <div class="sil-img-box">
-                            <img id="game-img" src="">
-                        </div>
-                        <div id="answer-zone"></div>
-                        <div id="controls-zone"></div>
+                    <div class="comparison-row">
+                        <div id="card-left" class="comp-card"></div>
+                        <div id="lacuna" class="symbol-lacuna">?</div>
+                        <div id="card-right" class="comp-card"></div>
+                    </div>
+
+                    <div class="symbol-pad">
+                        <button class="sym-btn" onclick="checkAnswer('<', event)"><</button>
+                        <button class="sym-btn" onclick="checkAnswer('=', event)">=</button>
+                        <button class="sym-btn" onclick="checkAnswer('>', event)">></button>
                     </div>
                 </div>
             </div>
@@ -140,156 +186,143 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--cor-acerto);">Boa!</h2>
-            <div id="modal-msg" style="margin-bottom:20px;"></div>
-            <button class="btn-play" onclick="location.reload()" style="background:var(--cor-principal);">Novo Jogo</button>
+            <h2 id="modal-title" style="margin-top: 0; color: var(--cor-jogo-azul);"></h2>
+            <div id="modal-msg" style="margin-bottom: 25px; color: var(--cor-texto);"></div>
+            <button class="option-btn" onclick="location.reload()">Jogar de Novo</button>
         </div>
     </div>
 
     <script src="dados.js"></script>
     <script>
-        let currentQuestion = 1, points = 0, seconds = 0, timerInterval;
-        let currentCatKey = "contar", currentItem = null, usedItems = [];
-        let playerSyllables = [];
+        let level = 1, points = 0, seconds = 0, timerInterval;
+        let questionNum = 1, valA = 0, valB = 0, correctSym = "";
+        let isRoundActive = true, currentFruit = "";
+        let stats = { 1: { c: 0, e: 0 }, 2: { c: 0, e: 0 } };
 
-        const sndCerto = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
-        const sndErro = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3');
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.frequency.setValueAtTime(type === 'certo' ? 600 : 150, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+            } catch(e) {}
+        }
 
         window.onload = () => {
-            document.getElementById('header-icon').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1;
-            document.getElementById('intro-rd-img').src = JOGO_CONFIG.caminhoImg + "rd.png";
-            document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
-            setupRDMenu(); updateIntro();
+            if(typeof JOGO_CONFIG !== 'undefined') {
+                const p = JOGO_CONFIG.caminhoIcons;
+                const i = JOGO_CONFIG.iconesMenu;
+                document.getElementById('header-icon').src = p + i.ano1;
+                
+                if(document.getElementById('side-pre')) document.getElementById('side-pre').src = p + i.pre;
+                if(document.getElementById('side-1')) document.getElementById('side-1').src = p + i.ano1;
+                if(document.getElementById('side-2')) document.getElementById('side-2').src = p + i.ano2;
+                if(document.getElementById('side-3')) document.getElementById('side-3').src = p + i.ano3;
+                if(document.getElementById('side-4')) document.getElementById('side-4').src = p + i.ano4;
+            }
         };
 
-        function setupRDMenu() {
-            const container = document.getElementById('categorias-list'); container.innerHTML = '';
-            Object.keys(JOGO_CONFIG.categorias).forEach(key => {
-                const cat = JOGO_CONFIG.categorias[key];
-                const item = document.createElement('div');
-                item.className = 'sidebar-item';
-                item.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + cat.img}" style="width:24px; margin-right:10px;"> <span>${cat.nome}</span>`;
-                item.onclick = () => { currentCatKey = key; updateIntro(); closeMenus(); };
-                container.appendChild(item);
-            });
-        }
-
-        function updateIntro() {
-            const cat = JOGO_CONFIG.categorias[currentCatKey];
-            document.getElementById('display-categoria').innerText = cat.nome;
-            document.getElementById('intro-preview-img').src = JOGO_CONFIG.caminhoImg + cat.img;
-            document.getElementById('intro-text').innerText = cat.tipo === "contar" ? "Conta quantas sílabas tem a palavra!" : "Clica nas sílabas para ordenar!";
-        }
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
 
         function startGame() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            points = 0; currentQuestion = 1; seconds = 0; usedItems = [];
-            initStars(); loadRound();
-            timerInterval = setInterval(() => {
-                seconds++;
-                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
-            }, 1000);
+            startTimer(); initStars(); loadQuestion();
         }
+
+        function startTimer() { timerInterval = setInterval(() => { seconds++; document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; }, 1000); }
 
         function initStars() {
             const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
             for(let i=0; i<5; i++) {
                 const s = document.createElement('div');
-                s.style.cssText="width:14px;height:14px;border:2px solid #ccc;border-radius:50%;background:white;";
-                bar.appendChild(s);
+                s.className = 'star'; s.innerText = '★'; bar.appendChild(s);
             }
         }
 
-        function loadRound() {
-            const cat = JOGO_CONFIG.categorias[currentCatKey];
-            let av = cat.itens.filter(i => !usedItems.includes(i.nome));
-            if(av.length === 0) { usedItems = []; av = cat.itens; }
-            currentItem = av[Math.floor(Math.random() * av.length)];
-            usedItems.push(currentItem.nome);
+        function loadQuestion() {
+            isRoundActive = true;
+            document.getElementById('lacuna').innerText = "?";
+            document.getElementById('lacuna').classList.remove('error-shake');
+            document.getElementById('lacuna').style.color = "var(--cor-vibrante)";
 
-            document.getElementById('game-img').src = JOGO_CONFIG.caminhoImg + currentItem.img;
-            const ansZone = document.getElementById('answer-zone');
-            const ctrlZone = document.getElementById('controls-zone');
-            ansZone.innerHTML = ''; ctrlZone.innerHTML = ''; playerSyllables = [];
+            valA = Math.floor(Math.random() * 11);
+            valB = Math.floor(Math.random() * 11);
+            if(Math.random() > 0.75) valB = valA; 
 
-            if(cat.tipo === "contar") {
-                document.getElementById('game-title').innerText = currentItem.nome;
-                ansZone.style.display = 'none';
-                ctrlZone.className = "numbers-footer";
-                for(let i=1; i<=4; i++) {
-                    const b = document.createElement('button');
-                    b.className = 'num-btn'; b.innerText = i;
-                    b.onclick = () => check(i);
-                    ctrlZone.appendChild(b);
+            if(valA > valB) correctSym = ">";
+            else if(valA < valB) correctSym = "<";
+            else correctSym = "=";
+
+            if (level === 1) {
+                document.getElementById('instruction-text').innerText = "Compara as quantidades!";
+                currentFruit = JOGO_CONFIG.frutas[Math.floor(Math.random() * JOGO_CONFIG.frutas.length)];
+            } else {
+                document.getElementById('instruction-text').innerText = "Qual número é maior?";
+            }
+
+            renderCard('card-left', valA); renderCard('card-right', valB);
+        }
+
+        function renderCard(id, value) {
+            const card = document.getElementById(id); card.innerHTML = "";
+            if (level === 1) {
+                const grid = document.createElement('div'); grid.className = 'fruit-grid';
+                for(let i=0; i<value; i++) {
+                    const img = document.createElement('img');
+                    img.src = JOGO_CONFIG.caminhoImg + currentFruit;
+                    grid.appendChild(img);
                 }
+                card.appendChild(grid);
             } else {
-                document.getElementById('game-title').innerText = "???";
-                ansZone.style.display = 'flex'; ansZone.className = "drop-zone";
-                ctrlZone.className = "pieces-footer";
-                const parts = currentItem.divisao.split('-');
-                parts.forEach((_, idx) => {
-                    const s = document.createElement('div');
-                    s.className = 'slot'; s.onclick = () => removePiece(idx);
-                    ansZone.appendChild(s);
-                });
-                const shuf = [...parts].sort(() => Math.random() - 0.5);
-                shuf.forEach((t, i) => {
-                    const p = document.createElement('div');
-                    p.className = 'piece'; p.innerText = t; p.id = `p-${i}`;
-                    p.onclick = () => addPiece(t, p.id);
-                    ctrlZone.appendChild(p);
-                });
+                const numObj = JOGO_CONFIG.numeros.find(n => n.valor === value);
+                if(numObj) {
+                    const img = document.createElement('img');
+                    img.src = JOGO_CONFIG.caminhoImg + numObj.imagem;
+                    img.className = "comp-img-num";
+                    card.appendChild(img);
+                }
             }
         }
 
-        function addPiece(txt, id) {
-            const slots = document.querySelectorAll('.slot');
-            if(playerSyllables.length < slots.length) {
-                const s = slots[playerSyllables.length];
-                s.innerText = txt; s.dataset.ref = id;
-                playerSyllables.push(txt);
-                document.getElementById(id).classList.add('hidden');
-                if(playerSyllables.length === slots.length) setTimeout(() => check(playerSyllables.join('-')), 300);
-            }
-        }
+        function checkAnswer(sym, event) {
+            if (!isRoundActive) return;
+            isRoundActive = false;
+            document.getElementById('lacuna').innerText = sym;
 
-        function removePiece(idx) {
-            if(idx === playerSyllables.length - 1 && playerSyllables.length > 0) {
-                const slots = document.querySelectorAll('.slot');
-                const rid = slots[idx].dataset.ref;
-                document.getElementById(rid).classList.remove('hidden');
-                slots[idx].innerText = ''; playerSyllables.pop();
-            }
-        }
-
-        function check(val) {
-            const cat = JOGO_CONFIG.categorias[currentCatKey];
-            const stars = document.getElementById('stars-bar').children;
-            const correct = (cat.tipo === "contar") ? (currentItem.divisao.split('-').length === val) : (currentItem.divisao === val);
-            
-            if(correct) {
-                sndCerto.play(); points++;
-                stars[currentQuestion-1].style.background = "var(--cor-acerto)";
+            const stars = document.querySelectorAll('.star');
+            if (sym === correctSym) {
+                playSound('certo'); points += 20; stats[level].c++;
+                document.getElementById('points').innerText = points;
+                stars[questionNum - 1].classList.add('correct');
+                stars[questionNum - 1].innerText = '✓';
             } else {
-                sndErro.play();
-                stars[currentQuestion-1].style.background = "var(--cor-erro)";
+                playSound('errado'); stats[level].e++;
+                document.getElementById('lacuna').classList.add('error-shake');
+                document.getElementById('lacuna').style.color = "var(--cor-erro)";
+                stars[questionNum - 1].classList.add('wrong');
+                stars[questionNum - 1].innerText = '✕';
             }
-            document.getElementById('points').innerText = points;
-            currentQuestion++;
-            setTimeout(() => { if(currentQuestion > 5) endGame(); else loadRound(); }, 600);
+
+            setTimeout(() => {
+                questionNum++;
+                if (questionNum > 5) {
+                    if (level === 1) { level = 2; questionNum = 1; initStars(); loadQuestion(); }
+                    else endGame();
+                } else loadQuestion();
+            }, 1500);
         }
 
         function endGame() {
             clearInterval(timerInterval);
-            document.getElementById('modal-title').innerText = points >= 3 ? JOGO_CONFIG.relatorio.titulo : "Tenta outra vez!";
-            document.getElementById('modal-msg').innerHTML = `<p>${JOGO_CONFIG.relatorio.pontosTotal} ${points}/5</p><p>${JOGO_CONFIG.relatorio.tempoTotal} ${document.getElementById('timer').innerText}</p>`;
+            document.getElementById('modal-title').innerText = "Fim do Jogo!";
+            document.getElementById('modal-msg').innerHTML = `Pontos: ${points} / 200<br>Tempo: ${document.getElementById('timer').innerText}`;
             document.getElementById('modal').style.display = 'flex';
         }
-
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
-        function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
-        function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
     </script>
 </body>
 </html>
