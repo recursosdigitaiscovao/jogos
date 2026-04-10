@@ -22,65 +22,53 @@
         /* --- Header & Sidebars --- */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
-        
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         .sidebar-rd { position: fixed; bottom: -300px; left: 0; width: 100%; height: 300px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
         .sidebar-rd.active { bottom: 0; }
-        
         .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; cursor: pointer; }
         .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
         /* --- Layout --- */
-        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
-        
-        .game-card { 
-            background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal); 
-            width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; 
-            display: flex; flex-direction: column; overflow: hidden;
-        }
+        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal); width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* --- Maze Maximizado --- */
-        .maze-outer { 
+        /* --- Labirinto: Adaptável e Centralizado --- */
+        .maze-container-box { 
             flex: 1; display: flex; align-items: center; justify-content: center; 
-            width: 100%; height: 100%; overflow: hidden;
+            width: 100%; height: 100%; min-height: 0; overflow: hidden; 
         }
         .maze-grid { 
             display: grid; 
-            background: white; 
-            border: 2px solid var(--cor-principal); 
-            border-radius: 10px; 
-            width: 90vmin; height: 90vmin; 
-            max-width: 48vh; max-height: 48vh; 
-            margin: auto;
+            width: min(80vw, 45vh); height: min(80vw, 45vh); /* Ajuste perfeito para monitores e mobile */
+            border: 2px dashed var(--cor-principal); border-radius: 15px; 
+            background: var(--cor-fundo); margin: auto;
         }
         .cell { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-        .cell img { max-width: 80%; max-height: 80%; object-fit: contain; }
-        .wall { width: 100%; height: 100%; display: block; } /* Paredes sólidas */
+        .cell img { width: 85%; height: 85%; object-fit: contain; }
+        .wall { width: 100%; height: 100%; }
 
-        /* Controles */
-        .d-pad { display: grid; grid-template-columns: repeat(3, 55px); grid-template-rows: repeat(2, 55px); gap: 10px; justify-content: center; margin-top: 5px; flex-shrink: 0; padding-bottom: 5px;}
-        .btn-dir { 
-            background: var(--cor-principal); color: white; border: none; border-radius: 12px; 
-            font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 0 #c07a8c; touch-action: none;
-        }
+        /* Controles D-Pad */
+        .d-pad { display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(2, 50px); gap: 10px; justify-content: center; margin-top: 10px; flex-shrink: 0; }
+        .btn-dir { background: var(--cor-principal); color: white; border: none; border-radius: 12px; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #c07a8c; }
         .btn-dir:active { transform: translateY(3px); box-shadow: none; background: var(--cor-vibrante); }
 
-        /* UI Original */
+        /* UI Elementos */
         .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; }
-        .anim-jump { animation: jump 1.5s infinite; }
+        .anim-pula { animation: jump 1.2s infinite ease-in-out; }
         @keyframes jump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-        .game-title { color: var(--cor-principal); text-align: center; font-size: 1.4rem; margin: 5px 0; font-weight: bold; }
         .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
         .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .btn-rd-mini { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 10px; }
         
+        /* Botão RD Mini (Corrigido para ser pequeno) */
+        .btn-rd-mini { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 10px; padding: 0; overflow: hidden; flex-shrink: 0;}
+        .btn-rd-mini img { width: 20px !important; height: 20px !important; object-fit: contain; margin: 0 !important; }
+
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-acerto); width: 85%; max-width: 350px; }
     </style>
@@ -121,13 +109,13 @@
             <div class="game-card">
                 <div class="explanation-box">
                     <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin-bottom: 20px;">Leva o animal até à comida!</p>
-                    <div style="display:flex; gap:40px; align-items:center;">
-                        <img id="intro-sprite" class="anim-jump" src="" style="width:80px;">
+                    <div style="display:flex; gap:30px; align-items:center;">
+                        <img id="intro-sprite" class="anim-pula" src="" style="width:80px;">
                         <span style="font-size:30px; color:var(--cor-principal);">➔</span>
                         <img id="intro-food" src="" style="width:80px;">
                     </div>
                 </div>
-                <h2 class="game-title">O Labirinto</h2>
+                <h2 style="color:var(--cor-principal); text-align:center; font-size:1.4rem; margin:10px 0;">O Labirinto</h2>
                 <div style="display:flex; gap:10px; width:100%;">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
                     <button class="btn-rd" onclick="toggleRD()"><img id="btn-rd-icon" src="" style="width:35px;"></button>
@@ -137,7 +125,7 @@
 
         <section id="game-screen" class="screen">
             <div class="game-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem; flex-shrink: 0;">
                     <div>⏳ <span id="timer">00:00</span></div>
                     <div id="stars-bar" style="display:flex; gap:4px;"></div>
                     <div style="display:flex; align-items:center;">
@@ -145,7 +133,7 @@
                         <button class="btn-rd-mini" onclick="toggleRD()"><img id="rd-mini-icon" src=""></button>
                     </div>
                 </div>
-                <div class="maze-outer">
+                <div class="maze-container-box">
                     <div id="maze-container" class="maze-grid"></div>
                 </div>
                 <div class="d-pad">
@@ -251,14 +239,13 @@
             }
             walk(0, 0);
             maze[0][0] = 2; maze[size-1][size-1] = 3;
-            // Garantir que existe caminho livre em volta da saída
             if(maze[size-2][size-1] === 1 && maze[size-1][size-2] === 1) maze[size-2][size-1] = 0;
             return maze;
         }
 
         function loadLevel() {
             canMove = true;
-            const size = 5 + (currentLevel * 2); // 7, 9, 11, 13, 15
+            const size = 4 + (currentLevel * 2); // 6, 8, 10, 12, 14
             currentMaze = generateMaze(size);
             const container = document.getElementById('maze-container');
             container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
@@ -291,7 +278,7 @@
         function startContinuousMove(dx, dy) {
             stopMove();
             if(!move(dx, dy)) return;
-            moveTimer = setInterval(() => { if(!move(dx, dy)) stopMove(); }, 80);
+            moveTimer = setInterval(() => { if(!move(dx, dy)) stopMove(); }, 100);
         }
 
         function stopMove() { clearInterval(moveTimer); }
@@ -299,7 +286,7 @@
         function move(dx, dy) {
             if(!canMove) return false;
             const nX = playerPos.x + dx, nY = playerPos.y + dy;
-            if(nY >= 0 && nY < currentMaze.length && nX >= 0 && nX < currentMaze[0].length && currentMaze[nY][nX] !== 1) {
+            if(nY >= 0 && nY < currentMaze.length && nX >= 0 && nX < currentMaze.length && currentMaze[nY][nX] !== 1) {
                 const newCell = document.getElementById(`c-${nX}-${nY}`);
                 newCell.appendChild(document.getElementById('player-img'));
                 playerPos = {x: nX, y: nY};
@@ -314,7 +301,8 @@
             points += 20;
             document.getElementById('points').innerText = points;
             document.getElementById('sound-win').play().catch(()=>{});
-            if(document.getElementById('food-img')) document.getElementById('food-img').style.display = 'none';
+            const food = document.getElementById('food-img');
+            if(food) food.style.display = 'none';
 
             const star = document.getElementById('stars-bar').children[currentLevel-1];
             star.style.background = "var(--cor-acerto)";
