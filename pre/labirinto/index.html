@@ -32,42 +32,42 @@
         .overlay.active { display: block; }
 
         /* --- Layout --- */
-        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
         .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal); width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* --- Labirinto: Adaptável e Centralizado --- */
-        .maze-container-box { 
-            flex: 1; display: flex; align-items: center; justify-content: center; 
-            width: 100%; height: 100%; min-height: 0; overflow: hidden; 
-        }
+        /* --- Maze Centralizado (Adaptação a qualquer monitor) --- */
+        .maze-area { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; overflow: hidden; }
         .maze-grid { 
             display: grid; 
-            width: min(80vw, 45vh); height: min(80vw, 45vh); /* Ajuste perfeito para monitores e mobile */
-            border: 2px dashed var(--cor-principal); border-radius: 15px; 
-            background: var(--cor-fundo); margin: auto;
+            background: white; 
+            border: 2px dashed var(--cor-principal); 
+            border-radius: 15px; 
+            width: 90vmin; height: 90vmin; 
+            max-width: 48vh; max-height: 48vh; 
+            margin: auto;
         }
-        .cell { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-        .cell img { width: 85%; height: 85%; object-fit: contain; }
-        .wall { width: 100%; height: 100%; }
+        .cell { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
+        .cell img { max-width: 80%; max-height: 80%; object-fit: contain; position: absolute; z-index: 5; }
+        .wall { width: 100%; height: 100%; z-index: 1; border-radius: 2px; }
 
-        /* Controles D-Pad */
-        .d-pad { display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(2, 50px); gap: 10px; justify-content: center; margin-top: 10px; flex-shrink: 0; }
+        /* D-Pad */
+        .d-pad { display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(2, 50px); gap: 10px; justify-content: center; margin-top: 10px; padding-bottom: 5px; flex-shrink: 0; }
         .btn-dir { background: var(--cor-principal); color: white; border: none; border-radius: 12px; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #c07a8c; }
         .btn-dir:active { transform: translateY(3px); box-shadow: none; background: var(--cor-vibrante); }
 
-        /* UI Elementos */
-        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; }
-        .anim-pula { animation: jump 1.2s infinite ease-in-out; }
+        /* UI */
+        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center;}
+        .anim-jump { animation: jump 1.5s infinite; }
         @keyframes jump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
         .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
         .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         
-        /* Botão RD Mini (Corrigido para ser pequeno) */
-        .btn-rd-mini { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 10px; padding: 0; overflow: hidden; flex-shrink: 0;}
-        .btn-rd-mini img { width: 20px !important; height: 20px !important; object-fit: contain; margin: 0 !important; }
+        /* RD Mini Corrigido */
+        .btn-rd-mini { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 10px; flex-shrink: 0; }
+        .btn-rd-mini img { width: 20px !important; height: 20px !important; margin: 0 !important; }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-acerto); width: 85%; max-width: 350px; }
@@ -109,13 +109,13 @@
             <div class="game-card">
                 <div class="explanation-box">
                     <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin-bottom: 20px;">Leva o animal até à comida!</p>
-                    <div style="display:flex; gap:30px; align-items:center;">
-                        <img id="intro-sprite" class="anim-pula" src="" style="width:80px;">
-                        <span style="font-size:30px; color:var(--cor-principal);">➔</span>
+                    <div style="display:flex; gap:35px; align-items:center;">
+                        <img id="intro-sprite" class="anim-jump" src="" style="width:80px;">
+                        <span style="font-size:28px; color:var(--cor-principal);">➔</span>
                         <img id="intro-food" src="" style="width:80px;">
                     </div>
                 </div>
-                <h2 style="color:var(--cor-principal); text-align:center; font-size:1.4rem; margin:10px 0;">O Labirinto</h2>
+                <h2 style="color:var(--cor-principal); text-align:center; font-size:1.4rem; margin:10px 0; font-weight:bold;">O Labirinto</h2>
                 <div style="display:flex; gap:10px; width:100%;">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
                     <button class="btn-rd" onclick="toggleRD()"><img id="btn-rd-icon" src="" style="width:35px;"></button>
@@ -125,7 +125,7 @@
 
         <section id="game-screen" class="screen">
             <div class="game-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem; flex-shrink: 0;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem;">
                     <div>⏳ <span id="timer">00:00</span></div>
                     <div id="stars-bar" style="display:flex; gap:4px;"></div>
                     <div style="display:flex; align-items:center;">
@@ -133,7 +133,7 @@
                         <button class="btn-rd-mini" onclick="toggleRD()"><img id="rd-mini-icon" src=""></button>
                     </div>
                 </div>
-                <div class="maze-container-box">
+                <div class="maze-area">
                     <div id="maze-container" class="maze-grid"></div>
                 </div>
                 <div class="d-pad">
@@ -158,7 +158,7 @@
     <script>
         let currentLevel = 1, points = 0, seconds = 0, timerInterval;
         let catKey = "cao", playerPos = {x:0, y:0}, exitPos = {x:0, y:0};
-        let canMove = true, currentMaze = [], moveTimer = null;
+        let canMove = true, currentMazeData = [], moveTimer = null;
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
@@ -180,7 +180,7 @@
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
                 item.innerHTML = `<img src="${JOGO_CONFIG.labirinto.caminho + cat.sprite}"> ${cat.nome}`;
-                item.onclick = () => { selectCategory(k); resetGame(); };
+                item.onclick = () => { selectCategory(k); resetGameTotal(); };
                 list.appendChild(item);
             });
         }
@@ -193,7 +193,7 @@
             closeMenus();
         }
 
-        function resetGame() {
+        function resetGameTotal() {
             if(!document.getElementById('game-screen').classList.contains('active')) return;
             clearInterval(timerInterval);
             currentLevel = 1; points = 0; seconds = 0;
@@ -225,6 +225,7 @@
             }
         }
 
+        // Algoritmo Robusto de Geração de Labirintos (Tamanho Ímpar obrigatório para paredes corretas)
         function generateMaze(size) {
             let maze = Array(size).fill().map(() => Array(size).fill(1));
             function walk(x, y) {
@@ -233,20 +234,24 @@
                 for(let [dx, dy] of dirs) {
                     let nx = x + dx, ny = y + dy;
                     if(nx >= 0 && nx < size && ny >= 0 && ny < size && maze[ny][nx] === 1) {
-                        maze[y + dy/2][x + dx/2] = 0; walk(nx, ny);
+                        maze[y + dy/2][x + dx/2] = 0;
+                        walk(nx, ny);
                     }
                 }
             }
             walk(0, 0);
-            maze[0][0] = 2; maze[size-1][size-1] = 3;
+            maze[0][0] = 2; // Entrada
+            maze[size-1][size-1] = 3; // Saída
+            // Garantir caminho para a saída
             if(maze[size-2][size-1] === 1 && maze[size-1][size-2] === 1) maze[size-2][size-1] = 0;
             return maze;
         }
 
         function loadLevel() {
             canMove = true;
-            const size = 4 + (currentLevel * 2); // 6, 8, 10, 12, 14
-            currentMaze = generateMaze(size);
+            // Tamanhos Ímpares para Ronda 1-5: 7, 9, 11, 13, 15
+            const size = 5 + (currentLevel * 2);
+            currentMazeData = generateMaze(size);
             const container = document.getElementById('maze-container');
             container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
             container.style.gridTemplateRows = `repeat(${size}, 1fr)`;
@@ -260,13 +265,14 @@
                     const cell = document.createElement('div');
                     cell.className = 'cell';
                     cell.id = `c-${x}-${y}`;
-                    if(currentMaze[y][x] === 1) {
+                    const val = currentMazeData[y][x];
+                    if(val === 1) {
                         cell.classList.add('wall');
                         cell.style.backgroundColor = cat.corParede;
-                    } else if(currentMaze[y][x] === 2) {
+                    } else if(val === 2) {
                         playerPos = {x,y};
                         cell.innerHTML = `<img id="player-img" src="${path + cat.sprite}">`;
-                    } else if(currentMaze[y][x] === 3) {
+                    } else if(val === 3) {
                         exitPos = {x,y};
                         cell.innerHTML = `<img id="food-img" src="${path + cat.objetivo}">`;
                     }
@@ -278,7 +284,7 @@
         function startContinuousMove(dx, dy) {
             stopMove();
             if(!move(dx, dy)) return;
-            moveTimer = setInterval(() => { if(!move(dx, dy)) stopMove(); }, 100);
+            moveTimer = setInterval(() => { if(!move(dx, dy)) stopMove(); }, 90);
         }
 
         function stopMove() { clearInterval(moveTimer); }
@@ -286,7 +292,7 @@
         function move(dx, dy) {
             if(!canMove) return false;
             const nX = playerPos.x + dx, nY = playerPos.y + dy;
-            if(nY >= 0 && nY < currentMaze.length && nX >= 0 && nX < currentMaze.length && currentMaze[nY][nX] !== 1) {
+            if(nY >= 0 && nY < currentMazeData.length && nX >= 0 && nX < currentMazeData[0].length && currentMazeData[nY][nX] !== 1) {
                 const newCell = document.getElementById(`c-${nX}-${nY}`);
                 newCell.appendChild(document.getElementById('player-img'));
                 playerPos = {x: nX, y: nY};
