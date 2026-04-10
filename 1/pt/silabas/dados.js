@@ -10,28 +10,29 @@ const JOGO_CONFIG = {
     },
     categorias: {
         contar: {
-            nome: "Quantas Sílabas?",
-            img: "frutas/maca.png", // Ícone Categoria 1
+            nome: "Contar Sílabas",
+            img: "maca.png", // Imagem pedida
             tipo: "contar",
             itens: [
                 { nome: "MACACO", img: "animaisdomesticos/macaco.png", divisao: "MA-CA-CO" },
                 { nome: "VACA", img: "animaisdomesticos/vaca.png", divisao: "VA-CA" },
+                { nome: "MOCHILA", img: "materialescolar/mochila.png", divisao: "MO-CHI-LA" },
                 { nome: "PATO", img: "animaisdomesticos/pato.png", divisao: "PA-TO" },
-                { nome: "BANANA", img: "frutas/banana.png", divisao: "BA-NA-NA" },
-                { nome: "MOCHILA", img: "materialescolar/mochila.png", divisao: "MO-CHI-LA" }
+                { nome: "BANANA", img: "frutas/banana.png", divisao: "BA-NA-NA" }
             ]
         },
         ordenar: {
-            nome: "Ordena as Sílabas",
-            img: "animaisdomesticos/cao.png", // Ícone Categoria 2
+            nome: "Ordenar Sílabas",
+            img: "cao.png", // Imagem pedida
             tipo: "ordenar",
             itens: [
                 { nome: "PORCO", img: "animaisdomesticos/porco.png", divisao: "POR-CO" },
-                { nome: "CARRO", img: "carro.png", divisao: "CAR-RO" },
-                { nome: "MASSA", img: "massa.png", divisao: "MAS-SA" },
+                { nome: "CARRO", img: "animaisdomesticos/carro.png", divisao: "CAR-RO" },
+                { nome: "MASSA", img: "animaisdomesticos/massa.png", divisao: "MAS-SA" },
                 { nome: "CAVALO", img: "animaisdomesticos/cavalo.png", divisao: "CA-VA-LO" },
                 { nome: "GALINHA", img: "animaisdomesticos/galinha.png", divisao: "GA-LI-NHA" },
-                { nome: "MORANGO", img: "frutas/morango.png", divisao: "MO-RAN-GO" }
+                { nome: "MORANGO", img: "frutas/morango.png", divisao: "MO-RAN-GO" },
+                { nome: "TESOURA", img: "materialescolar/tesoura.png", divisao: "TE-SOU-RA" }
             ]
         }
     },
