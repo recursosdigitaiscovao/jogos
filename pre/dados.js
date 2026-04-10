@@ -14,14 +14,14 @@ const JOGO_CONFIG = {
         ano4: "icon4.png"
     },
 
-    // Lista de jogos
+    // Lista de jogos (7 jogos no total)
     listaJogos: [
         { nome: "O meu par?", icon: "encontraopar.png", link: "encontraopar/" },
         { nome: "Monstro Comilão", icon: "monstrocomilao.png", link: "monstrocomilao/" },
         { nome: "Colorir", icon: "pinta.png", link: "pinta/" },
         { nome: "Não tenho par!", icon: "sem_par.png", link: "sem_par/" },
-        { nome: "Sombras Mágicas", icon: "sombrasmagicas.png", link: "sombrasmagicas/" }
-        { nome: "Labirinto", icon: "labirinto.png", link: "labirinto/" }
+        { nome: "Sombras Mágicas", icon: "sombrasmagicas.png", link: "sombrasmagicas/" },
+        { nome: "Labirinto", icon: "labirinto.png", link: "labirinto/" },
         { nome: "Chuva de Letras", icon: "chuva_letras.png", link: "chuva_letras/" }
     ]
 };
