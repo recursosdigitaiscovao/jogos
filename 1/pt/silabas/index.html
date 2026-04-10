@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Português 1º Ano - Sílabas</title>
+    <title>Português - 1º Ano</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --cor-principal: #FF9100; 
-            --cor-fundo: #fff9f2;      
+            --cor-principal: #FF9100; /* Laranja para UI */
+            --cor-fundo-site: #EBF4FF; /* Azul claro para fundo */
+            --cor-card-border: #EBF4FF; /* Cor pedida para limite do card */
             --header-height: 70px;
             --cor-acerto: #2ed573;
             --cor-erro: #ff4757;
@@ -17,9 +18,8 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
-        body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
+        body { background: var(--cor-fundo-site); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* HEADER & SIDEBARS */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
         
@@ -29,7 +29,6 @@
         .sidebar-rd.active { bottom: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
         .sidebar-item:hover { background-color: var(--cor-principal); color: white !important; }
-        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
@@ -38,37 +37,38 @@
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
         .screen.active { display: flex; }
 
-        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; overflow: hidden; }
+        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-card-border); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; overflow: hidden; }
         
-        .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fffcf8; border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 5px; overflow: hidden; }
+        .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--cor-fundo-site); border-radius: 20px; border: 2px dashed var(--cor-principal); padding: 5px; overflow: hidden; }
         
-        /* MOLDURA PRETA ESTILO MACACO */
-        .sil-frame { background: white; border: 4px solid #000; border-radius: 25px; width: 100%; max-width: 420px; height: 98%; display: flex; flex-direction: column; overflow: hidden; }
+        /* MOLDURA PRETA INTERNA */
+        .sil-frame { background: white; border: 4px solid #000; border-radius: 25px; width: 100%; max-width: 400px; height: 98%; display: flex; flex-direction: column; overflow: hidden; }
         
+        /* HEADER DO JOGO (PORTUGUÊS 1º ANO) */
         .sil-header { height: 15%; min-height: 50px; border-bottom: 4px solid #000; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 900; color: #000; letter-spacing: 5px; text-transform: uppercase; }
         
-        .sil-img-box { flex: 1; display: flex; align-items: center; justify-content: center; padding: 15px; }
+        .sil-img-box { flex: 1; display: flex; align-items: center; justify-content: center; padding: 10px; overflow: hidden; }
         .sil-img-box img { max-width: 90%; max-height: 100%; object-fit: contain; }
 
-        /* ZONA DE NÚMEROS (CATEGORIA 1) */
+        /* RODAPÉ MODO CONTAR */
         .numbers-footer { height: 20%; min-height: 80px; border-top: 4px solid #000; display: flex; }
         .num-btn { flex: 1; border: none; background: #fff; font-size: 2.5rem; font-weight: 900; color: #000; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .num-btn:not(:last-child) { border-right: 4px solid #000; }
         .num-btn:active { background: #eee; }
 
-        /* ZONA DE ORDENAR (CATEGORIA 2) */
-        .drop-zone { height: 18%; min-height: 75px; background: #f7f7f7; border-top: 4px solid #000; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 5px; }
-        .slot { width: 65px; height: 65px; border: 3px solid #000; background: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; cursor: pointer; }
+        /* RODAPÉ MODO ORDENAR */
+        .drop-zone { height: 18%; min-height: 70px; background: #f7f7f7; border-top: 4px solid #000; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 5px; }
+        .slot { width: 60px; height: 60px; border: 3px solid #000; background: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; cursor: pointer; }
         
         .pieces-footer { height: 20%; min-height: 80px; border-top: 4px solid #000; display: flex; align-items: center; justify-content: center; gap: 15px; padding: 10px; background: white; }
-        .piece { background: var(--cor-principal); color: white; padding: 12px 10px; border-radius: 12px; border: 2px solid #000; font-weight: 900; font-size: 1.3rem; cursor: pointer; min-width: 65px; text-align: center; box-shadow: 0 4px 0 #000; text-transform: uppercase; }
+        .piece { background: var(--cor-principal); color: white; padding: 10px 8px; border-radius: 10px; border: 2px solid #000; font-weight: 900; font-size: 1.2rem; cursor: pointer; min-width: 65px; text-align: center; box-shadow: 0 4px 0 #000; text-transform: uppercase; }
         .piece.hidden { visibility: hidden; pointer-events: none; }
 
-        /* INTRO & BOTÕES */
-        .explanation-box { background: #fff9f2; border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #ffe0b2; text-align: center;}
+        /* INTRO SCREEN */
+        .explanation-box { background: white; border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid var(--cor-principal); text-align: center;}
         .intro-btns { display: flex; gap: 10px; width: 100%; align-items: center; }
         .btn-play { background: var(--cor-principal); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
-        .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
         .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 90%; max-width: 350px; }
@@ -84,7 +84,6 @@
             <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="#" class="sidebar-item"><img class="menu-pre" src=""> Pré-Escolar</a>
     </div>
 
     <div class="sidebar-rd" id="sidebar-rd">
@@ -107,13 +106,13 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box">
-                    <img id="intro-preview-img" src="" style="width:110px; margin-bottom:10px;">
+                    <img id="intro-preview-img" src="" style="width:100px; margin-bottom:10px;">
                     <p id="intro-text" style="color:#555; font-weight:bold; font-size:1.2rem;"></p>
                 </div>
                 <h2 id="display-categoria" style="text-align:center; color:var(--cor-principal); margin-bottom:15px;"></h2>
                 <div class="intro-btns">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
-                    <button class="btn-rd" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:35px;"></button>
+                    <button class="btn-rd" onclick="toggleRD()"><img id="intro-rd-img" src="" style="width:35px;"></button>
                 </div>
             </div>
         </section>
@@ -146,7 +145,7 @@
         <div class="modal-content">
             <h2 id="modal-title" style="color:var(--cor-acerto);">Boa!</h2>
             <div id="modal-msg" style="margin-bottom:20px;"></div>
-            <button class="btn-play" onclick="location.reload()">Jogar de Novo</button>
+            <button class="btn-play" onclick="location.reload()" style="background:var(--cor-principal);">Novo Jogo</button>
         </div>
     </div>
 
@@ -161,7 +160,7 @@
 
         window.onload = () => {
             document.getElementById('header-icon').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1;
-            document.querySelector('.menu-pre').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.pre;
+            document.getElementById('intro-rd-img').src = JOGO_CONFIG.caminhoImg + "rd.png";
             document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             setupRDMenu(); updateIntro();
         };
@@ -172,7 +171,7 @@
                 const cat = JOGO_CONFIG.categorias[key];
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
-                item.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + cat.img}"> <span>${cat.nome}</span>`;
+                item.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + cat.img}" style="width:24px; margin-right:10px;"> <span>${cat.nome}</span>`;
                 item.onclick = () => { currentCatKey = key; updateIntro(); closeMenus(); };
                 container.appendChild(item);
             });
@@ -286,8 +285,8 @@
 
         function endGame() {
             clearInterval(timerInterval);
-            document.getElementById('modal-title').innerText = points >= 3 ? "Excelente!" : "Bom trabalho!";
-            document.getElementById('modal-msg').innerHTML = `<p>Acertaste: ${points}/5</p><p>Tempo: ${document.getElementById('timer').innerText}</p>`;
+            document.getElementById('modal-title').innerText = points >= 3 ? JOGO_CONFIG.relatorio.titulo : "Tenta outra vez!";
+            document.getElementById('modal-msg').innerHTML = `<p>${JOGO_CONFIG.relatorio.pontosTotal} ${points}/5</p><p>${JOGO_CONFIG.relatorio.tempoTotal} ${document.getElementById('timer').innerText}</p>`;
             document.getElementById('modal').style.display = 'flex';
         }
 
