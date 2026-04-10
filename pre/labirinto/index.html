@@ -1,348 +1,157 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pré-Escolar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --cor-principal: #e691a7; 
-            --cor-fundo: #fff5f7;      
-            --cor-vermelho: #ff4757; 
-            --header-height: 70px;
-            --cor-acerto: #2ed573;
-            --cor-erro: #ff4757;
-        }
-
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
-        body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
-
-        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
-        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
-        
-        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
-        .sidebar.active { left: 0; }
-        .sidebar-rd { position: fixed; bottom: -300px; left: 0; width: 100%; height: 300px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
-        .sidebar-rd.active { bottom: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; cursor: pointer; }
-        .sidebar-item img { width: 24px; height: 24px; margin-right: 12px; object-fit: contain; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
-        .overlay.active { display: block; }
-
-        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
-        .screen.active { display: flex; }
-        .game-card { background: white; border-radius: 30px; padding: 10px; border: 4px solid var(--cor-principal); width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; }
-
-        /* --- Maze Responsive --- */
-        .maze-outer { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; min-height: 0; }
-        #maze-container { 
-            display: grid; background: white; border: 2px dashed var(--cor-principal); border-radius: 15px; 
-            width: min(85vw, 45vh); height: min(85vw, 45vh); margin: auto;
-        }
-        .cell { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
-        .cell img { width: 80%; height: 80%; object-fit: contain; position: absolute; }
-        .wall { width: 100%; height: 100%; border-radius: 2px; }
-
-        /* --- D-Pad --- */
-        .d-pad { display: grid; grid-template-columns: repeat(3, 50px); grid-template-rows: repeat(2, 50px); gap: 10px; justify-content: center; margin: 10px 0; flex-shrink: 0; }
-        .btn-dir { background: var(--cor-principal); color: white; border: none; border-radius: 12px; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #c07a8c; touch-action: none; }
-        .btn-dir:active { transform: translateY(3px); box-shadow: none; }
-
-        /* --- UI --- */
-        .explanation-box { background: var(--cor-fundo); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #fce4ec; text-align: center;}
-        .anim-pula { animation: jump 1.5s infinite; }
-        @keyframes jump { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-
-        .btn-play { background: var(--cor-vermelho); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; flex: 1; font-family: 'Fredoka'; }
-        .btn-rd { width: 60px; height: 58px; border-radius: 15px; border: 3px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .btn-rd-mini { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--cor-principal); background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 10px; flex-shrink: 0; }
-        .btn-rd-mini img { width: 18px !important; height: 18px !important; margin: 0 !important; }
-
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-principal); width: 85%; max-width: 350px; }
-    </style>
+<meta charset="UTF-8">
+<title>Jogo Labirinto</title>
+<style>
+    body { margin: 0; background: #222; }
+    canvas { display: block; margin: auto; background: #fff; }
+</style>
 </head>
 <body>
 
-    <audio id="sound-win" src="../../sounds/acerto.mp3"></audio>
-    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
-    
-    <div class="sidebar" id="sidebar">
-        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
-            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer;">✕</button>
-        </div>
-        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="#" class="sidebar-item" id="side-pre-btn"><img id="side-pre" src=""> Pré-Escolar</a>
-        <a href="#" class="sidebar-item"><img id="side-1" src=""> 1º Ano</a>
-        <a href="#" class="sidebar-item"><img id="side-2" src=""> 2º Ano</a>
-        <a href="#" class="sidebar-item"><img id="side-3" src=""> 3º Ano</a>
-        <a href="#" class="sidebar-item"><img id="side-4" src=""> 4º Ano</a>
-    </div>
+<canvas id="gameCanvas" width="600" height="600"></canvas>
 
-    <div class="sidebar-rd" id="sidebar-rd">
-        <h3 style="margin:0 0 15px 0; color:var(--cor-principal);">Escolhe o Animal</h3>
-        <div id="categorias-list" style="max-height: 220px; overflow-y: auto;"></div>
-    </div>
-
-    <header class="nav-bar">
-        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:var(--cor-principal); cursor:pointer;">☰</button>
-        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin: 0;">
-            <img id="header-icon" src="" style="height:32px;"> Pré-Escolar
-        </h1>
-        <a href="../" class="back-btn">⬅ Voltar</a>
-    </header>
-
-    <main class="main-content">
-        <section id="intro-screen" class="screen active">
-            <div class="game-card">
-                <div class="explanation-box">
-                    <p style="color:var(--cor-texto); font-weight:bold; font-size: 1.2rem; margin-bottom: 20px;">Leva o animal até à comida!</p>
-                    <div style="display:flex; gap:30px; align-items:center;">
-                        <img id="intro-sprite" class="anim-pula" src="" style="width:80px;">
-                        <span style="font-size:30px; color:var(--cor-principal);">➔</span>
-                        <img id="intro-food" src="" style="width:80px;">
-                    </div>
-                </div>
-                <h2 style="color:var(--cor-principal); text-align:center; font-size:1.4rem; margin:10px 0; font-weight:bold;">O Labirinto</h2>
-                <div style="display:flex; gap:10px; width:100%;">
-                    <button class="btn-play" onclick="startGame()">JOGAR</button>
-                    <button class="btn-rd" onclick="toggleRD()"><img id="btn-rd-icon" src="" style="width:35px;"></button>
-                </div>
-            </div>
-        </section>
-
-        <section id="game-screen" class="screen">
-            <div class="game-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; font-size:0.9rem;">
-                    <div>⏳ <span id="timer">00:00</span></div>
-                    <div id="stars-bar" style="display:flex; gap:4px;"></div>
-                    <div style="display:flex; align-items:center;">
-                        PTS: <span id="points">0</span>
-                        <button class="btn-rd-mini" onclick="toggleRD()"><img id="rd-mini-icon" src=""></button>
-                    </div>
-                </div>
-                <div class="maze-outer">
-                    <div id="maze-container"></div>
-                </div>
-                <div class="d-pad">
-                    <div style="grid-column:2"><button class="btn-dir" onmousedown="handleMovePress(0,-1)" onmouseup="handleMoveRelease()" ontouchstart="handleMovePress(0,-1)" ontouchend="handleMoveRelease()">▲</button></div>
-                    <div style="grid-row:2"><button class="btn-dir" onmousedown="handleMovePress(-1,0)" onmouseup="handleMoveRelease()" ontouchstart="handleMovePress(-1,0)" ontouchend="handleMoveRelease()">◀</button></div>
-                    <div style="grid-row:2"><button class="btn-dir" onmousedown="handleMovePress(0,1)" onmouseup="handleMoveRelease()" ontouchstart="handleMovePress(0,1)" ontouchend="handleMoveRelease()">▼</button></div>
-                    <div style="grid-row:2"><button class="btn-dir" onmousedown="handleMovePress(1,0)" onmouseup="handleMoveRelease()" ontouchstart="handleMovePress(1,0)" ontouchend="handleMoveRelease()">▶</button></div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <h2 id="modal-title" style="color:var(--cor-acerto);">Fantástico!</h2>
-            <div id="modal-msg" style="margin: 20px 0;"></div>
-            <button class="btn-play" onclick="location.reload()" style="background:var(--cor-principal);">Jogar de Novo</button>
-        </div>
-    </div>
-
-    <script src="dados.js"></script>
-    <script>
-        let currentLevel = 1, points = 0, seconds = 0, timerInterval;
-        let catKey = "cao", playerPos = {x:0, y:0}, exitPos = {x:0, y:0};
-        let canMove = true, currentMaze = [], moveTimer = null, delayTimer = null;
-
-        window.onload = () => {
-            const p = JOGO_CONFIG.caminhoIcons;
-            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
-            ['side-pre','side-1','side-2','side-3','side-4'].forEach((id, i) => {
-                const icon = i === 0 ? 'pre' : `ano${i}`;
-                document.getElementById(id).src = p + JOGO_CONFIG.iconesMenu[icon];
-            });
-            document.getElementById('btn-rd-icon').src = JOGO_CONFIG.caminhoImg + "rd.png";
-            document.getElementById('rd-mini-icon').src = JOGO_CONFIG.caminhoImg + "rd.png";
-            setupRDMenu();
-            selectCategory('cao');
-        };
-
-        function setupRDMenu() {
-            const list = document.getElementById('categorias-list');
-            Object.keys(JOGO_CONFIG.labirinto.categorias).forEach(k => {
-                const cat = JOGO_CONFIG.labirinto.categorias[k];
-                const item = document.createElement('div');
-                item.className = 'sidebar-item';
-                item.innerHTML = `<img src="${JOGO_CONFIG.labirinto.caminho + cat.sprite}"> ${cat.nome}`;
-                item.onclick = () => { selectCategory(k); resetGame(); };
-                list.appendChild(item);
-            });
+<script>
+const JOGO_CONFIG = {
+    caminhoIcons: "../../icons/", 
+    caminhoImg: "../../img/",
+    iconesMenu: {
+        pre: "iconpre.png",
+        ano1: "icon1.png",
+        ano2: "icon2.png",
+        ano3: "icon3.png",
+        ano4: "icon4.png"
+    },
+    labirinto: {
+        caminho: "../../img/labirinto/",
+        obstaculos: ["pedra.png", "buraco.png"],
+        categorias: {
+            cao: { nome: "Cão", sprite: "l_cao.png", objetivo: "l_comida_cao.png", corParede: "#e691a7" },
+            gato: { nome: "Gato", sprite: "l_gato.png", objetivo: "l_comida_gato.png", corParede: "#d47a92" },
+            passaro: { nome: "Pássaro", sprite: "l_passaro.png", objetivo: "l_comida_passaro.png", corParede: "#8db596" }
         }
+    },
+    relatorio: {
+        titulo: "Fim da Aventura!",
+        pontosTotal: "Pontos:",
+        tempoTotal: "Tempo:"
+    }
+};
 
-        function selectCategory(k) {
-            catKey = k;
-            const data = JOGO_CONFIG.labirinto.categorias[k];
-            document.getElementById('intro-sprite').src = JOGO_CONFIG.labirinto.caminho + data.sprite;
-            document.getElementById('intro-food').src = JOGO_CONFIG.labirinto.caminho + data.objetivo;
-            closeMenus();
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+const TAM = 10;
+const TAM_CEL = 60;
+
+let grid = [];
+let inicio = {x:0, y:0};
+let fim = {x:TAM-1, y:TAM-1};
+
+// 🔹 Criar grid vazio
+function criarGrid() {
+    grid = [];
+    for (let y = 0; y < TAM; y++) {
+        let linha = [];
+        for (let x = 0; x < TAM; x++) {
+            linha.push(0); // 0 = livre
         }
+        grid.push(linha);
+    }
+}
 
-        function resetGame() {
-            if(!document.getElementById('game-screen').classList.contains('active')) return;
-            clearInterval(timerInterval);
-            currentLevel = 1; points = 0; seconds = 0;
-            document.getElementById('points').innerText = "0";
-            document.getElementById('timer').innerText = "00:00";
-            initStars();
-            loadLevel();
-            startClock();
-        }
+// 🔹 BFS para garantir caminho
+function existeCaminho() {
+    let fila = [inicio];
+    let visitado = new Set();
 
-        function startGame() {
-            document.getElementById('intro-screen').classList.remove('active');
-            document.getElementById('game-screen').classList.add('active');
-            initStars();
-            loadLevel();
-            startClock();
-        }
+    while (fila.length) {
+        let {x, y} = fila.shift();
+        let chave = x + "," + y;
 
-        function startClock() {
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                seconds++;
-                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;
-            }, 1000);
-        }
+        if (visitado.has(chave)) continue;
+        visitado.add(chave);
 
-        function initStars() {
-            const bar = document.getElementById('stars-bar'); bar.innerHTML = '';
-            for(let i=0; i<5; i++) {
-                let s = document.createElement('div');
-                s.style.cssText="width:18px;height:18px;border:2px solid #ccc;border-radius:50%; background:white; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:white;";
-                bar.appendChild(s);
-            }
-        }
+        if (x === fim.x && y === fim.y) return true;
 
-        function generateMaze(size) {
-            let maze = Array(size).fill().map(() => Array(size).fill(1));
-            function walk(x, y) {
-                maze[y][x] = 0;
-                let dirs = [[0,2],[0,-2],[2,0],[-2,0]].sort(() => Math.random() - 0.5);
-                for(let [dx, dy] of dirs) {
-                    let nx = x + dx, ny = y + dy;
-                    if(nx >= 0 && nx < size && ny >= 0 && ny < size && maze[ny][nx] === 1) {
-                        maze[y + dy/2][x + dx/2] = 0; walk(nx, ny);
-                    }
-                }
-            }
-            walk(0, 0);
-            maze[0][0] = 2; maze[size-1][size-1] = 3;
-            if(maze[size-2][size-1] === 1 && maze[size-1][size-2] === 1) maze[size-2][size-1] = 0;
+        let dirs = [[1,0],[-1,0],[0,1],[0,-1]];
 
-            // Add obstacles (stone/hole) starting from level 2
-            let obsCount = currentLevel - 1;
-            while(obsCount > 0) {
-                let rx = Math.floor(Math.random()*size), ry = Math.floor(Math.random()*size);
-                if(maze[ry][rx] === 0 && maze[ry][rx] !== 2 && maze[ry][rx] !== 3) {
-                    maze[ry][rx] = 4; obsCount--;
-                }
-            }
-            return maze;
-        }
+        for (let [dx, dy] of dirs) {
+            let nx = x + dx;
+            let ny = y + dy;
 
-        function loadLevel() {
-            canMove = true;
-            const size = 5 + (currentLevel * 2);
-            currentMaze = generateMaze(size);
-            const container = document.getElementById('maze-container');
-            container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-            container.style.gridTemplateRows = `repeat(${size}, 1fr)`;
-            container.innerHTML = '';
-            
-            const cat = JOGO_CONFIG.labirinto.categorias[catKey];
-            const path = JOGO_CONFIG.labirinto.caminho;
-
-            for(let y=0; y<size; y++){
-                for(let x=0; x<size; x++){
-                    const cell = document.createElement('div');
-                    cell.className = 'cell'; cell.id = `c-${x}-${y}`;
-                    const val = currentMaze[y][x];
-                    if(val === 1) {
-                        cell.classList.add('wall'); cell.style.backgroundColor = cat.corParede;
-                    } else if(val === 2) {
-                        playerPos = {x,y};
-                        cell.innerHTML = `<img id="player-img" src="${path + cat.sprite}">`;
-                    } else if(val === 3) {
-                        exitPos = {x,y};
-                        cell.innerHTML = `<img id="food-img" src="${path + cat.objetivo}">`;
-                    } else if(val === 4) {
-                        const obs = JOGO_CONFIG.labirinto.obstaculos[Math.floor(Math.random()*2)];
-                        cell.innerHTML = `<img src="${path + obs}">`;
-                    }
-                    container.appendChild(cell);
+            if (nx>=0 && ny>=0 && nx<TAM && ny<TAM) {
+                if (grid[ny][nx] === 0) {
+                    fila.push({x:nx, y:ny});
                 }
             }
         }
+    }
 
-        function handleMovePress(dx, dy) {
-            if(!canMove) return;
-            move(dx, dy); // Step 1
-            delayTimer = setTimeout(() => {
-                moveTimer = setInterval(() => { if(!move(dx, dy)) handleMoveRelease(); }, 80);
-            }, 250);
+    return false;
+}
+
+// 🔹 Colocar obstáculos sem bloquear o caminho
+function gerarObstaculos() {
+    let tentativas = 0;
+
+    while (tentativas < 200) {
+        let x = Math.floor(Math.random() * TAM);
+        let y = Math.floor(Math.random() * TAM);
+
+        if ((x === inicio.x && y === inicio.y) ||
+            (x === fim.x && y === fim.y)) continue;
+
+        if (grid[y][x] === 1) continue;
+
+        // tenta colocar
+        grid[y][x] = 1;
+
+        // verifica se ainda há caminho
+        if (!existeCaminho()) {
+            grid[y][x] = 0; // desfaz
         }
 
-        function handleMoveRelease() { clearTimeout(delayTimer); clearInterval(moveTimer); }
+        tentativas++;
+    }
+}
 
-        function move(dx, dy) {
-            if(!canMove) return false;
-            const nX = playerPos.x + dx, nY = playerPos.y + dy;
-            if(nY >= 0 && nY < currentMaze.length && nX >= 0 && nX < currentMaze.length) {
-                const val = currentMaze[nY][nX];
-                if(val !== 1) {
-                    const newCell = document.getElementById(`c-${nX}-${nY}`);
-                    newCell.appendChild(document.getElementById('player-img'));
-                    playerPos = {x: nX, y: nY};
-                    if(val === 3) { endRound(true); return false; }
-                    if(val === 4) { endRound(false); return false; }
-                    return true;
-                }
-            }
-            return false;
-        }
+// 🔹 Desenhar
+function desenhar() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-        function endRound(success) {
-            canMove = false; handleMoveRelease();
-            if(success) {
-                points += 20; document.getElementById('sound-win').play().catch(()=>{});
-                const food = document.getElementById('food-img'); if(food) food.style.display = 'none';
+    for (let y = 0; y < TAM; y++) {
+        for (let x = 0; x < TAM; x++) {
+
+            if (grid[y][x] === 1) {
+                ctx.fillStyle = "#444";
             } else {
-                if(points > 0) points -= 5;
-                document.getElementById('player-img').style.opacity = '0.4';
+                ctx.fillStyle = "#ddd";
             }
-            document.getElementById('points').innerText = points;
 
-            const star = document.getElementById('stars-bar').children[currentLevel-1];
-            star.style.background = success ? "var(--cor-acerto)" : "var(--cor-erro)";
-            star.style.borderColor = success ? "var(--cor-acerto)" : "var(--cor-erro)";
-            star.innerText = success ? "✔" : "✖";
-
-            setTimeout(() => {
-                if(currentLevel < 5) { currentLevel++; loadLevel(); }
-                else {
-                    clearInterval(timerInterval);
-                    document.getElementById('modal-title').innerText = points >= 60 ? "Incrível!" : "Bom trabalho!";
-                    document.getElementById('modal-msg').innerHTML = `<p>Pontos: ${points}</p><p>Tempo: ${document.getElementById('timer').innerText}</p>`;
-                    document.getElementById('modal').style.display = 'flex';
-                }
-            }, 800);
+            ctx.fillRect(x*TAM_CEL, y*TAM_CEL, TAM_CEL-2, TAM_CEL-2);
         }
+    }
 
-        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
-        function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
-        function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
+    // início
+    ctx.fillStyle = "green";
+    ctx.fillRect(inicio.x*TAM_CEL, inicio.y*TAM_CEL, TAM_CEL-2, TAM_CEL-2);
 
-        window.onkeydown = (e) => {
-            if(e.key === "ArrowUp") move(0,-1); if(e.key === "ArrowDown") move(0,1);
-            if(e.key === "ArrowLeft") move(-1,0); if(e.key === "ArrowRight") move(1,0);
-        };
-    </script>
+    // fim
+    ctx.fillStyle = "red";
+    ctx.fillRect(fim.x*TAM_CEL, fim.y*TAM_CEL, TAM_CEL-2, TAM_CEL-2);
+}
+
+// 🔹 Inicializar
+function iniciar() {
+    criarGrid();
+    gerarObstaculos();
+    desenhar();
+}
+
+iniciar();
+</script>
+
 </body>
 </html>
