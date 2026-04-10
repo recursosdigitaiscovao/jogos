@@ -31,6 +31,10 @@
         .sidebar.active { left: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
         .sidebar-item:hover { background-color: var(--cor-azul-tema); color: white !important; }
+        
+        /* Imagens maiores no menu de categorias */
+        .sidebar-rd .sidebar-item { padding: 15px 25px; }
+        .sidebar-rd .sidebar-item img { width: 45px; height: 45px; object-fit: contain; margin-right: 15px; }
         .sidebar-item img { width: 24px; height: 24px; object-fit: contain; margin-right: 12px; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
@@ -40,23 +44,20 @@
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
         .screen.active { display: flex; }
 
-        /* Card com padding bottom 10px */
         .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 20px 20px 10px 20px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; max-height: 600px; box-sizing: border-box; position: relative; }
         
         .explanation-box { background: var(--cor-fundo-pagina); border-radius: 20px; flex: 1; margin-bottom: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px solid #d0e4f7; text-align: center;}
         
-        /* Título do jogo reduzido */
         #intro-cat-title { color: var(--cor-azul-tema); font-size: 1.5rem; margin: 10px 0; font-weight: 900; text-align: center; }
 
         .intro-btns { display: flex; gap: 15px; width: 100%; align-items: center; padding-top: 15px; border-top: 2px dashed #d0e4f7; }
 
+        /* Top Bar sem o texto de nível */
         .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; font-size: 0.9rem; margin-bottom: 10px; border-bottom: 1px solid #eee; }
         .stars-container { display: flex; gap: 6px; }
         .star-dot { width: 18px; height: 18px; border: 2px solid #ddd; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; }
         
         .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
-        
-        /* Título da palavra SEM bordas e SEM limites */
         .game-title-header { width: 100%; text-align: center; font-size: 2.2rem; font-weight: 900; margin-bottom: 10px; color: #333; letter-spacing: 2px; }
         
         .img-display { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
@@ -80,7 +81,7 @@
         .btn-play:active { transform: translateY(3px); box-shadow: 0 2px 0 #4a96d1; }
         
         .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
-        .sidebar-rd { position: fixed; bottom: -300px; left: 0; width: 100%; height: 300px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
+        .sidebar-rd { position: fixed; bottom: -350px; left: 0; width: 100%; height: 350px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
         .sidebar-rd.active { bottom: 0; }
     </style>
 </head>
@@ -106,7 +107,7 @@
             <h3 style="margin:0; color:var(--cor-azul-tema);">Escolhe o Jogo</h3>
             <button onclick="toggleRD()" style="border:none; background:none; font-size:24px;">✕</button>
         </div>
-        <div id="categorias-list" style="max-height: 220px; overflow-y: auto;"></div>
+        <div id="categorias-list" style="max-height: 260px; overflow-y: auto;"></div>
     </div>
 
     <header class="nav-bar">
@@ -138,7 +139,7 @@
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="game-top-bar">
-                    <div>Nível <span id="level-num">1</span> | ⏳ <span id="timer">00:00</span></div>
+                    <div>⏳ <span id="timer">00:00</span></div>
                     <div class="stars-container" id="stars-bar"></div>
                     <div style="display:flex; align-items:center; gap:12px;">
                         PTS: <span id="points">0</span>
@@ -225,13 +226,18 @@
 
         function loadRound() {
             const cat = JOGO_CONFIG.categorias[currentCatKey];
-            const item = cat.itens[currentQuestion];
+            
+            // Lógica de imagens diferentes:
+            // Nível 1 usa índices 0-4 / Nível 2 usa índices 5-9
+            let dataIndex = (currentLevel === 1) ? currentQuestion : (currentQuestion + 5);
+            
+            // Segurança: Se o array for menor que 10, faz loop
+            if (dataIndex >= cat.itens.length) dataIndex = currentQuestion % cat.itens.length;
+            
+            const item = cat.itens[dataIndex];
             const footer = document.getElementById('game-interaction-area');
             const header = document.getElementById('word-header');
             
-            document.getElementById('level-num').innerText = currentLevel;
-
-            // Nivel 1: Mostra nome. Nivel 2: Esconde nome.
             if(currentLevel === 1) {
                 header.style.display = 'block';
                 header.innerText = item.nome.toUpperCase();
@@ -250,7 +256,7 @@
                     const b = document.createElement('div');
                     b.className = 'btn-num';
                     b.innerText = n;
-                    b.onclick = () => checkContar(n);
+                    b.onclick = () => checkContar(n, item);
                     grid.appendChild(b);
                 });
                 footer.appendChild(grid);
@@ -288,8 +294,8 @@
             }
         }
 
-        function checkContar(val) {
-            const correct = JOGO_CONFIG.categorias[currentCatKey].itens[currentQuestion].divisao.split('-').length;
+        function checkContar(val, item) {
+            const correct = item.divisao.split('-').length;
             processStep(val === correct);
         }
 
@@ -309,7 +315,9 @@
                 dots[currentQuestion].style.background = "var(--cor-erro)";
                 dots[currentQuestion].innerText = "X";
             }
+            
             currentQuestion++;
+            
             setTimeout(() => {
                 if(currentQuestion < 5) {
                     loadRound();
