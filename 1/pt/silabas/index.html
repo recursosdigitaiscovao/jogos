@@ -24,27 +24,32 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo-pagina); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
+        /* Barra de Navegação */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; box-shadow: 0 3px 0 #e68200; transition: 0.2s; }
         
+        /* Menu Lateral (Hambúrguer) Completo */
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
         .sidebar-item:hover { background-color: var(--cor-azul-tema); color: white !important; }
-        
-        /* Menu RD com imagens bem grandes */
+        .sidebar-item img { width: 24px; height: 24px; object-fit: contain; margin-right: 12px; }
+
+        /* Menu de Categorias (RD) */
+        .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
+        .sidebar-rd.active { bottom: 0; }
         .sidebar-rd .sidebar-item { padding: 20px 25px; }
         .sidebar-rd .sidebar-item img { width: 75px; height: 75px; object-fit: contain; margin-right: 20px; }
-        .sidebar-item img { width: 24px; height: 24px; object-fit: contain; margin-right: 12px; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* Card a 5px do fundo */
+        /* Área Principal */
         .main-content { flex: 1; padding: 10px 15px 5px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
         .screen.active { display: flex; }
 
+        /* Card de Jogo */
         .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 15px 20px 10px 20px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; position: relative; }
         
         .explanation-box { background: var(--cor-fundo-pagina); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; border: 2px solid #d0e4f7; text-align: center;}
@@ -63,11 +68,13 @@
         .img-display { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
         .img-display img, #intro-cat-img { max-width: 80%; max-height: 200px; object-fit: contain; filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.1)); }
 
+        /* Interface Contar */
         .contar-container { display: flex; width: 100%; border: 4px solid #000; border-radius: 10px; overflow: hidden; box-shadow: 0 6px 0 #000; }
         .btn-num { flex: 1; height: 75px; background: white; border-right: 4px solid #000; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 900; cursor: pointer; }
         .btn-num:last-child { border-right: none; }
         .btn-num:active { background: #eee; }
 
+        /* Interface Ordenar */
         .slots-area { display: flex; gap: 10px; justify-content: center; margin-bottom: 10px; min-height: 65px; }
         .slot { width: 75px; height: 65px; border: 3px dashed #5EAAEA; border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900; cursor: pointer; }
         .slot.filled { border: 4px solid #000; background: var(--cor-acerto); color: white; border-style: solid; }
@@ -80,14 +87,13 @@
         .btn-play:active { transform: translateY(3px); box-shadow: 0 2px 0 #4a96d1; }
         
         .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
-        .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
-        .sidebar-rd.active { bottom: 0; }
     </style>
 </head>
 <body>
 
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
     
+    <!-- Menu Lateral Hambúrguer Completo -->
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
@@ -97,8 +103,11 @@
         <a href="/jogos/pre" class="sidebar-item"><img class="menu-pre" src=""> Pré-Escolar</a>
         <a href="/jogos/1" class="sidebar-item"><img class="menu-1" src=""> 1º Ano</a>
         <a href="/jogos/2" class="sidebar-item"><img class="menu-2" src=""> 2º Ano</a>
+        <a href="/jogos/3" class="sidebar-item"><img class="menu-3" src=""> 3º Ano</a>
+        <a href="/jogos/4" class="sidebar-item"><img class="menu-4" src=""> 4º Ano</a>
     </div>
 
+    <!-- Seletor de Categorias -->
     <div class="sidebar-rd" id="sidebar-rd">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <h3 style="margin:0; color:var(--cor-azul-tema);">Escolhe o Jogo</h3>
@@ -170,13 +179,18 @@
         let currentQuestion = 0, currentLevel = 1, points = 0, seconds = 0, timerInterval;
         let currentCatKey = "contar";
         let userSyllables = [];
+        let currentShuffled = [];
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
+            // Carregamento de todos os ícones do menu
             document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.pre;
             document.querySelector('.menu-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
             document.querySelector('.menu-1').src = p + JOGO_CONFIG.iconesMenu.ano1;
             document.querySelector('.menu-2').src = p + JOGO_CONFIG.iconesMenu.ano2;
+            document.querySelector('.menu-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
+            document.querySelector('.menu-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
+            
             document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             setupRDMenu();
             updateIntro();
@@ -221,6 +235,7 @@
 
         function loadRound() {
             const cat = JOGO_CONFIG.categorias[currentCatKey];
+            // Nível 1: Índices 0-4 | Nível 2: Índices 5-9
             let dataIndex = (currentLevel === 1) ? currentQuestion : (currentQuestion + 5);
             if (dataIndex >= cat.itens.length) dataIndex = currentQuestion % cat.itens.length;
             
@@ -234,6 +249,7 @@
             document.getElementById('current-img').src = JOGO_CONFIG.caminhoImg + item.img;
             footer.innerHTML = '';
             userSyllables = [];
+            currentShuffled = []; // Reset shuffle para nova ronda
 
             if(cat.tipo === 'contar') {
                 const grid = document.createElement('div');
@@ -265,7 +281,6 @@
                 if(userSyllables[idx]) {
                     slot.innerText = userSyllables[idx];
                     slot.classList.add('filled');
-                    // Clique no slot para remover
                     slot.onclick = () => undoSyllable(idx, item);
                 }
                 slotsArea.appendChild(slot);
@@ -274,8 +289,6 @@
 
             const optsArea = document.createElement('div');
             optsArea.className = 'syllable-options';
-            // Criar botões. Se a sílaba já estiver usada, fica invisível.
-            // Para lidar com sílabas repetidas, usamos um contador de uso
             const shuffled = getShuffledSyllables(item);
             
             shuffled.forEach(sylObj => {
@@ -283,17 +296,15 @@
                 btn.className = 'syllable-btn';
                 btn.innerText = sylObj.text;
                 
-                const usedCount = userSyllables.filter(s => s === sylObj.text).length;
-                if(sylObj.instanceId < usedCount) btn.classList.add('used');
+                const usedInSlots = userSyllables.filter(s => s === sylObj.text).length;
+                if(sylObj.instanceId < usedInSlots) btn.classList.add('used');
 
                 btn.onclick = () => {
                     if(userSyllables.length < syllaArray.length && !btn.classList.contains('used')) {
                         userSyllables.push(sylObj.text);
+                        renderOrderUI(item);
                         if(userSyllables.length === syllaArray.length) {
-                            renderOrderUI(item);
                             setTimeout(() => checkOrder(syllaArray), 300);
-                        } else {
-                            renderOrderUI(item);
                         }
                     }
                 };
@@ -302,18 +313,15 @@
             footer.appendChild(optsArea);
         }
 
-        // Lógica para permitir sílabas repetidas e correção
         function undoSyllable(index, item) {
-            // Remove apenas se for a última preenchida para manter a ordem simples
             if(index === userSyllables.length - 1) {
                 userSyllables.pop();
                 renderOrderUI(item);
             }
         }
 
-        let currentShuffled = [];
         function getShuffledSyllables(item) {
-            if(userSyllables.length === 0) {
+            if(currentShuffled.length === 0) {
                 const raw = item.divisao.split('-');
                 const counts = {};
                 currentShuffled = raw.map(s => {
