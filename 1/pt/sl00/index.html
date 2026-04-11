@@ -19,16 +19,11 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        @keyframes handGuide {
-            0% { top: 30%; left: 50%; opacity: 0; }
-            15% { opacity: 1; }
-            85% { top: 70%; left: 30%; opacity: 1; }
-            100% { top: 70%; left: 30%; opacity: 0; }
-        }
-
+        /* Animação das bolas do tutorial */
         @keyframes highlightTutorial {
-            0%, 100% { background: white; color: var(--cor-azul-tema); transform: scale(1); }
-            50% { background: var(--cor-principal); color: white; transform: scale(1.1); }
+            0%, 10% { background: white; color: var(--cor-azul-tema); transform: scale(1); border-color: var(--cor-azul-tema); }
+            30%, 60% { background: var(--cor-principal); color: white; transform: scale(1.1); border-color: white; }
+            80%, 100% { background: white; color: var(--cor-azul-tema); transform: scale(1); border-color: var(--cor-azul-tema); }
         }
 
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
@@ -55,17 +50,16 @@
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* ÁREA DE JOGO */
+        /* CARD PRINCIPAL */
         .main-content { flex: 1; padding: 10px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
         .screen.active { display: flex; }
         .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 20px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; position: relative; }
 
-        /* TUTORIAL */
-        .explanation-box { background: var(--cor-fundo-pagina); border-radius: 20px; flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 15px; position: relative; overflow: hidden; border: none; }
+        /* TUTORIAL INICIAL */
+        .explanation-box { background: var(--cor-fundo-pagina); border-radius: 20px; flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 15px; border: none; }
         .tutorial-wheel { width: 130px; height: 130px; border: 4px solid #ddd; border-radius: 50%; position: relative; margin-top: 10px; }
-        .t-dot { position: absolute; width: 32px; height: 32px; background: white; border: 2px solid var(--cor-azul-tema); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 900; transform: translate(-50%, -50%); color: var(--cor-azul-tema); }
-        .t-hand { position: absolute; width: 35px; z-index: 10; animation: handGuide 3s infinite ease-in-out; pointer-events: none; }
+        .t-dot { position: absolute; width: 34px; height: 34px; background: white; border: 2px solid var(--cor-azul-tema); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 900; transform: translate(-50%, -50%); color: var(--cor-azul-tema); }
 
         /* GAMEPLAY */
         .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; font-size: 0.9rem; border-bottom: 1px solid #eee; width: 100%; box-sizing: border-box; flex-shrink: 0; }
@@ -88,7 +82,7 @@
         .btn-hint:active { transform: translateY(3px); box-shadow: 0 1px 0 #d4ac0d; }
 
         .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 16px; border-radius: 20px; cursor: pointer; flex: 1; box-shadow: 0 5px 0 #4a96d1; }
-        .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; }
+        .btn-rd-ui { background: transparent; border: none; cursor: pointer; }
 
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
         .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 30px 20px; width: 100%; max-width: 350px; text-align: center; }
@@ -119,7 +113,7 @@
     </div>
 
     <header class="nav-bar">
-        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:#FF9100;">☰</button>
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:#FF9100; cursor:pointer;">☰</button>
         <div style="display:flex; align-items:center; gap:10px;"><img id="header-icon" src="" style="height:32px;"><h1 style="font-size:1.1rem; color:#FF9100; margin: 0;">Conectar Letras</h1></div>
         <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
@@ -198,29 +192,25 @@
             document.getElementById('intro-cat-title').innerText = cat.nome;
             const area = document.getElementById('tutorial-area');
             
-            // Definir palavra e imagem da animação baseada na categoria
-            let tutWord = "GATO", tutImg = "gato.png";
-            if(currentCatKey === 'frutos') { tutWord = "PERA"; tutImg = "pera.png"; }
-            else if(currentCatKey === 'material') { tutWord = "AFIA"; tutImg = "estojo.png"; }
-            else if(currentCatKey === 'selvagens') { tutWord = "LEÃO"; tutImg = "leao.png"; }
-            else if(currentCatKey === 'paises') { tutWord = "BRASIL"; tutImg = "paises.png"; }
-            else if(currentCatKey === 'transportes') { tutWord = "MOTA"; tutImg = "transportes.png"; }
+            let word = "GATO", img = "gato.png";
+            if(currentCatKey === 'frutos') { word = "PERA"; img = "pera.png"; }
+            else if(currentCatKey === 'material') { word = "ESTOJO"; img = "estojo.png"; }
+            else if(currentCatKey === 'selvagens') { word = "LEÃO"; img = "leao.png"; }
+            else if(currentCatKey === 'paises') { word = "PAÍSES"; img = "paises.png"; }
+            else if(currentCatKey === 'transportes') { word = "CARRO"; img = "transportes.png"; }
 
-            let letters = tutWord.split('');
+            let letters = word.split('');
             let dotsHtml = letters.map((l, i) => {
                 let angle = (i / letters.length) * Math.PI * 2;
                 let x = 50 + 35 * Math.cos(angle);
                 let y = 50 + 35 * Math.sin(angle);
-                return `<div class="t-dot" style="top:${y}%; left:${x}%; animation: highlightTutorial 2s infinite ${i*0.3}s">${l}</div>`;
+                return `<div class="t-dot" style="top:${y}%; left:${x}%; animation: highlightTutorial 3s infinite ${i*0.4}s">${l}</div>`;
             }).join('');
 
             area.innerHTML = `
                 <p style="color:var(--cor-azul-tema); font-weight:bold; margin-bottom:5px;">Liga as letras:</p>
-                <img src="${JOGO_CONFIG.caminhoCat + tutImg}" style="height:55px; margin-bottom:5px;">
-                <div class="tutorial-wheel">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1655/1655781.png" class="t-hand">
-                    ${dotsHtml}
-                </div>`;
+                <img src="${JOGO_CONFIG.caminhoCat + img}" style="height:65px; margin-bottom:5px; object-fit:contain;">
+                <div class="tutorial-wheel">${dotsHtml}</div>`;
         }
 
         function startGame() {
