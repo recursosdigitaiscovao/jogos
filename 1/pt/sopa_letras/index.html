@@ -18,13 +18,14 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Animações Tutorial */
+        /* Animação Seleção (Sopa de Letras) */
         @keyframes highlightLetter {
             0%, 10% { background: white; color: #333; transform: scale(1); }
             30%, 50% { background: var(--cor-principal); color: white; transform: scale(1.1); }
             70%, 100% { background: var(--cor-acerto); color: white; transform: scale(1); }
         }
 
+        /* Animação Sílabas (Ordenar) */
         @keyframes moveSyllable {
             0% { transform: translateY(0); opacity: 1; }
             50% { transform: translateY(-35px); opacity: 0.5; }
@@ -51,56 +52,48 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* Template e Card */
+        /* Conteúdo Principal */
         .main-content { flex: 1; padding: 10px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
         .screen.active { display: flex; }
 
         .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 15px 5px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; position: relative; }
         
-        /* Box Tutorial */
-        .explanation-box { background: var(--cor-fundo-pagina); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border: 2px dashed var(--cor-azul-tema); overflow: hidden; text-align: center; }
-        .tutorial-grid { display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap; justify-content: center; }
-        .t-cell { width: 42px; height: 42px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #333; border: 1px solid #ddd; }
+        /* Box de Tutorial Animada */
+        .explanation-box { 
+            background: var(--cor-fundo-pagina); 
+            border-radius: 20px; 
+            flex: 1; 
+            margin-bottom: 10px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 15px;
+            border: 2px dashed var(--cor-azul-tema);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .tutorial-grid { display: flex; gap: 8px; margin-top: 15px; flex-wrap: nowrap; justify-content: center; }
+        .t-cell { width: 42px; height: 42px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #333; border: 1px solid #ddd; flex-shrink: 0; }
         .t-syllable { padding: 10px 15px; background: white; border: 2px solid #333; border-radius: 8px; font-weight: 900; }
 
-        /* Jogo */
+        /* Top Bar Jogo */
         .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; font-size: 0.9rem; border-bottom: 1px solid #eee; width: 100%; box-sizing: border-box; }
+        .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        /* Grelha */
         .word-search-container { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; background: var(--cor-fundo-pagina); padding: 8px; border-radius: 12px; width: 95%; max-width: min(450px, 55vh); aspect-ratio: 1/1; box-sizing: border-box; border: 2px solid var(--cor-azul-tema); touch-action: none; }
         .letter-cell { aspect-ratio: 1; background: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: clamp(1rem, 3.5vmin, 1.6rem); cursor: pointer; color: #333; }
         .letter-cell.selected { background: var(--cor-principal); color: white; }
         .letter-cell.found { background: var(--cor-acerto); color: white; }
 
         .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 16px; border-radius: 20px; cursor: pointer; flex: 1; box-shadow: 0 5px 0 #4a96d1; }
-        .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-        /* POPUP (MODAL) CORRIGIDO */
-        .modal { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.7); 
-            display: none; /* JS altera para flex */
-            align-items: center; 
-            justify-content: center; 
-            z-index: 3000; 
-            padding: 20px; 
-            box-sizing: border-box;
-        }
-        .modal-card { 
-            background: white; 
-            border: 4px solid var(--cor-azul-tema); 
-            border-radius: 30px; 
-            padding: 30px 20px; 
-            width: 100%; 
-            max-width: 350px; /* Largura equilibrada */
-            text-align: center; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
-            animation: fadeIn 0.4s ease-out; 
-            box-sizing: border-box;
-        }
+        
+        /* Modal Feedback */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
+        .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 30px 25px; width: 100%; max-width: 320px; text-align: center; }
     </style>
 </head>
 <body>
@@ -173,7 +166,7 @@
 
     <div class="modal" id="modal">
         <div class="modal-card">
-            <h2 id="modal-title" style="color:var(--cor-acerto);">MUITO BEM!</h2>
+            <h2 id="modal-title" style="color:var(--cor-acerto);"></h2>
             <div id="modal-msg" style="margin: 20px 0; font-size: 1.2rem; color: #555;"></div>
             <button class="btn-play" onclick="location.reload()">RECOMEÇAR</button>
         </div>
@@ -224,9 +217,10 @@
             area.innerHTML = '';
 
             let word = "", img = "";
+            
             if(currentCatKey === 'animais') { word = "GATO"; img = "animaisdomesticos/gato.png"; }
             else if(currentCatKey === 'frutos') { word = "CEREJA"; img = "frutas/cereja.png"; }
-            else if(currentCatKey === 'material') { word = "MOCHILA"; img = "materialescolar/mochila.png"; }
+            else if(currentCatKey === 'material') { word = "AFIA"; img = "materialescolar/afia.png"; }
             else {
                 area.innerHTML = `<p style="color:var(--cor-azul-tema); font-weight:bold;">Ordena as Sílabas:</p>
                     <img src="${JOGO_CONFIG.caminhoImg}animaisdomesticos/vaca.png" style="height:60px; margin:5px;">
@@ -237,7 +231,7 @@
 
             let lettersHtml = word.split('').map((l, i) => `<div class="t-cell" style="animation: highlightLetter 3s infinite ${i * 0.3}s">${l}</div>`).join('');
             area.innerHTML = `<p style="color:var(--cor-azul-tema); font-weight:bold;">Encontra a palavra:</p>
-                <img src="${JOGO_CONFIG.caminhoImg + img}" style="height:65px; margin:10px;"><div class="tutorial-grid">${lettersHtml}</div>`;
+                <img src="${JOGO_CONFIG.caminhoImg + img}" style="height:70px; margin:10px;"><div class="tutorial-grid">${lettersHtml}</div>`;
         }
 
         function startGame() {
