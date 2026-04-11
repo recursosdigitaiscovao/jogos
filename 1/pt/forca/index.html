@@ -7,9 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --cor-principal: #5EAAEA;  /* Agora é a cor azul do botão jogar */
+            --cor-principal: #5EAAEA; 
             --cor-azul-tema: #5EAAEA;  
-            --cor-laranja: #FF9100;
             --cor-fundo-pagina: #EBF4FF;
             --cor-fundo-card: #FFFFFF;
             --cor-acerto: #2ed573;
@@ -30,12 +29,9 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo-pagina); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* NAVEGAÇÃO */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-azul-tema); color: white; padding: 8px 18px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.85rem; box-shadow: 0 3px 0 #4a96d1; }
-        .back-btn:active { transform: translateY(2px); box-shadow: none; }
         
-        /* MENU HAMBURGUER */
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-weight: 500; transition: 0.2s; }
@@ -51,13 +47,12 @@
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* CONTENT */
         .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
         .screen.active { display: flex; }
         .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 15px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; position: relative; }
 
-        /* INTRO ANIMATION */
+        /* INTRO */
         .intro-animation-box { flex: 1; width: 100%; background: var(--cor-fundo-pagina); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; margin-bottom: 10px; }
         .intro-balloon { width: 140px; animation: floating 4s infinite ease-in-out; z-index: 2; margin-bottom: 20px; }
         .intro-typing-word { display: flex; gap: 6px; min-height: 50px; }
@@ -78,11 +73,14 @@
 
         .keyboard-side { flex: 1.3; display: flex; align-items: center; justify-content: center; }
         .keyboard { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 100%; }
-        .key { background: white; border: 2px solid #ddd; border-radius: 8px; height: 42px; font-family: inherit; font-size: clamp(0.9rem, 1.8vw, 1.1rem); font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #ddd; transition: 0.1s; }
+        .key { background: white; border: 2px solid #ddd; border-radius: 8px; height: 42px; font-family: inherit; font-size: clamp(0.9rem, 1.8vw, 1.1rem); font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #ddd; transition: 0.1s; display: flex; align-items: center; justify-content: center; }
         .key.correct { background: var(--cor-acerto); color: white; border-color: #26b963; box-shadow: 0 4px 0 #26b963; }
         .key.wrong { background: #eee; color: #bbb; border-color: #ddd; box-shadow: none; pointer-events: none; }
 
-        /* UI BUTTONS */
+        /* PROGRESS DOTS */
+        .round-dot { width: 12px; height: 12px; border: 2px solid #ddd; border-radius: 50%; transition: 0.3s; }
+
+        /* BUTTONS */
         .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.5rem; font-weight: bold; padding: 15px; border-radius: 20px; cursor: pointer; flex: 1; box-shadow: 0 5px 0 #4a96d1; }
         .btn-play:active { transform: translateY(3px); box-shadow: 0 2px 0 #4a96d1; }
         .btn-rd-ui { background: transparent; border: none; cursor: pointer; }
@@ -94,7 +92,7 @@
             .keyboard { grid-template-columns: repeat(6, 1fr); gap: 4px; }
             .play-zone { flex-direction: column; }
             .stage-side { flex: 0.6; min-height: 150px;}
-            .intro-letter { font-size: 1.6rem; }
+            .letter-slot { width: 22px; height: 32px; font-size: 1.3rem; }
             .intro-balloon { width: 90px; }
         }
     </style>
@@ -105,7 +103,6 @@
     <audio id="audio-acerto" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
     <audio id="audio-erro" src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"></audio>
 
-    <!-- MENU HAMBURGUER -->
     <div class="sidebar" id="sidebar">
         <div style="padding:15px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
             <span style="font-weight:bold; color:var(--cor-azul-tema);">MENU</span>
@@ -119,7 +116,6 @@
         <a href="/jogos/4" class="sidebar-item"><img class="menu-4" src=""> 4º Ano</a>
     </div>
 
-    <!-- SIDEBAR CATEGORIAS -->
     <div class="sidebar-rd" id="sidebar-rd">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
             <h3 style="margin:0; color:var(--cor-azul-tema);">Categorias</h3>
@@ -129,21 +125,17 @@
     </div>
 
     <header class="nav-bar">
-        <!-- Ícone hamburguer na cor azul -->
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:28px; color:var(--cor-azul-tema); cursor:pointer;">☰</button>
         <div style="display:flex; align-items:center; gap:10px;">
             <img id="header-icon" src="" style="height:32px;">
-            <!-- Título na cor azul -->
             <h1 style="font-size:1.1rem; color:var(--cor-azul-tema); margin: 0;">Português - 1º Ano</h1>
         </div>
-        <!-- Botão voltar na cor azul -->
         <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
 
     <main class="main-content">
         <section id="intro-screen" class="screen active">
             <div class="game-card">
-                <!-- Animação: Fundo azul, balão a flutuar e palavra exemplo -->
                 <div class="intro-animation-box">
                     <img id="intro-balloon-img" class="intro-balloon" src="">
                     <div id="intro-typing-container" class="intro-typing-word"></div>
@@ -151,7 +143,6 @@
                 </div>
                 
                 <div style="display:flex; flex-direction:column; align-items:center; gap:5px; width:100%; border-top: 2px dashed #eee; padding-top:15px;">
-                    <!-- Título na cor azul -->
                     <h2 style="color: var(--cor-azul-tema); margin: 0 0 10px 0; font-size: 1.7rem; font-weight: 700;">Descobre as palavras</h2>
                     <div style="display:flex; gap:15px; width:100%;">
                         <button class="btn-play" onclick="startGame()">JOGAR</button>
@@ -193,7 +184,7 @@
         <div class="modal-card">
             <h2 id="modal-title"></h2>
             <div id="modal-msg" style="margin: 20px 0; font-size: 1.2rem; color: #555;"></div>
-            <button class="btn-play" onclick="location.reload()">RECOMEÇAR</button>
+            <button id="modal-btn" class="btn-play" onclick="nextAction()"></button>
         </div>
     </div>
 
@@ -202,7 +193,7 @@
         let currentQuestion = 0, points = 0, seconds = 0, timerInterval, typingInterval;
         let mistakes = 0, maxMistakes = 5;
         let currentCatKey = Object.keys(JOGO_CONFIG.categorias)[0];
-        let sessionItens = [], currentWord = "", guessedLetters = [];
+        let sessionItens = [], currentWord = "", guessedLetters = [], lastRoundResult = null;
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
@@ -230,12 +221,9 @@
             const cat = JOGO_CONFIG.categorias[currentCatKey];
             document.getElementById('intro-balloon-img').src = JOGO_CONFIG.caminhoCat + "bal_ar.png";
             document.getElementById('intro-cat-display-name').innerText = cat.nome;
-            
             const container = document.getElementById('intro-typing-container');
             container.innerHTML = '';
             clearInterval(typingInterval);
-            
-            // Pega a primeira palavra da categoria para simular
             const exampleWord = cat.itens[0].palavras[0];
             let i = 0;
             typingInterval = setInterval(() => {
@@ -263,7 +251,7 @@
         function initStars() {
             const bar = document.getElementById('stars-bar');
             bar.innerHTML = '';
-            for(let i=0; i<5; i++) bar.innerHTML += `<div style="width:12px; height:12px; border:2px solid #ddd; border-radius:50%;"></div>`;
+            for(let i=0; i<5; i++) bar.innerHTML += `<div class="round-dot"></div>`;
         }
 
         function startTimer() { 
@@ -278,6 +266,7 @@
             currentWord = sessionItens[currentQuestion].palavras[0].toUpperCase();
             document.getElementById('img-balao').src = JOGO_CONFIG.caminhoCat + "bal_ar.png";
             const unit = document.getElementById('balloon-unit');
+            unit.style.transition = "bottom 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
             unit.style.bottom = "5px"; unit.style.opacity = "1";
             const bagsContainer = document.getElementById('bags-container');
             bagsContainer.innerHTML = '';
@@ -337,7 +326,8 @@
             if(mistakes >= maxMistakes) {
                 unit.style.transition = "bottom 2s ease-in, opacity 1s";
                 unit.style.bottom = "800px"; unit.style.opacity = "0";
-                setTimeout(() => endGame(false), 1200);
+                markRound(false);
+                setTimeout(() => showResultModal(false), 1200);
             }
         }
 
@@ -346,37 +336,67 @@
             if(allFound) {
                 points += 100;
                 document.getElementById('points').innerText = points;
-                document.getElementById('stars-bar').children[currentQuestion].style.background = "var(--cor-acerto)";
-                setTimeout(() => {
-                    currentQuestion++;
-                    if(currentQuestion < 5) loadRound(); else endGame(true);
-                }, 1000);
+                markRound(true);
+                setTimeout(() => showResultModal(true), 1000);
             }
+        }
+
+        function markRound(success) {
+            const dots = document.getElementById('stars-bar').children;
+            dots[currentQuestion].style.backgroundColor = success ? "var(--cor-acerto)" : "var(--cor-erro)";
+            dots[currentQuestion].style.borderColor = success ? "var(--cor-acerto)" : "var(--cor-erro)";
+        }
+
+        function showResultModal(win) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const msg = document.getElementById('modal-msg');
+            const btn = document.getElementById('modal-btn');
+            
+            modal.style.display = 'flex';
+            if(win) {
+                title.innerText = "MUITO BEM!"; title.style.color = "var(--cor-acerto)";
+                msg.innerHTML = `Acertaste a palavra!<br>Ganhaste 100 pontos.`;
+            } else {
+                title.innerText = "OPS!"; title.style.color = "var(--cor-erro)";
+                msg.innerHTML = `O balão voou!<br>A palavra era: <b>${currentWord}</b>`;
+            }
+
+            if(currentQuestion < 4) {
+                btn.innerText = "PRÓXIMA PALAVRA";
+                lastRoundResult = 'next';
+            } else {
+                btn.innerText = "VER RESULTADO FINAL";
+                lastRoundResult = 'final';
+            }
+        }
+
+        function nextAction() {
+            document.getElementById('modal').style.display = 'none';
+            if(lastRoundResult === 'next') {
+                currentQuestion++;
+                loadRound();
+            } else {
+                showFinalReport();
+            }
+        }
+
+        function showFinalReport() {
+            const modal = document.getElementById('modal');
+            clearInterval(timerInterval);
+            modal.style.display = 'flex';
+            document.getElementById('modal-title').innerText = "FIM DO JOGO";
+            document.getElementById('modal-title').style.color = "var(--cor-azul-tema)";
+            document.getElementById('modal-msg').innerHTML = `Pontos Totais: <b>${points}</b><br>Tempo: <b>${document.getElementById('timer').innerText}</b>`;
+            const btn = document.getElementById('modal-btn');
+            btn.innerText = "RECOMEÇAR";
+            btn.onclick = () => location.reload();
         }
 
         function normalize(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase(); }
 
-        function endGame(win) {
-            clearInterval(timerInterval);
-            const modal = document.getElementById('modal');
-            modal.style.display = 'flex';
-            const title = document.getElementById('modal-title');
-            if(win) {
-                title.innerText = "MUITO BEM!"; title.style.color = "var(--cor-acerto)";
-                document.getElementById('modal-msg').innerHTML = `Pontos: <b>${points}</b><br>Tempo: <b>${document.getElementById('timer').innerText}</b>`;
-            } else {
-                title.innerText = "OOPS!"; title.style.color = "var(--cor-erro)";
-                document.getElementById('modal-msg').innerHTML = `O balão fugiu!<br>A palavra era: <b>${currentWord}</b>`;
-            }
-        }
-
         function resetGame() { 
-            currentQuestion = 0; points = 0; seconds = 0; mistakes = 0;
-            clearInterval(timerInterval);
-            document.getElementById('intro-screen').classList.add('active');
-            document.getElementById('game-screen').classList.remove('active');
-            document.getElementById('modal').style.display = 'none';
-            updateIntro();
+            location.reload();
         }
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
