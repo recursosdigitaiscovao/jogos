@@ -1,8 +1,7 @@
 const JOGO_CONFIG = {
-    caminhoImg: "../../../img/",
-    caminhoIcons: "../../../icons/",
-    caminhoLetras: "../../../img/letras/", 
-    caminhoObjetos: "../../../img/objetos/",
+    caminhoImg: "../../../img/",         // Pasta das imagens dos objetos
+    caminhoIcons: "../../../icons/",     // Pasta dos ícones do sistema
+    caminhoCat: "../../../imgcategorias/", // Pasta das categorias (letra_a.png, etc.)
     iconesMenu: { 
         pre: "iconpre.png", 
         ano1: "icon1.png", 
@@ -13,7 +12,7 @@ const JOGO_CONFIG = {
     categorias: {
         A: {
             nome: "Letra A", 
-            img: "A.png",
+            img: "letra_a.png",
             itens: [
                 { palavra: "AVIÃO", img: "aviao.png" }, { palavra: "ABELHA", img: "abelha.png" },
                 { palavra: "ANEL", img: "anel.png" }, { palavra: "ARANHA", img: "aranha.png" },
@@ -29,7 +28,7 @@ const JOGO_CONFIG = {
         },
         B: {
             nome: "Letra B", 
-            img: "B.png",
+            img: "letra_b.png",
             itens: [
                 { palavra: "BOLA", img: "bola.png" }, { palavra: "BONECA", img: "boneca.png" },
                 { palavra: "BALEIA", img: "baleia.png" }, { palavra: "BANANA", img: "banana.png" },
@@ -45,7 +44,7 @@ const JOGO_CONFIG = {
         },
         C: {
             nome: "Letra C", 
-            img: "C.png",
+            img: "letra_c.png",
             itens: [
                 { palavra: "CASA", img: "casa.png" }, { palavra: "CARRO", img: "carro.png" },
                 { palavra: "CAVALO", img: "cavalo.png" }, { palavra: "COELHO", img: "coelho.png" },
@@ -59,10 +58,9 @@ const JOGO_CONFIG = {
                 { palavra: "COBRA", img: "cobra.png" }, { palavra: "COGUMELO", img: "cogumelo.png" }
             ]
         }
-        // Acrescentar D, E, F... seguindo o mesmo padrão.
     },
     relatorio: { 
-        titulo: "PARABÉNS!", 
+        titulo: "MUITO BEM!", 
         pontosTotal: "Pontos Totais:", 
         tempoTotal: "Tempo Total:" 
     }
