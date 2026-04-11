@@ -6,33 +6,33 @@ const JOGO_CONFIG = {
         animais: {
             nome: "Animais", img: "animaisdomesticos/vaca.png",
             itens: [
-                { letras: "CAO", palavras: ["CAO"] },
-                { letras: "PATO", palavras: ["PATO"] },
+                { letras: "CÃO", palavras: ["CÃO"] },
                 { letras: "GATO", palavras: ["GATO"] },
-                { letras: "PERU", palavras: ["PERU"] },
+                { letras: "LEÃO", palavras: ["LEÃO"] },
+                { letras: "PATO", palavras: ["PATO"] },
                 { letras: "VACA", palavras: ["VACA"] }
             ]
         },
         frutos: {
             nome: "Frutos", img: "frutas/banana.png",
             itens: [
-                { letras: "MACA", palavras: ["MACA"] },
-                { letras: "PERA", palavras: ["PERA"] },
+                { letras: "MAÇÃ", palavras: ["MAÇÃ"] },
+                { letras: "PÊRA", palavras: ["PÊRA"] },
                 { letras: "UVA", palavras: ["UVA"] },
                 { letras: "FIGO", palavras: ["FIGO"] },
-                { letras: "KIWI", palavras: ["KIWI"] }
+                { letras: "MELÃO", palavras: ["MELÃO"] }
             ]
         },
         material: {
             nome: "Material", img: "materialescolar/afia.png",
             itens: [
                 { letras: "AFIA", palavras: ["AFIA"] },
+                { letras: "LÁPIS", palavras: ["LÁPIS"] },
+                { letras: "RÉGUA", palavras: ["RÉGUA"] },
                 { letras: "COLA", palavras: ["COLA"] },
-                { letras: "LIVRO", palavras: ["LIVRO"] },
-                { letras: "GIZ", palavras: ["GIZ"] },
-                { letras: "MAPA", palavras: ["MAPA"] }
+                { letras: "LIVRO", palavras: ["LIVRO"] }
             ]
         }
     },
-    relatorio: { titulo: "MUITO BEM!", pontosTotal: "Palavras:", tempoTotal: "Tempo:" }
+    relatorio: { titulo: "MUITO BEM!", pontosTotal: "Acertos:", tempoTotal: "Tempo:" }
 };
