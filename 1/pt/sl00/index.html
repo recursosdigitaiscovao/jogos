@@ -13,15 +13,12 @@
             --cor-fundo-card: #FFFFFF;
             --cor-acerto: #2ed573;
             --cor-erro: #ff4757;
+            --cor-pista: #f1c40f;
             --header-height: 70px;
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes highlightLetter {
-            0%, 20% { background: white; transform: scale(1); }
-            50% { background: var(--cor-principal); color: white; transform: scale(1.1); }
-            100% { background: white; }
-        }
+        @keyframes pulseHint { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo-pagina); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
@@ -37,26 +34,14 @@
         .sidebar-item:hover { background-color: var(--cor-azul-tema); color: white !important; }
         .sidebar-item img { width: 24px; height: 24px; object-fit: contain; margin-right: 12px; }
 
-        /* MENU CATEGORIAS RD (GRELHA 2 COLUNAS) */
-        .sidebar-rd { 
-            position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; 
-            background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; 
-            z-index: 2000; border-radius: 30px 30px 0 0; padding: 25px; box-sizing: border-box; 
-        }
+        /* MENU RD (2 COLUNAS) */
+        .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 25px; box-sizing: border-box; }
         .sidebar-rd.active { bottom: 0; }
-        .rd-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 15px; 
-            margin-top: 10px;
-        }
-        .rd-item { 
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 15px; border-radius: 20px; cursor: pointer; transition: 0.2s; text-align: center;
-        }
+        .rd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .rd-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; border-radius: 20px; cursor: pointer; text-align: center; }
         .rd-item:hover { background: var(--cor-fundo-pagina); }
         .rd-item img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 8px; }
-        .rd-item span { font-weight: bold; color: #555; font-size: 0.9rem; line-height: 1.1; }
+        .rd-item span { font-weight: bold; color: #555; font-size: 0.9rem; }
 
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
@@ -74,23 +59,30 @@
         .word-row { display: flex; gap: 4px; }
         .box { width: 42px; height: 42px; border: 2px solid #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900; background: #f9f9f9; text-transform: uppercase; }
         .box.filled { background: var(--cor-acerto); color: white; border-color: var(--cor-acerto); }
+        .box.hinted { background: var(--cor-pista); color: white; border-color: var(--cor-pista); }
 
-        .current-word-display { height: 38px; min-width: 120px; background: var(--cor-principal); color: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 5px; opacity: 0; }
+        .current-word-display { height: 38px; min-width: 120px; background: var(--cor-principal); color: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 10px; opacity: 0; }
         .current-word-display.visible { opacity: 1; }
 
-        /* RODA DE LETRAS */
-        .letter-wheel { position: relative; width: 220px; height: 220px; background: #f8f8f8; border-radius: 50%; border: 6px solid #eee; margin-bottom: 10px; touch-action: none; }
-        .wheel-letter { position: absolute; width: 50px; height: 50px; background: white; border: 2px solid var(--cor-azul-tema); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 400; transform: translate(-50%, -50%); z-index: 5; text-transform: uppercase; }
+        /* RODAPÉ JOGO COM PISTA */
+        .wheel-container { position: relative; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+        .letter-wheel { position: relative; width: 210px; height: 210px; background: #f8f8f8; border-radius: 50%; border: 6px solid #eee; margin-bottom: 10px; touch-action: none; }
+        .wheel-letter { position: absolute; width: 48px; height: 48px; background: white; border: 2px solid var(--cor-azul-tema); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 400; transform: translate(-50%, -50%); z-index: 5; text-transform: uppercase; }
         .wheel-letter.active { background: var(--cor-principal); color: white; border-color: white; }
         #connection-canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 2; }
+
+        .btn-hint { 
+            position: absolute; right: -50px; bottom: 80px; 
+            width: 45px; height: 45px; background: var(--cor-pista); 
+            border-radius: 50%; border: none; cursor: pointer; 
+            box-shadow: 0 4px 0 #d4ac0d; display: flex; align-items: center; justify-content: center; 
+            font-size: 1.5rem; transition: 0.2s; 
+        }
+        .btn-hint:active { transform: translateY(3px); box-shadow: 0 1px 0 #d4ac0d; }
 
         .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 16px; border-radius: 20px; cursor: pointer; flex: 1; box-shadow: 0 5px 0 #4a96d1; }
         .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        /* TUTORIAL */
-        .explanation-box { background: var(--cor-fundo-pagina); border-radius: 20px; flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed var(--cor-azul-tema); margin-bottom: 10px; }
-
-        /* MODAL */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
         .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 30px 20px; width: 100%; max-width: 350px; text-align: center; box-sizing: border-box; }
     </style>
@@ -158,11 +150,12 @@
                     </div>
                 </div>
                 <div class="grid-answer" id="grid-answer"></div>
-                <div style="display:flex; flex-direction:column; align-items:center; flex-shrink:0;">
+                <div class="wheel-container">
                     <div id="current-word-display" class="current-word-display"></div>
                     <div class="letter-wheel" id="letter-wheel">
                         <canvas id="connection-canvas"></canvas>
                     </div>
+                    <button class="btn-hint" onclick="giveHint()">💡</button>
                 </div>
             </div>
         </section>
@@ -216,12 +209,7 @@
         function updateIntro() {
             const cat = JOGO_CONFIG.categorias[currentCatKey];
             document.getElementById('intro-cat-title').innerText = cat.nome;
-            document.getElementById('tutorial-area').innerHTML = `
-                <p style="color:var(--cor-azul-tema); font-weight:bold;">Liga as letras para jogar:</p>
-                <div style="width:100px; height:100px; border-radius:50%; border:4px solid #ddd; position:relative;">
-                    <div style="position:absolute; top:10%; left:50%; width:30px; height:30px; background:var(--cor-principal); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; transform:translate(-50%,-50%);">A</div>
-                    <div style="position:absolute; bottom:10%; left:50%; width:30px; height:30px; background:white; border:2px solid var(--cor-azul-tema); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; transform:translate(-50%,50%);">B</div>
-                </div>`;
+            document.getElementById('tutorial-area').innerHTML = `<p style="color:var(--cor-azul-tema); font-weight:bold;">Liga as letras para jogar!</p><div style="width:80px; height:80px; border-radius:50%; border:3px solid #ddd; position:relative; margin-top:10px;"><div style="position:absolute; top:10%; left:50%; width:25px; height:25px; background:var(--cor-principal); border-radius:50%; transform:translate(-50%,-50%);"></div></div>`;
         }
 
         function startGame() {
@@ -267,11 +255,8 @@
         function renderWheel(item) {
             const wheel = document.getElementById('letter-wheel');
             wheel.querySelectorAll('.wheel-letter').forEach(l => l.remove());
-            
-            // Baralhar as letras
             const letters = item.letras.split('').sort(() => Math.random() - 0.5);
-            
-            const radius = 80, centerX = 110, centerY = 110;
+            const radius = 75, centerX = 105, centerY = 105;
             letters.forEach((char, i) => {
                 const angle = (i / letters.length) * Math.PI * 2;
                 const x = centerX + radius * Math.cos(angle);
@@ -284,7 +269,7 @@
                 wheel.appendChild(div);
             });
             const canvas = document.getElementById('connection-canvas');
-            canvas.width = 220; canvas.height = 220;
+            canvas.width = 210; canvas.height = 210;
         }
 
         function startSelection(e) {
@@ -351,7 +336,7 @@
                 foundWords.push(currentStr);
                 document.getElementById('audio-acerto').play();
                 const row = document.querySelector(`.word-row[data-word="${currentStr}"]`);
-                row.querySelectorAll('.box').forEach((b, i) => { b.innerText = currentStr[i]; b.classList.add('filled'); });
+                row.querySelectorAll('.box').forEach((b, i) => { b.innerText = currentStr[i]; b.classList.add('filled'); b.classList.remove('hinted'); });
                 points++; document.getElementById('points').innerText = points;
                 if(foundWords.length === item.palavras.length) {
                     const stars = document.getElementById('stars-bar').children;
@@ -362,6 +347,24 @@
                     }, 800);
                 }
             } else if(currentStr.length > 0) document.getElementById('audio-erro').play();
+        }
+
+        function giveHint() {
+            const item = sessionItens[currentQuestion];
+            const rows = document.querySelectorAll('.word-row');
+            for (let row of rows) {
+                const word = row.dataset.word;
+                if (!foundWords.includes(word)) {
+                    const boxes = row.querySelectorAll('.box');
+                    for (let i = 0; i < boxes.length; i++) {
+                        if (boxes[i].innerText === '') {
+                            boxes[i].innerText = word[i];
+                            boxes[i].classList.add('hinted');
+                            return;
+                        }
+                    }
+                }
+            }
         }
 
         function startTimer() {
@@ -379,7 +382,7 @@
             document.getElementById('modal').style.display = 'flex';
         }
 
-        function resetGame() { location.reload(); }
+        function resetGame() { currentQuestion = 0; points = 0; seconds = 0; clearInterval(timerInterval); document.getElementById('intro-screen').classList.add('active'); document.getElementById('game-screen').classList.remove('active'); document.getElementById('modal').style.display = 'none'; }
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
