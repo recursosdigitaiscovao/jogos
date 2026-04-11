@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sopa de Letras - 1º Ano</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -13,7 +13,7 @@
             --cor-fundo-card: #FFFFFF;
             --cor-acerto: #2ed573;
             --cor-erro: #ff4757;
-            --header-height: 60px;
+            --header-height: 70px;
         }
 
         @keyframes fadeIn {
@@ -21,73 +21,71 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         body { background: var(--cor-fundo-pagina); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
         /* Navegação */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
-        .back-btn { background: var(--cor-principal); color: white; padding: 6px 12px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; box-shadow: 0 3px 0 #e68200; }
+        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; box-shadow: 0 3px 0 #e68200; transition: 0.2s; }
         
         /* Menus */
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; cursor: pointer; }
+        .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
+        .sidebar-item:hover { background-color: var(--cor-azul-tema); color: white !important; }
+        .sidebar-item img { width: 24px; height: 24px; object-fit: contain; margin-right: 12px; }
+
         .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
         .sidebar-rd.active { bottom: 0; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* Jogo */
-        .main-content { flex: 1; padding: 5px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.4s ease-out; }
+        /* Área de Conteúdo (Template Original) */
+        .main-content { flex: 1; padding: 10px 15px 5px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
         .screen.active { display: flex; }
 
-        .game-card { background: var(--cor-fundo-card); border-radius: 25px; padding: 10px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 500px; height: 100%; box-sizing: border-box; }
+        .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 15px 20px 10px 20px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; position: relative; }
         
-        /* Grelha Sopa de Letras - OTIMIZADA */
+        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; font-size: 0.9rem; margin-bottom: 5px; border-bottom: 1px solid #eee; }
+
+        /* Grelha Sopa de Letras - Cores ajustadas */
         .word-search-container { 
             display: grid; 
             grid-template-columns: repeat(8, 1fr); 
-            gap: 4px; 
-            background: #333; 
-            padding: 6px; 
-            border-radius: 12px; 
-            width: 100%;
-            max-width: 420px;
-            margin: 0 auto;
-            box-sizing: border-box;
+            gap: 6px; 
+            background: var(--cor-azul-tema); /* Fundo igual ao limite do card */
+            padding: 10px; 
+            border-radius: 15px; 
+            margin-top: 15px; /* Padding/Espaço da palavra para a grelha */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         .letter-cell {
             aspect-ratio: 1;
             background: white;
-            border-radius: 6px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem; /* Letras maiores */
-            font-weight: 900;
+            font-size: 1.6rem;
+            font-weight: 400; /* Letras sem negrito */
             cursor: pointer;
-            color: #222;
-            transition: 0.1s;
+            color: #333;
+            transition: 0.2s;
         }
-        @media (max-width: 400px) { .letter-cell { font-size: 1.4rem; } }
-
-        .letter-cell.selected { background: var(--cor-principal); color: white; }
+        .letter-cell.selected { background: var(--cor-principal); color: white; transform: scale(0.95); }
         .letter-cell.found { background: var(--cor-acerto); color: white; }
 
-        /* Elementos de Dica - REDUZIDOS */
-        .img-hint { height: 65px; object-fit: contain; margin-bottom: 2px; }
-        .word-hint { font-size: 1.6rem; font-weight: 900; color: var(--cor-azul-tema); letter-spacing: 3px; margin-bottom: 5px; }
+        /* Elementos Visuais */
+        .img-display { height: 100px; object-fit: contain; filter: drop-shadow(3px 3px 5px rgba(0,0,0,0.1)); }
+        .word-hint { font-size: 2rem; font-weight: 900; color: #333; letter-spacing: 5px; margin: 10px 0; }
 
-        /* Botões */
-        .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 15px; border-radius: 20px; cursor: pointer; flex: 1; box-shadow: 0 5px 0 #4a96d1; }
-        
-        /* Modal Feedback */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; box-sizing: border-box; }
-        .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 30px 20px; width: 100%; max-width: 350px; text-align: center; box-sizing: border-box; }
+        /* Botões e Modal */
+        .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 16px; border-radius: 20px; cursor: pointer; flex: 1; font-family: 'Fredoka'; box-shadow: 0 5px 0 #4a96d1; transition: 0.2s; }
+        .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        .game-top-bar { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 8px; font-size: 0.85rem; padding: 0 5px; }
-        .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; box-sizing: border-box; }
+        .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 30px 20px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: fadeIn 0.4s ease-out; box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -97,16 +95,18 @@
     <audio id="audio-acerto" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
     <audio id="audio-erro" src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"></audio>
     
+    <!-- Menu lateral -->
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
-            <button onclick="toggleMenu()" style="border:none; background:none; font-size: 20px;">✕</button>
+            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size: 20px;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
         <a href="/jogos/pre" class="sidebar-item"><img class="menu-pre" src=""> Pré-Escolar</a>
         <a href="/jogos/1" class="sidebar-item"><img class="menu-1" src=""> 1º Ano</a>
     </div>
 
+    <!-- Menu de Categorias -->
     <div class="sidebar-rd" id="sidebar-rd">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <h3 style="margin:0; color:var(--cor-azul-tema);">Escolhe o Jogo</h3>
@@ -116,44 +116,45 @@
     </div>
 
     <header class="nav-bar">
-        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:#FF9100;">☰</button>
-        <div style="display:flex; align-items:center; gap:8px;">
-            <img id="header-icon" src="" style="height:28px;">
-            <h1 style="font-size:1rem; color:#FF9100; margin: 0;">Sopa de Letras</h1>
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:#FF9100; cursor:pointer;">☰</button>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <img id="header-icon" src="" style="height:32px;">
+            <h1 style="font-size:1.1rem; color:#FF9100; margin: 0;">Sopa de Letras</h1>
         </div>
         <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
 
     <main class="main-content">
+        <!-- Ecrã Inicial -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                    <img id="intro-cat-img" src="" style="max-height: 120px;">
-                    <h2 id="intro-cat-title" style="color:var(--cor-azul-tema); font-size:1.8rem; margin:15px 0; text-align:center;"></h2>
-                    <p style="color:#666;">Encontra a palavra na grelha!</p>
+                    <img id="intro-cat-img" src="" style="max-height: 180px;">
+                    <h2 id="intro-cat-title" style="color:var(--cor-azul-tema); font-size:2.2rem; margin:15px 0;"></h2>
                 </div>
-                <div style="display:flex; gap:10px; width:100%; border-top: 2px dashed #eee; padding-top:10px;">
+                <div style="display:flex; gap:15px; width:100%; border-top: 2px dashed #eee; padding-top:15px;">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
                     <button class="btn-rd-ui" onclick="toggleRD()">
-                        <img class="btn-rd-img-ref" src="" style="width:50px;">
+                        <img class="btn-rd-img-ref" src="" style="width:55px;">
                     </button>
                 </div>
             </div>
         </section>
 
+        <!-- Ecrã de Jogo -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="game-top-bar">
                     <div>⏳ <span id="timer">00:00</span></div>
-                    <div id="stars-bar" style="display:flex; gap:4px;"></div>
-                    <div style="display:flex; align-items:center; gap:8px;">
+                    <div id="stars-bar" style="display:flex; gap:6px;"></div>
+                    <div style="display:flex; align-items:center; gap:12px;">
                         PTS: <span id="points">0</span>
-                        <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:24px;"></button>
+                        <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:30px;"></button>
                     </div>
                 </div>
 
-                <div style="display:flex; flex-direction:column; align-items:center; flex:1; justify-content:flex-start;">
-                    <img id="round-img" class="img-hint" src="">
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                    <img id="round-img" class="img-display" src="">
                     <div id="round-word" class="word-hint"></div>
                     <div id="grid-container" class="word-search-container"></div>
                 </div>
@@ -161,9 +162,10 @@
         </section>
     </main>
 
+    <!-- Modal Feedback -->
     <div class="modal" id="modal">
         <div class="modal-card">
-            <h2 id="modal-title" style="color:var(--cor-acerto);"></h2>
+            <h2 id="modal-title" style="color:var(--cor-acerto);">MUITO BEM!</h2>
             <div id="modal-msg" style="margin: 20px 0; font-size: 1.2rem; color: #555;"></div>
             <button class="btn-play" onclick="location.reload()">RECOMEÇAR</button>
         </div>
@@ -195,7 +197,7 @@
                 const cat = JOGO_CONFIG.categorias[key];
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
-                item.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + cat.img}" style="width:30px; margin-right:15px;"> <span>${cat.nome}</span>`;
+                item.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + cat.img}"> <span>${cat.nome}</span>`;
                 item.onclick = () => { currentCatKey = key; closeMenus(); updateIntro(); resetGame(); };
                 container.appendChild(item);
             });
@@ -221,7 +223,7 @@
             bar.innerHTML = '';
             for(let i=0; i<5; i++) {
                 const dot = document.createElement('div');
-                dot.style = "width:10px; height:10px; border:2px solid #ddd; border-radius:50%;";
+                dot.style = "width:18px; height:18px; border:2px solid #ddd; border-radius:50%;";
                 bar.appendChild(dot);
             }
         }
