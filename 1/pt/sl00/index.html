@@ -20,12 +20,15 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         @keyframes handGuide {
-            0% { top: 20%; left: 50%; opacity: 0; }
-            10% { opacity: 1; }
-            40% { top: 70%; left: 20%; }
-            70% { top: 70%; left: 80%; }
-            90% { opacity: 1; }
-            100% { opacity: 0; }
+            0% { top: 30%; left: 50%; opacity: 0; }
+            15% { opacity: 1; }
+            85% { top: 70%; left: 30%; opacity: 1; }
+            100% { top: 70%; left: 30%; opacity: 0; }
+        }
+
+        @keyframes highlightTutorial {
+            0%, 100% { background: white; color: var(--cor-azul-tema); transform: scale(1); }
+            50% { background: var(--cor-principal); color: white; transform: scale(1.1); }
         }
 
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
@@ -42,27 +45,27 @@
         .sidebar-item:hover { background-color: var(--cor-azul-tema); color: white !important; }
         .sidebar-item img { width: 24px; height: 24px; object-fit: contain; margin-right: 12px; }
 
-        .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
+        .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 25px; box-sizing: border-box; }
         .sidebar-rd.active { bottom: 0; }
         .rd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; }
         .rd-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; border-radius: 15px; cursor: pointer; text-align: center; }
-        .rd-item:hover { background: var(--cor-fundo-pagina); }
         .rd-item img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 5px; }
         .rd-item span { font-weight: bold; color: #555; font-size: 0.8rem; }
 
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* ÁREA DE CONTEÚDO */
+        /* ÁREA DE JOGO */
         .main-content { flex: 1; padding: 10px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
         .screen.active { display: flex; }
         .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 20px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; position: relative; }
 
-        /* TUTORIAL INICIAL */
+        /* TUTORIAL */
         .explanation-box { background: var(--cor-fundo-pagina); border-radius: 20px; flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 15px; position: relative; overflow: hidden; border: none; }
-        .tutorial-wheel { width: 140px; height: 140px; border: 4px solid #ddd; border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; }
-        .t-hand { position: absolute; width: 40px; z-index: 10; animation: handGuide 3s infinite ease-in-out; pointer-events: none; }
+        .tutorial-wheel { width: 130px; height: 130px; border: 4px solid #ddd; border-radius: 50%; position: relative; margin-top: 10px; }
+        .t-dot { position: absolute; width: 32px; height: 32px; background: white; border: 2px solid var(--cor-azul-tema); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 900; transform: translate(-50%, -50%); color: var(--cor-azul-tema); }
+        .t-hand { position: absolute; width: 35px; z-index: 10; animation: handGuide 3s infinite ease-in-out; pointer-events: none; }
 
         /* GAMEPLAY */
         .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; font-size: 0.9rem; border-bottom: 1px solid #eee; width: 100%; box-sizing: border-box; flex-shrink: 0; }
@@ -81,7 +84,6 @@
         .wheel-letter.active { background: var(--cor-principal); color: white; border-color: white; }
         #connection-canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 2; }
 
-        /* LÂMPADA */
         .btn-hint { position: absolute; right: 0; bottom: 0; width: 55px; height: 55px; background: var(--cor-pista); border-radius: 50%; border: none; cursor: pointer; box-shadow: 0 4px 0 #d4ac0d; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; z-index: 10; }
         .btn-hint:active { transform: translateY(3px); box-shadow: 0 1px 0 #d4ac0d; }
 
@@ -125,17 +127,9 @@
     <main class="main-content">
         <section id="intro-screen" class="screen active">
             <div class="game-card">
-                <div class="explanation-box" id="tutorial-area">
-                    <p style="color:var(--cor-azul-tema); font-weight:bold; margin-bottom:15px;">Liga as letras e ganha pontos!</p>
-                    <div class="tutorial-wheel">
-                        <img src="https://cdn-icons-png.flaticon.com/512/1655/1655781.png" class="t-hand">
-                        <div class="t-dot" style="top:10%; left:50%;">C</div>
-                        <div class="t-dot" style="bottom:10%; left:20%;">Ã</div>
-                        <div class="t-dot" style="bottom:10%; left:80%;">O</div>
-                    </div>
-                </div>
-                <h2 id="intro-cat-title" style="color:var(--cor-azul-tema); text-align:center;"></h2>
-                <div style="display:flex; gap:15px; width:100%; border-top: 2px dashed #eee; padding-top:20px;">
+                <div class="explanation-box" id="tutorial-area"></div>
+                <h2 id="intro-cat-title" style="color:var(--cor-azul-tema); text-align:center; margin: 5px 0;"></h2>
+                <div style="display:flex; gap:15px; width:100%; border-top: 2px dashed #eee; padding-top:15px; box-sizing:border-box;">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
                     <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:55px;"></button>
                 </div>
@@ -199,7 +193,35 @@
             });
         }
 
-        function updateIntro() { document.getElementById('intro-cat-title').innerText = JOGO_CONFIG.categorias[currentCatKey].nome; }
+        function updateIntro() {
+            const cat = JOGO_CONFIG.categorias[currentCatKey];
+            document.getElementById('intro-cat-title').innerText = cat.nome;
+            const area = document.getElementById('tutorial-area');
+            
+            // Definir palavra e imagem da animação baseada na categoria
+            let tutWord = "GATO", tutImg = "gato.png";
+            if(currentCatKey === 'frutos') { tutWord = "PERA"; tutImg = "pera.png"; }
+            else if(currentCatKey === 'material') { tutWord = "AFIA"; tutImg = "estojo.png"; }
+            else if(currentCatKey === 'selvagens') { tutWord = "LEÃO"; tutImg = "leao.png"; }
+            else if(currentCatKey === 'paises') { tutWord = "BRASIL"; tutImg = "paises.png"; }
+            else if(currentCatKey === 'transportes') { tutWord = "MOTA"; tutImg = "transportes.png"; }
+
+            let letters = tutWord.split('');
+            let dotsHtml = letters.map((l, i) => {
+                let angle = (i / letters.length) * Math.PI * 2;
+                let x = 50 + 35 * Math.cos(angle);
+                let y = 50 + 35 * Math.sin(angle);
+                return `<div class="t-dot" style="top:${y}%; left:${x}%; animation: highlightTutorial 2s infinite ${i*0.3}s">${l}</div>`;
+            }).join('');
+
+            area.innerHTML = `
+                <p style="color:var(--cor-azul-tema); font-weight:bold; margin-bottom:5px;">Liga as letras:</p>
+                <img src="${JOGO_CONFIG.caminhoCat + tutImg}" style="height:55px; margin-bottom:5px;">
+                <div class="tutorial-wheel">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1655/1655781.png" class="t-hand">
+                    ${dotsHtml}
+                </div>`;
+        }
 
         function startGame() {
             sessionItens = [...JOGO_CONFIG.categorias[currentCatKey].itens].sort(() => Math.random() - 0.5).slice(0,5);
@@ -287,12 +309,11 @@
             const letters = document.querySelectorAll('.wheel-letter');
             const currentStr = selectedIndices.map(i => letters[i].innerText).join('');
             const item = sessionItens[currentQuestion];
-            
             if(item.palavras.includes(currentStr)) {
                 document.getElementById('audio-acerto').play();
                 points += 100;
                 const row = document.querySelector('.word-row');
-                row.querySelectorAll('.box').forEach((b, i) => { b.innerText = currentStr[i]; b.classList.add('filled'); b.classList.remove('hinted'); });
+                row.querySelectorAll('.box').forEach((b, i) => { b.innerText = currentStr[i]; b.classList.add('filled'); });
                 document.getElementById('stars-bar').children[currentQuestion].style.background = "var(--cor-acerto)";
                 setTimeout(() => { currentQuestion++; if(currentQuestion < 5) loadRound(); else endGame(); }, 800);
             } else {
