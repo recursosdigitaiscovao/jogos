@@ -1,68 +1,174 @@
 const JOGO_CONFIG = {
     caminhoImg: "../../../img/",
     caminhoIcons: "../../../icons/",
-    iconesMenu: { pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png" },
+    iconesMenu: { 
+        pre: "iconpre.png", 
+        ano1: "icon1.png", 
+        ano2: "icon2.png", 
+        ano3: "icon3.png", 
+        ano4: "icon4.png" 
+    },
     categorias: {
         animais: {
-            nome: "Animais Domésticos", img: "animaisdomesticos/vaca.png",
+            nome: "Animais Domésticos", 
+            img: "animaisdomesticos/vaca.png",
             itens: [
                 { letras: "CÃO", palavras: ["CÃO"] },
                 { letras: "GATO", palavras: ["GATO"] },
                 { letras: "PATO", palavras: ["PATO"] },
                 { letras: "PERU", palavras: ["PERU"] },
-                { letras: "VACA", palavras: ["VACA"] }
+                { letras: "VACA", palavras: ["VACA"] },
+                { letras: "COELHO", palavras: ["COELHO"] },
+                { letras: "CABRA", palavras: ["CABRA"] },
+                { letras: "PORCO", palavras: ["PORCO"] },
+                { letras: "OVELHA", palavras: ["OVELHA"] },
+                { letras: "GALO", palavras: ["GALO"] },
+                { letras: "GALINHA", palavras: ["GALINHA"] },
+                { letras: "BURRO", palavras: ["BURRO"] },
+                { letras: "CAVALO", palavras: ["CAVALO"] },
+                { letras: "RATO", palavras: ["RATO"] },
+                { letras: "PEIXE", palavras: ["PEIXE"] },
+                { letras: "POMBO", palavras: ["POMBO"] },
+                { letras: "CANÁRIO", palavras: ["CANÁRIO"] },
+                { letras: "HAMSTER", palavras: ["HAMSTER"] },
+                { letras: "PÔNEI", palavras: ["PÔNEI"] },
+                { letras: "CÁGADO", palavras: ["CÁGADO"] }
             ]
         },
         frutos: {
-            nome: "Frutos", img: "frutas/banana.png",
+            nome: "Frutos", 
+            img: "frutas/banana.png",
             itens: [
                 { letras: "MAÇÃ", palavras: ["MAÇÃ"] },
                 { letras: "PÊRA", palavras: ["PÊRA"] },
                 { letras: "UVA", palavras: ["UVA"] },
                 { letras: "FIGO", palavras: ["FIGO"] },
-                { letras: "MELÃO", palavras: ["MELÃO"] }
+                { letras: "MELÃO", palavras: ["MELÃO"] },
+                { letras: "BANANA", palavras: ["BANANA"] },
+                { letras: "LARANJA", palavras: ["LARANJA"] },
+                { letras: "MORANGO", palavras: ["MORANGO"] },
+                { letras: "CEREJA", palavras: ["CEREJA"] },
+                { letras: "ANANÁS", palavras: ["ANANÁS"] },
+                { letras: "LIMÃO", palavras: ["LIMÃO"] },
+                { letras: "PÊSSEGO", palavras: ["PÊSSEGO"] },
+                { letras: "AMEIXA", palavras: ["AMEIXA"] },
+                { letras: "KIWI", palavras: ["KIWI"] },
+                { letras: "MANGA", palavras: ["MANGA"] },
+                { letras: "PAPAIA", palavras: ["PAPAIA"] },
+                { letras: "MELANCIA", palavras: ["MELANCIA"] },
+                { letras: "AMORA", palavras: ["AMORA"] },
+                { letras: "FRAMBOESA", palavras: ["FRAMBOESA"] },
+                { letras: "ROMÃ", palavras: ["ROMÃ"] }
             ]
         },
         material: {
-            nome: "Material Escolar", img: "materialescolar/afia.png",
+            nome: "Material Escolar", 
+            img: "materialescolar/afia.png",
             itens: [
                 { letras: "AFIA", palavras: ["AFIA"] },
                 { letras: "LÁPIS", palavras: ["LÁPIS"] },
                 { letras: "RÉGUA", palavras: ["RÉGUA"] },
                 { letras: "COLA", palavras: ["COLA"] },
-                { letras: "LIVRO", palavras: ["LIVRO"] }
+                { letras: "LIVRO", palavras: ["LIVRO"] },
+                { letras: "CADERNO", palavras: ["CADERNO"] },
+                { letras: "MOCHILA", palavras: ["MOCHILA"] },
+                { letras: "TESOURA", palavras: ["TESOURA"] },
+                { letras: "BORRACHA", palavras: ["BORRACHA"] },
+                { letras: "ESTOJO", palavras: ["ESTOJO"] },
+                { letras: "CANETA", palavras: ["CANETA"] },
+                { letras: "MARCADOR", palavras: ["MARCADOR"] },
+                { letras: "QUADRO", palavras: ["QUADRO"] },
+                { letras: "GIZ", palavras: ["GIZ"] },
+                { letras: "PINCEL", palavras: ["PINCEL"] },
+                { letras: "PASTA", palavras: ["PASTA"] },
+                { letras: "TINTA", palavras: ["TINTA"] },
+                { letras: "MAPA", palavras: ["MAPA"] },
+                { letras: "AGRAFADOR", palavras: ["AGRAFADOR"] },
+                { letras: "COMPASSO", palavras: ["COMPASSO"] }
             ]
         },
         selvagens: {
-            nome: "Animais Selvagens", img: "animaisdomesticos/silabas_1.png",
+            nome: "Animais Selvagens", 
+            img: "animaisdomesticos/silabas_1.png",
             itens: [
                 { letras: "LEÃO", palavras: ["LEÃO"] },
                 { letras: "TIGRE", palavras: ["TIGRE"] },
                 { letras: "ZEBRA", palavras: ["ZEBRA"] },
                 { letras: "GIRAFA", palavras: ["GIRAFA"] },
-                { letras: "COBRA", palavras: ["COBRA"] }
+                { letras: "COBRA", palavras: ["COBRA"] },
+                { letras: "ELEFANTE", palavras: ["ELEFANTE"] },
+                { letras: "MACACO", palavras: ["MACACO"] },
+                { letras: "URSO", palavras: ["URSO"] },
+                { letras: "LOBO", palavras: ["LOBO"] },
+                { letras: "RAPOSA", palavras: ["RAPOSA"] },
+                { letras: "ÁGUIA", palavras: ["ÁGUIA"] },
+                { letras: "BALEIA", palavras: ["BALEIA"] },
+                { letras: "TUBARÃO", palavras: ["TUBARÃO"] },
+                { letras: "JACARÉ", palavras: ["JACARÉ"] },
+                { letras: "ESQUILO", palavras: ["ESQUILO"] },
+                { letras: "VEADO", palavras: ["VEADO"] },
+                { letras: "CANGURU", palavras: ["CANGURU"] },
+                { letras: "RINOCERONTE", palavras: ["RINOCERONTE"] },
+                { letras: "HIPOPÓTAMO", palavras: ["HIPOPÓTAMO"] },
+                { letras: "MORCEGO", palavras: ["MORCEGO"] }
             ]
         },
         paises: {
-            nome: "Países", img: "rd.png",
+            nome: "Países", 
+            img: "rd.png",
             itens: [
                 { letras: "PORTUGAL", palavras: ["PORTUGAL"] },
+                { letras: "ESPANHA", palavras: ["ESPANHA"] },
+                { letras: "FRANÇA", palavras: ["FRANÇA"] },
+                { letras: "ITÁLIA", palavras: ["ITÁLIA"] },
                 { letras: "BRASIL", palavras: ["BRASIL"] },
                 { letras: "ANGOLA", palavras: ["ANGOLA"] },
-                { letras: "FRANÇA", palavras: ["FRANÇA"] },
-                { letras: "ITÁLIA", palavras: ["ITÁLIA"] }
+                { letras: "ALEMANHA", palavras: ["ALEMANHA"] },
+                { letras: "BÉLGICA", palavras: ["BÉLGICA"] },
+                { letras: "GRÉCIA", palavras: ["GRÉCIA"] },
+                { letras: "CHINA", palavras: ["CHINA"] },
+                { letras: "JAPÃO", palavras: ["JAPÃO"] },
+                { letras: "MÉXICO", palavras: ["MÉXICO"] },
+                { letras: "CANADÁ", palavras: ["CANADÁ"] },
+                { letras: "MOÇAMBIQUE", palavras: ["MOÇAMBIQUE"] },
+                { letras: "EGIPTO", palavras: ["EGIPTO"] },
+                { letras: "MARROCOS", palavras: ["MARROCOS"] },
+                { letras: "SUÍÇA", palavras: ["SUÍÇA"] },
+                { letras: "TIMOR", palavras: ["TIMOR"] },
+                { letras: "GUINÉ", palavras: ["GUINÉ"] },
+                { letras: "CABOVERDE", palavras: ["CABOVERDE"] }
             ]
         },
         transportes: {
-            nome: "Transportes", img: "materialescolar/mochila.png",
+            nome: "Transportes", 
+            img: "materialescolar/mochila.png",
             itens: [
                 { letras: "AVIÃO", palavras: ["AVIÃO"] },
                 { letras: "BARCO", palavras: ["BARCO"] },
                 { letras: "CARRO", palavras: ["CARRO"] },
-                { letras: "MOTO", palavras: ["MOTO"] },
-                { letras: "TREM", palavras: ["TREM"] }
+                { letras: "MOTA", palavras: ["MOTA"] },
+                { letras: "COMBOIO", palavras: ["COMBOIO"] },
+                { letras: "AUTOCARRO", palavras: ["AUTOCARRO"] },
+                { letras: "METRO", palavras: ["METRO"] },
+                { letras: "ELÉTRICO", palavras: ["ELÉTRICO"] },
+                { letras: "BICICLETA", palavras: ["BICICLETA"] },
+                { letras: "CAMIÃO", palavras: ["CAMIÃO"] },
+                { letras: "HELICÓPTERO", palavras: ["HELICÓPTERO"] },
+                { letras: "NAVIO", palavras: ["NAVIO"] },
+                { letras: "FOGUETE", palavras: ["FOGUETE"] },
+                { letras: "TRATOR", palavras: ["TRATOR"] },
+                { letras: "TÁXI", palavras: ["TÁXI"] },
+                { letras: "CANOA", palavras: ["CANOA"] },
+                { letras: "BALÃO", palavras: ["BALÃO"] },
+                { letras: "SUBMARINO", palavras: ["SUBMARINO"] },
+                { letras: "AMBULÂNCIA", palavras: ["AMBULÂNCIA"] },
+                { letras: "FOGUETE", palavras: ["FOGUETE"] }
             ]
         }
     },
-    relatorio: { titulo: "MUITO BEM!", pontosTotal: "Palavras:", tempoTotal: "Tempo:" }
+    relatorio: { 
+        titulo: "MUITO BEM!", 
+        pontosTotal: "Palavras Encontradas:", 
+        tempoTotal: "Tempo de Jogo:" 
+    }
 };
