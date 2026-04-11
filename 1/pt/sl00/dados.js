@@ -11,7 +11,7 @@ const JOGO_CONFIG = {
     categorias: {
         animais: {
             nome: "Animais Domésticos", 
-            img: "animaisdomesticos/vaca.png",
+            img: "imgcategorias/gato.png",
             itens: [
                 { letras: "CÃO", palavras: ["CÃO"] },
                 { letras: "GATO", palavras: ["GATO"] },
@@ -37,7 +37,7 @@ const JOGO_CONFIG = {
         },
         frutos: {
             nome: "Frutos", 
-            img: "frutas/banana.png",
+            img: "imgcategorias/pera.png",
             itens: [
                 { letras: "MAÇÃ", palavras: ["MAÇÃ"] },
                 { letras: "PÊRA", palavras: ["PÊRA"] },
@@ -63,7 +63,7 @@ const JOGO_CONFIG = {
         },
         material: {
             nome: "Material Escolar", 
-            img: "materialescolar/afia.png",
+            img: "imgcategorias/estojo.png",
             itens: [
                 { letras: "AFIA", palavras: ["AFIA"] },
                 { letras: "LÁPIS", palavras: ["LÁPIS"] },
@@ -89,7 +89,7 @@ const JOGO_CONFIG = {
         },
         selvagens: {
             nome: "Animais Selvagens", 
-            img: "animaisdomesticos/silabas_1.png",
+            img: "imgcategorias/leao.png",
             itens: [
                 { letras: "LEÃO", palavras: ["LEÃO"] },
                 { letras: "TIGRE", palavras: ["TIGRE"] },
@@ -115,7 +115,7 @@ const JOGO_CONFIG = {
         },
         paises: {
             nome: "Países", 
-            img: "rd.png",
+            img: "imgcategorias/paises",
             itens: [
                 { letras: "PORTUGAL", palavras: ["PORTUGAL"] },
                 { letras: "ESPANHA", palavras: ["ESPANHA"] },
@@ -141,7 +141,7 @@ const JOGO_CONFIG = {
         },
         transportes: {
             nome: "Transportes", 
-            img: "materialescolar/mochila.png",
+            img: "imgcategorias/transportes.png",
             itens: [
                 { letras: "AVIÃO", palavras: ["AVIÃO"] },
                 { letras: "BARCO", palavras: ["BARCO"] },
