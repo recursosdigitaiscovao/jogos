@@ -1,319 +1,294 @@
 <!DOCTYPE html>
-<html lang="pt-pt">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>1º Ano - Jogo das Palavras</title>
+    <title>Português - 1º Ano</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Reset e Estilo Geral - Template_1 */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-
-        body {
-            background-color: #fff4e6;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            height: 100vh; height: 100svh;
-            display: flex; flex-direction: column;
-            overflow: hidden; touch-action: manipulation;
+        :root {
+            --cor-principal: #FF9100; 
+            --cor-azul-tema: #5EAAEA;  
+            --cor-fundo-pagina: #EBF4FF;
+            --cor-fundo-card: #FFFFFF;
+            --cor-acerto: #2ed573;
+            --cor-erro: #ff4757;
+            --cor-pista: #f1c40f;
+            --header-height: 70px;
         }
 
-        /* HEADER */
-        header {
-            width: 100%; background: white; padding: 12px 20px;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid rgba(0,0,0,0.1); flex-shrink: 0; z-index: 100;
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fall { 
+            0% { transform: translateY(0) rotate(0); opacity: 1; }
+            100% { transform: translateY(300px) rotate(45deg); opacity: 0; }
         }
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        .menu-icon { font-size: 1.6rem; cursor: pointer; color: #2d3436; }
-        header h1 { font-size: 1.1rem; color: #2d3436; font-weight: 700; }
 
-        .btn-voltar-3d {
-            text-decoration: none; color: #000000; background-color: #ff9f43;
-            font-weight: bold; font-size: 0.8rem; padding: 8px 18px;
-            border-radius: 8px; border: 1px solid #e67e22; box-shadow: 0 3px 0 #e67e22;
-            cursor: pointer; display: flex; align-items: center; gap: 8px;
-            transition: all 0.1s;
-        }
-        .btn-voltar-3d:active { transform: translateY(2px); box-shadow: 0 1px 0 #e67e22; }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
+        body { background: var(--cor-fundo-pagina); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
-            background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.1);
-            transition: 0.3s ease; z-index: 200; padding: 25px;
-        }
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; box-shadow: 0 3px 0 #e68200; }
+        
+        .sidebar, .sidebar-rd { position: fixed; background: white; box-shadow: 0 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; }
+        .sidebar { top: 0; left: -260px; width: 240px; height: 100%; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        .sidebar-item {
-            text-decoration: none; color: #636e72; font-weight: 600;
-            padding: 14px; border-radius: 15px; background: #fdfdfd;
-            display: flex; align-items: center; gap: 15px; margin-bottom: 8px; 
-            border: 1px solid #eee; transition: all 0.2s;
-        }
-        .sidebar-item:hover { background-color: #ff9f43; color: #000000; border-color: #e67e22; }
+        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-weight: 500; cursor: pointer; }
+        .sidebar-item img { width: 24px; height: 24px; object-fit: contain; margin-right: 12px; }
 
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.3); display: none; z-index: 150;
-        }
+        .sidebar-rd { bottom: -450px; left: 0; width: 100%; height: 450px; border-radius: 30px 30px 0 0; padding: 25px; box-sizing: border-box; }
+        .sidebar-rd.active { bottom: 0; }
+        .rd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .rd-item { display: flex; flex-direction: column; align-items: center; padding: 10px; cursor: pointer; }
+        .rd-item img { width: 50px; height: 50px; object-fit: contain; }
+
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* ESTRUTURA DO MENU */
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 20px 15px; overflow-y: auto; }
-
-        .menu-header {
-            display: flex; align-items: center; justify-content: center; 
-            gap: 10px; margin-bottom: 30px; width: 100%;
-        }
-        .menu-header h2 { color: #e67e22; font-size: 1.4rem; font-weight: 800; }
+        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
+        .screen.active { display: flex; }
         
-        .btn-info-round {
-            background-color: #ff9f43; color: white; width: 28px; height: 28px;
-            border-radius: 50%; border: none; font-weight: bold; font-size: 1rem;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
+        .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 15px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 800px; height: 100%; box-sizing: border-box; }
 
-        #menu-container { width: 100%; max-width: 800px; }
-        
-        .theme-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 15px; 
-            width: 100%; 
-        }
-        
-        .theme-card {
-            background: white; 
-            padding: 25px 15px; 
-            border-radius: 25px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 4px 0 #e0e0e0; 
-            cursor: pointer; 
-            display: flex; 
-            flex-direction: column;
-            align-items: center; 
-            justify-content: center;
-            gap: 10px;
-            transition: 0.1s;
-        }
-        .theme-card:active { transform: translateY(3px); box-shadow: 0 1px 0 #e0e0e0; }
-        .theme-card span { font-size: 2.2rem; } 
-        .theme-card p { font-weight: 800; color: #000; font-size: 1rem; }
+        /* AREA DO BALÃO */
+        .stage { flex: 1.2; position: relative; width: 100%; background: #f0f8ff; border-radius: 20px; overflow: hidden; display: flex; justify-content: center; margin-bottom: 10px; border: 2px solid #eef; }
+        .balloon-container { position: absolute; bottom: 40px; transition: bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; width: 100px; }
+        .balloon-img { width: 80px; z-index: 2; }
+        .bags-area { display: flex; gap: 4px; margin-top: -5px; height: 30px; }
+        .bag-img { width: 20px; height: 25px; object-fit: contain; }
+        .bag-img.fall { animation: fall 1s forwards; }
 
-        /* ÁREA DE JOGO */
-        #game-area { width: 100%; max-width: 450px; display: none; flex-direction: column; align-items: center; gap: 15px; }
+        /* PALAVRA */
+        .word-display { flex: 0.5; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 0; }
+        .letter-slot { width: 35px; height: 45px; border-bottom: 4px solid var(--cor-azul-tema); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 700; color: #333; text-transform: uppercase; }
 
-        .visual-container {
-            display: flex; flex-direction: column; align-items: center; gap: 15px;
-            background: white; padding: 15px; border-radius: 25px;
-            border: 2px solid #ffcc80; width: 95%;
-        }
+        /* TECLADO */
+        .keyboard { flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(38px, 1fr)); gap: 5px; width: 100%; padding: 5px; }
+        .key { background: white; border: 2px solid #ddd; border-radius: 8px; height: 42px; font-family: inherit; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 3px 0 #ddd; transition: 0.1s; }
+        .key:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 #ddd; }
+        .key.correct { background: var(--cor-acerto); color: white; border-color: #26b963; box-shadow: 0 3px 0 #26b963; }
+        .key.wrong { background: #eee; color: #bbb; border-color: #ddd; box-shadow: none; pointer-events: none; }
 
-        .balloons-row { display: flex; gap: 8px; justify-content: center; min-height: 45px; }
-        .balloon { font-size: 1.8rem; transition: 0.3s; }
+        .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 16px; border-radius: 20px; cursor: pointer; flex: 1; box-shadow: 0 5px 0 #4a96d1; }
+        .btn-rd-ui { background: transparent; border: none; cursor: pointer; }
 
-        .hint-and-img { display: flex; align-items: center; gap: 20px; }
-        #word-hint { font-size: 3.5rem; }
-        #color-blot { width: 60px; height: 60px; border-radius: 50%; border: 1.5px solid #7f8c8d; display: none; }
-
-        .word-display { font-size: 2.2rem; font-weight: 800; letter-spacing: 8px; color: #2c3e50; }
-
-        .keyboard { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 100%; }
-        .key { 
-            background: white; border: 1.5px solid #7f8c8d; border-radius: 8px;
-            padding: 12px 0; font-weight: bold; font-size: 1rem; cursor: pointer;
-            box-shadow: 0 3px 0 #7f8c8d;
-        }
-        .key.used { opacity: 0.2; box-shadow: none; transform: translateY(2px); pointer-events: none; }
-
-        .modal-custom {
-            display: none; position: fixed; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); width: 85%; max-width: 350px;
-            background: white; padding: 25px; border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 400; text-align: center;
-        }
-
-        footer { width: 100%; padding: 10px; background: white; text-align: center; color: #95a5a6; font-size: 0.75rem; border-top: 1px solid #eee; margin-top: auto; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
+        .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 30px 20px; width: 100%; max-width: 350px; text-align: center; }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="fecharModais()"></div>
-    
-    <div id="modal-info" class="modal-custom">
-        <h2 style="color: #e67e22; margin-bottom: 10px;">Como Jogar</h2>
-        <p style="color: #636e72;">Observa a imagem e tenta descobrir a palavra! Se errares uma letra, um balão rebenta. Não deixes os 6 balões rebentarem!</p>
-        <button class="btn-voltar-3d" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="fecharModais()">ENTENDI!</button>
-    </div>
-
-    <div id="end-modal" class="modal-custom">
-        <div id="end-icon" style="font-size: 3.5rem;">🏆</div>
-        <h2 id="end-title" style="margin: 10px 0;">Muito bem!</h2>
-        <p id="end-msg" style="margin-bottom: 20px; color: #636e72; font-weight: bold;"></p>
-        <div style="display: flex; gap: 10px;">
-            <button class="btn-voltar-3d" style="flex: 1; justify-content: center;" onclick="startGame(activeTheme)">DE NOVO</button>
-            <button class="btn-voltar-3d" style="flex: 1; justify-content: center; background-color: #bdc3c7; border-color: #7f8c8d; box-shadow: 0 3px 0 #7f8c8d;" onclick="showMenu()">MENU</button>
-        </div>
-    </div>
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+    <audio id="audio-acerto" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+    <audio id="audio-erro" src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"></audio>
 
     <div class="sidebar" id="sidebar">
-        <h3 style="margin-bottom: 15px; color: #e67e22;">Menu</h3>
-        <nav>
-            <a href="../../../" class="sidebar-item">🏠 Início</a>
-            <a href="../../../1" class="sidebar-item">🐥 1º Ano</a>
-        </nav>
+        <div style="padding:15px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;"><span style="font-weight:bold; color:var(--cor-principal);">MENU</span><button onclick="toggleMenu()" style="border:none; background:none; font-size:20px;">✕</button></div>
+        <a href="/jogos/1" class="sidebar-item"><img class="menu-1" src=""> 1º Ano</a>
     </div>
 
-    <header>
-        <div class="header-left">
-            <span class="menu-icon" onclick="toggleMenu()">☰</span>
-            <span style="font-size:1.4rem">📝</span>
-            <h1 id="header-title">Jogo das Palavras</h1>
-        </div>
-        <button class="btn-voltar-3d" onclick="handleBack()">⬅ VOLTAR</button>
+    <div class="sidebar-rd" id="sidebar-rd">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><h3 style="margin:0; color:var(--cor-azul-tema);">Categorias</h3><button onclick="toggleRD()" style="border:none; background:none; font-size:24px;">✕</button></div>
+        <div id="categorias-list" class="rd-grid"></div>
+    </div>
+
+    <header class="nav-bar">
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:#FF9100; cursor:pointer;">☰</button>
+        <div style="display:flex; align-items:center; gap:10px;"><img id="header-icon" src="" style="height:32px;"><h1 style="font-size:1.1rem; color:#FF9100; margin: 0;">Português - 1º Ano</h1></div>
+        <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
 
-    <main>
-        <div id="menu-container">
-            <div class="menu-header">
-                <h2>Escolhe um tema</h2>
-                <button class="btn-info-round" onclick="mostrarInfo()">i</button>
-            </div>
-            <div id="theme-grid" class="theme-grid"></div>
-        </div>
-
-        <div id="game-area">
-            <div class="visual-container">
-                <div class="balloons-row" id="balloons-container"></div>
-                <div class="hint-and-img">
-                    <div id="word-hint">❓</div>
-                    <div id="color-blot"></div>
+    <main class="main-content">
+        <section id="intro-screen" class="screen active">
+            <div class="game-card">
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                    <img id="intro-img" src="" style="width:120px; margin-bottom:20px;">
+                    <h2 id="intro-cat-title" style="color:var(--cor-azul-tema); text-align:center;"></h2>
+                    <p style="text-align:center; color:#666;">Descobre a palavra secreta!</p>
+                </div>
+                <div style="display:flex; gap:15px; width:100%; border-top: 2px dashed #eee; padding-top:15px;">
+                    <button class="btn-play" onclick="startGame()">JOGAR</button>
+                    <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:55px;"></button>
                 </div>
             </div>
-            <div class="word-display" id="word-display">_ _ _ _</div>
-            <div class="keyboard" id="keyboard"></div>
-        </div>
+        </section>
+
+        <section id="game-screen" class="screen">
+            <div class="game-card">
+                <div class="stage">
+                    <div id="balloon-unit" class="balloon-container">
+                        <img id="img-balao" src="" class="balloon-img">
+                        <div id="bags-area" class="bags-area"></div>
+                    </div>
+                </div>
+                <div id="word-display" class="word-display"></div>
+                <div id="keyboard" class="keyboard"></div>
+            </div>
+        </section>
     </main>
 
-    <footer>Recursos Digitais Covão • Professor Luís</footer>
+    <div class="modal" id="modal">
+        <div class="modal-card">
+            <h2 id="modal-title"></h2>
+            <div id="modal-msg" style="margin: 20px 0; font-size: 1.2rem; color: #555;"></div>
+            <button class="btn-play" onclick="location.reload()">RECOMEÇAR</button>
+        </div>
+    </div>
 
+    <script src="dados.js"></script>
     <script>
-        // PALAVRAS ATUALIZADAS: Todas sem acentos ou cedilhas
-        const themes = {
-            "Animais": {icon:"🐶", words:[{p:"GATO",i:"🐱"},{p:"PATO",i:"🦆"},{p:"VACA",i:"🐮"},{p:"SAPO",i:"🐸"},{p:"RATO",i:"🐭"},{p:"ZEBRA",i:"🦓"},{p:"TIGRE",i:"🐯"}]},
-            "Cores": {icon:"🎨", words:[{p:"AZUL", c:"#0000FF"},{p:"ROSA", c:"#FFC0CB"},{p:"VERDE", c:"#008000"},{p:"PRETO", c:"#000000"}]},
-            "Escola": {icon:"🎒", words:[{p:"COLA",i:"🧪"},{p:"PASTA",i:"🎒"},{p:"LIVRO",i:"📚"},{p:"MESA",i:"🪑"},{p:"GIZ",i:"🖍️"}]},
-            "Frutas": {icon:"🍎", words:[{p:"UVA",i:"🍇"},{p:"BANANA",i:"🍌"},{p:"KIWI",i:"🥝"},{p:"FIGO",i:"🫐"}]}
+        let currentQuestion = 0, mistakes = 0, maxMistakes = 5;
+        let currentCatKey = Object.keys(JOGO_CONFIG.categorias)[0];
+        let sessionItens = [], currentWord = "", guessedLetters = [];
+
+        window.onload = () => {
+            const p = JOGO_CONFIG.caminhoIcons;
+            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.ano1;
+            document.querySelector('.menu-1').src = p + JOGO_CONFIG.iconesMenu.ano1;
+            document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
+            setupRDMenu();
+            updateIntro();
         };
 
-        let activeTheme = "", secretWord = "", guessed = [], mistakes = 0, isPlaying = false, lastWord = "";
-
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        function fecharModais() {
-            document.getElementById('modal-info').style.display = 'none';
-            document.getElementById('end-modal').style.display = 'none';
-            document.getElementById('overlay').classList.remove('active');
-            document.getElementById('sidebar').classList.remove('active');
-        }
-
-        function mostrarInfo() {
-            document.getElementById('overlay').classList.add('active');
-            document.getElementById('modal-info').style.display = 'block';
-        }
-
-        function handleBack() {
-            if (isPlaying) showMenu(); else window.location.href = "../";
-        }
-
-        function showMenu() {
-            isPlaying = false;
-            document.getElementById('menu-container').style.display = 'block';
-            document.getElementById('game-area').style.display = 'none';
-            fecharModais();
-            document.getElementById('header-title').innerText = "Jogo das Palavras";
-        }
-
-        function initThemes() {
-            const grid = document.getElementById('theme-grid');
-            grid.innerHTML = '';
-            Object.keys(themes).forEach(key => {
-                const card = document.createElement('div');
-                card.className = 'theme-card';
-                card.onclick = () => startGame(key);
-                card.innerHTML = `<span>${themes[key].icon}</span><p>${key}</p>`;
-                grid.appendChild(card);
+        function setupRDMenu() {
+            const container = document.getElementById('categorias-list');
+            container.innerHTML = '';
+            Object.keys(JOGO_CONFIG.categorias).forEach(key => {
+                const cat = JOGO_CONFIG.categorias[key];
+                container.innerHTML += `<div class="rd-item" onclick="currentCatKey='${key}'; closeMenus(); updateIntro();"><img src="${JOGO_CONFIG.caminhoCat + cat.img}"> <span style="font-size:0.7rem;">${cat.nome}</span></div>`;
             });
         }
 
-        function startGame(themeKey) {
-            isPlaying = true;
-            activeTheme = themeKey;
-            fecharModais();
-            const words = themes[themeKey].words;
-            let data;
-            do { data = words[Math.floor(Math.random() * words.length)]; } while (data.p === lastWord && words.length > 1);
-            secretWord = data.p; lastWord = secretWord; guessed = []; mistakes = 0;
-            document.getElementById('menu-container').style.display = 'none';
-            document.getElementById('game-area').style.display = 'flex';
-            document.getElementById('header-title').innerText = themeKey;
-            const hint = document.getElementById('word-hint');
-            const blot = document.getElementById('color-blot');
-            if (themeKey === "Cores") { hint.style.display = 'none'; blot.style.display = 'block'; blot.style.backgroundColor = data.c; }
-            else { hint.style.display = 'block'; blot.style.display = 'none'; hint.innerText = data.i; }
-            renderBalloons(); createKeyboard(); updateDisplay();
+        function updateIntro() {
+            const cat = JOGO_CONFIG.categorias[currentCatKey];
+            document.getElementById('intro-cat-title').innerText = cat.nome;
+            document.getElementById('intro-img').src = JOGO_CONFIG.caminhoCat + cat.img;
         }
 
-        function renderBalloons() {
-            const container = document.getElementById('balloons-container');
-            container.innerHTML = '';
-            for(let i=0; i<6; i++) {
-                const b = document.createElement('span'); b.className = 'balloon'; b.id = 'bal-' + i; b.innerText = '🎈';
-                container.appendChild(b);
+        function startGame() {
+            sessionItens = [...JOGO_CONFIG.categorias[currentCatKey].itens].sort(() => Math.random() - 0.5);
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            loadRound();
+        }
+
+        function loadRound() {
+            if(currentQuestion >= 5) return endGame(true);
+            mistakes = 0;
+            guessedLetters = [];
+            currentWord = sessionItens[currentQuestion].palavras[0].toUpperCase();
+            
+            // Setup Balão e Sacos
+            document.getElementById('img-balao').src = JOGO_CONFIG.caminhoCat + "bal_ar.png";
+            const unit = document.getElementById('balloon-unit');
+            unit.style.bottom = "40px";
+            unit.style.opacity = "1";
+            
+            const bagsArea = document.getElementById('bags-area');
+            bagsArea.innerHTML = '';
+            for(let i=0; i<maxMistakes; i++) {
+                bagsArea.innerHTML += `<img src="${JOGO_CONFIG.caminhoCat}sac_are.png" class="bag-img" id="bag-${i}">`;
             }
+
+            renderWord();
+            renderKeyboard();
         }
 
-        function createKeyboard() {
+        function renderWord() {
+            const display = document.getElementById('word-display');
+            display.innerHTML = '';
+            [...currentWord].forEach(letter => {
+                const isGuessed = guessedLetters.includes(normalize(letter));
+                display.innerHTML += `<div class="letter-slot">${isGuessed ? letter : ''}</div>`;
+            });
+        }
+
+        function renderKeyboard() {
+            const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             const kb = document.getElementById('keyboard');
             kb.innerHTML = '';
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(l => {
-                const b = document.createElement('button'); b.className = 'key'; b.innerText = l;
-                b.onclick = () => {
-                    b.classList.add('used');
-                    if (secretWord.includes(l)) {
-                        guessed.push(l); if (secretWord.split("").every(x => guessed.includes(x))) endGame(true);
-                    } else {
-                        const bal = document.getElementById('bal-' + mistakes);
-                        if(bal) { bal.style.opacity = '0'; bal.innerText = '💥'; setTimeout(() => bal.style.display = 'none', 300); }
-                        mistakes++; if (mistakes === 6) endGame(false);
-                    }
-                    updateDisplay();
-                };
-                kb.appendChild(b);
+            [...abc].forEach(l => {
+                const btn = document.createElement('button');
+                btn.className = 'key';
+                btn.innerText = l;
+                btn.onclick = () => handleGuess(l, btn);
+                kb.appendChild(btn);
             });
         }
 
-        function updateDisplay() {
-            document.getElementById('word-display').innerText = secretWord.split("").map(l => guessed.includes(l) ? l : "_").join(" ");
+        function handleGuess(letter, btn) {
+            const normLetter = normalize(letter);
+            let found = false;
+            
+            [...currentWord].forEach(l => {
+                if(normalize(l) === normLetter) found = true;
+            });
+
+            if(found) {
+                guessedLetters.push(normLetter);
+                btn.classList.add('correct');
+                document.getElementById('audio-acerto').play();
+                renderWord();
+                checkWin();
+            } else {
+                btn.classList.add('wrong');
+                document.getElementById('audio-erro').play();
+                removeBag();
+            }
+            btn.disabled = true;
         }
 
-        function endGame(won) {
-            const modal = document.getElementById('end-modal');
-            document.getElementById('overlay').classList.add('active');
-            modal.style.display = 'block';
-            if (won) {
-                document.getElementById('end-icon').innerText = "🏆";
-                document.getElementById('end-title').innerText = "Muito bem!";
-                document.getElementById('end-msg').innerText = "Acertaste na palavra!";
-            } else {
-                document.getElementById('end-icon').innerText = "💥🎈";
-                document.getElementById('end-title').innerText = "Fica para a próxima!";
-                document.getElementById('end-msg').innerText = "A palavra era: " + secretWord;
+        function removeBag() {
+            const bag = document.getElementById(`bag-${mistakes}`);
+            if(bag) bag.classList.add('fall');
+            
+            mistakes++;
+            const unit = document.getElementById('balloon-unit');
+            unit.style.bottom = (40 + (mistakes * 40)) + "px"; // Balão sobe
+
+            if(mistakes >= maxMistakes) {
+                // Balão foge
+                unit.style.bottom = "600px";
+                unit.style.opacity = "0";
+                setTimeout(() => endGame(false), 800);
             }
         }
 
-        initThemes();
+        function checkWin() {
+            const allFound = [...currentWord].every(l => guessedLetters.includes(normalize(l)));
+            if(allFound) {
+                setTimeout(() => {
+                    currentQuestion++;
+                    if(currentQuestion < 5) loadRound();
+                    else endGame(true);
+                }, 1000);
+            }
+        }
+
+        function normalize(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+        }
+
+        function endGame(win) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const msg = document.getElementById('modal-msg');
+            
+            modal.style.display = 'flex';
+            if(win) {
+                title.innerText = "MUITO BEM!";
+                title.style.color = "var(--cor-acerto)";
+                msg.innerText = "Completaste o desafio!";
+            } else {
+                title.innerText = "OPS!";
+                title.style.color = "var(--cor-erro)";
+                msg.innerHTML = `O balão fugiu!<br>A palavra era: <b>${currentWord}</b>`;
+            }
+        }
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
     </script>
 </body>
 </html>
