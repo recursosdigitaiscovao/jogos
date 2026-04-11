@@ -67,10 +67,10 @@
 
         .play-zone { flex: 1; display: flex; width: 100%; overflow: hidden; gap: 15px; padding-top: 5px; }
         .stage-side { flex: 1; position: relative; background: #f0f8ff; border-radius: 20px; overflow: hidden; display: flex; justify-content: center; border: 2px solid #eef; }
-        .balloon-unit { position: absolute; bottom: 5px; transition: bottom 0.8s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; width: clamp(100px, 20vw, 160px); }
+        .balloon-unit { position: absolute; bottom: 5px; transition: bottom 1s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; width: clamp(100px, 20vw, 160px); }
         .balloon-img { width: 100%; height: auto; z-index: 1; }
         .bags-container { position: absolute; bottom: 18px; display: flex; justify-content: center; gap: 3px; width: 100%; z-index: 2; }
-        .bag-img { width: clamp(12px, 2vw, 17px); height: auto; object-fit: contain; transition: 0.3s; }
+        .bag-img { width: clamp(12px, 2vw, 17px); height: auto; object-fit: contain; }
 
         .keyboard-side { flex: 1.3; display: flex; align-items: center; justify-content: center; }
         .keyboard { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 100%; }
@@ -80,15 +80,13 @@
 
         .round-dot { width: 12px; height: 12px; border: 2px solid #ddd; border-radius: 50%; transition: 0.3s; }
 
-        /* BUTTONS */
         .btn-main { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 15px; border-radius: 20px; cursor: pointer; width: 100%; box-shadow: 0 5px 0 #4a96d1; }
         .btn-main:active { transform: translateY(3px); box-shadow: none; }
         .btn-rd-ui { background: transparent; border: none; cursor: pointer; }
 
-        /* POPUP REFINADO */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
         .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 30px 20px; width: 100%; max-width: 350px; text-align: center; }
-        .btn-modal { font-size: 1.1rem; padding: 12px; margin-bottom: 10px; } /* Texto mais pequeno nos botões do popup */
+        .btn-modal { font-size: 1.1rem; padding: 12px; margin-bottom: 10px; } 
         .btn-orange { background: var(--cor-laranja); box-shadow: 0 5px 0 #e68200; }
 
         @media (max-width: 600px) {
@@ -326,22 +324,31 @@
         }
 
         function removeBag() {
+            // 1. O SACO CAI PRIMEIRO
             const bag = document.getElementById(`bag-${mistakes}`);
             if(bag) bag.classList.add('fall');
-            mistakes++;
-            points = Math.max(0, points - 10);
-            document.getElementById('points').innerText = points;
-            const unit = document.getElementById('balloon-unit');
-            unit.style.bottom = (5 + (mistakes * 20)) + "px"; // Subida reduzida para 20px
             
-            if(mistakes >= maxMistakes) {
-                unit.style.transition = "bottom 2.5s ease-in, opacity 1.5s";
-                unit.style.bottom = "1000px"; unit.style.opacity = "0";
-                setTimeout(() => {
-                    markRound(false);
-                    nextStep();
-                }, 2500);
-            }
+            // 2. O BALÃO SÓ REAGE APÓS UM PEQUENO DELAY (500ms)
+            setTimeout(() => {
+                mistakes++;
+                points = Math.max(0, points - 10);
+                document.getElementById('points').innerText = points;
+                
+                const unit = document.getElementById('balloon-unit');
+                unit.style.bottom = (5 + (mistakes * 20)) + "px"; 
+                
+                if(mistakes >= maxMistakes) {
+                    // SE FOR O ÚLTIMO SACO, SOBE ATÉ DESAPARECER
+                    unit.style.transition = "bottom 2.5s ease-in, opacity 1.5s";
+                    unit.style.bottom = "1000px"; unit.style.opacity = "0";
+                    
+                    // ESPERA O BALÃO DESAPARECER TOTALMENTE ANTES DE AVANÇAR
+                    setTimeout(() => {
+                        markRound(false);
+                        nextStep();
+                    }, 2500);
+                }
+            }, 500);
         }
 
         function checkWin() {
