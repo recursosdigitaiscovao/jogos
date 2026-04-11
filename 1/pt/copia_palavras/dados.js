@@ -1,8 +1,8 @@
 const JOGO_CONFIG = {
     caminhoImg: "../../../img/",
     caminhoIcons: "../../../icons/",
-    caminhoLetras: "../../../img/letras/", // Onde estão as imagens das letras (A.png, B.png...)
-    caminhoObjetos: "../../../img/objetos/", // Onde estão as imagens dos itens
+    caminhoLetras: "../../../img/letras/", 
+    caminhoObjetos: "../../../img/objetos/",
     iconesMenu: { 
         pre: "iconpre.png", 
         ano1: "icon1.png", 
@@ -59,11 +59,11 @@ const JOGO_CONFIG = {
                 { palavra: "COBRA", img: "cobra.png" }, { palavra: "COGUMELO", img: "cogumelo.png" }
             ]
         }
-        // Repetir para D, E, F... até Z
+        // Acrescentar D, E, F... seguindo o mesmo padrão.
     },
     relatorio: { 
         titulo: "PARABÉNS!", 
-        pontosTotal: "Pontos:", 
-        tempoTotal: "Tempo:" 
+        pontosTotal: "Pontos Totais:", 
+        tempoTotal: "Tempo Total:" 
     }
 };
