@@ -16,10 +16,10 @@ const JOGO_CONFIG = {
 
     // Lista de jogos - O sistema vai criar os cards sozinho
     listaJogos: [
-        { nome: "jogo1", icon: "1.png", link: "nome1/" },
-        { nome: "jogo2", icon: "2.png", link: "nome2/" },
-        { nome: "jogo3", icon: "3.png", link: "nome3/" },
-        { nome: "jogo4", icon: "4.png", link: "nome4/" },
-        { nome: "jogo5", icon: "5.png", link: "nome4/" },
+        { nome: "Conta as Sílabas", icon: "silabas.png", link: "silabas/" },
+        { nome: "Forma Palavras", icon: "liga_letras.png", link: "liga_letras/" },
+        { nome: "Descobre a Palavra", icon: "forca.png", link: "forca/" },
+        { nome: "Sopa de Letras", icon: "sopa_letras.png", link: "sopa_letras/" },
+       
     ]
 };
