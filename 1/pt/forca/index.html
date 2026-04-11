@@ -13,6 +13,7 @@
             --cor-fundo-card: #FFFFFF;
             --cor-acerto: #2ed573;
             --cor-erro: #ff4757;
+            --cor-laranja: #FF9100;
             --header-height: 70px;
         }
 
@@ -77,14 +78,12 @@
         .key.correct { background: var(--cor-acerto); color: white; border-color: #26b963; box-shadow: 0 4px 0 #26b963; }
         .key.wrong { background: #eee; color: #bbb; border-color: #ddd; box-shadow: none; pointer-events: none; }
 
-        /* DOTS */
         .round-dot { width: 12px; height: 12px; border: 2px solid #ddd; border-radius: 50%; transition: 0.3s; }
 
-        /* MODAL BUTTONS */
-        .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.3rem; font-weight: bold; padding: 15px; border-radius: 20px; cursor: pointer; width: 100%; box-shadow: 0 5px 0 #4a96d1; margin-bottom: 10px; }
-        .btn-theme { background: var(--cor-laranja); box-shadow: 0 5px 0 #e68200; }
-        .btn-play:active { transform: translateY(3px); box-shadow: 0 2px 0 #4a96d1; }
-        .btn-rd-ui { background: transparent; border: none; cursor: pointer; }
+        /* MODAL */
+        .modal-btn { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.2rem; font-weight: bold; padding: 15px; border-radius: 20px; cursor: pointer; width: 100%; box-shadow: 0 5px 0 #4a96d1; margin-bottom: 12px; display: block; }
+        .modal-btn-orange { background: var(--cor-laranja); box-shadow: 0 5px 0 #e68200; }
+        .modal-btn:active { transform: translateY(3px); box-shadow: none; }
 
         @media (max-width: 600px) {
             .keyboard { grid-template-columns: repeat(6, 1fr); gap: 4px; }
@@ -143,7 +142,7 @@
                 <div style="display:flex; flex-direction:column; align-items:center; gap:5px; width:100%; border-top: 2px dashed #eee; padding-top:15px;">
                     <h2 style="color: var(--cor-azul-tema); margin: 0 0 10px 0; font-size: 1.7rem; font-weight: 700;">Descobre as palavras</h2>
                     <div style="display:flex; gap:15px; width:100%;">
-                        <button class="btn-play" onclick="startGame()">JOGAR</button>
+                        <button class="modal-btn" onclick="startGame()" style="margin:0">JOGAR</button>
                         <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:55px;"></button>
                     </div>
                 </div>
@@ -180,10 +179,10 @@
 
     <div class="modal" id="modal">
         <div class="modal-card">
-            <h2 id="modal-title">FIM DO JOGO</h2>
+            <h2 id="modal-title" style="color:var(--cor-azul-tema)">FIM DO JOGO</h2>
             <div id="modal-msg" style="margin: 20px 0; font-size: 1.2rem; color: #555;"></div>
-            <button class="btn-play" onclick="startGame()">JOGAR DE NOVO</button>
-            <button class="btn-play btn-theme" onclick="resetGame()">ESCOLHER OUTRO TEMA</button>
+            <button class="modal-btn" onclick="startGame()">JOGAR DE NOVO</button>
+            <button class="modal-btn modal-btn-orange" onclick="resetToHome()">ESCOLHER OUTRO TEMA</button>
         </div>
     </div>
 
@@ -212,7 +211,7 @@
             container.innerHTML = '';
             Object.keys(JOGO_CONFIG.categorias).forEach(key => {
                 const cat = JOGO_CONFIG.categorias[key];
-                container.innerHTML += `<div class="rd-item" onclick="currentCatKey='${key}'; closeMenus(); updateIntro(); resetGame();"><img src="${JOGO_CONFIG.caminhoCat + cat.img}"> <span style="font-size:0.75rem; font-weight:bold;">${cat.nome}</span></div>`;
+                container.innerHTML += `<div class="rd-item" onclick="currentCatKey='${key}'; closeMenus(); updateIntro(); resetToHome();"><img src="${JOGO_CONFIG.caminhoCat + cat.img}"> <span style="font-size:0.75rem; font-weight:bold;">${cat.nome}</span></div>`;
             });
         }
 
@@ -311,7 +310,8 @@
                 guessedLetters.push(normLetter);
                 btn.classList.add('correct');
                 document.getElementById('audio-acerto').play();
-                renderWord(); checkWin();
+                renderWord(); 
+                checkWin();
             } else {
                 btn.classList.add('wrong');
                 document.getElementById('audio-erro').play();
@@ -332,7 +332,7 @@
                 unit.style.transition = "bottom 2s ease-in, opacity 1s";
                 unit.style.bottom = "800px"; unit.style.opacity = "0";
                 markRound(false);
-                nextRound();
+                setTimeout(nextStep, 2100);
             }
         }
 
@@ -342,7 +342,7 @@
                 points += 100;
                 document.getElementById('points').innerText = points;
                 markRound(true);
-                nextRound();
+                setTimeout(nextStep, 1000);
             }
         }
 
@@ -353,15 +353,13 @@
             dots[currentQuestion].style.borderColor = color;
         }
 
-        function nextRound() {
-            setTimeout(() => {
-                currentQuestion++;
-                if(currentQuestion < 5) {
-                    loadRound();
-                } else {
-                    showFinalModal();
-                }
-            }, 1200);
+        function nextStep() {
+            currentQuestion++;
+            if(currentQuestion < 5) {
+                loadRound();
+            } else {
+                showFinalModal();
+            }
         }
 
         function showFinalModal() {
@@ -372,14 +370,15 @@
             msg.innerHTML = `Pontos Totais: <b>${points}</b><br>Tempo Final: <b>${document.getElementById('timer').innerText}</b>`;
         }
 
-        function normalize(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase(); }
-
-        function resetGame() { 
+        function resetToHome() {
+            clearInterval(timerInterval);
             document.getElementById('modal').style.display = 'none';
             document.getElementById('intro-screen').classList.add('active');
             document.getElementById('game-screen').classList.remove('active');
             updateIntro();
         }
+
+        function normalize(str) { return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase(); }
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
