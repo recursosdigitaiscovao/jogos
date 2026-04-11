@@ -109,8 +109,6 @@ const JOGO_CONFIG = {
                 { letras: "ESQUILO", palavras: ["ESQUILO"] },
                 { letras: "VEADO", palavras: ["VEADO"] },
                 { letras: "CANGURU", palavras: ["CANGURU"] },
-                { letras: "RINOCERONTE", palavras: ["RINOCERONTE"] },
-                { letras: "HIPOPÓTAMO", palavras: ["HIPOPÓTAMO"] },
                 { letras: "MORCEGO", palavras: ["MORCEGO"] }
             ]
         },
@@ -131,13 +129,11 @@ const JOGO_CONFIG = {
                 { letras: "JAPÃO", palavras: ["JAPÃO"] },
                 { letras: "MÉXICO", palavras: ["MÉXICO"] },
                 { letras: "CANADÁ", palavras: ["CANADÁ"] },
-                { letras: "MOÇAMBIQUE", palavras: ["MOÇAMBIQUE"] },
                 { letras: "EGIPTO", palavras: ["EGIPTO"] },
                 { letras: "MARROCOS", palavras: ["MARROCOS"] },
                 { letras: "SUÍÇA", palavras: ["SUÍÇA"] },
                 { letras: "TIMOR", palavras: ["TIMOR"] },
-                { letras: "GUINÉ", palavras: ["GUINÉ"] },
-                { letras: "CABOVERDE", palavras: ["CABOVERDE"] }
+                { letras: "GUINÉ", palavras: ["GUINÉ"] }
             ]
         },
         transportes: {
@@ -154,15 +150,13 @@ const JOGO_CONFIG = {
                 { letras: "ELÉTRICO", palavras: ["ELÉTRICO"] },
                 { letras: "BICICLETA", palavras: ["BICICLETA"] },
                 { letras: "CAMIÃO", palavras: ["CAMIÃO"] },
-                { letras: "HELICÓPTERO", palavras: ["HELICÓPTERO"] },
                 { letras: "NAVIO", palavras: ["NAVIO"] },
                 { letras: "FOGUETE", palavras: ["FOGUETE"] },
                 { letras: "TRATOR", palavras: ["TRATOR"] },
                 { letras: "TÁXI", palavras: ["TÁXI"] },
                 { letras: "CANOA", palavras: ["CANOA"] },
                 { letras: "BALÃO", palavras: ["BALÃO"] },
-                { letras: "SUBMARINO", palavras: ["SUBMARINO"] },
-                { letras: "AMBULÂNCIA", palavras: ["AMBULÂNCIA"] }
+                { letras: "SUBMARINO", palavras: ["SUBMARINO"] }
             ]
         }
     },
