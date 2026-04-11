@@ -1,1 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Português - 1º Ano</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cor-principal: #FF9100; 
+            --cor-azul-tema: #5EAAEA;  
+            --cor-fundo-pagina: #EBF4FF;
+            --cor-fundo-card: #FFFFFF;
+            --cor-acerto: #2ed573;
+            --cor-erro: #ff4757;
+            --cor-pista: #f1c40f;
+            --header-height: 70px;
+        }
 
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @keyframes highlightTutorial {
+            0%, 10% { background: white; color: var(--cor-azul-tema); transform: scale(1); border-color: var(--cor-azul-tema); }
+            30%, 60% { background: var(--cor-principal); color: white; transform: scale(1.1); border-color: white; }
+            80%, 100% { background: white; color: var(--cor-azul-tema); transform: scale(1); border-color: var(--cor-azul-tema); }
+        }
+
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
+        body { background: var(--cor-fundo-pagina); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
+
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; box-shadow: 0 3px 0 #e68200; }
+        
+        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
+        .sidebar.active { left: 0; }
+        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-weight: 500; cursor: pointer; }
+        .sidebar-item:hover { background-color: var(--cor-azul-tema); color: white !important; }
+        .sidebar-item img { width: 24px; height: 24px; object-fit: contain; margin-right: 12px; }
+
+        .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 25px; box-sizing: border-box; }
+        .sidebar-rd.active { bottom: 0; }
+        .rd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; }
+        .rd-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; border-radius: 15px; cursor: pointer; text-align: center; }
+        .rd-item img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 5px; }
+        .rd-item span { font-weight: bold; color: #555; font-size: 0.8rem; }
+
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
+        .overlay.active { display: block; }
+
+        .main-content { flex: 1; padding: 10px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
+        .screen.active { display: flex; }
+        .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 20px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; position: relative; }
+
+        .explanation-box { background: var(--cor-fundo-pagina); border-radius: 20px; flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 15px; border: none; }
+        .tutorial-wheel { width: 130px; height: 130px; border: 4px solid #ddd; border-radius: 50%; position: relative; margin-top: 10px; }
+        .t-dot { position: absolute; width: 34px; height: 34px; background: white; border: 2px solid var(--cor-azul-tema); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 900; transform: translate(-50%, -50%); color: var(--cor-azul-tema); }
+
+        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; font-size: 0.9rem; border-bottom: 1px solid #eee; width: 100%; box-sizing: border-box; flex-shrink: 0; }
+        .grid-answer { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; overflow: hidden; padding: 10px 0; }
+        .word-row { display: flex; gap: 6px; width: 95%; max-width: 600px; justify-content: center; flex-wrap: nowrap; } 
+        .box { flex: 1; max-width: 55px; min-width: 30px; aspect-ratio: 1/1; border: 2px solid #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: clamp(1.2rem, 5vw, 1.8rem); font-weight: 900; background: #f9f9f9; text-transform: uppercase; }
+        .box.filled { background: var(--cor-acerto); color: white; border-color: var(--cor-acerto); }
+        .box.hinted { background: var(--cor-pista); color: white; border-color: var(--cor-pista); }
+
+        .wheel-area { display: flex; flex-direction: column; align-items: center; position: relative; width: 100%; margin-top: -30px; flex-shrink: 0; }
+        .current-word-display { height: 38px; min-width: 120px; background: var(--cor-principal); color: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 10px; visibility: hidden; }
+        .current-word-display.visible { visibility: visible; }
+
+        .letter-wheel { position: relative; width: 220px; height: 220px; background: #f8f8f8; border-radius: 50%; border: 6px solid #eee; touch-action: none; }
+        .wheel-letter { position: absolute; width: 54px; height: 54px; background: white; border: 2px solid var(--cor-azul-tema); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 400; transform: translate(-50%, -50%); z-index: 5; text-transform: uppercase; }
+        .wheel-letter.active { background: var(--cor-principal); color: white; border-color: white; }
+        #connection-canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 2; }
+
+        .btn-hint { position: absolute; right: 0; bottom: 0; width: 55px; height: 55px; background: var(--cor-pista); border-radius: 50%; border: none; cursor: pointer; box-shadow: 0 4px 0 #d4ac0d; display: flex; align-items: center; justify-content: center; z-index: 10; padding: 0; }
+        .btn-hint img { width: 35px; height: 35px; object-fit: contain; }
+        .btn-hint:active { transform: translateY(3px); box-shadow: 0 1px 0 #d4ac0d; }
+
+        .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 16px; border-radius: 20px; cursor: pointer; flex: 1; box-shadow: 0 5px 0 #4a96d1; }
+        .btn-rd-ui { background: transparent; border: none; cursor: pointer; }
+
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
+        .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 30px 20px; width: 100%; max-width: 350px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+    <audio id="audio-acerto" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
+    <audio id="audio-erro" src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"></audio>
+
+    <div class="sidebar" id="sidebar">
+        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
+            <button onclick="toggleMenu()" style="border:none; background:none; font-size: 20px;">✕</button>
+        </div>
+        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+        <a href="/jogos/pre" class="sidebar-item"><img class="menu-pre" src=""> Pré-Escolar</a>
+        <a href="/jogos/1" class="sidebar-item"><img class="menu-1" src=""> 1º Ano</a>
+        <a href="/jogos/2" class="sidebar-item"><img class="menu-2" src=""> 2º Ano</a>
+        <a href="/jogos/3" class="sidebar-item"><img class="menu-3" src=""> 3º Ano</a>
+        <a href="/jogos/4" class="sidebar-item"><img class="menu-4" src=""> 4º Ano</a>
+    </div>
+
+    <div class="sidebar-rd" id="sidebar-rd">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><h3 style="margin:0; color:var(--cor-azul-tema);">Categorias</h3><button onclick="toggleRD()" style="border:none; background:none; font-size:24px;">✕</button></div>
+        <div id="categorias-list" class="rd-grid"></div>
+    </div>
+
+    <header class="nav-bar">
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:#FF9100; cursor:pointer;">☰</button>
+        <div style="display:flex; align-items:center; gap:10px;"><img id="header-icon" src="" style="height:32px;"><h1 style="font-size:1.1rem; color:#FF9100; margin: 0;">Português - 1º Ano</h1></div>
+        <a href="../" class="back-btn">⬅ Voltar</a>
+    </header>
+
+    <main class="main-content">
+        <section id="intro-screen" class="screen active">
+            <div class="game-card">
+                <div class="explanation-box" id="tutorial-area"></div>
+                <h2 id="intro-cat-title" style="color:var(--cor-azul-tema); text-align:center; margin: 5px 0;"></h2>
+                <div style="display:flex; gap:15px; width:100%; border-top: 2px dashed #eee; padding-top:15px; box-sizing:border-box;">
+                    <button class="btn-play" onclick="startGame()">JOGAR</button>
+                    <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:55px;"></button>
+                </div>
+            </div>
+        </section>
+
+        <section id="game-screen" class="screen">
+            <div class="game-card">
+                <div class="game-top-bar">
+                    <div>⏳ <span id="timer">00:00</span></div>
+                    <div id="stars-bar" style="display:flex; gap:6px;"></div>
+                    <div style="display:flex; align-items:center; gap:10px;">PTS: <span id="points">0</span><button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:28px;"></button></div>
+                </div>
+                <div class="grid-answer" id="grid-answer"></div>
+                <div class="wheel-area">
+                    <div id="current-word-display" class="current-word-display"></div>
+                    <div class="letter-wheel" id="letter-wheel"><canvas id="connection-canvas"></canvas></div>
+                    <button class="btn-hint" onclick="giveHint()"><img id="hint-icon-img" src=""></button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="modal">
+        <div class="modal-card">
+            <h2 id="modal-title" style="color:var(--cor-acerto);">MUITO BEM!</h2>
+            <div id="modal-msg" style="margin: 20px 0; font-size: 1.2rem; color: #555;"></div>
+            <button class="btn-play" onclick="location.reload()">RECOMEÇAR</button>
+        </div>
+    </div>
+
+    <script src="dados.js"></script>
+    <script>
+        let currentQuestion = 0, points = 0, seconds = 0, timerInterval;
+        let currentCatKey = Object.keys(JOGO_CONFIG.categorias)[0];
+        let sessionItens = [], selectedIndices = [], isDragging = false, foundWords = [];
+
+        window.onload = () => {
+            const p = JOGO_CONFIG.caminhoIcons;
+            const c = JOGO_CONFIG.caminhoCat;
+            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.ano1;
+            document.querySelector('.menu-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
+            document.querySelector('.menu-1').src = p + JOGO_CONFIG.iconesMenu.ano1;
+            document.querySelector('.menu-2').src = p + JOGO_CONFIG.iconesMenu.ano2;
+            document.querySelector('.menu-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
+            document.querySelector('.menu-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
+            document.getElementById('hint-icon-img').src = c + "lampada.png";
+            document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
+            setupRDMenu();
+            updateIntro();
+            const wheel = document.getElementById('letter-wheel');
+            wheel.addEventListener('pointerdown', startSelection);
+            wheel.addEventListener('pointermove', moveSelection);
+            window.addEventListener('pointerup', endSelection);
+        };
+
+        function setupRDMenu() {
+            const container = document.getElementById('categorias-list');
+            container.innerHTML = '';
+            Object.keys(JOGO_CONFIG.categorias).forEach(key => {
+                const cat = JOGO_CONFIG.categorias[key];
+                container.innerHTML += `<div class="rd-item" onclick="currentCatKey='${key}'; closeMenus(); updateIntro(); resetGame();"><img src="${JOGO_CONFIG.caminhoCat + cat.img}"> <span>${cat.nome}</span></div>`;
+            });
+        }
+
+        function updateIntro() {
+            const cat = JOGO_CONFIG.categorias[currentCatKey];
+            document.getElementById('intro-cat-title').innerText = cat.nome;
+            const area = document.getElementById('tutorial-area');
+            
+            let word = "GATO", img = "gato.png";
+            if(currentCatKey === 'frutos') { word = "PERA"; img = "pera.png"; }
+            else if(currentCatKey === 'material') { word = "ESTOJO"; img = "estojo.png"; }
+            else if(currentCatKey === 'selvagens') { word = "LEÃO"; img = "leao.png"; }
+            else if(currentCatKey === 'paises') { word = "PAÍSES"; img = "paises.png"; }
+            else if(currentCatKey === 'transportes') { word = "CARRO"; img = "transportes.png"; }
+
+            let letters = word.split('');
+            let dotsHtml = letters.map((l, i) => {
+                let angle = (i / letters.length) * Math.PI * 2;
+                let x = 50 + 35 * Math.cos(angle);
+                let y = 50 + 35 * Math.sin(angle);
+                return `<div class="t-dot" style="top:${y}%; left:${x}%; animation: highlightTutorial 3s infinite ${i*0.4}s">${l}</div>`;
+            }).join('');
+
+            area.innerHTML = `
+                <p style="color:var(--cor-azul-tema); font-weight:bold; margin-bottom:5px;">Liga as letras:</p>
+                <img src="${JOGO_CONFIG.caminhoCat + img}" style="height:65px; margin-bottom:5px; object-fit:contain;">
+                <div class="tutorial-wheel">${dotsHtml}</div>`;
+        }
+
+        function startGame() {
+            sessionItens = [...JOGO_CONFIG.categorias[currentCatKey].itens].sort(() => Math.random() - 0.5).slice(0,5);
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            initStars(); startTimer(); loadRound();
+        }
+
+        function initStars() {
+            const bar = document.getElementById('stars-bar');
+            bar.innerHTML = '';
+            for(let i=0; i<5; i++) bar.innerHTML += `<div style="width:15px; height:15px; border:2px solid #ddd; border-radius:50%;"></div>`;
+        }
+
+        function loadRound() {
+            const item = sessionItens[currentQuestion];
+            foundWords = [];
+            const grid = document.getElementById('grid-answer');
+            grid.innerHTML = `<div class="word-row" data-word="${item.palavras[0]}"></div>`;
+            const row = grid.querySelector('.word-row');
+            for(let i=0; i<item.palavras[0].length; i++) row.innerHTML += `<div class="box"></div>`;
+            renderWheel(item);
+        }
+
+        function renderWheel(item) {
+            const wheel = document.getElementById('letter-wheel');
+            wheel.querySelectorAll('.wheel-letter').forEach(l => l.remove());
+            const letters = item.letras.split('').sort(() => Math.random() - 0.5);
+            const radius = 80, centerX = 110, centerY = 110;
+            letters.forEach((char, i) => {
+                const angle = (i / letters.length) * Math.PI * 2;
+                const x = centerX + radius * Math.cos(angle), y = centerY + radius * Math.sin(angle);
+                const div = document.createElement('div');
+                div.className = 'wheel-letter'; div.innerText = char; div.style.left = x + 'px'; div.style.top = y + 'px';
+                div.dataset.index = i; wheel.appendChild(div);
+            });
+            const canvas = document.getElementById('connection-canvas');
+            canvas.width = 220; canvas.height = 220;
+        }
+
+        function startSelection(e) {
+            const letter = e.target.closest('.wheel-letter');
+            if(!letter) return;
+            isDragging = true; selectedIndices = [parseInt(letter.dataset.index)];
+            updateUI();
+        }
+
+        function moveSelection(e) {
+            if(!isDragging) return;
+            const target = document.elementFromPoint(e.clientX, e.clientY);
+            const letter = target ? target.closest('.wheel-letter') : null;
+            if(letter) {
+                const idx = parseInt(letter.dataset.index);
+                if(!selectedIndices.includes(idx)) { selectedIndices.push(idx); updateUI(); }
+            }
+        }
+
+        function endSelection() { if(!isDragging) return; isDragging = false; checkWord(); selectedIndices = []; updateUI(); }
+
+        function updateUI() {
+            const letters = document.querySelectorAll('.wheel-letter');
+            letters.forEach((l, i) => l.classList.toggle('active', selectedIndices.includes(i)));
+            const currentStr = selectedIndices.map(i => letters[i].innerText).join('');
+            document.getElementById('current-word-display').innerText = currentStr;
+            document.getElementById('current-word-display').classList.toggle('visible', currentStr.length > 0);
+            drawLines();
+        }
+
+        function drawLines() {
+            const canvas = document.getElementById('connection-canvas');
+            const ctx = canvas.getContext('2d');
+            const letters = document.querySelectorAll('.wheel-letter');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if(selectedIndices.length < 2) return;
+            ctx.beginPath(); ctx.strokeStyle = '#FF9100'; ctx.lineWidth = 10; ctx.lineCap = 'round';
+            selectedIndices.forEach((idx, i) => {
+                const l = letters[idx];
+                const x = parseFloat(l.style.left), y = parseFloat(l.style.top);
+                if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+        }
+
+        function checkWord() {
+            const letters = document.querySelectorAll('.wheel-letter');
+            const currentStr = selectedIndices.map(i => letters[i].innerText).join('');
+            const item = sessionItens[currentQuestion];
+            if(item.palavras.includes(currentStr)) {
+                document.getElementById('audio-acerto').play();
+                points += 100;
+                const row = document.querySelector('.word-row');
+                row.querySelectorAll('.box').forEach((b, i) => { b.innerText = currentStr[i]; b.classList.add('filled'); });
+                document.getElementById('stars-bar').children[currentQuestion].style.background = "var(--cor-acerto)";
+                setTimeout(() => { currentQuestion++; if(currentQuestion < 5) loadRound(); else endGame(); }, 800);
+            } else {
+                if(selectedIndices.length === item.letras.length) {
+                    document.getElementById('audio-erro').play();
+                    points = Math.max(0, points - 100);
+                }
+            }
+            document.getElementById('points').innerText = points;
+        }
+
+        function giveHint() {
+            const row = document.querySelector('.word-row');
+            const word = row.dataset.word;
+            const boxes = row.querySelectorAll('.box');
+            for (let i = 0; i < boxes.length; i++) {
+                if (boxes[i].innerText === '') {
+                    boxes[i].innerText = word[i];
+                    boxes[i].classList.add('hinted');
+                    points = Math.max(0, points - 50);
+                    document.getElementById('points').innerText = points;
+                    return;
+                }
+            }
+        }
+
+        function startTimer() { timerInterval = setInterval(() => { seconds++; document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; }, 1000); }
+        function endGame() { clearInterval(timerInterval); document.getElementById('modal-msg').innerHTML = `<p>Pontos: <b>${points}</b></p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p>`; document.getElementById('modal').style.display = 'flex'; }
+        function resetGame() { currentQuestion = 0; points = 0; seconds = 0; clearInterval(timerInterval); document.getElementById('intro-screen').classList.add('active'); document.getElementById('game-screen').classList.remove('active'); document.getElementById('modal').style.display = 'none'; }
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
+    </script>
+</body>
+</html>
