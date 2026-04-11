@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Escrever Palavras - Alfabeto</title>
+    <title>Português - 1º Ano</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,263 +13,248 @@
             --cor-fundo-card: #FFFFFF;
             --cor-acerto: #2ed573;
             --cor-erro: #ff4757;
+            --header-height: 70px;
         }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; font-family: 'Fredoka', sans-serif; background: var(--cor-fundo-pagina); }
-
-        /* Interface Estrutural */
-        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: 70px; z-index: 1000; position: relative; }
-        .back-btn { background: var(--cor-azul-tema); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; box-shadow: 0 3px 0 #4a96d1; }
-        
-        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: calc(100% - 70px); }
-        .screen { display: none; width: 100%; max-width: 600px; animation: fadeIn 0.5s ease; }
-        .screen.active { display: flex; flex-direction: column; align-items: center; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .game-card { background: white; border-radius: 30px; padding: 25px; border: 4px solid var(--cor-azul-tema); width: 100%; text-align: center; position: relative; }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
+        body { background: var(--cor-fundo-pagina); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* Área de Jogo */
-        .img-box { background: #f8fbfd; border-radius: 20px; padding: 15px; margin-bottom: 15px; border: 2px dashed #d0e4f5; }
-        .item-img { height: 160px; max-width: 100%; object-fit: contain; }
+        /* HEADER ORIGINAL */
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        .back-btn { background: var(--cor-azul-tema); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; box-shadow: 0 3px 0 #4a96d1; }
         
-        .word-display { font-size: 2.2rem; font-weight: 700; color: var(--cor-azul-tema); margin-bottom: 20px; letter-spacing: 3px; text-transform: uppercase; }
-        
-        .input-word { width: 100%; border: 3px solid #ddd; border-radius: 15px; font-size: 2rem; padding: 12px; text-align: center; text-transform: uppercase; font-family: 'Fredoka', sans-serif; color: var(--cor-principal); outline: none; transition: all 0.2s; }
-        .input-word:focus { border-color: var(--cor-principal); background: #fffdf9; }
-        .input-word.correct { border-color: var(--cor-acerto); background: #eaffed; animation: pulse 0.3s; }
-        .input-word.wrong { border-color: var(--cor-erro); background: #fff0f0; }
+        /* SIDEBAR ESQUERDA (HAMBURGER) */
+        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
+        .sidebar.active { left: 0; }
+        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-weight: 500; cursor: pointer; }
+        .sidebar-item img { width: 24px; height: 24px; object-fit: contain; margin-right: 12px; }
 
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
-
-        /* Sidebar RD (Categorias/Letras) */
-        .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); transition: 0.3s; }
+        /* SIDEBAR RD (CATEGORIAS EM BAIXO) */
+        .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 25px; box-sizing: border-box; }
         .sidebar-rd.active { bottom: 0; }
-        .rd-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; overflow-y: auto; height: 360px; padding: 10px; }
-        .rd-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 10px; background: #f9f9f9; border-radius: 15px; border: 2px solid transparent; }
-        .rd-item:hover { border-color: var(--cor-azul-tema); background: #eef7ff; }
-        .rd-item img { width: 45px; height: 45px; margin-bottom: 5px; }
-        .rd-item span { font-weight: bold; font-size: 0.9rem; color: #555; }
+        .rd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; overflow-y: auto; height: 320px; margin-top: 5px; }
+        .rd-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; border-radius: 15px; cursor: pointer; text-align: center; background: #f8fbfd; border: 1px solid #eee; }
+        .rd-item img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 5px; }
+        .rd-item span { font-weight: bold; color: #555; font-size: 0.8rem; }
 
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; z-index: 1500; backdrop-filter: blur(2px); }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* Botões */
-        .btn-main { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 15px 40px; border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 #4a96d1; transition: 0.2s; }
-        .btn-main:active { transform: translateY(3px); box-shadow: 0 2px 0 #4a96d1; }
+        /* CONTEÚDO E CARD */
+        .main-content { flex: 1; padding: 10px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
+        .screen.active { display: flex; }
+        
+        .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 20px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; position: relative; }
 
-        .stats-bar { display: flex; justify-content: space-between; margin-bottom: 15px; width: 100%; color: #666; font-weight: bold; }
+        /* ELEMENTOS DO JOGO DE ESCRITA */
+        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; font-size: 0.9rem; border-bottom: 1px solid #eee; width: 100%; box-shrink: 0; }
+        
+        .display-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; gap: 15px; }
+        .image-box { background: #f9f9f9; border-radius: 20px; padding: 20px; border: 2px dashed #ddd; }
+        .item-img { max-height: 180px; max-width: 100%; object-fit: contain; }
+        
+        .word-to-copy { font-size: 2.5rem; font-weight: 900; color: var(--cor-azul-tema); letter-spacing: 4px; text-transform: uppercase; }
+        
+        .input-container { width: 100%; padding-bottom: 20px; }
+        .input-word { width: 100%; border: 4px solid #ddd; border-radius: 20px; font-size: 2.2rem; padding: 15px; text-align: center; text-transform: uppercase; font-family: 'Fredoka', sans-serif; color: var(--cor-principal); outline: none; transition: 0.3s; }
+        .input-word:focus { border-color: var(--cor-principal); }
+        .input-word.correct { border-color: var(--cor-acerto); background: #eaffed; }
 
-        /* Modal Final */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
-        .modal-card { background: white; border-radius: 30px; padding: 30px; width: 100%; max-width: 400px; text-align: center; border: 4px solid var(--cor-acerto); }
+        .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 16px; border-radius: 20px; cursor: pointer; flex: 1; box-shadow: 0 5px 0 #4a96d1; }
+        .btn-rd-ui { background: transparent; border: none; cursor: pointer; }
+
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
+        .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 30px 20px; width: 100%; max-width: 350px; text-align: center; }
     </style>
 </head>
 <body>
 
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
 
-    <header class="nav-bar">
-        <button onclick="toggleRD()" style="background:none; border:none; font-size:26px; color:var(--cor-azul-tema); cursor:pointer;">☰</button>
-        <div style="display:flex; align-items:center; gap:8px;">
-            <img id="header-icon" src="" style="height:35px;">
-            <h1 style="font-size:1.1rem; color:var(--cor-azul-tema); margin:0;">Português 1º Ano</h1>
+    <!-- SIDEBAR ESQUERDA -->
+    <div class="sidebar" id="sidebar">
+        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
+            <button onclick="toggleMenu()" style="border:none; background:none; font-size: 20px;">✕</button>
         </div>
+        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+        <a href="/jogos/pre" class="sidebar-item"><img class="menu-pre" src=""> Pré-Escolar</a>
+        <a href="/jogos/1" class="sidebar-item"><img class="menu-1" src=""> 1º Ano</a>
+        <a href="/jogos/2" class="sidebar-item"><img class="menu-2" src=""> 2º Ano</a>
+        <a href="/jogos/3" class="sidebar-item"><img class="menu-3" src=""> 3º Ano</a>
+        <a href="/jogos/4" class="sidebar-item"><img class="menu-4" src=""> 4º Ano</a>
+    </div>
+
+    <!-- SIDEBAR RD (CATEGORIAS) -->
+    <div class="sidebar-rd" id="sidebar-rd">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="margin:0; color:var(--cor-azul-tema);">Letras</h3>
+            <button onclick="toggleRD()" style="border:none; background:none; font-size:24px;">✕</button>
+        </div>
+        <div id="categorias-list" class="rd-grid"></div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="nav-bar">
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:#5EAAEA; cursor:pointer;">☰</button>
+        <div style="display:flex; align-items:center; gap:10px;"><img id="header-icon" src="" style="height:32px;"><h1 style="font-size:1.1rem; color:#5EAAEA; margin: 0;">Português - 1º Ano</h1></div>
         <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
 
     <main class="main-content">
-        <!-- Tela de Início -->
+        <!-- TELA INICIAL -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
-                <img id="intro-letter-img" src="" style="width:120px; margin-bottom:10px;">
-                <h2 id="intro-title" style="color:var(--cor-azul-tema); margin:10px 0;">Letra A</h2>
-                <p style="color:#666; font-size:1.1rem; line-height:1.4;">Vê a imagem, lê a palavra e escreve com atenção!</p>
-                <div style="margin-top:20px;">
-                    <button class="btn-main" onclick="startGame()">JOGAR</button>
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                    <img id="intro-cat-img" src="" style="width:120px; margin-bottom:15px;">
+                    <h2 id="intro-cat-title" style="color:var(--cor-azul-tema); text-align:center; margin: 0;"></h2>
+                    <p style="text-align:center; color:#666;">Observa a imagem e escreve a palavra corretamente.</p>
+                </div>
+                <div style="display:flex; gap:15px; width:100%; border-top: 2px dashed #eee; padding-top:15px;">
+                    <button class="btn-play" onclick="startGame()">JOGAR</button>
+                    <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:55px;"></button>
                 </div>
             </div>
         </section>
 
-        <!-- Tela do Jogo -->
+        <!-- TELA DE JOGO -->
         <section id="game-screen" class="screen">
-            <div class="stats-bar">
-                <span>PTS: <span id="points-display">0</span></span>
-                <span><span id="current-round-display">1</span> / 10</span>
-                <span>⏳ <span id="timer-display">00:00</span></span>
-            </div>
-            
             <div class="game-card">
-                <div class="img-box">
-                    <img id="game-item-img" class="item-img" src="">
+                <div class="game-top-bar">
+                    <div>⏳ <span id="timer">00:00</span></div>
+                    <div><span id="current-index">1</span> / 10</div>
+                    <div style="display:flex; align-items:center; gap:10px;">PTS: <span id="points">0</span><button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:28px;"></button></div>
                 </div>
-                
-                <div id="target-word" class="word-display">----</div>
-                
-                <input type="text" id="user-input" class="input-word" placeholder="Escreve aqui..." autocomplete="off" spellcheck="false">
+
+                <div class="display-area">
+                    <div class="image-box">
+                        <img id="game-img" class="item-img" src="">
+                    </div>
+                    <div id="word-target" class="word-to-copy">----</div>
+                    <div class="input-container">
+                        <input type="text" id="word-input" class="input-word" placeholder="Escreve aqui..." autocomplete="off" spellcheck="false">
+                    </div>
+                </div>
             </div>
         </section>
     </main>
 
-    <!-- Menu Lateral de Letras -->
-    <div class="sidebar-rd" id="sidebar-rd">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding:0 10px;">
-            <h3 style="margin:0; color:var(--cor-azul-tema);">Escolhe a Letra</h3>
-            <button onclick="toggleRD()" style="border:none; background:none; font-size:24px;">✕</button>
-        </div>
-        <div id="rd-list" class="rd-grid"></div>
-    </div>
-
-    <!-- Modal de Vitória -->
-    <div class="modal" id="modal-end">
+    <!-- MODAL FINAL -->
+    <div class="modal" id="modal">
         <div class="modal-card">
-            <h2 id="modal-title" style="color:var(--cor-acerto); margin-top:0;">MUITO BEM!</h2>
-            <div id="modal-body" style="font-size:1.2rem; color:#444; margin:20px 0;"></div>
-            <button class="btn-main" onclick="location.reload()" style="background:var(--cor-acerto); box-shadow:0 5px 0 #26b15e;">RECOMEÇAR</button>
+            <h2 id="modal-title" style="color:var(--cor-acerto);">MUITO BEM!</h2>
+            <div id="modal-msg" style="margin: 20px 0; font-size: 1.2rem; color: #555;"></div>
+            <button class="btn-play" onclick="location.reload()">RECOMEÇAR</button>
         </div>
     </div>
 
     <script src="dados.js"></script>
     <script>
+        let currentIdx = 0, points = 0, seconds = 0, timerInterval;
         let currentCatKey = Object.keys(JOGO_CONFIG.categorias)[0];
         let sessionItens = [];
-        let currentIndex = 0;
-        let points = 0;
-        let seconds = 0;
-        let timerInterval;
 
         window.onload = () => {
-            // Setup inicial de ícones
-            document.getElementById('header-icon').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1;
+            const p = JOGO_CONFIG.caminhoIcons;
+            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.ano1;
+            document.querySelector('.menu-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
+            document.querySelector('.menu-1').src = p + JOGO_CONFIG.iconesMenu.ano1;
+            document.querySelector('.menu-2').src = p + JOGO_CONFIG.iconesMenu.ano2;
+            document.querySelector('.menu-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
+            document.querySelector('.menu-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
+            document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
+            
             setupRDMenu();
             updateIntro();
 
-            // Event listener do input
-            const inputField = document.getElementById('user-input');
-            inputField.addEventListener('input', handleInput);
+            document.getElementById('word-input').addEventListener('input', checkInput);
         };
 
         function setupRDMenu() {
-            const list = document.getElementById('rd-list');
-            list.innerHTML = '';
+            const container = document.getElementById('categorias-list');
+            container.innerHTML = '';
             Object.keys(JOGO_CONFIG.categorias).forEach(key => {
                 const cat = JOGO_CONFIG.categorias[key];
-                const item = document.createElement('div');
-                item.className = 'rd-item';
-                item.onclick = () => selectCategory(key);
-                item.innerHTML = `<img src="${JOGO_CONFIG.caminhoLetras + cat.img}"><span>${cat.nome}</span>`;
-                list.appendChild(item);
+                container.innerHTML += `<div class="rd-item" onclick="changeCategory('${key}')"><img src="${JOGO_CONFIG.caminhoCat + cat.img}"> <span>${cat.nome}</span></div>`;
             });
         }
 
-        function selectCategory(key) {
+        function changeCategory(key) {
             currentCatKey = key;
             closeMenus();
             updateIntro();
-            resetState();
+            resetGame();
         }
 
         function updateIntro() {
             const cat = JOGO_CONFIG.categorias[currentCatKey];
-            document.getElementById('intro-title').innerText = cat.nome;
-            document.getElementById('intro-letter-img').src = JOGO_CONFIG.caminhoLetras + cat.img;
+            document.getElementById('intro-cat-title').innerText = cat.nome;
+            document.getElementById('intro-cat-img').src = JOGO_CONFIG.caminhoCat + cat.img;
         }
 
         function startGame() {
-            const allItems = JOGO_CONFIG.categorias[currentCatKey].itens;
-            // Seleciona 10 itens aleatórios (ou o máximo disponível)
-            sessionItens = [...allItems].sort(() => Math.random() - 0.5).slice(0, 10);
-            
+            sessionItens = [...JOGO_CONFIG.categorias[currentCatKey].itens].sort(() => Math.random() - 0.5).slice(0,10);
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            
-            currentIndex = 0;
-            points = 0;
-            seconds = 0;
+            currentIdx = 0; points = 0; seconds = 0;
             loadRound();
             startTimer();
         }
 
         function loadRound() {
-            const item = sessionItens[currentIndex];
-            document.getElementById('game-item-img').src = JOGO_CONFIG.caminhoObjetos + item.img;
-            document.getElementById('target-word').innerText = item.palavra;
-            document.getElementById('current-round-display').innerText = currentIndex + 1;
-            
-            const inputField = document.getElementById('user-input');
-            inputField.value = '';
-            inputField.className = 'input-word';
-            inputField.focus();
+            const item = sessionItens[currentIdx];
+            document.getElementById('game-img').src = JOGO_CONFIG.caminhoImg + item.img;
+            document.getElementById('word-target').innerText = item.palavra;
+            document.getElementById('current-index').innerText = currentIdx + 1;
+            const input = document.getElementById('word-input');
+            input.value = "";
+            input.className = "input-word";
+            input.focus();
         }
 
-        function handleInput(e) {
+        function checkInput(e) {
             const val = e.target.value.toUpperCase();
-            const target = sessionItens[currentIndex].palavra.toUpperCase();
-            const inputField = document.getElementById('user-input');
+            const target = sessionItens[currentIdx].palavra.toUpperCase();
+            const input = document.getElementById('word-input');
 
-            // Verifica se o que foi escrito até agora está correto
-            if (val === target) {
-                inputField.classList.add('correct');
+            if(val === target) {
+                input.classList.add('correct');
                 points += 100;
-                document.getElementById('points-display').innerText = points;
-                
-                // Pequena pausa para feedback visual
+                document.getElementById('points').innerText = points;
                 setTimeout(() => {
-                    currentIndex++;
-                    if (currentIndex < sessionItens.length) {
-                        loadRound();
-                    } else {
-                        endGame();
-                    }
+                    currentIdx++;
+                    if(currentIdx < sessionItens.length) loadRound();
+                    else endGame();
                 }, 600);
-            } else {
-                // Se errar o padrão da palavra (opcional: dar feedback de erro imediato)
-                if (val.length >= target.length || !target.startsWith(val)) {
-                    inputField.classList.add('wrong');
-                    setTimeout(() => inputField.classList.remove('wrong'), 400);
-                } else {
-                    inputField.classList.remove('wrong');
-                }
             }
         }
 
-        function startTimer() {
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                seconds++;
-                const m = Math.floor(seconds/60).toString().padStart(2, '0');
-                const s = (seconds%60).toString().padStart(2, '0');
-                document.getElementById('timer-display').innerText = `${m}:${s}`;
-            }, 1000);
+        function startTimer() { 
+            timerInterval = setInterval(() => { 
+                seconds++; 
+                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; 
+            }, 1000); 
         }
 
-        function endGame() {
-            clearInterval(timerInterval);
-            const time = document.getElementById('timer-display').innerText;
-            document.getElementById('modal-body').innerHTML = `
-                <p>${JOGO_CONFIG.relatorio.pontosTotal} <b>${points}</b></p>
-                <p>${JOGO_CONFIG.relatorio.tempoTotal} <b>${time}</b></p>
-            `;
-            document.getElementById('modal-end').style.display = 'flex';
+        function endGame() { 
+            clearInterval(timerInterval); 
+            document.getElementById('modal-msg').innerHTML = `<p>Pontos: <b>${points}</b></p><p>Tempo: <b>${document.getElementById('timer').innerText}</b></p>`; 
+            document.getElementById('modal').style.display = 'flex'; 
         }
 
-        function resetState() {
-            document.getElementById('intro-screen').classList.add('active');
-            document.getElementById('game-screen').classList.remove('active');
-            document.getElementById('modal-end').style.display = 'none';
-            clearInterval(timerInterval);
+        function resetGame() { 
+            clearInterval(timerInterval); 
+            document.getElementById('intro-screen').classList.add('active'); 
+            document.getElementById('game-screen').classList.remove('active'); 
+            document.getElementById('modal').style.display = 'none'; 
         }
 
-        function toggleRD() {
-            document.getElementById('sidebar-rd').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        function closeMenus() {
-            document.getElementById('sidebar-rd').classList.remove('active');
-            document.getElementById('overlay').classList.remove('active');
-        }
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
     </script>
 </body>
 </html>
