@@ -1,1 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Escrever Palavras - 1º Ano</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cor-principal: #FF9100; 
+            --cor-azul-tema: #5EAAEA;  
+            --cor-fundo-pagina: #EBF4FF;
+            --cor-fundo-card: #FFFFFF;
+            --cor-acerto: #2ed573;
+            --cor-erro: #ff4757;
+        }
 
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; font-family: 'Fredoka', sans-serif; background: var(--cor-fundo-pagina); }
+        
+        /* Navbar */
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: 70px; }
+        .back-btn { background: var(--cor-azul-tema); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; }
+
+        .main-content { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; height: calc(100% - 100px); }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
+        .screen.active { display: flex; }
+
+        .game-card { background: white; border-radius: 30px; padding: 20px; border: 4px solid var(--cor-azul-tema); width: 100%; max-width: 500px; box-sizing: border-box; text-align: center; }
+
+        /* Área da Imagem */
+        .image-container { background: #f9f9f9; border-radius: 20px; padding: 20px; margin-bottom: 15px; }
+        .item-img { max-width: 150px; height: 150px; object-fit: contain; }
+
+        /* Nome do Objeto (Dica) */
+        .word-hint { font-size: 2rem; font-weight: 700; color: var(--cor-azul-tema); margin-bottom: 20px; letter-spacing: 2px; text-transform: uppercase; }
+
+        /* Campo de Digitação */
+        .input-area { width: 100%; border: 3px solid #ddd; border-radius: 15px; font-size: 2rem; padding: 10px; text-align: center; text-transform: uppercase; font-family: 'Fredoka', sans-serif; color: var(--cor-principal); outline: none; transition: 0.3s; }
+        .input-area:focus { border-color: var(--cor-principal); }
+        .input-area.correct { border-color: var(--cor-acerto); background: #e8f5e9; }
+        .input-area.wrong { border-color: var(--cor-erro); background: #ffebee; }
+
+        /* Sidebar de Categorias */
+        .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; z-index: 2000; border-radius: 30px 30px 0 0; padding: 25px; box-sizing: border-box; transition: 0.3s; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); }
+        .sidebar-rd.active { bottom: 0; }
+        .rd-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; overflow-y: auto; height: 350px; }
+        .rd-item { text-align: center; cursor: pointer; padding: 10px; border: 1px solid #eee; border-radius: 10px; }
+        .rd-item img { width: 40px; height: 40px; }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
+        .overlay.active { display: block; }
+
+        .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.2rem; font-weight: bold; padding: 15px 30px; border-radius: 20px; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+
+    <header class="nav-bar">
+        <button onclick="toggleRD()" style="background:none; border:none; font-size:26px; color:#5EAAEA;">☰</button>
+        <h1 style="font-size:1.1rem; color:#5EAAEA;">Escrever Palavras</h1>
+        <a href="../" class="back-btn">⬅ Voltar</a>
+    </header>
+
+    <main class="main-content">
+        <!-- Tela Inicial -->
+        <section id="intro-screen" class="screen active">
+            <div class="game-card">
+                <img id="intro-img" src="" style="width: 100px;">
+                <h2 id="intro-title" style="color:var(--cor-azul-tema);">Letra A</h2>
+                <p>Vê a imagem, lê a palavra e escreve igual!</p>
+                <button class="btn-play" onclick="startGame()">COMEÇAR</button>
+            </div>
+        </section>
+
+        <!-- Tela de Jogo -->
+        <section id="game-screen" class="screen">
+            <div class="game-card">
+                <div style="display:flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold;">
+                    <span>PTS: <span id="points">0</span></span>
+                    <span id="timer">00:00</span>
+                </div>
+                
+                <div class="image-container">
+                    <img id="current-img" class="item-img" src="">
+                </div>
+
+                <div id="word-to-copy" class="word-hint">---</div>
+
+                <input type="text" id="word-input" class="input-area" placeholder="Escreve aqui..." autocomplete="off">
+            </div>
+        </section>
+    </main>
+
+    <!-- Menu de Letras -->
+    <div class="sidebar-rd" id="sidebar-rd">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0;">Escolhe uma Letra</h3>
+            <button onclick="toggleRD()" style="border:none; background:none; font-size:24px;">✕</button>
+        </div>
+        <div id="categorias-list" class="rd-grid"></div>
+    </div>
+
+    <script src="dados.js"></script>
+    <script>
+        let currentQuestion = 0, points = 0, seconds = 0, timerInterval;
+        let currentCatKey = "A";
+        let sessionItens = [];
+
+        window.onload = () => {
+            setupRDMenu();
+            updateIntro();
+            
+            // Listener para o Input
+            const input = document.getElementById('word-input');
+            input.addEventListener('input', checkInput);
+        };
+
+        function setupRDMenu() {
+            const container = document.getElementById('categorias-list');
+            Object.keys(JOGO_CONFIG.categorias).forEach(key => {
+                const cat = JOGO_CONFIG.categorias[key];
+                container.innerHTML += `
+                    <div class="rd-item" onclick="selectCategory('${key}')">
+                        <img src="${JOGO_CONFIG.caminhoLetras + cat.img}">
+                        <div style="font-weight:bold">${key}</div>
+                    </div>`;
+            });
+        }
+
+        function selectCategory(key) {
+            currentCatKey = key;
+            closeMenus();
+            updateIntro();
+            resetGame();
+        }
+
+        function updateIntro() {
+            const cat = JOGO_CONFIG.categorias[currentCatKey];
+            document.getElementById('intro-title').innerText = cat.nome;
+            document.getElementById('intro-img').src = JOGO_CONFIG.caminhoLetras + cat.img;
+        }
+
+        function startGame() {
+            const allItens = JOGO_CONFIG.categorias[currentCatKey].itens;
+            sessionItens = [...allItens].sort(() => Math.random() - 0.5).slice(0, 10);
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            currentQuestion = 0;
+            points = 0;
+            seconds = 0;
+            loadRound();
+            startTimer();
+        }
+
+        function loadRound() {
+            const item = sessionItens[currentQuestion];
+            document.getElementById('current-img').src = JOGO_CONFIG.caminhoObjetos + item.img;
+            document.getElementById('word-to-copy').innerText = item.palavra;
+            const input = document.getElementById('word-input');
+            input.value = "";
+            input.className = "input-area";
+            input.focus();
+        }
+
+        function checkInput() {
+            const input = document.getElementById('word-input');
+            const target = sessionItens[currentQuestion].palavra;
+            const value = input.value.toUpperCase();
+
+            if (value === target) {
+                input.classList.add('correct');
+                points += 100;
+                document.getElementById('points').innerText = points;
+                
+                setTimeout(() => {
+                    currentQuestion++;
+                    if (currentQuestion < sessionItens.length) {
+                        loadRound();
+                    } else {
+                        endGame();
+                    }
+                }, 600);
+            } else if (value.length >= target.length) {
+                input.classList.add('wrong');
+                setTimeout(() => input.classList.remove('wrong'), 500);
+            }
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                seconds++;
+                const min = Math.floor(seconds/60).toString().padStart(2,'0');
+                const seg = (seconds%60).toString().padStart(2,'0');
+                document.getElementById('timer').innerText = `${min}:${seg}`;
+            }, 1000);
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            alert(`Fim de jogo! Pontos: ${points}`);
+            resetGame();
+        }
+
+        function resetGame() {
+            document.getElementById('intro-screen').classList.add('active');
+            document.getElementById('game-screen').classList.remove('active');
+        }
+
+        function toggleRD() { 
+            document.getElementById('sidebar-rd').classList.toggle('active'); 
+            document.getElementById('overlay').classList.toggle('active'); 
+        }
+
+        function closeMenus() { 
+            document.getElementById('sidebar-rd').classList.remove('active'); 
+            document.getElementById('overlay').classList.remove('active'); 
+        }
+    </script>
+</body>
+</html>
