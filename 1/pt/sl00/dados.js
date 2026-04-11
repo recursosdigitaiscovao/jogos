@@ -1,6 +1,7 @@
 const JOGO_CONFIG = {
     caminhoImg: "../../../img/",
     caminhoIcons: "../../../icons/",
+    caminhoCat: "../../../imgcategorias/", // Pasta das categorias corrigida
     iconesMenu: { 
         pre: "iconpre.png", 
         ano1: "icon1.png", 
@@ -11,7 +12,7 @@ const JOGO_CONFIG = {
     categorias: {
         animais: {
             nome: "Animais Domésticos", 
-            img: "../../../imgcategorias/gato.png",
+            img: "gato.png",
             itens: [
                 { letras: "CÃO", palavras: ["CÃO"] },
                 { letras: "GATO", palavras: ["GATO"] },
@@ -37,7 +38,7 @@ const JOGO_CONFIG = {
         },
         frutos: {
             nome: "Frutos", 
-            img: "imgcategorias/pera.png",
+            img: "pera.png",
             itens: [
                 { letras: "MAÇÃ", palavras: ["MAÇÃ"] },
                 { letras: "PÊRA", palavras: ["PÊRA"] },
@@ -63,7 +64,7 @@ const JOGO_CONFIG = {
         },
         material: {
             nome: "Material Escolar", 
-            img: "imgcategorias/estojo.png",
+            img: "estojo.png",
             itens: [
                 { letras: "AFIA", palavras: ["AFIA"] },
                 { letras: "LÁPIS", palavras: ["LÁPIS"] },
@@ -89,7 +90,7 @@ const JOGO_CONFIG = {
         },
         selvagens: {
             nome: "Animais Selvagens", 
-            img: "imgcategorias/leao.png",
+            img: "leao.png",
             itens: [
                 { letras: "LEÃO", palavras: ["LEÃO"] },
                 { letras: "TIGRE", palavras: ["TIGRE"] },
@@ -115,7 +116,7 @@ const JOGO_CONFIG = {
         },
         paises: {
             nome: "Países", 
-            img: "imgcategorias/paises",
+            img: "paises.png",
             itens: [
                 { letras: "PORTUGAL", palavras: ["PORTUGAL"] },
                 { letras: "ESPANHA", palavras: ["ESPANHA"] },
@@ -141,7 +142,7 @@ const JOGO_CONFIG = {
         },
         transportes: {
             nome: "Transportes", 
-            img: "imgcategorias/transportes.png",
+            img: "transportes.png",
             itens: [
                 { letras: "AVIÃO", palavras: ["AVIÃO"] },
                 { letras: "BARCO", palavras: ["BARCO"] },
@@ -161,14 +162,13 @@ const JOGO_CONFIG = {
                 { letras: "CANOA", palavras: ["CANOA"] },
                 { letras: "BALÃO", palavras: ["BALÃO"] },
                 { letras: "SUBMARINO", palavras: ["SUBMARINO"] },
-                { letras: "AMBULÂNCIA", palavras: ["AMBULÂNCIA"] },
-                { letras: "FOGUETE", palavras: ["FOGUETE"] }
+                { letras: "AMBULÂNCIA", palavras: ["AMBULÂNCIA"] }
             ]
         }
     },
     relatorio: { 
         titulo: "MUITO BEM!", 
-        pontosTotal: "Palavras Encontradas:", 
-        tempoTotal: "Tempo de Jogo:" 
+        pontosTotal: "Pontos Totais:", 
+        tempoTotal: "Tempo Total:" 
     }
 };
