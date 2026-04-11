@@ -19,7 +19,6 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Animação Tutorial: Mão a mover-se */
         @keyframes handGuide {
             0% { top: 20%; left: 50%; opacity: 0; }
             10% { opacity: 1; }
@@ -32,6 +31,7 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo-pagina); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
+        /* NAVEGAÇÃO */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; box-shadow: 0 3px 0 #e68200; }
         
@@ -62,13 +62,15 @@
         .t-hand { position: absolute; width: 40px; z-index: 10; animation: handGuide 3s infinite ease-in-out; pointer-events: none; }
 
         /* GAMEPLAY */
-        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; font-size: 0.9rem; border-bottom: 1px solid #eee; width: 100%; box-sizing: border-box; }
-        .grid-answer { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
-        .box { width: 42px; height: 42px; border: 2px solid #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900; background: #f9f9f9; text-transform: uppercase; }
+        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; font-size: 0.9rem; border-bottom: 1px solid #eee; width: 100%; box-sizing: border-box; flex-shrink: 0; }
+        
+        .grid-answer { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; overflow: hidden; }
+        .word-row { display: flex; gap: 6px; flex-wrap: nowrap; } /* Forçado horizontal */
+        .box { width: 45px; height: 45px; border: 2px solid #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 900; background: #f9f9f9; text-transform: uppercase; }
         .box.filled { background: var(--cor-acerto); color: white; border-color: var(--cor-acerto); }
         .box.hinted { background: var(--cor-pista); color: white; border-color: var(--cor-pista); }
 
-        .wheel-area { display: flex; flex-direction: column; align-items: center; position: relative; width: 100%; margin-top: -20px; }
+        .wheel-area { display: flex; flex-direction: column; align-items: center; position: relative; width: 100%; margin-top: -30px; flex-shrink: 0; }
         .current-word-display { height: 38px; min-width: 120px; background: var(--cor-principal); color: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 10px; visibility: hidden; }
         .current-word-display.visible { visibility: visible; }
 
@@ -121,7 +123,7 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div class="explanation-box" id="tutorial-area">
-                    <p style="color:var(--cor-azul-tema); font-weight:bold; margin-bottom:15px;">Aprende a jogar:</p>
+                    <p style="color:var(--cor-azul-tema); font-weight:bold; margin-bottom:15px;">Liga as letras e ganha pontos!</p>
                     <div class="tutorial-wheel">
                         <img src="https://cdn-icons-png.flaticon.com/512/1655/1655781.png" class="t-hand">
                         <div class="t-dot" style="top:10%; left:50%;">C</div>
@@ -208,11 +210,10 @@
             const item = sessionItens[currentQuestion];
             foundWords = [];
             document.getElementById('grid-answer').innerHTML = '';
-            item.palavras.forEach(word => {
-                let row = `<div class="word-row" data-word="${word}">`;
-                for(let i=0; i<word.length; i++) row += `<div class="box"></div>`;
-                document.getElementById('grid-answer').innerHTML += row + `</div>`;
-            });
+            // Todas as palavras na mesma linha horizontal
+            let horizontalWrapper = `<div class="word-row" data-word="${item.palavras[0]}">`;
+            for(let i=0; i<item.palavras[0].length; i++) horizontalWrapper += `<div class="box"></div>`;
+            document.getElementById('grid-answer').innerHTML = horizontalWrapper + `</div>`;
             renderWheel(item);
         }
 
@@ -279,39 +280,36 @@
             const letters = document.querySelectorAll('.wheel-letter');
             const currentStr = selectedIndices.map(i => letters[i].innerText).join('');
             const item = sessionItens[currentQuestion];
+            
             if(item.palavras.includes(currentStr) && !foundWords.includes(currentStr)) {
                 foundWords.push(currentStr);
                 document.getElementById('audio-acerto').play();
                 points += 100;
-                const row = document.querySelector(`.word-row[data-word="${currentStr}"]`);
+                const row = document.querySelector(`.word-row`);
                 row.querySelectorAll('.box').forEach((b, i) => { b.innerText = currentStr[i]; b.classList.add('filled'); b.classList.remove('hinted'); });
                 if(foundWords.length === item.palavras.length) {
                     document.getElementById('stars-bar').children[currentQuestion].style.background = "var(--cor-acerto)";
                     setTimeout(() => { currentQuestion++; if(currentQuestion < 5) loadRound(); else endGame(); }, 800);
                 }
-            } else if(currentStr.length >= item.letras.length) {
+            } else if(currentStr.length > 0) {
+                // Errou a ligação: perde pontos mas NÃO fica com bola vermelha
                 document.getElementById('audio-erro').play();
                 points = Math.max(0, points - 100);
-                document.getElementById('stars-bar').children[currentQuestion].style.background = "var(--cor-erro)";
             }
             document.getElementById('points').innerText = points;
         }
 
         function giveHint() {
-            const rows = document.querySelectorAll('.word-row');
-            for (let row of rows) {
-                const word = row.dataset.word;
-                if (!foundWords.includes(word)) {
-                    const boxes = row.querySelectorAll('.box');
-                    for (let i = 0; i < boxes.length; i++) {
-                        if (boxes[i].innerText === '') {
-                            boxes[i].innerText = word[i];
-                            boxes[i].classList.add('hinted');
-                            points = Math.max(0, points - 50);
-                            document.getElementById('points').innerText = points;
-                            return;
-                        }
-                    }
+            const row = document.querySelector('.word-row');
+            const word = row.dataset.word;
+            const boxes = row.querySelectorAll('.box');
+            for (let i = 0; i < boxes.length; i++) {
+                if (boxes[i].innerText === '') {
+                    boxes[i].innerText = word[i];
+                    boxes[i].classList.add('hinted');
+                    points = Math.max(0, points - 50);
+                    document.getElementById('points').innerText = points;
+                    return;
                 }
             }
         }
