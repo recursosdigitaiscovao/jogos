@@ -80,10 +80,15 @@
 
         .round-dot { width: 12px; height: 12px; border: 2px solid #ddd; border-radius: 50%; transition: 0.3s; }
 
-        /* MODAL */
-        .modal-btn { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.2rem; font-weight: bold; padding: 15px; border-radius: 20px; cursor: pointer; width: 100%; box-shadow: 0 5px 0 #4a96d1; margin-bottom: 12px; display: block; }
-        .modal-btn-orange { background: var(--cor-laranja); box-shadow: 0 5px 0 #e68200; }
-        .modal-btn:active { transform: translateY(3px); box-shadow: none; }
+        /* BOTÕES */
+        .btn-ui { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.5rem; font-weight: bold; padding: 15px; border-radius: 20px; cursor: pointer; width: 100%; box-shadow: 0 5px 0 #4a96d1; }
+        .btn-ui:active { transform: translateY(3px); box-shadow: none; }
+        .btn-orange { background: var(--cor-laranja); box-shadow: 0 5px 0 #e68200; }
+        .btn-rd-ui { background: transparent; border: none; cursor: pointer; }
+
+        /* MODAL POPUP */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
+        .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 30px 20px; width: 100%; max-width: 350px; text-align: center; }
 
         @media (max-width: 600px) {
             .keyboard { grid-template-columns: repeat(6, 1fr); gap: 4px; }
@@ -142,7 +147,7 @@
                 <div style="display:flex; flex-direction:column; align-items:center; gap:5px; width:100%; border-top: 2px dashed #eee; padding-top:15px;">
                     <h2 style="color: var(--cor-azul-tema); margin: 0 0 10px 0; font-size: 1.7rem; font-weight: 700;">Descobre as palavras</h2>
                     <div style="display:flex; gap:15px; width:100%;">
-                        <button class="modal-btn" onclick="startGame()" style="margin:0">JOGAR</button>
+                        <button class="btn-ui" onclick="startGame()" style="margin:0">JOGAR</button>
                         <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:55px;"></button>
                     </div>
                 </div>
@@ -177,12 +182,13 @@
         </section>
     </main>
 
-    <div class="modal" id="modal">
+    <!-- O MODAL ESTÁ AQUI FORA E SÓ APARECE NO FINAL -->
+    <div class="modal" id="game-modal">
         <div class="modal-card">
             <h2 id="modal-title" style="color:var(--cor-azul-tema)">FIM DO JOGO</h2>
             <div id="modal-msg" style="margin: 20px 0; font-size: 1.2rem; color: #555;"></div>
-            <button class="modal-btn" onclick="startGame()">JOGAR DE NOVO</button>
-            <button class="modal-btn modal-btn-orange" onclick="resetToHome()">ESCOLHER OUTRO TEMA</button>
+            <button class="btn-ui" onclick="startGame()" style="margin-bottom:12px;">JOGAR DE NOVO</button>
+            <button class="btn-ui btn-orange" onclick="resetToHome()">ESCOLHER OUTRO TEMA</button>
         </div>
     </div>
 
@@ -202,6 +208,10 @@
             document.querySelector('.menu-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
             document.querySelector('.menu-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
             document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
+            
+            // Garantir que o modal está escondido ao iniciar
+            document.getElementById('game-modal').style.display = 'none';
+            
             setupRDMenu();
             updateIntro();
         };
@@ -222,6 +232,7 @@
             const container = document.getElementById('intro-typing-container');
             container.innerHTML = '';
             clearInterval(typingInterval);
+            
             const exampleWord = cat.itens[0].palavras[0];
             let i = 0;
             typingInterval = setInterval(() => {
@@ -240,11 +251,15 @@
 
         function startGame() {
             clearInterval(typingInterval);
-            document.getElementById('modal').style.display = 'none';
+            // Esconder o modal explicitamente
+            document.getElementById('game-modal').style.display = 'none';
+            
             currentQuestion = 0; points = 0; seconds = 0;
             sessionItens = [...JOGO_CONFIG.categorias[currentCatKey].itens].sort(() => Math.random() - 0.5).slice(0, 5);
+            
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
+            
             initStars();
             if(timerInterval) clearInterval(timerInterval);
             startTimer();
@@ -310,8 +325,7 @@
                 guessedLetters.push(normLetter);
                 btn.classList.add('correct');
                 document.getElementById('audio-acerto').play();
-                renderWord(); 
-                checkWin();
+                renderWord(); checkWin();
             } else {
                 btn.classList.add('wrong');
                 document.getElementById('audio-erro').play();
@@ -332,7 +346,7 @@
                 unit.style.transition = "bottom 2s ease-in, opacity 1s";
                 unit.style.bottom = "800px"; unit.style.opacity = "0";
                 markRound(false);
-                setTimeout(nextStep, 2100);
+                nextStep();
             }
         }
 
@@ -364,15 +378,15 @@
 
         function showFinalModal() {
             clearInterval(timerInterval);
-            const modal = document.getElementById('modal');
+            const modal = document.getElementById('game-modal');
             const msg = document.getElementById('modal-msg');
             modal.style.display = 'flex';
             msg.innerHTML = `Pontos Totais: <b>${points}</b><br>Tempo Final: <b>${document.getElementById('timer').innerText}</b>`;
         }
 
         function resetToHome() {
-            clearInterval(timerInterval);
-            document.getElementById('modal').style.display = 'none';
+            if(timerInterval) clearInterval(timerInterval);
+            document.getElementById('game-modal').style.display = 'none';
             document.getElementById('intro-screen').classList.add('active');
             document.getElementById('game-screen').classList.remove('active');
             updateIntro();
