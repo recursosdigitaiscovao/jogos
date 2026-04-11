@@ -17,6 +17,8 @@ const JOGO_CONFIG = {
                 { nome: "GATO", img: "animaisdomesticos/gato.png" },
                 { nome: "PATO", img: "animaisdomesticos/pato.png" },
                 { nome: "PERU", img: "animaisdomesticos/peru.png" },
+                { nome: "CÃO", img: "animaisdomesticos/cao.png" },
+                { nome: "CAVALO", img: "animaisdomesticos/cavalo.png" },
                 { nome: "COELHO", img: "animaisdomesticos/coelho.png" }
             ]
         },
@@ -26,9 +28,12 @@ const JOGO_CONFIG = {
             itens: [
                 { nome: "BANANA", img: "frutas/banana.png" },
                 { nome: "CEREJA", img: "frutas/cereja.png" },
+                { nome: "BANANA", img: "frutas/banana.png" },
+                { nome: "UVAS", img: "frutas/uvas.png" },
+                { nome: "MORANGO", img: "frutas/morango.png" },
                 { nome: "LARANJA", img: "frutas/banana.png" }, // Reutilizando imagem do seu config
                 { nome: "PAPAIA", img: "frutas/papaia.png" },
-                { nome: "MACA", img: "frutas/cereja.png" } // Adicionado para completar 5
+                { nome: "MACÃ", img: "frutas/maca.png" } // Adicionado para completar 5
             ]
         },
         material: {
@@ -37,9 +42,13 @@ const JOGO_CONFIG = {
             itens: [
                 { nome: "MOCHILA", img: "materialescolar/mochila.png" },
                 { nome: "TESOURA", img: "materialescolar/tesoura.png" },
-                { nome: "LAPIS", img: "materialescolar/mochila.png" },
-                { nome: "LIVRO", img: "materialescolar/mochila.png" },
-                { nome: "REGUA", img: "materialescolar/tesoura.png" }
+                { nome: "LÁPIS", img: "materialescolar/lapis.png" },
+                { nome: "LIVRO", img: "materialescolar/livro.png" },
+                { nome: "CAPA", img: "materialescolar/capa.png" },
+                { nome: "AFIA", img: "materialescolar/afia.png" },
+                { nome: "COLA", img: "materialescolar/cola.png" },
+                { nome: "FOLHA", img: "materialescolar/folha.png" },
+                { nome: "ESTOJO", img: "materialescolar/estojo.png" }
             ]
         }
     },
