@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sopa de Letras - 1º Ano</title>
+    <title>Português - 1º Ano</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -16,16 +16,19 @@
             --header-height: 70px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Animação Seleção (Sopa) */
+        @keyframes highlightLetter {
+            0%, 20% { background: white; color: #333; }
+            30%, 100% { background: var(--cor-principal); color: white; }
         }
 
-        @keyframes handGuide {
-            0% { transform: translate(0, 0); opacity: 0; }
-            20% { opacity: 1; }
-            80% { transform: translate(120px, 0); opacity: 1; }
-            100% { transform: translate(120px, 0); opacity: 0; }
+        /* Animação Sílabas (Ordenar) */
+        @keyframes moveSyllable {
+            0% { transform: translateY(0); opacity: 1; }
+            50% { transform: translateY(-30px); opacity: 0.5; }
+            100% { transform: translateY(0); opacity: 1; background: var(--cor-acerto); color: white; }
         }
 
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
@@ -35,81 +38,56 @@
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; box-shadow: 0 3px 0 #e68200; transition: 0.2s; }
         
-        /* Menu Lateral (Hover sem cantos redondos) */
+        /* Menu Hambúrguer (Ajustado) */
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-weight: 500; cursor: pointer; transition: 0.2s; border-radius: 0 !important; }
+        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-weight: 500; cursor: pointer; border-radius: 0 !important; }
         .sidebar-item:hover { background-color: var(--cor-azul-tema); color: white !important; }
         .sidebar-item img { width: 24px; height: 24px; object-fit: contain; margin-right: 12px; }
 
-        /* Menu RD */
+        /* Menu Categorias */
         .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
         .sidebar-rd.active { bottom: 0; }
-        .sidebar-rd .sidebar-item img { width: 60px; height: 60px; object-fit: contain; margin-right: 20px; }
+        .sidebar-rd .sidebar-item img { width: 60px; height: 60px; margin-right: 20px; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* Layout */
-        .main-content { flex: 1; padding: 5px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+        /* Conteúdo Principal */
+        .main-content { flex: 1; padding: 10px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
         .screen.active { display: flex; }
 
-        .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 10px 5px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; position: relative; overflow: hidden; }
-        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; font-size: 0.9rem; border-bottom: 1px solid #eee; flex-shrink: 0; }
-
-        .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 5px 0; overflow: hidden; position: relative; }
-
-        /* Grelha e Células */
-        .word-search-container { 
-            display: grid; 
-            grid-template-columns: repeat(8, 1fr); 
-            gap: 4px; 
-            background: var(--cor-fundo-pagina); /* Fundo igual ao da página como pedido */
-            padding: 8px; 
-            border-radius: 12px; 
-            width: 98%;
-            max-width: min(450px, 55vh); 
-            aspect-ratio: 1/1; 
-            box-sizing: border-box;
-            touch-action: none;
-            border: 2px solid var(--cor-azul-tema);
+        .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 15px 5px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; position: relative; }
+        
+        /* Área de Tutorial Animada */
+        .explanation-box { 
+            background: var(--cor-fundo-pagina); 
+            border-radius: 20px; 
+            flex: 1; 
+            margin-bottom: 10px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 15px;
+            border: 2px dashed var(--cor-azul-tema);
+            overflow: hidden;
         }
-        .letter-cell {
-            aspect-ratio: 1;
-            background: white;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: clamp(1rem, 3.5vmin, 1.6rem); 
-            font-weight: 400; 
-            cursor: pointer;
-            color: #333;
-            box-shadow: 0 2px 0 rgba(0,0,0,0.05);
-        }
+
+        /* Estilos da Animação do Tutorial */
+        .tutorial-grid { display: flex; gap: 8px; margin-top: 15px; }
+        .t-cell { width: 45px; height: 45px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #333; border: 1px solid #ddd; }
+        .t-syllable { padding: 10px 20px; background: white; border: 3px solid #333; border-radius: 10px; font-weight: 900; }
+
+        /* Jogo Real */
+        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; font-size: 0.9rem; border-bottom: 1px solid #eee; }
+        .word-search-container { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; background: var(--cor-fundo-pagina); padding: 8px; border-radius: 12px; width: 95%; max-width: min(450px, 55vh); aspect-ratio: 1/1; box-sizing: border-box; border: 2px solid var(--cor-azul-tema); }
+        .letter-cell { aspect-ratio: 1; background: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: clamp(1rem, 3.5vmin, 1.6rem); cursor: pointer; color: #333; }
         .letter-cell.selected { background: var(--cor-principal); color: white; }
         .letter-cell.found { background: var(--cor-acerto); color: white; }
 
-        /* Mão do Tutorial */
-        #tutorial-hand {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background: url('https://cdn-icons-png.flaticon.com/512/1655/1655781.png') no-repeat center;
-            background-size: contain;
-            pointer-events: none;
-            z-index: 100;
-            display: none;
-            filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.3));
-        }
-
-        .img-display { max-height: 15vh; max-width: 150px; object-fit: contain; }
-        .word-hint { font-size: clamp(1.2rem, 4vh, 2rem); font-weight: 900; color: #333; letter-spacing: 4px; }
-
         .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 16px; border-radius: 20px; cursor: pointer; flex: 1; box-shadow: 0 5px 0 #4a96d1; }
-        .btn-rd-ui { background: transparent; border: none; cursor: pointer; }
-
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
         .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 30px 20px; width: 100%; max-width: 350px; text-align: center; }
     </style>
@@ -124,7 +102,7 @@
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
-            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size: 20px;">✕</button>
+            <button onclick="toggleMenu()" style="border:none; background:none; font-size: 20px;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
         <a href="/jogos/pre" class="sidebar-item"><img class="menu-pre" src=""> Pré-Escolar</a>
@@ -135,18 +113,14 @@
     </div>
 
     <div class="sidebar-rd" id="sidebar-rd">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3 style="margin:0; color:var(--cor-azul-tema);">Escolhe o Jogo</h3>
-            <button onclick="toggleRD()" style="border:none; background:none; font-size:24px;">✕</button>
-        </div>
-        <div id="categorias-list" style="max-height: 380px; overflow-y: auto;"></div>
+        <div id="categorias-list" style="max-height: 400px; overflow-y: auto;"></div>
     </div>
 
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:#FF9100; cursor:pointer;">☰</button>
         <div style="display:flex; align-items:center; gap:10px;">
             <img id="header-icon" src="" style="height:32px;">
-            <h1 style="font-size:1.1rem; color:#FF9100; margin: 0;">Sopa de Letras</h1>
+            <h1 style="font-size:1.1rem; color:#FF9100; margin: 0;">Português - 1º Ano</h1>
         </div>
         <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
@@ -154,13 +128,13 @@
     <main class="main-content">
         <section id="intro-screen" class="screen active">
             <div class="game-card">
-                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                    <img id="intro-cat-img" src="" style="max-height: 150px;">
-                    <h2 id="intro-cat-title" style="color:var(--cor-azul-tema); font-size:2rem; margin:15px 0;"></h2>
+                <div class="explanation-box" id="tutorial-area">
+                    <!-- Conteúdo dinâmico aqui -->
                 </div>
-                <div style="display:flex; gap:15px; width:100%; border-top: 2px dashed #eee; padding-top:10px; flex-shrink: 0;">
+                <h2 id="intro-cat-title" style="color:var(--cor-azul-tema); font-size:1.8rem; margin:10px 0; text-align:center;"></h2>
+                <div style="display:flex; gap:15px; width:100%; border-top: 2px dashed #eee; padding:15px; box-sizing:border-box;">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
-                    <button class="btn-rd-ui" onclick="toggleRD()">
+                    <button style="background:none; border:none; cursor:pointer;" onclick="toggleRD()">
                         <img class="btn-rd-img-ref" src="" style="width:55px;">
                     </button>
                 </div>
@@ -172,16 +146,11 @@
                 <div class="game-top-bar">
                     <div>⏳ <span id="timer">00:00</span></div>
                     <div id="stars-bar" style="display:flex; gap:6px;"></div>
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        PTS: <span id="points">0</span>
-                        <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:28px;"></button>
-                    </div>
+                    <div>PTS: <span id="points">0</span></div>
                 </div>
-
-                <div class="game-area">
-                    <div id="tutorial-hand"></div>
-                    <img id="round-img" class="img-display" src="">
-                    <div id="round-word" class="word-hint"></div>
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden;">
+                    <img id="round-img" style="max-height: 12vh; margin-bottom:5px;" src="">
+                    <div id="round-word" style="font-size:1.6rem; font-weight:900; letter-spacing:3px; margin-bottom:10px;"></div>
                     <div id="grid-container" class="word-search-container"></div>
                 </div>
             </div>
@@ -190,7 +159,7 @@
 
     <div class="modal" id="modal">
         <div class="modal-card">
-            <h2 id="modal-title" style="color:var(--cor-acerto);">MUITO BEM!</h2>
+            <h2 id="modal-title" style="color:var(--cor-acerto);"></h2>
             <div id="modal-msg" style="margin: 20px 0; font-size: 1.2rem; color: #555;"></div>
             <button class="btn-play" onclick="location.reload()">RECOMEÇAR</button>
         </div>
@@ -200,7 +169,7 @@
     <script>
         let currentQuestion = 0, points = 0, seconds = 0, timerInterval;
         let currentCatKey = Object.keys(JOGO_CONFIG.categorias)[0];
-        let sessionItens = [], selectedCells = [], gridLetters = [], isDragging = false, tutorialActive = true;
+        let sessionItens = [], selectedCells = [], gridLetters = [], isDragging = false;
         const GRID_SIZE = 8;
 
         window.onload = () => {
@@ -214,7 +183,7 @@
             document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             setupRDMenu();
             updateIntro();
-
+            
             const container = document.getElementById('grid-container');
             container.addEventListener('pointerdown', startSelection);
             container.addEventListener('pointermove', moveSelection);
@@ -228,7 +197,7 @@
                 const cat = JOGO_CONFIG.categorias[key];
                 const item = document.createElement('div');
                 item.className = 'sidebar-item';
-                item.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + cat.img}"> <span>${cat.nome}</span>`;
+                item.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg + cat.img}" style="width:50px; height:50px;"> <span>${cat.nome}</span>`;
                 item.onclick = () => { currentCatKey = key; closeMenus(); updateIntro(); resetGame(); };
                 container.appendChild(item);
             });
@@ -237,7 +206,35 @@
         function updateIntro() {
             const cat = JOGO_CONFIG.categorias[currentCatKey];
             document.getElementById('intro-cat-title').innerText = cat.nome;
-            document.getElementById('intro-cat-img').src = JOGO_CONFIG.caminhoImg + cat.img;
+            const area = document.getElementById('tutorial-area');
+            area.innerHTML = '';
+
+            // Se for Sopa de Letras (Animais/Frutos/Material)
+            if (currentCatKey !== 'ordenar') {
+                area.innerHTML = `
+                    <p style="color:#5EAAEA; font-weight:bold; margin-bottom:10px;">Encontra a palavra:</p>
+                    <img src="${JOGO_CONFIG.caminhoImg}animaisdomesticos/gato.png" style="height:60px;">
+                    <div class="tutorial-grid">
+                        <div class="t-cell" style="animation: highlightLetter 2s infinite 0.2s">G</div>
+                        <div class="t-cell" style="animation: highlightLetter 2s infinite 0.4s">A</div>
+                        <div class="t-cell" style="animation: highlightLetter 2s infinite 0.6s">T</div>
+                        <div class="t-cell" style="animation: highlightLetter 2s infinite 0.8s">O</div>
+                    </div>
+                `;
+            } else {
+                // Se for Ordenar Sílabas
+                area.innerHTML = `
+                    <p style="color:#5EAAEA; font-weight:bold; margin-bottom:10px;">Ordena as sílabas:</p>
+                    <div style="display:flex; gap:10px; margin-bottom:15px;">
+                        <div class="t-cell" style="border-style:dashed;"></div>
+                        <div class="t-cell" style="border-style:dashed;"></div>
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <div class="t-syllable" style="animation: moveSyllable 2s infinite">VA</div>
+                        <div class="t-syllable" style="animation: moveSyllable 2s infinite 1s">CA</div>
+                    </div>
+                `;
+            }
         }
 
         function startGame() {
@@ -253,21 +250,6 @@
             document.getElementById('round-word').innerText = item.nome;
             generateGrid(item.nome);
             selectedCells = [];
-            if(currentQuestion === 0 && tutorialActive) showTutorial();
-        }
-
-        function showTutorial() {
-            const hand = document.getElementById('tutorial-hand');
-            hand.style.display = 'block';
-            hand.style.animation = 'handGuide 2s infinite ease-in-out';
-            // Posição aproximada na grelha
-            hand.style.top = '60%';
-            hand.style.left = '35%';
-        }
-
-        function stopTutorial() {
-            tutorialActive = false;
-            document.getElementById('tutorial-hand').style.display = 'none';
         }
 
         function generateGrid(word) {
@@ -299,7 +281,6 @@
         }
 
         function startSelection(e) {
-            if(tutorialActive) stopTutorial();
             const cell = e.target.closest('.letter-cell');
             if (!cell || cell.classList.contains('found')) return;
             isDragging = true;
@@ -385,7 +366,7 @@
         }
 
         function resetGame() {
-            currentQuestion = 0; points = 0; seconds = 0; tutorialActive = true;
+            currentQuestion = 0; points = 0; seconds = 0;
             clearInterval(timerInterval);
             document.getElementById('intro-screen').classList.add('active');
             document.getElementById('game-screen').classList.remove('active');
