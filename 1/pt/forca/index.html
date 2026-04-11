@@ -57,22 +57,17 @@
 
         .play-zone { flex: 1; display: flex; width: 100%; overflow: hidden; gap: 15px; padding-top: 5px; }
         
-        /* PALCO DO BALÃO À ESQUERDA */
         .stage-side { flex: 1; position: relative; background: #f0f8ff; border-radius: 20px; overflow: hidden; display: flex; justify-content: center; border: 2px solid #eef; }
-        
-        /* Balão Responsivo: Diminui em ecrãs pequenos */
-        .balloon-unit { position: absolute; bottom: 5px; transition: bottom 0.8s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; width: clamp(90px, 18vw, 155px); }
+        .balloon-unit { position: absolute; bottom: 5px; transition: bottom 0.8s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; width: clamp(100px, 20vw, 160px); }
         .balloon-img { width: 100%; height: auto; z-index: 1; }
         
-        /* SACOS DE AREIA: 18px do fundo da unidade */
         .bags-container { position: absolute; bottom: 18px; display: flex; justify-content: center; gap: 3px; width: 100%; z-index: 2; }
-        .bag-img { width: clamp(10px, 2vw, 16px); height: auto; object-fit: contain; }
+        .bag-img { width: clamp(12px, 2vw, 17px); height: auto; object-fit: contain; }
         .bag-img.fall { animation: fall 1s forwards; }
 
-        /* TECLADO À DIREITA */
         .keyboard-side { flex: 1.3; display: flex; align-items: center; justify-content: center; }
         .keyboard { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 100%; }
-        .key { background: white; border: 2px solid #ddd; border-radius: 8px; height: 45px; font-family: inherit; font-size: clamp(0.85rem, 1.8vw, 1.15rem); font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #ddd; transition: 0.1s; display: flex; align-items: center; justify-content: center; }
+        .key { background: white; border: 2px solid #ddd; border-radius: 8px; height: 45px; font-family: inherit; font-size: clamp(0.9rem, 1.8vw, 1.2rem); font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #ddd; transition: 0.1s; display: flex; align-items: center; justify-content: center; }
         .key:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #ddd; }
         .key.correct { background: var(--cor-acerto); color: white; border-color: #26b963; box-shadow: 0 4px 0 #26b963; }
         .key.wrong { background: #eee; color: #bbb; border-color: #ddd; box-shadow: none; pointer-events: none; }
@@ -87,9 +82,9 @@
             .keyboard { grid-template-columns: repeat(6, 1fr); gap: 4px; }
             .key { height: 38px; }
             .play-zone { flex-direction: column; }
-            .stage-side { flex: 0.7; min-height: 160px;}
-            .letter-slot { width: 20px; height: 30px; font-size: 1.2rem; }
-            .balloon-unit { width: 100px; }
+            .stage-side { flex: 0.7; min-height: 180px;}
+            .letter-slot { width: 22px; height: 32px; font-size: 1.3rem; }
+            .balloon-unit { width: 110px; }
         }
     </style>
 </head>
@@ -121,7 +116,7 @@
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
                     <img id="intro-img" src="" style="width:130px; margin-bottom:20px; object-fit:contain;">
                     <h2 id="intro-cat-title" style="color:var(--cor-azul-tema); font-size:1.8rem;"></h2>
-                    <p style="color:#666;">Cuidado! Se errares, o balão sobe!</p>
+                    <p style="color:#666;">Adivinha as letras para o balão não voar!</p>
                 </div>
                 <div style="display:flex; gap:15px; width:100%; border-top: 2px dashed #eee; padding-top:15px;">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
@@ -143,7 +138,7 @@
                 </div>
                 
                 <div class="play-zone">
-                    <div class="stage-side" id="stage-area">
+                    <div class="stage-side">
                         <div id="balloon-unit" class="balloon-unit">
                             <img id="img-balao" src="" class="balloon-img">
                             <div id="bags-container" class="bags-container"></div>
@@ -188,7 +183,7 @@
             container.innerHTML = '';
             Object.keys(JOGO_CONFIG.categorias).forEach(key => {
                 const cat = JOGO_CONFIG.categorias[key];
-                container.innerHTML += `<div class="rd-item" onclick="currentCatKey='${key}'; closeMenus(); updateIntro(); resetGame();"><img src="${JOGO_CONFIG.caminhoCat + cat.img}"> <span style="font-size:0.7rem; font-weight:bold;">${cat.nome}</span></div>`;
+                container.innerHTML += `<div class="rd-item" onclick="currentCatKey='${key}'; closeMenus(); updateIntro(); resetGame();"><img src="${JOGO_CONFIG.caminhoCat + cat.img}"> <span style="font-size:0.75rem; font-weight:bold;">${cat.nome}</span></div>`;
             });
         }
 
@@ -290,20 +285,13 @@
             points = Math.max(0, points - 10);
             document.getElementById('points').innerText = points;
 
-            const stage = document.getElementById('stage-area');
             const unit = document.getElementById('balloon-unit');
-            
-            // Lógica: Subir metade do espaço que resta até ao topo do contentor azul
-            let stageHeight = stage.offsetHeight;
-            let balloonHeight = unit.offsetHeight;
-            let availableSpace = stageHeight - balloonHeight - currentBottom;
-            
-            currentBottom += (availableSpace / 2);
+            currentBottom += 30; // SOBE FIXO 30PX
             unit.style.bottom = currentBottom + "px";
 
             if(mistakes >= maxMistakes) {
                 unit.style.transition = "bottom 2s ease-in, opacity 1s";
-                unit.style.bottom = (stageHeight + 500) + "px";
+                unit.style.bottom = "800px";
                 unit.style.opacity = "0";
                 setTimeout(() => endGame(false), 1200);
             }
@@ -341,7 +329,7 @@
             } else {
                 title.innerText = "OOPS!";
                 title.style.color = "var(--cor-erro)";
-                msg.innerHTML = `O balão fugiu!<br>A palavra era: <b>${currentWord}</b>`;
+                msg.innerHTML = `O balão voou!<br>A palavra era: <b>${currentWord}</b>`;
             }
         }
 
