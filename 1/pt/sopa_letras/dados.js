@@ -38,7 +38,7 @@ const JOGO_CONFIG = {
         },
         material: {
             nome: "Material Escolar",
-            img: "materialescolar/mochila.png",
+            img: "materialescolar/afia.png",
             itens: [
                 { nome: "MOCHILA", img: "materialescolar/mochila.png" },
                 { nome: "TESOURA", img: "materialescolar/tesoura.png" },
