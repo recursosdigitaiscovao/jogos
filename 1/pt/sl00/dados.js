@@ -1,7 +1,7 @@
 const JOGO_CONFIG = {
     caminhoImg: "../../../img/",
     caminhoIcons: "../../../icons/",
-    caminhoCat: "../../../imgcategorias/", // Pasta das categorias corrigida
+    caminhoCat: "../../../imgcategorias/", // Pasta das categorias
     iconesMenu: { 
         pre: "iconpre.png", 
         ano1: "icon1.png", 
