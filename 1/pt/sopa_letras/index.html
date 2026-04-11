@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sopa de Letras - 1º Ano</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -21,7 +21,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo-pagina); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
         /* Navegação */
@@ -33,56 +33,70 @@
         .sidebar.active { left: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 12px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; transition: 0.3s; font-weight: 500; cursor: pointer; }
         .sidebar-item:hover { background-color: var(--cor-azul-tema); color: white !important; }
-        .sidebar-item img { width: 24px; height: 24px; object-fit: contain; margin-right: 12px; }
-
         .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
         .sidebar-rd.active { bottom: 0; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* Área de Conteúdo (Template Original) */
+        /* Template Original com Padding Lateral de 5px */
         .main-content { flex: 1; padding: 10px 15px 5px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.5s ease-out; }
         .screen.active { display: flex; }
 
-        .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 15px 20px 10px 20px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; position: relative; }
+        .game-card { 
+            background: var(--cor-fundo-card); 
+            border-radius: 30px; 
+            padding: 15px 5px 10px 5px; /* 5px nas laterais como pedido */
+            border: 4px solid var(--cor-azul-tema); 
+            display: flex; 
+            flex-direction: column; 
+            width: 100%; 
+            max-width: 900px; 
+            height: 100%; 
+            box-sizing: border-box; 
+            position: relative; 
+        }
         
-        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; font-size: 0.9rem; margin-bottom: 5px; border-bottom: 1px solid #eee; }
+        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; font-size: 0.9rem; margin-bottom: 5px; border-bottom: 1px solid #eee; width: 100%; box-sizing: border-box; }
 
-        /* Grelha Sopa de Letras - Cores ajustadas */
+        /* Grelha Sopa de Letras */
         .word-search-container { 
             display: grid; 
             grid-template-columns: repeat(8, 1fr); 
-            gap: 6px; 
-            background: var(--cor-azul-tema); /* Fundo igual ao limite do card */
-            padding: 10px; 
+            gap: 5px; 
+            background: var(--cor-azul-tema); 
+            padding: 8px; 
             border-radius: 15px; 
-            margin-top: 15px; /* Padding/Espaço da palavra para a grelha */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-top: 15px; /* Padding da palavra para a grelha */
+            width: 100%;
+            max-width: 450px;
+            box-sizing: border-box;
+            touch-action: none; /* Importante para o arrastar não fazer scroll */
         }
         .letter-cell {
             aspect-ratio: 1;
             background: white;
-            border-radius: 8px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.6rem;
-            font-weight: 400; /* Letras sem negrito */
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+            font-weight: 400; /* Sem negrito */
             cursor: pointer;
             color: #333;
-            transition: 0.2s;
+            transition: background 0.2s;
+            user-select: none;
         }
-        .letter-cell.selected { background: var(--cor-principal); color: white; transform: scale(0.95); }
+        .letter-cell.selected { background: var(--cor-principal); color: white; }
         .letter-cell.found { background: var(--cor-acerto); color: white; }
 
-        /* Elementos Visuais */
-        .img-display { height: 100px; object-fit: contain; filter: drop-shadow(3px 3px 5px rgba(0,0,0,0.1)); }
-        .word-hint { font-size: 2rem; font-weight: 900; color: #333; letter-spacing: 5px; margin: 10px 0; }
+        /* Estética das Dicas */
+        .img-display { height: 80px; max-width: 150px; object-fit: contain; }
+        .word-hint { font-size: 1.8rem; font-weight: 900; color: #333; letter-spacing: 4px; margin-top: 5px; }
 
-        /* Botões e Modal */
+        /* Botões e Modais */
         .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 16px; border-radius: 20px; cursor: pointer; flex: 1; font-family: 'Fredoka'; box-shadow: 0 5px 0 #4a96d1; transition: 0.2s; }
-        .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-rd-ui { background: transparent; border: none; cursor: pointer; }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; box-sizing: border-box; }
         .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 30px 20px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: fadeIn 0.4s ease-out; box-sizing: border-box; }
@@ -95,7 +109,6 @@
     <audio id="audio-acerto" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
     <audio id="audio-erro" src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"></audio>
     
-    <!-- Menu lateral -->
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
@@ -106,7 +119,6 @@
         <a href="/jogos/1" class="sidebar-item"><img class="menu-1" src=""> 1º Ano</a>
     </div>
 
-    <!-- Menu de Categorias -->
     <div class="sidebar-rd" id="sidebar-rd">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <h3 style="margin:0; color:var(--cor-azul-tema);">Escolhe o Jogo</h3>
@@ -125,12 +137,11 @@
     </header>
 
     <main class="main-content">
-        <!-- Ecrã Inicial -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                    <img id="intro-cat-img" src="" style="max-height: 180px;">
-                    <h2 id="intro-cat-title" style="color:var(--cor-azul-tema); font-size:2.2rem; margin:15px 0;"></h2>
+                    <img id="intro-cat-img" src="" style="max-height: 150px;">
+                    <h2 id="intro-cat-title" style="color:var(--cor-azul-tema); font-size:2rem; margin:15px 0;"></h2>
                 </div>
                 <div style="display:flex; gap:15px; width:100%; border-top: 2px dashed #eee; padding-top:15px;">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
@@ -141,7 +152,6 @@
             </div>
         </section>
 
-        <!-- Ecrã de Jogo -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="game-top-bar">
@@ -149,11 +159,11 @@
                     <div id="stars-bar" style="display:flex; gap:6px;"></div>
                     <div style="display:flex; align-items:center; gap:12px;">
                         PTS: <span id="points">0</span>
-                        <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:30px;"></button>
+                        <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:28px;"></button>
                     </div>
                 </div>
 
-                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; width: 100%;">
                     <img id="round-img" class="img-display" src="">
                     <div id="round-word" class="word-hint"></div>
                     <div id="grid-container" class="word-search-container"></div>
@@ -162,7 +172,6 @@
         </section>
     </main>
 
-    <!-- Modal Feedback -->
     <div class="modal" id="modal">
         <div class="modal-card">
             <h2 id="modal-title" style="color:var(--cor-acerto);">MUITO BEM!</h2>
@@ -178,6 +187,7 @@
         let sessionItens = [];
         let selectedCells = [];
         let gridLetters = [];
+        let isDragging = false;
         const GRID_SIZE = 8;
 
         window.onload = () => {
@@ -188,6 +198,12 @@
             document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             setupRDMenu();
             updateIntro();
+
+            // Eventos para arrastar (Mouse e Touch)
+            const container = document.getElementById('grid-container');
+            container.addEventListener('pointerdown', startSelection);
+            container.addEventListener('pointermove', moveSelection);
+            window.addEventListener('pointerup', endSelection);
         };
 
         function setupRDMenu() {
@@ -223,7 +239,7 @@
             bar.innerHTML = '';
             for(let i=0; i<5; i++) {
                 const dot = document.createElement('div');
-                dot.style = "width:18px; height:18px; border:2px solid #ddd; border-radius:50%;";
+                dot.style = "width:15px; height:15px; border:2px solid #ddd; border-radius:50%;";
                 bar.appendChild(dot);
             }
         }
@@ -263,54 +279,83 @@
                 const div = document.createElement('div');
                 div.className = 'letter-cell';
                 div.innerText = l;
-                div.onclick = () => selectLetter(i);
+                div.dataset.index = i;
                 container.appendChild(div);
             });
         }
 
-        function selectLetter(idx) {
+        // --- LÓGICA DE SELEÇÃO DUPLA ---
+
+        function startSelection(e) {
+            const cell = e.target.closest('.letter-cell');
+            if (!cell || cell.classList.contains('found')) return;
+            
+            isDragging = true;
+            toggleSelection(parseInt(cell.dataset.index));
+        }
+
+        function moveSelection(e) {
+            if (!isDragging) return;
+            const target = document.elementFromPoint(e.clientX, e.clientY);
+            const cell = target ? target.closest('.letter-cell') : null;
+            
+            if (cell && !cell.classList.contains('found')) {
+                const idx = parseInt(cell.dataset.index);
+                if (!selectedCells.includes(idx)) {
+                    toggleSelection(idx);
+                }
+            }
+        }
+
+        function endSelection() {
+            if (isDragging) {
+                isDragging = false;
+                checkWord();
+            }
+        }
+
+        function toggleSelection(idx) {
             const cells = document.querySelectorAll('.letter-cell');
             const cell = cells[idx];
-            if (cell.classList.contains('found')) return;
-
-            if (cell.classList.contains('selected')) {
+            
+            if (selectedCells.includes(idx)) {
                 cell.classList.remove('selected');
                 selectedCells = selectedCells.filter(i => i !== idx);
             } else {
                 cell.classList.add('selected');
                 selectedCells.push(idx);
             }
-            checkWord();
         }
 
         function checkWord() {
             const targetWord = sessionItens[currentQuestion].nome;
+            // Pegamos as letras na ordem em que foram selecionadas
             const currentString = selectedCells.map(idx => gridLetters[idx]).join('');
+            const reversed = targetWord.split('').reverse().join('');
             
-            if (currentString.length === targetWord.length) {
-                const reversed = targetWord.split('').reverse().join('');
-                if (currentString === targetWord || currentString === reversed) {
-                    document.getElementById('audio-acerto').play();
-                    selectedCells.forEach(idx => {
-                        const cell = document.querySelectorAll('.letter-cell')[idx];
-                        cell.classList.replace('selected', 'found');
-                    });
-                    points++;
-                    document.getElementById('points').innerText = points;
-                    updateStars();
-                    
-                    setTimeout(() => {
-                        currentQuestion++;
-                        if (currentQuestion < 5) loadRound();
-                        else endGame();
-                    }, 600);
-                } else {
-                    document.getElementById('audio-erro').play();
-                    setTimeout(() => {
-                        document.querySelectorAll('.letter-cell').forEach(c => c.classList.remove('selected'));
-                        selectedCells = [];
-                    }, 300);
-                }
+            if (currentString === targetWord || currentString === reversed) {
+                document.getElementById('audio-acerto').play();
+                selectedCells.forEach(idx => {
+                    const cell = document.querySelectorAll('.letter-cell')[idx];
+                    cell.classList.remove('selected');
+                    cell.classList.add('found');
+                });
+                points++;
+                document.getElementById('points').innerText = points;
+                updateStars();
+                
+                setTimeout(() => {
+                    currentQuestion++;
+                    if (currentQuestion < 5) loadRound();
+                    else endGame();
+                }, 600);
+            } else if (selectedCells.length >= targetWord.length) {
+                // Se o tamanho já é igual ou maior e não acertou, limpa tudo
+                document.getElementById('audio-erro').play();
+                setTimeout(() => {
+                    document.querySelectorAll('.letter-cell').forEach(c => c.classList.remove('selected'));
+                    selectedCells = [];
+                }, 200);
             }
         }
 
