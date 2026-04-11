@@ -11,7 +11,7 @@ const JOGO_CONFIG = {
     categorias: {
         animais: {
             nome: "Animais Domésticos", 
-            img: "imgcategorias/gato.png",
+            img: "../../../imgcategorias/gato.png",
             itens: [
                 { letras: "CÃO", palavras: ["CÃO"] },
                 { letras: "GATO", palavras: ["GATO"] },
