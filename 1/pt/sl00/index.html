@@ -26,7 +26,7 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo-pagina); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* HEADER E NAVEGAÇÃO */
+        /* NAVEGAÇÃO */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; box-shadow: 0 3px 0 #e68200; }
         
@@ -49,33 +49,31 @@
         .screen.active { display: flex; }
         .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 10px 5px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; position: relative; }
 
-        /* TOP BAR */
         .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; font-size: 0.9rem; border-bottom: 1px solid #eee; width: 100%; box-sizing: border-box; }
-        .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        /* TUTORIAL INICIAL */
+        /* TUTORIAL */
         .explanation-box { background: var(--cor-fundo-pagina); border-radius: 20px; flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed var(--cor-azul-tema); margin-bottom: 10px; }
         .t-wheel-demo { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #ddd; position: relative; }
-        .t-dot { position: absolute; width: 30px; height: 30px; background: white; border: 2px solid var(--cor-azul-tema); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 900; transform: translate(-50%, -50%); }
+        .t-dot { position: absolute; width: 28px; height: 28px; background: white; border: 2px solid var(--cor-azul-tema); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 900; transform: translate(-50%, -50%); }
 
-        /* GRID DE RESPOSTA */
+        /* GRID RESPOSTA */
         .grid-answer { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
         .word-row { display: flex; gap: 4px; }
         .box { width: 42px; height: 42px; border: 2px solid #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900; background: #f9f9f9; text-transform: uppercase; }
         .box.filled { background: var(--cor-acerto); color: white; border-color: var(--cor-acerto); }
 
-        /* DISPLAY DA PALAVRA ATUAL */
         .current-word-display { height: 38px; min-width: 120px; background: var(--cor-principal); color: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 900; margin-bottom: 10px; opacity: 0; }
         .current-word-display.visible { opacity: 1; }
 
-        /* RODA DE LETRAS */
+        /* RODA */
         .letter-wheel { position: relative; width: 220px; height: 220px; background: #f8f8f8; border-radius: 50%; border: 6px solid #eee; margin-bottom: 10px; touch-action: none; }
         .wheel-letter { position: absolute; width: 48px; height: 48px; background: white; border: 2px solid var(--cor-azul-tema); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 400; transform: translate(-50%, -50%); z-index: 5; text-transform: uppercase; }
         .wheel-letter.active { background: var(--cor-principal); color: white; border-color: white; }
         #connection-canvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 2; }
 
-        /* BOTÕES E MODAL */
         .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 16px; border-radius: 20px; cursor: pointer; flex: 1; box-shadow: 0 5px 0 #4a96d1; }
+        .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
         .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 30px 20px; width: 100%; max-width: 350px; text-align: center; box-sizing: border-box; }
     </style>
@@ -138,9 +136,7 @@
                         </button>
                     </div>
                 </div>
-
                 <div class="grid-answer" id="grid-answer"></div>
-
                 <div style="display:flex; flex-direction:column; align-items:center; flex-shrink:0;">
                     <div id="current-word-display" class="current-word-display"></div>
                     <div class="letter-wheel" id="letter-wheel">
@@ -199,14 +195,13 @@
         function updateIntro() {
             const cat = JOGO_CONFIG.categorias[currentCatKey];
             document.getElementById('intro-cat-title').innerText = cat.nome;
-            const area = document.getElementById('tutorial-area');
-            area.innerHTML = `
+            document.getElementById('tutorial-area').innerHTML = `
                 <p style="color:var(--cor-azul-tema); font-weight:bold;">Liga as letras:</p>
                 <div class="t-wheel-demo">
-                    <div class="t-dot" style="top:20%; left:50%; animation: highlightLetter 2s infinite 0.2s">M</div>
-                    <div class="t-dot" style="top:70%; left:20%; animation: highlightLetter 2s infinite 0.4s">A</div>
-                    <div class="t-dot" style="top:70%; left:80%; animation: highlightLetter 2s infinite 0.6s">Ç</div>
-                    <div class="t-dot" style="top:30%; left:10%; animation: highlightLetter 2s infinite 0.8s">Ã</div>
+                    <div class="t-dot" style="top:20%; left:50%; animation: highlightLetter 2.5s infinite 0.2s">M</div>
+                    <div class="t-dot" style="top:70%; left:20%; animation: highlightLetter 2.5s infinite 0.4s">A</div>
+                    <div class="t-dot" style="top:70%; left:80%; animation: highlightLetter 2.5s infinite 0.6s">Ç</div>
+                    <div class="t-dot" style="top:30%; left:10%; animation: highlightLetter 2.5s infinite 0.8s">Ã</div>
                 </div>`;
         }
 
@@ -262,8 +257,7 @@
                 const div = document.createElement('div');
                 div.className = 'wheel-letter';
                 div.innerText = char;
-                div.style.left = x + 'px';
-                div.style.top = y + 'px';
+                div.style.left = x + 'px'; div.style.top = y + 'px';
                 div.dataset.index = i;
                 wheel.appendChild(div);
             });
@@ -318,8 +312,7 @@
             if(selectedLettersIndices.length < 2) return;
             ctx.beginPath();
             ctx.strokeStyle = '#FF9100';
-            ctx.lineWidth = 8;
-            ctx.lineCap = 'round';
+            ctx.lineWidth = 8; ctx.lineCap = 'round';
             selectedLettersIndices.forEach((idx, i) => {
                 const l = letters[idx];
                 const x = parseFloat(l.style.left), y = parseFloat(l.style.top);
@@ -364,7 +357,7 @@
             document.getElementById('modal').style.display = 'flex';
         }
 
-        function resetGame() { location.reload(); }
+        function resetGame() { currentQuestion = 0; points = 0; seconds = 0; clearInterval(timerInterval); document.getElementById('intro-screen').classList.add('active'); document.getElementById('game-screen').classList.remove('active'); document.getElementById('modal').style.display = 'none'; }
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
