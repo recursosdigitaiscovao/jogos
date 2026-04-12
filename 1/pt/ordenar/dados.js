@@ -1,7 +1,7 @@
 const JOGO_CONFIG = {
-    caminhoImg: "../../../img/",         // Caminho para imagens gerais (ex: rd.png)
-    caminhoIcons: "../../../icons/",     // Caminho para ícones do sistema
-    caminhoCat: "../../../imgategorias/",     // Caminho para imagens das categorias
+    caminhoImg: "../../../img/",         
+    caminhoIcons: "../../../icons/",     
+    caminhoCat: "../../../img/cat/",     
 
     iconesMenu: { 
         pre: "iconpre.png", 
@@ -9,13 +9,18 @@ const JOGO_CONFIG = {
         ano2: "icon2.png", 
         ano3: "icon3.png", 
         ano4: "icon4.png" 
+    },
+    
+    relatorio: {
+        pontosTotal: "Livros Ordenados:",
+        tempoTotal: "Tempo na Biblioteca:"
     }
 };
 
 const JOGO_ORDEM_DATA = {
     categorias: {
         letras: { 
-            nome: 'Letras do Alfabeto', 
+            nome: 'Páginas Soltas (Letras)', 
             img: 'cat_letras.png', 
             niveis: [ 
                 { n: 1, qtd: 6, tipo: 'seq', titulo: 'Letras Seguidas' }, 
@@ -23,45 +28,27 @@ const JOGO_ORDEM_DATA = {
             ] 
         },
         mesma: { 
-            nome: 'Mesma Letra Inicial', 
+            nome: 'Secções do Dicionário', 
             img: 'cat_mesma.png', 
             niveis: [ 
-                { n: 1, qtd: 6, tipo: 'mesma', titulo: '6 Palavras' }, 
-                { n: 2, qtd: 9, tipo: 'mesma', titulo: '9 Palavras' } 
+                { n: 1, qtd: 6, tipo: 'mesma', titulo: 'Mesma Letra Inicial' }
             ] 
         },
         mix: { 
-            nome: 'Tudo Misturado', 
+            nome: 'Biblioteca em Caos', 
             img: 'cat_mix.png', 
             niveis: [ 
-                { n: 1, qtd: 6, tipo: 'mix', titulo: '6 Palavras' }, 
-                { n: 2, qtd: 9, tipo: 'mix', titulo: '9 Palavras' } 
+                { n: 1, qtd: 6, tipo: 'mix', titulo: 'Desafio Total' } 
             ] 
         }
     },
-
-    banco: {
-        A: ["Abelha", "Abacaxi", "Anel", "Aranha", "Avião", "Alface", "Anta", "Amora", "Agulha", "Avestruz"],
-        B: ["Baleia", "Bola", "Boneca", "Bota", "Banana", "Bigode", "Barco", "Biscoito", "Bule", "Bexiga"],
-        C: ["Cachorro", "Cama", "Caneta", "Carro", "Casa", "Cavalo", "Cebola", "Cenoura", "Coelho", "Cabide"],
-        D: ["Dado", "Dedo", "Dente", "Dominó", "Doce", "Dinossauro", "Diamante", "Degrau"],
-        E: ["Esquilo", "Escola", "Escova", "Estrela", "Elefante", "Espelho", "Esmalte", "Escada"],
-        F: ["Foca", "Faca", "Fada", "Feijão", "Foguete", "Folha", "Formiga", "Fivela"],
-        G: ["Gato", "Galo", "Goiaba", "Girafa", "Gelo", "Gaveta", "Gaita", "Galinha"],
-        H: ["Hipopótamo", "Hiena", "Hélice", "Harpa", "Horta", "Hotel", "Homem"],
-        I: ["Igreja", "Ioiô", "Ilha", "Ímã", "Iguana", "Inverno", "Iogurte"],
-        J: ["Joaninha", "Jacaré", "Janela", "Jipe", "Jabuti", "Jaca", "Jarro", "Jogo"],
-        L: ["Leão", "Lápis", "Leite", "Limão", "Livro", "Lobo", "Lua", "Luva"],
-        M: ["Macaco", "Maçã", "Mala", "Meia", "Milho", "Mola", "Muro", "Morango"],
-        N: ["Navio", "Nuvem", "Ninho", "Noite", "Novelo", "Nariz", "Natal"],
-        O: ["Olho", "Ovo", "Ovelha", "Onça", "Orelha", "Ônibus", "Ouro", "Osso"],
-        P: ["Pato", "Peixe", "Pera", "Pipa", "Porco", "Pudim", "Porta", "Pena"],
-        Q: ["Queijo", "Quadro", "Quiabo", "Quati", "Queixo", "Quinta"],
-        R: ["Rato", "Rede", "Relógio", "Roda", "Rua", "Régua", "Raposa"],
-        S: ["Sapo", "Selo", "Sino", "Sofa", "Suco", "Sereia", "Sacola"],
-        T: ["Tatu", "Teia", "Tigre", "Tomate", "Trem", "Tucano", "Tubarão", "Teclado"],
-        U: ["Uva", "Urubu", "Urso", "Umbigo", "Unha"],
-        V: ["Vaca", "Vela", "Vinho", "Violão", "Vovó", "Vaso", "Vagalume"],
-        Z: ["Zebra", "Zangão", "Zíper", "Zebu", "Zero"]
-    }
+    // Banco focado em palavras com a mesma inicial para a Categoria 2
+    bancoMesma: {
+        C: ["Cama", "Caneta", "Carro", "Casa", "Cavalo", "Copo", "Cebola", "Coelho"],
+        M: ["Mala", "Maçã", "Mesa", "Meia", "Milho", "Mola", "Muro", "Moeda"],
+        B: ["Bala", "Baleia", "Barco", "Batom", "Bexiga", "Bico", "Bolo", "Bule"],
+        P: ["Papa", "Pato", "Pena", "Pera", "Pipa", "Poço", "Pulo", "Pudim"],
+        A: ["Abacate", "Abacaxi", "Abelha", "Agulha", "Anel", "Anta", "Aranha", "Avião"]
+    },
+    bancoGeral: ["Zebra", "Dado", "Foca", "Gato", "Hipopótamo", "Ilha", "Joaninha", "Lua", "Nuvem", "Ovelha", "Rato", "Sapo", "Tatu", "Uva", "Vaca"]
 };
