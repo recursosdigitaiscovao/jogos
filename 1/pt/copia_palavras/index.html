@@ -49,14 +49,16 @@
         .dot.active { border-color: var(--cor-azul-tema); transform: scale(1.1); }
         .dot.checked { background: var(--cor-acerto); border-color: var(--cor-acerto); color: white; }
 
-        .game-top-bar { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; font-size: 0.9rem; border-bottom: 1px solid #eee; width: 100%; flex-shrink: 0; }
+        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; font-size: 0.9rem; border-bottom: 1px solid #eee; width: 100%; flex-shrink: 0; }
         
-        /* Ajuste do Timer Vertical */
         .timer-col { display: flex; flex-direction: column; align-items: center; line-height: 1; min-width: 50px; }
         .timer-icon { font-size: 1.2rem; margin-bottom: 4px; }
         #timer { font-weight: bold; font-size: 0.8rem; color: #666; }
 
-        .points-col { display: flex; flex-direction: column; align-items: center; gap: 4px; line-height: 1; }
+        /* Ajuste solicitado: Pontos na mesma linha */
+        .points-col { display: flex; align-items: center; gap: 5px; background: #f0f7ff; padding: 5px 12px; border-radius: 15px; border: 1px solid #e0eefd; }
+        .pts-label { font-weight: bold; color: #888; font-size: 0.75rem; }
+        #points { font-weight: bold; font-size: 1.1rem; color: var(--cor-azul-tema); }
 
         .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; gap: 10px; overflow: hidden; }
         
@@ -71,11 +73,15 @@
         .input-field.correct { border-color: var(--cor-acerto) !important; background: #eaffed; color: var(--cor-acerto); }
         .input-field.wrong { border-color: var(--cor-erro) !important; background: #fff0f0; color: var(--cor-erro); }
 
-        .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.4rem; font-weight: bold; padding: 16px; border-radius: 20px; cursor: pointer; flex: 1; box-shadow: 0 5px 0 #4a96d1; }
-        .btn-rd-ui { background: transparent; border: none; cursor: pointer; }
+        .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.2rem; font-weight: bold; padding: 14px; border-radius: 20px; cursor: pointer; flex: 1; box-shadow: 0 5px 0 #4a96d1; transition: 0.1s; }
+        .btn-play:active { transform: translateY(3px); box-shadow: 0 2px 0 #4a96d1; }
+        .btn-next { background: var(--cor-principal); box-shadow: 0 5px 0 #d37800; margin-top: 10px; }
+        .btn-next:active { box-shadow: 0 2px 0 #d37800; }
+        
+        .btn-rd-ui { background: transparent; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; }
 
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
-        .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 30px 20px; width: 100%; max-width: 350px; text-align: center; }
+        .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 25px; width: 100%; max-width: 350px; text-align: center; display: flex; flex-direction: column; gap: 10px; }
     </style>
 </head>
 <body>
@@ -127,7 +133,6 @@
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="game-top-bar">
-                    <!-- TIMER VERTICAL -->
                     <div class="timer-col">
                         <span class="timer-icon">⏳</span>
                         <span id="timer">00:00</span>
@@ -136,11 +141,11 @@
                     <div id="progress-dots" class="progress-container"></div>
                     
                     <div class="points-col">
-                        <div style="font-weight:bold; color:#666; font-size:0.75rem;">PTS</div>
-                        <div style="display:flex; align-items:center; gap:8px;">
-                            <span id="points" style="font-weight:bold; font-size:1rem;">0</span>
-                            <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:26px;"></button>
-                        </div>
+                        <span class="pts-label">PTS</span>
+                        <span id="points">0</span>
+                        <button class="btn-rd-ui" onclick="toggleRD()" style="margin-left:5px;">
+                            <img class="btn-rd-img-ref" src="" style="width:22px;">
+                        </button>
                     </div>
                 </div>
 
@@ -150,7 +155,7 @@
                     </div>
                     <div id="word-to-copy" class="word-hint">---</div>
                     <div class="input-box">
-                        <input type="text" id="game-input" class="input-field" placeholder="..." autocomplete="off" spellcheck="false">
+                        <input type="text" id="game-input" class="input-field" placeholder="..." autocomplete="off" border="none" spellcheck="false">
                     </div>
                 </div>
             </div>
@@ -159,9 +164,11 @@
 
     <div class="modal" id="modal">
         <div class="modal-card">
-            <h2 id="modal-title" style="color:var(--cor-acerto);">MUITO BEM!</h2>
-            <div id="modal-msg" style="margin: 20px 0; font-size: 1.2rem; color: #555;"></div>
+            <h2 id="modal-title" style="color:var(--cor-acerto); margin-bottom:0;">MUITO BEM!</h2>
+            <div id="modal-msg" style="margin: 10px 0; font-size: 1.1rem; color: #555;"></div>
+            
             <button class="btn-play" onclick="location.reload()">RECOMEÇAR</button>
+            <button class="btn-play btn-next" onclick="nextCategory()">PRÓXIMA CATEGORIA</button>
         </div>
     </div>
 
@@ -201,6 +208,14 @@
             resetGame();
         }
 
+        function nextCategory() {
+            const keys = Object.keys(JOGO_CONFIG.categorias);
+            const currentPos = keys.indexOf(currentCatKey);
+            const nextPos = (currentPos + 1) % keys.length;
+            changeCategory(keys[nextPos]);
+            document.getElementById('modal').style.display = 'none';
+        }
+
         function updateIntro() {
             const cat = JOGO_CONFIG.categorias[currentCatKey];
             document.getElementById('intro-cat-title').innerText = cat.nome;
@@ -212,6 +227,7 @@
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
             currentIdx = 0; points = 0; seconds = 0; currentLevel = 1;
+            document.getElementById('points').innerText = "0";
             initProgressDots();
             loadRound();
             startTimer();
@@ -277,6 +293,7 @@
         }
 
         function startTimer() { 
+            if(timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => { 
                 seconds++; 
                 document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; 
@@ -285,7 +302,7 @@
 
         function endGame() { 
             clearInterval(timerInterval); 
-            document.getElementById('modal-msg').innerHTML = `<p>${JOGO_CONFIG.relatorio.pontosTotal} <b>${points}</b></p><p>${JOGO_CONFIG.relatorio.tempoTotal} <b>${document.getElementById('timer').innerText}</b></p>`; 
+            document.getElementById('modal-msg').innerHTML = `<p style="margin:5px 0;">${JOGO_CONFIG.relatorio.pontosTotal} <b>${points}</b></p><p style="margin:5px 0;">${JOGO_CONFIG.relatorio.tempoTotal} <b>${document.getElementById('timer').innerText}</b></p>`; 
             document.getElementById('modal').style.display = 'flex'; 
         }
 
