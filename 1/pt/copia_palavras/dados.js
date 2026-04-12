@@ -36,7 +36,7 @@ const JOGO_CONFIG = {
             { palavra: "DEDO", img: "corpo/dedo.png" }, 
             { palavra: "DOCE", img: "comida/doce.png" }, 
             { palavra: "DENTE", img: "corpo/dente.png" }, 
-            { palavra: "DRAGÃO", img: "fantasia/dragao.png" }
+            { palavra: "DRAGÃO", img: "objetos/dragao.png" }
         ]}
         // Podes acrescentar E, F, G... aqui em baixo seguindo o mesmo padrão
     },
