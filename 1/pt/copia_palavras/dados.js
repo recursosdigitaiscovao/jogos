@@ -25,10 +25,10 @@ const JOGO_CONFIG = {
             { palavra: "BARCO", img: "transportes/barco.png" }
         ]},
         C: { nome: "Letra C", img: "letra_c.png", itens: [
-            { palavra: "CASA", img: "objetos/casa.png" }, 
+            { palavra: "CASA", img: "habitacao/casa.png" }, 
             { palavra: "CARRO", img: "transportes/carro.png" }, 
-            { palavra: "CAVALO", img: "animais_domesticos/cavalo.png" }, 
-            { palavra: "COELHO", img: "animais_domesticos/coelho.png" }, 
+            { palavra: "CAVALO", img: "animaisdomesticos/cavalo.png" }, 
+            { palavra: "COELHO", img: "animaisdomesticos/coelho.png" }, 
             { palavra: "CADERNO", img: "materialescolar/caderno.png" }
         ]},
         D: { nome: "Letra D", img: "letra_d.png", itens: [
