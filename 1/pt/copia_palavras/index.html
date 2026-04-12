@@ -49,7 +49,15 @@
         .dot.active { border-color: var(--cor-azul-tema); transform: scale(1.1); }
         .dot.checked { background: var(--cor-acerto); border-color: var(--cor-acerto); color: white; }
 
-        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; font-size: 0.9rem; border-bottom: 1px solid #eee; width: 100%; flex-shrink: 0; }
+        .game-top-bar { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; font-size: 0.9rem; border-bottom: 1px solid #eee; width: 100%; flex-shrink: 0; }
+        
+        /* Ajuste do Timer Vertical */
+        .timer-col { display: flex; flex-direction: column; align-items: center; line-height: 1; min-width: 50px; }
+        .timer-icon { font-size: 1.2rem; margin-bottom: 4px; }
+        #timer { font-weight: bold; font-size: 0.8rem; color: #666; }
+
+        .points-col { display: flex; flex-direction: column; align-items: center; gap: 4px; line-height: 1; }
+
         .game-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; gap: 10px; overflow: hidden; }
         
         .image-box { background: #fcfcfc; border-radius: 20px; padding: 10px; border: 2px dashed #ddd; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 260px; height: 160px; overflow: hidden; }
@@ -119,9 +127,21 @@
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="game-top-bar">
-                    <div>⏳ <span id="timer">00:00</span></div>
+                    <!-- TIMER VERTICAL -->
+                    <div class="timer-col">
+                        <span class="timer-icon">⏳</span>
+                        <span id="timer">00:00</span>
+                    </div>
+                    
                     <div id="progress-dots" class="progress-container"></div>
-                    <div style="display:flex; align-items:center; gap:10px;">PTS: <span id="points">0</span><button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:28px;"></button></div>
+                    
+                    <div class="points-col">
+                        <div style="font-weight:bold; color:#666; font-size:0.75rem;">PTS</div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span id="points" style="font-weight:bold; font-size:1rem;">0</span>
+                            <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:26px;"></button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="game-area">
@@ -150,7 +170,7 @@
         let currentIdx = 0, points = 0, seconds = 0, timerInterval;
         let currentCatKey = Object.keys(JOGO_CONFIG.categorias)[0];
         let sessionItens = []; 
-        let currentLevel = 1; // Controla se estamos no nível 1 ou 2
+        let currentLevel = 1;
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
@@ -188,12 +208,9 @@
         }
 
         function startGame() {
-            // Escolhemos 5 itens aleatórios para esta sessão
             sessionItens = [...JOGO_CONFIG.categorias[currentCatKey].itens].sort(() => Math.random() - 0.5).slice(0, 5);
-            
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            
             currentIdx = 0; points = 0; seconds = 0; currentLevel = 1;
             initProgressDots();
             loadRound();
@@ -213,16 +230,11 @@
             const imgEl = document.getElementById('game-item-img');
             imgEl.src = JOGO_CONFIG.caminhoImg + item.img;
             
-            // Lógica do Nível 2: Esconder imagem inicialmente
             if(currentLevel === 2) imgEl.classList.add('hidden');
             else imgEl.classList.remove('hidden');
 
             document.getElementById('word-to-copy').innerText = item.palavra;
-            
-            // Highlight na bola atual
-            document.querySelectorAll('.dot').forEach((d, i) => {
-                d.classList.toggle('active', i === currentIdx);
-            });
+            document.querySelectorAll('.dot').forEach((d, i) => { d.classList.toggle('active', i === currentIdx); });
 
             const input = document.getElementById('game-input');
             input.value = "";
@@ -243,11 +255,7 @@
                 input.disabled = true;
                 points += 100;
                 document.getElementById('points').innerText = points;
-                
-                // Mostrar imagem no nível 2 após acerto
                 if(currentLevel === 2) document.getElementById('game-item-img').classList.remove('hidden');
-                
-                // Marcar bola com check
                 document.getElementById(`dot-${currentIdx}`).classList.add('checked');
 
                 setTimeout(() => {
@@ -255,13 +263,11 @@
                         currentIdx++;
                         loadRound();
                     } else if (currentLevel === 1) {
-                        // Transição para Nível 2
                         currentLevel = 2;
                         currentIdx = 0;
-                        initProgressDots(); // Limpa as 5 bolas para o novo nível
+                        initProgressDots();
                         loadRound();
                     } else {
-                        // Fim do Nível 2 -> Fim do jogo
                         endGame();
                     }
                 }, 1000); 
