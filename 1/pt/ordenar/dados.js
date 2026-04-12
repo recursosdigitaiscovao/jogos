@@ -1,20 +1,10 @@
 const JOGO_CONFIG = {
-    caminhoImg: "../../../img/",         
+    caminhoImg: "../../../img/",         // Onde estão livro_a.png, livro_as.png, livro_f.png e rd.png
     caminhoIcons: "../../../icons/",     
     caminhoCat: "../../../img/cat/",     
 
-    iconesMenu: { 
-        pre: "iconpre.png", 
-        ano1: "icon1.png", 
-        ano2: "icon2.png", 
-        ano3: "icon3.png", 
-        ano4: "icon4.png" 
-    },
-    
-    relatorio: {
-        pontosTotal: "Livros Ordenados:",
-        tempoTotal: "Tempo na Biblioteca:"
-    }
+    iconesMenu: { pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png" },
+    relatorio: { pontosTotal: "Livros na Estante:", tempoTotal: "Tempo:" }
 };
 
 const JOGO_ORDEM_DATA = {
@@ -30,25 +20,17 @@ const JOGO_ORDEM_DATA = {
         mesma: { 
             nome: 'Secções do Dicionário', 
             img: 'cat_mesma.png', 
-            niveis: [ 
-                { n: 1, qtd: 6, tipo: 'mesma', titulo: 'Mesma Letra Inicial' }
-            ] 
+            niveis: [ { n: 1, qtd: 6, tipo: 'mesma', titulo: 'Mesma Letra Inicial' } ] 
         },
         mix: { 
             nome: 'Biblioteca em Caos', 
             img: 'cat_mix.png', 
-            niveis: [ 
-                { n: 1, qtd: 6, tipo: 'mix', titulo: 'Desafio Total' } 
-            ] 
+            niveis: [ { n: 1, qtd: 6, tipo: 'mix', titulo: 'Desafio Total' } ] 
         }
     },
-    // Banco focado em palavras com a mesma inicial para a Categoria 2
     bancoMesma: {
-        C: ["Cama", "Caneta", "Carro", "Casa", "Cavalo", "Copo", "Cebola", "Coelho"],
-        M: ["Mala", "Maçã", "Mesa", "Meia", "Milho", "Mola", "Muro", "Moeda"],
-        B: ["Bala", "Baleia", "Barco", "Batom", "Bexiga", "Bico", "Bolo", "Bule"],
-        P: ["Papa", "Pato", "Pena", "Pera", "Pipa", "Poço", "Pulo", "Pudim"],
-        A: ["Abacate", "Abacaxi", "Abelha", "Agulha", "Anel", "Anta", "Aranha", "Avião"]
+        C: ["Cama", "Caneta", "Carro", "Casa", "Cavalo", "Copo"],
+        M: ["Mala", "Maçã", "Mesa", "Meia", "Milho", "Mola"]
     },
-    bancoGeral: ["Zebra", "Dado", "Foca", "Gato", "Hipopótamo", "Ilha", "Joaninha", "Lua", "Nuvem", "Ovelha", "Rato", "Sapo", "Tatu", "Uva", "Vaca"]
+    bancoGeral: ["Zebra", "Dado", "Foca", "Gato", "Hipopótamo", "Lua"]
 };
