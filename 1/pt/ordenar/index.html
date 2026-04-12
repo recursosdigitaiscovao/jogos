@@ -19,37 +19,48 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo-pagina); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
+        /* NAV BAR & SIDEBARS */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-azul-tema); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; box-shadow: 0 3px 0 #4a96d1; }
         
+        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
+        .sidebar.active { left: 0; }
+        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-weight: 500; cursor: pointer; }
+        
+        .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 25px; box-sizing: border-box; }
+        .sidebar-rd.active { bottom: 0; }
+        .rd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; overflow-y: auto; height: 320px; margin-top: 5px; }
+        .rd-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; border-radius: 15px; cursor: pointer; text-align: center; background: #f8fbfd; border: 1px solid #eee; }
+        .rd-item img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 5px; }
+        
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
+        .overlay.active { display: block; }
+
         .main-content { flex: 1; padding: 10px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
         .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 15px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; }
 
+        /* TOP BAR */
         .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; font-size: 0.9rem; border-bottom: 1px solid #eee; width: 100%; flex-shrink: 0; }
+        .points-wrapper { display: flex; align-items: center; gap: 10px; }
+        .points-col { display: flex; align-items: center; gap: 5px; background: #f0f7ff; padding: 5px 12px; border-radius: 15px; border: 1px solid #e0eefd; font-weight: bold; color: var(--cor-azul-tema); }
+        .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; padding: 0; }
 
-        /* LAYOUT VERTICAL OTIMIZADO */
+        /* GAME SPLIT */
         .game-split { display: flex; flex: 1; width: 100%; gap: 10px; padding: 10px 0; overflow: hidden; }
         
-        /* Lado Esquerdo: Estante */
-        .slots-side { flex: 1; display: flex; flex-direction: column; gap: 5px; overflow: hidden; }
-        .slot-box { 
-            height: 65px; width: 100%; position: relative; 
-            display: flex; align-items: center; justify-content: center;
-        }
+        /* Estante (Lado Esquerdo) */
+        .slots-side { flex: 1; display: flex; flex-direction: column; gap: 5px; overflow: hidden; justify-content: center; }
+        .slot-box { height: 65px; position: relative; display: flex; align-items: center; justify-content: center; }
         .slot-bg-img { width: 100%; height: 100%; object-fit: contain; position: absolute; z-index: 1; pointer-events: none; }
-        .slot-content { position: relative; z-index: 2; font-weight: 900; text-transform: uppercase; font-size: clamp(1rem, 4vw, 1.4rem); color: #333; pointer-events: none; }
+        .slot-content { position: relative; z-index: 2; font-weight: 900; text-transform: uppercase; font-size: clamp(0.9rem, 3.5vw, 1.3rem); color: #333; pointer-events: none; text-align: center; width: 80%; }
 
-        /* Lado Direito: Mesa */
-        .pool-side { flex: 1; display: grid; grid-template-columns: 1fr; gap: 5px; align-content: start; overflow-y: auto; padding-left: 10px; border-left: 2px solid #f0f0f0; }
-        
-        .drag-book { 
-            height: 65px; position: relative; cursor: grab;
-            display: flex; align-items: center; justify-content: center;
-        }
+        /* Mesa (Lado Direito) */
+        .pool-side { flex: 1; display: grid; grid-template-columns: 1fr; gap: 5px; align-content: center; overflow-y: auto; padding-left: 10px; border-left: 2px solid #f0f0f0; }
+        .drag-book { height: 65px; position: relative; cursor: grab; display: flex; align-items: center; justify-content: center; }
         .drag-book img { width: 100%; height: 100%; object-fit: contain; position: absolute; }
-        .drag-book span { position: relative; z-index: 2; font-weight: 900; text-transform: uppercase; font-size: clamp(0.9rem, 3.5vw, 1.3rem); color: #333; }
+        .drag-book span { position: relative; z-index: 2; font-weight: 900; text-transform: uppercase; font-size: clamp(0.9rem, 3.5vw, 1.3rem); color: #333; text-align: center; width: 80%; }
         .drag-book.dragging { opacity: 0.3; }
 
         .footer-btns { display: flex; gap: 15px; width: 100%; border-top: 2px dashed #eee; padding-top: 10px; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -58,8 +69,28 @@
 </head>
 <body>
 
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+
+    <!-- SIDEBARS -->
+    <div class="sidebar" id="sidebar">
+        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: bold; color: var(--cor-principal);">BIBLIOTECA</span>
+            <button onclick="toggleMenu()" style="border:none; background:none; font-size: 20px;">✕</button>
+        </div>
+        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+        <a href="/jogos/1" class="sidebar-item"><img class="menu-1" src="" style="width:24px; margin-right:10px;"> 1º Ano</a>
+    </div>
+
+    <div class="sidebar-rd" id="sidebar-rd">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="margin:0; color:var(--cor-azul-tema);">Categorias</h3>
+            <button onclick="toggleRD()" style="border:none; background:none; font-size:24px;">✕</button>
+        </div>
+        <div id="categorias-list" class="rd-grid"></div>
+    </div>
+
     <header class="nav-bar">
-        <button onclick="location.reload()" style="background:none; border:none; font-size:26px; color:#5EAAEA; cursor:pointer;">☰</button>
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:#5EAAEA; cursor:pointer;">☰</button>
         <div style="display:flex; align-items:center; gap:10px;"><img id="header-icon" src="" style="height:32px;"><h1 style="font-size:1.1rem; color:#5EAAEA; margin: 0;">Biblioteca Mágica</h1></div>
         <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
@@ -71,10 +102,11 @@
                     <img id="intro-cat-img" src="" style="width:80px; margin-bottom:10px;">
                     <h2 id="intro-cat-title" style="color:var(--cor-azul-tema); margin: 0;"></h2>
                     <h1 style="color:var(--cor-principal); font-size:2rem; margin: 10px 0;">ORDEM ALFABÉTICA</h1>
-                    <p style="color:#666; max-width: 320px;">Organiza os livros na estante mágica!</p>
+                    <p style="color:#666; max-width: 320px;">Organiza os livros na estante!</p>
                 </div>
                 <div class="footer-btns">
                     <button class="btn-check" style="background:var(--cor-azul-tema); color:white; border-color:var(--cor-azul-tema); box-shadow:0 5px 0 #4a96d1; width:100%; font-size:1.4rem;" onclick="startGame()">JOGAR</button>
+                    <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:55px;"></button>
                 </div>
             </div>
         </section>
@@ -84,7 +116,10 @@
                 <div class="game-top-bar">
                     <div style="font-weight:bold; color:#666;">⏳ <span id="timer">00:00</span></div>
                     <div id="level-title" style="font-weight:bold; color:var(--cor-azul-tema); font-size:0.8rem;"></div>
-                    <div style="font-weight:bold; color:var(--cor-azul-tema);">PTS: <span id="points">0</span></div>
+                    <div class="points-wrapper">
+                        <div class="points-col">PTS: <span id="points">0</span></div>
+                        <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:26px;"></button>
+                    </div>
                 </div>
                 <div class="game-split">
                     <div id="slots-list" class="slots-side"></div>
@@ -111,8 +146,28 @@
 
         window.onload = () => {
             document.getElementById('header-icon').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1;
+            document.querySelectorAll('.menu-1').forEach(img => img.src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1);
+            document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
+            setupRDMenu();
             updateIntro();
         };
+
+        function setupRDMenu() {
+            const container = document.getElementById('categorias-list');
+            container.innerHTML = '';
+            Object.keys(JOGO_ORDEM_DATA.categorias).forEach(key => {
+                const cat = JOGO_ORDEM_DATA.categorias[key];
+                container.innerHTML += `<div class="rd-item" onclick="changeCategory('${key}')"><img src="${JOGO_CONFIG.caminhoCat + cat.img}" onerror="this.src='https://via.placeholder.com/50'"> <span>${cat.nome}</span></div>`;
+            });
+        }
+
+        function changeCategory(key) {
+            currentCatKey = key; currentLevelIdx = 0; closeMenus(); updateIntro();
+            document.getElementById('intro-screen').classList.add('active');
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('modal').style.display = 'none';
+            clearInterval(timerInterval);
+        }
 
         function updateIntro() {
             const cat = JOGO_ORDEM_DATA.categorias[currentCatKey];
@@ -123,15 +178,13 @@
         function startGame() {
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            loadLevel();
-            startTimer();
+            loadLevel(); startTimer();
         }
 
         function loadLevel() {
             const level = JOGO_ORDEM_DATA.categorias[currentCatKey].niveis[currentLevelIdx];
             document.getElementById('level-title').innerText = level.titulo;
             let items = [];
-
             if (currentCatKey === 'letras') {
                 const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
                 if (level.tipo === 'seq') {
@@ -140,7 +193,7 @@
                 } else {
                     items = abc.sort(() => 0.5 - Math.random()).slice(0, 6);
                 }
-            } else if (currentCatKey === 'mesma') {
+            } else {
                 const letras = Object.keys(JOGO_ORDEM_DATA.bancoMesma);
                 const letra = letras[Math.floor(Math.random() * letras.length)];
                 items = [...JOGO_ORDEM_DATA.bancoMesma[letra]].sort(() => 0.5 - Math.random()).slice(0, 6);
@@ -194,18 +247,14 @@
         function verifyOrder() {
             const slots = Array.from(document.querySelectorAll('.slot-box'));
             const words = slots.map(s => s.querySelector('.slot-content').innerText.trim()).filter(t => t !== "");
-
             if(words.length < 6) return alert("Organiza todos os livros!");
-
             const correct = [...words].sort((a, b) => a.localeCompare(b, 'pt', {sensitivity: 'base'}));
             let errors = 0;
-
             slots.forEach((s, i) => {
                 const txt = s.querySelector('.slot-content');
                 if (txt.innerText === correct[i]) txt.style.color = "var(--cor-acerto)";
                 else { txt.style.color = "var(--cor-erro)"; errors++; }
             });
-
             if (errors === 0) {
                 points += 100; document.getElementById('points').innerText = points;
                 document.getElementById('modal').style.display = 'flex';
@@ -230,6 +279,10 @@
                 document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; 
             }, 1000); 
         }
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
     </script>
 </body>
 </html>
