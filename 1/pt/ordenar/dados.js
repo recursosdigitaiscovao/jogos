@@ -1,7 +1,7 @@
 const JOGO_CONFIG = {
     caminhoImg: "../../../img/",         
     caminhoIcons: "../../../icons/",     
-    caminhoCat: "../../../imgcategorias/",     
+    caminhoCat: "../../../img/cat/",     
 
     iconesMenu: { 
         pre: "iconpre.png", 
@@ -17,9 +17,18 @@ const JOGO_ORDEM_DATA = {
         letras: { 
             nome: 'Letras do Alfabeto', 
             img: 'cat_letras.png', 
-            niveis: [ 
-                { n: 1, qtd: 6, tipo: 'seq', titulo: 'O Armário das Letras' }
-            ] 
+            niveis: [ { n: 1, qtd: 4, tipo: 'seq', titulo: '4 Letras Seguidas' } ] 
+        },
+        mesma: { 
+            nome: 'Mesma Letra Inicial', 
+            img: 'cat_mesma.png', 
+            niveis: [ { n: 1, qtd: 4, tipo: 'mesma', titulo: 'Dicionário Mágico' } ] 
         }
+    },
+    bancoMesma: {
+        C: ["Cama", "Carro", "Casa", "Copo"],
+        M: ["Mala", "Maçã", "Mesa", "Mola"],
+        B: ["Bala", "Bota", "Bico", "Bule"],
+        P: ["Pato", "Pera", "Pipa", "Pudim"]
     }
 };
