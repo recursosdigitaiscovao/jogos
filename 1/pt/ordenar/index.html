@@ -19,7 +19,7 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo-pagina); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* NAV BAR & SIDEBARS */
+        /* HEADER & SIDEBARS */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-azul-tema); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; box-shadow: 0 3px 0 #4a96d1; }
         
@@ -30,33 +30,33 @@
         .sidebar-rd.active { bottom: 0; }
         .rd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; overflow-y: auto; height: 320px; margin-top: 5px; }
         .rd-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; border-radius: 15px; cursor: pointer; text-align: center; background: #f8fbfd; border: 1px solid #eee; }
+        
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* MAIN AREA */
+        /* MAIN CONTENT */
         .main-content { flex: 1; padding: 10px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
-        .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 15px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; position: relative; }
+        .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 15px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 1000px; height: 100%; box-sizing: border-box; position: relative; }
 
-        /* TOP BAR DO JOGO */
+        /* TOP BAR */
         .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #eee; width: 100%; flex-shrink: 0; }
-        .points-wrapper { display: flex; align-items: center; gap: 10px; }
         .points-col { display: flex; align-items: center; gap: 5px; background: #f0f7ff; padding: 5px 12px; border-radius: 15px; border: 1px solid #e0eefd; font-weight: bold; color: var(--cor-azul-tema); }
-        .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; padding: 0; }
 
-        /* LAYOUT VERTICAL (ARMÁRIO TOPO, BOTÕES BAIXO) */
+        /* LAYOUT (ARMÁRIO TOPO, BOTÕES BAIXO) */
         .game-split { 
             display: flex; 
             flex-direction: column; 
             flex: 1; 
             width: 100%; 
-            padding: 10px 25px; /* Recuo solicitado de 25px */
-            gap: 15px; 
+            padding: 10px 30px; /* Margem solicitada de 30px à esquerda e direita */
+            box-sizing: border-box;
+            gap: 10px; 
             overflow: hidden; 
         }
         
-        /* Armário no topo */
+        /* Armário centrado e aumentado */
         .armario-side { 
             flex: 2; 
             position: relative; 
@@ -66,67 +66,72 @@
             width: 100%;
             min-height: 0;
         }
-        .armario-img-container { position: relative; height: 100%; aspect-ratio: 350 / 530; }
-        .armario-img { height: 100%; width: 100%; object-fit: contain; }
+        .armario-img-container { 
+            position: relative; 
+            height: 100%; 
+            width: 100%; /* Força a ocupar a largura disponível entre as margens */
+            max-width: 600px; /* Limite para não deformar em telas gigantes */
+            aspect-ratio: 350 / 530; 
+        }
+        .armario-img { width: 100%; height: 100%; object-fit: contain; }
         
-        /* Grelha milimétrica sobre as cores da imagem armario_livros1.png */
+        /* Grelha de Drop */
         .armario-grid { 
             position: absolute; 
             top: 26.5%; left: 10.5%; width: 79%; height: 63.5%; 
             display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); 
             column-gap: 8%; row-gap: 4.5%;
         }
-        .drop-slot { display: flex; align-items: center; justify-content: center; border-radius: 10px; }
+        .drop-slot { display: flex; align-items: center; justify-content: center; }
 
-        /* Etiquetas em baixo na Horizontal */
+        /* Etiquetas horizontais em baixo */
         .pool-side { 
-            height: 85px; 
+            height: 80px; 
             display: flex; 
             flex-direction: row; 
             justify-content: center; 
             align-items: center; 
-            gap: 10px; 
+            gap: 12px; 
             padding-top: 10px; 
             border-top: 2px dashed #eee;
             flex-shrink: 0;
         }
 
-        /* ETIQUETA BOTÃO (Mais pequeno, limite definido) */
+        /* ETIQUETA BOTÃO (Reduzido e sem limite) */
         .label-btn { 
-            width: 70px; height: 50px; /* Tamanho reduzido solicitado */
-            background-color: white; 
+            width: 65px; height: 45px; /* Tamanho reduzido solicitado */
+            background-color: transparent; 
             background-size: contain; background-repeat: no-repeat; background-position: center;
-            border: 2px solid #555; border-radius: 8px; 
+            border: none; /* Retirado o limite do botão */
             display: flex; align-items: center; justify-content: center; cursor: grab;
-            box-shadow: 0 4px 0 #ddd;
             flex-shrink: 0;
         }
         .label-btn span { 
             font-weight: 900; 
-            font-size: 2.1rem; /* Letras maiores solicitado */
+            font-size: 2.3rem; /* Letras maiores solicitado */
             color: #333; text-transform: uppercase; margin-top: -3px; pointer-events: none; 
         }
 
-        /* Etiqueta quando dropada no Slot */
-        .label-btn.in-slot { width: 100%; height: 100%; border: none; box-shadow: none; background-color: transparent; }
-        .label-btn.in-slot span { color: white; text-shadow: 2px 2px 0 rgba(0,0,0,0.3); font-size: 2.3rem; }
+        /* Dentro do Armário */
+        .label-btn.in-slot { width: 100%; height: 100%; }
+        .label-btn.in-slot span { color: white; text-shadow: 2px 2px 0 rgba(0,0,0,0.3); font-size: 2.5rem; }
 
         .footer-btns { display: flex; gap: 15px; width: 100%; border-top: 2px dashed #eee; padding-top: 10px; align-items: center; justify-content: center; flex-shrink: 0; }
         .btn-check { background: white; color: var(--cor-acerto); border: 3px solid var(--cor-acerto); font-size: 1.1rem; padding: 10px 40px; box-shadow: 0 4px 0 var(--cor-acerto); font-weight: bold; cursor: pointer; border-radius: 15px; font-family: 'Fredoka'; }
+        .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; padding: 0; }
     </style>
 </head>
 <body>
 
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
 
-    <!-- SIDEBARS -->
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
             <button onclick="toggleMenu()" style="border:none; background:none; font-size: 20px;">✕</button>
         </div>
         <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="/jogos/1" class="sidebar-item"><img class="menu-1" src="" style="width:24px; margin-right:10px;"> 1º Ano</a>
+        <a href="/jogos/1" class="sidebar-item"><img id="menu-1-icon" src="" style="width:24px; margin-right:10px;"> 1º Ano</a>
     </div>
 
     <div class="sidebar-rd" id="sidebar-rd">
@@ -144,12 +149,11 @@
     </header>
 
     <main class="main-content">
-        <!-- INTRO -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
-                    <h1 style="color:var(--cor-principal); font-size:2.2rem; margin: 10px 0;">ORDEM ALFABÉTICA</h1>
-                    <p style="color:#666; font-size: 1.1rem;">Organiza as letras no armário superior!</p>
+                    <h1 style="color:var(--cor-principal); font-size:2.4rem; margin: 10px 0;">ORDEM ALFABÉTICA</h1>
+                    <p style="color:#666; font-size: 1.2rem; max-width: 400px;">Maximiza a organização e coloca as letras no armário superior!</p>
                 </div>
                 <div class="footer-btns">
                     <button class="btn-check" style="background:var(--cor-azul-tema); color:white; border-color:var(--cor-azul-tema); box-shadow:0 5px 0 #4a96d1; width:100%; font-size:1.4rem;" onclick="startGame()">JOGAR</button>
@@ -157,14 +161,13 @@
             </div>
         </section>
 
-        <!-- GAME -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="game-top-bar">
                     <div style="font-weight:bold; color:#666;">⏳ <span id="timer">00:00</span></div>
-                    <div class="points-wrapper">
+                    <div class="points-wrapper" style="display:flex; align-items:center;">
                         <div class="points-col">PTS: <span id="points">0</span></div>
-                        <button class="btn-rd-ui" onclick="toggleRD()" style="margin-left:8px;"><img class="btn-rd-img-ref" src="" style="width:26px;"></button>
+                        <button class="btn-rd-ui" onclick="toggleRD()" style="margin-left:10px;"><img class="btn-rd-img-ref" src="" style="width:26px;"></button>
                     </div>
                 </div>
 
@@ -187,7 +190,7 @@
 
     <div id="modal" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); display:none; align-items:center; justify-content:center; z-index:3000;">
         <div style="background:white; border:4px solid var(--cor-azul-tema); border-radius:30px; padding:30px; width:300px; text-align:center;">
-            <h2 style="color:var(--cor-acerto);">MUITO BEM!</h2>
+            <h2 style="color:var(--cor-acerto); margin-top:0;">MUITO BEM!</h2>
             <button class="btn-check" style="background:var(--cor-azul-tema); color:white; border-color:var(--cor-azul-tema); box-shadow:0 4px 0 #4a96d1; width:100%; margin-top:15px;" onclick="location.reload()">PRÓXIMO</button>
         </div>
     </div>
@@ -197,12 +200,11 @@
         let points = 0, seconds = 0, timerInterval, draggedText = null;
 
         window.onload = () => {
-            const icons = JOGO_CONFIG.caminhoIcons;
-            document.getElementById('header-icon').src = icons + JOGO_CONFIG.iconesMenu.ano1;
-            document.querySelectorAll('.menu-1').forEach(img => img.src = icons + JOGO_CONFIG.iconesMenu.ano1);
+            const p = JOGO_CONFIG.caminhoIcons;
+            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.ano1;
+            document.getElementById('menu-1-icon').src = p + JOGO_CONFIG.iconesMenu.ano1;
             document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             setupRDMenu();
-            updateIntro();
         };
 
         function setupRDMenu() {
@@ -210,14 +212,8 @@
             container.innerHTML = '';
             Object.keys(JOGO_ORDEM_DATA.categorias).forEach(key => {
                 const cat = JOGO_ORDEM_DATA.categorias[key];
-                container.innerHTML += `<div class="rd-item" onclick="changeCategory('${key}')"><img src="${JOGO_CONFIG.caminhoCat + cat.img}" onerror="this.src='https://via.placeholder.com/50'"> <span>${cat.nome}</span></div>`;
+                container.innerHTML += `<div class="rd-item" onclick="location.reload()"><img src="${JOGO_CONFIG.caminhoCat + cat.img}" onerror="this.src='https://via.placeholder.com/50'"> <span>${cat.nome}</span></div>`;
             });
-        }
-
-        function updateIntro() {
-            const cat = JOGO_ORDEM_DATA.categorias['letras'];
-            document.getElementById('intro-cat-title').innerText = cat.nome;
-            document.getElementById('intro-cat-img').src = JOGO_CONFIG.caminhoCat + cat.img;
         }
 
         function startGame() {
@@ -252,10 +248,10 @@
                 btn.style.backgroundImage = `url(../../../img/etiqueta_letras.png)`;
                 btn.innerHTML = `<span>${txt}</span>`;
                 
-                btn.addEventListener('dragstart', () => { draggedText = txt; btn.classList.add('dragging'); });
-                btn.addEventListener('dragend', () => btn.classList.remove('dragging'));
+                btn.addEventListener('dragstart', () => { draggedText = txt; btn.style.opacity = "0.4"; });
+                btn.addEventListener('dragend', () => btn.style.opacity = "1");
                 
-                btn.addEventListener('touchstart', (e) => { draggedText = txt; }, {passive:true});
+                btn.addEventListener('touchstart', () => { draggedText = txt; }, {passive:true});
                 btn.addEventListener('touchend', e => {
                     const t = e.changedTouches[0];
                     const target = document.elementFromPoint(t.clientX, t.clientY);
@@ -268,7 +264,7 @@
 
         function handleDrop(e) {
             e.preventDefault();
-            placeInSlot(e.currentTarget, draggedText, document.querySelector('.label-btn.dragging'));
+            placeInSlot(e.currentTarget, draggedText, document.querySelector('.label-btn[style*="opacity: 0.4"]'));
         }
 
         function placeInSlot(slot, text, originalBtn) {
@@ -280,7 +276,7 @@
         function verifyOrder() {
             const slots = Array.from(document.querySelectorAll('.drop-slot'));
             const words = slots.map(s => s.innerText.trim()).filter(t => t !== "");
-            if(words.length < 6) return alert("Preenche todos os espaços!");
+            if(words.length < 6) return alert("Completa o armário primeiro!");
             const correct = [...words].sort((a, b) => a.localeCompare(b, 'pt', {sensitivity: 'base'}));
             let errors = 0;
             slots.forEach((s, i) => {
@@ -306,7 +302,6 @@
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
         function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); }
         function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); }
-        function changeCategory(k) { location.reload(); }
     </script>
 </body>
 </html>
