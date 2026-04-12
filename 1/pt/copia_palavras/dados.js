@@ -12,9 +12,9 @@ const JOGO_CONFIG = {
     categorias: {
         A: { nome: "Letra A", img: "letra_a.png", itens: [
             { palavra: "AVIÃO", img: "transportes/aviao.png" }, 
-            { palavra: "ABELHA", img: "insetos/abelha.png" }, 
+            { palavra: "ABELHA", img: "animaisselvagens/abelha.png" }, 
             { palavra: "ANEL", img: "objetos/anel.png" }, 
-            { palavra: "ARANHA", img: "insetos/aranha.png" }, 
+            { palavra: "ARANHA", img: "animaisselvagens/aranha.png" }, 
             { palavra: "ÁRVORE", img: "natureza/arvore.png" }
         ]},
         B: { nome: "Letra B", img: "letra_b.png", itens: [
