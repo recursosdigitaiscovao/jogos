@@ -1,195 +1,305 @@
-<style>
-    /* ... (restante do CSS igual ao anterior) ... */
-
-    /* CONTENTOR DO ARMÁRIO */
-    .armario-side { 
-        flex: 1.5; 
-        position: relative; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        height: 100%;
-        max-height: 600px;
-    }
-
-    .armario-img-container {
-        position: relative;
-        height: 100%;
-        /* Ajusta a proporção para manter o armário fiel à imagem */
-        aspect-ratio: 350 / 520; 
-    }
-
-    .armario-img { 
-        width: 100%; 
-        height: 100%; 
-        object-fit: contain; 
-        display: block;
-    }
-
-    /* GRELHA DE DROP RIGOROSA */
-    /* Estes valores (top, left, width, height) isolam APENAS a zona das cores */
-    .armario-grid { 
-        position: absolute; 
-        top: 26.5%;    /* Começa exatamente no topo do quadrado 1 (azul) */
-        left: 10.5%;   /* Alinhado à margem esquerda das cores */
-        width: 79%;    /* Largura total das duas colunas de cores */
-        height: 63.5%; /* Altura total das três linhas de cores */
-        display: grid; 
-        grid-template-columns: 1fr 1fr; 
-        grid-template-rows: 1fr 1fr 1fr; 
-        /* Gaps ajustados para a "madeira" entre as prateleiras */
-        column-gap: 8%; 
-        row-gap: 4.5%;
-        pointer-events: none; /* Deixa o drop passar para os slots */
-    }
-
-    .drop-slot { 
-        pointer-events: auto; /* Reativa para aceitar o drop */
-        display: flex; 
-        align-items: center; 
-        justify-content: center;
-        border-radius: 8px;
-        /* Debug: retira o comentário abaixo para ver as caixas se não estiverem centradas */
-        /* background: rgba(0,0,0,0.1); */
-    }
-
-    /* ETIQUETA DENTRO DO ARMÁRIO */
-    .label-in-slot {
-        width: 90%; 
-        height: 85%;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .label-in-slot span {
-        font-weight: 900;
-        font-size: clamp(1.4rem, 5vw, 2.2rem); /* Letra grande e centrada */
-        color: white; /* Cor da letra para contrastar com os fundos coloridos */
-        text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
-        margin-top: -5px; /* Ajuste fino para o centro visual da etiqueta */
-    }
-
-    /* POOL DE ETIQUETAS (Lado Direito) */
-    .pool-side { 
-        flex: 0.8; 
-        display: grid; 
-        grid-template-columns: 1fr 1fr; 
-        gap: 10px; 
-        align-content: center; 
-        padding-left: 15px;
-        border-left: 3px dashed var(--cor-azul-tema);
-    }
-
-    .label-btn { 
-        width: 100%; 
-        height: 70px; 
-        background-size: contain; 
-        background-repeat: no-repeat; 
-        background-position: center;
-        display: flex; 
-        align-items: center; 
-        justify-content: center;
-        cursor: grab;
-    }
-
-    .label-btn span { 
-        font-weight: 900; 
-        font-size: 1.6rem; 
-        color: #333; 
-        text-transform: uppercase;
-        pointer-events: none;
-    }
-</style>
-
-<!-- ... (O HTML do Game Screen permanece similar, mas com as novas classes) ... -->
-
-<script>
-    // ... (Lógica de carregar níveis igual) ...
-
-    function renderGame(items) {
-        const grid = document.getElementById('armario-grid');
-        const pool = document.getElementById('pool-list');
-        grid.innerHTML = ''; pool.innerHTML = '';
-
-        // Cria os 6 slots transparentes sobre as cores
-        for (let i = 0; i < 6; i++) {
-            const slot = document.createElement('div');
-            slot.className = 'drop-slot';
-            slot.dataset.slotId = i;
-            slot.addEventListener('dragover', e => e.preventDefault());
-            slot.addEventListener('drop', handleDrop);
-            grid.appendChild(slot);
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Biblioteca Mágica - Ordem Alfabética</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cor-principal: #FF9100; 
+            --cor-azul-tema: #5EAAEA;  
+            --cor-fundo-pagina: #EBF4FF;
+            --cor-fundo-card: #FFFFFF;
+            --cor-acerto: #2ed573;
+            --cor-erro: #ff4757;
+            --header-height: 70px;
         }
 
-        // Embaralha e cria as etiquetas
-        [...items].sort(() => 0.5 - Math.random()).forEach(txt => {
-            const btn = document.createElement('div');
-            btn.className = 'label-btn';
-            btn.draggable = true;
-            btn.style.backgroundImage = `url(${JOGO_CONFIG.caminhoImg}etiquetas_letras.png)`;
-            btn.innerHTML = `<span>${txt}</span>`;
-            
-            btn.addEventListener('dragstart', () => { draggedText = txt; btn.classList.add('dragging'); });
-            btn.addEventListener('dragend', () => btn.classList.remove('dragging'));
-            
-            // Touch para Tablets/Telemóveis
-            btn.addEventListener('touchstart', (e) => { draggedText = txt; }, {passive:true});
-            btn.addEventListener('touchend', e => {
-                const t = e.changedTouches[0];
-                const target = document.elementFromPoint(t.clientX, t.clientY);
-                const slot = target ? target.closest('.drop-slot') : null;
-                if (slot) placeInSlot(slot, txt, btn);
-            });
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
+        body { background: var(--cor-fundo-pagina); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-            pool.appendChild(btn);
-        });
-    }
-
-    function handleDrop(e) {
-        e.preventDefault();
-        const slot = e.currentTarget;
-        const originalBtn = document.querySelector('.label-btn.dragging');
-        placeInSlot(slot, draggedText, originalBtn);
-    }
-
-    function placeInSlot(slot, text, originalBtn) {
-        // Se já houver algo no slot, limpamos (ou podes fazer lógica de troca)
-        slot.innerHTML = `
-            <div class="label-in-slot" style="background-image: url(${JOGO_CONFIG.caminhoImg}etiquetas_letras.png);">
-                <span>${text}</span>
-            </div>`;
-        if(originalBtn) originalBtn.remove();
-    }
-
-    function verifyOrder() {
-        const slots = Array.from(document.querySelectorAll('.drop-slot'));
-        const words = slots.map(s => s.innerText.trim()).filter(t => t !== "");
+        /* HEADER & SIDEBARS */
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        .back-btn { background: var(--cor-azul-tema); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; box-shadow: 0 3px 0 #4a96d1; }
         
-        if(words.length < 6) {
-            alert("Tens de preencher todas as cores primeiro!");
-            return;
+        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
+        .sidebar.active { left: 0; }
+        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-weight: 500; cursor: pointer; }
+        
+        .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 25px; box-sizing: border-box; }
+        .sidebar-rd.active { bottom: 0; }
+        .rd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; overflow-y: auto; height: 320px; margin-top: 5px; }
+        .rd-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; border-radius: 15px; cursor: pointer; text-align: center; background: #f8fbfd; border: 1px solid #eee; }
+        .rd-item img { width: 50px; height: 50px; object-fit: contain; }
+
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
+        .overlay.active { display: block; }
+
+        /* MAIN CONTENT */
+        .main-content { flex: 1; padding: 10px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
+        .screen.active { display: flex; }
+        .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 15px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; }
+
+        /* GAME TOP BAR */
+        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid #eee; width: 100%; flex-shrink: 0; }
+        .points-wrapper { display: flex; align-items: center; gap: 10px; }
+        .points-col { display: flex; align-items: center; gap: 5px; background: #f0f7ff; padding: 5px 12px; border-radius: 15px; border: 1px solid #e0eefd; font-weight: bold; color: var(--cor-azul-tema); }
+
+        /* ARMÁRIO LAYOUT */
+        .game-split { display: flex; flex: 1; width: 100%; gap: 10px; padding: 10px 0; overflow: hidden; }
+        
+        .armario-side { flex: 1.4; position: relative; display: flex; align-items: center; justify-content: center; height: 100%; }
+        .armario-img-container { position: relative; height: 100%; aspect-ratio: 350 / 530; }
+        .armario-img { width: 100%; height: 100%; object-fit: contain; }
+        
+        /* GRELHA SOBRE AS CORES */
+        .armario-grid { 
+            position: absolute; 
+            top: 26.5%; left: 10.5%; width: 79%; height: 63.5%; 
+            display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); 
+            column-gap: 8%; row-gap: 4.5%;
+        }
+        .drop-slot { display: flex; align-items: center; justify-content: center; border-radius: 10px; }
+        .drop-slot.drag-over { background: rgba(255, 255, 255, 0.3); border: 2px dashed white; }
+
+        /* POOL ETIQUETAS */
+        .pool-side { flex: 0.7; display: grid; grid-template-columns: 1fr; gap: 10px; align-content: center; padding-left: 15px; border-left: 2px solid #eee; }
+        .label-btn { 
+            width: 100%; max-width: 120px; height: 75px; margin: 0 auto;
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            display: flex; align-items: center; justify-content: center; cursor: grab;
+        }
+        .label-btn span { font-weight: 900; font-size: 1.8rem; color: #333; text-transform: uppercase; margin-top: -6px; pointer-events: none; }
+        .label-btn.in-slot { width: 100%; height: 100%; }
+        .label-btn.in-slot span { color: white; text-shadow: 2px 2px 0 rgba(0,0,0,0.2); }
+
+        /* FOOTER */
+        .footer-btns { display: flex; gap: 15px; width: 100%; border-top: 2px dashed #eee; padding-top: 15px; align-items: center; justify-content: center; }
+        .btn-check { background: white; color: var(--cor-acerto); border: 3px solid var(--cor-acerto); font-size: 1.1rem; padding: 10px 40px; box-shadow: 0 4px 0 var(--cor-acerto); font-weight: bold; cursor: pointer; border-radius: 15px; font-family: 'Fredoka'; }
+        .btn-check:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--cor-acerto); }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+
+    <!-- SIDEBARS -->
+    <div class="sidebar" id="sidebar">
+        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
+            <button onclick="toggleMenu()" style="border:none; background:none; font-size: 20px;">✕</button>
+        </div>
+        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+        <a href="/jogos/1" class="sidebar-item"><img class="menu-1" src="" style="width:24px; margin-right:10px;"> 1º Ano</a>
+    </div>
+
+    <div class="sidebar-rd" id="sidebar-rd">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="margin:0; color:var(--cor-azul-tema);">Categorias</h3>
+            <button onclick="toggleRD()" style="border:none; background:none; font-size:24px;">✕</button>
+        </div>
+        <div id="categorias-list" class="rd-grid"></div>
+    </div>
+
+    <header class="nav-bar">
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:#5EAAEA; cursor:pointer;">☰</button>
+        <div style="display:flex; align-items:center; gap:10px;"><img id="header-icon" src="" style="height:32px;"><h1 style="font-size:1.1rem; color:#5EAAEA; margin: 0;">Biblioteca Mágica</h1></div>
+        <a href="../" class="back-btn">⬅ Voltar</a>
+    </header>
+
+    <main class="main-content">
+        <!-- INTRO -->
+        <section id="intro-screen" class="screen active">
+            <div class="game-card">
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+                    <img id="intro-cat-img" src="" style="width:100px; margin-bottom:10px;">
+                    <h2 id="intro-cat-title" style="color:var(--cor-azul-tema);"></h2>
+                    <h1 style="color:var(--cor-principal); font-size:2.2rem; margin: 10px 0;">ORDEM ALFABÉTICA</h1>
+                    <p style="color:#666;">Organiza as etiquetas nos espaços coloridos!</p>
+                </div>
+                <div class="footer-btns">
+                    <button class="btn-check" style="background:var(--cor-azul-tema); color:white; border-color:var(--cor-azul-tema); box-shadow:0 5px 0 #4a96d1; width:100%; font-size:1.4rem;" onclick="startGame()">JOGAR</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- GAME -->
+        <section id="game-screen" class="screen">
+            <div class="game-card">
+                <div class="game-top-bar">
+                    <div style="font-weight:bold; color:#666;">⏳ <span id="timer">00:00</span></div>
+                    <div id="level-title" style="font-weight:bold; color:var(--cor-azul-tema); font-size:0.9rem;"></div>
+                    <div class="points-wrapper">
+                        <div class="points-col">PTS: <span id="points">0</span></div>
+                        <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:26px;"></button>
+                    </div>
+                </div>
+
+                <div class="game-split">
+                    <div class="armario-side">
+                        <div class="armario-img-container">
+                            <img src="../../../img/armario_livros.png" class="armario-img">
+                            <div id="armario-grid" class="armario-grid"></div>
+                        </div>
+                    </div>
+                    <div id="pool-list" class="pool-side"></div>
+                </div>
+
+                <div class="footer-btns">
+                    <button class="btn-check" onclick="verifyOrder()">VERIFICAR</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="modal" class="modal" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); display:none; align-items:center; justify-content:center; z-index:3000;">
+        <div style="background:white; border:4px solid var(--cor-azul-tema); border-radius:30px; padding:30px; width:300px; text-align:center;">
+            <h2 style="color:var(--cor-acerto);">MUITO BEM!</h2>
+            <button class="btn-check" style="background:var(--cor-azul-tema); color:white; border-color:var(--cor-azul-tema); box-shadow:0 4px 0 #4a96d1; width:100%; margin-top:15px;" onclick="handleNext()">CONTINUAR</button>
+        </div>
+    </div>
+
+    <script src="dados.js"></script>
+    <script>
+        let currentCatKey = 'letras', currentLevelIdx = 0, points = 0, seconds = 0, timerInterval, draggedText = null;
+
+        window.onload = () => {
+            const icons = JOGO_CONFIG.caminhoIcons;
+            document.getElementById('header-icon').src = icons + JOGO_CONFIG.iconesMenu.ano1;
+            document.querySelectorAll('.menu-1').forEach(img => img.src = icons + JOGO_CONFIG.iconesMenu.ano1);
+            document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
+            setupRDMenu();
+            updateIntro();
+        };
+
+        function setupRDMenu() {
+            const container = document.getElementById('categorias-list');
+            container.innerHTML = '';
+            Object.keys(JOGO_ORDEM_DATA.categorias).forEach(key => {
+                const cat = JOGO_ORDEM_DATA.categorias[key];
+                container.innerHTML += `<div class="rd-item" onclick="changeCategory('${key}')"><img src="${JOGO_CONFIG.caminhoCat + cat.img}" onerror="this.src='https://via.placeholder.com/50'"> <span>${cat.nome}</span></div>`;
+            });
         }
 
-        const correct = [...words].sort((a, b) => a.localeCompare(b, 'pt', {sensitivity: 'base'}));
-        let errors = 0;
+        function updateIntro() {
+            const cat = JOGO_ORDEM_DATA.categorias[currentCatKey];
+            document.getElementById('intro-cat-title').innerText = cat.nome;
+            document.getElementById('intro-cat-img').src = JOGO_CONFIG.caminhoCat + cat.img;
+        }
 
-        slots.forEach((s, i) => {
-            const span = s.querySelector('span');
-            if (span.innerText === correct[i]) {
-                span.style.color = "#2ed573"; // Verde se estiver na ordem certa
+        function startGame() {
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            loadLevel(); startTimer();
+        }
+
+        function loadLevel() {
+            const level = JOGO_ORDEM_DATA.categorias[currentCatKey].niveis[currentLevelIdx];
+            document.getElementById('level-title').innerText = level.titulo;
+            let items = [];
+            const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+            if (currentCatKey === 'letras') {
+                if (level.tipo === 'seq') {
+                    const start = Math.floor(Math.random() * (abc.length - 6));
+                    items = abc.slice(start, start + 6);
+                } else {
+                    items = abc.sort(() => 0.5 - Math.random()).slice(0, 6);
+                }
             } else {
-                span.style.color = "#ff4757"; // Vermelho se estiver errado
-                errors++;
+                const ch = Object.keys(JOGO_ORDEM_DATA.bancoMesma);
+                const letra = ch[Math.floor(Math.random() * ch.length)];
+                items = [...JOGO_ORDEM_DATA.bancoMesma[letra]].sort(() => 0.5 - Math.random()).slice(0, 6);
             }
-        });
-
-        if (errors === 0) {
-            clearInterval(timerInterval);
-            document.getElementById('modal').style.display = 'flex';
+            renderGame(items);
         }
-    }
-</script>
+
+        function renderGame(items) {
+            const grid = document.getElementById('armario-grid');
+            const pool = document.getElementById('pool-list');
+            grid.innerHTML = ''; pool.innerHTML = '';
+
+            for (let i = 0; i < 6; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'drop-slot';
+                slot.addEventListener('dragover', e => e.preventDefault());
+                slot.addEventListener('drop', handleDrop);
+                slot.addEventListener('dragenter', () => slot.classList.add('drag-over'));
+                slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
+                grid.appendChild(slot);
+            }
+
+            [...items].sort(() => 0.5 - Math.random()).forEach(txt => {
+                const btn = document.createElement('div');
+                btn.className = 'label-btn';
+                btn.draggable = true;
+                btn.style.backgroundImage = `url(${JOGO_CONFIG.caminhoImg}etiquetas_letras.png)`;
+                btn.innerHTML = `<span>${txt}</span>`;
+                btn.addEventListener('dragstart', () => { draggedText = txt; btn.classList.add('dragging'); });
+                btn.addEventListener('dragend', () => btn.classList.remove('dragging'));
+                
+                // Touch
+                btn.addEventListener('touchstart', () => { draggedText = txt; }, {passive:true});
+                btn.addEventListener('touchend', e => {
+                    const touch = e.changedTouches[0];
+                    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                    const slot = target ? target.closest('.drop-slot') : null;
+                    if (slot) placeInSlot(slot, txt, btn);
+                });
+                pool.appendChild(btn);
+            });
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const slot = e.currentTarget;
+            slot.classList.remove('drag-over');
+            placeInSlot(slot, draggedText, document.querySelector('.label-btn.dragging'));
+        }
+
+        function placeInSlot(slot, text, originalBtn) {
+            slot.innerHTML = `<div class="label-btn in-slot" style="background-image: url(${JOGO_CONFIG.caminhoImg}etiquetas_letras.png);"><span>${text}</span></div>`;
+            if(originalBtn) originalBtn.remove();
+        }
+
+        function verifyOrder() {
+            const slots = Array.from(document.querySelectorAll('.drop-slot'));
+            const words = slots.map(s => s.innerText.trim()).filter(t => t !== "");
+            if(words.length < 6) return alert("Tens de preencher todos os espaços!");
+            const correct = [...words].sort((a, b) => a.localeCompare(b, 'pt', {sensitivity: 'base'}));
+            let errors = 0;
+            slots.forEach((s, i) => {
+                const span = s.querySelector('span');
+                if (span.innerText === correct[i]) span.style.color = "#2ed573";
+                else { span.style.color = "#ff4757"; errors++; }
+            });
+            if (errors === 0) {
+                points += 100; document.getElementById('points').innerText = points;
+                document.getElementById('modal').style.display = 'flex';
+                clearInterval(timerInterval);
+            }
+        }
+
+        function handleNext() {
+            document.getElementById('modal').style.display = 'none';
+            if (currentLevelIdx < JOGO_ORDEM_DATA.categorias[currentCatKey].niveis.length - 1) {
+                currentLevelIdx++; loadLevel(); startTimer();
+            } else { location.reload(); }
+        }
+
+        function startTimer() { 
+            seconds = 0; clearInterval(timerInterval);
+            timerInterval = setInterval(() => { 
+                seconds++; 
+                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; 
+            }, 1000); 
+        }
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
+        function changeCategory(k) { currentCatKey = k; currentLevelIdx = 0; closeMenus(); updateIntro(); startGame(); }
+    </script>
+</body>
+</html>
