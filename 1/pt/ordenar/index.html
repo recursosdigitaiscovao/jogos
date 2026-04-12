@@ -19,7 +19,7 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo-pagina); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* NAV BAR & SIDEBARS */
+        /* UI BASE */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-azul-tema); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; box-shadow: 0 3px 0 #4a96d1; }
         
@@ -31,7 +31,6 @@
         .sidebar-rd.active { bottom: 0; }
         .rd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; overflow-y: auto; height: 320px; margin-top: 5px; }
         .rd-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; border-radius: 15px; cursor: pointer; text-align: center; background: #f8fbfd; border: 1px solid #eee; }
-        .rd-item img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 5px; }
         
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
@@ -42,26 +41,46 @@
         .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 15px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; }
 
         /* TOP BAR */
-        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; font-size: 0.9rem; border-bottom: 1px solid #eee; width: 100%; flex-shrink: 0; }
+        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #eee; width: 100%; flex-shrink: 0; }
         .points-wrapper { display: flex; align-items: center; gap: 10px; }
-        .points-col { display: flex; align-items: center; gap: 5px; background: #f0f7ff; padding: 5px 12px; border-radius: 15px; border: 1px solid #e0eefd; font-weight: bold; color: var(--cor-azul-tema); }
         .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; padding: 0; }
 
-        /* GAME SPLIT */
-        .game-split { display: flex; flex: 1; width: 100%; gap: 10px; padding: 10px 0; overflow: hidden; }
+        /* GAME LAYOUT - ARMÁRIO */
+        .game-split { display: flex; flex: 1; width: 100%; gap: 20px; padding: 10px 0; overflow: hidden; align-items: center; }
         
-        /* Estante (Lado Esquerdo) */
-        .slots-side { flex: 1; display: flex; flex-direction: column; gap: 5px; overflow: hidden; justify-content: center; }
-        .slot-box { height: 65px; position: relative; display: flex; align-items: center; justify-content: center; }
-        .slot-bg-img { width: 100%; height: 100%; object-fit: contain; position: absolute; z-index: 1; pointer-events: none; }
-        .slot-content { position: relative; z-index: 2; font-weight: 900; text-transform: uppercase; font-size: clamp(0.9rem, 3.5vw, 1.3rem); color: #333; pointer-events: none; text-align: center; width: 80%; }
+        /* Lado Esquerdo: Armário */
+        .armario-side { flex: 1.2; position: relative; display: flex; align-items: center; justify-content: center; height: 100%; }
+        .armario-img { width: 100%; height: 100%; object-fit: contain; }
+        
+        .armario-grid { 
+            position: absolute; 
+            width: 70%; height: 75%; 
+            top: 15%; left: 15%; 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            grid-template-rows: repeat(3, 1fr); 
+            gap: 10px;
+        }
+        .drop-slot { 
+            background: transparent; 
+            border: 2px dashed rgba(201, 161, 113, 0.4); 
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .drop-slot.drag-over { background: rgba(201, 161, 113, 0.3); border-color: #C9A171; }
 
-        /* Mesa (Lado Direito) */
-        .pool-side { flex: 1; display: grid; grid-template-columns: 1fr; gap: 5px; align-content: center; overflow-y: auto; padding-left: 10px; border-left: 2px solid #f0f0f0; }
-        .drag-book { height: 65px; position: relative; cursor: grab; display: flex; align-items: center; justify-content: center; }
-        .drag-book img { width: 100%; height: 100%; object-fit: contain; position: absolute; }
-        .drag-book span { position: relative; z-index: 2; font-weight: 900; text-transform: uppercase; font-size: clamp(0.9rem, 3.5vw, 1.3rem); color: #333; text-align: center; width: 80%; }
-        .drag-book.dragging { opacity: 0.3; }
+        /* Lado Direito: Etiquetas */
+        .pool-side { flex: 0.8; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-content: center; }
+        
+        .label-btn { 
+            width: 90px; height: 60px; 
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            display: flex; align-items: center; justify-content: center;
+            cursor: grab; position: relative;
+        }
+        .label-btn span { font-weight: 900; font-size: 1.5rem; color: #333; text-transform: uppercase; margin-top: -5px; }
+        .label-btn.dragging { opacity: 0.4; }
 
         .footer-btns { display: flex; gap: 15px; width: 100%; border-top: 2px dashed #eee; padding-top: 10px; align-items: center; justify-content: center; flex-shrink: 0; }
         .btn-check { background: white; color: var(--cor-acerto); border: 3px solid var(--cor-acerto); font-size: 1.1rem; padding: 10px 30px; box-shadow: 0 4px 0 var(--cor-acerto); font-weight: bold; cursor: pointer; border-radius: 15px; font-family: 'Fredoka'; }
@@ -71,14 +90,13 @@
 
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
 
-    <!-- SIDEBARS -->
+    <!-- SIDEBARS (Mesma lógica do anterior) -->
     <div class="sidebar" id="sidebar">
         <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: var(--cor-principal);">BIBLIOTECA</span>
             <button onclick="toggleMenu()" style="border:none; background:none; font-size: 20px;">✕</button>
         </div>
-        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="/jogos/1" class="sidebar-item"><img class="menu-1" src="" style="width:24px; margin-right:10px;"> 1º Ano</a>
+        <a href="/jogos/1" class="sidebar-item">🏠 Início 1º Ano</a>
     </div>
 
     <div class="sidebar-rd" id="sidebar-rd">
@@ -96,35 +114,44 @@
     </header>
 
     <main class="main-content">
+        <!-- INTRO -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
                     <img id="intro-cat-img" src="" style="width:80px; margin-bottom:10px;">
-                    <h2 id="intro-cat-title" style="color:var(--cor-azul-tema); margin: 0;"></h2>
+                    <h2 id="intro-cat-title" style="color:var(--cor-azul-tema);"></h2>
                     <h1 style="color:var(--cor-principal); font-size:2rem; margin: 10px 0;">ORDEM ALFABÉTICA</h1>
-                    <p style="color:#666; max-width: 320px;">Organiza os livros na estante!</p>
+                    <p style="color:#666;">Organiza as etiquetas no armário correto!</p>
                 </div>
                 <div class="footer-btns">
                     <button class="btn-check" style="background:var(--cor-azul-tema); color:white; border-color:var(--cor-azul-tema); box-shadow:0 5px 0 #4a96d1; width:100%; font-size:1.4rem;" onclick="startGame()">JOGAR</button>
-                    <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:55px;"></button>
                 </div>
             </div>
         </section>
 
+        <!-- GAME -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="game-top-bar">
                     <div style="font-weight:bold; color:#666;">⏳ <span id="timer">00:00</span></div>
                     <div id="level-title" style="font-weight:bold; color:var(--cor-azul-tema); font-size:0.8rem;"></div>
                     <div class="points-wrapper">
-                        <div class="points-col">PTS: <span id="points">0</span></div>
+                        <div style="font-weight:bold; color:var(--cor-azul-tema); font-size:0.9rem;">PTS: <span id="points">0</span></div>
                         <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:26px;"></button>
                     </div>
                 </div>
+
                 <div class="game-split">
-                    <div id="slots-list" class="slots-side"></div>
+                    <!-- Armário à Esquerda -->
+                    <div class="armario-side">
+                        <img src="../../../img/armario_livros.png" class="armario-img">
+                        <div id="armario-grid" class="armario-grid"></div>
+                    </div>
+
+                    <!-- Etiquetas à Direita -->
                     <div id="pool-list" class="pool-side"></div>
                 </div>
+
                 <div class="footer-btns">
                     <button class="btn-check" onclick="verifyOrder()">VERIFICAR</button>
                 </div>
@@ -134,19 +161,17 @@
 
     <div class="modal" id="modal" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); display:none; align-items:center; justify-content:center; z-index:3000;">
         <div style="background:white; border:4px solid var(--cor-azul-tema); border-radius:30px; padding:30px; width:300px; text-align:center;">
-            <h2 style="color:var(--cor-acerto); margin-top:0;">MUITO BEM!</h2>
-            <p id="modal-msg" style="margin: 20px 0; font-size: 1.1rem; color: #555;"></p>
-            <button class="btn-check" style="background:var(--cor-azul-tema); color:white; border-color:var(--cor-azul-tema); box-shadow:0 4px 0 #4a96d1; width:100%;" onclick="handleNext()">CONTINUAR</button>
+            <h2 style="color:var(--cor-acerto);">MUITO BEM!</h2>
+            <button class="btn-check" style="background:var(--cor-azul-tema); color:white; border-color:var(--cor-azul-tema); box-shadow:0 4px 0 #4a96d1; width:100%; margin-top:15px;" onclick="handleNext()">CONTINUAR</button>
         </div>
     </div>
 
     <script src="dados.js"></script>
     <script>
-        let currentCatKey = 'letras', currentLevelIdx = 0, points = 0, seconds = 0, timerInterval, draggedData = null;
+        let currentCatKey = 'letras', currentLevelIdx = 0, seconds = 0, timerInterval, draggedText = null;
 
         window.onload = () => {
             document.getElementById('header-icon').src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1;
-            document.querySelectorAll('.menu-1').forEach(img => img.src = JOGO_CONFIG.caminhoIcons + JOGO_CONFIG.iconesMenu.ano1);
             document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             setupRDMenu();
             updateIntro();
@@ -159,14 +184,6 @@
                 const cat = JOGO_ORDEM_DATA.categorias[key];
                 container.innerHTML += `<div class="rd-item" onclick="changeCategory('${key}')"><img src="${JOGO_CONFIG.caminhoCat + cat.img}" onerror="this.src='https://via.placeholder.com/50'"> <span>${cat.nome}</span></div>`;
             });
-        }
-
-        function changeCategory(key) {
-            currentCatKey = key; currentLevelIdx = 0; closeMenus(); updateIntro();
-            document.getElementById('intro-screen').classList.add('active');
-            document.getElementById('game-screen').classList.remove('active');
-            document.getElementById('modal').style.display = 'none';
-            clearInterval(timerInterval);
         }
 
         function updateIntro() {
@@ -184,6 +201,7 @@
         function loadLevel() {
             const level = JOGO_ORDEM_DATA.categorias[currentCatKey].niveis[currentLevelIdx];
             document.getElementById('level-title').innerText = level.titulo;
+            
             let items = [];
             if (currentCatKey === 'letras') {
                 const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -194,70 +212,78 @@
                     items = abc.sort(() => 0.5 - Math.random()).slice(0, 6);
                 }
             } else {
-                const letras = Object.keys(JOGO_ORDEM_DATA.bancoMesma);
-                const letra = letras[Math.floor(Math.random() * letras.length)];
+                const ch = Object.keys(JOGO_ORDEM_DATA.bancoMesma);
+                const letra = ch[Math.floor(Math.random() * ch.length)];
                 items = [...JOGO_ORDEM_DATA.bancoMesma[letra]].sort(() => 0.5 - Math.random()).slice(0, 6);
             }
-            renderGame(items);
+            renderArmario(items);
         }
 
-        function renderGame(items) {
-            const slotsList = document.getElementById('slots-list');
-            const poolList = document.getElementById('pool-list');
-            slotsList.innerHTML = ''; poolList.innerHTML = '';
+        function renderArmario(items) {
+            const grid = document.getElementById('armario-grid');
+            const pool = document.getElementById('pool-list');
+            grid.innerHTML = ''; pool.innerHTML = '';
 
-            items.forEach(() => {
-                slotsList.innerHTML += `
-                    <div class="slot-box" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
-                        <img class="slot-bg-img" src="${JOGO_CONFIG.caminhoImg}livro_as.png">
-                        <span class="slot-content"></span>
-                    </div>`;
-            });
+            // Cria slots no armário (2 colunas x 3 linhas)
+            for (let i = 0; i < 6; i++) {
+                grid.innerHTML += `<div class="drop-slot" ondragover="event.preventDefault()" ondrop="handleDrop(event)" ondragenter="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')"></div>`;
+            }
 
+            // Cria etiquetas (etiquetas_letras.png como botões)
             [...items].sort(() => 0.5 - Math.random()).forEach(txt => {
-                const book = document.createElement('div');
-                book.className = 'drag-book';
-                book.draggable = true;
-                book.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}livro_a.png"><span>${txt}</span>`;
-                book.addEventListener('dragstart', () => { draggedData = txt; book.classList.add('dragging'); });
-                book.addEventListener('dragend', () => book.classList.remove('dragging'));
-                book.addEventListener('touchstart', () => { draggedData = txt; }, {passive:true});
-                book.addEventListener('touchend', e => {
+                const btn = document.createElement('div');
+                btn.className = 'label-btn';
+                btn.draggable = true;
+                btn.style.backgroundImage = `url(${JOGO_CONFIG.caminhoImg}etiquetas_letras.png)`;
+                btn.innerHTML = `<span>${txt}</span>`;
+                
+                btn.addEventListener('dragstart', () => { draggedText = txt; btn.classList.add('dragging'); });
+                btn.addEventListener('dragend', () => btn.classList.remove('dragging'));
+                
+                // Touch
+                btn.addEventListener('touchstart', () => { draggedText = txt; }, {passive:true});
+                btn.addEventListener('touchend', e => {
                     const target = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-                    const slot = target ? target.closest('.slot-box') : null;
-                    if (slot) fillSlot(slot, draggedData, book);
+                    if (target && target.classList.contains('drop-slot')) placeInSlot(target, txt, btn);
                 });
-                poolList.appendChild(book);
+
+                pool.appendChild(btn);
             });
         }
 
         function handleDrop(e) {
             e.preventDefault();
-            fillSlot(e.currentTarget, draggedData, document.querySelector('.drag-book.dragging'));
+            const slot = e.currentTarget;
+            slot.classList.remove('drag-over');
+            placeInSlot(slot, draggedText, document.querySelector('.label-btn.dragging'));
         }
 
-        function fillSlot(slot, text, sourceBook) {
-            const content = slot.querySelector('.slot-content');
-            if(content.innerText !== "") return;
-            content.innerText = text;
-            slot.querySelector('.slot-bg-img').src = JOGO_CONFIG.caminhoImg + "livro_f.png";
-            if(sourceBook) sourceBook.remove();
+        function placeInSlot(slot, text, originalBtn) {
+            if(slot.innerText !== "") {
+                const old = slot.querySelector('span').innerText;
+                // Opcional: devolver o antigo para a pool
+            }
+            slot.innerHTML = `<div class="label-btn" style="background-image: url(${JOGO_CONFIG.caminhoImg}etiquetas_letras.png); width:100%; height:100%; cursor:default;"><span>${text}</span></div>`;
+            if(originalBtn) originalBtn.remove();
         }
 
         function verifyOrder() {
-            const slots = Array.from(document.querySelectorAll('.slot-box'));
-            const words = slots.map(s => s.querySelector('.slot-content').innerText.trim()).filter(t => t !== "");
-            if(words.length < 6) return alert("Organiza todos os livros!");
+            const slots = Array.from(document.querySelectorAll('.drop-slot'));
+            const words = slots.map(s => s.innerText.trim()).filter(t => t !== "");
+            if(words.length < 6) return alert("Preenche o armário todo!");
+
             const correct = [...words].sort((a, b) => a.localeCompare(b, 'pt', {sensitivity: 'base'}));
             let errors = 0;
+
             slots.forEach((s, i) => {
-                const txt = s.querySelector('.slot-content');
-                if (txt.innerText === correct[i]) txt.style.color = "var(--cor-acerto)";
-                else { txt.style.color = "var(--cor-erro)"; errors++; }
+                const span = s.querySelector('span');
+                if (span.innerText === correct[i]) span.style.color = "var(--cor-acerto)";
+                else { span.style.color = "var(--cor-erro)"; errors++; }
             });
+
             if (errors === 0) {
-                points += 100; document.getElementById('points').innerText = points;
                 document.getElementById('modal').style.display = 'flex';
+                clearInterval(timerInterval);
             }
         }
 
@@ -267,13 +293,13 @@
                 currentLevelIdx++;
             } else if (currentCatKey === 'letras') {
                 currentCatKey = 'mesma'; currentLevelIdx = 0;
-            } else {
-                location.reload(); return;
-            }
-            loadLevel();
+            } else { location.reload(); return; }
+            loadLevel(); startTimer();
         }
 
         function startTimer() { 
+            seconds = 0;
+            if(timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => { 
                 seconds++; 
                 document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; 
@@ -283,6 +309,7 @@
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
+        function changeCategory(key) { currentCatKey = key; currentLevelIdx = 0; closeMenus(); updateIntro(); document.getElementById('intro-screen').classList.add('active'); document.getElementById('game-screen').classList.remove('active'); }
     </script>
 </body>
 </html>
