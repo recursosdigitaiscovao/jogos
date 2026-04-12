@@ -19,19 +19,9 @@
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
         body { background: var(--cor-fundo-pagina); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
 
-        /* UI BASE */
         .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-azul-tema); color: white; padding: 8px 15px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.8rem; box-shadow: 0 3px 0 #4a96d1; }
-        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
-        .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-weight: 500; cursor: pointer; }
-        .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 25px; box-sizing: border-box; }
-        .sidebar-rd.active { bottom: 0; }
-        .rd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; overflow-y: auto; height: 320px; margin-top: 5px; }
-        .rd-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; border-radius: 15px; cursor: pointer; text-align: center; background: #f8fbfd; border: 1px solid #eee; }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
-        .overlay.active { display: block; }
-
+        
         .main-content { flex: 1; padding: 10px 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
@@ -39,54 +29,47 @@
 
         /* TOP BAR */
         .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; font-size: 0.9rem; border-bottom: 1px solid #eee; width: 100%; flex-shrink: 0; }
-        .points-wrapper { display: flex; align-items: center; gap: 10px; }
         .points-col { display: flex; align-items: center; gap: 5px; background: #f0f7ff; padding: 5px 12px; border-radius: 15px; border: 1px solid #e0eefd; font-weight: bold; color: var(--cor-azul-tema); }
 
         /* MECÂNICA DE LIVROS */
-        .game-split { display: flex; flex: 1; width: 100%; gap: 10px; padding: 10px 0; overflow: hidden; }
+        .game-split { display: flex; flex: 1; width: 100%; gap: 15px; padding: 15px 0; overflow: hidden; }
         
-        /* Estante (Slots) */
-        .slots-side { flex: 1; background: #f8fbfd; border-radius: 20px; padding: 10px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; overflow-y: auto; }
-        .slot-row { display: flex; align-items: center; gap: 5px; }
-        .slot-num { background: var(--cor-principal); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem; flex-shrink: 0; }
+        /* Estante (Lado Esquerdo) */
+        .slots-side { flex: 1; background: #f8fbfd; border-radius: 20px; padding: 15px; display: grid; grid-template-columns: 1fr; gap: 8px; overflow-y: auto; border: 2px dashed #ddd; }
+        .slot-row { display: flex; align-items: center; gap: 10px; width: 100%; }
+        .slot-num { background: var(--cor-principal); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; flex-shrink: 0; }
         
         .slot-box { 
-            flex: 1; height: 80px; position: relative; 
+            flex: 1; height: 90px; position: relative; 
             display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.5); border-radius: 15px;
         }
-        .slot-bg-img { width: 100%; height: 100%; object-fit: contain; position: absolute; z-index: 1; }
-        .slot-content { position: relative; z-index: 2; font-weight: bold; text-transform: lowercase; font-size: 1.1rem; }
+        .slot-bg-img { width: 100%; height: 100%; object-fit: contain; position: absolute; z-index: 1; pointer-events: none; }
+        .slot-content { position: relative; z-index: 2; font-weight: 900; text-transform: uppercase; font-size: clamp(1.8rem, 6vw, 2.5rem); color: #333; pointer-events: none; }
 
-        /* Pool de Livros Abertos */
-        .pool-side { flex: 0.8; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 10px; overflow-y: auto; padding: 10px; border-left: 2px dashed #eee; }
+        /* Mesa de Livros (Lado Direito) */
+        .pool-side { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-content: start; overflow-y: auto; padding: 10px; border-left: 2px solid #eee; }
         
         .drag-book { 
-            width: 80px; height: 80px; position: relative; cursor: grab;
+            height: 90px; position: relative; cursor: grab;
             display: flex; align-items: center; justify-content: center;
+            transition: transform 0.2s;
         }
+        .drag-book:active { cursor: grabbing; }
         .drag-book img { width: 100%; height: 100%; object-fit: contain; position: absolute; }
-        .drag-book span { position: relative; z-index: 2; font-weight: bold; text-transform: lowercase; font-size: 1rem; }
-        
-        .drag-book.dragging { opacity: 0.5; }
+        .drag-book span { position: relative; z-index: 2; font-weight: 900; text-transform: uppercase; font-size: clamp(1.5rem, 5vw, 2rem); color: #333; }
+        .drag-book.dragging { opacity: 0.3; transform: scale(0.9); }
 
         /* FOOTER */
         .footer-btns { display: flex; gap: 15px; width: 100%; border-top: 2px dashed #eee; padding-top: 15px; align-items: center; justify-content: center; }
-        .btn-play { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.3rem; font-weight: bold; padding: 16px; border-radius: 20px; cursor: pointer; flex: 1; box-shadow: 0 5px 0 #4a96d1; }
-        .btn-check { background: white; color: var(--cor-acerto); border: 3px solid var(--cor-acerto); font-size: 1rem; padding: 10px 30px; box-shadow: 0 3px 0 var(--cor-acerto); font-weight: bold; cursor: pointer; border-radius: 15px; font-family: 'Fredoka'; }
-
-        /* ANIMAÇÃO INTRO */
-        .anim-box { width: 100%; max-width: 320px; height: 110px; background: var(--cor-fundo-pagina); border-radius: 20px; margin: 10px 0; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
-        .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 25px; width: 100%; max-width: 350px; text-align: center; }
+        .btn-check { background: white; color: var(--cor-acerto); border: 3px solid var(--cor-acerto); font-size: 1.1rem; padding: 12px 40px; box-shadow: 0 4px 0 var(--cor-acerto); font-weight: bold; cursor: pointer; border-radius: 20px; font-family: 'Fredoka'; transition: 0.1s; }
+        .btn-check:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--cor-acerto); }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
-
     <header class="nav-bar">
-        <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:#5EAAEA; cursor:pointer;">☰</button>
+        <button onclick="location.reload()" style="background:none; border:none; font-size:26px; color:#5EAAEA; cursor:pointer;">☰</button>
         <div style="display:flex; align-items:center; gap:10px;"><img id="header-icon" src="" style="height:32px;"><h1 style="font-size:1.1rem; color:#5EAAEA; margin: 0;">Português - 1º Ano</h1></div>
         <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
@@ -96,15 +79,12 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
-                    <img id="intro-cat-img" src="" style="width:80px; margin-bottom:5px;">
-                    <h2 id="intro-cat-title" style="color:var(--cor-azul-tema); margin: 0;"></h2>
-                    <div id="anim-container" class="anim-box"></div>
-                    <h1 style="color:var(--cor-principal); font-size:1.7rem; margin: 5px 0;">ORDEM ALFABÉTICA</h1>
-                    <p style="color:#666;">Organiza os livros na estante!</p>
+                    <h2 id="intro-cat-title" style="color:var(--cor-azul-tema); margin: 0; font-size: 1.2rem;"></h2>
+                    <h1 style="color:var(--cor-principal); font-size:2rem; margin: 10px 0;">ORDEM ALFABÉTICA</h1>
+                    <p style="color:#666; max-width: 300px;">Os livros da 1ª prateleira estão baralhados! Consegues pô-los em ordem?</p>
                 </div>
                 <div class="footer-btns">
-                    <button class="btn-play" onclick="startGame()">JOGAR</button>
-                    <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:55px;"></button>
+                    <button class="btn-check" style="background:var(--cor-azul-tema); color:white; border-color:var(--cor-azul-tema); box-shadow:0 5px 0 #4a96d1; width:100%; font-size:1.4rem;" onclick="startGame()">JOGAR</button>
                 </div>
             </div>
         </section>
@@ -113,16 +93,14 @@
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="game-top-bar">
-                    <div style="font-weight:bold; color:#666;">⏳ <span id="timer">00:00</span></div>
-                    <div id="level-title" style="font-weight:bold; color:var(--cor-azul-tema); font-size:0.8rem;"></div>
-                    <div class="points-wrapper">
-                        <div class="points-col">PTS: <span id="points">0</span></div>
-                        <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:26px;"></button>
-                    </div>
+                    <div style="font-weight:bold; color:#666; font-size:1rem;">⏳ <span id="timer">00:00</span></div>
+                    <div class="points-col">PTS: <span id="points">0</span></div>
                 </div>
 
                 <div class="game-split">
+                    <!-- Esquerda: Estante com livro_as.png -->
                     <div id="slots-list" class="slots-side"></div>
+                    <!-- Direita: Mesa com livro_a.png -->
                     <div id="pool-list" class="pool-side"></div>
                 </div>
 
@@ -133,11 +111,11 @@
         </section>
     </main>
 
-    <div class="modal" id="modal">
-        <div class="modal-card">
-            <h2 id="modal-title" style="color:var(--cor-acerto);">MUITO BEM!</h2>
-            <div id="modal-msg" style="margin: 15px 0; font-size: 1rem; color: #555;"></div>
-            <button class="btn-play" id="modal-btn-next" onclick="handleNext()">PRÓXIMO</button>
+    <div class="modal" id="modal" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); display:none; align-items:center; justify-content:center; z-index:3000;">
+        <div style="background:white; border:4px solid var(--cor-azul-tema); border-radius:30px; padding:30px; width:300px; text-align:center;">
+            <h2 style="color:var(--cor-acerto); margin-top:0;">PARABÉNS!</h2>
+            <p id="modal-msg" style="margin: 20px 0; font-size: 1.1rem; color: #555;"></p>
+            <button class="btn-check" style="background:var(--cor-azul-tema); color:white; border-color:var(--cor-azul-tema); box-shadow:0 4px 0 #4a96d1; width:100%;" onclick="location.reload()">PRÓXIMO</button>
         </div>
     </div>
 
@@ -148,15 +126,8 @@
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
             document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.ano1;
-            document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
-            updateIntro();
+            document.getElementById('intro-cat-title').innerText = JOGO_ORDEM_DATA.categorias[currentCatKey].nome;
         };
-
-        function updateIntro() {
-            const cat = JOGO_ORDEM_DATA.categorias[currentCatKey];
-            document.getElementById('intro-cat-title').innerText = cat.nome;
-            document.getElementById('intro-cat-img').src = JOGO_CONFIG.caminhoCat + cat.img;
-        }
 
         function startGame() {
             document.getElementById('intro-screen').classList.remove('active');
@@ -167,23 +138,14 @@
 
         function loadLevel() {
             const level = JOGO_ORDEM_DATA.categorias[currentCatKey].niveis[currentLevelIdx];
-            document.getElementById('level-title').innerText = level.titulo;
             let items = [];
+            const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
-            if (currentCatKey === 'letras') {
-                const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-                if (level.tipo === 'seq') {
-                    const start = Math.floor(Math.random() * (abc.length - 6));
-                    items = abc.slice(start, start + 6);
-                } else {
-                    items = abc.sort(() => 0.5 - Math.random()).slice(0, 6);
-                }
-            } else if (currentCatKey === 'mesma') {
-                const ch = Object.keys(JOGO_ORDEM_DATA.bancoMesma);
-                const letra = ch[Math.floor(Math.random() * ch.length)];
-                items = [...JOGO_ORDEM_DATA.bancoMesma[letra]].sort(() => 0.5 - Math.random()).slice(0, 6);
+            if (currentLevelIdx === 0) {
+                const start = Math.floor(Math.random() * (abc.length - 6));
+                items = abc.slice(start, start + 6);
             } else {
-                items = [...JOGO_ORDEM_DATA.bancoGeral].sort(() => 0.5 - Math.random()).slice(0, 6);
+                items = abc.sort(() => 0.5 - Math.random()).slice(0, 6);
             }
             renderGame(items);
         }
@@ -193,7 +155,7 @@
             const poolList = document.getElementById('pool-list');
             slotsList.innerHTML = ''; poolList.innerHTML = '';
 
-            // Slots com livro_as.png
+            // Estante (Slots) - livro_as.png
             items.forEach((_, i) => {
                 slotsList.innerHTML += `
                     <div class="slot-row">
@@ -205,7 +167,7 @@
                     </div>`;
             });
 
-            // Pool com livro_a.png (Livro aberto com letra)
+            // Mesa (Pool) - livro_a.png
             [...items].sort(() => 0.5 - Math.random()).forEach(txt => {
                 const book = document.createElement('div');
                 book.className = 'drag-book';
@@ -215,9 +177,9 @@
                     <span>${txt}</span>
                 `;
                 book.addEventListener('dragstart', () => { draggedData = txt; book.classList.add('dragging'); });
-                book.addEventListener('dragend', () => { book.classList.remove('dragging'); });
+                book.addEventListener('dragend', () => book.classList.remove('dragging'));
                 
-                // Suporte Touch
+                // Touch
                 book.addEventListener('touchstart', () => { draggedData = txt; }, {passive:true});
                 book.addEventListener('touchend', e => {
                     const t = e.changedTouches[0];
@@ -241,14 +203,10 @@
             const content = slot.querySelector('.slot-content');
             const bg = slot.querySelector('.slot-bg-img');
 
-            // Se o slot já estiver preenchido, não faz nada ou podes resetar
-            if(content.innerText !== "") return;
+            if(content.innerText !== "") return; // Slot já ocupado
 
-            // Transforma o slot
             content.innerText = text;
-            bg.src = JOGO_CONFIG.caminhoImg + "livro_f.png"; // Transforma em livro_f
-            
-            // Remove o livro original da pool
+            bg.src = JOGO_CONFIG.caminhoImg + "livro_f.png"; // Muda para livro_f.png
             if(sourceBook) sourceBook.remove();
         }
 
@@ -256,31 +214,27 @@
             const slots = Array.from(document.querySelectorAll('.slot-box'));
             const words = slots.map(s => s.querySelector('.slot-content').innerText.trim()).filter(t => t !== "");
 
-            if(words.length < slots.length) return alert("Preenche todos os espaços!");
+            if(words.length < 6) return alert("Coloca todos os livros na estante!");
 
             const correct = [...words].sort((a, b) => a.localeCompare(b, 'pt', {sensitivity: 'base'}));
             let errors = 0;
 
             slots.forEach((s, i) => {
                 const txt = s.querySelector('.slot-content');
-                txt.style.color = (txt.innerText === correct[i]) ? "var(--cor-acerto)" : "var(--cor-erro)";
-                if(txt.innerText !== correct[i]) errors++;
+                if (txt.innerText === correct[i]) {
+                    txt.style.color = "var(--cor-acerto)";
+                } else {
+                    txt.style.color = "var(--cor-erro)";
+                    errors++;
+                }
             });
 
             if (errors === 0) {
-                points += 100; document.getElementById('points').innerText = points;
+                points += 100;
+                document.getElementById('points').innerText = points;
+                document.getElementById('modal-msg').innerText = "Ordenaste a prateleira perfeitamente!";
                 document.getElementById('modal').style.display = 'flex';
-            } else {
-                alert("Alguns livros estão no lugar errado!");
-            }
-        }
-
-        function handleNext() {
-            document.getElementById('modal').style.display = 'none';
-            if (currentLevelIdx < JOGO_ORDEM_DATA.categorias[currentCatKey].niveis.length - 1) {
-                currentLevelIdx++; loadLevel();
-            } else {
-                location.reload();
+                clearInterval(timerInterval);
             }
         }
 
@@ -290,9 +244,6 @@
                 document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; 
             }, 1000); 
         }
-
-        function toggleMenu() { document.body.classList.toggle('menu-active'); }
-        function toggleRD() { /* Lógica de fechar/abrir RD */ }
     </script>
 </body>
 </html>
