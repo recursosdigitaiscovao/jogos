@@ -21,7 +21,7 @@ const JOGO_CONFIG = {
             { palavra: "BOLA", img: "objetos/bola.png" }, 
             { palavra: "BONECA", img: "objetos/boneca.png" }, 
             { palavra: "BALEIA", img: "animais_selvagens/baleia.png" }, 
-            { palavra: "BANANA", img: "frutos/banana.png" }, 
+            { palavra: "BANANA", img: "frutas/banana.png" }, 
             { palavra: "BARCO", img: "transportes/barco.png" }
         ]},
         C: { nome: "Letra C", img: "letra_c.png", itens: [
