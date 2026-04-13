@@ -3,33 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sopa de Letras - 1º Ano</title>
+    <title>Sopa de Letras - Template 1</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-page: #e9f0f8;
-            --white: #ffffff;
             --primary-blue: #5ba4e5;
             --inner-shadow: inset 6px 6px 12px #c5d4e3, inset -6px -6px 12px #ffffff;
             --outer-shadow: 10px 10px 20px #c5d4e3, -10px -10px 20px #ffffff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
-        body { background-color: var(--bg-page); display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+        body { background-color: var(--bg-page); height: 100vh; width: 100vw; overflow: hidden; position: relative; }
 
-        /* --- MENU HAMBÚRGUER VERTICAL (SEM BARRA BRANCA) --- */
-        .menu-container-vertical {
+        /* --- NOVO MENU HAMBÚRGUER FLUTUANTE --- */
+        .nav-container {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            top: 15px;
+            left: 15px;
+            z-index: 9999; /* Garante que fica por cima de tudo */
         }
 
-        .hamburger-icon {
+        .hamburger-btn {
             font-size: 32px;
             color: var(--primary-blue);
             cursor: pointer;
@@ -38,51 +34,51 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.3s ease;
+            background: transparent;
+            transition: transform 0.3s;
         }
 
-        /* Dropdown de Icons */
         .menu-dropdown {
-            display: flex;
+            display: none; /* Escondido por padrão */
             flex-direction: column;
-            gap: 15px;
-            margin-top: 10px;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease, opacity 0.3s ease;
-            opacity: 0;
+            gap: 12px;
+            padding-top: 10px;
         }
 
-        .menu-dropdown.open {
-            max-height: 500px;
-            opacity: 1;
+        .menu-dropdown.active {
+            display: flex; /* Mostra ao clicar */
         }
 
-        .menu-item {
+        .menu-icon-item {
             width: 55px;
             height: 55px;
-            background: var(--white);
+            background: #ffffff;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 4px 4px 8px #c5d4e3, -4px -4px 8px #ffffff;
+            box-shadow: 4px 4px 10px #c5d4e3, -4px -4px 10px #ffffff;
             cursor: pointer;
             transition: transform 0.2s;
         }
 
-        .menu-item:hover { transform: scale(1.1); }
-        .menu-item img { width: 30px; height: 30px; object-fit: contain; }
+        .menu-icon-item:hover { transform: scale(1.1); }
+        .menu-icon-item img { width: 32px; height: 32px; object-fit: contain; }
 
-        /* --- LAYOUT PRINCIPAL --- */
-        .main-wrapper { flex-grow: 1; display: flex; flex-direction: column; }
+        /* --- CONTEÚDO --- */
+        .main-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
 
         header {
             height: 80px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 40px 0 100px; /* Espaço para o menu à esquerda */
+            padding: 0 40px 0 100px; /* Recuo para não bater no menu */
         }
 
         .header-title { display: flex; align-items: center; gap: 12px; color: var(--primary-blue); font-weight: 900; font-size: 1.6rem; }
@@ -93,25 +89,25 @@
             border-radius: 25px; text-decoration: none; font-weight: 900; box-shadow: 0 5px 0 #3d7db8;
         }
 
-        /* --- ÁREA DO JOGO (CARD) --- */
+        /* --- CARD DO JOGO --- */
         .game-area { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
         
         .game-card {
-            background: var(--bg-page); width: 100%; max-width: 950px; height: 100%; max-height: 780px;
-            border-radius: 40px; box-shadow: var(--outer-shadow); padding: 25px 40px;
+            background: var(--bg-page); width: 100%; max-width: 950px; height: 95%; max-height: 780px;
+            border-radius: 40px; box-shadow: var(--outer-shadow); padding: 25px;
             display: flex; flex-direction: column; align-items: center;
         }
 
         .status-bar { width: 100%; display: flex; justify-content: space-between; font-weight: 900; margin-bottom: 10px; }
         .dots { display: flex; gap: 8px; }
         .dot { width: 20px; height: 20px; border-radius: 50%; background: var(--bg-page); box-shadow: var(--inner-shadow); }
-        .dot.active { background: #2ecc71; border: 2px solid white; box-shadow: 0 0 10px rgba(46, 204, 113, 0.3); }
+        .dot.active { background: #2ecc71; border: 2px solid white; }
 
         .target-box { text-align: center; margin-bottom: 15px; }
-        .target-box img { height: clamp(80px, 12vh, 120px); margin-bottom: 5px; }
+        .target-box img { height: clamp(80px, 15vh, 120px); margin-bottom: 5px; }
         .target-box h2 { font-size: 2.5rem; font-weight: 900; letter-spacing: 4px; color: #333; }
 
-        /* Grade Neomórfica Centralizada */
+        /* Grade Neomórfica */
         .grid-frame {
             background: var(--bg-page); padding: 15px; border-radius: 30px;
             box-shadow: var(--inner-shadow); display: grid; gap: 10px; margin: auto;
@@ -132,15 +128,15 @@
 </head>
 <body>
 
-    <nav class="menu-container-vertical">
-        <div class="hamburger-icon" onclick="toggleDropdown()">
+    <nav class="nav-container">
+        <div class="hamburger-btn" onclick="toggleMenu()">
             <i class="fas fa-bars"></i>
         </div>
         <div class="menu-dropdown" id="dropdownMenu">
             </div>
     </nav>
 
-    <div class="main-wrapper">
+    <div class="main-content">
         <header>
             <div class="header-title">
                 <img id="header-icon" src="" alt="">
@@ -152,9 +148,9 @@
         <main class="game-area">
             <div class="game-card">
                 <div class="status-bar">
-                    <div id="tempo">⏳ 01:31</div>
-                    <div class="dots" id="dots-container"></div>
-                    <div id="pts">0 PTS</div>
+                    <div>⏳ 01:31</div>
+                    <div class="dots" id="dots-progress"></div>
+                    <div>0 PTS</div>
                 </div>
 
                 <div class="target-box">
@@ -162,7 +158,7 @@
                     <h2 id="main-word"></h2>
                 </div>
 
-                <div class="grid-frame" id="game-grid"></div>
+                <div id="game-grid" class="grid-frame"></div>
 
                 <div class="game-footer">
                     <button class="settings-btn"><i class="fas fa-cog"></i></button>
@@ -173,40 +169,38 @@
 
     <script src="dados.js"></script>
     <script>
-        function toggleDropdown() {
-            document.getElementById('dropdownMenu').classList.toggle('open');
+        function toggleMenu() {
+            const menu = document.getElementById('dropdownMenu');
+            menu.classList.toggle('active');
         }
 
-        function init() {
+        function initApp() {
             const dropdown = document.getElementById('dropdownMenu');
             const icons = JOGO_CONFIG.iconesMenu;
             const pathIcons = JOGO_CONFIG.caminhoIcons;
 
-            // Criar ícones do dropdown (Pré ao 4º Ano)
+            // Criar a lista de icons debaixo do hambúrguer
             const keys = ['pre', 'ano1', 'ano2', 'ano3', 'ano4'];
             keys.forEach(key => {
-                const item = document.createElement('div');
-                item.className = 'menu-item';
-                item.innerHTML = `<img src="${pathIcons}${icons[key]}" title="${key}">`;
-                dropdown.appendChild(item);
+                const div = document.createElement('div');
+                div.className = 'menu-icon-item';
+                div.innerHTML = `<img src="${pathIcons}${icons[key]}" alt="${key}">`;
+                dropdown.appendChild(div);
             });
 
-            // Definir ícone do header
+            // Ícone do topo (header)
             document.getElementById('header-icon').src = `${pathIcons}${icons.ano1}`;
-            
-            // Iniciar Jogo (Exemplo com PATO)
-            carregarJogo('animais', 2);
-        }
 
-        function carregarJogo(cat, idx) {
-            const item = JOGO_CONFIG.categorias[cat].itens[idx];
+            // Carregar o primeiro item (VACA) da categoria animais
+            const cat = JOGO_CONFIG.categorias.animais;
+            const item = cat.itens[0];
+            
             document.getElementById('main-img').src = JOGO_CONFIG.caminhoImg + item.img;
             document.getElementById('main-word').innerText = item.nome;
 
+            // Gerar Grade
             const grid = document.getElementById('game-grid');
-            grid.innerHTML = '';
-            grid.style.gridTemplateColumns = `repeat(8, 1fr)`;
-            
+            grid.style.gridTemplateColumns = 'repeat(8, 1fr)';
             const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             for(let i=0; i<64; i++) {
                 const cell = document.createElement('div');
@@ -215,8 +209,8 @@
                 grid.appendChild(cell);
             }
 
-            const dots = document.getElementById('dots-container');
-            dots.innerHTML = '';
+            // Bolinhas de progresso
+            const dots = document.getElementById('dots-progress');
             for(let i=0; i<5; i++) {
                 const d = document.createElement('div');
                 d.className = i === 0 ? 'dot active' : 'dot';
@@ -224,7 +218,7 @@
             }
         }
 
-        window.onload = init;
+        window.onload = initApp;
     </script>
 </body>
 </html>
