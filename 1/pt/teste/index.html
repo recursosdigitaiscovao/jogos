@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sopa de Letras - Template 1</title>
+    <title>Sopa de Letras - 1º Ano</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -18,80 +18,73 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
         body { background-color: var(--bg-page); display: flex; height: 100vh; width: 100vw; overflow: hidden; }
 
-        /* --- SIDEBAR HAMBÚRGUER --- */
-        .sidebar {
-            width: 80px; /* Largura inicial (apenas ícones) */
-            background: #f8fbff;
+        /* --- MENU HAMBÚRGUER VERTICAL (SEM BARRA BRANCA) --- */
+        .menu-container-vertical {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
-            align-items: flex-start; /* Alinha itens à esquerda para a expansão */
-            padding-top: 20px;
-            border-right: 1px solid rgba(0,0,0,0.05);
-            transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            flex-shrink: 0;
-            z-index: 100;
-            overflow: hidden;
+            align-items: center;
         }
 
-        /* Classe ativada pelo clique */
-        body.menu-open .sidebar { width: 240px; }
-
-        .hamburger-container {
-            width: 80px; /* Mantém o ícone do topo sempre centrado na zona de 80px */
+        .hamburger-icon {
+            font-size: 32px;
+            color: var(--primary-blue);
+            cursor: pointer;
+            width: 60px;
+            height: 60px;
             display: flex;
+            align-items: center;
             justify-content: center;
-            margin-bottom: 30px;
-            flex-shrink: 0;
+            transition: transform 0.3s ease;
         }
 
-        .hamburger-menu { 
-            font-size: 30px; 
-            color: var(--primary-blue); 
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        body.menu-open .hamburger-menu { transform: rotate(90deg); }
-        
-        .menu-items { 
-            width: 100%; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px;
-        }
-
-        .menu-item { 
-            display: flex; 
-            align-items: center; 
-            width: 100%;
-            padding: 15px 0 15px 25px; /* Padding fixo à esquerda */
-            gap: 20px; 
-            color: var(--primary-blue); 
-            font-weight: 800; 
-            cursor: pointer;
-            transition: background 0.2s;
-            white-space: nowrap;
-        }
-
-        .menu-item:hover { background: #eef5fc; }
-
-        .menu-item img { 
-            width: 32px; 
-            height: 32px; 
-            object-fit: contain;
-            flex-shrink: 0;
-        }
-
-        .menu-item span {
+        /* Dropdown de Icons */
+        .menu-dropdown {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 10px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
             opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 1.1rem;
         }
-        body.menu-open .menu-item span { opacity: 1; }
 
-        /* --- CONTEÚDO PRINCIPAL --- */
-        .main-wrapper { flex-grow: 1; display: flex; flex-direction: column; min-width: 0; }
-        
-        header { height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
+        .menu-dropdown.open {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        .menu-item {
+            width: 55px;
+            height: 55px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 4px 4px 8px #c5d4e3, -4px -4px 8px #ffffff;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .menu-item:hover { transform: scale(1.1); }
+        .menu-item img { width: 30px; height: 30px; object-fit: contain; }
+
+        /* --- LAYOUT PRINCIPAL --- */
+        .main-wrapper { flex-grow: 1; display: flex; flex-direction: column; }
+
+        header {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px 0 100px; /* Espaço para o menu à esquerda */
+        }
+
         .header-title { display: flex; align-items: center; gap: 12px; color: var(--primary-blue); font-weight: 900; font-size: 1.6rem; }
         .header-title img { width: 45px; }
 
@@ -100,62 +93,58 @@
             border-radius: 25px; text-decoration: none; font-weight: 900; box-shadow: 0 5px 0 #3d7db8;
         }
 
+        /* --- ÁREA DO JOGO (CARD) --- */
         .game-area { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
         
         .game-card {
             background: var(--bg-page); width: 100%; max-width: 950px; height: 100%; max-height: 780px;
-            border-radius: 40px; box-shadow: var(--outer-shadow); padding: 20px 40px;
+            border-radius: 40px; box-shadow: var(--outer-shadow); padding: 25px 40px;
             display: flex; flex-direction: column; align-items: center;
         }
 
         .status-bar { width: 100%; display: flex; justify-content: space-between; font-weight: 900; margin-bottom: 10px; }
         .dots { display: flex; gap: 8px; }
         .dot { width: 20px; height: 20px; border-radius: 50%; background: var(--bg-page); box-shadow: var(--inner-shadow); }
-        .dot.active { background: #2ecc71; border: 2px solid white; box-shadow: none; }
+        .dot.active { background: #2ecc71; border: 2px solid white; box-shadow: 0 0 10px rgba(46, 204, 113, 0.3); }
 
         .target-box { text-align: center; margin-bottom: 15px; }
-        .target-box img { height: 110px; margin-bottom: 5px; }
+        .target-box img { height: clamp(80px, 12vh, 120px); margin-bottom: 5px; }
         .target-box h2 { font-size: 2.5rem; font-weight: 900; letter-spacing: 4px; color: #333; }
 
+        /* Grade Neomórfica Centralizada */
         .grid-frame {
             background: var(--bg-page); padding: 15px; border-radius: 30px;
             box-shadow: var(--inner-shadow); display: grid; gap: 10px; margin: auto;
         }
+        
         .cell {
-            width: clamp(35px, 4vw, 48px); height: clamp(35px, 4vw, 48px); background: var(--bg-page); 
+            width: clamp(35px, 4.5vw, 48px); height: clamp(35px, 4.5vw, 48px); background: var(--bg-page); 
             border-radius: 10px; display: flex; align-items: center; justify-content: center; 
             font-weight: 900; font-size: 1.3rem; cursor: pointer; box-shadow: 5px 5px 10px #c5d4e3, -5px -5px 10px #ffffff;
         }
 
-        .game-footer { width: 100%; display: flex; justify-content: flex-end; padding-top: 10px; }
+        .game-footer { width: 100%; display: flex; justify-content: flex-end; }
         .settings-btn {
             background: var(--bg-page); border: none; width: 50px; height: 50px;
             border-radius: 50%; box-shadow: var(--outer-shadow); color: #888; font-size: 24px; cursor: pointer;
         }
-
-        @media (max-width: 800px) {
-            body.menu-open .sidebar { width: 80px; } /* Mantém fechado em ecrãs muito pequenos */
-            .header-title span { display: none; }
-        }
     </style>
 </head>
-<body id="mainBody">
+<body>
 
-    <aside class="sidebar">
-        <div class="hamburger-container">
-            <div class="hamburger-menu" onclick="toggleMenu()">
-                <i class="fas fa-bars"></i>
-            </div>
+    <nav class="menu-container-vertical">
+        <div class="hamburger-icon" onclick="toggleDropdown()">
+            <i class="fas fa-bars"></i>
         </div>
-        <div class="menu-items" id="menu-container">
+        <div class="menu-dropdown" id="dropdownMenu">
             </div>
-    </aside>
+    </nav>
 
     <div class="main-wrapper">
         <header>
             <div class="header-title">
                 <img id="header-icon" src="" alt="">
-                <span>Português - 1º Ano</span>
+                Português - 1º Ano
             </div>
             <a href="#" class="btn-voltar">← Voltar</a>
         </header>
@@ -163,14 +152,14 @@
         <main class="game-area">
             <div class="game-card">
                 <div class="status-bar">
-                    <div>⏳ 01:31</div>
-                    <div class="dots" id="progress-dots"></div>
-                    <div>0 PTS</div>
+                    <div id="tempo">⏳ 01:31</div>
+                    <div class="dots" id="dots-container"></div>
+                    <div id="pts">0 PTS</div>
                 </div>
 
                 <div class="target-box">
-                    <img id="target-img" src="" alt="">
-                    <h2 id="target-word"></h2>
+                    <img id="main-img" src="" alt="">
+                    <h2 id="main-word"></h2>
                 </div>
 
                 <div class="grid-frame" id="game-grid"></div>
@@ -184,39 +173,35 @@
 
     <script src="dados.js"></script>
     <script>
-        function toggleMenu() {
-            document.getElementById('mainBody').classList.toggle('menu-open');
+        function toggleDropdown() {
+            document.getElementById('dropdownMenu').classList.toggle('open');
         }
 
         function init() {
-            const menu = document.getElementById('menu-container');
+            const dropdown = document.getElementById('dropdownMenu');
             const icons = JOGO_CONFIG.iconesMenu;
             const pathIcons = JOGO_CONFIG.caminhoIcons;
 
-            const anos = [
-                { id: 'pre', txt: 'Pré-Escolar' },
-                { id: 'ano1', txt: '1º Ano' },
-                { id: 'ano2', txt: '2º Ano' },
-                { id: 'ano3', txt: '3º Ano' },
-                { id: 'ano4', txt: '4º Ano' }
-            ];
-
-            anos.forEach(a => {
+            // Criar ícones do dropdown (Pré ao 4º Ano)
+            const keys = ['pre', 'ano1', 'ano2', 'ano3', 'ano4'];
+            keys.forEach(key => {
                 const item = document.createElement('div');
                 item.className = 'menu-item';
-                // O icon fica sempre visível, o span (texto) só aparece quando aberto
-                item.innerHTML = `<img src="${pathIcons}${icons[a.id]}"> <span>${a.txt}</span>`;
-                menu.appendChild(item);
+                item.innerHTML = `<img src="${pathIcons}${icons[key]}" title="${key}">`;
+                dropdown.appendChild(item);
             });
 
+            // Definir ícone do header
             document.getElementById('header-icon').src = `${pathIcons}${icons.ano1}`;
-            carregarPalavra('animais', 2); // Exemplo PATO
+            
+            // Iniciar Jogo (Exemplo com PATO)
+            carregarJogo('animais', 2);
         }
 
-        function carregarPalavra(cat, idx) {
+        function carregarJogo(cat, idx) {
             const item = JOGO_CONFIG.categorias[cat].itens[idx];
-            document.getElementById('target-img').src = JOGO_CONFIG.caminhoImg + item.img;
-            document.getElementById('target-word').innerText = item.nome;
+            document.getElementById('main-img').src = JOGO_CONFIG.caminhoImg + item.img;
+            document.getElementById('main-word').innerText = item.nome;
 
             const grid = document.getElementById('game-grid');
             grid.innerHTML = '';
@@ -230,7 +215,7 @@
                 grid.appendChild(cell);
             }
 
-            const dots = document.getElementById('progress-dots');
+            const dots = document.getElementById('dots-container');
             dots.innerHTML = '';
             for(let i=0; i<5; i++) {
                 const d = document.createElement('div');
