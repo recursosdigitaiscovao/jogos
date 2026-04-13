@@ -1,45 +1,154 @@
-/* 1. Contentor Flexível */
-.icon-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  width: 100%;
-  height: 100%;
-  padding: 10px;
-  box-sizing: border-box;
-}
+<style>
+    :root {
+        --pre: #e691a7;
+        --ano1: #e6a75a;
+        --ano2: #45cfa8;
+        --ano3: #5ea2e6;
+        --ano4: #8a81e6;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* 2. Tamanho Dinâmico do Ícone */
-.icon-item {
-  /* O clamp garante que o ícone nunca fique minúsculo nem gigante */
-  /* (mínimo: 24px, ideal: 5vw, máximo: 60px) */
-  font-size: clamp(24px, 6vw, 60px); 
-  
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: transform 0.3s ease;
-}
+    body {
+        font-family: 'Fredoka', sans-serif;
+        background: #f0faff;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        height: 100dvh; 
+        overflow: hidden; 
+    }
 
-/* 3. Ajuste para Monitor na Vertical (Portrait / Telemóvel) */
-@media (orientation: portrait) {
-  .icon-container {
-    flex-direction: row; /* Ou column se quiseres uma lista vertical */
-    flex-wrap: wrap;    /* Se forem muitos, eles saltam para a linha de baixo */
-  }
-}
+    header {
+        width: 100%;
+        padding: 1.5vh 10px; 
+        text-align: center;
+        background: white;
+        border-bottom-left-radius: 50px;
+        border-bottom-right-radius: 50px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        flex-shrink: 0;
+        z-index: 10;
+    }
 
-/* 4. Ajuste para Monitor na Horizontal (Landscape / Desktop) */
-@media (orientation: landscape) {
-  .icon-container {
-    flex-direction: row;
-  }
-}
+    h1 {
+        white-space: nowrap;
+        font-size: clamp(1.2rem, 5vw, 2.5rem); 
+        color: #ff4757;
+        text-shadow: 2px 2px 0px #ffcccb;
+        animation: bounce 2s infinite;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
 
-/* Garantir que em ecrãs muito pequenos eles não desapareçam */
-@media (max-width: 480px) {
-  .icon-container {
-    gap: 10px;
-  }
-}
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+    }
+
+    main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        min-height: 0; /* Importante para o flex container */
+    }
+
+    .grid-container {
+        display: grid;
+        width: 100%;
+        height: 100%;
+        max-width: 1400px;
+        max-height: 70vh; /* Limita a altura para não colar no rodapé */
+        gap: 15px;
+        /* Desktop padrão: 5 colunas */
+        grid-template-columns: repeat(5, 1fr); 
+    }
+
+    .card {
+        text-decoration: none;
+        color: white;
+        border-radius: 25px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: clamp(0.8rem, 2vw, 1.2rem);
+        font-weight: bold;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        border: 4px solid white;
+        text-align: center;
+        padding: 15px;
+        overflow: hidden;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    }
+
+    .icon { 
+        width: 100%;
+        /* O ícone ocupará no máximo 60% da altura do cartão */
+        height: 60%; 
+        max-height: 150px;
+        margin-bottom: 10px; 
+        object-fit: contain; /* Garante que a imagem não distorce */
+        filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1));
+    }
+    
+    .pre { background-color: var(--pre); }
+    .ano1 { background-color: var(--ano1); }
+    .ano2 { background-color: var(--ano2); }
+    .ano3 { background-color: var(--ano3); }
+    .ano4 { background-color: var(--ano4); }
+
+    footer {
+        background: white; 
+        padding: 10px; 
+        text-align: center;
+        font-size: 0.8rem; 
+        color: #777; 
+        flex-shrink: 0;
+    }
+
+    /* --- AJUSTES DE RESPONSIVIDADE --- */
+
+    /* Telemóveis e Tablets na Vertical (Portrait) */
+    @media (max-width: 850px) and (orientation: portrait) {
+        .grid-container {
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            max-height: 85vh;
+        }
+        .card.ano4 {
+            grid-column: span 2; /* 4º ano ocupa a largura toda em baixo */
+        }
+        .icon { height: 50%; }
+    }
+
+    /* Tablets na Horizontal ou Ecrãs Médios */
+    @media (max-width: 1100px) and (min-width: 851px) {
+        .grid-container {
+            gap: 10px;
+        }
+        .card { padding: 10px; }
+    }
+
+    /* Telemóveis na Horizontal (Ecrã muito baixo) */
+    @media (max-height: 500px) {
+        header { padding: 5px; }
+        h1 { font-size: 1.2rem; }
+        p { display: none; } /* Esconde o texto secundário para ganhar espaço */
+        .grid-container {
+            grid-template-columns: repeat(5, 1fr);
+            max-height: 75vh;
+        }
+        .icon { height: 40px; margin-bottom: 2px; }
+        .card { padding: 5px; border-radius: 15px; }
+    }
+</style>
