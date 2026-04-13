@@ -1,208 +1,45 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Portal Escola Divertida</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --pre: #e691a7;
-            --ano1: #e6a75a;
-            --ano2: #45cfa8;
-            --ano3: #5ea2e6;
-            --ano4: #8a81e6;
-        }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+/* 1. Contentor Flexível */
+.icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
 
-        body {
-            font-family: 'Fredoka', sans-serif;
-            background: #f0faff;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            height: 100dvh; 
-            overflow: hidden; 
-        }
+/* 2. Tamanho Dinâmico do Ícone */
+.icon-item {
+  /* O clamp garante que o ícone nunca fique minúsculo nem gigante */
+  /* (mínimo: 24px, ideal: 5vw, máximo: 60px) */
+  font-size: clamp(24px, 6vw, 60px); 
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
 
-        header {
-            width: 100%;
-            padding: 20px 10px 30px 10px; 
-            text-align: center;
-            background: white;
-            border-bottom-left-radius: 50% 15%;
-            border-bottom-right-radius: 50% 15%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            flex-shrink: 0;
-            z-index: 10;
-        }
+/* 3. Ajuste para Monitor na Vertical (Portrait / Telemóvel) */
+@media (orientation: portrait) {
+  .icon-container {
+    flex-direction: row; /* Ou column se quiseres uma lista vertical */
+    flex-wrap: wrap;    /* Se forem muitos, eles saltam para a linha de baixo */
+  }
+}
 
-        h1 {
-            white-space: nowrap;
-            /* Ajuste dinâmico para nunca quebrar */
-            font-size: clamp(1.2rem, 7.5vw, 2.8rem); 
-            color: #ff4757;
-            text-shadow: 3px 3px 0px #ffcccb;
-            animation: bounce 2s infinite;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
+/* 4. Ajuste para Monitor na Horizontal (Landscape / Desktop) */
+@media (orientation: landscape) {
+  .icon-container {
+    flex-direction: row;
+  }
+}
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        main {
-            flex: 1; 
-            display: flex;
-            align-items: center; 
-            justify-content: center;
-            padding: 10px 15px; 
-            min-height: 0;
-        }
-
-        .grid-container {
-            display: grid;
-            width: 100%;
-            height: 65%; /* Altura para desktop */
-            max-width: 1250px;
-            gap: 15px;
-            grid-template-columns: repeat(5, 1fr); 
-        }
-
-        .card {
-            text-decoration: none;
-            color: white;
-            height: 100%; 
-            border-radius: 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: clamp(0.9rem, 1.5vw, 1.3rem);
-            font-weight: bold;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 5px solid white;
-            text-align: center;
-            padding: 10px;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-        }
-
-        .icon { 
-            width: auto;
-            height: clamp(60px, 12vh, 110px);
-            margin-bottom: 10px; 
-            display: block;
-            object-fit: contain;
-        }
-        
-        .pre { background-color: var(--pre); }
-        .ano1 { background-color: var(--ano1); }
-        .ano2 { background-color: var(--ano2); }
-        .ano3 { background-color: var(--ano3); }
-        .ano4 { background-color: var(--ano4); }
-
-        footer {
-            background: white; padding: 10px 0; text-align: center;
-            font-size: 0.9rem; color: #777; flex-shrink: 0;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.03);
-        }
-
-        /* Ajustes para Telemóvel (Ecrãs Pequenos) */
-        @media (max-width: 800px) {
-            header { padding: 15px 10px 25px 10px; }
-            
-            main {
-                align-items: center; /* Mantém centrado mas preenche mais */
-                padding-top: 5px;
-            }
-
-            .grid-container {
-                height: 82%; /* Grelha muito maior para ocupar o ecrã */
-                grid-template-columns: repeat(2, 1fr); 
-                grid-template-rows: repeat(3, 1fr);
-                gap: 12px;
-            }
-            
-            .card {
-                border-radius: 20px;
-                font-size: 1.1rem;
-            }
-
-            .card.ano4 { grid-column: span 2; }
-            
-            .icon {
-                /* Aumenta os ícones significativamente no mobile */
-                height: clamp(70px, 14vh, 100px); 
-                margin-bottom: 5px;
-            }
-        }
-
-        /* Ajuste fino para telemóveis muito baixos ou com barra de navegação grande */
-        @media (max-height: 650px) and (max-width: 800px) {
-            .grid-container { height: 85%; }
-            .icon { height: clamp(50px, 12vh, 70px); }
-            header { padding: 10px; }
-            h1 { font-size: 1.2rem; }
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <h1><span>🚀</span> Mundo dos Jogos <span>🎮</span></h1>
-        <p style="color: #666; font-size: clamp(0.8rem, 2vh, 1.1rem); margin-top: 5px;">Escolhe o teu ano e diverte-te!</p>
-    </header>
-
-    <main>
-        <div class="grid-container">
-            <a href="/jogos/pre/" class="card pre">
-                <img id="img-pre" src="" alt="Pré-Escolar" class="icon">
-                <span>Pré-Escolar</span>
-            </a>
-            <a href="/jogos/1/" class="card ano1">
-                <img id="img-ano1" src="" alt="1º Ano" class="icon">
-                <span>1º Ano</span>
-            </a>
-            <a href="/jogos/2/" class="card ano2">
-                <img id="img-ano2" src="" alt="2º Ano" class="icon">
-                <span>2º Ano</span>
-            </a>
-            <a href="/jogos/3/" class="card ano3">
-                <img id="img-ano3" src="" alt="3º Ano" class="icon">
-                <span>3º Ano</span>
-            </a>
-            <a href="/jogos/4/" class="card ano4">
-                <img id="img-ano4" src="" alt="4º Ano" class="icon">
-                <span>4º Ano</span>
-            </a>
-        </div>
-    </main>
-
-    <footer>Recursos Digitais Covão</footer>
-
-    <script src="dados.js"></script>
-    <script>
-        window.onload = () => {
-            if (typeof PORTAL_CONFIG !== 'undefined') {
-                const path = PORTAL_CONFIG.caminhoIcons;
-                const imgs = PORTAL_CONFIG.icones;
-                document.getElementById('img-pre').src = path + imgs.pre;
-                document.getElementById('img-ano1').src = path + imgs.ano1;
-                document.getElementById('img-ano2').src = path + imgs.ano2;
-                document.getElementById('img-ano3').src = path + imgs.ano3;
-                document.getElementById('img-ano4').src = path + imgs.ano4;
-            }
-        };
-    </script>
-</body>
-</html>
+/* Garantir que em ecrãs muito pequenos eles não desapareçam */
+@media (max-width: 480px) {
+  .icon-container {
+    gap: 10px;
+  }
+}
