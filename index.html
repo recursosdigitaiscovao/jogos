@@ -21,7 +21,6 @@
             background: #f0faff;
             display: flex;
             flex-direction: column;
-            /* Garante que ocupa sempre a altura total do ecrã */
             height: 100vh;
             height: 100dvh; 
             overflow: hidden; 
@@ -29,7 +28,7 @@
 
         header {
             width: 100%;
-            padding: 1.5vh 10px;
+            padding: 2vh 10px;
             text-align: center;
             background: white;
             border-bottom-left-radius: 30px;
@@ -40,7 +39,7 @@
         }
 
         h1 {
-            font-size: clamp(1.2rem, 5vh, 2.5rem); 
+            font-size: clamp(1.2rem, 4vh, 2.2rem); 
             color: #ff4757;
             text-shadow: 2px 2px 0px #ffcccb;
             display: flex;
@@ -55,18 +54,20 @@
             align-items: center; 
             justify-content: center;
             padding: 20px;
-            min-height: 0; /* Importante para o scroll interno se necessário */
+            min-height: 0;
         }
 
         .grid-container {
             display: grid;
             width: 100%;
-            height: 100%;
-            max-width: 1400px;
-            max-height: 700px; /* Limita para não esticar excessivamente em monitores gigantes */
-            gap: 15px;
-            /* Padrão para Desktop (Horizontal) */
+            /* LIMITADOR PARA MONITORES GRANDES */
+            max-width: 1100px; 
+            /* LIMITADOR DE ALTURA PARA NÃO ESTICAR NA VERTICAL */
+            max-height: 500px; 
+            gap: 20px;
+            /* 5 colunas por padrão */
             grid-template-columns: repeat(5, 1fr); 
+            margin: 0 auto;
         }
 
         .card {
@@ -77,26 +78,28 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: clamp(0.9rem, 2.5vh, 1.4rem);
+            font-size: clamp(0.8rem, 2vh, 1.2rem);
             font-weight: bold;
             box-shadow: 0 8px 15px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
             border: 4px solid white;
             text-align: center;
             padding: 15px;
-            overflow: hidden;
+            /* Mantém o card com um formato proporcional */
+            aspect-ratio: 1 / 1.1; 
         }
 
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
             box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+            filter: brightness(1.05);
         }
 
         .icon { 
-            width: 80%;
+            width: 70%;
             height: auto;
-            max-height: 50%; /* Garante que o ícone não empurre o texto para fora */
-            margin-bottom: 15px; 
+            max-height: 55%;
+            margin-bottom: 10px; 
             object-fit: contain;
         }
         
@@ -107,49 +110,38 @@
         .ano4 { background-color: var(--ano4); }
 
         footer {
-            background: white; 
-            padding: 8px 0; 
-            text-align: center;
-            font-size: 0.8rem; 
-            color: #777; 
-            flex-shrink: 0;
+            background: white; padding: 10px 0; text-align: center;
+            font-size: 0.8rem; color: #777; flex-shrink: 0;
         }
 
-        /* --- AJUSTES DE ORIENTAÇÃO --- */
-
-        /* Quando o ecrã está na VERTICAL (Telemóveis, Tablets em pé) */
+        /* --- AJUSTES DE ORIENTAÇÃO (PORTRAIT / VERTICAL) --- */
         @media (orientation: portrait) {
             .grid-container {
-                grid-template-columns: repeat(2, 1fr); /* 2 colunas */
-                grid-template-rows: repeat(3, 1fr);
-                max-height: none; 
+                grid-template-columns: repeat(2, 1fr);
+                max-height: 70vh; /* Permite crescer mais na vertical do telemóvel */
+                max-width: 500px; /* Não deixa os botões gigantes no tablet vertical */
             }
             
-            /* O último card (ano 4) ocupa as duas colunas em baixo para ficar equilibrado */
             .card.ano4 {
                 grid-column: span 2;
+                aspect-ratio: 2 / 1; /* Card de baixo fica mais largo e baixo */
             }
 
-            .icon {
-                max-height: 40%;
-            }
+            .icon { max-height: 50%; }
         }
 
-        /* Ajuste para ecrãs muito pequenos (Telemóveis antigos ou muito estreitos) */
-        @media (max-width: 400px) {
-            .grid-container {
-                gap: 10px;
-            }
-            h1 { font-size: 1.2rem; }
-            .card { border-radius: 15px; padding: 10px; }
+        /* AJUSTE PARA ECRÃS PEQUENOS (TELEMÓVEIS) */
+        @media (max-width: 480px) {
+            .grid-container { gap: 12px; }
+            .card { border-radius: 20px; padding: 10px; }
+            h1 { font-size: 1.4rem; }
         }
 
-        /* Ajuste para ecrãs HORIZONTAIS mas com pouca altura (Laptops pequenos) */
-        @media (max-height: 500px) and (orientation: landscape) {
-            header { padding: 5px; }
-            h1 { font-size: 1.1rem; }
-            .grid-container { gap: 8px; }
-            .icon { max-height: 40%; margin-bottom: 5px; }
+        /* AJUSTE PARA MONITORES MUITO BAIXOS (LAPTOPS PEQUENOS) */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .grid-container { max-height: 350px; gap: 10px; }
+            .icon { max-height: 45%; }
+            header { padding: 10px; }
         }
     </style>
 </head>
@@ -157,13 +149,13 @@
 
     <header>
         <h1><span>🚀</span> Mundo dos Jogos <span>🎮</span></h1>
-        <p style="color: #666; font-size: clamp(0.7rem, 2vh, 1rem); margin-top: 2px;">Escolhe o teu ano e diverte-te!</p>
+        <p style="color: #666; font-size: clamp(0.7rem, 1.8vh, 1rem); margin-top: 5px;">Escolhe o teu ano e diverte-te!</p>
     </header>
 
     <main>
         <div class="grid-container">
             <a href="/jogos/pre/" class="card pre">
-                <img id="img-pre" src="" alt="Pré-Escolar" class="icon">
+                <img id="img-pre" src="" alt="Pré" class="icon">
                 <span>Pré-Escolar</span>
             </a>
             <a href="/jogos/1/" class="card ano1">
