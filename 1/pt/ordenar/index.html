@@ -96,4 +96,232 @@
     <header class="nav-bar">
         <button onclick="toggleMenu()" style="background:none; border:none; font-size:26px; color:#5EAAEA; cursor:pointer;">☰</button>
         <div style="display:flex; align-items:center; gap:10px;"><img id="header-icon" src="" style="height:32px;"><h1 style="font-size:1.1rem; color:#5EAAEA; margin: 0;">Biblioteca Mágica</h1></div>
-        <a href="
+        <a href="../" class="back-btn">⬅ Voltar</a>
+    </header>
+
+    <main class="main-content">
+        <section id="intro-screen" class="screen active">
+            <div class="game-card">
+                <div class="intro-container">
+                    <div class="intro-anim-area">
+                        <div id="intro-label-demo" class="label-container" style="position:absolute; top:40%;">
+                            <div class="label-btn" style="background-image: url('../../../img/etiqueta_letras.png');"><span>A</span></div>
+                        </div>
+                    </div>
+                    <h1 class="intro-title" id="display-cat-title">ORDEM ALFABÉTICA</h1>
+                    <div class="intro-footer" style="display:flex; gap:15px; align-items:center; margin-bottom:5px;">
+                        <button class="btn-play" onclick="startGame()">JOGAR</button>
+                        <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:60px;"></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="game-screen" class="screen">
+            <div class="game-card">
+                <div class="game-top-bar">
+                    <div class="timer-info">
+                        <div style="font-weight:bold; color:#666; font-size:0.9rem;">⏳ <span id="timer">00:00</span></div>
+                        <div id="rounds-dots" class="rounds-container"></div>
+                    </div>
+                    <div class="points-col">PTS: <span id="points">0</span> <button class="btn-rd-ui" onclick="toggleRD()" style="margin-left:8px;"><img class="btn-rd-img-ref" src="" style="width:24px;"></button></div>
+                </div>
+
+                <div class="game-area">
+                    <div class="armario-wrapper">
+                        <img src="../../../img/armario_letras2.png" class="armario-img">
+                        <div id="armario-grid" class="armario-grid"></div>
+                    </div>
+                    <div id="pool-list" class="pool-side"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="modal-end" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); display:none; align-items:center; justify-content:center; z-index:3000;">
+        <div style="background:white; border:4px solid var(--cor-azul-tema); border-radius:30px; padding:30px; width:300px; text-align:center;">
+            <h2 style="color:var(--cor-acerto);">FIM DO JOGO!</h2>
+            <p id="final-msg" style="margin: 20px 0; font-size: 1.1rem; color: #555;"></p>
+            <button class="btn-play" style="width:100%" onclick="location.reload()">RECOMEÇAR</button>
+        </div>
+    </div>
+
+    <script src="dados.js"></script>
+    <script>
+        let currentCatKey = 'letras_n1', points = 0, seconds = 0, timerInterval, draggedText = null;
+        let currentRound = 0, totalRounds = 5;
+
+        window.onload = () => {
+            const p = JOGO_CONFIG.caminhoIcons;
+            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.ano1;
+            ['pre','1','2','3','4'].forEach(n => {
+                const img = document.getElementById('m-'+n);
+                if(img) img.src = p + JOGO_CONFIG.iconesMenu[n==='pre'?'pre':'ano'+n];
+            });
+            document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
+            setupRDMenu();
+        };
+
+        function setupRDMenu() {
+            const container = document.getElementById('categorias-list');
+            container.innerHTML = '';
+            Object.keys(JOGO_ORDEM_DATA.categorias).forEach(key => {
+                const cat = JOGO_ORDEM_DATA.categorias[key];
+                const div = document.createElement('div');
+                div.className = 'rd-item';
+                div.innerHTML = `<span>${cat.nome}</span>`;
+                div.onclick = () => {
+                    currentCatKey = key;
+                    document.getElementById('display-cat-title').innerText = cat.titulo;
+                    closeMenus();
+                };
+                container.appendChild(div);
+            });
+        }
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
+
+        function startGame() {
+            currentRound = 0; points = 0; seconds = 0;
+            document.getElementById('points').innerText = "0";
+            document.getElementById('intro-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            initDots(); loadRound(); startTimer();
+        }
+
+        function initDots() {
+            const container = document.getElementById('rounds-dots');
+            container.innerHTML = '';
+            for(let i=0; i<totalRounds; i++) container.innerHTML += `<div class="dot" id="dot-${i}"></div>`;
+        }
+
+        function getItemsForRound() {
+            const cat = JOGO_ORDEM_DATA.categorias[currentCatKey];
+            const alfabeto = "ABCDEFGHLMNOPQRSTUVWXYZ";
+            let items = [];
+
+            if (cat.tipo === 'letras') {
+                if (cat.nivel === 1) { // Consecutivas
+                    const start = Math.floor(Math.random() * (alfabeto.length - 4));
+                    items = alfabeto.substring(start, start + 4).split("");
+                } else { // Aleatórias
+                    while(items.length < 4) {
+                        let letra = alfabeto[Math.floor(Math.random()*alfabeto.length)];
+                        if(!items.includes(letra)) items.push(letra);
+                    }
+                }
+            } else if (cat.tipo === 'mesma') {
+                const keys = Object.keys(JOGO_ORDEM_DATA.bancoMesma);
+                const randomKey = keys[Math.floor(Math.random() * keys.length)];
+                items = [...JOGO_ORDEM_DATA.bancoMesma[randomKey]].sort(() => 0.5-Math.random()).slice(0, 4);
+            } else if (cat.tipo === 'geral') {
+                const banco = [...JOGO_ORDEM_DATA.bancoGeral];
+                while(items.length < 4) {
+                    let p = banco[Math.floor(Math.random()*banco.length)];
+                    if(!items.includes(p)) items.push(p);
+                }
+            }
+            return items;
+        }
+
+        function loadRound() {
+            const grid = document.getElementById('armario-grid');
+            const pool = document.getElementById('pool-list');
+            grid.innerHTML = ''; pool.innerHTML = '';
+
+            for (let i = 0; i < 4; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'drop-slot';
+                slot.addEventListener('dragover', e => e.preventDefault());
+                slot.addEventListener('drop', handleDrop);
+                slot.onclick = () => removeFromSlot(slot);
+                grid.appendChild(slot);
+            }
+
+            const items = getItemsForRound();
+            const shuffled = [...items].sort(() => 0.5 - Math.random());
+
+            shuffled.forEach(txt => {
+                const cont = document.createElement('div');
+                cont.className = 'label-container';
+                const btn = document.createElement('div');
+                btn.className = 'label-btn';
+                btn.draggable = true;
+                btn.style.backgroundImage = `url(${JOGO_CONFIG.caminhoImg}etiqueta_letras.png)`;
+                btn.innerHTML = `<span>${txt}</span>`;
+                
+                btn.addEventListener('dragstart', () => { draggedText = txt; btn.style.opacity = "0.4"; });
+                btn.addEventListener('dragend', () => btn.style.opacity = "1");
+                btn.addEventListener('touchstart', () => { draggedText = txt; }, {passive:true});
+                btn.addEventListener('touchend', e => {
+                    const t = e.changedTouches[0];
+                    const target = document.elementFromPoint(t.clientX, t.clientY);
+                    const slot = target ? target.closest('.drop-slot') : null;
+                    if (slot) placeInSlot(slot, txt, btn);
+                });
+                cont.appendChild(btn); pool.appendChild(cont);
+            });
+        }
+
+        function handleDrop(e) { e.preventDefault(); const btn = Array.from(document.querySelectorAll('.label-btn')).find(b => b.innerText.trim() === draggedText); placeInSlot(e.currentTarget, draggedText, btn); }
+
+        function placeInSlot(slot, text, originalBtn) {
+            if(slot.innerText.trim() !== "") {
+                const oldText = slot.innerText.trim();
+                const oldBtn = Array.from(document.querySelectorAll('.label-btn')).find(b => b.innerText.trim() === oldText);
+                if(oldBtn) oldBtn.style.display = 'flex';
+            }
+            slot.innerHTML = `<span>${text}</span>`;
+            if(originalBtn) originalBtn.style.display = 'none';
+            checkAutoVerify();
+        }
+
+        function removeFromSlot(slot) {
+            const txt = slot.innerText.trim();
+            if(txt === "") return;
+            const btn = Array.from(document.querySelectorAll('.label-btn')).find(b => b.innerText.trim() === txt);
+            if(btn) btn.style.display = 'flex';
+            slot.innerHTML = "";
+            document.querySelectorAll('.drop-slot span').forEach(s => s.style.color = "white");
+        }
+
+        function checkAutoVerify() {
+            const slots = Array.from(document.querySelectorAll('.drop-slot'));
+            const filled = slots.map(s => s.innerText.trim()).filter(t => t !== "");
+            if(filled.length === 4) verifyOrder(slots, filled);
+        }
+
+        function verifyOrder(slots, filled) {
+            // Ordenação correta usando regras de português (acentos, etc)
+            const correct = [...filled].sort((a, b) => a.localeCompare(b, 'pt', {sensitivity: 'base'}));
+            let errors = 0;
+            slots.forEach((s, i) => {
+                const span = s.querySelector('span');
+                if (span.innerText === correct[i]) span.style.color = "var(--cor-acerto)";
+                else { span.style.color = "var(--cor-erro)"; errors++; }
+            });
+
+            const dot = document.getElementById(`dot-${currentRound}`);
+            if (errors === 0) {
+                dot.style.backgroundColor = "var(--cor-acerto)";
+                points += 100; document.getElementById('points').innerText = points;
+                currentRound++;
+                setTimeout(() => { if(currentRound < totalRounds) loadRound(); else endGame(); }, 1200);
+            } else {
+                dot.style.backgroundColor = "var(--cor-erro)";
+                setTimeout(() => {
+                    slots.forEach((s, i) => {
+                        const txt = s.innerText.trim();
+                        if (txt !== correct[i]) removeFromSlot(s);
+                    });
+                }, 1000);
+            }
+        }
+
+        function endGame() { clearInterval(timerInterval); document.getElementById('final-msg').innerHTML = `Pontos: ${points}<br>Tempo: ${document.getElementById('timer').innerText}`; document.getElementById('modal-end').style.display = 'flex'; }
+        function startTimer() { timerInterval = setInterval(() => { seconds++; document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; }, 1000); }
+    </script>
+</body>
+</html>
