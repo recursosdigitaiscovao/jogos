@@ -11,32 +11,32 @@ const JOGO_CONFIG = {
     },
     categorias: {
         cat1: {
-            nome: "Letras Consecutivas", 
+            nome: "4 Letras Consecutivas", 
             img: "cat1.png",
             rondas: [
                 { itens: ["A", "B", "C", "D"] },
                 { itens: ["E", "F", "G", "H"] },
-                { itens: ["L", "M", "N", "O"] },
-                { itens: ["P", "Q", "R", "S"] },
-                { itens: ["W", "X", "Y", "Z"] }
+                { itens: ["I", "J", "K", "L"] },
+                { itens: ["M", "N", "O", "P"] },
+                { itens: ["Q", "R", "S", "T"] }
             ]
         },
         cat2: {
-            nome: "Letras Baralhadas", 
+            nome: "4 Letras Alternadas", 
             img: "cat2.png",
             rondas: [
-                { itens: ["A", "F", "M", "X"] },
-                { itens: ["B", "H", "K", "T"] },
-                { itens: ["C", "G", "J", "V"] },
-                { itens: ["D", "I", "L", "P"] },
-                { itens: ["E", "N", "S", "Z"] }
+                { itens: ["A", "X", "M", "E"] },
+                { itens: ["B", "L", "O", "V"] },
+                { itens: ["C", "G", "Z", "Q"] },
+                { itens: ["D", "H", "K", "W"] },
+                { itens: ["P", "Y", "U", "S"] }
             ]
         },
         cat3: {
             nome: "Mesma Letra Inicial", 
             img: "cat3.png",
             rondas: [
-                { itens: ["ABELHA", "ANANÁS", "ANEL", "AVENTAL"] },
+                { itens: ["AMORA", "ANANÁS", "ANEL", "AVENTAL"] },
                 { itens: ["BOLA", "BOLO", "BONECA", "BOTA"] },
                 { itens: ["CASA", "CAVALO", "COELHO", "COPO"] },
                 { itens: ["DADO", "DEDO", "DENTE", "DOCE"] },
@@ -48,10 +48,10 @@ const JOGO_CONFIG = {
             img: "cat4.png",
             rondas: [
                 { itens: ["CÃO", "GATO", "PATO", "RATO"] },
-                { itens: ["AZUL", "ROSA", "VERDE", "VIOLETA"] },
-                { itens: ["MÃE", "PAI", "AVÓ", "AVÔ"] },
                 { itens: ["SOL", "LUA", "MAR", "CÉU"] },
-                { itens: ["UM", "DOIS", "TRÊS", "QUATRO"] }
+                { itens: ["UM", "DOIS", "TRÊS", "QUATRO"] },
+                { itens: ["MÃE", "PAI", "AVÓ", "AVÔ"] },
+                { itens: ["AZUL", "ROSA", "VERDE", "VERMELHO"] }
             ]
         }
     }
