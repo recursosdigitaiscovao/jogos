@@ -6,7 +6,7 @@
     <title>Biblioteca Mágica - Ordem Alfabética</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS EXATAMENTE IGUAL AO SEU ORIGINAL */
+        /* CSS ORIGINAL MANTIDO */
         :root {
             --cor-principal: #FF9100; 
             --cor-azul-tema: #5EAAEA;  
@@ -45,7 +45,8 @@
         .intro-anim-area { flex: 1; background: var(--cor-fundo-pagina); border-radius: 25px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .intro-title { color: var(--cor-principal); font-size: clamp(1.4rem, 5vw, 1.8rem); font-weight: bold; text-align: center; margin: 10px 0; }
         .btn-play { flex: 1; background: var(--cor-azul-tema); color: white; border: none; font-size: 1.5rem; font-weight: bold; padding: 16px; border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 #4a96d1; }
-        
+        .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; padding: 0; }
+
         .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #eee; width: 100%; flex-shrink: 0; }
         .timer-info { display: flex; align-items: center; gap: 10px; }
         .rounds-container { display: flex; gap: 4px; }
@@ -58,14 +59,18 @@
         .armario-img { width: 100%; height: 100%; object-fit: contain; }
         .armario-grid { position: absolute; top: 38%; left: 3.5%; width: 93%; height: 38%; display: grid; grid-template-columns: repeat(4, 1fr); column-gap: 4.2%; pointer-events: none; }
         .drop-slot { pointer-events: auto; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .drop-slot span { font-weight: 900; font-size: clamp(0.7rem, 2.8vw, 1.6rem); color: white; text-shadow: 2px 2px 0 rgba(0,0,0,0.3); text-transform: uppercase; text-align: center; }
+        .drop-slot span { font-weight: 900; font-size: clamp(0.7rem, 2.5vw, 1.4rem); color: white; text-shadow: 2px 2px 0 rgba(0,0,0,0.3); text-transform: uppercase; text-align: center; }
 
-        .pool-side { width: 100%; min-height: 80px; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 10px; border-top: 2px dashed #eee; flex-shrink: 0; flex-wrap: wrap; padding-top: 5px; }
+        .pool-side { width: 100%; height: 80px; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 10px; border-top: 2px dashed #eee; flex-shrink: 0; }
         .label-container { width: clamp(70px, 18vw, 110px); height: 55px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .label-btn { width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; background-position: center; display: flex; align-items: center; justify-content: center; cursor: grab; }
-        .label-btn span { font-weight: 900; font-size: clamp(0.8rem, 3vw, 1.3rem); color: #333; text-transform: uppercase; margin-top: -3px; pointer-events: none; text-align: center; padding: 0 5px; }
+        .label-btn span { font-weight: 900; font-size: clamp(0.7rem, 3vw, 1.1rem); color: #333; text-transform: uppercase; margin-top: -3px; pointer-events: none; text-align: center; padding: 0 5px; line-height: 1; }
 
-        .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; padding: 0; }
+        /* HAND ANIMATION */
+        .hand-icon { position: absolute; font-size: 2rem; z-index: 10; animation: handMove 4s infinite; pointer-events: none; }
+        .fake-label { position: absolute; width: 50px; height: 35px; background: white; border: 2px solid #333; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-weight: bold; animation: labelMove 4s infinite; }
+        @keyframes handMove { 0% { transform: translate(0, 60px); opacity: 0; } 10% { opacity: 1; } 50% { transform: translate(100px, -20px); } 80%, 100% { transform: translate(100px, -20px); opacity: 0; } }
+        @keyframes labelMove { 0% { transform: translate(-100px, 60px); opacity: 1; } 50% { transform: translate(0, -20px); } 70% { opacity: 1; } 80%, 100% { opacity: 0; } }
     </style>
 </head>
 <body>
@@ -104,9 +109,9 @@
             <div class="game-card">
                 <div class="intro-container">
                     <div class="intro-anim-area">
-                        <div id="intro-label-demo" class="label-container" style="position:absolute; top:40%;">
-                            <div class="label-btn" style="background-image: url('../../../img/etiqueta_letras.png');"><span>A</span></div>
-                        </div>
+                        <div style="position:absolute; width:70px; height:45px; border:2px dashed var(--cor-azul-tema); border-radius:8px; top:40%; left:60%;"></div>
+                        <div class="fake-label">A</div>
+                        <div class="hand-icon">👆</div>
                     </div>
                     <h1 class="intro-title" id="display-cat-title">ORDEM ALFABÉTICA</h1>
                     <div class="intro-footer" style="display:flex; gap:15px; align-items:center; margin-bottom:5px;">
@@ -124,7 +129,12 @@
                         <div style="font-weight:bold; color:#666; font-size:0.9rem;">⏳ <span id="timer">00:00</span></div>
                         <div id="rounds-dots" class="rounds-container"></div>
                     </div>
-                    <div class="points-col">PTS: <span id="points">0</span> <button class="btn-rd-ui" onclick="toggleRD()" style="margin-left:8px;"><img class="btn-rd-img-ref" src="" style="width:24px;"></button></div>
+                    <div class="points-col">
+                        PTS: <span id="points">0</span> 
+                        <button class="btn-rd-ui" onclick="toggleRD()" style="margin-left:8px;">
+                            <img class="btn-rd-img-ref" src="" style="width:24px;">
+                        </button>
+                    </div>
                 </div>
 
                 <div class="game-area">
@@ -158,6 +168,7 @@
                 const img = document.getElementById('m-'+n);
                 if(img) img.src = p + JOGO_CONFIG.iconesMenu[n==='pre'?'pre':'ano'+n];
             });
+            // Carrega imagem do RD em todos os botões
             document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             setupRDMenu();
         };
@@ -167,15 +178,15 @@
             container.innerHTML = '';
             Object.keys(JOGO_ORDEM_DATA.categorias).forEach(key => {
                 const cat = JOGO_ORDEM_DATA.categorias[key];
-                const div = document.createElement('div');
-                div.className = 'rd-item';
-                div.innerHTML = `<span>${cat.nome}</span>`;
-                div.onclick = () => {
+                const item = document.createElement('div');
+                item.className = 'rd-item';
+                item.innerHTML = `<span>${cat.nome}</span>`;
+                item.onclick = () => {
                     currentCatKey = key;
                     document.getElementById('display-cat-title').innerText = cat.titulo;
                     closeMenus();
                 };
-                container.appendChild(div);
+                container.appendChild(item);
             });
         }
 
@@ -231,6 +242,7 @@
             const pool = document.getElementById('pool-list');
             grid.innerHTML = ''; pool.innerHTML = '';
 
+            // Criar slots vazios
             for (let i = 0; i < 4; i++) {
                 const slot = document.createElement('div');
                 slot.className = 'drop-slot';
@@ -294,7 +306,6 @@
         }
 
         function verifyOrder(slots, filled) {
-            // Ordenação correta usando regras de português (acentos, etc)
             const correct = [...filled].sort((a, b) => a.localeCompare(b, 'pt', {sensitivity: 'base'}));
             let errors = 0;
             slots.forEach((s, i) => {
