@@ -19,7 +19,7 @@
         .sidebar-rd { bottom: -450px; left: 0; width: 100%; height: 450px; border-radius: 30px 30px 0 0; padding: 20px; box-sizing: border-box; }
         .sidebar-rd.active { bottom: 0; }
         .rd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; overflow-y: auto; height: 320px; margin-top: 10px; }
-        .rd-item { display: flex; align-items: center; justify-content: center; padding: 12px; border-radius: 15px; cursor: pointer; background: #f8fbfd; border: 1px solid #eee; font-weight: bold; color: var(--cor-azul-tema); text-align: center; }
+        .rd-item { display: flex; align-items: center; justify-content: center; padding: 12px; border-radius: 15px; cursor: pointer; background: #f8fbfd; border: 1px solid #eee; font-weight: bold; color: var(--cor-azul-tema); text-align: center; font-size: 0.9rem; }
         
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
@@ -29,24 +29,28 @@
         .screen.active { display: flex; }
         
         .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 15px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 1000px; height: 100%; box-sizing: border-box; position: relative; }
-        .intro-title { color: var(--cor-principal); font-size: 1.8rem; font-weight: bold; text-align: center; margin: 10px 0; }
+        .intro-title { color: var(--cor-principal); font-size: 2rem; font-weight: bold; text-align: center; margin: 10px 0; }
         .btn-play { flex: 1; background: var(--cor-azul-tema); color: white; border: none; font-size: 1.5rem; font-weight: bold; padding: 16px; border-radius: 20px; cursor: pointer; box-shadow: 0 5px 0 #4a96d1; }
         .btn-rd-ui { background: transparent; border: none; cursor: pointer; padding: 0; }
         
         .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #eee; width: 100%; }
-        .rounds-container { display: flex; gap: 4px; flex-wrap: wrap; max-width: 250px; }
-        .dot { width: 12px; height: 12px; background: #eee; border-radius: 50%; border: 1px solid #ddd; }
+        .dots-area { display: flex; gap: 5px; flex-wrap: wrap; max-width: 300px; }
+        .dot { width: 15px; height: 15px; background: #eee; border-radius: 50%; border: 1px solid #ddd; }
         
-        .armario-wrapper { position: relative; width: 90%; max-width: 800px; aspect-ratio: 1000 / 350; margin: 15px auto; }
+        .armario-wrapper { position: relative; width: 95%; max-width: 900px; aspect-ratio: 1000 / 350; margin: 15px auto; }
         .armario-img { width: 100%; height: 100%; object-fit: contain; }
         .armario-grid { position: absolute; top: 38%; left: 3.5%; width: 93%; height: 38%; display: grid; grid-template-columns: repeat(4, 1fr); column-gap: 4.2%; }
         .drop-slot { display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .drop-slot span { font-weight: 900; font-size: clamp(0.7rem, 2.4vw, 1.4rem); color: white; text-shadow: 2px 2px 0 rgba(0,0,0,0.3); text-transform: uppercase; text-align: center; }
         
-        .pool-side { width: 100%; min-height: 85px; display: flex; justify-content: center; align-items: center; gap: 8px; border-top: 2px dashed #eee; padding-top: 10px; flex-wrap: wrap; }
-        .label-container { width: clamp(80px, 18vw, 110px); height: 50px; display: flex; align-items: center; justify-content: center; }
+        /* AUMENTO DAS LETRAS NO ARMÁRIO */
+        .drop-slot span { font-weight: 900; font-size: clamp(1rem, 4vw, 2.2rem); color: white; text-shadow: 2px 2px 0 rgba(0,0,0,0.3); text-transform: uppercase; text-align: center; }
+        
+        .pool-side { width: 100%; min-height: 100px; display: flex; justify-content: center; align-items: center; gap: 12px; border-top: 2px dashed #eee; padding-top: 10px; flex-wrap: wrap; }
+        .label-container { width: clamp(90px, 22vw, 140px); height: 65px; display: flex; align-items: center; justify-content: center; }
         .label-btn { width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; background-position: center; display: flex; align-items: center; justify-content: center; cursor: grab; }
-        .label-btn span { font-weight: 900; font-size: clamp(0.6rem, 2vw, 1rem); color: #333; text-transform: uppercase; text-align: center; padding: 0 5px; line-height: 1; pointer-events: none; }
+        
+        /* AUMENTO DAS LETRAS NAS ETIQUETAS */
+        .label-btn span { font-weight: 900; font-size: clamp(0.9rem, 3.5vw, 1.6rem); color: #333; text-transform: uppercase; text-align: center; padding: 0 10px; line-height: 1; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -76,12 +80,12 @@
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div style="flex:1; display:flex; align-items:center; justify-content:center;">
-                    <img id="demo-img" src="" style="width:100px;">
+                    <img id="demo-img" src="" style="width:120px;">
                 </div>
                 <h1 class="intro-title" id="display-cat-title">ORDEM ALFABÉTICA</h1>
                 <div style="display:flex; gap:15px; align-items:center; width:100%;">
                     <button class="btn-play" onclick="startGame()">JOGAR</button>
-                    <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:60px;"></button>
+                    <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:70px;"></button>
                 </div>
             </div>
         </section>
@@ -91,11 +95,11 @@
                 <div class="game-top-bar">
                     <div style="display:flex; align-items:center; gap:10px;">
                         <span id="timer" style="font-weight:bold; color:#666;">00:00</span>
-                        <div id="rounds-dots" class="rounds-container"></div>
+                        <div id="rounds-dots" class="dots-area"></div>
                     </div>
                     <div style="display:flex; align-items:center; gap:10px; font-weight:bold; color:var(--cor-azul-tema);">
                         PTS: <span id="points">0</span>
-                        <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:24px;"></button>
+                        <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:28px;"></button>
                     </div>
                 </div>
 
@@ -111,16 +115,16 @@
     </main>
 
     <div id="modal-end" style="position:fixed; inset:0; background:rgba(0,0,0,0.8); display:none; align-items:center; justify-content:center; z-index:3000;">
-        <div style="background:white; border-radius:30px; padding:30px; text-align:center; width:300px; border:4px solid var(--cor-azul-tema);">
-            <h2 style="color:var(--cor-acerto);">PARABÉNS!</h2>
-            <p id="final-msg" style="font-size:1.2rem; margin:20px 0;"></p>
-            <button class="btn-play" style="width:100%" onclick="location.reload()">RECOMEÇAR</button>
+        <div style="background:white; border-radius:30px; padding:30px; text-align:center; width:320px; border:4px solid var(--cor-azul-tema);">
+            <h2 style="color:var(--cor-acerto);">CATEGORIA CONCLUÍDA!</h2>
+            <p id="final-msg" style="font-size:1.3rem; margin:20px 0; font-weight:bold;"></p>
+            <button class="btn-play" style="width:100%" onclick="location.reload()">VOLTAR AO INÍCIO</button>
         </div>
     </div>
 
     <script src="dados.js"></script>
     <script>
-        let currentCatKey = 'consec', points = 0, seconds = 0, timerInterval;
+        let currentCatKey = 'cat1', points = 0, seconds = 0, timerInterval;
         let roundsWon = 0, totalToWin = 5, draggedText = null;
 
         window.onload = () => {
@@ -165,18 +169,18 @@
         function getItems() {
             const abc = "ABCDEFGHLMNOPQRSTUVWXYZ";
             let res = [];
-            if(currentCatKey === 'consec') {
+            if(currentCatKey === 'cat1') { // Consecutivas
                 let idx = Math.floor(Math.random() * (abc.length - 4));
                 res = abc.substring(idx, idx + 4).split("");
-            } else if(currentCatKey === 'aleat') {
+            } else if(currentCatKey === 'cat2') { // Não Consecutivas
                 while(res.length < 4) {
                     let l = abc[Math.floor(Math.random()*abc.length)];
                     if(!res.includes(l)) res.push(l);
                 }
-            } else if(currentCatKey === 'mesma') {
+            } else if(currentCatKey === 'cat3') { // Mesma Letra
                 const k = Object.keys(JOGO_ORDEM_DATA.bancoMesma);
                 res = [...JOGO_ORDEM_DATA.bancoMesma[k[Math.floor(Math.random()*k.length)]]].sort(()=>0.5-Math.random()).slice(0,4);
-            } else {
+            } else { // Variadas
                 const b = [...JOGO_ORDEM_DATA.bancoGeral];
                 while(res.length < 4) {
                     let p = b[Math.floor(Math.random()*b.length)];
@@ -235,6 +239,8 @@
             const btn = Array.from(document.querySelectorAll('.label-btn')).find(b => b.innerText.trim() === txt);
             if(btn) btn.style.visibility = 'visible';
             slot.innerHTML = '';
+            // Limpa as cores de erro quando o jogador remove algo
+            Array.from(document.querySelectorAll('.drop-slot span')).forEach(s => s.style.color = 'white');
         }
 
         function checkIfFull() {
@@ -245,33 +251,41 @@
         function verifyOrder(slots) {
             const values = slots.map(s => s.innerText.trim());
             const correct = [...values].sort((a,b) => a.localeCompare(b, 'pt', {sensitivity: 'base'}));
-            let errors = 0;
+            let totalCorrectSlots = 0;
 
             slots.forEach((s, i) => {
                 const span = s.querySelector('span');
-                if(span.innerText === correct[i]) span.style.color = "var(--cor-acerto)";
-                else { span.style.color = "var(--cor-erro)"; errors++; }
+                if(span.innerText === correct[i]) {
+                    span.style.color = "var(--cor-acerto)";
+                    totalCorrectSlots++;
+                } else {
+                    span.style.color = "var(--cor-erro)";
+                }
             });
+
+            // LÓGICA DE PONTOS: 100 por opção certa, -50 por opção errada
+            let roundScore = (totalCorrectSlots * 100) - ((4 - totalCorrectSlots) * 50);
+            points = Math.max(0, points + roundScore);
+            document.getElementById('points').innerText = points;
 
             const container = document.getElementById('rounds-dots');
             const dot = document.createElement('div');
             dot.className = 'dot';
 
-            if(errors === 0) {
+            if(totalCorrectSlots === 4) {
+                // TUDO CERTO
                 dot.style.backgroundColor = 'var(--cor-acerto)';
                 container.appendChild(dot);
-                points += 100;
                 roundsWon++;
-                document.getElementById('points').innerText = points;
                 setTimeout(() => {
                     if(roundsWon < totalToWin) loadRound();
                     else endGame();
                 }, 1200);
             } else {
+                // ERROU ALGUMA
                 dot.style.backgroundColor = 'var(--cor-erro)';
                 container.appendChild(dot);
-                points = Math.max(0, points - 50);
-                document.getElementById('points').innerText = points;
+                // Permite refazer as erradas após 1 segundo
                 setTimeout(() => {
                     slots.forEach((s, i) => {
                         if(s.innerText.trim() !== correct[i]) removeFromSlot(s);
@@ -281,7 +295,7 @@
         }
 
         function startTimer() { timerInterval = setInterval(() => { seconds++; document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; }, 1000); }
-        function endGame() { clearInterval(timerInterval); document.getElementById('final-msg').innerText = `Fizeste ${points} pontos em ${document.getElementById('timer').innerText}!`; document.getElementById('modal-end').style.display = 'flex'; }
+        function endGame() { clearInterval(timerInterval); document.getElementById('final-msg').innerText = `Fizeste ${points} pontos!`; document.getElementById('modal-end').style.display = 'flex'; }
     </script>
 </body>
 </html>
