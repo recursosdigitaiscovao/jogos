@@ -21,34 +21,6 @@ const JOGO_CONFIG = {
                 { nome: "CAVALO", img: "animaisdomesticos/cavalo.png" },
                 { nome: "COELHO", img: "animaisdomesticos/coelho.png" }
             ]
-        },
-        frutos: {
-            nome: "Frutos",
-            img: "frutas/banana.png",
-            itens: [
-                { nome: "BANANA", img: "frutas/banana.png" },
-                { nome: "CEREJA", img: "frutas/cereja.png" },
-                { nome: "UVAS", img: "frutas/uvas.png" },
-                { nome: "MORANGO", img: "frutas/morango.png" },
-                { nome: "LARANJA", img: "frutas/banana.png" },
-                { nome: "PAPAIA", img: "frutas/papaia.png" },
-                { nome: "MACÃ", img: "frutas/maca.png" }
-            ]
-        },
-        material: {
-            nome: "Material Escolar",
-            img: "materialescolar/afia.png",
-            itens: [
-                { nome: "MOCHILA", img: "materialescolar/mochila.png" },
-                { nome: "TESOURA", img: "materialescolar/tesoura.png" },
-                { nome: "LÁPIS", img: "materialescolar/lapis.png" },
-                { nome: "LIVRO", img: "materialescolar/livro.png" },
-                { nome: "CAPA", img: "materialescolar/capa.png" },
-                { nome: "AFIA", img: "materialescolar/afia.png" },
-                { nome: "COLA", img: "materialescolar/cola.png" },
-                { nome: "FOLHA", img: "materialescolar/folha.png" },
-                { nome: "ESTOJO", img: "materialescolar/estojo.png" }
-            ]
         }
     },
     relatorio: {
