@@ -6,10 +6,10 @@ const JOGO_CONFIG = {
 
 const JOGO_ORDEM_DATA = {
     categorias: {
-        consec: { id: 'consec', nome: '1. Letras Consecutivas', titulo: 'Sequência Alfabética' },
-        aleat: { id: 'aleat', nome: '2. Letras Alternadas', titulo: 'Letras Misturadas' },
-        mesma: { id: 'mesma', nome: '3. Mesma Letra Inicial', titulo: 'Dicionário Mágico' },
-        variadas: { id: 'variadas', nome: '4. Palavras Variadas', titulo: 'Ordem Geral' }
+        cat1: { id: 'cat1', nome: '1. Letras Consecutivas', titulo: 'Sequência do Alfabeto' },
+        cat2: { id: 'cat2', nome: '2. Letras Não Consecutivas', titulo: 'Letras Misturadas' },
+        cat3: { id: 'cat3', nome: '3. Mesma Letra Inicial', titulo: 'Palavras com a Mesma Letra' },
+        cat4: { id: 'cat4', nome: '4. Palavras Variadas', titulo: 'Ordem Alfabética Geral' }
     },
     bancoMesma: {
         C: ["Cama", "Carro", "Casa", "Copo", "Cebola", "Coelho"],
