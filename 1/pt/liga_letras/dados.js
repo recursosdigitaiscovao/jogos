@@ -1,7 +1,7 @@
 const JOGO_CONFIG = {
     caminhoImg: "../../../img/",
     caminhoIcons: "../../../icons/",
-    caminhoCat: "../../../imgcategorias/", 
+    caminhoCat: "../../../imgcategorias/", // Pasta das categorias
     iconesMenu: { 
         pre: "iconpre.png", 
         ano1: "icon1.png", 
@@ -13,8 +13,6 @@ const JOGO_CONFIG = {
         animais: {
             nome: "Animais Domésticos", 
             img: "gato.png",
-            tutorialWord: "GATO",
-            tutorialImg: "gato.png",
             itens: [
                 { letras: "CÃO", palavras: ["CÃO"] },
                 { letras: "GATO", palavras: ["GATO"] },
@@ -41,8 +39,6 @@ const JOGO_CONFIG = {
         frutos: {
             nome: "Frutos", 
             img: "pera.png",
-            tutorialWord: "PERA",
-            tutorialImg: "pera.png",
             itens: [
                 { letras: "MAÇÃ", palavras: ["MAÇÃ"] },
                 { letras: "PÊRA", palavras: ["PÊRA"] },
@@ -69,8 +65,6 @@ const JOGO_CONFIG = {
         material: {
             nome: "Material Escolar", 
             img: "estojo.png",
-            tutorialWord: "COLA",
-            tutorialImg: "estojo.png",
             itens: [
                 { letras: "AFIA", palavras: ["AFIA"] },
                 { letras: "LÁPIS", palavras: ["LÁPIS"] },
@@ -97,8 +91,6 @@ const JOGO_CONFIG = {
         selvagens: {
             nome: "Animais Selvagens", 
             img: "leao.png",
-            tutorialWord: "LEÃO",
-            tutorialImg: "leao.png",
             itens: [
                 { letras: "LEÃO", palavras: ["LEÃO"] },
                 { letras: "TIGRE", palavras: ["TIGRE"] },
@@ -123,8 +115,6 @@ const JOGO_CONFIG = {
         paises: {
             nome: "Países", 
             img: "paises.png",
-            tutorialWord: "TIMOR",
-            tutorialImg: "paises.png",
             itens: [
                 { letras: "PORTUGAL", palavras: ["PORTUGAL"] },
                 { letras: "ESPANHA", palavras: ["ESPANHA"] },
@@ -149,8 +139,6 @@ const JOGO_CONFIG = {
         transportes: {
             nome: "Transportes", 
             img: "transportes.png",
-            tutorialWord: "CARRO",
-            tutorialImg: "transportes.png",
             itens: [
                 { letras: "AVIÃO", palavras: ["AVIÃO"] },
                 { letras: "BARCO", palavras: ["BARCO"] },
