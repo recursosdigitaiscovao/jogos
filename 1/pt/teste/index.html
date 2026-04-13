@@ -10,9 +10,9 @@
         :root {
             --bg-page: #e9f0f8;
             --white: #ffffff;
-            --soft-shadow: rgba(174, 190, 205, 0.5);
-            --inner-shadow: inset 6px 6px 12px #c5d4e3, inset -6px -6px 12px #ffffff;
             --primary-blue: #5ba4e5;
+            --inner-shadow: inset 6px 6px 12px #c5d4e3, inset -6px -6px 12px #ffffff;
+            --outer-shadow: 10px 10px 20px #c5d4e3, -10px -10px 20px #ffffff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
@@ -21,8 +21,8 @@
             background-color: var(--bg-page);
             display: flex;
             height: 100vh;
+            width: 100vw;
             overflow: hidden;
-            color: #444;
         }
 
         /* --- SIDEBAR --- */
@@ -34,20 +34,24 @@
             align-items: center;
             padding-top: 20px;
             border-right: 1px solid rgba(255,255,255,0.3);
+            flex-shrink: 0;
         }
 
-        .hamburger-menu { font-size: 24px; color: var(--primary-blue); cursor: pointer; }
-
-        /* --- CONTENT --- */
-        .main-wrapper { flex-grow: 1; display: flex; flex-direction: column; }
+        /* --- CONTENT WRAPPER --- */
+        .main-wrapper { 
+            flex-grow: 1; 
+            display: flex; 
+            flex-direction: column; 
+            min-width: 0; /* Evita que o flexbox quebre em ecrãs pequenos */
+        }
 
         /* --- HEADER --- */
         header {
-            height: 80px;
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 40px;
+            padding: 0 5%;
         }
 
         .header-title {
@@ -56,39 +60,42 @@
             gap: 10px;
             color: var(--primary-blue);
             font-weight: 800;
-            font-size: 1.5rem;
+            font-size: clamp(1rem, 4vw, 1.5rem);
         }
 
-        .header-title img { width: 40px; }
+        .header-title img { width: clamp(30px, 5vw, 45px); }
 
         .btn-voltar {
             background-color: var(--primary-blue);
             color: white;
-            padding: 8px 25px;
+            padding: 8px 20px;
             border-radius: 20px;
             text-decoration: none;
             font-weight: 900;
             box-shadow: 0 4px 0 #3d7db8;
-            font-size: 0.9rem;
+            font-size: clamp(0.7rem, 3vw, 0.9rem);
+            white-space: nowrap;
         }
 
-        /* --- JOGO (IGUAL À IMAGEM) --- */
+        /* --- ÁREA DO JOGO --- */
         .game-area {
             flex-grow: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 10px;
+            overflow: hidden;
         }
 
         .game-card {
             background: var(--bg-page);
-            width: 100%;
+            width: 95%;
             max-width: 1000px;
-            height: 100%;
-            border-radius: 40px;
-            box-shadow: 20px 20px 60px #c5d4e3, -20px -20px 60px #ffffff;
-            padding: 30px;
+            height: 90%;
+            max-height: 800px;
+            border-radius: clamp(20px, 5vw, 40px);
+            box-shadow: var(--outer-shadow);
+            padding: clamp(15px, 3vw, 30px);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -102,47 +109,50 @@
             justify-content: space-between;
             align-items: center;
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
         }
 
-        .dots { display: flex; gap: 8px; }
+        .dots { display: flex; gap: clamp(4px, 1.5vw, 8px); }
         .dot { 
-            width: 20px; height: 20px; border-radius: 50%; 
+            width: clamp(12px, 2.5vw, 20px); 
+            height: clamp(12px, 2.5vw, 20px); 
+            border-radius: 50%; 
             background: var(--bg-page); box-shadow: var(--inner-shadow);
         }
-        .dot.active { background: #50d080; box-shadow: none; }
+        .dot.active { background: #50d080; box-shadow: none; border: 2px solid white; }
 
         /* Alvo */
-        .target-box { text-align: center; margin-bottom: 20px; }
-        .target-box img { width: 110px; filter: drop-shadow(5px 5px 10px var(--soft-shadow)); }
-        .target-box h2 { font-size: 2.2rem; font-weight: 900; letter-spacing: 3px; margin-top: 10px; }
+        .target-box { text-align: center; margin-bottom: 10px; flex-shrink: 0; }
+        .target-box img { height: clamp(60px, 15vh, 110px); width: auto; }
+        .target-box h2 { font-size: clamp(1.5rem, 5vw, 2.2rem); font-weight: 900; letter-spacing: 2px; }
 
         /* Grade Neomórfica */
         .grid-frame {
             background: var(--bg-page);
-            padding: 20px;
-            border-radius: 30px;
-            box-shadow: var(--inner-shadow); /* Efeito afundado da imagem */
+            padding: clamp(8px, 2vw, 20px);
+            border-radius: 20px;
+            box-shadow: var(--inner-shadow);
             display: grid;
-            gap: 8px;
+            gap: clamp(4px, 1vw, 8px);
+            max-height: 55vh; /* Impede que a grade saia do ecrã no telemóvel */
+            overflow: hidden;
         }
 
         .cell {
-            width: 45px;
-            height: 45px;
+            aspect-ratio: 1/1;
+            width: clamp(25px, 8vw, 45px);
             background: var(--bg-page);
-            border-radius: 10px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1.2rem;
-            box-shadow: 4px 4px 8px #c5d4e3, -4px -4px 8px #ffffff;
+            font-size: clamp(0.8rem, 3vw, 1.2rem);
+            box-shadow: 3px 3px 6px #c5d4e3, -3px -3px 6px #ffffff;
             cursor: pointer;
             user-select: none;
         }
-
-        .cell.selected { background: #d0f0d0; color: #2d8a4e; }
 
         /* Footer */
         .game-footer {
@@ -155,13 +165,23 @@
         .settings-btn {
             background: var(--bg-page);
             border: none;
-            width: 50px;
-            height: 50px;
+            width: clamp(35px, 6vw, 50px);
+            height: clamp(35px, 6vw, 50px);
             border-radius: 50%;
             box-shadow: 4px 4px 8px #c5d4e3, -4px -4px 8px #ffffff;
             color: #777;
-            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
+        }
+
+        /* AJUSTES PARA MOBILE */
+        @media (max-width: 600px) {
+            .sidebar { width: 50px; }
+            header { height: 60px; padding: 0 10px; }
+            .game-card { padding: 15px; border-radius: 25px; height: 95%; }
+            .target-box h2 { margin-top: 5px; }
         }
     </style>
 </head>
@@ -213,9 +233,10 @@
             document.getElementById('target-word').innerText = dados.palavraAlvo;
             
             const grid = document.getElementById('grid');
+            grid.innerHTML = ''; // Limpa grid anterior
             grid.style.gridTemplateColumns = `repeat(${dados.gridTamanho}, 1fr)`;
             
-            const letras = "ABCDEfGHIJKLMNOPQRSTUVWXYZ";
+            const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             for(let i=0; i < (dados.gridTamanho * dados.gridTamanho); i++) {
                 const div = document.createElement('div');
                 div.className = 'cell';
