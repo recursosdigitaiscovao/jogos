@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Armário das Letras - 1º Ano</title>
+    <title>Português - 1º Ano</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --cor-principal: #5EAAEA; 
             --cor-azul-tema: #5EAAEA;  
             --cor-fundo-pagina: #EBF4FF;
+            --cor-fundo-card: #FFFFFF;
             --cor-acerto: #2ed573;
             --cor-erro: #ff4757;
             --cor-laranja: #FF9100;
@@ -17,52 +18,68 @@
         }
 
         html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; font-family: 'Fredoka', sans-serif; background: var(--cor-fundo-pagina); }
-        
-        /* HEADER & NAVIGATION */
-        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; position: relative;}
+
+        /* NAVEGAÇÃO */
+        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
         .back-btn { background: var(--cor-azul-tema); color: white; padding: 8px 18px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.85rem; box-shadow: 0 3px 0 #4a96d1; }
         
-        /* SIDEBARS */
-        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; }
+        /* SIDEBAR */
+        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
-        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-weight: 500; }
-        .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 400px; background: white; z-index: 2000; border-radius: 30px 30px 0 0; padding: 25px; box-sizing: border-box; transition: 0.3s; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); }
+        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-weight: 500; transition: 0.2s; }
+        .sidebar-item:hover { background: var(--cor-azul-tema); color: white !important; }
+        .sidebar-item img { width: 24px; height: 24px; object-fit: contain; margin-right: 12px; }
+
+        .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 25px; box-sizing: border-box; }
         .sidebar-rd.active { bottom: 0; }
+        .rd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .rd-item { display: flex; flex-direction: column; align-items: center; padding: 10px; cursor: pointer; border-radius: 15px; background: #f9f9f9; text-align: center; }
+        .rd-item img { width: 45px; height: 45px; margin-bottom: 5px; }
+
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
         .overlay.active { display: block; }
 
-        /* GAME LAYOUT */
-        .main-content { height: calc(100% - var(--header-height)); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; }
+        /* CONTENT */
+        .main-content { flex: 1; height: calc(100% - var(--header-height)); padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
+        .game-card { background: var(--cor-fundo-card); border-radius: 30px; padding: 15px; border: 4px solid var(--cor-azul-tema); display: flex; flex-direction: column; width: 100%; max-width: 950px; height: 100%; box-sizing: border-box; position: relative; }
 
-        /* ARMARIO AREA */
-        .cabinet-container { position: relative; width: 100%; max-width: 800px; aspect-ratio: 800 / 300; background-size: contain; background-repeat: no-repeat; background-position: center; margin-bottom: 20px; }
-        .drop-zones { position: absolute; top: 40%; left: 3.5%; width: 93%; height: 38%; display: flex; gap: 1%; }
-        .drop-slot { flex: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; position: relative; transition: 0.2s; }
-        .drop-slot.hover { background: rgba(94, 170, 234, 0.2); }
+        /* TOP BAR GAME */
+        .game-top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; font-size: 0.95rem; border-bottom: 1px solid #eee; width: 100%; flex-shrink: 0; }
+        .timer-box { display: flex; align-items: center; gap: 5px; font-weight: bold; min-width: 80px; }
+        .round-dots { display: flex; gap: 6px; }
+        .dot { width: 14px; height: 14px; border: 2px solid #ddd; border-radius: 50%; transition: 0.3s; }
 
-        /* PIECES AREA */
-        .pieces-pool { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; max-width: 900px; padding: 10px; }
-        .drag-item { background: white; border: 3px solid var(--cor-azul-tema); border-radius: 15px; padding: 12px 25px; font-size: 1.5rem; font-weight: bold; cursor: grab; box-shadow: 0 4px 0 var(--cor-azul-tema); color: #333; min-width: 60px; text-align: center; touch-action: none; position: relative; z-index: 10; }
-        .drag-item.dragging { opacity: 0.5; transform: scale(1.1); }
-        .drag-item.placed { cursor: default; box-shadow: none; pointer-events: none; }
+        /* PLAY AREA */
+        .play-area { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-around; overflow: hidden; padding: 10px 0; }
+        
+        .cabinet-container { position: relative; width: 100%; max-width: 850px; aspect-ratio: 928 / 314; background-size: contain; background-repeat: no-repeat; background-position: center; }
+        
+        /* ZONAS DROP (Ajustadas para os quadrados 1, 2, 3, 4 da imagem) */
+        .drop-zones { position: absolute; top: 40%; left: 3.5%; width: 93%; height: 38%; display: flex; gap: 4%; }
+        .drop-slot { flex: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .drop-slot span { color: rgba(0,0,0,0.1); font-size: 1.5rem; font-weight: bold; pointer-events: none; }
 
-        /* UI ELEMENTS */
-        .points-box { font-size: 1.2rem; font-weight: bold; color: var(--cor-azul-tema); }
-        .dots-container { display: flex; gap: 8px; margin: 10px 0; }
-        .dot { width: 15px; height: 15px; border: 2px solid #ccc; border-radius: 50%; }
-        .btn-main { background: var(--cor-azul-tema); color: white; border: none; padding: 15px 40px; border-radius: 50px; font-size: 1.5rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #4a96d1; transition: 0.1s; }
-        .btn-main:active { transform: translateY(3px); box-shadow: none; }
+        /* PEÇAS ARRASTÁVEIS */
+        .pieces-pool { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; padding: 10px; }
+        .drag-item { background: white; border: 3px solid var(--cor-azul-tema); border-radius: 15px; padding: 10px 20px; font-size: clamp(1rem, 2vw, 1.4rem); font-weight: 700; cursor: grab; box-shadow: 0 4px 0 #ddd; color: #333; touch-action: none; position: relative; z-index: 100; min-width: 50px; text-align: center; }
+        .drag-item.dragging { opacity: 0.6; transform: scale(1.1); cursor: grabbing; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .drag-item.correct-placed { background: #e8f5e9; border-color: var(--cor-acerto); box-shadow: none; cursor: default; }
 
-        /* MODAL */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-card { background: white; border-radius: 30px; padding: 30px; text-align: center; width: 90%; max-width: 400px; }
-        .btn-orange { background: var(--cor-laranja); box-shadow: 0 5px 0 #e68200; margin-top: 10px; }
+        /* BUTTONS & MODAL */
+        .btn-main { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.3rem; font-weight: bold; padding: 15px; border-radius: 20px; cursor: pointer; width: 100%; box-shadow: 0 5px 0 #4a96d1; }
+        .btn-main:active { transform: translateY(2px); box-shadow: 0 3px 0 #4a96d1; }
+        .btn-rd-ui { background: transparent; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; }
+
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
+        .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 30px 20px; width: 100%; max-width: 380px; text-align: center; }
+        .btn-modal { font-size: 1.1rem; padding: 12px; margin-bottom: 10px; width: 100%; }
+        .btn-orange { background: var(--cor-laranja); box-shadow: 0 5px 0 #e68200; }
 
         @media (max-width: 600px) {
-            .drag-item { font-size: 1.1rem; padding: 8px 15px; }
-            .drop-zones { top: 41%; }
+            .drop-zones { top: 41%; height: 35%; }
+            .drag-item { padding: 8px 12px; font-size: 0.9rem; }
         }
     </style>
 </head>
@@ -73,85 +90,119 @@
     <audio id="audio-erro" src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3"></audio>
 
     <div class="sidebar" id="sidebar">
-        <div style="padding:20px; font-weight:bold; border-bottom:1px solid #eee;">MENU</div>
-        <a href="#" class="sidebar-item" onclick="resetToHome()">🏠 Início</a>
+        <div style="padding:15px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:bold; color:var(--cor-azul-tema);">MENU</span>
+            <button onclick="toggleMenu()" style="border:none; background:none; font-size:20px; color:var(--cor-azul-tema);">✕</button>
+        </div>
+        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
+        <a href="/jogos/pre" class="sidebar-item"><img class="menu-pre" src=""> Pré-Escolar</a>
+        <a href="/jogos/1" class="sidebar-item"><img class="menu-1" src=""> 1º Ano</a>
+        <a href="/jogos/2" class="sidebar-item"><img class="menu-2" src=""> 2º Ano</a>
+        <a href="/jogos/3" class="sidebar-item"><img class="menu-3" src=""> 3º Ano</a>
+        <a href="/jogos/4" class="sidebar-item"><img class="menu-4" src=""> 4º Ano</a>
     </div>
 
     <div class="sidebar-rd" id="sidebar-rd">
-        <h3 style="color:var(--cor-azul-tema); margin-top:0;">Categorias</h3>
-        <div id="cat-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="margin:0; color:var(--cor-azul-tema);">Categorias</h3>
+            <button onclick="toggleRD()" style="border:none; background:none; font-size:24px; color:var(--cor-azul-tema);">✕</button>
+        </div>
+        <div id="categorias-list" class="rd-grid"></div>
     </div>
 
     <header class="nav-bar">
-        <button onclick="toggleMenu()" style="background:none; border:none; font-size:24px; color:var(--cor-azul-tema);">☰</button>
-        <div class="points-box">PTS: <span id="score">0</span></div>
+        <button onclick="toggleMenu()" style="background:none; border:none; font-size:28px; color:var(--cor-azul-tema); cursor:pointer;">☰</button>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <img id="header-icon" src="" style="height:32px;">
+            <h1 style="font-size:1.1rem; color:var(--cor-azul-tema); margin: 0;">Português - 1º Ano</h1>
+        </div>
         <a href="../" class="back-btn">⬅ Voltar</a>
     </header>
 
     <main class="main-content">
         <!-- INTRO -->
         <section id="intro-screen" class="screen active">
-            <div style="background:white; padding:40px; border-radius:30px; border:4px solid var(--cor-azul-tema); text-align:center;">
-                <img id="intro-cat-img" src="" style="width:120px; margin-bottom:20px;">
-                <h2 id="intro-cat-name" style="color:var(--cor-azul-tema); margin:0;">Armário das Letras</h2>
-                <p style="color:#666; margin: 20px 0;">Ordena as peças no armário!</p>
-                <button class="btn-main" onclick="startGame()">JOGAR</button>
-                <br><br>
-                <button onclick="toggleRD()" style="background:none; border:none; cursor:pointer;"><img id="btn-rd-img" src="" style="width:50px;"></button>
+            <div class="game-card">
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+                    <img id="intro-cat-img" src="" style="width:120px; margin-bottom:20px;">
+                    <h2 style="color:var(--cor-azul-tema); margin:0; font-size:2rem;">Armário das Letras</h2>
+                    <p id="intro-cat-name" style="color:#666; font-weight:bold; font-size:1.2rem;"></p>
+                    <p style="color:#888;">Ordena as letras ou palavras no sítio certo!</p>
+                </div>
+                <div style="display:flex; gap:15px; border-top: 2px dashed #eee; padding-top:20px;">
+                    <button class="btn-main" onclick="startGame()">JOGAR</button>
+                    <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:55px;"></button>
+                </div>
             </div>
         </section>
 
-        <!-- GAME -->
+        <!-- GAMEPLAY -->
         <section id="game-screen" class="screen">
-            <div id="dots-container" class="dots-container"></div>
-            
-            <div class="cabinet-container" id="cabinet-bg">
-                <div class="drop-zones" id="drop-zones">
-                    <div class="drop-slot" data-index="0"></div>
-                    <div class="drop-slot" data-index="1"></div>
-                    <div class="drop-slot" data-index="2"></div>
-                    <div class="drop-slot" data-index="3"></div>
+            <div class="game-card">
+                <div class="game-top-bar">
+                    <div class="timer-box">⏳ <span id="timer">00:00</span></div>
+                    <div class="round-dots" id="round-dots"></div>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-weight:bold; color:var(--cor-azul-tema);">PTS: <span id="points">0</span></span>
+                        <button class="btn-rd-ui" onclick="toggleRD()"><img class="btn-rd-img-ref" src="" style="width:28px;"></button>
+                    </div>
+                </div>
+
+                <div class="play-area">
+                    <div class="cabinet-container" id="cabinet-bg">
+                        <div class="drop-zones">
+                            <div class="drop-slot" data-index="0"><span>1</span></div>
+                            <div class="drop-slot" data-index="1"><span>2</span></div>
+                            <div class="drop-slot" data-index="2"><span>3</span></div>
+                            <div class="drop-slot" data-index="3"><span>4</span></div>
+                        </div>
+                    </div>
+
+                    <div class="pieces-pool" id="pieces-pool"></div>
                 </div>
             </div>
-
-            <div class="pieces-pool" id="pieces-pool"></div>
         </section>
     </main>
 
-    <div class="modal" id="modal">
+    <div class="modal" id="game-modal">
         <div class="modal-card">
-            <h2 id="modal-title" style="color:var(--cor-azul-tema)">PARABÉNS!</h2>
-            <div id="modal-msg" style="font-size:1.2rem; margin:20px 0;"></div>
-            <button class="btn-main" style="width:100%" onclick="startGame()">JOGAR DE NOVO</button>
-            <button id="btn-next-cat" class="btn-main btn-orange" style="width:100%" onclick="nextCategory()">PRÓXIMA CATEGORIA</button>
+            <h2 id="modal-title" style="color:var(--cor-azul-tema)">MUITO BEM!</h2>
+            <div id="modal-msg" style="margin: 20px 0; font-size: 1.2rem; color: #555;"></div>
+            <button class="btn-main btn-modal" onclick="startGame()">JOGAR DE NOVO</button>
+            <button id="btn-next-cat" class="btn-main btn-modal btn-orange" onclick="nextCategory()">PRÓXIMA CATEGORIA</button>
         </div>
     </div>
 
     <script src="dados.js"></script>
     <script>
-        let currentCatKey = "cat1";
-        let currentRound = 0;
-        let score = 0;
-        let roundCorrectCount = 0;
-        let activeItem = null;
-        let initialPos = { x: 0, y: 0 };
+        let currentCatKey = "cat1", currentRound = 0, score = 0, seconds = 0;
+        let timerInterval, roundCorrect = 0;
+        let activeElement = null, initialOffset = { x: 0, y: 0 };
 
         window.onload = () => {
+            const p = JOGO_CONFIG.caminhoIcons;
+            document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.ano1;
+            document.querySelector('.menu-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
+            document.querySelector('.menu-1').src = p + JOGO_CONFIG.iconesMenu.ano1;
+            document.querySelector('.menu-2').src = p + JOGO_CONFIG.iconesMenu.ano2;
+            document.querySelector('.menu-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
+            document.querySelector('.menu-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
+            document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             document.getElementById('cabinet-bg').style.backgroundImage = `url('${JOGO_CONFIG.caminhoImg}armariodasletras.png')`;
-            document.getElementById('btn-rd-img').src = JOGO_CONFIG.caminhoImg + "rd.png";
-            setupCategories();
+            
+            setupRDMenu();
             updateIntro();
         };
 
-        function setupCategories() {
-            const grid = document.getElementById('cat-grid');
+        function setupRDMenu() {
+            const container = document.getElementById('categorias-list');
+            container.innerHTML = '';
             Object.keys(JOGO_CONFIG.categorias).forEach(key => {
                 const cat = JOGO_CONFIG.categorias[key];
-                const div = document.createElement('div');
-                div.style = "background:#f0f8ff; padding:10px; border-radius:15px; text-align:center; cursor:pointer;";
-                div.innerHTML = `<img src="${JOGO_CONFIG.caminhoCat + cat.img}" style="width:40px;"><br><small style="font-weight:bold">${cat.nome}</small>`;
-                div.onclick = () => { currentCatKey = key; closeMenus(); updateIntro(); resetToHome(); };
-                grid.appendChild(div);
+                container.innerHTML += `<div class="rd-item" onclick="currentCatKey='${key}'; closeMenus(); updateIntro(); resetToHome();">
+                    <img src="${JOGO_CONFIG.caminhoCat + cat.img}"> 
+                    <span style="font-size:0.75rem; font-weight:bold;">${cat.nome}</span>
+                </div>`;
             });
         }
 
@@ -162,168 +213,165 @@
         }
 
         function startGame() {
-            currentRound = 0;
-            score = 0;
-            document.getElementById('score').innerText = "0";
-            document.getElementById('modal').style.display = 'none';
+            currentRound = 0; score = 0; seconds = 0;
+            document.getElementById('points').innerText = "0";
+            document.getElementById('game-modal').style.display = 'none';
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
             initDots();
+            startTimer();
             loadRound();
         }
 
         function initDots() {
-            const container = document.getElementById('dots-container');
-            container.innerHTML = '';
-            for(let i=0; i<5; i++) container.innerHTML += `<div class="dot" id="dot-${i}"></div>`;
+            const bar = document.getElementById('round-dots');
+            bar.innerHTML = '';
+            for(let i=0; i<5; i++) bar.innerHTML += `<div class="dot" id="dot-${i}"></div>`;
+        }
+
+        function startTimer() { 
+            if(timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => { 
+                seconds++; 
+                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; 
+            }, 1000); 
         }
 
         function loadRound() {
-            const cat = JOGO_CONFIG.categorias[currentCatKey];
-            const roundData = cat.rondas[currentRound];
-            roundCorrectCount = 0;
+            roundCorrect = 0;
+            const roundData = JOGO_CONFIG.categorias[currentCatKey].rondas[currentRound];
             
-            // Limpar zonas
-            document.querySelectorAll('.drop-slot').forEach(slot => slot.innerHTML = '');
-            
-            // Criar peças baralhadas
+            // Limpar slots
+            document.querySelectorAll('.drop-slot').forEach(slot => {
+                slot.innerHTML = `<span>${parseInt(slot.dataset.index)+1}</span>`;
+            });
+
+            // Criar pool baralhado
             const pool = document.getElementById('pieces-pool');
             pool.innerHTML = '';
-            
             const shuffled = [...roundData.itens].sort(() => Math.random() - 0.5);
-            shuffled.forEach(val => {
-                const el = document.createElement('div');
-                el.className = 'drag-item';
-                el.innerText = val;
-                el.dataset.value = val;
-                addDragEvents(el);
-                pool.appendChild(el);
+            
+            shuffled.forEach(txt => {
+                const item = document.createElement('div');
+                item.className = 'drag-item';
+                item.innerText = txt;
+                item.dataset.value = txt;
+                makeDraggable(item);
+                pool.appendChild(item);
             });
         }
 
-        function addDragEvents(el) {
+        function makeDraggable(el) {
             el.onpointerdown = (e) => {
-                if(el.classList.contains('placed')) return;
-                activeItem = el;
+                if(el.classList.contains('correct-placed')) return;
+                activeElement = el;
                 el.classList.add('dragging');
                 const rect = el.getBoundingClientRect();
-                initialPos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+                initialOffset = { x: e.clientX - rect.left, y: e.clientY - rect.top };
                 el.style.position = 'fixed';
                 moveAt(e.clientX, e.clientY);
                 el.setPointerCapture(e.pointerId);
             };
 
             el.onpointermove = (e) => {
-                if(!activeItem) return;
+                if(!activeElement) return;
                 moveAt(e.clientX, e.clientY);
             };
 
             el.onpointerup = (e) => {
-                if(!activeItem) return;
+                if(!activeElement) return;
                 el.classList.remove('dragging');
                 el.releasePointerCapture(e.pointerId);
                 
-                // Check Drop
-                const target = checkDrop(e.clientX, e.clientY);
-                if(target) {
-                    validatePlacement(el, target);
-                } else {
-                    resetPiece(el);
-                }
-                activeItem = null;
+                const targetSlot = findSlotAt(e.clientX, e.clientY);
+                if(targetSlot) validateDrop(el, targetSlot);
+                else resetPosition(el);
+
+                activeElement = null;
             };
 
             function moveAt(x, y) {
-                el.style.left = (x - initialPos.x) + 'px';
-                el.style.top = (y - initialPos.y) + 'px';
+                el.style.left = (x - initialOffset.x) + 'px';
+                el.style.top = (y - initialOffset.y) + 'px';
             }
         }
 
-        function checkDrop(x, y) {
+        function findSlotAt(x, y) {
             const slots = document.querySelectorAll('.drop-slot');
-            for(let slot of slots) {
-                const rect = slot.getBoundingClientRect();
-                if(x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) return slot;
+            for(let s of slots) {
+                const r = s.getBoundingClientRect();
+                if(x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return s;
             }
             return null;
         }
 
-        function validatePlacement(el, slot) {
-            const cat = JOGO_CONFIG.categorias[currentCatKey];
-            const correctOrder = cat.rondas[currentRound].itens;
-            const expectedValue = correctOrder[slot.dataset.index];
+        function validateDrop(el, slot) {
+            const roundData = JOGO_CONFIG.categorias[currentCatKey].rondas[currentRound];
+            const correctValue = roundData.itens[slot.dataset.index];
 
-            if(el.dataset.value === expectedValue) {
+            if(el.dataset.value === correctValue) {
                 // ACERTO
-                slot.innerHTML = ''; // Limpa se houver algo (segurança)
+                score += 100;
+                document.getElementById('audio-acerto').play();
+                slot.innerHTML = ''; 
                 const clone = el.cloneNode(true);
                 clone.style = "";
-                clone.className = "drag-item placed";
+                clone.className = "drag-item correct-placed";
                 slot.appendChild(clone);
                 el.remove();
-                
-                score += 100;
-                roundCorrectCount++;
-                document.getElementById('audio-acerto').play();
-                if(roundCorrectCount === 4) endRound(true);
+                roundCorrect++;
+                if(roundCorrect === 4) endRound(true);
             } else {
                 // ERRO
                 score = Math.max(0, score - 50);
                 document.getElementById('audio-erro').play();
-                resetPiece(el);
-                markDot(false); // Fica logo vermelho se errar? A instrução diz que avança se acertar.
+                resetPosition(el);
             }
-            document.getElementById('score').innerText = score;
+            document.getElementById('points').innerText = score;
         }
 
-        function resetPiece(el) {
+        function resetPosition(el) {
             el.style.position = 'static';
             el.style.left = 'auto';
             el.style.top = 'auto';
         }
 
         function endRound(win) {
-            markDot(win);
+            const dot = document.getElementById(`dot-${currentRound}`);
+            dot.style.backgroundColor = win ? "var(--cor-acerto)" : "var(--cor-erro)";
+            dot.style.borderColor = win ? "var(--cor-acerto)" : "var(--cor-erro)";
+            
             setTimeout(() => {
                 currentRound++;
-                if(currentRound < 5) {
-                    loadRound();
-                } else {
-                    showFinalModal();
-                }
-            }, 1000);
-        }
-
-        function markDot(win) {
-            const dot = document.getElementById(`dot-${currentRound}`);
-            dot.style.background = win ? 'var(--cor-acerto)' : 'var(--cor-erro)';
-            dot.style.borderColor = win ? 'var(--cor-acerto)' : 'var(--cor-erro)';
+                if(currentRound < 5) loadRound();
+                else showFinalModal();
+            }, 800);
         }
 
         function showFinalModal() {
-            const modal = document.getElementById('modal');
-            const msg = document.getElementById('modal-msg');
+            clearInterval(timerInterval);
+            const modal = document.getElementById('game-modal');
             modal.style.display = 'flex';
-            msg.innerHTML = `Pontuação Final: <b>${score}</b>`;
+            document.getElementById('modal-msg').innerHTML = `Pontos Totais: <b>${score}</b><br>Tempo Final: <b>${document.getElementById('timer').innerText}</b>`;
             
-            // Verifica se há próxima categoria
             const keys = Object.keys(JOGO_CONFIG.categorias);
-            const idx = keys.indexOf(currentCatKey);
-            document.getElementById('btn-next-cat').style.display = (idx < keys.length - 1) ? 'block' : 'none';
+            const nextIdx = keys.indexOf(currentCatKey) + 1;
+            document.getElementById('btn-next-cat').style.display = (nextIdx < keys.length) ? 'block' : 'none';
         }
 
         function nextCategory() {
             const keys = Object.keys(JOGO_CONFIG.categorias);
-            const idx = keys.indexOf(currentCatKey);
-            currentCatKey = keys[idx + 1];
+            currentCatKey = keys[keys.indexOf(currentCatKey) + 1];
             updateIntro();
             startGame();
         }
 
         function resetToHome() {
-            document.getElementById('game-screen').classList.remove('active');
+            clearInterval(timerInterval);
+            document.getElementById('game-modal').style.display = 'none';
             document.getElementById('intro-screen').classList.add('active');
-            document.getElementById('modal').style.display = 'none';
+            document.getElementById('game-screen').classList.remove('active');
+            updateIntro();
         }
 
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
