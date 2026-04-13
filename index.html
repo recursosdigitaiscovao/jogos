@@ -1,154 +1,205 @@
-<style>
-    :root {
-        --pre: #e691a7;
-        --ano1: #e6a75a;
-        --ano2: #45cfa8;
-        --ano3: #5ea2e6;
-        --ano4: #8a81e6;
-    }
-    
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-        font-family: 'Fredoka', sans-serif;
-        background: #f0faff;
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        height: 100dvh; 
-        overflow: hidden; 
-    }
-
-    header {
-        width: 100%;
-        padding: 1.5vh 10px; 
-        text-align: center;
-        background: white;
-        border-bottom-left-radius: 50px;
-        border-bottom-right-radius: 50px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        flex-shrink: 0;
-        z-index: 10;
-    }
-
-    h1 {
-        white-space: nowrap;
-        font-size: clamp(1.2rem, 5vw, 2.5rem); 
-        color: #ff4757;
-        text-shadow: 2px 2px 0px #ffcccb;
-        animation: bounce 2s infinite;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-
-    @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-5px); }
-    }
-
-    main {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        min-height: 0; /* Importante para o flex container */
-    }
-
-    .grid-container {
-        display: grid;
-        width: 100%;
-        height: 100%;
-        max-width: 1400px;
-        max-height: 70vh; /* Limita a altura para não colar no rodapé */
-        gap: 15px;
-        /* Desktop padrão: 5 colunas */
-        grid-template-columns: repeat(5, 1fr); 
-    }
-
-    .card {
-        text-decoration: none;
-        color: white;
-        border-radius: 25px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        font-size: clamp(0.8rem, 2vw, 1.2rem);
-        font-weight: bold;
-        box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-        border: 4px solid white;
-        text-align: center;
-        padding: 15px;
-        overflow: hidden;
-    }
-
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 25px rgba(0,0,0,0.15);
-    }
-
-    .icon { 
-        width: 100%;
-        /* O ícone ocupará no máximo 60% da altura do cartão */
-        height: 60%; 
-        max-height: 150px;
-        margin-bottom: 10px; 
-        object-fit: contain; /* Garante que a imagem não distorce */
-        filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1));
-    }
-    
-    .pre { background-color: var(--pre); }
-    .ano1 { background-color: var(--ano1); }
-    .ano2 { background-color: var(--ano2); }
-    .ano3 { background-color: var(--ano3); }
-    .ano4 { background-color: var(--ano4); }
-
-    footer {
-        background: white; 
-        padding: 10px; 
-        text-align: center;
-        font-size: 0.8rem; 
-        color: #777; 
-        flex-shrink: 0;
-    }
-
-    /* --- AJUSTES DE RESPONSIVIDADE --- */
-
-    /* Telemóveis e Tablets na Vertical (Portrait) */
-    @media (max-width: 850px) and (orientation: portrait) {
-        .grid-container {
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            max-height: 85vh;
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Portal Escola Divertida</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pre: #e691a7;
+            --ano1: #e6a75a;
+            --ano2: #45cfa8;
+            --ano3: #5ea2e6;
+            --ano4: #8a81e6;
         }
-        .card.ano4 {
-            grid-column: span 2; /* 4º ano ocupa a largura toda em baixo */
-        }
-        .icon { height: 50%; }
-    }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* Tablets na Horizontal ou Ecrãs Médios */
-    @media (max-width: 1100px) and (min-width: 851px) {
-        .grid-container {
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: #f0faff;
+            display: flex;
+            flex-direction: column;
+            /* Garante que ocupa sempre a altura total do ecrã */
+            height: 100vh;
+            height: 100dvh; 
+            overflow: hidden; 
+        }
+
+        header {
+            width: 100%;
+            padding: 1.5vh 10px;
+            text-align: center;
+            background: white;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: clamp(1.2rem, 5vh, 2.5rem); 
+            color: #ff4757;
+            text-shadow: 2px 2px 0px #ffcccb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             gap: 10px;
         }
-        .card { padding: 10px; }
-    }
 
-    /* Telemóveis na Horizontal (Ecrã muito baixo) */
-    @media (max-height: 500px) {
-        header { padding: 5px; }
-        h1 { font-size: 1.2rem; }
-        p { display: none; } /* Esconde o texto secundário para ganhar espaço */
-        .grid-container {
-            grid-template-columns: repeat(5, 1fr);
-            max-height: 75vh;
+        main {
+            flex: 1; 
+            display: flex;
+            align-items: center; 
+            justify-content: center;
+            padding: 20px;
+            min-height: 0; /* Importante para o scroll interno se necessário */
         }
-        .icon { height: 40px; margin-bottom: 2px; }
-        .card { padding: 5px; border-radius: 15px; }
-    }
-</style>
+
+        .grid-container {
+            display: grid;
+            width: 100%;
+            height: 100%;
+            max-width: 1400px;
+            max-height: 700px; /* Limita para não esticar excessivamente em monitores gigantes */
+            gap: 15px;
+            /* Padrão para Desktop (Horizontal) */
+            grid-template-columns: repeat(5, 1fr); 
+        }
+
+        .card {
+            text-decoration: none;
+            color: white;
+            border-radius: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(0.9rem, 2.5vh, 1.4rem);
+            font-weight: bold;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 4px solid white;
+            text-align: center;
+            padding: 15px;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+        }
+
+        .icon { 
+            width: 80%;
+            height: auto;
+            max-height: 50%; /* Garante que o ícone não empurre o texto para fora */
+            margin-bottom: 15px; 
+            object-fit: contain;
+        }
+        
+        .pre { background-color: var(--pre); }
+        .ano1 { background-color: var(--ano1); }
+        .ano2 { background-color: var(--ano2); }
+        .ano3 { background-color: var(--ano3); }
+        .ano4 { background-color: var(--ano4); }
+
+        footer {
+            background: white; 
+            padding: 8px 0; 
+            text-align: center;
+            font-size: 0.8rem; 
+            color: #777; 
+            flex-shrink: 0;
+        }
+
+        /* --- AJUSTES DE ORIENTAÇÃO --- */
+
+        /* Quando o ecrã está na VERTICAL (Telemóveis, Tablets em pé) */
+        @media (orientation: portrait) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr); /* 2 colunas */
+                grid-template-rows: repeat(3, 1fr);
+                max-height: none; 
+            }
+            
+            /* O último card (ano 4) ocupa as duas colunas em baixo para ficar equilibrado */
+            .card.ano4 {
+                grid-column: span 2;
+            }
+
+            .icon {
+                max-height: 40%;
+            }
+        }
+
+        /* Ajuste para ecrãs muito pequenos (Telemóveis antigos ou muito estreitos) */
+        @media (max-width: 400px) {
+            .grid-container {
+                gap: 10px;
+            }
+            h1 { font-size: 1.2rem; }
+            .card { border-radius: 15px; padding: 10px; }
+        }
+
+        /* Ajuste para ecrãs HORIZONTAIS mas com pouca altura (Laptops pequenos) */
+        @media (max-height: 500px) and (orientation: landscape) {
+            header { padding: 5px; }
+            h1 { font-size: 1.1rem; }
+            .grid-container { gap: 8px; }
+            .icon { max-height: 40%; margin-bottom: 5px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><span>🚀</span> Mundo dos Jogos <span>🎮</span></h1>
+        <p style="color: #666; font-size: clamp(0.7rem, 2vh, 1rem); margin-top: 2px;">Escolhe o teu ano e diverte-te!</p>
+    </header>
+
+    <main>
+        <div class="grid-container">
+            <a href="/jogos/pre/" class="card pre">
+                <img id="img-pre" src="" alt="Pré-Escolar" class="icon">
+                <span>Pré-Escolar</span>
+            </a>
+            <a href="/jogos/1/" class="card ano1">
+                <img id="img-ano1" src="" alt="1º Ano" class="icon">
+                <span>1º Ano</span>
+            </a>
+            <a href="/jogos/2/" class="card ano2">
+                <img id="img-ano2" src="" alt="2º Ano" class="icon">
+                <span>2º Ano</span>
+            </a>
+            <a href="/jogos/3/" class="card ano3">
+                <img id="img-ano3" src="" alt="3º Ano" class="icon">
+                <span>3º Ano</span>
+            </a>
+            <a href="/jogos/4/" class="card ano4">
+                <img id="img-ano4" src="" alt="4º Ano" class="icon">
+                <span>4º Ano</span>
+            </a>
+        </div>
+    </main>
+
+    <footer>Recursos Digitais Covão</footer>
+
+    <script src="dados.js"></script>
+    <script>
+        window.onload = () => {
+            if (typeof PORTAL_CONFIG !== 'undefined') {
+                const path = PORTAL_CONFIG.caminhoIcons;
+                const imgs = PORTAL_CONFIG.icones;
+                document.getElementById('img-pre').src = path + imgs.pre;
+                document.getElementById('img-ano1').src = path + imgs.ano1;
+                document.getElementById('img-ano2').src = path + imgs.ano2;
+                document.getElementById('img-ano3').src = path + imgs.ano3;
+                document.getElementById('img-ano4').src = path + imgs.ano4;
+            }
+        };
+    </script>
+</body>
+</html>
