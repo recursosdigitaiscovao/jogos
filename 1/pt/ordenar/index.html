@@ -27,7 +27,6 @@
         .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
         .sidebar.active { left: 0; }
         .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-weight: 500; transition: 0.2s; }
-        .sidebar-item:hover { background: var(--cor-azul-tema); color: white !important; }
         .sidebar-item img { width: 24px; height: 24px; object-fit: contain; margin-right: 12px; }
 
         .sidebar-rd { position: fixed; bottom: -450px; left: 0; width: 100%; height: 450px; background: white; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; border-radius: 30px 30px 0 0; padding: 25px; box-sizing: border-box; }
@@ -56,21 +55,24 @@
         
         .cabinet-container { position: relative; width: 100%; max-width: 850px; aspect-ratio: 928 / 314; background-size: contain; background-repeat: no-repeat; background-position: center; }
         
-        /* ZONAS DROP (Ajustadas para os quadrados 1, 2, 3, 4 da imagem) */
         .drop-zones { position: absolute; top: 40%; left: 3.5%; width: 93%; height: 38%; display: flex; gap: 4%; }
-        .drop-slot { flex: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; position: relative; }
-        .drop-slot span { color: rgba(0,0,0,0.1); font-size: 1.5rem; font-weight: bold; pointer-events: none; }
+        .drop-slot { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+        .drop-slot span.placeholder { color: rgba(0,0,0,0.1); font-size: 1.5rem; font-weight: bold; pointer-events: none; }
+        
+        /* ESTILO DA PALAVRA NO SLOT (Sem fundo de botão) */
+        .placed-text { font-size: clamp(1.1rem, 2.5vw, 1.6rem); font-weight: 800; color: #333; text-align: center; pointer-events: auto; cursor: pointer; }
+        .placed-text.correct { color: var(--cor-acerto); }
+        .placed-text.wrong { color: var(--cor-erro); }
 
-        /* PEÇAS ARRASTÁVEIS */
-        .pieces-pool { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; padding: 10px; }
-        .drag-item { background: white; border: 3px solid var(--cor-azul-tema); border-radius: 15px; padding: 10px 20px; font-size: clamp(1rem, 2vw, 1.4rem); font-weight: 700; cursor: grab; box-shadow: 0 4px 0 #ddd; color: #333; touch-action: none; position: relative; z-index: 100; min-width: 50px; text-align: center; }
-        .drag-item.dragging { opacity: 0.6; transform: scale(1.1); cursor: grabbing; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .drag-item.correct-placed { background: #e8f5e9; border-color: var(--cor-acerto); box-shadow: none; cursor: default; }
+        /* PEÇAS NO POOL (Botões) */
+        .pieces-pool { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; padding: 10px; min-height: 80px; }
+        .drag-item { background: white; border: 3px solid var(--cor-azul-tema); border-radius: 15px; padding: 10px 20px; font-size: clamp(0.9rem, 1.8vw, 1.3rem); font-weight: 700; cursor: grab; box-shadow: 0 4px 0 #ddd; color: #333; touch-action: none; position: relative; z-index: 100; min-width: 50px; text-align: center; transition: transform 0.1s; }
+        .drag-item.dragging { opacity: 0.4; transform: scale(1.1); z-index: 1000; position: fixed !important; pointer-events: none; }
 
-        /* BUTTONS & MODAL */
+        /* BOTÕES */
         .btn-main { background: var(--cor-azul-tema); color: white; border: none; font-size: 1.3rem; font-weight: bold; padding: 15px; border-radius: 20px; cursor: pointer; width: 100%; box-shadow: 0 5px 0 #4a96d1; }
         .btn-main:active { transform: translateY(2px); box-shadow: 0 3px 0 #4a96d1; }
-        .btn-rd-ui { background: transparent; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; }
+        .btn-rd-ui { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; }
 
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
         .modal-card { background: white; border: 4px solid var(--cor-azul-tema); border-radius: 30px; padding: 30px 20px; width: 100%; max-width: 380px; text-align: center; }
@@ -79,7 +81,7 @@
 
         @media (max-width: 600px) {
             .drop-zones { top: 41%; height: 35%; }
-            .drag-item { padding: 8px 12px; font-size: 0.9rem; }
+            .drag-item { padding: 8px 12px; }
         }
     </style>
 </head>
@@ -120,14 +122,12 @@
     </header>
 
     <main class="main-content">
-        <!-- INTRO -->
         <section id="intro-screen" class="screen active">
             <div class="game-card">
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
                     <img id="intro-cat-img" src="" style="width:120px; margin-bottom:20px;">
                     <h2 style="color:var(--cor-azul-tema); margin:0; font-size:2rem;">Armário das Letras</h2>
                     <p id="intro-cat-name" style="color:#666; font-weight:bold; font-size:1.2rem;"></p>
-                    <p style="color:#888;">Ordena as letras ou palavras no sítio certo!</p>
                 </div>
                 <div style="display:flex; gap:15px; border-top: 2px dashed #eee; padding-top:20px;">
                     <button class="btn-main" onclick="startGame()">JOGAR</button>
@@ -136,7 +136,6 @@
             </div>
         </section>
 
-        <!-- GAMEPLAY -->
         <section id="game-screen" class="screen">
             <div class="game-card">
                 <div class="game-top-bar">
@@ -151,13 +150,12 @@
                 <div class="play-area">
                     <div class="cabinet-container" id="cabinet-bg">
                         <div class="drop-zones">
-                            <div class="drop-slot" data-index="0"><span>1</span></div>
-                            <div class="drop-slot" data-index="1"><span>2</span></div>
-                            <div class="drop-slot" data-index="2"><span>3</span></div>
-                            <div class="drop-slot" data-index="3"><span>4</span></div>
+                            <div class="drop-slot" data-index="0"></div>
+                            <div class="drop-slot" data-index="1"></div>
+                            <div class="drop-slot" data-index="2"></div>
+                            <div class="drop-slot" data-index="3"></div>
                         </div>
                     </div>
-
                     <div class="pieces-pool" id="pieces-pool"></div>
                 </div>
             </div>
@@ -175,23 +173,21 @@
 
     <script src="dados.js"></script>
     <script>
-        let currentCatKey = "cat1", currentRound = 0, score = 0, seconds = 0;
-        let timerInterval, roundCorrect = 0;
+        let currentCatKey = "cat1", currentRound = 0, score = 0, seconds = 0, timerInterval;
         let activeElement = null, initialOffset = { x: 0, y: 0 };
+        let slotValues = [null, null, null, null];
 
         window.onload = () => {
             const p = JOGO_CONFIG.caminhoIcons;
             document.getElementById('header-icon').src = p + JOGO_CONFIG.iconesMenu.ano1;
-            document.querySelector('.menu-pre').src = p + JOGO_CONFIG.iconesMenu.pre;
-            document.querySelector('.menu-1').src = p + JOGO_CONFIG.iconesMenu.ano1;
-            document.querySelector('.menu-2').src = p + JOGO_CONFIG.iconesMenu.ano2;
-            document.querySelector('.menu-3').src = p + JOGO_CONFIG.iconesMenu.ano3;
-            document.querySelector('.menu-4').src = p + JOGO_CONFIG.iconesMenu.ano4;
+            document.querySelectorAll('.menu-pre').forEach(i => i.src = p + JOGO_CONFIG.iconesMenu.pre);
+            document.querySelectorAll('.menu-1').forEach(i => i.src = p + JOGO_CONFIG.iconesMenu.ano1);
+            document.querySelectorAll('.menu-2').forEach(i => i.src = p + JOGO_CONFIG.iconesMenu.ano2);
+            document.querySelectorAll('.menu-3').forEach(i => i.src = p + JOGO_CONFIG.iconesMenu.ano3);
+            document.querySelectorAll('.menu-4').forEach(i => i.src = p + JOGO_CONFIG.iconesMenu.ano4);
             document.querySelectorAll('.btn-rd-img-ref').forEach(img => img.src = JOGO_CONFIG.caminhoImg + "rd.png");
             document.getElementById('cabinet-bg').style.backgroundImage = `url('${JOGO_CONFIG.caminhoImg}armariodasletras.png')`;
-            
-            setupRDMenu();
-            updateIntro();
+            setupRDMenu(); updateIntro();
         };
 
         function setupRDMenu() {
@@ -199,10 +195,7 @@
             container.innerHTML = '';
             Object.keys(JOGO_CONFIG.categorias).forEach(key => {
                 const cat = JOGO_CONFIG.categorias[key];
-                container.innerHTML += `<div class="rd-item" onclick="currentCatKey='${key}'; closeMenus(); updateIntro(); resetToHome();">
-                    <img src="${JOGO_CONFIG.caminhoCat + cat.img}"> 
-                    <span style="font-size:0.75rem; font-weight:bold;">${cat.nome}</span>
-                </div>`;
+                container.innerHTML += `<div class="rd-item" onclick="currentCatKey='${key}'; closeMenus(); updateIntro(); resetToHome();"><img src="${JOGO_CONFIG.caminhoCat + cat.img}"><span style="font-size:0.75rem; font-weight:bold;">${cat.nome}</span></div>`;
             });
         }
 
@@ -218,142 +211,134 @@
             document.getElementById('game-modal').style.display = 'none';
             document.getElementById('intro-screen').classList.remove('active');
             document.getElementById('game-screen').classList.add('active');
-            initDots();
-            startTimer();
-            loadRound();
+            initDots(); startTimer(); loadRound();
         }
 
         function initDots() {
-            const bar = document.getElementById('round-dots');
-            bar.innerHTML = '';
+            const bar = document.getElementById('round-dots'); bar.innerHTML = '';
             for(let i=0; i<5; i++) bar.innerHTML += `<div class="dot" id="dot-${i}"></div>`;
         }
 
         function startTimer() { 
             if(timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => { 
-                seconds++; 
-                document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; 
-            }, 1000); 
+            timerInterval = setInterval(() => { seconds++; document.getElementById('timer').innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; }, 1000); 
         }
 
         function loadRound() {
-            roundCorrect = 0;
+            slotValues = [null, null, null, null];
+            document.querySelectorAll('.drop-slot').forEach(slot => { slot.innerHTML = `<span class="placeholder">${parseInt(slot.dataset.index)+1}</span>`; });
             const roundData = JOGO_CONFIG.categorias[currentCatKey].rondas[currentRound];
-            
-            // Limpar slots
-            document.querySelectorAll('.drop-slot').forEach(slot => {
-                slot.innerHTML = `<span>${parseInt(slot.dataset.index)+1}</span>`;
-            });
+            renderPool(roundData.itens);
+        }
 
-            // Criar pool baralhado
+        function renderPool(list) {
             const pool = document.getElementById('pieces-pool');
             pool.innerHTML = '';
-            const shuffled = [...roundData.itens].sort(() => Math.random() - 0.5);
-            
+            const shuffled = [...list].sort(() => Math.random() - 0.5);
             shuffled.forEach(txt => {
-                const item = document.createElement('div');
-                item.className = 'drag-item';
-                item.innerText = txt;
-                item.dataset.value = txt;
-                makeDraggable(item);
-                pool.appendChild(item);
+                const btn = document.createElement('div');
+                btn.className = 'drag-item'; btn.innerText = txt; btn.dataset.value = txt;
+                makeDraggable(btn); pool.appendChild(btn);
             });
         }
 
         function makeDraggable(el) {
             el.onpointerdown = (e) => {
-                if(el.classList.contains('correct-placed')) return;
-                activeElement = el;
-                el.classList.add('dragging');
+                activeElement = el; el.classList.add('dragging');
                 const rect = el.getBoundingClientRect();
                 initialOffset = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-                el.style.position = 'fixed';
-                moveAt(e.clientX, e.clientY);
                 el.setPointerCapture(e.pointerId);
             };
-
-            el.onpointermove = (e) => {
-                if(!activeElement) return;
-                moveAt(e.clientX, e.clientY);
-            };
-
+            el.onpointermove = (e) => { if(!activeElement) return; el.style.left = (e.clientX - initialOffset.x) + 'px'; el.style.top = (e.clientY - initialOffset.y) + 'px'; };
             el.onpointerup = (e) => {
-                if(!activeElement) return;
-                el.classList.remove('dragging');
-                el.releasePointerCapture(e.pointerId);
-                
-                const targetSlot = findSlotAt(e.clientX, e.clientY);
-                if(targetSlot) validateDrop(el, targetSlot);
-                else resetPosition(el);
-
+                if(!activeElement) return; el.classList.remove('dragging');
+                const slot = findSlotAt(e.clientX, e.clientY);
+                if(slot && !slotValues[slot.dataset.index]) {
+                    placeInSlot(el.dataset.value, slot);
+                    el.remove();
+                    checkIfAllPlaced();
+                } else { el.style.position = 'static'; }
                 activeElement = null;
             };
-
-            function moveAt(x, y) {
-                el.style.left = (x - initialOffset.x) + 'px';
-                el.style.top = (y - initialOffset.y) + 'px';
-            }
         }
 
         function findSlotAt(x, y) {
             const slots = document.querySelectorAll('.drop-slot');
-            for(let s of slots) {
-                const r = s.getBoundingClientRect();
-                if(x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return s;
-            }
+            for(let s of slots) { const r = s.getBoundingClientRect(); if(x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return s; }
             return null;
         }
 
-        function validateDrop(el, slot) {
-            const roundData = JOGO_CONFIG.categorias[currentCatKey].rondas[currentRound];
-            const correctValue = roundData.itens[slot.dataset.index];
+        function placeInSlot(val, slot) {
+            const idx = slot.dataset.index;
+            slotValues[idx] = val;
+            slot.innerHTML = `<div class="placed-text" onclick="returnToPool('${val}', ${idx})">${val}</div>`;
+        }
 
-            if(el.dataset.value === correctValue) {
-                // ACERTO
-                score += 100;
-                document.getElementById('audio-acerto').play();
-                slot.innerHTML = ''; 
-                const clone = el.cloneNode(true);
-                clone.style = "";
-                clone.className = "drag-item correct-placed";
-                slot.appendChild(clone);
-                el.remove();
-                roundCorrect++;
-                if(roundCorrect === 4) endRound(true);
-            } else {
-                // ERRO
-                score = Math.max(0, score - 50);
-                document.getElementById('audio-erro').play();
-                resetPosition(el);
+        function returnToPool(val, idx) {
+            // Permite tirar do slot antes da validação
+            slotValues[idx] = null;
+            const slot = document.querySelector(`.drop-slot[data-index="${idx}"]`);
+            slot.innerHTML = `<span class="placeholder">${idx+1}</span>`;
+            const btn = document.createElement('div');
+            btn.className = 'drag-item'; btn.innerText = val; btn.dataset.value = val;
+            makeDraggable(btn);
+            document.getElementById('pieces-pool').appendChild(btn);
+        }
+
+        function checkIfAllPlaced() {
+            if(slotValues.every(v => v !== null)) {
+                setTimeout(validateBoard, 500);
             }
+        }
+
+        function validateBoard() {
+            const roundData = JOGO_CONFIG.categorias[currentCatKey].rondas[currentRound];
+            let mistakes = 0;
+            let correctCount = 0;
+
+            slotValues.forEach((val, i) => {
+                const slot = document.querySelector(`.drop-slot[data-index="${i}"]`);
+                const textEl = slot.querySelector('.placed-text');
+                
+                if(val === roundData.itens[i]) {
+                    textEl.classList.add('correct');
+                    score += 100;
+                    correctCount++;
+                } else {
+                    textEl.classList.add('wrong');
+                    score = Math.max(0, score - 50);
+                    mistakes++;
+                    // Após 1 segundo, as erradas voltam ao pool
+                    setTimeout(() => {
+                        returnToPool(val, i);
+                        document.getElementById('audio-erro').play();
+                    }, 1000);
+                }
+            });
+
             document.getElementById('points').innerText = score;
+
+            if(mistakes === 0) {
+                document.getElementById('audio-acerto').play();
+                markDot(true);
+                setTimeout(() => {
+                    currentRound++;
+                    if(currentRound < 5) loadRound();
+                    else showFinalModal();
+                }, 1500);
+            }
         }
 
-        function resetPosition(el) {
-            el.style.position = 'static';
-            el.style.left = 'auto';
-            el.style.top = 'auto';
-        }
-
-        function endRound(win) {
+        function markDot(win) {
             const dot = document.getElementById(`dot-${currentRound}`);
-            dot.style.backgroundColor = win ? "var(--cor-acerto)" : "var(--cor-erro)";
-            dot.style.borderColor = win ? "var(--cor-acerto)" : "var(--cor-erro)";
-            
-            setTimeout(() => {
-                currentRound++;
-                if(currentRound < 5) loadRound();
-                else showFinalModal();
-            }, 800);
+            dot.style.backgroundColor = "var(--cor-acerto)"; dot.style.borderColor = "var(--cor-acerto)";
         }
 
         function showFinalModal() {
             clearInterval(timerInterval);
             const modal = document.getElementById('game-modal');
             modal.style.display = 'flex';
-            document.getElementById('modal-msg').innerHTML = `Pontos Totais: <b>${score}</b><br>Tempo Final: <b>${document.getElementById('timer').innerText}</b>`;
-            
+            document.getElementById('modal-msg').innerHTML = `Pontos Totais: <b>${score}</b><br>Tempo: <b>${document.getElementById('timer').innerText}</b>`;
             const keys = Object.keys(JOGO_CONFIG.categorias);
             const nextIdx = keys.indexOf(currentCatKey) + 1;
             document.getElementById('btn-next-cat').style.display = (nextIdx < keys.length) ? 'block' : 'none';
@@ -362,18 +347,10 @@
         function nextCategory() {
             const keys = Object.keys(JOGO_CONFIG.categorias);
             currentCatKey = keys[keys.indexOf(currentCatKey) + 1];
-            updateIntro();
-            startGame();
+            updateIntro(); startGame();
         }
 
-        function resetToHome() {
-            clearInterval(timerInterval);
-            document.getElementById('game-modal').style.display = 'none';
-            document.getElementById('intro-screen').classList.add('active');
-            document.getElementById('game-screen').classList.remove('active');
-            updateIntro();
-        }
-
+        function resetToHome() { clearInterval(timerInterval); document.getElementById('game-modal').style.display = 'none'; document.getElementById('intro-screen').classList.add('active'); document.getElementById('game-screen').classList.remove('active'); updateIntro(); }
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function toggleRD() { document.getElementById('sidebar-rd').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         function closeMenus() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebar-rd').classList.remove('active'); document.getElementById('overlay').classList.remove('active'); }
