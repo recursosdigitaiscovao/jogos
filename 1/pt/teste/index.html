@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Português - 1º Ano</title>
+    <title>Sopa de Letras - 1º Ano</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -16,185 +16,92 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
+        body { background-color: var(--bg-page); display: flex; height: 100vh; width: 100vw; overflow: hidden; }
 
-        body {
-            background-color: var(--bg-page);
-            display: flex;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-        }
-
-        /* --- SIDEBAR --- */
+        /* SIDEBAR */
         .sidebar {
-            width: 70px;
-            background: var(--bg-page);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 20px;
-            border-right: 1px solid rgba(255,255,255,0.3);
-            flex-shrink: 0;
+            width: 70px; background: #f8fbff; display: flex; flex-direction: column; 
+            align-items: center; padding-top: 20px; border-right: 1px solid rgba(0,0,0,0.05);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); flex-shrink: 0; z-index: 100;
         }
+        body.menu-open .sidebar { width: 220px; }
+        .hamburger-menu { font-size: 28px; color: var(--primary-blue); cursor: pointer; margin-bottom: 30px; }
+        
+        .menu-items { width: 100%; display: flex; flex-direction: column; gap: 10px; opacity: 0; pointer-events: none; transition: 0.2s; }
+        body.menu-open .menu-items { opacity: 1; pointer-events: auto; }
 
-        /* --- CONTENT WRAPPER --- */
-        .main-wrapper { 
-            flex-grow: 1; 
-            display: flex; 
-            flex-direction: column; 
-            min-width: 0; /* Evita que o flexbox quebre em ecrãs pequenos */
+        .menu-item { 
+            display: flex; align-items: center; padding: 12px 20px; gap: 15px; 
+            color: var(--primary-blue); font-weight: 800; cursor: pointer; white-space: nowrap;
         }
+        .menu-item img { width: 28px; height: 28px; object-fit: contain; }
 
-        /* --- HEADER --- */
-        header {
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 5%;
-        }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--primary-blue);
-            font-weight: 800;
-            font-size: clamp(1rem, 4vw, 1.5rem);
-        }
-
-        .header-title img { width: clamp(30px, 5vw, 45px); }
+        /* MAIN WRAPPER */
+        .main-wrapper { flex-grow: 1; display: flex; flex-direction: column; min-width: 0; }
+        
+        header { height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
+        .header-title { display: flex; align-items: center; gap: 12px; color: var(--primary-blue); font-weight: 900; font-size: 1.6rem; }
+        .header-title img { width: 45px; }
 
         .btn-voltar {
-            background-color: var(--primary-blue);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: 900;
-            box-shadow: 0 4px 0 #3d7db8;
-            font-size: clamp(0.7rem, 3vw, 0.9rem);
-            white-space: nowrap;
+            background-color: var(--primary-blue); color: white; padding: 10px 30px;
+            border-radius: 25px; text-decoration: none; font-weight: 900; box-shadow: 0 5px 0 #3d7db8;
         }
 
-        /* --- ÁREA DO JOGO --- */
-        .game-area {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-            overflow: hidden;
-        }
-
+        /* GAME AREA */
+        .game-area { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; position: relative; }
         .game-card {
-            background: var(--bg-page);
-            width: 95%;
-            max-width: 1000px;
-            height: 90%;
-            max-height: 800px;
-            border-radius: clamp(20px, 5vw, 40px);
-            box-shadow: var(--outer-shadow);
-            padding: clamp(15px, 3vw, 30px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
+            background: var(--bg-page); width: 100%; max-width: 950px; height: 100%; max-height: 780px;
+            border-radius: 40px; box-shadow: var(--outer-shadow); padding: 20px 40px;
+            display: flex; flex-direction: column; align-items: center;
         }
 
-        /* Status Bar */
-        .status-bar {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 700;
-            margin-bottom: 15px;
-            font-size: clamp(0.8rem, 2.5vw, 1rem);
-        }
+        .status-bar { width: 100%; display: flex; justify-content: space-between; font-weight: 900; margin-bottom: 10px; }
+        .dots { display: flex; gap: 8px; }
+        .dot { width: 20px; height: 20px; border-radius: 50%; background: var(--bg-page); box-shadow: var(--inner-shadow); }
+        .dot.active { background: #2ecc71; border: 2px solid white; box-shadow: none; }
 
-        .dots { display: flex; gap: clamp(4px, 1.5vw, 8px); }
-        .dot { 
-            width: clamp(12px, 2.5vw, 20px); 
-            height: clamp(12px, 2.5vw, 20px); 
-            border-radius: 50%; 
-            background: var(--bg-page); box-shadow: var(--inner-shadow);
-        }
-        .dot.active { background: #50d080; box-shadow: none; border: 2px solid white; }
+        .target-box { text-align: center; margin-bottom: 15px; }
+        .target-box img { height: 110px; margin-bottom: 5px; }
+        .target-box h2 { font-size: 2.5rem; font-weight: 900; letter-spacing: 4px; color: #333; }
 
-        /* Alvo */
-        .target-box { text-align: center; margin-bottom: 10px; flex-shrink: 0; }
-        .target-box img { height: clamp(60px, 15vh, 110px); width: auto; }
-        .target-box h2 { font-size: clamp(1.5rem, 5vw, 2.2rem); font-weight: 900; letter-spacing: 2px; }
-
-        /* Grade Neomórfica */
+        /* GRID */
         .grid-frame {
-            background: var(--bg-page);
-            padding: clamp(8px, 2vw, 20px);
-            border-radius: 20px;
-            box-shadow: var(--inner-shadow);
-            display: grid;
-            gap: clamp(4px, 1vw, 8px);
-            max-height: 55vh; /* Impede que a grade saia do ecrã no telemóvel */
-            overflow: hidden;
+            background: var(--bg-page); padding: 15px; border-radius: 30px;
+            box-shadow: var(--inner-shadow); display: grid; gap: 10px; margin: auto;
         }
-
         .cell {
-            aspect-ratio: 1/1;
-            width: clamp(25px, 8vw, 45px);
-            background: var(--bg-page);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: clamp(0.8rem, 3vw, 1.2rem);
-            box-shadow: 3px 3px 6px #c5d4e3, -3px -3px 6px #ffffff;
-            cursor: pointer;
-            user-select: none;
+            width: clamp(35px, 4vw, 48px); height: clamp(35px, 4vw, 48px); background: var(--bg-page); 
+            border-radius: 10px; display: flex; align-items: center; justify-content: center; 
+            font-weight: 900; font-size: 1.3rem; cursor: pointer; box-shadow: 5px 5px 10px #c5d4e3, -5px -5px 10px #ffffff;
+            transition: 0.1s;
         }
+        .cell:active { box-shadow: var(--inner-shadow); transform: scale(0.92); }
 
-        /* Footer */
-        .game-footer {
-            width: 100%;
-            display: flex;
-            justify-content: flex-end;
-            margin-top: auto;
-        }
-
+        .game-footer { width: 100%; display: flex; justify-content: flex-end; padding-top: 10px; }
         .settings-btn {
-            background: var(--bg-page);
-            border: none;
-            width: clamp(35px, 6vw, 50px);
-            height: clamp(35px, 6vw, 50px);
-            border-radius: 50%;
-            box-shadow: 4px 4px 8px #c5d4e3, -4px -4px 8px #ffffff;
-            color: #777;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+            background: var(--bg-page); border: none; width: 50px; height: 50px;
+            border-radius: 50%; box-shadow: var(--outer-shadow); color: #888; font-size: 24px; cursor: pointer;
         }
 
-        /* AJUSTES PARA MOBILE */
         @media (max-width: 600px) {
-            .sidebar { width: 50px; }
-            header { height: 60px; padding: 0 10px; }
-            .game-card { padding: 15px; border-radius: 25px; height: 95%; }
-            .target-box h2 { margin-top: 5px; }
+            body.menu-open .sidebar { width: 70px; }
+            header { padding: 0 15px; }
+            .game-card { padding: 15px; }
         }
     </style>
 </head>
-<body>
+<body id="mainBody">
 
     <aside class="sidebar">
-        <div class="hamburger-menu"><i class="fas fa-bars"></i></div>
+        <div class="hamburger-menu" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+        <div class="menu-items" id="menu-container"></div>
     </aside>
 
     <div class="main-wrapper">
         <header>
             <div class="header-title">
-                <img src="https://img.icons8.com/color/96/giraffe.png" alt="Icon">
+                <img id="header-icon" src="" alt="">
                 Português - 1º Ano
             </div>
             <a href="#" class="btn-voltar">← Voltar</a>
@@ -203,20 +110,17 @@
         <main class="game-area">
             <div class="game-card">
                 <div class="status-bar">
-                    <div>⏳ 01:31</div>
-                    <div class="dots">
-                        <div class="dot active"></div>
-                        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-                    </div>
-                    <div>0 PTS</div>
+                    <div id="display-tempo">⏳ 01:31</div>
+                    <div class="dots" id="progress-dots"></div>
+                    <div id="display-pontos">0 PTS</div>
                 </div>
 
                 <div class="target-box">
-                    <img id="target-img" src="" alt="Imagem">
+                    <img id="target-img" src="" alt="">
                     <h2 id="target-word"></h2>
                 </div>
 
-                <div class="grid-frame" id="grid"></div>
+                <div class="grid-frame" id="game-grid"></div>
 
                 <div class="game-footer">
                     <button class="settings-btn"><i class="fas fa-cog"></i></button>
@@ -227,24 +131,65 @@
 
     <script src="dados.js"></script>
     <script>
-        function carregarNivel(n) {
-            const dados = jogoDados.niveis[n];
-            document.getElementById('target-img').src = dados.imagem;
-            document.getElementById('target-word').innerText = dados.palavraAlvo;
-            
-            const grid = document.getElementById('grid');
-            grid.innerHTML = ''; // Limpa grid anterior
-            grid.style.gridTemplateColumns = `repeat(${dados.gridTamanho}, 1fr)`;
+        function toggleMenu() { document.getElementById('mainBody').classList.toggle('menu-open'); }
+
+        function init() {
+            const menu = document.getElementById('menu-container');
+            const icons = JOGO_CONFIG.iconesMenu;
+            const pathIcons = JOGO_CONFIG.caminhoIcons;
+
+            // Gerar menu lateral
+            const anos = [
+                { id: 'pre', txt: 'Pré-Escolar' },
+                { id: 'ano1', txt: '1º Ano' },
+                { id: 'ano2', txt: '2º Ano' },
+                { id: 'ano3', txt: '3º Ano' },
+                { id: 'ano4', txt: '4º Ano' }
+            ];
+
+            anos.forEach(a => {
+                const item = document.createElement('div');
+                item.className = 'menu-item';
+                item.innerHTML = `<img src="${pathIcons}${icons[a.id]}"> <span>${a.txt}</span>`;
+                menu.appendChild(item);
+            });
+
+            // Ícone do Header (conforme o 1º ano)
+            document.getElementById('header-icon').src = `${pathIcons}${icons.ano1}`;
+
+            carregarPalavra('animais', 2); // Exemplo: PATO
+        }
+
+        function carregarPalavra(cat, idx) {
+            const item = JOGO_CONFIG.categorias[cat].itens[idx];
+            const pathImg = JOGO_CONFIG.caminhoImg;
+
+            document.getElementById('target-img').src = `${pathImg}${item.img}`;
+            document.getElementById('target-word').innerText = item.nome;
+
+            const grid = document.getElementById('game-grid');
+            grid.innerHTML = '';
+            grid.style.gridTemplateColumns = `repeat(8, 1fr)`;
             
             const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            for(let i=0; i < (dados.gridTamanho * dados.gridTamanho); i++) {
-                const div = document.createElement('div');
-                div.className = 'cell';
-                div.innerText = letras.charAt(Math.floor(Math.random() * letras.length));
-                grid.appendChild(div);
+            for(let i=0; i<64; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.innerText = letras.charAt(Math.floor(Math.random() * letras.length));
+                grid.appendChild(cell);
+            }
+
+            // Bolinhas de progresso
+            const dots = document.getElementById('progress-dots');
+            dots.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const d = document.createElement('div');
+                d.className = i === 0 ? 'dot active' : 'dot';
+                dots.appendChild(d);
             }
         }
-        window.onload = () => carregarNivel(0);
+
+        window.onload = init;
     </script>
 </body>
 </html>
