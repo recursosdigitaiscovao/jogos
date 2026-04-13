@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sopa de Letras - 1º Ano</title>
+    <title>Sopa de Letras - Template 1</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -18,25 +18,77 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
         body { background-color: var(--bg-page); display: flex; height: 100vh; width: 100vw; overflow: hidden; }
 
-        /* SIDEBAR */
+        /* --- SIDEBAR HAMBÚRGUER --- */
         .sidebar {
-            width: 70px; background: #f8fbff; display: flex; flex-direction: column; 
-            align-items: center; padding-top: 20px; border-right: 1px solid rgba(0,0,0,0.05);
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); flex-shrink: 0; z-index: 100;
+            width: 80px; /* Largura inicial (apenas ícones) */
+            background: #f8fbff;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Alinha itens à esquerda para a expansão */
+            padding-top: 20px;
+            border-right: 1px solid rgba(0,0,0,0.05);
+            transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            flex-shrink: 0;
+            z-index: 100;
+            overflow: hidden;
         }
-        body.menu-open .sidebar { width: 220px; }
-        .hamburger-menu { font-size: 28px; color: var(--primary-blue); cursor: pointer; margin-bottom: 30px; }
+
+        /* Classe ativada pelo clique */
+        body.menu-open .sidebar { width: 240px; }
+
+        .hamburger-container {
+            width: 80px; /* Mantém o ícone do topo sempre centrado na zona de 80px */
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-shrink: 0;
+        }
+
+        .hamburger-menu { 
+            font-size: 30px; 
+            color: var(--primary-blue); 
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        body.menu-open .hamburger-menu { transform: rotate(90deg); }
         
-        .menu-items { width: 100%; display: flex; flex-direction: column; gap: 10px; opacity: 0; pointer-events: none; transition: 0.2s; }
-        body.menu-open .menu-items { opacity: 1; pointer-events: auto; }
+        .menu-items { 
+            width: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px;
+        }
 
         .menu-item { 
-            display: flex; align-items: center; padding: 12px 20px; gap: 15px; 
-            color: var(--primary-blue); font-weight: 800; cursor: pointer; white-space: nowrap;
+            display: flex; 
+            align-items: center; 
+            width: 100%;
+            padding: 15px 0 15px 25px; /* Padding fixo à esquerda */
+            gap: 20px; 
+            color: var(--primary-blue); 
+            font-weight: 800; 
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
         }
-        .menu-item img { width: 28px; height: 28px; object-fit: contain; }
 
-        /* MAIN WRAPPER */
+        .menu-item:hover { background: #eef5fc; }
+
+        .menu-item img { 
+            width: 32px; 
+            height: 32px; 
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .menu-item span {
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 1.1rem;
+        }
+        body.menu-open .menu-item span { opacity: 1; }
+
+        /* --- CONTEÚDO PRINCIPAL --- */
         .main-wrapper { flex-grow: 1; display: flex; flex-direction: column; min-width: 0; }
         
         header { height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
@@ -48,8 +100,8 @@
             border-radius: 25px; text-decoration: none; font-weight: 900; box-shadow: 0 5px 0 #3d7db8;
         }
 
-        /* GAME AREA */
-        .game-area { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; position: relative; }
+        .game-area { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        
         .game-card {
             background: var(--bg-page); width: 100%; max-width: 950px; height: 100%; max-height: 780px;
             border-radius: 40px; box-shadow: var(--outer-shadow); padding: 20px 40px;
@@ -65,7 +117,6 @@
         .target-box img { height: 110px; margin-bottom: 5px; }
         .target-box h2 { font-size: 2.5rem; font-weight: 900; letter-spacing: 4px; color: #333; }
 
-        /* GRID */
         .grid-frame {
             background: var(--bg-page); padding: 15px; border-radius: 30px;
             box-shadow: var(--inner-shadow); display: grid; gap: 10px; margin: auto;
@@ -74,9 +125,7 @@
             width: clamp(35px, 4vw, 48px); height: clamp(35px, 4vw, 48px); background: var(--bg-page); 
             border-radius: 10px; display: flex; align-items: center; justify-content: center; 
             font-weight: 900; font-size: 1.3rem; cursor: pointer; box-shadow: 5px 5px 10px #c5d4e3, -5px -5px 10px #ffffff;
-            transition: 0.1s;
         }
-        .cell:active { box-shadow: var(--inner-shadow); transform: scale(0.92); }
 
         .game-footer { width: 100%; display: flex; justify-content: flex-end; padding-top: 10px; }
         .settings-btn {
@@ -84,25 +133,29 @@
             border-radius: 50%; box-shadow: var(--outer-shadow); color: #888; font-size: 24px; cursor: pointer;
         }
 
-        @media (max-width: 600px) {
-            body.menu-open .sidebar { width: 70px; }
-            header { padding: 0 15px; }
-            .game-card { padding: 15px; }
+        @media (max-width: 800px) {
+            body.menu-open .sidebar { width: 80px; } /* Mantém fechado em ecrãs muito pequenos */
+            .header-title span { display: none; }
         }
     </style>
 </head>
 <body id="mainBody">
 
     <aside class="sidebar">
-        <div class="hamburger-menu" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
-        <div class="menu-items" id="menu-container"></div>
+        <div class="hamburger-container">
+            <div class="hamburger-menu" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+        <div class="menu-items" id="menu-container">
+            </div>
     </aside>
 
     <div class="main-wrapper">
         <header>
             <div class="header-title">
                 <img id="header-icon" src="" alt="">
-                Português - 1º Ano
+                <span>Português - 1º Ano</span>
             </div>
             <a href="#" class="btn-voltar">← Voltar</a>
         </header>
@@ -110,9 +163,9 @@
         <main class="game-area">
             <div class="game-card">
                 <div class="status-bar">
-                    <div id="display-tempo">⏳ 01:31</div>
+                    <div>⏳ 01:31</div>
                     <div class="dots" id="progress-dots"></div>
-                    <div id="display-pontos">0 PTS</div>
+                    <div>0 PTS</div>
                 </div>
 
                 <div class="target-box">
@@ -131,14 +184,15 @@
 
     <script src="dados.js"></script>
     <script>
-        function toggleMenu() { document.getElementById('mainBody').classList.toggle('menu-open'); }
+        function toggleMenu() {
+            document.getElementById('mainBody').classList.toggle('menu-open');
+        }
 
         function init() {
             const menu = document.getElementById('menu-container');
             const icons = JOGO_CONFIG.iconesMenu;
             const pathIcons = JOGO_CONFIG.caminhoIcons;
 
-            // Gerar menu lateral
             const anos = [
                 { id: 'pre', txt: 'Pré-Escolar' },
                 { id: 'ano1', txt: '1º Ano' },
@@ -150,21 +204,18 @@
             anos.forEach(a => {
                 const item = document.createElement('div');
                 item.className = 'menu-item';
+                // O icon fica sempre visível, o span (texto) só aparece quando aberto
                 item.innerHTML = `<img src="${pathIcons}${icons[a.id]}"> <span>${a.txt}</span>`;
                 menu.appendChild(item);
             });
 
-            // Ícone do Header (conforme o 1º ano)
             document.getElementById('header-icon').src = `${pathIcons}${icons.ano1}`;
-
-            carregarPalavra('animais', 2); // Exemplo: PATO
+            carregarPalavra('animais', 2); // Exemplo PATO
         }
 
         function carregarPalavra(cat, idx) {
             const item = JOGO_CONFIG.categorias[cat].itens[idx];
-            const pathImg = JOGO_CONFIG.caminhoImg;
-
-            document.getElementById('target-img').src = `${pathImg}${item.img}`;
+            document.getElementById('target-img').src = JOGO_CONFIG.caminhoImg + item.img;
             document.getElementById('target-word').innerText = item.nome;
 
             const grid = document.getElementById('game-grid');
@@ -179,7 +230,6 @@
                 grid.appendChild(cell);
             }
 
-            // Bolinhas de progresso
             const dots = document.getElementById('progress-dots');
             dots.innerHTML = '';
             for(let i=0; i<5; i++) {
