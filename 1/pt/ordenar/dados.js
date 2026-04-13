@@ -1,16 +1,15 @@
 const JOGO_CONFIG = {
     caminhoImg: "../../../img/",         
     caminhoIcons: "../../../icons/",     
-    caminhoCat: "../../../imgcategorias/",     
     iconesMenu: { pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png" }
 };
 
 const JOGO_ORDEM_DATA = {
     categorias: {
-        letras_n1: { id: 'letras_n1', nome: 'Letras (Consecutivas)', titulo: 'Siga o Alfabeto', tipo: 'letras', nivel: 1 },
-        letras_n2: { id: 'letras_n2', nome: 'Letras (Aleatórias)', titulo: 'Letras Soltas', tipo: 'letras', nivel: 2 },
-        mesma_letra: { id: 'mesma_letra', nome: 'Mesma Letra Inicial', titulo: 'Dicionário Mágico', tipo: 'mesma' },
-        palavras_geral: { id: 'palavras_geral', nome: 'Palavras Variadas', titulo: 'Ordem das Coisas', tipo: 'geral' }
+        cat1: { id: 'cat1', nome: '1. Letras Consecutivas', titulo: 'Sequência do Alfabeto', tipo: 'letras', modo: 'consecutivo' },
+        cat2: { id: 'cat2', nome: '2. Letras Alternadas', titulo: 'Letras Misturadas', tipo: 'letras', modo: 'aleatorio' },
+        cat3: { id: 'cat3', nome: '3. Mesma Letra Inicial', titulo: 'Dicionário Mágico', tipo: 'mesma', modo: 'mesma' },
+        cat4: { id: 'cat4', nome: '4. Palavras Variadas', titulo: 'Ordem Geral', tipo: 'variadas', modo: 'variadas' }
     },
     bancoMesma: {
         C: ["Cama", "Carro", "Casa", "Copo", "Cebola", "Coelho"],
