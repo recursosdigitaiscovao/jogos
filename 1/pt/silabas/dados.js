@@ -13,6 +13,7 @@ const JOGO_CONFIG = {
             nome: "Contar Sílabas",
             img: "animaisdomesticos/silabas_1.png",
             tipo: "contar",
+            // ADICIONE MAIS PALAVRAS AQUI
             itens: [
                 { nome: "VACA", img: "animaisdomesticos/vaca.png", divisao: "VA-CA" },
                 { nome: "GATO", img: "animaisdomesticos/gato.png", divisao: "GA-TO" },
@@ -27,14 +28,16 @@ const JOGO_CONFIG = {
                 { nome: "CABRA", img: "animaisdomesticos/cabra.png", divisao: "CA-BRA" },
                 { nome: "CÃO", img: "animaisdomesticos/cao.png", divisao: "CÃO" },
                 { nome: "CEREJA", img: "frutas/cereja.png", divisao: "CE-RE-JA" },
-                { nome: "LARANJA", img: "frutas/banana.png", divisao: "LA-RAN-JA" },
-                { nome: "PAPAIA", img: "frutas/papaia.png", divisao: "PA-PAI-A" }
+                { nome: "LARANJA", img: "frutas/laranja.png", divisao: "LA-RAN-JA" },
+                { nome: "PAPAIA", img: "frutas/papaia.png", divisao: "PA-PAI-A" },
+                { nome: "MACACO", img: "animais/macaco.png", divisao: "MA-CA-CO" } // Exemplo de nova palavra
             ]
         },
         ordenar: {
             nome: "Ordenar Sílabas",
             img: "animaisdomesticos/silabas_2.png",
             tipo: "ordenar",
+            // ADICIONE MAIS PALAVRAS AQUI
             itens: [
                 { nome: "VACA", img: "animaisdomesticos/vaca.png", divisao: "VA-CA" },
                 { nome: "GATO", img: "animaisdomesticos/gato.png", divisao: "GA-TO" },
@@ -49,7 +52,7 @@ const JOGO_CONFIG = {
                 { nome: "CABRA", img: "animaisdomesticos/cabra.png", divisao: "CA-BRA" },
                 { nome: "CÃO", img: "animaisdomesticos/cao.png", divisao: "CÃO" },
                 { nome: "CEREJA", img: "frutas/cereja.png", divisao: "CE-RE-JA" },
-                { nome: "LARANJA", img: "frutas/banana.png", divisao: "LA-RAN-JA" },
+                { nome: "LARANJA", img: "frutas/laranja.png", divisao: "LA-RAN-JA" },
                 { nome: "PAPAIA", img: "frutas/papaia.png", divisao: "PA-PAI-A" }
             ]
         }
