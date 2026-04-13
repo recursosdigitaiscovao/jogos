@@ -2,6 +2,7 @@ const JOGO_CONFIG = {
     caminhoImg: "../../../img/",         
     caminhoIcons: "../../../icons/",     
     caminhoCat: "../../../imgcategorias/",     
+
     iconesMenu: { 
         pre: "iconpre.png", 
         ano1: "icon1.png", 
@@ -13,10 +14,10 @@ const JOGO_CONFIG = {
 
 const JOGO_ORDEM_DATA = {
     categorias: {
-        letras_consec: { id: 'letras_consec', nome: 'Letras (Consecutivas)', titulo: 'Siga o Alfabeto' },
-        letras_aleat: { id: 'letras_aleat', nome: 'Letras (Aleatórias)', titulo: 'Letras Misturadas' },
-        mesma_inicial: { id: 'mesma_inicial', nome: 'Mesma Letra Inicial', titulo: 'Dicionário Mágico' },
-        palavras_geral: { id: 'palavras_geral', nome: 'Palavras Variadas', titulo: 'Ordem das Coisas' }
+        letras_n1: { id: 'letras_n1', nome: 'Letras (Consecutivas)', titulo: 'Siga o Alfabeto', tipo: 'letras', nivel: 1 },
+        letras_n2: { id: 'letras_n2', nome: 'Letras (Aleatórias)', titulo: 'Letras Soltas', tipo: 'letras', nivel: 2 },
+        mesma_letra: { id: 'mesma_letra', nome: 'Mesma Letra Inicial', titulo: 'Dicionário Mágico', tipo: 'mesma' },
+        palavras_geral: { id: 'palavras_geral', nome: 'Palavras Variadas', titulo: 'Ordem das Coisas', tipo: 'geral' }
     },
     bancoMesma: {
         C: ["Cama", "Carro", "Casa", "Copo", "Cebola", "Coelho"],
@@ -26,9 +27,7 @@ const JOGO_ORDEM_DATA = {
         A: ["Abacate", "Abacaxi", "Abelha", "Agulha", "Anel", "Anta"]
     },
     bancoGeral: [
-        "Abelha", "Bola", "Cachorro", "Dado", "Elefante", "Foca", "Gato", "Hipopótamo", 
-        "Ilha", "Jacaré", "Ketchup", "Leão", "Macaco", "Navio", "Ovo", "Pato", 
-        "Queijo", "Rato", "Sapo", "Tigre", "Uva", "Vaca", "Waffle", "Xícara", "Zebra"
+        "Abelha", "Bola", "Cachorro", "Dado", "Elefante", "Foca", "Gato", "Jacaré", 
+        "Leão", "Macaco", "Navio", "Ovo", "Pato", "Queijo", "Rato", "Sapo", "Tigre", "Uva", "Vaca", "Zebra"
     ]
-};
 };
