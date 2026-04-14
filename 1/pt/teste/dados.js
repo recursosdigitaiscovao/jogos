@@ -33,6 +33,20 @@ const JOGO_CONFIG = {
             ]
         }
     },
+            frutos: {
+            nome: "Frutos",
+            img: "frutas/banana.png",
+            itens: [
+                { nome: "BANANA", img: "frutas/banana.png" },
+                { nome: "CEREJA", img: "frutas/cereja.png" },
+                { nome: "BANANA", img: "frutas/banana.png" },
+                { nome: "UVAS", img: "frutas/uvas.png" },
+                { nome: "MORANGO", img: "frutas/morango.png" },
+                { nome: "LARANJA", img: "frutas/banana.png" }, // Reutilizando imagem do seu config
+                { nome: "PAPAIA", img: "frutas/papaia.png" },
+                { nome: "MACÃ", img: "frutas/maca.png" } // Adicionado para completar 5
+            ]
+        },
     relatorio: {
         titulo: "MUITO BEM!",
         pontosTotal: "Encontraste:",
