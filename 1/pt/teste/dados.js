@@ -20,6 +20,7 @@ const JOGO_CONFIG = {
     categorias: {
         animais: {
             nome: "Animais",
+            imgCapa: "animaisdomesticos/gato.png",
             itens: [
                 { nome: "VACA", img: "animaisdomesticos/vaca.png" },
                 { nome: "GATO", img: "animaisdomesticos/gato.png" },
@@ -32,6 +33,7 @@ const JOGO_CONFIG = {
         },
         frutos: {
             nome: "Frutos",
+            imgCapa: "frutas/morango.png",
             itens: [
                 { nome: "BANANA", img: "frutas/banana.png" },
                 { nome: "CEREJA", img: "frutas/cereja.png" },
@@ -44,6 +46,7 @@ const JOGO_CONFIG = {
         },
         material: {
             nome: "Material Escolar",
+            imgCapa: "materialescolar/afia.png",
             itens: [
                 { nome: "MOCHILA", img: "materialescolar/mochila.png" },
                 { nome: "TESOURA", img: "materialescolar/tesoura.png" },
@@ -59,7 +62,7 @@ const JOGO_CONFIG = {
     },
     relatorio: {
         titulo: "MUITO BEM!",
-        pontosTotal: "Encontraste:",
+        pontosTotal: "Pontos:",
         tempoTotal: "Tempo:"
     }
 };
