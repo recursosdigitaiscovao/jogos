@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Template 1 - Estrutura Finalizada</title>
+    <title>Template 1 - Estrutura Limpa</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -25,7 +25,7 @@
         }
 
         /* ==========================================================================
-           1. HEADER (10px de padding das bordas laterais)
+           1. HEADER (Sem menus, apenas título e botão voltar)
            ========================================================================== */
         header { 
             height: 60px; 
@@ -37,9 +37,8 @@
             z-index: 1000;
         }
         
-        .header-left, .header-right { display: flex; align-items: center; min-width: 50px; }
+        .header-left, .header-right { display: flex; align-items: center; min-width: 80px; }
         .header-right { justify-content: flex-end; }
-        .hamburger-btn { font-size: 26px; color: var(--primary-blue); cursor: pointer; }
 
         .header-center { 
             flex: 1; display: flex; align-items: center; justify-content: center; 
@@ -53,6 +52,7 @@
         @media (max-width: 480px) {
             .title-desktop { display: none; }
             .title-mobile { display: inline; font-size: 1.1rem; }
+            .header-left, .header-right { min-width: 60px; }
         }
 
         .btn-voltar { 
@@ -62,13 +62,13 @@
         }
 
         /* ==========================================================================
-           2. WRAPPER (Padding de 10px do Header e do Footer)
+           2. WRAPPER (Padding de 10px em relação aos elementos externos)
            ========================================================================== */
         .game-wrapper { 
             flex: 1; 
             display: flex; 
             justify-content: center; 
-            padding: 10px; /* 10px Top (Header), 10px Bottom (Footer), 10px Laterais */
+            padding: 10px; /* Margem de 10px do Header e do Footer */
             min-height: 0; 
             overflow: hidden;
         }
@@ -86,27 +86,17 @@
             overflow: hidden;
         }
 
+        /* STATUS (Simplificado, sem gatilho RD) */
         .status { 
             height: 55px; 
             flex-shrink: 0; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 0 15px; 
+            padding: 0 20px; 
         }
 
-        .status-rd-trigger { 
-            display: flex; 
-            align-items: center; 
-            background: rgba(255,255,255,0.4); 
-            padding: 4px 10px; 
-            border-radius: 15px; 
-            box-shadow: var(--inner-shadow);
-            cursor: pointer; 
-            height: 38px;
-        }
-        .points-val { font-weight: 900; color: var(--primary-blue); font-size: 0.95rem; margin-right: 10px; }
-        .status-rd-img { height: 26px; }
+        .status-info { font-weight: 900; color: var(--primary-blue); font-size: 0.95rem; }
 
         /* ==========================================================================
            3. ÁREA DE CONTEÚDO (MAIN)
@@ -131,7 +121,7 @@
         #game-area { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; }
 
         /* ==========================================================================
-           4. FOOTER (10px de padding do Main)
+           4. FOOTER
            ========================================================================== */
         footer {
             height: 30px;
@@ -142,21 +132,7 @@
             font-size: 0.8rem;
             font-weight: 700;
             flex-shrink: 0;
-            margin-bottom: 5px; /* Ajuste fino para não colar na borda do dispositivo */
-        }
-
-        /* MENUS */
-        .menu-dropdown, #rd-menu-container { 
-            position: absolute; top: 55px; display: none; flex-direction: column; 
-            gap: 8px; z-index: 2000; 
-        }
-        .menu-dropdown { left: 10px; }
-        #rd-menu-container { right: 10px; }
-
-        .custom-menu-item { 
-            display: flex; align-items: center; gap: 12px; padding: 10px 18px; 
-            background: white; border-radius: 18px; box-shadow: 4px 4px 10px #c5d4e3; 
-            cursor: pointer; min-width: 180px; text-decoration: none; color: inherit;
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -164,9 +140,7 @@
 
     <header>
         <div class="header-left">
-            <i class="fas fa-bars hamburger-btn" onclick="toggleMenu('dropdownMenu', event)"></i>
-            <div class="menu-dropdown" id="dropdownMenu"></div>
-        </div>
+            </div>
         <div class="header-center">
             <img id="header-icon" src="" alt="">
             <span class="title-desktop">Português - 1º Ano</span>
@@ -183,10 +157,8 @@
             <section class="status">
                 <div class="status-timer">⏳ <span id="timer-label">00:00</span></div>
                 <div id="dots-container" style="display:flex; gap:5px;"></div>
-                <div class="status-rd-trigger" onclick="toggleMenu('rd-menu-container', event)">
-                    <span id="points-label" class="points-val">0</span>
-                    <img id="status-rd-img" src="" class="status-rd-img">
-                    <div id="rd-menu-container"></div>
+                <div class="status-info">
+                    Pontos: <span id="points-label">0</span>
                 </div>
             </section>
 
@@ -205,18 +177,6 @@
 
     <script src="dados.js"></script>
     <script>
-        function toggleMenu(menuId, e) {
-            if(e) e.stopPropagation();
-            const menu = document.getElementById(menuId);
-            const isVisible = menu.style.display === 'flex';
-            document.querySelectorAll('.menu-dropdown, #rd-menu-container').forEach(m => m.style.display = 'none');
-            if(!isVisible) menu.style.display = 'flex';
-        }
-
-        window.onclick = () => {
-            document.querySelectorAll('.menu-dropdown, #rd-menu-container').forEach(m => m.style.display = 'none');
-        };
-
         function mostrarJogo() {
             document.getElementById('intro-overlay').style.display = 'none';
             document.getElementById('game-area').style.display = 'flex';
@@ -226,24 +186,9 @@
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const icons = JOGO_CONFIG.iconesMenu;
                 const pathI = JOGO_CONFIG.caminhoIcons;
-                const pathImg = JOGO_CONFIG.caminhoImg;
 
                 document.getElementById('header-icon').src = pathI + icons.ano1;
                 document.getElementById('intro-img').src = pathI + icons.ano1;
-                document.getElementById('status-rd-img').src = pathImg + "rd.png";
-                
-                // Preencher menu hamburguer
-                const menuKeys = ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'];
-                const menuLabels = ['Início', 'Pré', '1º Ano', '2º Ano', '3º Ano', '4º Ano'];
-                const menuBox = document.getElementById('dropdownMenu');
-                
-                menuKeys.forEach((key, index) => {
-                    const a = document.createElement('a');
-                    a.className = 'custom-menu-item';
-                    a.href = JOGO_CONFIG.links[key];
-                    a.innerHTML = `<img src="${pathI}${icons[key]}" style="height:20px;"><span>${menuLabels[index]}</span>`;
-                    menuBox.appendChild(a);
-                });
             }
         };
     </script>
