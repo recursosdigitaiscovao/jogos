@@ -44,7 +44,6 @@
         }
         .header-center img { height: 30px; }
 
-        /* ALTERADO: Botão voltar */
         .btn-voltar { 
             background: var(--primary-blue); color: white; padding: 8px 16px; 
             border-radius: 12px; text-decoration: none; font-weight: 900; 
@@ -74,7 +73,6 @@
             padding: 0 15px;
         }
 
-        /* AJUSTADO: Alinhamento horizontal total dos elementos de status */
         .status { 
             height: 50px; 
             flex-shrink: 0; 
@@ -83,10 +81,20 @@
             align-items: center; 
         }
         .status-timer { white-space: nowrap; }
+        
         .status-right { 
             display: flex; 
             align-items: center; 
-            gap: 10px; 
+            gap: 12px; 
+        }
+
+        /* NOVO: Estilo para o Menu RD */
+        .rd-menu-btn {
+            font-size: 22px;
+            color: var(--primary-blue);
+            cursor: pointer;
+            padding: 5px;
+            display: flex; align-items: center;
         }
 
         main { 
@@ -136,7 +144,6 @@
             display: flex; align-items: center; justify-content: center;
             cursor: pointer;
         }
-        .rd-intro-btn img { height: 40px; }
 
         footer {
             height: 45px; display: flex; align-items: center; justify-content: center;
@@ -146,6 +153,13 @@
         .menu-dropdown { 
             position: absolute; top: 60px; left: 20px; 
             display: none; flex-direction: column; gap: 8px; z-index: 2000; 
+        }
+
+        /* AJUSTE: Dropdown do lado direito para o menu RD */
+        .rd-dropdown {
+            left: auto;
+            right: 0;
+            top: 45px;
         }
 
         .custom-menu-item { 
@@ -175,7 +189,6 @@
             <span>1º Ano</span>
         </div>
         <div class="header-right">
-            <!-- ALTERADO: Link para o diretório anterior -->
             <a href="../index.html" class="btn-voltar">VOLTAR</a>
         </div>
     </header>
@@ -188,7 +201,13 @@
                 <div id="dots-container" style="display:flex; gap:5px;"></div>
                 <div class="status-right">
                     <div style="font-weight: 900; color: var(--primary-blue);"><span id="points-label">0</span></div>
-                    <img id="status-rd-img" class="rd-icon-btn" src="" alt="RD" style="height: 24px; cursor:pointer;">
+                    <!-- RD TRANSFORMADO EM HAMBURGUER MENU -->
+                    <div style="position: relative;">
+                        <i class="fas fa-bars rd-menu-btn" onclick="toggleMenu('rdDropdownMenu', event)"></i>
+                        <div class="menu-dropdown rd-dropdown" id="rdDropdownMenu">
+                            <!-- Categorias serão inseridas aqui via JS -->
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -200,8 +219,9 @@
                 
                 <div class="intro-actions">
                     <button onclick="mostrarJogo()" class="btn-jogar">JOGAR</button>
-                    <div class="rd-intro-btn">
-                        <img id="intro-rd-img" src="" alt="RD">
+                    <!-- RD DA INTRO TAMBÉM ABRE O MENU -->
+                    <div class="rd-intro-btn" onclick="toggleMenu('rdDropdownMenu', event)">
+                        <i class="fas fa-bars" style="font-size: 26px; color: var(--primary-blue);"></i>
                     </div>
                 </div>
             </div>
@@ -216,12 +236,18 @@
     <script>
         function toggleMenu(menuId, e) {
             if(e) e.stopPropagation();
-            const menu = document.getElementById(menuId);
-            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+            const targetMenu = document.getElementById(menuId);
+            const isVisible = targetMenu.style.display === 'flex';
+            
+            // Fecha todos os menus primeiro
+            document.querySelectorAll('.menu-dropdown').forEach(m => m.style.display = 'none');
+            
+            // Abre o selecionado se estava fechado
+            targetMenu.style.display = isVisible ? 'none' : 'flex';
         }
 
         window.onclick = () => {
-            document.getElementById('dropdownMenu').style.display = 'none';
+            document.querySelectorAll('.menu-dropdown').forEach(m => m.style.display = 'none');
         };
 
         function mostrarJogo() {
@@ -233,14 +259,12 @@
         window.onload = () => {
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const pathI = JOGO_CONFIG.caminhoIcons;
-                const pathImg = JOGO_CONFIG.caminhoImg;
                 const icons = JOGO_CONFIG.iconesMenu;
                 
                 document.getElementById('header-icon').src = pathI + icons.ano1;
                 document.getElementById('intro-img').src = pathI + icons.ano1;
-                document.getElementById('status-rd-img').src = pathImg + "rd.png";
-                document.getElementById('intro-rd-img').src = pathImg + "rd.png";
 
+                // Menu Principal
                 const menuKeys = ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'];
                 const menuLabels = ['Início', 'Pré', '1º Ano', '2º Ano', '3º Ano', '4º Ano'];
                 const menuBox = document.getElementById('dropdownMenu');
@@ -251,6 +275,17 @@
                     a.href = JOGO_CONFIG.links[key];
                     a.innerHTML = `<img src="${pathI}${icons[key]}" style="height:20px;"><span>${menuLabels[i]}</span>`;
                     menuBox.appendChild(a);
+                });
+
+                // Menu RD (Categorias/Níveis) - Exemplo de preenchimento
+                const rdBox = document.getElementById('rdDropdownMenu');
+                const niveis = ['Nível 1', 'Nível 2', 'Nível 3'];
+                niveis.forEach(nv => {
+                    const div = document.createElement('div');
+                    div.className = 'custom-menu-item';
+                    div.innerHTML = `<span>${nv}</span>`;
+                    div.onclick = () => console.log('Selecionado: ' + nv);
+                    rdBox.appendChild(div);
                 });
             }
         };
