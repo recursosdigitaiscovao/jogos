@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sopa de Letras - 1º Ano</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
@@ -18,113 +18,163 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
-        body { background-color: var(--bg-page); height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
+        
+        body { 
+            background-color: var(--bg-page); 
+            height: 100vh; 
+            width: 100vw; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column;
+            touch-action: manipulation; /* Melhora resposta ao toque no mobile */
+        }
 
-        /* --- HEADER (TÍTULO E ICON SEMPRE VISÍVEIS) --- */
+        /* --- HEADER RESPONSIVO --- */
         header {
-            height: 65px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 25px;
+            padding: 0 15px;
             flex-shrink: 0;
+            background: var(--bg-page);
         }
 
-        .header-left, .header-right { width: 120px; }
+        .header-left, .header-right { width: 80px; }
         .header-right { display: flex; justify-content: flex-end; }
         
-        .hamburger-btn { font-size: 24px; color: var(--primary-blue); cursor: pointer; }
+        .hamburger-btn { font-size: 22px; color: var(--primary-blue); cursor: pointer; padding: 10px; }
 
         .header-center { 
             display: flex; 
             align-items: center; 
-            gap: 10px; 
+            gap: 8px; 
             color: var(--primary-blue); 
             font-weight: 900; 
-            font-size: 1.1rem;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            white-space: nowrap;
         }
 
         .header-center img { 
-            width: 32px; 
-            height: 32px; 
-            object-fit: contain;
+            width: clamp(24px, 4vw, 32px); 
+            height: auto;
         }
 
         .btn-voltar {
             background-color: var(--primary-blue); 
             color: white; 
-            padding: 6px 18px; 
-            border-radius: 20px; 
+            padding: 5px 12px; 
+            border-radius: 15px; 
             text-decoration: none; 
             font-weight: 900; 
-            font-size: 0.8rem; 
+            font-size: 0.75rem; 
             box-shadow: 0 3px 0 #3d7db8;
         }
 
-        /* --- STATUS BAR (ALINHAMENTO PRECISO) --- */
-        .status-bar {
-            width: 100%;
-            display: grid;
-            grid-template-columns: 100px 1fr 100px 50px; /* Colunas bem definidas */
-            align-items: center;
-            margin-bottom: 15px;
-            padding: 0 5px;
+        /* --- ÁREA DO JOGO (ADAPTÁVEL) --- */
+        .game-area { 
+            flex-grow: 1; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 10px;
+            min-height: 0; /* Importante para flexbox não quebrar */
         }
-
-        .timer-box { font-weight: 900; color: #555; font-size: 0.9rem; }
-        .dots-box { display: flex; gap: 6px; justify-content: center; }
-        .points-box { font-weight: 900; color: #555; font-size: 0.9rem; text-align: right; }
-        .rd-box { display: flex; justify-content: flex-end; }
-        .rd-box img { height: 35px; }
-
-        .dot { 
-            width: 15px; height: 15px; border-radius: 50%; 
-            background: var(--bg-page); box-shadow: var(--inner-shadow); 
-        }
-        .dot.active { background: var(--correct); border: 2px solid white; box-shadow: none; }
-
-        /* --- ÁREA DO JOGO --- */
-        .game-area { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 10px; }
         
         .game-card {
-            background: var(--bg-page); width: 95%; max-width: 850px; height: 95%; 
-            border-radius: 40px; box-shadow: var(--outer-shadow); padding: 20px 30px;
-            display: flex; flex-direction: column; align-items: center;
+            background: var(--bg-page); 
+            width: 100%; 
+            max-width: 850px; 
+            height: 100%;
+            max-height: 800px;
+            border-radius: clamp(20px, 5vw, 40px); 
+            box-shadow: var(--outer-shadow); 
+            padding: clamp(10px, 3vw, 25px);
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            overflow-y: auto; /* Caso o ecrã seja muito pequeno horizontalmente */
         }
 
-        .target-box { text-align: center; margin-bottom: 10px; }
-        .target-box img { height: clamp(60px, 12vh, 90px); margin-bottom: 5px; }
-        .target-box h2 { font-size: 1.8rem; font-weight: 900; letter-spacing: 3px; color: #333; }
+        /* --- STATUS BAR RESPONSIVA --- */
+        .status-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 900;
+            color: #555;
+            font-size: clamp(0.7rem, 2.5vw, 0.9rem);
+        }
 
-        /* --- GRADE --- */
+        .dots-box { display: flex; gap: 4px; }
+        .dot { 
+            width: clamp(10px, 2vw, 15px); 
+            height: clamp(10px, 2vw, 15px); 
+            border-radius: 50%; 
+            background: var(--bg-page); 
+            box-shadow: var(--inner-shadow); 
+        }
+        .dot.active { background: var(--correct); border: 1.5px solid white; box-shadow: none; }
+
+        .rd-box img { height: clamp(25px, 5vw, 35px); }
+
+        /* --- IMAGEM E PALAVRA --- */
+        .target-box { text-align: center; margin-bottom: 8px; flex-shrink: 0; }
+        .target-box img { height: clamp(60px, 15vh, 90px); width: auto; }
+        .target-box h2 { font-size: clamp(1.4rem, 5vw, 2rem); font-weight: 900; letter-spacing: 3px; color: #333; }
+
+        /* --- GRADE DA SOPA DE LETRAS --- */
         .grid-frame {
-            background: var(--bg-page); padding: 12px; border-radius: 25px;
-            box-shadow: var(--inner-shadow); display: grid; gap: 8px; margin: auto;
+            background: var(--bg-page); 
+            padding: clamp(8px, 2vw, 15px); 
+            border-radius: 20px;
+            box-shadow: var(--inner-shadow); 
+            display: grid; 
+            gap: clamp(4px, 1vw, 8px); 
+            margin: auto;
         }
         
         .cell {
-            width: clamp(32px, 4.5vw, 45px); height: clamp(32px, 4.5vw, 45px);
-            background: var(--bg-page); border-radius: 10px; display: flex; align-items: center; 
-            justify-content: center; font-weight: 900; font-size: 1.2rem; cursor: pointer;
-            box-shadow: 4px 4px 8px #c5d4e3, -4px -4px 8px #ffffff;
-            user-select: none; transition: 0.2s;
+            width: clamp(30px, 9vw, 46px); 
+            height: clamp(30px, 9vw, 46px);
+            background: var(--bg-page); 
+            border-radius: clamp(6px, 1.5vw, 10px); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: 900; 
+            font-size: clamp(0.9rem, 3.5vw, 1.2rem); 
+            cursor: pointer;
+            box-shadow: 3px 3px 6px #c5d4e3, -3px -3px 6px #ffffff;
+            user-select: none;
+            transition: transform 0.1s;
         }
-        .cell.selected { background: var(--selected); color: white; transform: scale(0.9); }
-        .cell.correct { background: var(--correct); color: white; box-shadow: none; }
+        .cell:active { transform: scale(0.9); }
+        .cell.selected { background: var(--selected); color: white; box-shadow: var(--inner-shadow); }
+        .cell.correct { background: var(--correct); color: white; box-shadow: none; pointer-events: none; }
 
-        /* --- MENU DROPDOWN --- */
+        /* --- MENU DROPDOWN (FLUTUANTE) --- */
         .menu-dropdown {
-            position: absolute; top: 60px; left: 20px;
+            position: absolute; top: 60px; left: 15px;
             display: none; flex-direction: column; gap: 8px; z-index: 9999;
         }
         .menu-dropdown.active { display: flex; }
         .menu-row-item {
             display: flex; align-items: center; gap: 10px; padding: 10px 15px;
-            background: var(--white); border-radius: 25px; box-shadow: 4px 4px 10px #c5d4e3;
-            width: 190px; cursor: pointer;
+            background: var(--white); border-radius: 20px; box-shadow: 4px 4px 10px #c5d4e3;
+            width: 170px; cursor: pointer;
         }
-        .menu-row-item img { width: 25px; height: 25px; }
-        .menu-row-item span { color: var(--primary-blue); font-weight: 800; font-size: 0.9rem; }
+        .menu-row-item img { width: 22px; }
+        .menu-row-item span { color: var(--primary-blue); font-weight: 800; font-size: 0.85rem; }
+
+        /* AJUSTES PARA ECRÃS PEQUENOS (MOBILE) */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .target-box img { height: 40px; }
+            .target-box h2 { font-size: 1.2rem; }
+            header { height: 40px; }
+        }
     </style>
 </head>
 <body>
@@ -134,23 +184,19 @@
             <i class="fas fa-bars hamburger-btn" onclick="toggleMenu()"></i>
             <div class="menu-dropdown" id="dropdownMenu"></div>
         </div>
-
         <div class="header-center">
             <img id="header-icon" src="" alt="">
             <span id="header-text">Português - 1º Ano</span>
         </div>
-
-        <div class="header-right">
-            <a href="#" class="btn-voltar">← Voltar</a>
-        </div>
+        <div class="header-right"><a href="#" class="btn-voltar">← Voltar</a></div>
     </header>
 
     <main class="game-area">
         <div class="game-card">
             <div class="status-bar">
-                <div class="timer-box">⏳ <span id="timer-display">00:00</span></div>
+                <div>⏳ <span id="timer-display">00:00</span></div>
                 <div class="dots-box" id="dots-container"></div>
-                <div class="points-box"><span id="points-display">0</span> PTS</div>
+                <div><span id="points-display">0</span> PTS</div>
                 <div class="rd-box"><img id="img-rd" src=""></div>
             </div>
 
@@ -165,6 +211,7 @@
 
     <script src="dados.js"></script>
     <script>
+        // ... (Mesma lógica de jogo do código anterior) ...
         let currentRound = 0;
         let points = 0;
         let timerSeconds = 0;
@@ -178,11 +225,9 @@
             const icons = JOGO_CONFIG.iconesMenu;
             const pathIcons = JOGO_CONFIG.caminhoIcons;
 
-            // Header e RD
             document.getElementById('header-icon').src = pathIcons + icons.ano1;
             document.getElementById('img-rd').src = JOGO_CONFIG.caminhoImg + "rd.png";
 
-            // Menu
             const anos = [{k:'pre', l:'Pré-Escolar'}, {k:'ano1', l:'1º Ano'}, {k:'ano2', l:'2º Ano'}, {k:'ano3', l:'3º Ano'}, {k:'ano4', l:'4º Ano'}];
             anos.forEach(a => {
                 const div = document.createElement('div');
@@ -191,21 +236,17 @@
                 dropdown.appendChild(div);
             });
 
-            startTimer();
-            loadRound();
-        }
-
-        function startTimer() {
             setInterval(() => {
                 timerSeconds++;
                 const m = Math.floor(timerSeconds/60).toString().padStart(2,'0');
                 const s = (timerSeconds%60).toString().padStart(2,'0');
                 document.getElementById('timer-display').innerText = `${m}:${s}`;
             }, 1000);
+
+            loadRound();
         }
 
         function loadRound() {
-            // Atualizar Bolas
             const dots = document.getElementById('dots-container');
             dots.innerHTML = '';
             for(let i=0; i<5; i++) {
@@ -214,7 +255,6 @@
                 dots.appendChild(d);
             }
 
-            // Pegar palavra
             const itens = JOGO_CONFIG.categorias.animais.itens;
             const item = itens[currentRound % itens.length];
             wordToFind = item.nome.toUpperCase();
@@ -229,14 +269,9 @@
             const grid = document.getElementById('game-grid');
             grid.innerHTML = '';
             grid.style.gridTemplateColumns = 'repeat(8, 1fr)';
-            
             let cells = Array(64).fill('');
             const startIdx = Math.floor(Math.random() * (64 - word.length));
-            
-            // Colocar palavra
             for(let i=0; i<word.length; i++) cells[startIdx + i] = word[i];
-            
-            // Preencher resto
             const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             cells = cells.map(c => c === '' ? abc[Math.floor(Math.random()*26)] : c);
 
@@ -270,12 +305,8 @@
                 document.getElementById('points-display').innerText = points;
                 selectedLetters = [];
                 setTimeout(() => {
-                    if(currentRound < 4) {
-                        currentRound++;
-                        loadRound();
-                    } else {
-                        alert("Jogo Terminado!");
-                    }
+                    if(currentRound < 4) { currentRound++; loadRound(); }
+                    else { alert("Parabéns! Completaste o desafio!"); }
                 }, 800);
             }
         }
