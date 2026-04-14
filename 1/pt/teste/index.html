@@ -1,119 +1,290 @@
-<header>
-    <div class="header-left">
-        <i class="fas fa-bars hamburger-btn" onclick="toggleMainMenu(event)"></i>
-        <div class="menu-dropdown" id="dropdownMenu"></div>
-    </div>
-    <div class="header-center">
-        <img id="header-icon" src="" alt="">
-        <span>1º Ano</span>
-    </div>
-    <div class="header-right">
-        <a href="../index.html" class="btn-voltar">VOLTAR</a>
-    </div>
-</header>
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>1º Ano</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #e9f0f8;
+            --primary-blue: #5ba4e5;
+            --primary-dark: #3d7db8;
+            --white: #ffffff;
+            --outer-shadow: 0px 0px 25px #b0c4d9, 0px 0px 25px #ffffff;
+        }
 
-<div class="game-wrapper">
-    <div class="game-card">
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
         
-        <section class="status">
-            <div class="status-timer">⏳ 00:00</div>
-            <div id="dots-container" style="display:flex; gap:5px;"></div>
-            <div class="status-right">
-                <div style="font-weight: 900; color: var(--primary-blue);"><span id="points-label">0</span></div>
-                <img id="status-rd-img" class="rd-menu-btn" src="" alt="RD" onclick="toggleRDMenu(event)">
-            </div>
-        </section>
+        body { 
+            background-color: var(--bg-page); 
+            height: 100dvh; width: 100vw; 
+            overflow: hidden; 
+            display: flex; flex-direction: column;
+        }
 
-        <div id="intro-overlay">
-            <div class="intro-content">
-                <img id="intro-img" src="" style="height:80px; margin-bottom:20px;">
-                <h1 style="color:var(--primary-blue); font-weight:900; margin-bottom:25px;">Título do Jogo</h1>
-            </div>
+        header { 
+            height: 60px; 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 20px; flex-shrink: 0; z-index: 1000;
+        }
+        
+        .hamburger-btn { 
+            font-size: 26px; 
+            color: var(--primary-blue); 
+            cursor: pointer; 
+            padding: 8px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .header-center { 
+            flex: 1; display: flex; align-items: center; justify-content: center; 
+            gap: 10px; color: var(--primary-blue); font-weight: 900; font-size: 1.2rem;
+        }
+        .header-center img { height: 30px; }
+
+        .btn-voltar { 
+            background: var(--primary-blue); color: white; padding: 8px 16px; 
+            border-radius: 12px; text-decoration: none; font-weight: 900; 
+            font-size: 0.8rem; box-shadow: 0 4px 0 var(--primary-dark);
+        }
+
+        .game-wrapper { 
+            flex: 1; 
+            display: flex; 
+            justify-content: center; 
+            /* AJUSTE AQUI: padding-bottom de 15px para afastar do footer */
+            padding: 5px 30px 15px 30px; 
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .game-card { 
+            background: var(--bg-page); 
+            width: 100%; 
+            max-width: 900px; 
+            height: 100%; 
+            border-radius: 35px; 
+            box-shadow: var(--outer-shadow); 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            overflow: hidden;
+        }
+
+        .status { 
+            height: 50px; 
+            flex-shrink: 0; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 0 15px;
+        }
+        
+        .status-right { display: flex; align-items: center; gap: 12px; }
+        .rd-menu-btn { height: 24px; cursor: pointer; }
+
+        main { 
+            flex: 1; display: none; 
+            flex-direction: column; align-items: center; justify-content: center; 
+            position: relative;
+        }
+
+        #intro-overlay {
+            position: absolute; top: 0; left: 0; right: 0; height: 100%;
+            background: var(--bg-page); z-index: 100;
+            display: flex; flex-direction: column; align-items: center; padding-bottom: 20px;
+        }
+
+        .intro-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+        .intro-actions { display: flex; align-items: center; gap: 15px; width: 100%; padding: 0 25px; }
+
+        .btn-jogar {
+            flex: 1; padding: 15px; background: var(--primary-blue); 
+            color: white; border: none; border-radius: 20px; 
+            font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); 
+            font-size: 1.1rem;
+        }
+
+        .rd-intro-btn { height: 50px; width: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .rd-intro-btn img { height: 40px; }
+
+        footer { 
+            height: 45px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: #8899aa; 
+            font-size: 0.85rem; 
+            flex-shrink: 0; 
+        }
+
+        /* MENU LATERAL (HAMBURGUER) */
+        .menu-dropdown { 
+            position: absolute; top: 60px; left: 20px; 
+            display: none; flex-direction: column; gap: 8px; z-index: 2000; 
+        }
+
+        /* PAINEL RD QUE SOBE DO FUNDO */
+        .rd-panel {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            z-index: 2500;
+            border-radius: 35px 35px 0 0;
+            box-shadow: 0 -10px 25px rgba(176, 196, 217, 0.5);
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transform: translateY(101%); 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .rd-panel.active { transform: translateY(0); }
+
+        .rd-panel-header {
+            width: 50px; height: 5px; background: #ccd6e0; border-radius: 10px;
+            margin: -10px auto 15px auto; cursor: pointer;
+        }
+
+        .custom-menu-item { 
+            display: flex; align-items: center; gap: 12px; padding: 12px 20px; 
+            background: white; border-radius: 18px; box-shadow: 4px 4px 10px #c5d4e3; 
+            cursor: pointer; min-width: 180px; text-decoration: none; color: #555;
+            transition: background 0.2s ease;
+        }
+        .custom-menu-item:hover { background: var(--primary-blue); }
+
+        @media (max-width: 450px) { 
+            .game-wrapper { 
+                /* AJUSTE AQUI: padding-bottom de 15px no mobile também */
+                padding: 5px 20px 15px 20px; 
+            } 
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <i class="fas fa-bars hamburger-btn" onclick="toggleMainMenu(event)"></i>
+            <div class="menu-dropdown" id="dropdownMenu"></div>
+        </div>
+        <div class="header-center">
+            <img id="header-icon" src="" alt="">
+            <span>1º Ano</span>
+        </div>
+        <div class="header-right">
+            <a href="../index.html" class="btn-voltar">VOLTAR</a>
+        </div>
+    </header>
+
+    <div class="game-wrapper">
+        <div class="game-card">
             
-            <div class="intro-actions">
-                <button onclick="mostrarJogo()" class="btn-jogar">JOGAR</button>
-                <div class="rd-intro-btn" onclick="toggleRDMenu(event)">
-                    <img id="intro-rd-img" src="" alt="RD">
+            <section class="status">
+                <div class="status-timer">⏳ 00:00</div>
+                <div id="dots-container" style="display:flex; gap:5px;"></div>
+                <div class="status-right">
+                    <div style="font-weight: 900; color: var(--primary-blue);"><span id="points-label">0</span></div>
+                    <img id="status-rd-img" class="rd-menu-btn" src="" alt="RD" onclick="toggleRDMenu(event)">
+                </div>
+            </section>
+
+            <div id="intro-overlay">
+                <div class="intro-content">
+                    <img id="intro-img" src="" style="height:80px; margin-bottom:20px;">
+                    <h1 style="color:var(--primary-blue); font-weight:900; margin-bottom:25px;">Título do Jogo</h1>
+                </div>
+                
+                <div class="intro-actions">
+                    <button onclick="mostrarJogo()" class="btn-jogar">JOGAR</button>
+                    <div class="rd-intro-btn" onclick="toggleRDMenu(event)">
+                        <img id="intro-rd-img" src="" alt="RD">
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- PAINEL RD (EXPANDE PARA CIMA) -->
-        <div id="rdDropdownMenu" class="rd-panel">
-            <div class="rd-panel-header" onclick="toggleRDMenu(event)"></div>
-            <!-- Categorias inseridas via JS -->
-        </div>
+            <!-- PAINEL RD (EXPANDE PARA CIMA) -->
+            <div id="rdDropdownMenu" class="rd-panel">
+                <div class="rd-panel-header" onclick="toggleRDMenu(event)"></div>
+            </div>
 
-        <main id="game-area"></main>
+            <main id="game-area"></main>
+        </div>
     </div>
-</div>
 
-<footer id="main-footer">2026</footer>
+    <footer id="main-footer">2026</footer>
 
-<script src="dados.js"></script>
-<script>
-    function toggleMainMenu(e) {
-        if(e) e.stopPropagation();
-        closeRDMenu();
-        const menu = document.getElementById('dropdownMenu');
-        menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
-    }
-
-    function toggleRDMenu(e) {
-        if(e) e.stopPropagation();
-        // Fecha menu lateral se estiver aberto
-        document.getElementById('dropdownMenu').style.display = 'none';
-        
-        const rdPanel = document.getElementById('rdDropdownMenu');
-        rdPanel.classList.toggle('active');
-    }
-
-    function closeRDMenu() {
-        document.getElementById('rdDropdownMenu').classList.remove('active');
-    }
-
-    window.onclick = () => {
-        document.getElementById('dropdownMenu').style.display = 'none';
-        closeRDMenu();
-    };
-
-    function mostrarJogo() {
-        document.getElementById('intro-overlay').style.display = 'none';
-        document.getElementById('main-footer').style.display = 'none';
-        document.getElementById('game-area').style.display = 'flex';
-    }
-
-    window.onload = () => {
-        if (typeof JOGO_CONFIG !== 'undefined') {
-            const pathI = JOGO_CONFIG.caminhoIcons;
-            const pathImg = JOGO_CONFIG.caminhoImg;
-            const icons = JOGO_CONFIG.iconesMenu;
-            
-            document.getElementById('header-icon').src = pathI + icons.ano1;
-            document.getElementById('intro-img').src = pathI + icons.ano1;
-            document.getElementById('status-rd-img').src = pathImg + "rd.png";
-            document.getElementById('intro-rd-img').src = pathImg + "rd.png";
-
-            const menuKeys = ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'];
-            const menuLabels = ['Início', 'Pré', '1º Ano', '2º Ano', '3º Ano', '4º Ano'];
-            const menuBox = document.getElementById('dropdownMenu');
-            
-            menuKeys.forEach((key, i) => {
-                const a = document.createElement('a');
-                a.className = 'custom-menu-item';
-                a.href = JOGO_CONFIG.links[key];
-                a.innerHTML = `<img src="${pathI}${icons[key]}" style="height:20px;"><span>${menuLabels[i]}</span>`;
-                menuBox.appendChild(a);
-            });
-
-            const rdBox = document.getElementById('rdDropdownMenu');
-            const niveis = ['Nível 1', 'Nível 2', 'Nível 3'];
-            niveis.forEach(nv => {
-                const div = document.createElement('div');
-                div.className = 'custom-menu-item';
-                div.innerHTML = `<span>${nv}</span>`;
-                rdBox.appendChild(div);
-            });
+    <script src="dados.js"></script>
+    <script>
+        function toggleMainMenu(e) {
+            if(e) e.stopPropagation();
+            closeRDMenu();
+            const menu = document.getElementById('dropdownMenu');
+            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
         }
-    };
-</script>
+
+        function toggleRDMenu(e) {
+            if(e) e.stopPropagation();
+            document.getElementById('dropdownMenu').style.display = 'none';
+            const rdPanel = document.getElementById('rdDropdownMenu');
+            rdPanel.classList.toggle('active');
+        }
+
+        function closeRDMenu() {
+            document.getElementById('rdDropdownMenu').classList.remove('active');
+        }
+
+        window.onclick = () => {
+            document.getElementById('dropdownMenu').style.display = 'none';
+            closeRDMenu();
+        };
+
+        function mostrarJogo() {
+            document.getElementById('intro-overlay').style.display = 'none';
+            document.getElementById('main-footer').style.display = 'none';
+            document.getElementById('game-area').style.display = 'flex';
+        }
+
+        window.onload = () => {
+            if (typeof JOGO_CONFIG !== 'undefined') {
+                const pathI = JOGO_CONFIG.caminhoIcons;
+                const pathImg = JOGO_CONFIG.caminhoImg;
+                const icons = JOGO_CONFIG.iconesMenu;
+                
+                document.getElementById('header-icon').src = pathI + icons.ano1;
+                document.getElementById('intro-img').src = pathI + icons.ano1;
+                document.getElementById('status-rd-img').src = pathImg + "rd.png";
+                document.getElementById('intro-rd-img').src = pathImg + "rd.png";
+
+                const menuKeys = ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'];
+                const menuLabels = ['Início', 'Pré', '1º Ano', '2º Ano', '3º Ano', '4º Ano'];
+                const menuBox = document.getElementById('dropdownMenu');
+                
+                menuKeys.forEach((key, i) => {
+                    const a = document.createElement('a');
+                    a.className = 'custom-menu-item';
+                    a.href = JOGO_CONFIG.links[key];
+                    a.innerHTML = `<img src="${pathI}${icons[key]}" style="height:20px;"><span>${menuLabels[i]}</span>`;
+                    menuBox.appendChild(a);
+                });
+
+                const rdBox = document.getElementById('rdDropdownMenu');
+                const niveis = ['Nível 1', 'Nível 2', 'Nível 3'];
+                niveis.forEach(nv => {
+                    const div = document.createElement('div');
+                    div.className = 'custom-menu-item';
+                    div.innerHTML = `<span>${nv}</span>`;
+                    rdBox.appendChild(div);
+                });
+            }
+        };
+    </script>
+</body>
+</html>
