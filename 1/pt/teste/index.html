@@ -79,7 +79,7 @@
         .dot { width: 12px; height: 12px; border-radius: 50%; }
 
         /* ==========================================================================
-           3. MAIN (Ajustado para expansão máxima na vertical)
+           3. MAIN
            ========================================================================== */
         main {
             flex-grow: 1; 
@@ -87,26 +87,34 @@
             flex-direction: column; 
             align-items: center; 
             justify-content: flex-start; 
-            padding: 0 10px 10px 10px; /* 10px laterais e fundo conforme pedido */
+            padding: 0 10px 10px 10px; 
             min-height: 0;
         }
 
         .target-display { 
             text-align: center; 
             padding-top: 30px; 
-            margin-bottom: 20px; /* 20px de espaço para a grelha */
+            margin-bottom: 20px; 
             flex-shrink: 0;
         }
 
-        /* Layout para ecrãs horizontais */
+        /* AJUSTE PARA O MODO HORIZONTAL (Landscape) */
         @media (min-width: 768px) and (orientation: landscape) {
             main { 
                 flex-direction: row; 
-                gap: 50px; 
-                justify-content: space-evenly; 
-                padding: 20px 40px; 
+                gap: 5vw; /* Espaço proporcional entre os blocos */
+                justify-content: center; /* Centraliza o conjunto imagem+grelha no meio */
+                padding: 20px; 
             }
-            .target-display { padding-top: 0; margin-bottom: 0; }
+            .target-display { 
+                padding-top: 0; 
+                margin-bottom: 0;
+                max-width: 35%; /* Limita a largura para não empurrar a grelha */
+            }
+            .grid-container {
+                margin: 0; /* Remove o auto-margin para o justify-center do pai funcionar */
+                max-width: 50vw; /* Grelha ocupa metade da largura do ecrã */
+            }
         }
 
         .target-display img { height: clamp(50px, 12vh, 90px); object-fit: contain; }
@@ -116,14 +124,12 @@
             display: grid; grid-template-columns: repeat(8, 1fr); 
             gap: 1vmin; padding: 1.2vmin;
             background: var(--bg-page); border-radius: 20px; box-shadow: var(--inner-shadow);
-            /* Garante que a grelha cresce o máximo possível */
             width: 100%;
             max-width: 600px;
             margin: 0 auto;
         }
         
         .cell {
-            /* Cálculo dinâmico para ocupar a largura total menos os paddings */
             width: 100%;
             aspect-ratio: 1 / 1; 
             background: var(--bg-page); border-radius: clamp(6px, 1.5vmin, 12px); 
@@ -134,7 +140,12 @@
         }
 
         @media (orientation: landscape) {
-            .cell { width: clamp(35px, 7.5vmin, 65px); height: clamp(35px, 7.5vmin, 65px); }
+            .cell { 
+                /* Em horizontal, as letras baseiam-se na altura disponível para não cortar */
+                width: clamp(35px, 6.5vh, 60px); 
+                height: clamp(35px, 6.5vh, 60px); 
+                font-size: clamp(1rem, 3vh, 1.4rem);
+            }
             .grid-container { width: auto; }
         }
 
