@@ -78,10 +78,39 @@
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 0 15px;
+            padding: 0 20px;
         }
         
-        .status-right { display: flex; align-items: center; gap: 12px; }
+        /* ESTILOS DA PROGRESSÃO (DOTS) */
+        #dots-container {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #cbd9e6; /* Cor neutra para rondas futuras */
+            transition: all 0.3s ease;
+            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .dot.active {
+            background: var(--primary-blue);
+            transform: scale(1.3);
+            box-shadow: 0 0 8px var(--primary-blue);
+        }
+
+        .dot.completed {
+            background: #a8d5ff; /* Azul claro para concluído */
+            transform: scale(1);
+        }
+
+        .status-timer { font-weight: 700; color: #667788; min-width: 60px; }
+        .status-right { display: flex; align-items: center; gap: 12px; min-width: 60px; justify-content: flex-end; }
         .rd-menu-btn { height: 24px; cursor: pointer; }
 
         main { 
@@ -110,7 +139,6 @@
         .rd-intro-btn { height: 50px; width: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .rd-intro-btn img { height: 40px; }
 
-        /* FOOTER REDUZIDO PARA 40PX */
         footer { 
             height: 40px; 
             display: flex; 
@@ -153,7 +181,6 @@
             margin: -10px auto 15px auto; cursor: pointer;
         }
 
-        /* ITENS DE MENU */
         .custom-menu-item { 
             display: flex; align-items: center; gap: 12px; padding: 12px 20px; 
             background: white; border-radius: 18px; box-shadow: 4px 4px 10px #c5d4e3; 
@@ -162,17 +189,14 @@
             transition: background 0.2s ease, transform 0.2s ease;
         }
 
-        /* HOVER: FUNDO AZUL DO BOTÃO JOGAR, CONTEÚDO IGUAL */
         .custom-menu-item:hover { 
             background: var(--primary-blue); 
             transform: translateY(-2px);
-            /* Removido color:white e filter:invert para manter ícones e texto originais */
         }
 
         @media (max-width: 450px) { 
-            .game-wrapper { 
-                padding: 5px 20px 15px 20px; 
-            } 
+            .game-wrapper { padding: 5px 20px 15px 20px; } 
+            .status { padding: 0 10px; }
         }
     </style>
 </head>
@@ -197,7 +221,10 @@
             
             <section class="status">
                 <div class="status-timer">⏳ 00:00</div>
-                <div id="dots-container" style="display:flex; gap:5px;"></div>
+                
+                <!-- CONTAINER DE PROGRESSÃO CENTRALIZADO -->
+                <div id="dots-container"></div>
+                
                 <div class="status-right">
                     <div style="font-weight: 900; color: var(--primary-blue);"><span id="points-label">0</span></div>
                     <img id="status-rd-img" class="rd-menu-btn" src="" alt="RD" onclick="toggleRDMenu(event)">
@@ -230,6 +257,25 @@
 
     <script src="dados.js"></script>
     <script>
+        // FUNÇÃO PARA GERAR A PROGRESSÃO
+        function atualizarProgressao(total, atual) {
+            const container = document.getElementById('dots-container');
+            container.innerHTML = ''; // Limpa os pontos
+            
+            for (let i = 1; i <= total; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                
+                if (i < atual) {
+                    dot.classList.add('completed');
+                } else if (i === atual) {
+                    dot.classList.add('active');
+                }
+                
+                container.appendChild(dot);
+            }
+        }
+
         function toggleMainMenu(e) {
             if(e) e.stopPropagation();
             closeRDMenu();
@@ -257,6 +303,9 @@
             document.getElementById('intro-overlay').style.display = 'none';
             document.getElementById('main-footer').style.display = 'none';
             document.getElementById('game-area').style.display = 'flex';
+            
+            // Exemplo: Inicia na ronda 1 de 5 quando clica em JOGAR
+            atualizarProgressao(5, 1);
         }
 
         window.onload = () => {
@@ -289,6 +338,9 @@
                     div.innerHTML = `<span>${nv}</span>`;
                     rdBox.appendChild(div);
                 });
+
+                // Inicializa os pontos vazios no início
+                atualizarProgressao(5, 0);
             }
         };
     </script>
