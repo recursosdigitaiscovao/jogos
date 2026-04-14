@@ -27,126 +27,117 @@
         }
 
         /* ==========================================================================
-           1. HEADER
+           1. ECRÃ DE EXPLICAÇÃO (OVERLAY)
+           ========================================================================== */
+        #intro-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-page); z-index: 2000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 20px; text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .intro-content {
+            background: var(--white); padding: 40px; border-radius: 35px;
+            box-shadow: var(--outer-shadow); max-width: 500px; width: 90%;
+            animation: popIn 0.6s cubic-bezier(0.17, 0.89, 0.32, 1.28);
+        }
+
+        .intro-img { width: 120px; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+        .intro-title { color: var(--primary-blue); font-weight: 900; font-size: 1.8rem; margin-bottom: 15px; }
+        .intro-text { color: #555; font-size: 1.1rem; margin-bottom: 30px; line-height: 1.4; }
+
+        .btn-group { display: flex; gap: 15px; justify-content: center; }
+
+        .btn-main {
+            padding: 15px 35px; border-radius: 20px; border: none;
+            font-weight: 900; font-size: 1.1rem; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .btn-jogar { background: var(--correct); color: white; box-shadow: 0 6px 0 #27ae60; }
+        .btn-rd { background: var(--white); color: var(--primary-blue); box-shadow: 0 6px 0 #cbd5e0; }
+        
+        .btn-main:active { transform: translateY(4px); box-shadow: 0 2px 0 transparent; }
+
+        /* ANIMAÇÕES */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes float { 
+            0%, 100% { transform: translateY(0); } 
+            50% { transform: translateY(-15px); } 
+        }
+
+        /* ==========================================================================
+           2. JOGO (EXISTENTE)
            ========================================================================== */
         header { 
             height: 60px; display: flex; align-items: center; justify-content: space-between; 
             padding: 0 25px; flex-shrink: 0; z-index: 10;
         }
-        .header-left { width: 120px; position: relative; }
-        .header-right { width: 120px; text-align: right; }
+        .header-left, .header-right { width: 120px; position: relative; }
         .header-center { display: flex; align-items: center; gap: 10px; color: var(--primary-blue); font-weight: 900; }
         .header-center img { width: 30px; height: 30px; }
-        
         .hamburger-btn { font-size: 24px; color: var(--primary-blue); cursor: pointer; }
-        .btn-voltar { 
-            background-color: var(--primary-blue); color: white; padding: 6px 14px; 
-            border-radius: 12px; text-decoration: none; font-weight: 900; font-size: 0.75rem; 
-            box-shadow: 0 3px 0 #3d7db8; 
-        }
+        .btn-voltar { background: var(--primary-blue); color: white; padding: 6px 14px; border-radius: 12px; text-decoration: none; font-weight: 900; font-size: 0.75rem; box-shadow: 0 3px 0 #3d7db8; }
 
-        /* MENU DROPDOWN */
-        .menu-dropdown { 
-            position: absolute; top: 50px; left: 0; 
-            display: none; flex-direction: column; gap: 5px; z-index: 1000; 
-        }
+        .menu-dropdown { position: absolute; top: 50px; left: 0; display: none; flex-direction: column; gap: 5px; z-index: 1000; }
         .menu-dropdown.active { display: flex; }
-        .menu-item { 
-            display: flex; align-items: center; gap: 10px; 
-            padding: 8px 15px; background: white; border-radius: 15px; 
-            box-shadow: 4px 4px 10px #c5d4e3; cursor: pointer; 
-            min-width: 170px; text-decoration: none; color: inherit;
-        }
-        .menu-item img { width: auto; height: 18px; max-width: 18px; object-fit: contain; }
-        .menu-item span { font-size: 0.85rem; font-weight: 700; color: #555; }
+        .menu-item { display: flex; align-items: center; gap: 10px; padding: 8px 15px; background: white; border-radius: 15px; box-shadow: 4px 4px 10px #c5d4e3; cursor: pointer; min-width: 170px; text-decoration: none; color: inherit; }
+        .menu-item img { height: 18px; max-width: 18px; }
 
-        /* ==========================================================================
-           2. STATUS
-           ========================================================================== */
-        .status {
-            height: 55px; flex-shrink: 0;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 15px;
-        }
-        .status-timer { font-weight: 900; color: #666; font-size: 0.8rem; min-width: 50px; }
+        .game-wrapper { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 5px 10px 10px; min-height: 0; }
+        .game-card { background: var(--bg-page); width: 100%; max-width: 1200px; height: 100%; border-radius: 35px; box-shadow: var(--outer-shadow); display: flex; flex-direction: column; overflow: hidden; }
+
+        .status { height: 55px; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; }
+        .status-timer { font-weight: 900; color: #666; font-size: 0.8rem; }
         .status-dots { display: flex; gap: 5px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; }
-        .status-rd-points {
-            display: flex; align-items: center; 
-            background: rgba(255,255,255,0.4); padding: 4px 10px; 
-            border-radius: 15px; box-shadow: var(--inner-shadow);
-        }
+        .status-rd-points { display: flex; align-items: center; background: rgba(255,255,255,0.4); padding: 4px 10px; border-radius: 15px; box-shadow: var(--inner-shadow); }
         .points-val { font-weight: 900; color: var(--primary-blue); font-size: 0.95rem; margin-right: 10px; }
-        .status-rd-points img { height: 25px; width: auto; }
 
-        /* ==========================================================================
-           3. MAIN (LAYOUT ADAPTÁVEL)
-           ========================================================================== */
-        .game-wrapper { 
-            flex-grow: 1; display: flex; justify-content: center; align-items: center; 
-            padding: 5px 10px 10px 10px; min-height: 0; 
-        }
-        
-        .game-card {
-            background: var(--bg-page); width: 100%; max-width: 1200px; height: 100%; 
-            border-radius: 35px; box-shadow: var(--outer-shadow); 
-            display: flex; flex-direction: column; overflow: hidden;
-        }
+        main { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 0 10px 10px; min-height: 0; width: 100%; }
+        .target-display { text-align: center; padding-top: 25px; margin-bottom: 20px; flex-shrink: 0; }
 
-        main {
-            flex-grow: 1; display: flex; flex-direction: column; 
-            align-items: center; justify-content: flex-start; 
-            padding: 0 10px 10px 10px; min-height: 0; width: 100%;
-        }
-
-        .target-display { 
-            text-align: center; padding-top: 25px; 
-            margin-bottom: 20px; flex-shrink: 0;
-        }
-
-        /* HORIZONTAL (Desktop / Landscape) */
         @media (min-width: 768px) and (orientation: landscape) {
-            main { 
-                flex-direction: row; justify-content: center; 
-                padding: 0 8%; gap: 5vw; 
-            }
+            main { flex-direction: row; justify-content: center; padding: 0 8%; gap: 5vw; }
             .target-display { padding-top: 0; margin-bottom: 0; flex: 1; }
-            .grid-container { flex: 1.2; margin: 0; }
+            .grid-container { flex: 1.2; }
         }
 
         .target-display img { height: clamp(50px, 15vh, 120px); object-fit: contain; }
         .target-display h2 { font-size: clamp(1.4rem, 4vmin, 2.2rem); font-weight: 900; letter-spacing: 4px; color: #333; margin-top: 5px; }
 
-        .grid-container {
-            display: grid; grid-template-columns: repeat(8, 1fr); 
-            gap: 1vmin; padding: 1.5vmin;
-            background: var(--bg-page); border-radius: 20px; box-shadow: var(--inner-shadow);
-            width: 100%; max-width: 550px; margin: 0 auto;
-        }
-        
-        .cell {
-            width: 100%; aspect-ratio: 1 / 1; 
-            background: var(--bg-page); border-radius: clamp(5px, 1.2vmin, 10px); 
-            display: flex; align-items: center; justify-content: center; 
-            font-weight: 900; font-size: clamp(0.9rem, 4vw, 1.4rem);
-            box-shadow: 3px 3px 6px #c5d4e3, -3px -3px 6px #ffffff; 
-            cursor: pointer; user-select: none; transition: 0.1s;
-        }
+        .grid-container { display: grid; grid-template-columns: repeat(8, 1fr); gap: 1vmin; padding: 1.5vmin; background: var(--bg-page); border-radius: 20px; box-shadow: var(--inner-shadow); width: 100%; max-width: 550px; margin: 0 auto; }
+        .cell { width: 100%; aspect-ratio: 1/1; background: var(--bg-page); border-radius: clamp(5px, 1.2vmin, 10px); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: clamp(0.9rem, 4vw, 1.4rem); box-shadow: 3px 3px 6px #c5d4e3, -3px -3px 6px #ffffff; cursor: pointer; user-select: none; }
 
         @media (orientation: landscape) {
-            .cell { 
-                width: clamp(30px, 7.2vh, 60px); 
-                height: clamp(30px, 7.2vh, 60px); 
-                font-size: clamp(1rem, 3.2vh, 1.5rem);
-            }
+            .cell { width: clamp(30px, 7.2vh, 60px); height: clamp(30px, 7.2vh, 60px); font-size: clamp(1rem, 3.2vh, 1.5rem); }
             .grid-container { width: auto; }
         }
 
         .cell.selected { background: var(--selected); color: white; box-shadow: var(--inner-shadow); }
-        .cell.correct { background: var(--correct); color: white; pointer-events: none; box-shadow: none; }
+        .cell.correct { background: var(--correct); color: white; pointer-events: none; }
     </style>
 </head>
 <body>
+
+    <div id="intro-overlay">
+        <div class="intro-content">
+            <img src="" id="intro-img" class="intro-img" alt="Ícone">
+            <h1 class="intro-title">Sopa de Letras</h1>
+            <p class="intro-text">Encontra as palavras escondidas na grelha o mais rápido que conseguires! Estás pronto?</p>
+            <div class="btn-group">
+                <button class="btn-main btn-rd" onclick="window.open('https://recursodigital.pt', '_blank')">
+                    <img src="" id="intro-rd-icon" style="height:20px;"> RD
+                </button>
+                <button class="btn-main btn-jogar" onclick="startGame()">
+                    <i class="fas fa-play"></i> JOGAR
+                </button>
+            </div>
+        </div>
+    </div>
 
     <header>
         <div class="header-left">
@@ -172,7 +163,6 @@
                     <img id="status-rd-img" src="">
                 </div>
             </section>
-
             <main id="main">
                 <div class="target-display">
                     <img id="main-target-img" src="" alt="">
@@ -185,36 +175,47 @@
 
     <script src="dados.js"></script>
     <script>
-        let currentRound = 0, points = 0, seconds = 0, selected = [], wordToFind = "";
+        let currentRound = 0, points = 0, seconds = 0, selected = [], wordToFind = "", gameStarted = false;
 
         function toggleMenu() { document.getElementById('dropdownMenu').classList.toggle('active'); }
+
+        // Função para iniciar o jogo de facto
+        function startGame() {
+            document.getElementById('intro-overlay').style.display = 'none';
+            gameStarted = true;
+            // O timer só começa aqui
+            setInterval(() => {
+                if(gameStarted) {
+                    seconds++;
+                    const m = Math.floor(seconds/60).toString().padStart(2,'0');
+                    const s = (seconds%60).toString().padStart(2,'0');
+                    document.getElementById('timer-label').innerText = `${m}:${s}`;
+                }
+            }, 1000);
+        }
 
         function init() {
             const icons = JOGO_CONFIG.iconesMenu;
             const pathI = JOGO_CONFIG.caminhoIcons;
-            const links = JOGO_CONFIG.links;
+            const pathImg = JOGO_CONFIG.caminhoImg;
 
+            // Configura imagens da intro
+            document.getElementById('intro-img').src = pathI + icons.ano1;
+            document.getElementById('intro-rd-icon').src = pathImg + "rd.png";
+            
             document.getElementById('header-icon').src = pathI + icons.ano1;
-            document.getElementById('status-rd-img').src = JOGO_CONFIG.caminhoImg + "rd.png";
+            document.getElementById('status-rd-img').src = pathImg + "rd.png";
 
-            // Ordem: Início -> Pré -> Anos 1 a 4
             const menuKeys = ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'];
             const menuLabels = ['Início', 'Pré-Escolar', '1º Ano', '2º Ano', '3º Ano', '4º Ano'];
 
             menuKeys.forEach((key, index) => {
                 const a = document.createElement('a');
                 a.className = 'menu-item';
-                a.href = links[key];
+                a.href = JOGO_CONFIG.links[key];
                 a.innerHTML = `<img src="${pathI}${icons[key]}"><span>${menuLabels[index]}</span>`;
                 document.getElementById('dropdownMenu').appendChild(a);
             });
-
-            setInterval(() => {
-                seconds++;
-                const m = Math.floor(seconds/60).toString().padStart(2,'0');
-                const s = (seconds%60).toString().padStart(2,'0');
-                document.getElementById('timer-label').innerText = `${m}:${s}`;
-            }, 1000);
 
             loadRound();
         }
@@ -236,42 +237,28 @@
 
             const grid = document.getElementById('game-grid');
             grid.innerHTML = '';
-            
             const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             let cells = Array(64).fill(null).map(() => letters[Math.floor(Math.random() * letters.length)]);
-            
             const startPos = Math.floor(Math.random() * (64 - wordToFind.length));
-            for(let i=0; i<wordToFind.length; i++) {
-                cells[startPos + i] = wordToFind[i];
-            }
+            for(let i=0; i<wordToFind.length; i++) cells[startPos + i] = wordToFind[i];
 
             cells.forEach((l, i) => {
                 const div = document.createElement('div');
                 div.className = 'cell';
                 div.innerText = l;
                 div.onclick = () => {
+                    if(!gameStarted) return;
                     div.classList.toggle('selected');
-                    if(div.classList.contains('selected')) {
-                        selected.push({el: div, char: l});
-                    } else {
-                        selected = selected.filter(item => item.el !== div);
-                    }
+                    if(div.classList.contains('selected')) selected.push({el: div, char: l});
+                    else selected = selected.filter(item => item.el !== div);
                     
                     const currentString = selected.map(s => s.char).join('');
                     if(currentString === wordToFind) {
-                        selected.forEach(s => {
-                            s.el.classList.add('correct');
-                            s.el.classList.remove('selected');
-                        });
+                        selected.forEach(s => { s.el.classList.add('correct'); s.el.classList.remove('selected'); });
                         points += 10;
                         document.getElementById('points-label').innerText = points;
                         selected = [];
-                        setTimeout(() => {
-                            if(currentRound < 4) {
-                                currentRound++;
-                                loadRound();
-                            }
-                        }, 600);
+                        setTimeout(() => { if(currentRound < 4) { currentRound++; loadRound(); } }, 600);
                     }
                 };
                 grid.appendChild(div);
