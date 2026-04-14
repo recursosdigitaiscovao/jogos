@@ -9,7 +9,7 @@
     <style>
         :root {
             --bg-page: #e9f0f8;
-            --primary-blue: #5ba4e5;
+            --primary-blue: #5ba4e5; /* Cor do botão Jogar */
             --primary-dark: #3d7db8;
             --white: #ffffff;
             --outer-shadow: 0px 0px 25px #b0c4d9, 0px 0px 25px #ffffff;
@@ -19,9 +19,12 @@
         
         body { 
             background-color: var(--bg-page); 
-            height: 100vh; width: 100vw; 
+            height: 100vh; 
+            height: 100dvh; /* Altura dinâmica para telemóveis */
+            width: 100vw; 
             overflow: hidden; 
-            display: flex; flex-direction: column;
+            display: flex; 
+            flex-direction: column;
         }
 
         /* 1. HEADER */
@@ -31,22 +34,19 @@
             padding: 0 20px; flex-shrink: 0; z-index: 1000;
         }
         
-        .header-left, .header-right { display: flex; align-items: center; min-width: 80px; }
-        .header-right { justify-content: flex-end; }
-
-        /* AJUSTE: HOVER NO MENU */
+        /* MENU HAMBURGUER AJUSTADO */
         .hamburger-btn { 
             font-size: 26px; 
-            color: var(--primary-blue); 
+            color: #8899aa; /* Cor neutra inicial */
             cursor: pointer; 
-            transition: transform 0.2s, color 0.2s;
-            padding: 5px;
+            transition: all 0.2s ease;
+            padding: 8px;
+            display: flex; align-items: center; justify-content: center;
         }
         .hamburger-btn:hover { 
-            color: var(--primary-dark); 
-            transform: scale(1.1); 
+            color: var(--primary-blue); /* Mesma cor do botão jogar */
+            transform: scale(1.1);
         }
-        .hamburger-btn:active { transform: scale(0.9); }
 
         .header-center { 
             flex: 1; display: flex; align-items: center; justify-content: center; 
@@ -58,18 +58,16 @@
             background: var(--primary-blue); color: white; padding: 8px 16px; 
             border-radius: 12px; text-decoration: none; font-weight: 900; 
             font-size: 0.8rem; box-shadow: 0 4px 0 var(--primary-dark);
-            transition: background 0.2s;
         }
-        .btn-voltar:hover { background: var(--primary-dark); }
 
-        /* 2. WRAPPER - Adaptado para ecrãs verticais */
+        /* 2. WRAPPER - Garante que o card não empurre o footer */
         .game-wrapper { 
             flex: 1; 
             display: flex; 
             justify-content: center; 
-            padding: 10px; /* Reduzido para ganhar espaço em mobile */
+            padding: 5px 15px; 
+            min-height: 0; /* Importante para o flexbox conter o conteúdo */
             overflow: hidden;
-            min-height: 0;
         }
 
         .game-card { 
@@ -77,12 +75,12 @@
             width: 100%; 
             max-width: 900px; 
             height: 100%; 
-            border-radius: 30px; /* Ligeiramente menor para mobile */
+            border-radius: 35px; 
             box-shadow: var(--outer-shadow); 
             display: flex; 
             flex-direction: column; 
             position: relative; 
-            overflow: hidden;
+            overflow: hidden; /* Impede que o jogo "passe o fundo" */
         }
 
         /* STATUS AREA */
@@ -94,19 +92,15 @@
             align-items: center; 
             padding: 0 20px; 
         }
-        .status-right { display: flex; align-items: center; gap: 12px; }
-        .rd-icon-btn { height: 24px; cursor: pointer; transition: opacity 0.2s; }
-        .rd-icon-btn:hover { opacity: 0.8; }
 
-        /* MAIN */
+        /* MAIN / GAME AREA */
         main { 
             flex: 1; 
             display: none; 
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
-            padding: 10px; 
-            min-height: 0; 
+            overflow: hidden; /* Garante que nada saia do card */
             position: relative;
         }
 
@@ -115,40 +109,32 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-page); z-index: 100;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 20px; text-align: center;
+            padding: 20px;
         }
-
-        .intro-actions { display: flex; align-items: center; gap: 20px; margin-top: 10px; }
 
         .btn-jogar {
-            padding: 15px 40px; background: var(--primary-blue); 
+            padding: 15px 45px; background: var(--primary-blue); 
             color: white; border: none; border-radius: 20px; 
             font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); 
-            font-size: 1.1rem; transition: transform 0.1s, background 0.2s;
+            font-size: 1.1rem;
         }
-        .btn-jogar:hover { background: var(--primary-dark); }
-        .btn-jogar:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--primary-dark); }
+        .btn-jogar:active { transform: translateY(2px); box-shadow: 0 3px 0 var(--primary-dark); }
 
         .rd-intro-btn {
             height: 50px; width: 50px; background: white; 
             border-radius: 15px; display: flex; align-items: center; justify-content: center;
-            box-shadow: var(--outer-shadow); cursor: pointer;
-            transition: transform 0.2s;
+            box-shadow: var(--outer-shadow);
         }
-        .rd-intro-btn:hover { transform: scale(1.05); }
-        .rd-intro-btn img { height: 30px; }
 
-        /* FOOTER - Ajustado para ecrãs verticais */
+        /* FOOTER - Altura fixa para ser visível no 1º ecrã */
         footer {
-            height: 40px; 
+            height: 45px; 
             display: flex; 
             align-items: center; 
             justify-content: center;
             color: #8899aa; 
             font-size: 0.85rem; 
-            font-weight: 400; 
             flex-shrink: 0;
-            padding-bottom: 5px;
         }
 
         .menu-dropdown { 
@@ -159,15 +145,13 @@
             display: flex; align-items: center; gap: 12px; padding: 12px 20px; 
             background: white; border-radius: 18px; box-shadow: 4px 4px 10px #c5d4e3; 
             cursor: pointer; min-width: 180px; text-decoration: none; color: #555;
-            font-weight: 400; transition: background 0.2s;
         }
-        .custom-menu-item:hover { background: #f0f7ff; }
 
-        /* AJUSTES PARA ECRÃS MUITO PEQUENOS (VERTICAL) */
-        @media (max-height: 650px) {
-            .header-center span { display: none; }
+        /* Ajustes específicos para ecrãs pequenos verticais */
+        @media (max-width: 450px) {
+            .game-wrapper { padding: 5px 10px 10px 10px; }
             #intro-img { height: 60px !important; }
-            h1 { font-size: 1.4rem; }
+            h1 { font-size: 1.2rem; text-align: center; margin-bottom: 15px !important; }
         }
     </style>
 </head>
@@ -175,7 +159,7 @@
 
     <header>
         <div class="header-left">
-            <i class="fas fa-bars hamburger-btn" title="Menu" onclick="toggleMenu('dropdownMenu', event)"></i>
+            <i class="fas fa-bars hamburger-btn" onclick="toggleMenu('dropdownMenu', event)"></i>
             <div class="menu-dropdown" id="dropdownMenu"></div>
         </div>
         <div class="header-center">
@@ -195,7 +179,7 @@
                 <div id="dots-container" style="display:flex; gap:5px;"></div>
                 <div class="status-right">
                     <div style="font-weight: 900; color: var(--primary-blue);"><span id="points-label">0</span></div>
-                    <img id="status-rd-img" class="rd-icon-btn" src="" alt="RD">
+                    <img id="status-rd-img" class="rd-icon-btn" src="" alt="RD" style="height: 24px;">
                 </div>
             </section>
 
@@ -203,10 +187,10 @@
                 <img id="intro-img" src="" style="height:80px; margin-bottom:20px;">
                 <h1 style="color:var(--primary-blue); font-weight:900; margin-bottom:25px;">Título do Jogo</h1>
                 
-                <div class="intro-actions">
+                <div class="intro-actions" style="display:flex; align-items:center; gap:20px;">
                     <button onclick="mostrarJogo()" class="btn-jogar">JOGAR</button>
                     <div class="rd-intro-btn">
-                        <img id="intro-rd-img" src="" alt="RD">
+                        <img id="intro-rd-img" src="" alt="RD" style="height:30px;">
                     </div>
                 </div>
             </div>
@@ -215,7 +199,6 @@
         </div>
     </div>
 
-    <!-- Visível no ecrã inicial -->
     <footer id="main-footer">2026</footer>
 
     <script src="dados.js"></script>
@@ -223,8 +206,7 @@
         function toggleMenu(menuId, e) {
             if(e) e.stopPropagation();
             const menu = document.getElementById(menuId);
-            const isVisible = menu.style.display === 'flex';
-            menu.style.display = isVisible ? 'none' : 'flex';
+            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
         }
 
         window.onclick = () => {
@@ -232,12 +214,14 @@
         };
 
         function mostrarJogo() {
-            // Esconde a intro
+            // Esconde intro e footer
             document.getElementById('intro-overlay').style.display = 'none';
-            // Mostra o jogo
-            document.getElementById('game-area').style.display = 'flex';
-            // ESCONDE O FOOTER no 2º ecrã
             document.getElementById('main-footer').style.display = 'none';
+            // Mostra área do jogo
+            document.getElementById('game-area').style.display = 'flex';
+            
+            // Pequeno ajuste para garantir que o wrapper ocupe o espaço do footer
+            document.querySelector('.game-wrapper').style.paddingBottom = '15px';
         }
 
         window.onload = () => {
@@ -258,7 +242,7 @@
                 menuKeys.forEach((key, i) => {
                     const a = document.createElement('a');
                     a.className = 'custom-menu-item';
-                    a.href = JOGO_CONFIG.links[key] || '#';
+                    a.href = JOGO_CONFIG.links[key];
                     a.innerHTML = `<img src="${pathI}${icons[key]}" style="height:20px;"><span>${menuLabels[i]}</span>`;
                     menuBox.appendChild(a);
                 });
