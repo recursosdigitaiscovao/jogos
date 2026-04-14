@@ -80,7 +80,6 @@
             justify-content: space-between; 
             align-items: center; 
         }
-        .status-timer { white-space: nowrap; }
         
         .status-right { 
             display: flex; 
@@ -88,13 +87,11 @@
             gap: 12px; 
         }
 
-        /* NOVO: Estilo para o Menu RD */
+        /* Ícone RD no Status */
         .rd-menu-btn {
-            font-size: 22px;
-            color: var(--primary-blue);
+            height: 24px;
             cursor: pointer;
-            padding: 5px;
-            display: flex; align-items: center;
+            display: block;
         }
 
         main { 
@@ -139,11 +136,13 @@
             font-size: 1.1rem;
         }
 
+        /* RD na Intro */
         .rd-intro-btn {
             height: 50px; width: 50px; 
             display: flex; align-items: center; justify-content: center;
             cursor: pointer;
         }
+        .rd-intro-btn img { height: 40px; }
 
         footer {
             height: 45px; display: flex; align-items: center; justify-content: center;
@@ -155,7 +154,7 @@
             display: none; flex-direction: column; gap: 8px; z-index: 2000; 
         }
 
-        /* AJUSTE: Dropdown do lado direito para o menu RD */
+        /* Dropdown RD à Direita */
         .rd-dropdown {
             left: auto;
             right: 0;
@@ -201,12 +200,10 @@
                 <div id="dots-container" style="display:flex; gap:5px;"></div>
                 <div class="status-right">
                     <div style="font-weight: 900; color: var(--primary-blue);"><span id="points-label">0</span></div>
-                    <!-- RD TRANSFORMADO EM HAMBURGUER MENU -->
                     <div style="position: relative;">
-                        <i class="fas fa-bars rd-menu-btn" onclick="toggleMenu('rdDropdownMenu', event)"></i>
-                        <div class="menu-dropdown rd-dropdown" id="rdDropdownMenu">
-                            <!-- Categorias serão inseridas aqui via JS -->
-                        </div>
+                        <!-- Imagem RD agora funciona como botão de menu -->
+                        <img id="status-rd-img" class="rd-menu-btn" src="" alt="RD" onclick="toggleMenu('rdDropdownMenu', event)">
+                        <div class="menu-dropdown rd-dropdown" id="rdDropdownMenu"></div>
                     </div>
                 </div>
             </section>
@@ -219,9 +216,8 @@
                 
                 <div class="intro-actions">
                     <button onclick="mostrarJogo()" class="btn-jogar">JOGAR</button>
-                    <!-- RD DA INTRO TAMBÉM ABRE O MENU -->
                     <div class="rd-intro-btn" onclick="toggleMenu('rdDropdownMenu', event)">
-                        <i class="fas fa-bars" style="font-size: 26px; color: var(--primary-blue);"></i>
+                        <img id="intro-rd-img" src="" alt="RD">
                     </div>
                 </div>
             </div>
@@ -239,10 +235,7 @@
             const targetMenu = document.getElementById(menuId);
             const isVisible = targetMenu.style.display === 'flex';
             
-            // Fecha todos os menus primeiro
             document.querySelectorAll('.menu-dropdown').forEach(m => m.style.display = 'none');
-            
-            // Abre o selecionado se estava fechado
             targetMenu.style.display = isVisible ? 'none' : 'flex';
         }
 
@@ -259,12 +252,15 @@
         window.onload = () => {
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const pathI = JOGO_CONFIG.caminhoIcons;
+                const pathImg = JOGO_CONFIG.caminhoImg;
                 const icons = JOGO_CONFIG.iconesMenu;
                 
                 document.getElementById('header-icon').src = pathI + icons.ano1;
                 document.getElementById('intro-img').src = pathI + icons.ano1;
+                document.getElementById('status-rd-img').src = pathImg + "rd.png";
+                document.getElementById('intro-rd-img').src = pathImg + "rd.png";
 
-                // Menu Principal
+                // Preencher Menu Lateral
                 const menuKeys = ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'];
                 const menuLabels = ['Início', 'Pré', '1º Ano', '2º Ano', '3º Ano', '4º Ano'];
                 const menuBox = document.getElementById('dropdownMenu');
@@ -277,14 +273,13 @@
                     menuBox.appendChild(a);
                 });
 
-                // Menu RD (Categorias/Níveis) - Exemplo de preenchimento
+                // Preencher Menu RD (Exemplo)
                 const rdBox = document.getElementById('rdDropdownMenu');
                 const niveis = ['Nível 1', 'Nível 2', 'Nível 3'];
                 niveis.forEach(nv => {
                     const div = document.createElement('div');
                     div.className = 'custom-menu-item';
                     div.innerHTML = `<span>${nv}</span>`;
-                    div.onclick = () => console.log('Selecionado: ' + nv);
                     rdBox.appendChild(div);
                 });
             }
