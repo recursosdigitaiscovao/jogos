@@ -27,34 +27,27 @@
         }
 
         /* ==========================================================================
-           HEADER (Ajustado com 10px de padding fixo)
+           1. HEADER (Ícones com tamanhos controlados)
            ========================================================================== */
         header { 
-            height: 60px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 0 10px; /* 10px das bordas laterais */
-            flex-shrink: 0; 
-            z-index: 1000;
+            height: 60px; display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 10px; flex-shrink: 0; z-index: 1000;
         }
         
-        .header-left, .header-right { 
-            display: flex; 
-            align-items: center; 
-            min-width: 50px; 
+        .header-left, .header-right { width: 70px; display: flex; align-items: center; }
+        .header-right { justify-content: flex-end; }
+
+        .hamburger-btn { 
+            font-size: 24px; /* Tamanho fixo para não crescer */
+            color: var(--primary-blue); 
+            cursor: pointer; 
         }
 
         .header-center { 
-            flex: 1; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
-            color: var(--primary-blue); 
-            font-weight: 900; 
+            flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; 
+            color: var(--primary-blue); font-weight: 900; 
         }
-        .header-center img { width: 28px; height: 28px; }
+        .header-center img { width: 26px; height: 26px; } /* Ícone central controlado */
 
         .title-desktop { display: inline; }
         .title-mobile { display: none; }
@@ -62,16 +55,71 @@
         @media (max-width: 480px) {
             .title-desktop { display: none; }
             .title-mobile { display: inline; font-size: 1.1rem; }
+            .header-left, .header-right { width: 60px; }
         }
 
-        .hamburger-btn { font-size: 26px; color: var(--primary-blue); cursor: pointer; }
         .btn-voltar { 
             background: var(--primary-blue); color: white; padding: 6px 12px; 
             border-radius: 12px; text-decoration: none; font-weight: 900; 
-            font-size: 0.75rem; box-shadow: 0 3px 0 #3d7db8;
+            font-size: 0.7rem; box-shadow: 0 3px 0 #3d7db8;
         }
 
-        /* MENUS */
+        /* ==========================================================================
+           2. ESTRUTURA E ESPAÇO DE JOGO (Margens de 10px)
+           ========================================================================== */
+        .game-wrapper { 
+            flex: 1; display: flex; justify-content: center; 
+            padding: 0 10px 10px 10px; /* 10px de distância do header e do fundo */
+            min-height: 0; overflow: hidden;
+        }
+
+        .game-card { 
+            background: var(--bg-page); width: 100%; max-width: 1200px; height: 100%; 
+            border-radius: 30px; box-shadow: var(--outer-shadow); display: flex; 
+            flex-direction: column; position: relative; overflow: hidden;
+        }
+
+        /* STATUS (Botão RD controlado) */
+        .status { 
+            height: 50px; flex-shrink: 0; display: flex; 
+            justify-content: space-between; align-items: center; padding: 0 15px; 
+        }
+        .status-timer { font-weight: 900; color: #666; font-size: 0.75rem; width: 60px; }
+
+        .status-rd-trigger { 
+            display: flex; align-items: center; background: rgba(255,255,255,0.4); 
+            padding: 4px 10px; border-radius: 15px; box-shadow: var(--inner-shadow);
+            cursor: pointer; height: 34px; /* Altura controlada */
+        }
+        .points-val { font-weight: 900; color: var(--primary-blue); font-size: 0.9rem; margin-right: 6px; }
+        .status-rd-trigger img { height: 22px; width: auto; } /* RD icon fixo */
+
+        /* ÁREA DE JOGO (MAIN) */
+        main { 
+            flex: 1; display: flex; flex-direction: column; align-items: center; 
+            justify-content: space-evenly; padding: 10px; min-height: 0;
+        }
+
+        /* GRELHA E DISPLAY (Ajuste para visibilidade total) */
+        .target-display { text-align: center; flex-shrink: 0; }
+        .target-display img { height: 15vh; max-height: 90px; object-fit: contain; }
+        .target-display h2 { font-size: clamp(1.1rem, 3.5vh, 1.6rem); font-weight: 900; color: #333; }
+
+        .grid-container { 
+            display: grid; grid-template-columns: repeat(8, 1fr); gap: 1vh; 
+            padding: 1vh; background: var(--bg-page); border-radius: 15px; 
+            box-shadow: var(--inner-shadow); width: fit-content; max-height: 50vh;
+        }
+
+        .cell { 
+            width: clamp(28px, 6vh, 45px); height: clamp(28px, 6vh, 45px); 
+            background: var(--bg-page); border-radius: 8px; display: flex; 
+            align-items: center; justify-content: center; font-weight: 900; 
+            font-size: clamp(0.8rem, 2.8vh, 1.2rem); box-shadow: 2px 2px 4px #c5d4e3, -2px -2px 4px #ffffff; 
+            cursor: pointer;
+        }
+
+        /* MENUS ESTILO HAMBURGUER */
         .menu-dropdown, #rd-menu-container { 
             position: absolute; top: 55px; display: none; flex-direction: column; 
             gap: 8px; z-index: 2000; 
@@ -80,109 +128,17 @@
         #rd-menu-container { right: 10px; }
 
         .custom-menu-item { 
-            display: flex; align-items: center; gap: 12px; padding: 10px 18px; 
-            background: white; border-radius: 18px; box-shadow: 4px 4px 10px #c5d4e3; 
-            cursor: pointer; min-width: 180px; text-decoration: none; color: inherit;
+            display: flex; align-items: center; gap: 10px; padding: 10px 15px; 
+            background: white; border-radius: 15px; box-shadow: 4px 4px 10px #c5d4e3; 
+            cursor: pointer; min-width: 170px; text-decoration: none; color: #555; font-weight: 800; font-size: 0.85rem;
         }
+        .custom-menu-item img { height: 18px; }
 
-        /* ==========================================================================
-           ESTRUTURA DO CARD E MAIN (10px de margem total)
-           ========================================================================== */
-        .game-wrapper { 
-            flex: 1; 
-            display: flex; 
-            justify-content: center; 
-            padding: 10px; /* Margem de 10px em relação ao header e ao fundo do monitor */
-            min-height: 0; 
-            overflow: hidden;
-        }
-
-        .game-card { 
-            background: var(--bg-page); 
-            width: 100%; 
-            max-width: 1200px; 
-            height: 100%; 
-            border-radius: 35px; 
-            box-shadow: var(--outer-shadow); 
-            display: flex; 
-            flex-direction: column; 
-            position: relative; 
-            overflow: hidden;
-        }
-
-        /* STATUS DENTRO DO CARD */
-        .status { 
-            height: 55px; 
-            flex-shrink: 0; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 0 15px; 
-        }
-
-        .status-rd-trigger { 
-            display: flex; 
-            align-items: center; 
-            background: rgba(255,255,255,0.4); 
-            padding: 4px 10px; 
-            border-radius: 15px; 
-            box-shadow: var(--inner-shadow);
-            cursor: pointer; 
-            height: 38px;
-        }
-
-        /* ÁREA DE JOGO (MAIN) */
-        main { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: space-evenly; 
-            padding: 10px; /* 10px das bordas internas do card */
-            min-height: 0; 
-            width: 100%;
-        }
-
-        /* RESPONSIVIDADE DA GRELHA */
-        .target-display { text-align: center; flex-shrink: 0; }
-        .target-display img { height: 18vh; max-height: 110px; object-fit: contain; }
-        .target-display h2 { font-size: clamp(1.2rem, 4vh, 1.8rem); font-weight: 900; letter-spacing: 4px; }
-
-        .grid-container { 
-            display: grid; 
-            grid-template-columns: repeat(8, 1fr); 
-            gap: 1vh; 
-            padding: 1.5vh; 
-            background: var(--bg-page); 
-            border-radius: 20px; 
-            box-shadow: var(--inner-shadow); 
-            max-height: 50vh; /* Garante que cabe em qualquer ecrã */
-        }
-
-        .cell { 
-            width: clamp(28px, 6vh, 50px); 
-            height: clamp(28px, 6vh, 50px); 
-            background: var(--bg-page); 
-            border-radius: 8px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-weight: 900; 
-            font-size: clamp(0.8rem, 2.5vh, 1.3rem); 
-            box-shadow: 2px 2px 4px #c5d4e3, -2px -2px 4px #ffffff; 
-            cursor: pointer;
-        }
-
-        @media (min-width: 768px) and (orientation: landscape) {
-            main { flex-direction: row; justify-content: center; gap: 40px; }
-        }
-
-        /* INTRO OVERLAY */
+        /* INTRO */
         #intro-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-page); z-index: 100;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 20px;
         }
     </style>
 </head>
@@ -208,20 +164,22 @@
             
             <section class="status">
                 <div class="status-timer">⏳ <span id="timer-label">00:00</span></div>
-                <div id="dots-container" class="status-dots"></div>
+                <div id="dots-container" class="status-dots" style="display:flex; gap:4px;"></div>
                 <div class="status-rd-trigger" onclick="toggleMenu('rd-menu-container', event)">
                     <span id="points-label" class="points-val">0</span>
-                    <img id="status-rd-img" src="">
+                    <img id="status-rd-img" src="" alt="RD">
                     <div id="rd-menu-container">
-                        <div class="custom-menu-item" onclick="changeCategory('animais')"><span>🐾 Animais</span></div>
+                        <div class="custom-menu-item" onclick="changeCategory('animais')">
+                            <span>🐾 Animais</span>
+                        </div>
                     </div>
                 </div>
             </section>
 
             <div id="intro-overlay">
-                <img src="" id="intro-img" style="height:20vh; max-height:120px; margin-bottom:20px;">
-                <h1 style="color:var(--primary-blue); font-weight:900; margin-bottom:20px;">Sopa de Letras</h1>
-                <button onclick="startGame()" style="padding:15px 40px; background:var(--correct); color:white; border:none; border-radius:20px; font-weight:900; cursor:pointer; box-shadow: 0 5px 0 #27ae60;">JOGAR</button>
+                <img src="" id="intro-img" style="height:80px; margin-bottom:20px;">
+                <h1 style="color:var(--primary-blue); font-weight:900; margin-bottom:20px; font-size:1.8rem;">Sopa de Letras</h1>
+                <button onclick="startGame()" style="padding:12px 35px; background:var(--correct); color:white; border:none; border-radius:15px; font-weight:900; cursor:pointer; box-shadow: 0 4px 0 #27ae60;">JOGAR</button>
             </div>
 
             <main id="main">
@@ -286,6 +244,14 @@
         }
 
         function loadRound() {
+            const dots = document.getElementById('dots-container');
+            dots.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const d = document.createElement('div');
+                d.style.cssText = `width:8px; height:8px; border-radius:50%; background:${i <= currentRound ? '#2ecc71' : '#d1d9e2'};`;
+                dots.appendChild(d);
+            }
+
             const item = JOGO_CONFIG.categorias.animais.itens[currentRound];
             wordToFind = item.nome.toUpperCase();
             document.getElementById('main-target-img').src = JOGO_CONFIG.caminhoImg + item.img;
