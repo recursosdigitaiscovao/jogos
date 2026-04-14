@@ -8,6 +8,14 @@ const JOGO_CONFIG = {
         ano3: "icon3.png",
         ano4: "icon4.png"
     },
+    // Nova estrutura de links centralizada
+    links: {
+        pre: "/pre",
+        ano1: "/1",
+        ano2: "/2",
+        ano3: "/3",
+        ano4: "/4"
+    },
     categorias: {
         animais: {
             nome: "Animais",
