@@ -9,7 +9,6 @@ const JOGO_CONFIG = {
         ano3: "icon3.png",
         ano4: "icon4.png"
     },
-    // Mantendo a tua estrutura de caminhos exata
     links: {
         home: "/jogos", 
         pre: "/jogos/pre",
@@ -21,7 +20,6 @@ const JOGO_CONFIG = {
     categorias: {
         animais: {
             nome: "Animais",
-            img: "animaisdomesticos/vaca.png",
             itens: [
                 { nome: "VACA", img: "animaisdomesticos/vaca.png" },
                 { nome: "GATO", img: "animaisdomesticos/gato.png" },
@@ -31,25 +29,21 @@ const JOGO_CONFIG = {
                 { nome: "CAVALO", img: "animaisdomesticos/cavalo.png" },
                 { nome: "COELHO", img: "animaisdomesticos/coelho.png" }
             ]
-        }
-    },
-            frutos: {
+        },
+        frutos: {
             nome: "Frutos",
-            img: "frutas/banana.png",
             itens: [
                 { nome: "BANANA", img: "frutas/banana.png" },
                 { nome: "CEREJA", img: "frutas/cereja.png" },
-                { nome: "BANANA", img: "frutas/banana.png" },
                 { nome: "UVAS", img: "frutas/uvas.png" },
                 { nome: "MORANGO", img: "frutas/morango.png" },
-                { nome: "LARANJA", img: "frutas/banana.png" }, // Reutilizando imagem do seu config
+                { nome: "LARANJA", img: "frutas/laranja.png" },
                 { nome: "PAPAIA", img: "frutas/papaia.png" },
-                { nome: "MACÃ", img: "frutas/maca.png" } // Adicionado para completar 5
+                { nome: "MAÇÃ", img: "frutas/maca.png" }
             ]
         },
-            material: {
+        material: {
             nome: "Material Escolar",
-            img: "materialescolar/afia.png",
             itens: [
                 { nome: "MOCHILA", img: "materialescolar/mochila.png" },
                 { nome: "TESOURA", img: "materialescolar/tesoura.png" },
