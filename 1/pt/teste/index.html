@@ -81,7 +81,6 @@
             padding: 0 20px;
         }
         
-        /* ESTILOS DA PROGRESSÃO (DOTS) */
         #dots-container {
             display: flex;
             gap: 8px;
@@ -93,7 +92,7 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: #cbd9e6; /* Cor neutra para rondas futuras */
+            background: #cbd9e6;
             transition: all 0.3s ease;
             box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1);
         }
@@ -105,7 +104,7 @@
         }
 
         .dot.completed {
-            background: #a8d5ff; /* Azul claro para concluído */
+            background: #a8d5ff;
             transform: scale(1);
         }
 
@@ -194,11 +193,6 @@
             transform: translateY(-2px);
         }
         .custom-menu-item:hover span { color: white; }
-
-        @media (max-width: 450px) { 
-            .game-wrapper { padding: 5px 20px 15px 20px; } 
-            .status { padding: 0 10px; }
-        }
     </style>
 </head>
 <body>
@@ -242,9 +236,11 @@
                     </div>
                     <style>
                         @keyframes moveHand { 
-                            0% { transform: translate(0,0); } 
-                            50% { transform: translate(-60px, 0); } 
-                            100% { transform: translate(0,0); } 
+                            0% { transform: translate(0,0); opacity: 0; } 
+                            10% { opacity: 1; }
+                            50% { transform: translate(-60px, 0); opacity: 1; } 
+                            90% { opacity: 1; }
+                            100% { transform: translate(0,0); opacity: 0; } 
                         }
                     </style>
                     <h1 id="intro-title" style="color:var(--primary-blue); font-weight:900; margin-bottom:25px; text-align:center;">Sopa de Letras</h1>
@@ -263,17 +259,16 @@
             </div>
 
             <main id="game-area">
-                <!-- Estilos específicos do jogo injetados aqui para não mexer no style principal -->
                 <style>
                     #inner-game { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; }
                     .hint-img { height: 90px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
                     .slots { font-size: 1.8rem; font-weight: 900; color: var(--primary-blue); letter-spacing: 5px; height: 40px; }
-                    .grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; background: #d0e0f0; padding: 10px; border-radius: 20px; }
+                    .grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; background: #d0e0f0; padding: 10px; border-radius: 20px; touch-action: none; position: relative; }
                     .cell { 
                         width: 38px; height: 38px; background: white; border-radius: 10px; 
                         display: flex; align-items: center; justify-content: center; 
                         font-weight: 900; font-size: 1.2rem; color: #445566; cursor: pointer; 
-                        box-shadow: 0 3px 0 #cbd9e6; user-select: none;
+                        box-shadow: 0 3px 0 #cbd9e6; user-select: none; transition: background 0.2s;
                     }
                     .cell.selected { background: var(--primary-blue); color: white; transform: translateY(2px); box-shadow: none; }
                     .cell.correct { background: #7ed321; color: white; box-shadow: none; }
@@ -292,20 +287,19 @@
 
     <script src="dados.js"></script>
     <script>
-        let roundGlobal = 1; // 1 a 10
+        let roundGlobal = 1;
         let currentCategory = 'animais';
         let itemsForGame = [];
         let timer = 0;
         let timerInt;
-        let selectedLetters = [];
+        let selectedCells = [];
         let targetWord = "";
+        let isDragging = false;
 
         function atualizarProgressao(total, atual) {
             const container = document.getElementById('dots-container');
             container.innerHTML = '';
-            // Se for > 5, subtraímos 5 para mostrar sempre 5 bolas (Nível 2)
             let visualAtual = atual > 5 ? atual - 5 : atual;
-            
             for (let i = 1; i <= 5; i++) {
                 const dot = document.createElement('div');
                 dot.className = 'dot';
@@ -325,8 +319,7 @@
         function toggleRDMenu(e) {
             if(e) e.stopPropagation();
             document.getElementById('dropdownMenu').style.display = 'none';
-            const rdPanel = document.getElementById('rdDropdownMenu');
-            rdPanel.classList.toggle('active');
+            document.getElementById('rdDropdownMenu').classList.toggle('active');
         }
 
         function closeRDMenu() {
@@ -343,7 +336,6 @@
             document.getElementById('main-footer').style.display = 'none';
             document.getElementById('game-area').style.display = 'flex';
             
-            // Inicia o cronómetro se não estiver a correr
             if(!timerInt) {
                 timerInt = setInterval(() => {
                     timer++;
@@ -353,39 +345,26 @@
                 }, 1000);
             }
 
-            prepararRondas();
+            if(roundGlobal === 1) prepararRondas();
             loadRound();
         }
 
         function prepararRondas() {
             const catData = JOGO_CONFIG.categorias[currentCategory].itens;
-            // Pegamos 5 aleatórios para o Nível 1 e 5 para o Nível 2
             const level1 = [...catData].sort(() => 0.5 - Math.random()).slice(0, 5);
             const level2 = [...catData].sort(() => 0.5 - Math.random()).slice(0, 5);
             itemsForGame = [...level1, ...level2];
         }
 
         function loadRound() {
-            if(roundGlobal > 10) {
-                finalizarJogo();
-                return;
-            }
-
+            if(roundGlobal > 10) { finalizarJogo(); return; }
             atualizarProgressao(5, roundGlobal);
             const item = itemsForGame[roundGlobal - 1];
             targetWord = item.nome.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/Ç/g, "C");
-            
             document.getElementById('target-img').src = JOGO_CONFIG.caminhoImg + item.img;
-            
-            // Nível 1 (1-5) mostra a palavra, Nível 2 (6-10) mostra traços
-            if(roundGlobal <= 5) {
-                document.getElementById('target-slots').innerText = item.nome.toUpperCase();
-            } else {
-                document.getElementById('target-slots').innerText = "_ ".repeat(targetWord.length);
-            }
-
+            document.getElementById('target-slots').innerText = (roundGlobal <= 5) ? item.nome.toUpperCase() : "_ ".repeat(targetWord.length);
             generateGrid(targetWord);
-            selectedLetters = [];
+            selectedCells = [];
         }
 
         function generateGrid(word) {
@@ -393,71 +372,120 @@
             gridEl.innerHTML = '';
             const size = 8;
             let cells = Array(size * size).fill('');
-            
-            // Horizontal ou Vertical
             const isHorizontal = Math.random() > 0.5;
             const start = isHorizontal 
                 ? Math.floor(Math.random() * size) * size + Math.floor(Math.random() * (size - word.length))
                 : Math.floor(Math.random() * (size - word.length)) * size + Math.floor(Math.random() * size);
 
-            for(let i=0; i<word.length; i++) {
-                cells[isHorizontal ? start + i : start + (i * size)] = word[i];
-            }
-
+            for(let i=0; i<word.length; i++) cells[isHorizontal ? start + i : start + (i * size)] = word[i];
             const abc = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
+            
             cells.forEach((l, idx) => {
                 const d = document.createElement('div');
                 d.className = 'cell';
                 d.innerText = l || abc[Math.floor(Math.random()*abc.length)];
-                d.onclick = () => selectCell(d);
+                
+                // Mouse Events
+                d.onmousedown = (e) => startSelection(d);
+                d.onmouseenter = (e) => moveSelection(d);
+                gridEl.onmouseleave = () => endSelection();
+                
+                // Touch Events
+                d.ontouchstart = (e) => { e.preventDefault(); startSelection(d); };
+                
                 gridEl.appendChild(d);
             });
+
+            // Global Touch move
+            gridEl.ontouchmove = (e) => {
+                e.preventDefault();
+                let touch = e.touches[0];
+                let target = document.elementFromPoint(touch.clientX, touch.clientY);
+                if(target && target.classList.contains('cell')) moveSelection(target);
+            };
+            
+            window.onmouseup = window.ontouchend = () => endSelection();
+        }
+
+        function startSelection(el) {
+            isDragging = true;
+            clearSelection();
+            selectCell(el);
+        }
+
+        function moveSelection(el) {
+            if(!isDragging) return;
+            selectCell(el);
+        }
+
+        function endSelection() {
+            if(!isDragging) return;
+            isDragging = false;
+            checkWord();
         }
 
         function selectCell(el) {
-            if(el.classList.contains('correct')) return;
+            if(el.classList.contains('correct') || selectedCells.includes(el)) return;
+            el.classList.add('selected');
+            selectedCells.push(el);
             
-            // Toggle seleção
-            if(el.classList.contains('selected')) {
-                el.classList.remove('selected');
-                selectedLetters = selectedLetters.filter(x => x !== el);
-            } else {
-                el.classList.add('selected');
-                selectedLetters.push(el);
-            }
-
-            // Verificar se as letras selecionadas formam a palavra (na ordem que foram clicadas)
-            const currentString = selectedLetters.map(x => x.innerText).join('');
+            // Check instantâneo enquanto seleciona
+            const currentString = selectedCells.map(x => x.innerText).join('');
             if(currentString === targetWord) {
-                selectedLetters.forEach(x => {
+                isDragging = false;
+                checkWord();
+            }
+        }
+
+        function clearSelection() {
+            selectedCells.forEach(el => el.classList.remove('selected'));
+            selectedCells = [];
+        }
+
+        function checkWord() {
+            const currentString = selectedCells.map(x => x.innerText).join('');
+            if(currentString === targetWord) {
+                selectedCells.forEach(x => {
                     x.classList.remove('selected');
                     x.classList.add('correct');
                 });
                 document.getElementById('target-slots').innerText = itemsForGame[roundGlobal-1].nome.toUpperCase();
-                
-                setTimeout(() => {
-                    roundGlobal++;
-                    loadRound();
-                }, 800);
+                setTimeout(() => { roundGlobal++; loadRound(); }, 800);
+            } else {
+                clearSelection();
             }
         }
 
         function finalizarJogo() {
             clearInterval(timerInt);
+            timerInt = null;
             const main = document.getElementById('game-area');
             main.innerHTML = `
                 <div style="text-align:center; padding:20px;">
                     <h2 style="color:var(--primary-blue); font-size:2rem; margin-bottom:10px;">${JOGO_CONFIG.relatorio.titulo}</h2>
-                    <p style="font-weight:700; color:#667; margin-bottom:5px;">Concluíste os dois níveis!</p>
                     <p style="font-weight:700; color:#667; margin-bottom:20px;">Tempo: ${document.getElementById('timer-display').innerText.replace('⏳','').trim()}</p>
                     <button onclick="location.reload()" class="btn-jogar" style="width:180px;">REPETIR</button>
                 </div>
             `;
         }
 
-        function selectCategory(cat) {
+        function restartWithCategory(cat) {
             currentCategory = cat;
-            document.getElementById('intro-title').innerText = "Sopa de: " + JOGO_CONFIG.categorias[cat].nome;
+            roundGlobal = 1;
+            timer = 0;
+            if(timerInt) { clearInterval(timerInt); timerInt = null; }
+            document.getElementById('timer-display').innerText = `⏳ 00:00`;
+            document.getElementById('points-label').innerText = "0";
+            
+            // Se estivermos no fim (ecrã final), precisamos de restaurar o HTML do main
+            const main = document.getElementById('game-area');
+            if(!main.querySelector('#inner-game')) {
+                location.reload(); // Forma mais segura de limpar o estado final
+                return;
+            }
+
+            prepararRondas();
+            mostrarJogo();
             closeRDMenu();
         }
 
@@ -471,12 +499,8 @@
                 document.getElementById('status-rd-img').src = pathImg + "rd.png";
                 document.getElementById('intro-rd-img').src = pathImg + "rd.png";
 
-                // Menu Principal
                 const menuBox = document.getElementById('dropdownMenu');
-                const menuData = [
-                    {k:'home', l:'Início'}, {k:'pre', l:'Pré'}, {k:'ano1', l:'1º Ano'},
-                    {k:'ano2', l:'2º Ano'}, {k:'ano3', l:'3º Ano'}, {k:'ano4', l:'4º Ano'}
-                ];
+                const menuData = [{k:'home',l:'Início'},{k:'pre',l:'Pré'},{k:'ano1',l:'1º Ano'},{k:'ano2',l:'2º Ano'},{k:'ano3',l:'3º Ano'},{k:'ano4',l:'4º Ano'}];
                 menuData.forEach(m => {
                     const a = document.createElement('a');
                     a.className = 'custom-menu-item';
@@ -485,17 +509,15 @@
                     menuBox.appendChild(a);
                 });
 
-                // Menu RD
                 const rdBox = document.getElementById('rdDropdownMenu');
                 Object.keys(JOGO_CONFIG.categorias).forEach(key => {
                     const cat = JOGO_CONFIG.categorias[key];
                     const div = document.createElement('div');
                     div.className = 'custom-menu-item';
                     div.innerHTML = `<img src="${pathImg}${cat.imgCapa}" style="height:25px; width:25px; object-fit:contain;"><span>${cat.nome}</span>`;
-                    div.onclick = () => selectCategory(key);
+                    div.onclick = () => restartWithCategory(key);
                     rdBox.appendChild(div);
                 });
-
                 atualizarProgressao(5, 0);
             }
         };
