@@ -69,8 +69,7 @@
             display: flex; 
             flex-direction: column; 
             position: relative; 
-            overflow: hidden;
-            padding: 0 15px;
+            overflow: hidden; /* Mantém o menu dentro do card ao deslizar */
         }
 
         .status { 
@@ -79,86 +78,69 @@
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
+            padding: 0 15px;
         }
         
-        .status-right { 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-        }
-
-        /* Ícone RD no Status */
-        .rd-menu-btn {
-            height: 24px;
-            cursor: pointer;
-            display: block;
-        }
+        .status-right { display: flex; align-items: center; gap: 12px; }
+        .rd-menu-btn { height: 24px; cursor: pointer; }
 
         main { 
-            flex: 1; 
-            display: none; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            overflow: hidden;
+            flex: 1; display: none; 
+            flex-direction: column; align-items: center; justify-content: center; 
             position: relative;
         }
 
         #intro-overlay {
-            position: absolute; top: 0; left: 15px; right: 15px; height: 100%;
+            position: absolute; top: 0; left: 0; right: 0; height: 100%;
             background: var(--bg-page); z-index: 100;
-            display: flex; flex-direction: column; 
-            align-items: center; 
-            padding-bottom: 20px; 
+            display: flex; flex-direction: column; align-items: center; padding-bottom: 20px;
         }
 
-        .intro-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
+        .intro-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
-        .intro-actions { 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-            width: 100%; 
-            padding: 0 10px;
-        }
+        .intro-actions { display: flex; align-items: center; gap: 15px; width: 100%; padding: 0 25px; }
 
         .btn-jogar {
-            flex: 1;
-            padding: 15px; background: var(--primary-blue); 
+            flex: 1; padding: 15px; background: var(--primary-blue); 
             color: white; border: none; border-radius: 20px; 
             font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); 
             font-size: 1.1rem;
         }
 
-        /* RD na Intro */
-        .rd-intro-btn {
-            height: 50px; width: 50px; 
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-        }
+        .rd-intro-btn { height: 50px; width: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .rd-intro-btn img { height: 40px; }
 
-        footer {
-            height: 45px; display: flex; align-items: center; justify-content: center;
-            color: #8899aa; font-size: 0.85rem; flex-shrink: 0;
-        }
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; color: #8899aa; font-size: 0.85rem; flex-shrink: 0; }
 
+        /* MENU LATERAL (HAMBURGUER) */
         .menu-dropdown { 
             position: absolute; top: 60px; left: 20px; 
             display: none; flex-direction: column; gap: 8px; z-index: 2000; 
         }
 
-        /* Dropdown RD à Direita */
-        .rd-dropdown {
-            left: auto;
-            right: 0;
-            top: 45px;
+        /* NOVO: PAINEL RD QUE SOBE DO FUNDO */
+        .rd-panel {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            z-index: 2500;
+            border-radius: 35px 35px 0 0;
+            box-shadow: 0 -10px 25px rgba(176, 196, 217, 0.5);
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transform: translateY(101%); /* Escondido abaixo */
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .rd-panel.active { transform: translateY(0); }
+
+        .rd-panel-header {
+            width: 50px; height: 5px; background: #ccd6e0; border-radius: 10px;
+            margin: -10px auto 15px auto; cursor: pointer;
         }
 
         .custom-menu-item { 
@@ -167,20 +149,16 @@
             cursor: pointer; min-width: 180px; text-decoration: none; color: #555;
             transition: background 0.2s ease;
         }
-        .custom-menu-item:hover {
-            background: var(--primary-blue);
-        }
+        .custom-menu-item:hover { background: var(--primary-blue); }
 
-        @media (max-width: 450px) {
-            .game-wrapper { padding: 5px 20px; }
-        }
+        @media (max-width: 450px) { .game-wrapper { padding: 5px 20px; } }
     </style>
 </head>
 <body>
 
     <header>
         <div class="header-left">
-            <i class="fas fa-bars hamburger-btn" onclick="toggleMenu('dropdownMenu', event)"></i>
+            <i class="fas fa-bars hamburger-btn" onclick="toggleMainMenu(event)"></i>
             <div class="menu-dropdown" id="dropdownMenu"></div>
         </div>
         <div class="header-center">
@@ -200,11 +178,7 @@
                 <div id="dots-container" style="display:flex; gap:5px;"></div>
                 <div class="status-right">
                     <div style="font-weight: 900; color: var(--primary-blue);"><span id="points-label">0</span></div>
-                    <div style="position: relative;">
-                        <!-- Imagem RD agora funciona como botão de menu -->
-                        <img id="status-rd-img" class="rd-menu-btn" src="" alt="RD" onclick="toggleMenu('rdDropdownMenu', event)">
-                        <div class="menu-dropdown rd-dropdown" id="rdDropdownMenu"></div>
-                    </div>
+                    <img id="status-rd-img" class="rd-menu-btn" src="" alt="RD" onclick="toggleRDMenu(event)">
                 </div>
             </section>
 
@@ -216,10 +190,16 @@
                 
                 <div class="intro-actions">
                     <button onclick="mostrarJogo()" class="btn-jogar">JOGAR</button>
-                    <div class="rd-intro-btn" onclick="toggleMenu('rdDropdownMenu', event)">
+                    <div class="rd-intro-btn" onclick="toggleRDMenu(event)">
                         <img id="intro-rd-img" src="" alt="RD">
                     </div>
                 </div>
+            </div>
+
+            <!-- PAINEL RD (EXPANDE PARA CIMA) -->
+            <div id="rdDropdownMenu" class="rd-panel">
+                <div class="rd-panel-header" onclick="toggleRDMenu(event)"></div>
+                <!-- Categorias inseridas via JS -->
             </div>
 
             <main id="game-area"></main>
@@ -230,17 +210,29 @@
 
     <script src="dados.js"></script>
     <script>
-        function toggleMenu(menuId, e) {
+        function toggleMainMenu(e) {
             if(e) e.stopPropagation();
-            const targetMenu = document.getElementById(menuId);
-            const isVisible = targetMenu.style.display === 'flex';
+            closeRDMenu();
+            const menu = document.getElementById('dropdownMenu');
+            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function toggleRDMenu(e) {
+            if(e) e.stopPropagation();
+            // Fecha menu lateral se estiver aberto
+            document.getElementById('dropdownMenu').style.display = 'none';
             
-            document.querySelectorAll('.menu-dropdown').forEach(m => m.style.display = 'none');
-            targetMenu.style.display = isVisible ? 'none' : 'flex';
+            const rdPanel = document.getElementById('rdDropdownMenu');
+            rdPanel.classList.toggle('active');
+        }
+
+        function closeRDMenu() {
+            document.getElementById('rdDropdownMenu').classList.remove('active');
         }
 
         window.onclick = () => {
-            document.querySelectorAll('.menu-dropdown').forEach(m => m.style.display = 'none');
+            document.getElementById('dropdownMenu').style.display = 'none';
+            closeRDMenu();
         };
 
         function mostrarJogo() {
@@ -260,7 +252,6 @@
                 document.getElementById('status-rd-img').src = pathImg + "rd.png";
                 document.getElementById('intro-rd-img').src = pathImg + "rd.png";
 
-                // Preencher Menu Lateral
                 const menuKeys = ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'];
                 const menuLabels = ['Início', 'Pré', '1º Ano', '2º Ano', '3º Ano', '4º Ano'];
                 const menuBox = document.getElementById('dropdownMenu');
@@ -273,7 +264,6 @@
                     menuBox.appendChild(a);
                 });
 
-                // Preencher Menu RD (Exemplo)
                 const rdBox = document.getElementById('rdDropdownMenu');
                 const niveis = ['Nível 1', 'Nível 2', 'Nível 3'];
                 niveis.forEach(nv => {
