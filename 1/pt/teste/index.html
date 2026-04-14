@@ -27,7 +27,7 @@
         }
 
         /* ==========================================================================
-           1. HEADER (Menu, Título/Ícone, Voltar)
+           1. HEADER
            ========================================================================== */
         header { 
             height: 60px; 
@@ -60,44 +60,54 @@
         }
 
         /* ==========================================================================
-           2. STATUS (Timer, Bolas, Pontos, RD)
+           2. STATUS
            ========================================================================== */
         .status {
             height: 60px; flex-shrink: 0;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 15px; /* Mais encostado às bordas */
+            padding: 0 15px;
         }
-        .status-timer { 
-            font-weight: 900; color: #666; font-size: 0.85rem; 
-            min-width: 60px; 
-        }
+        .status-timer { font-weight: 900; color: #666; font-size: 0.85rem; min-width: 60px; }
         .status-dots { display: flex; gap: 6px; }
         .status-rd-points {
             display: flex; align-items: center; 
             background: rgba(255,255,255,0.4); padding: 5px 12px; 
             border-radius: 18px; box-shadow: var(--inner-shadow);
         }
-        .points-val { 
-            font-weight: 900; color: var(--primary-blue); font-size: 1rem; 
-            margin-right: 12px; /* Espaço para não colar no RD */
-        }
+        .points-val { font-weight: 900; color: var(--primary-blue); font-size: 1rem; margin-right: 12px; }
         .status-rd-points img { height: 28px; width: auto; }
         .dot { width: 12px; height: 12px; border-radius: 50%; }
 
         /* ==========================================================================
-           3. MAIN (Área de Jogo - Ocupa o maior espaço)
+           3. MAIN (Layout Vertical e Horizontal)
            ========================================================================== */
         main {
             flex-grow: 1; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 20px; padding: 15px; min-height: 0;
+            display: flex; 
+            flex-direction: column; /* Vertical por padrão */
+            align-items: center; 
+            justify-content: space-between; /* Espaçamento entre imagem e grelha */
+            padding: 0 20px 20px 20px; /* Padding esquerda, direita e fundo conforme pedido */
+            min-height: 0;
         }
 
+        .target-display { 
+            text-align: center; 
+            padding-top: 30px; /* Padding do topo do main no vertical */
+            flex-shrink: 0;
+        }
+
+        /* Layout para ecrãs horizontais */
         @media (min-width: 768px) and (orientation: landscape) {
-            main { flex-direction: row; gap: 50px; justify-content: space-evenly; }
+            main { 
+                flex-direction: row; 
+                gap: 50px; 
+                justify-content: space-evenly; 
+                padding: 20px 40px; /* Padding mais equilibrado para horizontal */
+            }
+            .target-display { padding-top: 0; }
         }
 
-        .target-display { text-align: center; }
         .target-display img { height: clamp(60px, 15vh, 100px); object-fit: contain; }
         .target-display h2 { font-size: clamp(1.6rem, 4.5vmin, 2.2rem); font-weight: 900; letter-spacing: 4px; color: #333; margin-top: 5px; }
 
@@ -105,6 +115,11 @@
             display: grid; grid-template-columns: repeat(8, 1fr); 
             gap: 0.8vmin; padding: 1.5vmin;
             background: var(--bg-page); border-radius: 25px; box-shadow: var(--inner-shadow);
+            margin-bottom: auto; /* No vertical, ajuda a manter a grelha com espaço */
+        }
+
+        @media (orientation: landscape) {
+            .grid-container { margin-bottom: 0; }
         }
         
         .cell {
@@ -146,9 +161,7 @@
             
             <section id="status" class="status">
                 <div class="status-timer">⏳ <span id="timer-label">00:00</span></div>
-                
                 <div id="dots-container" class="status-dots"></div>
-                
                 <div class="status-rd-points">
                     <div>
                         <span id="points-label" class="points-val">0</span>
