@@ -19,33 +19,27 @@
         
         body { 
             background-color: var(--bg-page); 
-            height: 100dvh; 
-            width: 100vw; 
+            height: 100dvh; width: 100vw; 
             overflow: hidden; 
-            display: flex; 
-            flex-direction: column;
+            display: flex; flex-direction: column;
         }
 
-        /* 1. HEADER */
         header { 
             height: 60px; 
             display: flex; align-items: center; justify-content: space-between; 
             padding: 0 20px; flex-shrink: 0; z-index: 1000;
         }
         
+        /* ALTERADO: Icon hamburger agora tem a cor do botão jogar por padrão */
         .hamburger-btn { 
             font-size: 26px; 
-            color: #8899aa; 
+            color: var(--primary-blue); 
             cursor: pointer; 
             transition: all 0.2s ease;
             padding: 8px;
             display: flex; align-items: center; justify-content: center;
         }
-        /* Cor alterada para a cor do botão jogar no hover */
-        .hamburger-btn:hover { 
-            color: var(--primary-blue); 
-            transform: scale(1.1);
-        }
+        .hamburger-btn:hover { transform: scale(1.1); opacity: 0.8; }
 
         .header-center { 
             flex: 1; display: flex; align-items: center; justify-content: center; 
@@ -59,17 +53,16 @@
             font-size: 0.8rem; box-shadow: 0 4px 0 var(--primary-dark);
         }
 
-        /* 2. WRAPPER */
+        /* ALTERADO: Aumentado o padding horizontal para 30px para afastar o card das bordas */
         .game-wrapper { 
             flex: 1; 
             display: flex; 
             justify-content: center; 
-            padding: 5px 15px; 
+            padding: 5px 30px; 
             min-height: 0;
             overflow: hidden;
         }
 
-        /* GAME CARD COM PADDING LATERAL DE 15PX */
         .game-card { 
             background: var(--bg-page); 
             width: 100%; 
@@ -81,20 +74,17 @@
             flex-direction: column; 
             position: relative; 
             overflow: hidden;
-            padding: 0 15px; /* PADDING SOLICITADO */
+            padding: 0 15px;
         }
 
-        /* STATUS AREA */
         .status { 
             height: 50px; 
             flex-shrink: 0; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            /* Padding removido aqui pois o card já tem 15px */
         }
 
-        /* MAIN / GAME AREA */
         main { 
             flex: 1; 
             display: none; 
@@ -105,19 +95,10 @@
             position: relative;
         }
 
-        /* INTRO OVERLAY - Ajustado para respeitar o padding do card */
         #intro-overlay {
-            position: absolute; 
-            top: 0; 
-            left: 15px; /* Ajustado ao padding do card */
-            right: 15px; /* Ajustado ao padding do card */
-            height: 100%;
-            background: var(--bg-page); 
-            z-index: 100;
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center;
+            position: absolute; top: 0; left: 15px; right: 15px; height: 100%;
+            background: var(--bg-page); z-index: 100;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
 
         .btn-jogar {
@@ -126,7 +107,6 @@
             font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); 
             font-size: 1.1rem;
         }
-        .btn-jogar:active { transform: translateY(2px); box-shadow: 0 3px 0 var(--primary-dark); }
 
         .rd-intro-btn {
             height: 50px; width: 50px; background: white; 
@@ -134,31 +114,36 @@
             box-shadow: var(--outer-shadow);
         }
 
-        /* FOOTER */
         footer {
-            height: 45px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            color: #8899aa; 
-            font-size: 0.85rem; 
-            flex-shrink: 0;
+            height: 45px; display: flex; align-items: center; justify-content: center;
+            color: #8899aa; font-size: 0.85rem; flex-shrink: 0;
         }
 
         .menu-dropdown { 
             position: absolute; top: 60px; left: 20px; 
             display: none; flex-direction: column; gap: 8px; z-index: 2000; 
         }
+
+        /* ALTERADO: Item do menu agora ganha a cor do botão jogar no hover */
         .custom-menu-item { 
             display: flex; align-items: center; gap: 12px; padding: 12px 20px; 
             background: white; border-radius: 18px; box-shadow: 4px 4px 10px #c5d4e3; 
             cursor: pointer; min-width: 180px; text-decoration: none; color: #555;
+            transition: all 0.2s ease;
+        }
+        .custom-menu-item:hover {
+            background: #f0f7ff;
+            color: var(--primary-blue);
+        }
+        .custom-menu-item:hover span {
+            color: var(--primary-blue);
+            font-weight: 700;
         }
 
         @media (max-width: 450px) {
-            .game-wrapper { padding: 5px 10px 5px 10px; }
+            .game-wrapper { padding: 5px 20px; } /* Ajuste mobile levemente menor mas ainda com margem */
             #intro-img { height: 60px !important; }
-            h1 { font-size: 1.2rem; text-align: center; margin-bottom: 15px !important; }
+            h1 { font-size: 1.2rem; text-align: center; }
         }
     </style>
 </head>
@@ -224,9 +209,6 @@
             document.getElementById('intro-overlay').style.display = 'none';
             document.getElementById('main-footer').style.display = 'none';
             document.getElementById('game-area').style.display = 'flex';
-            
-            // Ajuste do padding para preencher o espaço do footer
-            document.querySelector('.game-wrapper').style.paddingBottom = '15px';
         }
 
         window.onload = () => {
