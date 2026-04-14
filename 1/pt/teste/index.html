@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>1º Ano - Sopa de Letras</title>
+    <title>1º Ano</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -20,94 +20,269 @@
         body { 
             background-color: var(--bg-page); 
             height: 100dvh; width: 100vw; 
-            overflow: hidden; display: flex; flex-direction: column;
+            overflow: hidden; 
+            display: flex; flex-direction: column;
         }
 
-        header { height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 1000; }
-        .hamburger-btn { font-size: 26px; color: var(--primary-blue); cursor: pointer; padding: 8px; }
-        .header-center { flex: 1; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--primary-blue); font-weight: 900; font-size: 1.2rem; }
+        header { 
+            height: 60px; 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 20px; flex-shrink: 0; z-index: 1000;
+        }
+        
+        .hamburger-btn { 
+            font-size: 26px; 
+            color: var(--primary-blue); 
+            cursor: pointer; 
+            padding: 8px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .header-center { 
+            flex: 1; display: flex; align-items: center; justify-content: center; 
+            gap: 10px; color: var(--primary-blue); font-weight: 900; font-size: 1.2rem;
+        }
         .header-center img { height: 30px; }
-        .btn-voltar { background: var(--primary-blue); color: white; padding: 8px 16px; border-radius: 12px; text-decoration: none; font-weight: 900; font-size: 0.8rem; box-shadow: 0 4px 0 var(--primary-dark); }
 
-        .game-wrapper { flex: 1; display: flex; justify-content: center; padding: 5px 30px 15px 30px; overflow: hidden; }
-        .game-card { background: var(--bg-page); width: 100%; max-width: 900px; height: 100%; border-radius: 35px; box-shadow: var(--outer-shadow); display: flex; flex-direction: column; position: relative; overflow: hidden; }
+        .btn-voltar { 
+            background: var(--primary-blue); color: white; padding: 8px 16px; 
+            border-radius: 12px; text-decoration: none; font-weight: 900; 
+            font-size: 0.8rem; box-shadow: 0 4px 0 var(--primary-dark);
+        }
 
-        .status { height: 50px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
-        #dots-container { display: flex; gap: 6px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: #cbd9e6; }
-        .dot.active { background: var(--primary-blue); transform: scale(1.3); }
-        .dot.completed { background: #a8d5ff; }
+        .game-wrapper { 
+            flex: 1; 
+            display: flex; 
+            justify-content: center; 
+            padding: 5px 30px 15px 30px; 
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .game-card { 
+            background: var(--bg-page); 
+            width: 100%; 
+            max-width: 900px; 
+            height: 100%; 
+            border-radius: 35px; 
+            box-shadow: var(--outer-shadow); 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            overflow: hidden;
+        }
+
+        .status { 
+            height: 50px; 
+            flex-shrink: 0; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 0 20px;
+        }
+        
+        /* ESTILOS DA PROGRESSÃO (DOTS) */
+        #dots-container {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #cbd9e6; /* Cor neutra para rondas futuras */
+            transition: all 0.3s ease;
+            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .dot.active {
+            background: var(--primary-blue);
+            transform: scale(1.3);
+            box-shadow: 0 0 8px var(--primary-blue);
+        }
+
+        .dot.completed {
+            background: #a8d5ff; /* Azul claro para concluído */
+            transform: scale(1);
+        }
 
         .status-timer { font-weight: 700; color: #667788; min-width: 60px; }
+        .status-right { display: flex; align-items: center; gap: 12px; min-width: 60px; justify-content: flex-end; }
         .rd-menu-btn { height: 24px; cursor: pointer; }
 
-        main { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
-
-        /* TUTORIAL ANIMATION */
-        .tutorial-box { position: relative; width: 120px; height: 120px; background: #d0e0f0; border-radius: 15px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; }
-        .hand-icon { position: absolute; font-size: 30px; color: #f1c40f; animation: dragHand 2s infinite; }
-        @keyframes dragHand {
-            0% { transform: translate(-30px, 0); opacity: 0; }
-            20% { opacity: 1; }
-            80% { transform: translate(30px, 0); opacity: 1; }
-            100% { transform: translate(30px, 0); opacity: 0; }
+        main { 
+            flex: 1; display: none; 
+            flex-direction: column; align-items: center; justify-content: center; 
+            position: relative;
         }
 
-        #intro-overlay { position: absolute; top: 0; left: 0; right: 0; height: 100%; background: var(--bg-page); z-index: 100; display: flex; flex-direction: column; align-items: center; }
-        .intro-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .btn-jogar { width: 200px; padding: 15px; background: var(--primary-blue); color: white; border: none; border-radius: 20px; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); font-size: 1.1rem; }
+        #intro-overlay {
+            position: absolute; top: 0; left: 0; right: 0; height: 100%;
+            background: var(--bg-page); z-index: 100;
+            display: flex; flex-direction: column; align-items: center; padding-bottom: 20px;
+        }
 
-        .menu-dropdown, .rd-panel { position: absolute; z-index: 2000; display: none; flex-direction: column; gap: 8px; }
-        .menu-dropdown { top: 60px; left: 20px; }
-        .rd-panel { bottom: 0; left: 0; width: 100%; background: white; border-radius: 35px 35px 0 0; padding: 25px 20px; transform: translateY(101%); transition: 0.4s; display: flex; }
-        .rd-panel.active { transform: translateY(0); box-shadow: 0 -10px 25px rgba(0,0,0,0.1); }
-        
-        .custom-menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; background: white; border-radius: 18px; box-shadow: 4px 4px 10px #c5d4e3; cursor: pointer; text-decoration: none; color: #555; font-weight: 700; }
-        .custom-menu-item:hover { background: var(--primary-blue); color: white; }
+        .intro-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+        .intro-actions { display: flex; align-items: center; gap: 15px; width: 100%; padding: 0 25px; }
+
+        .btn-jogar {
+            flex: 1; padding: 15px; background: var(--primary-blue); 
+            color: white; border: none; border-radius: 20px; 
+            font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); 
+            font-size: 1.1rem;
+        }
+
+        .rd-intro-btn { height: 50px; width: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .rd-intro-btn img { height: 40px; }
+
+        footer { 
+            height: 40px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: #8899aa; 
+            font-size: 0.85rem; 
+            flex-shrink: 0; 
+        }
+
+        .menu-dropdown { 
+            position: absolute; top: 60px; left: 20px; 
+            display: none; flex-direction: column; gap: 8px; z-index: 2000; 
+        }
+
+        .rd-panel {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            z-index: 2500;
+            border-radius: 35px 35px 0 0;
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transform: translateY(101%); 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: none; 
+        }
+
+        .rd-panel.active { 
+            transform: translateY(0); 
+            box-shadow: 0 -10px 25px rgba(176, 196, 217, 0.5);
+        }
+
+        .rd-panel-header {
+            width: 50px; height: 5px; background: #ccd6e0; border-radius: 10px;
+            margin: -10px auto 15px auto; cursor: pointer;
+        }
+
+        .custom-menu-item { 
+            display: flex; align-items: center; gap: 12px; padding: 12px 20px; 
+            background: white; border-radius: 18px; box-shadow: 4px 4px 10px #c5d4e3; 
+            cursor: pointer; min-width: 180px; text-decoration: none; 
+            color: #555; font-weight: 700;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .custom-menu-item:hover { 
+            background: var(--primary-blue) !important; 
+            transform: translateY(-2px);
+        }
         .custom-menu-item:hover span { color: white; }
 
-        /* GRID SOPA */
-        #game-container { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; }
-        .word-slots { font-size: 1.8rem; font-weight: 900; color: var(--primary-blue); letter-spacing: 4px; height: 40px; }
-        .grid-sopa { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; background: #d0e0f0; padding: 10px; border-radius: 20px; touch-action: none; position: relative; }
-        .letter-cell { width: 38px; height: 38px; background: white; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-weight: 900; font-size: 1.2rem; color: #445566; box-shadow: 0 3px 0 #cbd9e6; pointer-events: none; }
-        .letter-cell.highlight { background: var(--primary-blue); color: white; }
-        .letter-cell.found { background: #7ed321; color: white; box-shadow: none; }
-
-        @media (max-width: 450px) { .letter-cell { width: 33px; height: 33px; font-size: 1rem; } }
+        @media (max-width: 450px) { 
+            .game-wrapper { padding: 5px 20px 15px 20px; } 
+            .status { padding: 0 10px; }
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="header-left"><i class="fas fa-bars hamburger-btn" onclick="toggleMainMenu(event)"></i><div class="menu-dropdown" id="dropdownMenu"></div></div>
-        <div class="header-center"><img id="header-icon" src=""><span>1º Ano</span></div>
-        <div class="header-right"><a href="../index.html" class="btn-voltar">VOLTAR</a></div>
+        <div class="header-left">
+            <i class="fas fa-bars hamburger-btn" onclick="toggleMainMenu(event)"></i>
+            <div class="menu-dropdown" id="dropdownMenu"></div>
+        </div>
+        <div class="header-center">
+            <img id="header-icon" src="" alt="">
+            <span>1º Ano</span>
+        </div>
+        <div class="header-right">
+            <a href="../index.html" class="btn-voltar">VOLTAR</a>
+        </div>
     </header>
 
     <div class="game-wrapper">
         <div class="game-card">
+            
             <section class="status">
-                <div class="status-timer">⏳ <span id="timer-txt">00:00</span></div>
+                <div id="timer-display" class="status-timer">⏳ 00:00</div>
                 <div id="dots-container"></div>
-                <div class="status-right"><img id="status-rd-img" class="rd-menu-btn" onclick="toggleRDMenu(event)"></div>
+                <div class="status-right">
+                    <div style="font-weight: 900; color: var(--primary-blue);"><span id="points-label">0</span></div>
+                    <img id="status-rd-img" class="rd-menu-btn" src="" alt="RD" onclick="toggleRDMenu(event)">
+                </div>
             </section>
 
             <div id="intro-overlay">
                 <div class="intro-content">
-                    <div class="tutorial-box"><i class="fas fa-hand-pointer hand-icon"></i><div style="display:grid; grid-template-columns:repeat(3,1fr); gap:5px;"><div class="letter-cell" style="width:25px;height:25px;font-size:0.6rem">A</div><div class="letter-cell" style="width:25px;height:25px;font-size:0.6rem">B</div><div class="letter-cell" style="width:25px;height:25px;font-size:0.6rem">C</div></div></div>
-                    <h1 id="intro-titulo" style="color:var(--primary-blue); font-weight:900; margin-bottom:20px;">Sopa de Letras</h1>
+                    <!-- Tutorial Animado -->
+                    <div style="position:relative; margin-bottom:20px; background:#dbe9f7; padding:15px; border-radius:20px;">
+                        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:5px;">
+                            <div style="width:30px;height:30px;background:white;border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;">G</div>
+                            <div style="width:30px;height:30px;background:white;border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;">A</div>
+                            <div style="width:30px;height:30px;background:white;border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;">T</div>
+                        </div>
+                        <i class="fas fa-hand-pointer" style="position:absolute; color:#f1c40f; font-size:24px; bottom:5px; right:5px; animation: moveHand 2s infinite;"></i>
+                    </div>
+                    <style>
+                        @keyframes moveHand { 
+                            0% { transform: translate(0,0); } 
+                            50% { transform: translate(-60px, 0); } 
+                            100% { transform: translate(0,0); } 
+                        }
+                    </style>
+                    <h1 id="intro-title" style="color:var(--primary-blue); font-weight:900; margin-bottom:25px; text-align:center;">Sopa de Letras</h1>
+                </div>
+                
+                <div class="intro-actions">
                     <button onclick="mostrarJogo()" class="btn-jogar">JOGAR</button>
+                    <div class="rd-intro-btn" onclick="toggleRDMenu(event)">
+                        <img id="intro-rd-img" src="" alt="RD">
+                    </div>
                 </div>
             </div>
 
-            <div id="rdDropdownMenu" class="rd-panel"><div style="width:50px; height:5px; background:#ccd6e0; border-radius:10px; margin:-10px auto 15px auto;"></div></div>
+            <div id="rdDropdownMenu" class="rd-panel">
+                <div class="rd-panel-header" onclick="toggleRDMenu(event)"></div>
+            </div>
 
             <main id="game-area">
-                <div id="game-container">
-                    <img id="game-image" style="height:100px; border-radius:20px;">
-                    <div id="game-slots" class="word-slots"></div>
-                    <div id="game-grid" class="grid-sopa"></div>
+                <!-- Estilos específicos do jogo injetados aqui para não mexer no style principal -->
+                <style>
+                    #inner-game { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; }
+                    .hint-img { height: 90px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+                    .slots { font-size: 1.8rem; font-weight: 900; color: var(--primary-blue); letter-spacing: 5px; height: 40px; }
+                    .grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; background: #d0e0f0; padding: 10px; border-radius: 20px; }
+                    .cell { 
+                        width: 38px; height: 38px; background: white; border-radius: 10px; 
+                        display: flex; align-items: center; justify-content: center; 
+                        font-weight: 900; font-size: 1.2rem; color: #445566; cursor: pointer; 
+                        box-shadow: 0 3px 0 #cbd9e6; user-select: none;
+                    }
+                    .cell.selected { background: var(--primary-blue); color: white; transform: translateY(2px); box-shadow: none; }
+                    .cell.correct { background: #7ed321; color: white; box-shadow: none; }
+                    @media (max-width: 450px) { .cell { width: 32px; height: 32px; font-size: 1rem; } .hint-img { height: 70px; } }
+                </style>
+                <div id="inner-game">
+                    <img id="target-img" class="hint-img" src="">
+                    <div id="target-slots" class="slots"></div>
+                    <div id="letter-grid" class="grid"></div>
                 </div>
             </main>
         </div>
@@ -117,169 +292,212 @@
 
     <script src="dados.js"></script>
     <script>
-        let roundAtual = 1;
-        const totalRondas = 10;
-        let segundos = 0;
-        let cronometro;
-        let palavraAlvo = "";
-        let listaJogo = [];
-        let categoriaAtual = 'animais';
-        
-        // Drag logic variables
-        let isDragging = false;
-        let startCellIdx = null;
-        let currentCells = [];
+        let roundGlobal = 1; // 1 a 10
+        let currentCategory = 'animais';
+        let itemsForGame = [];
+        let timer = 0;
+        let timerInt;
+        let selectedLetters = [];
+        let targetWord = "";
 
         function atualizarProgressao(total, atual) {
             const container = document.getElementById('dots-container');
             container.innerHTML = '';
-            for (let i = 1; i <= total; i++) {
+            // Se for > 5, subtraímos 5 para mostrar sempre 5 bolas (Nível 2)
+            let visualAtual = atual > 5 ? atual - 5 : atual;
+            
+            for (let i = 1; i <= 5; i++) {
                 const dot = document.createElement('div');
-                dot.className = 'dot' + (i < atual ? ' completed' : (i === atual ? ' active' : ''));
+                dot.className = 'dot';
+                if (i < visualAtual) dot.classList.add('completed');
+                else if (i === visualAtual) dot.classList.add('active');
                 container.appendChild(dot);
             }
         }
 
-        function toggleMainMenu(e) { if(e) e.stopPropagation(); closeRDMenu(); const m = document.getElementById('dropdownMenu'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
-        function toggleRDMenu(e) { if(e) e.stopPropagation(); document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('rdDropdownMenu').classList.toggle('active'); }
-        function closeRDMenu() { document.getElementById('rdDropdownMenu').classList.remove('active'); }
-        window.onclick = () => { document.getElementById('dropdownMenu').style.display = 'none'; closeRDMenu(); };
+        function toggleMainMenu(e) {
+            if(e) e.stopPropagation();
+            closeRDMenu();
+            const menu = document.getElementById('dropdownMenu');
+            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function toggleRDMenu(e) {
+            if(e) e.stopPropagation();
+            document.getElementById('dropdownMenu').style.display = 'none';
+            const rdPanel = document.getElementById('rdDropdownMenu');
+            rdPanel.classList.toggle('active');
+        }
+
+        function closeRDMenu() {
+            document.getElementById('rdDropdownMenu').classList.remove('active');
+        }
+
+        window.onclick = () => {
+            document.getElementById('dropdownMenu').style.display = 'none';
+            closeRDMenu();
+        };
 
         function mostrarJogo() {
             document.getElementById('intro-overlay').style.display = 'none';
             document.getElementById('main-footer').style.display = 'none';
             document.getElementById('game-area').style.display = 'flex';
-            roundAtual = 1; segundos = 0;
             
-            // Gerar 10 itens (5 para Nivel 1, 5 para Nivel 2)
-            const itensCat = [...JOGO_CONFIG.categorias[categoriaAtual].itens];
-            listaJogo = itensCat.sort(() => 0.5 - Math.random()).slice(0, 5);
-            listaJogo = [...listaJogo, ...[...itensCat].sort(() => 0.5 - Math.random()).slice(0, 5)];
+            // Inicia o cronómetro se não estiver a correr
+            if(!timerInt) {
+                timerInt = setInterval(() => {
+                    timer++;
+                    const m = Math.floor(timer/60).toString().padStart(2,'0');
+                    const s = (timer%60).toString().padStart(2,'0');
+                    document.getElementById('timer-display').innerText = `⏳ ${m}:${s}`;
+                }, 1000);
+            }
 
-            if(!cronometro) cronometro = setInterval(() => {
-                segundos++;
-                document.getElementById('timer-txt').innerText = `${Math.floor(segundos/60).toString().padStart(2,'0')}:${(segundos%60).toString().padStart(2,'0')}`;
-            }, 1000);
-            carregarRonda();
+            prepararRondas();
+            loadRound();
         }
 
-        function carregarRonda() {
-            if (roundAtual > totalRondas) { finalizarJogo(); return; }
-            atualizarProgressao(totalRondas, roundAtual);
-            const item = listaJogo[roundAtual - 1];
-            palavraAlvo = item.nome.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/Ç/g, "C");
-            
-            document.getElementById('game-image').src = JOGO_CONFIG.caminhoImg + item.img;
-            document.getElementById('game-slots').innerText = (roundAtual <= 5) ? item.nome.toUpperCase() : "_ ".repeat(palavraAlvo.length);
-            
-            criarGrelha(palavraAlvo);
+        function prepararRondas() {
+            const catData = JOGO_CONFIG.categorias[currentCategory].itens;
+            // Pegamos 5 aleatórios para o Nível 1 e 5 para o Nível 2
+            const level1 = [...catData].sort(() => 0.5 - Math.random()).slice(0, 5);
+            const level2 = [...catData].sort(() => 0.5 - Math.random()).slice(0, 5);
+            itemsForGame = [...level1, ...level2];
         }
 
-        function criarGrelha(palavra) {
-            const grid = document.getElementById('game-grid');
-            grid.innerHTML = '';
+        function loadRound() {
+            if(roundGlobal > 10) {
+                finalizarJogo();
+                return;
+            }
+
+            atualizarProgressao(5, roundGlobal);
+            const item = itemsForGame[roundGlobal - 1];
+            targetWord = item.nome.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/Ç/g, "C");
+            
+            document.getElementById('target-img').src = JOGO_CONFIG.caminhoImg + item.img;
+            
+            // Nível 1 (1-5) mostra a palavra, Nível 2 (6-10) mostra traços
+            if(roundGlobal <= 5) {
+                document.getElementById('target-slots').innerText = item.nome.toUpperCase();
+            } else {
+                document.getElementById('target-slots').innerText = "_ ".repeat(targetWord.length);
+            }
+
+            generateGrid(targetWord);
+            selectedLetters = [];
+        }
+
+        function generateGrid(word) {
+            const gridEl = document.getElementById('letter-grid');
+            gridEl.innerHTML = '';
             const size = 8;
             let cells = Array(size * size).fill('');
-            const horizontal = Math.random() > 0.5;
-            const startPos = horizontal 
-                ? Math.floor(Math.random() * size) * size + Math.floor(Math.random() * (size - palavra.length))
-                : Math.floor(Math.random() * (size - palavra.length)) * size + Math.floor(Math.random() * size);
+            
+            // Horizontal ou Vertical
+            const isHorizontal = Math.random() > 0.5;
+            const start = isHorizontal 
+                ? Math.floor(Math.random() * size) * size + Math.floor(Math.random() * (size - word.length))
+                : Math.floor(Math.random() * (size - word.length)) * size + Math.floor(Math.random() * size);
 
-            for (let i = 0; i < palavra.length; i++) {
-                cells[horizontal ? startPos + i : startPos + (i * size)] = palavra[i];
+            for(let i=0; i<word.length; i++) {
+                cells[isHorizontal ? start + i : start + (i * size)] = word[i];
             }
 
-            const abc = "ABCDEFGJKLMNOPQRSTUVXYZ";
-            cells.forEach((letra, idx) => {
-                const div = document.createElement('div');
-                div.className = 'letter-cell';
-                div.innerText = letra || abc[Math.floor(Math.random()*abc.length)];
-                div.dataset.index = idx;
-                grid.appendChild(div);
+            const abc = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
+            cells.forEach((l, idx) => {
+                const d = document.createElement('div');
+                d.className = 'cell';
+                d.innerText = l || abc[Math.floor(Math.random()*abc.length)];
+                d.onclick = () => selectCell(d);
+                gridEl.appendChild(d);
             });
-
-            // Handlers para Seleção por Arrasto
-            grid.onmousedown = grid.ontouchstart = (e) => startDrag(e);
-            window.onmousemove = window.ontouchmove = (e) => doDrag(e);
-            window.onmouseup = window.ontouchend = () => endDrag();
         }
 
-        function getIdx(e) {
-            const touch = e.touches ? e.touches[0] : e;
-            const el = document.elementFromPoint(touch.clientX, touch.clientY);
-            return el && el.classList.contains('letter-cell') ? parseInt(el.dataset.index) : null;
-        }
-
-        function startDrag(e) {
-            const idx = getIdx(e);
-            if (idx !== null) { isDragging = true; startCellIdx = idx; currentCells = [idx]; updateHighlight(); }
-        }
-
-        function doDrag(e) {
-            if (!isDragging) return;
-            const idx = getIdx(e);
-            if (idx !== null && !currentCells.includes(idx)) {
-                currentCells.push(idx);
-                updateHighlight();
-            }
-        }
-
-        function endDrag() {
-            if (!isDragging) return;
-            isDragging = false;
-            const tentativa = currentCells.map(i => document.querySelector(`[data-index="${i}"]`).innerText).join('');
-            if (tentativa === palavraAlvo) {
-                currentCells.forEach(i => document.querySelector(`[data-index="${i}"]`).classList.add('found'));
-                document.getElementById('game-slots').innerText = listaJogo[roundAtual-1].nome.toUpperCase();
-                setTimeout(() => { roundAtual++; carregarRonda(); }, 800);
+        function selectCell(el) {
+            if(el.classList.contains('correct')) return;
+            
+            // Toggle seleção
+            if(el.classList.contains('selected')) {
+                el.classList.remove('selected');
+                selectedLetters = selectedLetters.filter(x => x !== el);
             } else {
-                document.querySelectorAll('.letter-cell').forEach(c => c.classList.remove('highlight'));
+                el.classList.add('selected');
+                selectedLetters.push(el);
             }
-            currentCells = [];
-        }
 
-        function updateHighlight() {
-            document.querySelectorAll('.letter-cell').forEach(c => c.classList.remove('highlight'));
-            currentCells.forEach(i => document.querySelector(`[data-index="${i}"]`).classList.add('highlight'));
+            // Verificar se as letras selecionadas formam a palavra (na ordem que foram clicadas)
+            const currentString = selectedLetters.map(x => x.innerText).join('');
+            if(currentString === targetWord) {
+                selectedLetters.forEach(x => {
+                    x.classList.remove('selected');
+                    x.classList.add('correct');
+                });
+                document.getElementById('target-slots').innerText = itemsForGame[roundGlobal-1].nome.toUpperCase();
+                
+                setTimeout(() => {
+                    roundGlobal++;
+                    loadRound();
+                }, 800);
+            }
         }
 
         function finalizarJogo() {
-            clearInterval(cronometro);
-            document.getElementById('game-area').innerHTML = `<div style="text-align:center;"><h2 style="color:var(--primary-blue); font-size:2.2rem; margin-bottom:15px;">MUITO BEM!</h2><p style="font-weight:700; color:#555; margin-bottom:30px;">Completaste as 10 rondas em ${document.getElementById('timer-txt').innerText}!</p><button onclick="location.reload()" class="btn-jogar">REPETIR</button></div>`;
+            clearInterval(timerInt);
+            const main = document.getElementById('game-area');
+            main.innerHTML = `
+                <div style="text-align:center; padding:20px;">
+                    <h2 style="color:var(--primary-blue); font-size:2rem; margin-bottom:10px;">${JOGO_CONFIG.relatorio.titulo}</h2>
+                    <p style="font-weight:700; color:#667; margin-bottom:5px;">Concluíste os dois níveis!</p>
+                    <p style="font-weight:700; color:#667; margin-bottom:20px;">Tempo: ${document.getElementById('timer-display').innerText.replace('⏳','').trim()}</p>
+                    <button onclick="location.reload()" class="btn-jogar" style="width:180px;">REPETIR</button>
+                </div>
+            `;
         }
 
-        function mudarCategoria(cat) {
-            categoriaAtual = cat;
-            document.getElementById('intro-titulo').innerText = "Sopa de: " + JOGO_CONFIG.categorias[cat].nome;
+        function selectCategory(cat) {
+            currentCategory = cat;
+            document.getElementById('intro-title').innerText = "Sopa de: " + JOGO_CONFIG.categorias[cat].nome;
             closeRDMenu();
-            if(document.getElementById('game-area').style.display === 'flex') mostrarJogo();
         }
 
         window.onload = () => {
-            const pathI = JOGO_CONFIG.caminhoIcons;
-            const pathImg = JOGO_CONFIG.caminhoImg;
-            const icons = JOGO_CONFIG.iconesMenu;
-            document.getElementById('header-icon').src = pathI + icons.ano1;
-            document.getElementById('status-rd-img').src = pathImg + "rd.png";
+            if (typeof JOGO_CONFIG !== 'undefined') {
+                const pathI = JOGO_CONFIG.caminhoIcons;
+                const pathImg = JOGO_CONFIG.caminhoImg;
+                const icons = JOGO_CONFIG.iconesMenu;
+                
+                document.getElementById('header-icon').src = pathI + icons.ano1;
+                document.getElementById('status-rd-img').src = pathImg + "rd.png";
+                document.getElementById('intro-rd-img').src = pathImg + "rd.png";
 
-            // Menu Hambúrguer
-            const menuBox = document.getElementById('dropdownMenu');
-            [{k:'home',l:'Início'},{k:'pre',l:'Pré'},{k:'ano1',l:'1º Ano'},{k:'ano2',l:'2º Ano'},{k:'ano3',l:'3º Ano'},{k:'ano4',l:'4º Ano'}].forEach(item => {
-                const a = document.createElement('a'); a.className = 'custom-menu-item'; a.href = JOGO_CONFIG.links[item.k];
-                a.innerHTML = `<img src="${pathI}${icons[item.k]}" style="height:20px;"><span>${item.l}</span>`;
-                menuBox.appendChild(a);
-            });
+                // Menu Principal
+                const menuBox = document.getElementById('dropdownMenu');
+                const menuData = [
+                    {k:'home', l:'Início'}, {k:'pre', l:'Pré'}, {k:'ano1', l:'1º Ano'},
+                    {k:'ano2', l:'2º Ano'}, {k:'ano3', l:'3º Ano'}, {k:'ano4', l:'4º Ano'}
+                ];
+                menuData.forEach(m => {
+                    const a = document.createElement('a');
+                    a.className = 'custom-menu-item';
+                    a.href = JOGO_CONFIG.links[m.k];
+                    a.innerHTML = `<img src="${pathI}${icons[m.k]}" style="height:20px;"><span>${m.l}</span>`;
+                    menuBox.appendChild(a);
+                });
 
-            // Menu RD
-            const rdBox = document.getElementById('rdDropdownMenu');
-            Object.keys(JOGO_CONFIG.categorias).forEach(key => {
-                const cat = JOGO_CONFIG.categorias[key];
-                const div = document.createElement('div'); div.className = 'custom-menu-item';
-                div.innerHTML = `<img src="${pathImg}${cat.imgCapa}" style="height:22px; width:22px; object-fit:cover; border-radius:5px;"><span>${cat.nome}</span>`;
-                div.onclick = () => mudarCategoria(key);
-                rdBox.appendChild(div);
-            });
-            atualizarProgressao(10, 0);
+                // Menu RD
+                const rdBox = document.getElementById('rdDropdownMenu');
+                Object.keys(JOGO_CONFIG.categorias).forEach(key => {
+                    const cat = JOGO_CONFIG.categorias[key];
+                    const div = document.createElement('div');
+                    div.className = 'custom-menu-item';
+                    div.innerHTML = `<img src="${pathImg}${cat.imgCapa}" style="height:25px; width:25px; object-fit:contain;"><span>${cat.nome}</span>`;
+                    div.onclick = () => selectCategory(key);
+                    rdBox.appendChild(div);
+                });
+
+                atualizarProgressao(5, 0);
+            }
         };
     </script>
 </body>
