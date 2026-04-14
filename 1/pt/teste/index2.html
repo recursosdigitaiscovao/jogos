@@ -12,6 +12,7 @@
             --primary-blue: #5ba4e5;
             --primary-dark: #3d7db8;
             --white: #ffffff;
+            /* Sombra suave de 25px */
             --outer-shadow: 0px 0px 25px #b0c4d9, 0px 0px 25px #ffffff;
         }
 
@@ -50,12 +51,13 @@
             font-size: 0.8rem; box-shadow: 0 4px 0 var(--primary-dark);
         }
 
-        /* AJUSTADO: Padding bottom de 10px para distanciamento do footer */
         .game-wrapper { 
             flex: 1; 
             display: flex; 
             justify-content: center; 
-            padding: 5px 30px 10px 30px; 
+            /* AJUSTE CHAVE: Aumentamos o padding inferior para 40px 
+               Isso dá espaço para a curva de 35px e a sombra de 25px aparecerem */
+            padding: 10px 30px 40px 30px; 
             min-height: 0;
             overflow: hidden;
         }
@@ -65,12 +67,12 @@
             width: 100%; 
             max-width: 900px; 
             height: 100%; 
-            border-radius: 35px; 
+            border-radius: 35px; /* Curva bem definida */
             box-shadow: var(--outer-shadow); 
             display: flex; 
             flex-direction: column; 
             position: relative; 
-            overflow: hidden;
+            overflow: hidden; /* Garante que o conteúdo interno respeite as bordas do card */
         }
 
         .status { 
@@ -85,15 +87,10 @@
         .status-right { display: flex; align-items: center; gap: 12px; }
         .rd-menu-btn { height: 24px; cursor: pointer; }
 
-        /* MAIN - MANTIDO LIMITE VERMELHO */
         main { 
-            flex: 1; 
-            display: none; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
+            flex: 1; display: none; 
+            flex-direction: column; align-items: center; justify-content: center; 
             position: relative;
-            border: 2px solid red; 
         }
 
         #intro-overlay {
@@ -118,35 +115,56 @@
 
         footer { 
             height: 45px; 
-            display: flex; align-items: center; justify-content: center; 
-            color: #8899aa; font-size: 0.85rem; flex-shrink: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: #8899aa; 
+            font-size: 0.85rem; 
+            flex-shrink: 0; 
         }
 
+        /* MENU LATERAL */
         .menu-dropdown { 
             position: absolute; top: 60px; left: 20px; 
             display: none; flex-direction: column; gap: 8px; z-index: 2000; 
         }
 
+        /* PAINEL RD */
         .rd-panel {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            background: white; z-index: 2500; border-radius: 35px 35px 0 0;
-            box-shadow: 0 -10px 25px rgba(176, 196, 217, 0.5); padding: 25px 20px;
-            display: flex; flex-direction: column; gap: 12px;
-            transform: translateY(101%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            z-index: 2500;
+            border-radius: 35px 35px 0 0;
+            box-shadow: 0 -10px 25px rgba(176, 196, 217, 0.5);
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transform: translateY(101%); 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         .rd-panel.active { transform: translateY(0); }
-        .rd-panel-header { width: 50px; height: 5px; background: #ccd6e0; border-radius: 10px; margin: -10px auto 15px auto; cursor: pointer; }
+
+        .rd-panel-header {
+            width: 50px; height: 5px; background: #ccd6e0; border-radius: 10px;
+            margin: -10px auto 15px auto; cursor: pointer;
+        }
 
         .custom-menu-item { 
             display: flex; align-items: center; gap: 12px; padding: 12px 20px; 
             background: white; border-radius: 18px; box-shadow: 4px 4px 10px #c5d4e3; 
             cursor: pointer; min-width: 180px; text-decoration: none; color: #555;
-            transition: background 0.2s ease;
         }
-        .custom-menu-item:hover { background: var(--primary-blue); }
 
         @media (max-width: 450px) { 
-            .game-wrapper { padding: 5px 20px 10px 20px; } 
+            .game-wrapper { 
+                /* Mobile com bastante espaço embaixo para garantir o visual arredondado */
+                padding: 10px 15px 40px 15px; 
+            } 
         }
     </style>
 </head>
@@ -214,7 +232,8 @@
         function toggleRDMenu(e) {
             if(e) e.stopPropagation();
             document.getElementById('dropdownMenu').style.display = 'none';
-            document.getElementById('rdDropdownMenu').classList.toggle('active');
+            const rdPanel = document.getElementById('rdDropdownMenu');
+            rdPanel.classList.toggle('active');
         }
 
         function closeRDMenu() {
@@ -243,9 +262,9 @@
                 document.getElementById('status-rd-img').src = pathImg + "rd.png";
                 document.getElementById('intro-rd-img').src = pathImg + "rd.png";
 
+                const menuBox = document.getElementById('dropdownMenu');
                 const menuKeys = ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'];
                 const menuLabels = ['Início', 'Pré', '1º Ano', '2º Ano', '3º Ano', '4º Ano'];
-                const menuBox = document.getElementById('dropdownMenu');
                 
                 menuKeys.forEach((key, i) => {
                     const a = document.createElement('a');
@@ -256,8 +275,7 @@
                 });
 
                 const rdBox = document.getElementById('rdDropdownMenu');
-                const niveis = ['Nível 1', 'Nível 2', 'Nível 3'];
-                niveis.forEach(nv => {
+                ['Nível 1', 'Nível 2', 'Nível 3'].forEach(nv => {
                     const div = document.createElement('div');
                     div.className = 'custom-menu-item';
                     div.innerHTML = `<span>${nv}</span>`;
