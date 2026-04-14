@@ -10,8 +10,8 @@ const JOGO_CONFIG = {
     },
     // Nova estrutura de links centralizada
     links: {
-        pre: "/pre",
-        ano1: "/1",
+        pre: "../pre",
+        ano1: "../1",
         ano2: "/2",
         ano3: "/3",
         ano4: "/4"
