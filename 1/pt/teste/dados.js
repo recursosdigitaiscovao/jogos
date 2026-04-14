@@ -10,11 +10,11 @@ const JOGO_CONFIG = {
     },
     // Nova estrutura de links centralizada
     links: {
-        pre: "../pre",
-        ano1: "../1",
-        ano2: "/2",
-        ano3: "/3",
-        ano4: "/4"
+        pre: "/jogos/pre",
+        ano1: "/jogos/1",
+        ano2: "/jogos/2",
+        ano3: "/jogos/3",
+        ano4: "/jogos/4"
     },
     categorias: {
         animais: {
