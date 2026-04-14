@@ -47,6 +47,22 @@ const JOGO_CONFIG = {
                 { nome: "MACÃ", img: "frutas/maca.png" } // Adicionado para completar 5
             ]
         },
+            material: {
+            nome: "Material Escolar",
+            img: "materialescolar/afia.png",
+            itens: [
+                { nome: "MOCHILA", img: "materialescolar/mochila.png" },
+                { nome: "TESOURA", img: "materialescolar/tesoura.png" },
+                { nome: "LÁPIS", img: "materialescolar/lapis.png" },
+                { nome: "LIVRO", img: "materialescolar/livro.png" },
+                { nome: "CAPA", img: "materialescolar/capa.png" },
+                { nome: "AFIA", img: "materialescolar/afia.png" },
+                { nome: "COLA", img: "materialescolar/cola.png" },
+                { nome: "FOLHA", img: "materialescolar/folha.png" },
+                { nome: "ESTOJO", img: "materialescolar/estojo.png" }
+            ]
+        }
+    },
     relatorio: {
         titulo: "MUITO BEM!",
         pontosTotal: "Encontraste:",
