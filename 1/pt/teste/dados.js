@@ -2,14 +2,16 @@ const JOGO_CONFIG = {
     caminhoImg: "../../../img/",
     caminhoIcons: "../../../icons/",
     iconesMenu: {
+        home: "home.png",
         pre: "iconpre.png",
         ano1: "icon1.png",
         ano2: "icon2.png",
         ano3: "icon3.png",
         ano4: "icon4.png"
     },
-    // Nova estrutura de links centralizada
+    // Mantendo a tua estrutura de caminhos exata
     links: {
+        home: "/jogos", 
         pre: "/jogos/pre",
         ano1: "/jogos/1",
         ano2: "/jogos/2",
