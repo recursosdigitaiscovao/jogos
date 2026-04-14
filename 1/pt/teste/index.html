@@ -1,50 +1,247 @@
-/* ==========================================================================
-   2. STATUS (Ajustes de espaçamento e escala)
-   ========================================================================== */
-.status {
-    height: 60px; /* Reduzi ligeiramente a altura para dar mais espaço ao Main */
-    flex-shrink: 0;
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center;
-    padding: 0 15px; /* Reduzi o padding lateral para o timer encostar mais à borda */
-}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sopa de Letras - Template 1</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #e9f0f8;
+            --primary-blue: #5ba4e5;
+            --white: #ffffff;
+            --inner-shadow: inset 4px 4px 8px #c5d4e3, inset -4px -4px 8px #ffffff;
+            --outer-shadow: 8px 8px 16px #c5d4e3, -8px -8px 16px #ffffff;
+            --selected: #ffcc00;
+            --correct: #2ecc71;
+        }
 
-.status-timer { 
-    font-weight: 900; 
-    color: #666; 
-    font-size: 0.85rem; /* Texto mais pequeno como solicitado */
-    min-width: 60px;
-}
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
+        
+        body { 
+            background-color: var(--bg-page); 
+            height: 100vh; width: 100vw; 
+            overflow: hidden; 
+            display: flex; flex-direction: column;
+        }
 
-.status-dots { 
-    display: flex; 
-    gap: 6px; 
-}
+        /* ==========================================================================
+           1. HEADER (Menu, Título/Ícone, Voltar)
+           ========================================================================== */
+        header { 
+            height: 60px; 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 25px; flex-shrink: 0; 
+            z-index: 10;
+        }
+        .header-left { width: 120px; }
+        .header-right { width: 120px; text-align: right; }
+        .header-center { display: flex; align-items: center; gap: 10px; color: var(--primary-blue); font-weight: 900; }
+        .header-center img { width: 32px; height: 32px; }
+        
+        .hamburger-btn { font-size: 24px; color: var(--primary-blue); cursor: pointer; }
+        .btn-voltar { 
+            background-color: var(--primary-blue); color: white; padding: 6px 16px; 
+            border-radius: 15px; text-decoration: none; font-weight: 900; font-size: 0.8rem; 
+            box-shadow: 0 3px 0 #3d7db8; 
+        }
 
-.status-rd-points {
-    display: flex; 
-    align-items: center; 
-    background: rgba(255,255,255,0.4); 
-    padding: 5px 12px; 
-    border-radius: 18px; 
-    box-shadow: var(--inner-shadow);
-}
+        /* CARD PRINCIPAL */
+        .game-wrapper { 
+            flex-grow: 1; display: flex; justify-content: center; align-items: center; 
+            padding: 5px 15px 15px 15px; min-height: 0; 
+        }
+        
+        .game-card {
+            background: var(--bg-page); width: 100%; max-width: 1100px; height: 100%; 
+            border-radius: 40px; box-shadow: var(--outer-shadow); 
+            display: flex; flex-direction: column; overflow: hidden;
+        }
 
-.points-val { 
-    font-weight: 900; 
-    color: var(--primary-blue); 
-    font-size: 1rem; 
-    margin-right: 12px; /* Espaço extra para não colar no RD */
-}
+        /* ==========================================================================
+           2. STATUS (Timer, Bolas, Pontos, RD)
+           ========================================================================== */
+        .status {
+            height: 60px; flex-shrink: 0;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 15px; /* Mais encostado às bordas */
+        }
+        .status-timer { 
+            font-weight: 900; color: #666; font-size: 0.85rem; 
+            min-width: 60px; 
+        }
+        .status-dots { display: flex; gap: 6px; }
+        .status-rd-points {
+            display: flex; align-items: center; 
+            background: rgba(255,255,255,0.4); padding: 5px 12px; 
+            border-radius: 18px; box-shadow: var(--inner-shadow);
+        }
+        .points-val { 
+            font-weight: 900; color: var(--primary-blue); font-size: 1rem; 
+            margin-right: 12px; /* Espaço para não colar no RD */
+        }
+        .status-rd-points img { height: 28px; width: auto; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
 
-.status-rd-points img { 
-    height: 28px; 
-    width: auto;
-}
+        /* ==========================================================================
+           3. MAIN (Área de Jogo - Ocupa o maior espaço)
+           ========================================================================== */
+        main {
+            flex-grow: 1; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 20px; padding: 15px; min-height: 0;
+        }
 
-.dot { 
-    width: 12px; 
-    height: 12px; 
-    border-radius: 50%; 
-}
+        @media (min-width: 768px) and (orientation: landscape) {
+            main { flex-direction: row; gap: 50px; justify-content: space-evenly; }
+        }
+
+        .target-display { text-align: center; }
+        .target-display img { height: clamp(60px, 15vh, 100px); object-fit: contain; }
+        .target-display h2 { font-size: clamp(1.6rem, 4.5vmin, 2.2rem); font-weight: 900; letter-spacing: 4px; color: #333; margin-top: 5px; }
+
+        .grid-container {
+            display: grid; grid-template-columns: repeat(8, 1fr); 
+            gap: 0.8vmin; padding: 1.5vmin;
+            background: var(--bg-page); border-radius: 25px; box-shadow: var(--inner-shadow);
+        }
+        
+        .cell {
+            width: clamp(30px, 7vmin, 60px); 
+            height: clamp(30px, 7vmin, 60px);
+            background: var(--bg-page); border-radius: 10px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 900; font-size: clamp(0.9rem, 3vmin, 1.3rem);
+            box-shadow: 4px 4px 8px #c5d4e3, -4px -4px 8px #ffffff; 
+            cursor: pointer; user-select: none; transition: 0.1s;
+        }
+        .cell.selected { background: var(--selected); color: white; box-shadow: var(--inner-shadow); }
+        .cell.correct { background: var(--correct); color: white; pointer-events: none; box-shadow: none; }
+
+        /* Menu Dropdown */
+        .menu-dropdown { position: absolute; top: 60px; left: 25px; display: none; flex-direction: column; gap: 8px; z-index: 1000; }
+        .menu-dropdown.active { display: flex; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 10px 18px; background: white; border-radius: 18px; box-shadow: 4px 4px 10px #c5d4e3; cursor: pointer; min-width: 180px; }
+    </style>
+</head>
+<body>
+
+    <header id="header">
+        <div class="header-left">
+            <i class="fas fa-bars hamburger-btn" onclick="toggleMenu()"></i>
+            <div class="menu-dropdown" id="dropdownMenu"></div>
+        </div>
+        <div class="header-center">
+            <img id="header-icon" src="" alt="">
+            <span id="header-title">Português - 1º Ano</span>
+        </div>
+        <div class="header-right">
+            <a href="#" class="btn-voltar">← Voltar</a>
+        </div>
+    </header>
+
+    <div class="game-wrapper">
+        <div class="game-card">
+            
+            <section id="status" class="status">
+                <div class="status-timer">⏳ <span id="timer-label">00:00</span></div>
+                
+                <div id="dots-container" class="status-dots"></div>
+                
+                <div class="status-rd-points">
+                    <div>
+                        <span id="points-label" class="points-val">0</span>
+                        <span style="font-weight:900; color:var(--primary-blue); font-size:0.65rem; margin-left:-10px;">PTS</span>
+                    </div>
+                    <img id="status-rd-img" src="">
+                </div>
+            </section>
+
+            <main id="main">
+                <div class="target-display">
+                    <img id="main-target-img" src="" alt="">
+                    <h2 id="main-target-word"></h2>
+                </div>
+
+                <div id="game-grid" class="grid-container"></div>
+            </main>
+
+        </div>
+    </div>
+
+    <script src="dados.js"></script>
+    <script>
+        let currentRound = 0, points = 0, seconds = 0, selected = [], wordToFind = "";
+
+        function toggleMenu() { document.getElementById('dropdownMenu').classList.toggle('active'); }
+
+        function init() {
+            const icons = JOGO_CONFIG.iconesMenu;
+            const pathI = JOGO_CONFIG.caminhoIcons;
+            document.getElementById('header-icon').src = pathI + icons.ano1;
+            document.getElementById('status-rd-img').src = JOGO_CONFIG.caminhoImg + "rd.png";
+
+            const anos = [{k:'pre', l:'Pré-Escolar'}, {k:'ano1', l:'1º Ano'}, {k:'ano2', l:'2º Ano'}, {k:'ano3', l:'3º Ano'}, {k:'ano4', l:'4º Ano'}];
+            anos.forEach(a => {
+                const d = document.createElement('div');
+                d.className = 'menu-item';
+                d.innerHTML = `<img src="${pathI}${icons[a.k]}" style="width:22px;"><span>${a.l}</span>`;
+                document.getElementById('dropdownMenu').appendChild(d);
+            });
+
+            setInterval(() => {
+                seconds++;
+                const m = Math.floor(seconds/60).toString().padStart(2,'0');
+                const s = (seconds%60).toString().padStart(2,'0');
+                document.getElementById('timer-label').innerText = `${m}:${s}`;
+            }, 1000);
+
+            loadRound();
+        }
+
+        function loadRound() {
+            const dots = document.getElementById('dots-container');
+            dots.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const d = document.createElement('div');
+                d.className = 'dot';
+                d.style.cssText = `background:${i <= currentRound ? '#2ecc71' : '#e9f0f8'}; box-shadow: ${i <= currentRound ? 'none' : 'inset 2px 2px 4px #c5d4e3'}; border: ${i <= currentRound ? '2px solid white' : 'none'}`;
+                dots.appendChild(d);
+            }
+
+            const item = JOGO_CONFIG.categorias.animais.itens[currentRound];
+            wordToFind = item.nome.toUpperCase();
+            document.getElementById('main-target-img').src = JOGO_CONFIG.caminhoImg + item.img;
+            document.getElementById('main-target-word').innerText = wordToFind;
+
+            const grid = document.getElementById('game-grid');
+            grid.innerHTML = '';
+            let cells = Array(64).fill('').map(() => "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random()*26)]);
+            const start = Math.floor(Math.random() * (64 - wordToFind.length));
+            for(let i=0; i<wordToFind.length; i++) cells[start+i] = wordToFind[i];
+
+            cells.forEach((l, i) => {
+                const div = document.createElement('div');
+                div.className = 'cell';
+                div.innerText = l;
+                div.onclick = () => {
+                    div.classList.toggle('selected');
+                    if(div.classList.contains('selected')) selected.push({el:div, l});
+                    else selected = selected.filter(x => x.el !== div);
+                    
+                    if(selected.map(x=>x.l).join('') === wordToFind) {
+                        selected.forEach(x => { x.el.classList.add('correct'); x.el.classList.remove('selected'); });
+                        points += 10; 
+                        document.getElementById('points-label').innerText = points;
+                        selected = [];
+                        setTimeout(() => { if(currentRound < 4) { currentRound++; loadRound(); } }, 600);
+                    }
+                };
+                grid.appendChild(div);
+            });
+        }
+        window.onload = init;
+    </script>
+</body>
+</html>
