@@ -50,7 +50,7 @@
         /* CARD PRINCIPAL */
         .game-wrapper { 
             flex-grow: 1; display: flex; justify-content: center; align-items: center; 
-            padding: 5px 15px 15px 15px; min-height: 0; 
+            padding: 5px 10px 10px 10px; min-height: 0; 
         }
         
         .game-card {
@@ -79,21 +79,22 @@
         .dot { width: 12px; height: 12px; border-radius: 50%; }
 
         /* ==========================================================================
-           3. MAIN (Layout Vertical e Horizontal)
+           3. MAIN (Ajustado para expansão máxima na vertical)
            ========================================================================== */
         main {
             flex-grow: 1; 
             display: flex; 
-            flex-direction: column; /* Vertical por padrão */
+            flex-direction: column; 
             align-items: center; 
-            justify-content: space-between; /* Espaçamento entre imagem e grelha */
-            padding: 0 20px 20px 20px; /* Padding esquerda, direita e fundo conforme pedido */
+            justify-content: flex-start; 
+            padding: 0 10px 10px 10px; /* 10px laterais e fundo conforme pedido */
             min-height: 0;
         }
 
         .target-display { 
             text-align: center; 
-            padding-top: 30px; /* Padding do topo do main no vertical */
+            padding-top: 30px; 
+            margin-bottom: 20px; /* 20px de espaço para a grelha */
             flex-shrink: 0;
         }
 
@@ -103,34 +104,40 @@
                 flex-direction: row; 
                 gap: 50px; 
                 justify-content: space-evenly; 
-                padding: 20px 40px; /* Padding mais equilibrado para horizontal */
+                padding: 20px 40px; 
             }
-            .target-display { padding-top: 0; }
+            .target-display { padding-top: 0; margin-bottom: 0; }
         }
 
-        .target-display img { height: clamp(60px, 15vh, 100px); object-fit: contain; }
-        .target-display h2 { font-size: clamp(1.6rem, 4.5vmin, 2.2rem); font-weight: 900; letter-spacing: 4px; color: #333; margin-top: 5px; }
+        .target-display img { height: clamp(50px, 12vh, 90px); object-fit: contain; }
+        .target-display h2 { font-size: clamp(1.4rem, 4vmin, 2rem); font-weight: 900; letter-spacing: 4px; color: #333; margin-top: 5px; }
 
         .grid-container {
             display: grid; grid-template-columns: repeat(8, 1fr); 
-            gap: 0.8vmin; padding: 1.5vmin;
-            background: var(--bg-page); border-radius: 25px; box-shadow: var(--inner-shadow);
-            margin-bottom: auto; /* No vertical, ajuda a manter a grelha com espaço */
-        }
-
-        @media (orientation: landscape) {
-            .grid-container { margin-bottom: 0; }
+            gap: 1vmin; padding: 1.2vmin;
+            background: var(--bg-page); border-radius: 20px; box-shadow: var(--inner-shadow);
+            /* Garante que a grelha cresce o máximo possível */
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
         }
         
         .cell {
-            width: clamp(30px, 7vmin, 60px); 
-            height: clamp(30px, 7vmin, 60px);
-            background: var(--bg-page); border-radius: 10px; 
+            /* Cálculo dinâmico para ocupar a largura total menos os paddings */
+            width: 100%;
+            aspect-ratio: 1 / 1; 
+            background: var(--bg-page); border-radius: clamp(6px, 1.5vmin, 12px); 
             display: flex; align-items: center; justify-content: center; 
-            font-weight: 900; font-size: clamp(0.9rem, 3vmin, 1.3rem);
-            box-shadow: 4px 4px 8px #c5d4e3, -4px -4px 8px #ffffff; 
+            font-weight: 900; font-size: clamp(1rem, 4.5vw, 1.5rem);
+            box-shadow: 3px 3px 6px #c5d4e3, -3px -3px 6px #ffffff; 
             cursor: pointer; user-select: none; transition: 0.1s;
         }
+
+        @media (orientation: landscape) {
+            .cell { width: clamp(35px, 7.5vmin, 65px); height: clamp(35px, 7.5vmin, 65px); }
+            .grid-container { width: auto; }
+        }
+
         .cell.selected { background: var(--selected); color: white; box-shadow: var(--inner-shadow); }
         .cell.correct { background: var(--correct); color: white; pointer-events: none; box-shadow: none; }
 
