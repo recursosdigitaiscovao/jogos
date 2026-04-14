@@ -18,79 +18,140 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
-        body { background-color: var(--bg-page); height: 100vh; width: 100vw; overflow: hidden; }
+        body { background-color: var(--bg-page); height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* --- HEADER --- */
-        header { height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 25px; }
-        .nav-section, .back-section { width: 150px; }
-        .back-section { display: flex; justify-content: flex-end; }
+        /* --- HEADER (TÍTULO E ICON SEMPRE VISÍVEIS) --- */
+        header {
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+            flex-shrink: 0;
+        }
+
+        .header-left, .header-right { width: 120px; }
+        .header-right { display: flex; justify-content: flex-end; }
+        
         .hamburger-btn { font-size: 24px; color: var(--primary-blue); cursor: pointer; }
-        .header-title { display: flex; align-items: center; gap: 8px; color: var(--primary-blue); font-weight: 900; font-size: 1.1rem; }
-        .header-title img { width: 28px; height: 28px; }
-        .btn-voltar { background-color: var(--primary-blue); color: white; padding: 5px 15px; border-radius: 15px; text-decoration: none; font-weight: 900; font-size: 0.75rem; box-shadow: 0 3px 0 #3d7db8; }
 
-        /* --- STATUS BAR ALINHADA --- */
+        .header-center { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            color: var(--primary-blue); 
+            font-weight: 900; 
+            font-size: 1.1rem;
+        }
+
+        .header-center img { 
+            width: 32px; 
+            height: 32px; 
+            object-fit: contain;
+        }
+
+        .btn-voltar {
+            background-color: var(--primary-blue); 
+            color: white; 
+            padding: 6px 18px; 
+            border-radius: 20px; 
+            text-decoration: none; 
+            font-weight: 900; 
+            font-size: 0.8rem; 
+            box-shadow: 0 3px 0 #3d7db8;
+        }
+
+        /* --- STATUS BAR (ALINHAMENTO PRECISO) --- */
         .status-bar {
             width: 100%;
             display: grid;
-            grid-template-columns: 1fr 2fr 1fr 1fr; /* Alinhamento proporcional */
+            grid-template-columns: 100px 1fr 100px 50px; /* Colunas bem definidas */
             align-items: center;
-            margin-bottom: 20px;
-            padding: 0 10px;
+            margin-bottom: 15px;
+            padding: 0 5px;
         }
-        .status-item { font-weight: 900; color: #555; display: flex; align-items: center; gap: 5px; }
-        .rounds-dots { display: flex; gap: 8px; justify-content: center; }
-        .dot { width: 16px; height: 16px; border-radius: 50%; background: var(--bg-page); box-shadow: var(--inner-shadow); transition: 0.3s; }
+
+        .timer-box { font-weight: 900; color: #555; font-size: 0.9rem; }
+        .dots-box { display: flex; gap: 6px; justify-content: center; }
+        .points-box { font-weight: 900; color: #555; font-size: 0.9rem; text-align: right; }
+        .rd-box { display: flex; justify-content: flex-end; }
+        .rd-box img { height: 35px; }
+
+        .dot { 
+            width: 15px; height: 15px; border-radius: 50%; 
+            background: var(--bg-page); box-shadow: var(--inner-shadow); 
+        }
         .dot.active { background: var(--correct); border: 2px solid white; box-shadow: none; }
-        .rd-image { height: 35px; justify-self: end; }
 
-        /* --- GAME CARD --- */
-        .game-area { display: flex; justify-content: center; align-items: center; height: calc(100vh - 60px); padding: 10px; }
-        .game-card { background: var(--bg-page); width: 95%; max-width: 850px; border-radius: 40px; box-shadow: var(--outer-shadow); padding: 25px; display: flex; flex-direction: column; align-items: center; }
-
-        .target-box { text-align: center; margin-bottom: 15px; }
-        .target-box img { height: 90px; margin-bottom: 5px; }
-        .target-box h2 { font-size: 2rem; font-weight: 900; letter-spacing: 4px; color: #333; }
-
-        /* --- GRID --- */
-        .grid-frame { background: var(--bg-page); padding: 15px; border-radius: 25px; box-shadow: var(--inner-shadow); display: grid; gap: 10px; }
-        .cell {
-            width: clamp(35px, 5vw, 45px); height: clamp(35px, 5vw, 45px);
-            background: var(--bg-page); border-radius: 10px; display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: 1.2rem; cursor: pointer;
-            box-shadow: 4px 4px 8px #c5d4e3, -4px -4px 8px #ffffff; transition: 0.2s;
-            user-select: none;
+        /* --- ÁREA DO JOGO --- */
+        .game-area { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 10px; }
+        
+        .game-card {
+            background: var(--bg-page); width: 95%; max-width: 850px; height: 95%; 
+            border-radius: 40px; box-shadow: var(--outer-shadow); padding: 20px 30px;
+            display: flex; flex-direction: column; align-items: center;
         }
-        .cell.selected { background: var(--selected); color: white; transform: scale(0.95); box-shadow: var(--inner-shadow); }
-        .cell.correct { background: var(--correct); color: white; }
 
-        /* --- MENU --- */
-        .menu-dropdown { position: absolute; top: 55px; left: 20px; display: none; flex-direction: column; gap: 8px; z-index: 1000; }
+        .target-box { text-align: center; margin-bottom: 10px; }
+        .target-box img { height: clamp(60px, 12vh, 90px); margin-bottom: 5px; }
+        .target-box h2 { font-size: 1.8rem; font-weight: 900; letter-spacing: 3px; color: #333; }
+
+        /* --- GRADE --- */
+        .grid-frame {
+            background: var(--bg-page); padding: 12px; border-radius: 25px;
+            box-shadow: var(--inner-shadow); display: grid; gap: 8px; margin: auto;
+        }
+        
+        .cell {
+            width: clamp(32px, 4.5vw, 45px); height: clamp(32px, 4.5vw, 45px);
+            background: var(--bg-page); border-radius: 10px; display: flex; align-items: center; 
+            justify-content: center; font-weight: 900; font-size: 1.2rem; cursor: pointer;
+            box-shadow: 4px 4px 8px #c5d4e3, -4px -4px 8px #ffffff;
+            user-select: none; transition: 0.2s;
+        }
+        .cell.selected { background: var(--selected); color: white; transform: scale(0.9); }
+        .cell.correct { background: var(--correct); color: white; box-shadow: none; }
+
+        /* --- MENU DROPDOWN --- */
+        .menu-dropdown {
+            position: absolute; top: 60px; left: 20px;
+            display: none; flex-direction: column; gap: 8px; z-index: 9999;
+        }
         .menu-dropdown.active { display: flex; }
-        .menu-row-item { display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--white); border-radius: 20px; box-shadow: 4px 4px 10px #c5d4e3; width: 180px; cursor: pointer; }
+        .menu-row-item {
+            display: flex; align-items: center; gap: 10px; padding: 10px 15px;
+            background: var(--white); border-radius: 25px; box-shadow: 4px 4px 10px #c5d4e3;
+            width: 190px; cursor: pointer;
+        }
+        .menu-row-item img { width: 25px; height: 25px; }
+        .menu-row-item span { color: var(--primary-blue); font-weight: 800; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="nav-section">
+        <div class="header-left">
             <i class="fas fa-bars hamburger-btn" onclick="toggleMenu()"></i>
             <div class="menu-dropdown" id="dropdownMenu"></div>
         </div>
-        <div class="header-title">
+
+        <div class="header-center">
             <img id="header-icon" src="" alt="">
-            <span>Português - 1º Ano</span>
+            <span id="header-text">Português - 1º Ano</span>
         </div>
-        <div class="back-section"><a href="#" class="btn-voltar">← Voltar</a></div>
+
+        <div class="header-right">
+            <a href="#" class="btn-voltar">← Voltar</a>
+        </div>
     </header>
 
     <main class="game-area">
         <div class="game-card">
             <div class="status-bar">
-                <div class="status-item">⏳ <span id="timer">00:00</span></div>
-                <div class="rounds-dots" id="rounds-container"></div>
-                <div class="status-item"><span id="points-display">0</span> PTS</div>
-                <img id="img-rd" src="" class="rd-image">
+                <div class="timer-box">⏳ <span id="timer-display">00:00</span></div>
+                <div class="dots-box" id="dots-container"></div>
+                <div class="points-box"><span id="points-display">0</span> PTS</div>
+                <div class="rd-box"><img id="img-rd" src=""></div>
             </div>
 
             <div class="target-box">
@@ -106,10 +167,9 @@
     <script>
         let currentRound = 0;
         let points = 0;
-        let seconds = 0;
+        let timerSeconds = 0;
         let selectedLetters = [];
-        let currentWord = "";
-        let timerInterval;
+        let wordToFind = "";
 
         function toggleMenu() { document.getElementById('dropdownMenu').classList.toggle('active'); }
 
@@ -117,17 +177,18 @@
             const dropdown = document.getElementById('dropdownMenu');
             const icons = JOGO_CONFIG.iconesMenu;
             const pathIcons = JOGO_CONFIG.caminhoIcons;
-            
-            document.getElementById('img-rd').src = JOGO_CONFIG.caminhoImg + "rd.png";
-            document.getElementById('header-icon').src = pathIcons + icons.ano1;
 
-            // Criar Menu
-            const mapping = [{k:'pre', l:'Pré-Escolar'}, {k:'ano1', l:'1º Ano'}, {k:'ano2', l:'2º Ano'}, {k:'ano3', l:'3º Ano'}, {k:'ano4', l:'4º Ano'}];
-            mapping.forEach(m => {
-                const row = document.createElement('div');
-                row.className = 'menu-row-item';
-                row.innerHTML = `<img src="${pathIcons}${icons[m.k]}"><span>${m.l}</span>`;
-                dropdown.appendChild(row);
+            // Header e RD
+            document.getElementById('header-icon').src = pathIcons + icons.ano1;
+            document.getElementById('img-rd').src = JOGO_CONFIG.caminhoImg + "rd.png";
+
+            // Menu
+            const anos = [{k:'pre', l:'Pré-Escolar'}, {k:'ano1', l:'1º Ano'}, {k:'ano2', l:'2º Ano'}, {k:'ano3', l:'3º Ano'}, {k:'ano4', l:'4º Ano'}];
+            anos.forEach(a => {
+                const div = document.createElement('div');
+                div.className = 'menu-row-item';
+                div.innerHTML = `<img src="${pathIcons}${icons[a.k]}"><span>${a.l}</span>`;
+                dropdown.appendChild(div);
             });
 
             startTimer();
@@ -135,31 +196,33 @@
         }
 
         function startTimer() {
-            timerInterval = setInterval(() => {
-                seconds++;
-                const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
-                const secs = (seconds % 60).toString().padStart(2, '0');
-                document.getElementById('timer').innerText = `${mins}:${secs}`;
+            setInterval(() => {
+                timerSeconds++;
+                const m = Math.floor(timerSeconds/60).toString().padStart(2,'0');
+                const s = (timerSeconds%60).toString().padStart(2,'0');
+                document.getElementById('timer-display').innerText = `${m}:${s}`;
             }, 1000);
         }
 
         function loadRound() {
-            const roundContainer = document.getElementById('rounds-container');
-            roundContainer.innerHTML = '';
+            // Atualizar Bolas
+            const dots = document.getElementById('dots-container');
+            dots.innerHTML = '';
             for(let i=0; i<5; i++) {
-                const dot = document.createElement('div');
-                dot.className = i <= currentRound ? 'dot active' : 'dot';
-                roundContainer.appendChild(dot);
+                const d = document.createElement('div');
+                d.className = i <= currentRound ? 'dot active' : 'dot';
+                dots.appendChild(d);
             }
 
-            const items = JOGO_CONFIG.categorias.animais.itens;
-            const item = items[currentRound % items.length];
-            currentWord = item.nome.toUpperCase();
+            // Pegar palavra
+            const itens = JOGO_CONFIG.categorias.animais.itens;
+            const item = itens[currentRound % itens.length];
+            wordToFind = item.nome.toUpperCase();
             
             document.getElementById('target-img').src = JOGO_CONFIG.caminhoImg + item.img;
-            document.getElementById('target-word').innerText = currentWord;
+            document.getElementById('target-word').innerText = wordToFind;
 
-            generateGrid(currentWord);
+            generateGrid(wordToFind);
         }
 
         function generateGrid(word) {
@@ -167,64 +230,53 @@
             grid.innerHTML = '';
             grid.style.gridTemplateColumns = 'repeat(8, 1fr)';
             
-            const totalCells = 64;
-            let cells = Array(totalCells).fill('');
-
-            // Colocar a palavra na horizontal aleatoriamente
-            const startPos = Math.floor(Math.random() * (totalCells - word.length));
-            for(let i=0; i < word.length; i++) {
-                cells[startPos + i] = word[i];
-            }
-
-            // Preencher o resto com letras aleatórias
+            let cells = Array(64).fill('');
+            const startIdx = Math.floor(Math.random() * (64 - word.length));
+            
+            // Colocar palavra
+            for(let i=0; i<word.length; i++) cells[startIdx + i] = word[i];
+            
+            // Preencher resto
             const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            cells = cells.map(c => c === '' ? abc[Math.floor(Math.random() * abc.length)] : c);
+            cells = cells.map(c => c === '' ? abc[Math.floor(Math.random()*26)] : c);
 
-            cells.forEach((letter, index) => {
-                const cell = document.createElement('div');
-                cell.className = 'cell';
-                cell.innerText = letter;
-                cell.onclick = () => selectCell(cell, letter);
-                grid.appendChild(cell);
+            cells.forEach((l, i) => {
+                const div = document.createElement('div');
+                div.className = 'cell';
+                div.innerText = l;
+                div.onclick = () => {
+                    if(div.classList.contains('correct')) return;
+                    div.classList.toggle('selected');
+                    updateSelection(div, l);
+                };
+                grid.appendChild(div);
             });
         }
 
-        function selectCell(cell, letter) {
-            if (cell.classList.contains('correct')) return;
-
-            cell.classList.toggle('selected');
-            
-            if (cell.classList.contains('selected')) {
-                selectedLetters.push({element: cell, letter: letter});
+        function updateSelection(el, letter) {
+            if(el.classList.contains('selected')) {
+                selectedLetters.push({el, letter});
             } else {
-                selectedLetters = selectedLetters.filter(item => item.element !== cell);
+                selectedLetters = selectedLetters.filter(x => x.el !== el);
             }
-
-            checkWord();
-        }
-
-        function checkWord() {
-            const wordFormed = selectedLetters.map(l => l.letter).join('');
             
-            if (wordFormed === currentWord) {
-                selectedLetters.forEach(item => {
-                    item.element.classList.remove('selected');
-                    item.element.classList.add('correct');
+            const formed = selectedLetters.map(x => x.letter).join('');
+            if(formed === wordToFind) {
+                selectedLetters.forEach(x => {
+                    x.el.classList.remove('selected');
+                    x.el.classList.add('correct');
                 });
-                
                 points += 10;
                 document.getElementById('points-display').innerText = points;
                 selectedLetters = [];
-
                 setTimeout(() => {
-                    if (currentRound < 4) {
+                    if(currentRound < 4) {
                         currentRound++;
                         loadRound();
                     } else {
-                        alert("Parabéns! Terminaste o jogo!");
-                        clearInterval(timerInterval);
+                        alert("Jogo Terminado!");
                     }
-                }, 1000);
+                }, 800);
             }
         }
 
