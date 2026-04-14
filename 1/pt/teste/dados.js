@@ -62,7 +62,7 @@ const JOGO_CONFIG = {
     },
     relatorio: {
         titulo: "MUITO BEM!",
-        pontosTotal: "Pontos:",
+        pontosTotal: "Encontraste:",
         tempoTotal: "Tempo:"
     }
 };
