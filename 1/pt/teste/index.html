@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sopa de Letras - Template 1</title>
+    <title>Sopa de Letras - 1º Ano</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-page: #e9f0f8;
             --primary-blue: #5ba4e5;
+            --white: #ffffff;
             --inner-shadow: inset 6px 6px 12px #c5d4e3, inset -6px -6px 12px #ffffff;
             --outer-shadow: 10px 10px 20px #c5d4e3, -10px -10px 20px #ffffff;
         }
@@ -17,12 +18,12 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
         body { background-color: var(--bg-page); height: 100vh; width: 100vw; overflow: hidden; position: relative; }
 
-        /* --- NOVO MENU HAMBÚRGUER FLUTUANTE --- */
+        /* --- MENU DROPDOWN VERTICAL COM TEXTO --- */
         .nav-container {
             position: absolute;
             top: 15px;
             left: 15px;
-            z-index: 9999; /* Garante que fica por cima de tudo */
+            z-index: 9999;
         }
 
         .hamburger-btn {
@@ -39,46 +40,46 @@
         }
 
         .menu-dropdown {
-            display: none; /* Escondido por padrão */
+            display: none;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             padding-top: 10px;
+            width: 220px; /* Largura para caber o texto ao lado */
         }
 
-        .menu-dropdown.active {
-            display: flex; /* Mostra ao clicar */
-        }
+        .menu-dropdown.active { display: flex; }
 
-        .menu-icon-item {
-            width: 55px;
-            height: 55px;
-            background: #ffffff;
-            border-radius: 50%;
+        .menu-row-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            box-shadow: 4px 4px 10px #c5d4e3, -4px -4px 10px #ffffff;
+            gap: 15px;
+            padding: 8px 15px;
+            background: var(--white);
+            border-radius: 30px;
+            box-shadow: 4px 4px 8px #c5d4e3, -4px -4px 8px #ffffff;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.2s, background 0.2s;
         }
 
-        .menu-icon-item:hover { transform: scale(1.1); }
-        .menu-icon-item img { width: 32px; height: 32px; object-fit: contain; }
+        .menu-row-item:hover { transform: translateX(10px); background: #f0f7ff; }
+
+        .menu-row-item img { width: 35px; height: 35px; object-fit: contain; }
+
+        .menu-row-item span {
+            color: var(--primary-blue);
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
 
         /* --- CONTEÚDO --- */
-        .main-content {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
+        .main-content { width: 100%; height: 100%; display: flex; flex-direction: column; }
 
         header {
             height: 80px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 40px 0 100px; /* Recuo para não bater no menu */
+            padding: 0 40px 0 100px;
         }
 
         .header-title { display: flex; align-items: center; gap: 12px; color: var(--primary-blue); font-weight: 900; font-size: 1.6rem; }
@@ -96,33 +97,34 @@
             background: var(--bg-page); width: 100%; max-width: 950px; height: 95%; max-height: 780px;
             border-radius: 40px; box-shadow: var(--outer-shadow); padding: 25px;
             display: flex; flex-direction: column; align-items: center;
+            position: relative;
         }
 
         .status-bar { width: 100%; display: flex; justify-content: space-between; font-weight: 900; margin-bottom: 10px; }
         .dots { display: flex; gap: 8px; }
-        .dot { width: 20px; height: 20px; border-radius: 50%; background: var(--bg-page); box-shadow: var(--inner-shadow); }
+        .dot { width: 18px; height: 18px; border-radius: 50%; background: var(--bg-page); box-shadow: var(--inner-shadow); }
         .dot.active { background: #2ecc71; border: 2px solid white; }
 
         .target-box { text-align: center; margin-bottom: 15px; }
-        .target-box img { height: clamp(80px, 15vh, 120px); margin-bottom: 5px; }
-        .target-box h2 { font-size: 2.5rem; font-weight: 900; letter-spacing: 4px; color: #333; }
+        .target-box img { height: clamp(70px, 12vh, 110px); margin-bottom: 5px; }
+        .target-box h2 { font-size: 2.2rem; font-weight: 900; letter-spacing: 4px; color: #333; }
 
-        /* Grade Neomórfica */
+        /* Grade Centralizada */
         .grid-frame {
             background: var(--bg-page); padding: 15px; border-radius: 30px;
-            box-shadow: var(--inner-shadow); display: grid; gap: 10px; margin: auto;
+            box-shadow: var(--inner-shadow); display: grid; gap: 8px; margin: auto;
         }
         
         .cell {
-            width: clamp(35px, 4.5vw, 48px); height: clamp(35px, 4.5vw, 48px); background: var(--bg-page); 
+            width: clamp(32px, 4vw, 46px); height: clamp(32px, 4vw, 46px); background: var(--bg-page); 
             border-radius: 10px; display: flex; align-items: center; justify-content: center; 
-            font-weight: 900; font-size: 1.3rem; cursor: pointer; box-shadow: 5px 5px 10px #c5d4e3, -5px -5px 10px #ffffff;
+            font-weight: 900; font-size: 1.2rem; cursor: pointer; box-shadow: 4px 4px 8px #c5d4e3, -4px -4px 8px #ffffff;
         }
 
         .game-footer { width: 100%; display: flex; justify-content: flex-end; }
         .settings-btn {
-            background: var(--bg-page); border: none; width: 50px; height: 50px;
-            border-radius: 50%; box-shadow: var(--outer-shadow); color: #888; font-size: 24px; cursor: pointer;
+            background: var(--bg-page); border: none; width: 45px; height: 45px;
+            border-radius: 50%; box-shadow: var(--outer-shadow); color: #888; font-size: 22px; cursor: pointer;
         }
     </style>
 </head>
@@ -174,32 +176,40 @@
             menu.classList.toggle('active');
         }
 
-        function initApp() {
+        function init() {
             const dropdown = document.getElementById('dropdownMenu');
             const icons = JOGO_CONFIG.iconesMenu;
             const pathIcons = JOGO_CONFIG.caminhoIcons;
 
-            // Criar a lista de icons debaixo do hambúrguer
-            const keys = ['pre', 'ano1', 'ano2', 'ano3', 'ano4'];
-            keys.forEach(key => {
-                const div = document.createElement('div');
-                div.className = 'menu-icon-item';
-                div.innerHTML = `<img src="${pathIcons}${icons[key]}" alt="${key}">`;
-                dropdown.appendChild(div);
+            const mapping = [
+                { key: 'pre', label: 'Pré-Escolar' },
+                { key: 'ano1', label: '1º Ano' },
+                { key: 'ano2', label: '2º Ano' },
+                { key: 'ano3', label: '3º Ano' },
+                { key: 'ano4', label: '4º Ano' }
+            ];
+
+            mapping.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'menu-row-item';
+                row.innerHTML = `
+                    <img src="${pathIcons}${icons[item.key]}" alt="${item.label}">
+                    <span>${item.label}</span>
+                `;
+                dropdown.appendChild(row);
             });
 
-            // Ícone do topo (header)
             document.getElementById('header-icon').src = `${pathIcons}${icons.ano1}`;
+            carregarJogo('animais', 0); // VACA
+        }
 
-            // Carregar o primeiro item (VACA) da categoria animais
-            const cat = JOGO_CONFIG.categorias.animais;
-            const item = cat.itens[0];
-            
+        function carregarJogo(catKey, idx) {
+            const item = JOGO_CONFIG.categorias[catKey].itens[idx];
             document.getElementById('main-img').src = JOGO_CONFIG.caminhoImg + item.img;
             document.getElementById('main-word').innerText = item.nome;
 
-            // Gerar Grade
             const grid = document.getElementById('game-grid');
+            grid.innerHTML = '';
             grid.style.gridTemplateColumns = 'repeat(8, 1fr)';
             const letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             for(let i=0; i<64; i++) {
@@ -209,8 +219,8 @@
                 grid.appendChild(cell);
             }
 
-            // Bolinhas de progresso
             const dots = document.getElementById('dots-progress');
+            dots.innerHTML = '';
             for(let i=0; i<5; i++) {
                 const d = document.createElement('div');
                 d.className = i === 0 ? 'dot active' : 'dot';
@@ -218,7 +228,7 @@
             }
         }
 
-        window.onload = initApp;
+        window.onload = init;
     </script>
 </body>
 </html>
