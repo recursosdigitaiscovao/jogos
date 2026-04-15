@@ -1,1 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Qual é a Letra? - 1º Ano</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #e9f0f8;
+            --primary-blue: #5ba4e5;
+            --primary-dark: #3d7db8;
+            --white: #ffffff;
+            --outer-shadow: 0px 0px 25px #b0c4d9, 0px 0px 25px #ffffff;
+        }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
+        
+        body { 
+            background-color: var(--bg-page); 
+            height: 100dvh; width: 100vw; 
+            overflow: hidden; 
+            display: flex; flex-direction: column;
+        }
+
+        header { 
+            height: 60px; 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 20px; flex-shrink: 0; z-index: 1000;
+        }
+        
+        .hamburger-btn { font-size: 26px; color: var(--primary-blue); cursor: pointer; padding: 8px; }
+
+        .header-center { 
+            flex: 1; display: flex; align-items: center; justify-content: center; 
+            gap: 10px; color: var(--primary-blue); font-weight: 900; font-size: 1.2rem;
+        }
+        .header-center img { height: 30px; }
+
+        .btn-voltar { 
+            background: var(--primary-blue); color: white; padding: 8px 16px; 
+            border-radius: 12px; text-decoration: none; font-weight: 900; 
+            font-size: 0.8rem; box-shadow: 0 4px 0 var(--primary-dark);
+        }
+
+        .game-wrapper { 
+            flex: 1; display: flex; justify-content: center; 
+            padding: 5px 20px 15px 20px; overflow: hidden;
+        }
+
+        .game-card { 
+            background: var(--bg-page); width: 100%; max-width: 600px; 
+            height: 100%; border-radius: 35px; box-shadow: var(--outer-shadow); 
+            display: flex; flex-direction: column; position: relative; overflow: hidden;
+        }
+
+        /* Status Bar */
+        .status { height: 50px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+        #dots-container { display: flex; gap: 8px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; background: #cbd9e6; transition: 0.3s; }
+        .dot.active { background: var(--primary-blue); transform: scale(1.3); }
+        .dot.completed { background: #7ed321; }
+
+        /* Jogo */
+        main { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; }
+        
+        #target-img { 
+            height: min(200px, 25vh); 
+            border-radius: 25px; 
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            background: white; padding: 10px;
+        }
+
+        .word-container {
+            display: flex; align-items: center; justify-content: center;
+            font-size: clamp(2rem, 8vw, 3.5rem); font-weight: 900; color: #445;
+            letter-spacing: 4px; gap: 10px;
+        }
+
+        .drop-zone {
+            width: 60px; height: 70px;
+            border: 3px dashed var(--primary-blue);
+            border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.5);
+            color: var(--primary-blue);
+        }
+
+        .drop-zone.hover { background: #d0e0f0; border-style: solid; }
+
+        .options-grid {
+            display: flex; gap: 15px; justify-content: center;
+            width: 100%; padding: 10px;
+        }
+
+        .letter-option {
+            width: 65px; height: 65px;
+            background: white; border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; font-weight: 900; color: #445;
+            box-shadow: 0 5px 0 #cbd9e6; cursor: grab;
+            touch-action: none; user-select: none;
+        }
+
+        .letter-option:active { cursor: grabbing; }
+
+        /* Intro Overlay */
+        #intro-overlay {
+            position: absolute; inset: 0; background: var(--bg-page); z-index: 100;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+        }
+
+        .btn-jogar {
+            padding: 15px 50px; background: var(--primary-blue); 
+            color: white; border: none; border-radius: 20px; 
+            font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); 
+            font-size: 1.2rem;
+        }
+
+        /* Menu de Categorias */
+        .rd-panel {
+            position: absolute; bottom: 0; left: 0; width: 100%; background: white; z-index: 2500;
+            border-radius: 35px 35px 0 0; padding: 25px 20px; display: flex; flex-direction: column; gap: 12px;
+            transform: translateY(101%); transition: transform 0.4s ease;
+        }
+        .rd-panel.active { transform: translateY(0); box-shadow: 0 -10px 25px rgba(0,0,0,0.1); }
+        .custom-menu-item { 
+            display: flex; align-items: center; gap: 12px; padding: 12px 20px; 
+            background: #f0f4f8; border-radius: 18px; cursor: pointer; text-decoration: none; 
+            color: #555; font-weight: 700;
+        }
+
+        #drag-proxy {
+            position: fixed; pointer-events: none; z-index: 3000;
+            width: 65px; height: 65px; background: white; border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; font-weight: 900; color: #445;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2); opacity: 0.9;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <i class="fas fa-bars hamburger-btn" onclick="toggleRDMenu()"></i>
+        <div class="header-center">
+            <img id="header-icon" src="" alt="">
+            <span>Qual é a Letra?</span>
+        </div>
+        <a href="../index.html" class="btn-voltar">VOLTAR</a>
+    </header>
+
+    <div class="game-wrapper">
+        <div class="game-card">
+            <section class="status">
+                <div id="timer-display" style="font-weight: 700; color: #667;">⏳ 00:00</div>
+                <div id="dots-container"></div>
+                <div id="points-display" style="font-weight: 900; color: var(--primary-blue);">0</div>
+            </section>
+
+            <div id="intro-overlay">
+                <h1 style="color:var(--primary-blue); font-weight:900;">Qual é a Letra?</h1>
+                <p style="text-align:center; padding: 0 20px;">Arrasta a primeira letra para completar a palavra!</p>
+                <button onclick="iniciarJogo()" class="btn-jogar">JOGAR</button>
+            </div>
+
+            <main id="game-area">
+                <img id="target-img" src="">
+                
+                <div class="word-container">
+                    <div class="drop-zone" id="main-drop-zone">?</div>
+                    <span id="word-rest"></span>
+                </div>
+
+                <div class="options-grid" id="options-container">
+                    <!-- Letras geradas por JS -->
+                </div>
+            </main>
+
+            <div id="rdDropdownMenu" class="rd-panel">
+                <div style="width:40px; height:5px; background:#ccc; margin:0 auto 10px; border-radius:10px;" onclick="toggleRDMenu()"></div>
+                <h3 style="text-align:center; color:var(--primary-blue); margin-bottom:10px;">Escolher Letra</h3>
+                <!-- Categorias JS -->
+            </div>
+        </div>
+    </div>
+
+    <div id="drag-proxy"></div>
+
+    <script src="dados.js"></script>
+    <script>
+        let currentRound = 0;
+        let totalRounds = 5;
+        let currentCategory = 'letra_a';
+        let itemsForGame = [];
+        let timer = 0;
+        let timerInt;
+        let points = 0;
+        let correctLetter = "";
+
+        // Sons
+        const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
+        const sndErro = new Audio(JOGO_CONFIG.sons.erro);
+        const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
+
+        function iniciarJogo() {
+            document.getElementById('intro-overlay').style.display = 'none';
+            document.getElementById('game-area').style.display = 'flex';
+            
+            if(!timerInt) {
+                timerInt = setInterval(() => {
+                    timer++;
+                    const m = Math.floor(timer/60).toString().padStart(2,'0');
+                    const s = (timer%60).toString().padStart(2,'0');
+                    document.getElementById('timer-display').innerText = `⏳ ${m}:${s}`;
+                }, 1000);
+            }
+
+            prepararRondas();
+            loadRound();
+        }
+
+        function prepararRondas() {
+            const itens = JOGO_CONFIG.categorias[currentCategory].itens;
+            itemsForGame = [...itens].sort(() => 0.5 - Math.random()).slice(0, totalRounds);
+            currentRound = 0;
+            points = 0;
+            atualizarUI();
+        }
+
+        function loadRound() {
+            if(currentRound >= totalRounds) {
+                finalizarJogo();
+                return;
+            }
+
+            atualizarDots();
+            const item = itemsForGame[currentRound];
+            const nomeOriginal = item.nome.toUpperCase();
+            
+            // Lógica para a primeira letra
+            correctLetter = nomeOriginal.charAt(0);
+            const restoDaPalavra = nomeOriginal.substring(1);
+
+            document.getElementById('target-img').src = JOGO_CONFIG.caminhoImg + item.img;
+            document.getElementById('word-rest').innerText = restoDaPalavra;
+            document.getElementById('main-drop-zone').innerText = "?";
+            document.getElementById('main-drop-zone').style.color = "var(--primary-blue)";
+
+            gerarOpcoes(correctLetter);
+        }
+
+        function gerarOpcoes(correta) {
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            let opcoes = [correta];
+            const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+            while(opcoes.length < 4) {
+                let r = abc[Math.floor(Math.random() * abc.length)];
+                if(!opcoes.includes(r)) opcoes.push(r);
+            }
+
+            opcoes.sort(() => 0.5 - Math.random());
+
+            opcoes.forEach(letra => {
+                const div = document.createElement('div');
+                div.className = 'letter-option';
+                div.innerText = letra;
+                setupDragEvents(div);
+                container.appendChild(div);
+            });
+        }
+
+        // Lógica de Drag and Drop (Mouse e Touch)
+        let activeDrag = null;
+        function setupDragEvents(el) {
+            const onStart = (e) => {
+                activeDrag = el;
+                const touch = e.touches ? e.touches[0] : e;
+                const proxy = document.getElementById('drag-proxy');
+                proxy.innerText = el.innerText;
+                proxy.style.display = 'flex';
+                proxy.style.left = (touch.clientX - 32) + 'px';
+                proxy.style.top = (touch.clientY - 32) + 'px';
+                el.style.opacity = "0.4";
+            };
+
+            const onMove = (e) => {
+                if(!activeDrag) return;
+                const touch = e.touches ? e.touches[0] : e;
+                const proxy = document.getElementById('drag-proxy');
+                proxy.style.left = (touch.clientX - 32) + 'px';
+                proxy.style.top = (touch.clientY - 32) + 'px';
+
+                // Check hover sobre a zona
+                const dropZone = document.getElementById('main-drop-zone');
+                const rect = dropZone.getBoundingClientRect();
+                if(touch.clientX > rect.left && touch.clientX < rect.right && 
+                   touch.clientY > rect.top && touch.clientY < rect.bottom) {
+                    dropZone.classList.add('hover');
+                } else {
+                    dropZone.classList.remove('hover');
+                }
+            };
+
+            const onEnd = (e) => {
+                if(!activeDrag) return;
+                const touch = e.changedTouches ? e.changedTouches[0] : e;
+                const dropZone = document.getElementById('main-drop-zone');
+                const rect = dropZone.getBoundingClientRect();
+                
+                document.getElementById('drag-proxy').style.display = 'none';
+                el.style.opacity = "1";
+                dropZone.classList.remove('hover');
+
+                if(touch.clientX > rect.left && touch.clientX < rect.right && 
+                   touch.clientY > rect.top && touch.clientY < rect.bottom) {
+                    checkAnswer(el.innerText);
+                }
+                activeDrag = null;
+            };
+
+            el.addEventListener('mousedown', onStart);
+            el.addEventListener('touchstart', onStart, {passive: false});
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('touchmove', onMove, {passive: false});
+            window.addEventListener('mouseup', onEnd);
+            window.addEventListener('touchend', onEnd);
+        }
+
+        function checkAnswer(letra) {
+            if(letra === correctLetter) {
+                sndAcerto.play();
+                document.getElementById('main-drop-zone').innerText = letra;
+                document.getElementById('main-drop-zone').style.color = "#7ed321";
+                points += 100;
+                atualizarUI();
+                setTimeout(() => {
+                    currentRound++;
+                    loadRound();
+                }, 1000);
+            } else {
+                sndErro.play();
+                const dz = document.getElementById('main-drop-zone');
+                dz.style.borderColor = "#ff4d4d";
+                setTimeout(() => dz.style.borderColor = "var(--primary-blue)", 500);
+            }
+        }
+
+        function atualizarUI() {
+            document.getElementById('points-display').innerText = points;
+        }
+
+        function atualizarDots() {
+            const container = document.getElementById('dots-container');
+            container.innerHTML = '';
+            for (let i = 0; i < totalRounds; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                if (i < currentRound) dot.classList.add('completed');
+                else if (i === currentRound) dot.classList.add('active');
+                container.appendChild(dot);
+            }
+        }
+
+        function finalizarJogo() {
+            clearInterval(timerInt);
+            sndVitoria.play();
+            
+            let relatorio = JOGO_CONFIG.relatorios.find(r => points >= r.min);
+
+            document.getElementById('game-area').innerHTML = `
+                <div style="text-align:center; padding:20px;">
+                    <h2 style="color:var(--primary-blue); font-size:2rem; margin-bottom:10px;">${relatorio.titulo}</h2>
+                    <p style="font-weight:700; color:#667; margin-bottom:20px;">${relatorio.msg}</p>
+                    <p style="font-size:1.5rem; font-weight:900; margin-bottom:20px;">Pontos: ${points}</p>
+                    <button onclick="location.reload()" class="btn-jogar">REPETIR</button>
+                </div>
+            `;
+        }
+
+        function toggleRDMenu() {
+            document.getElementById('rdDropdownMenu').classList.toggle('active');
+        }
+
+        function mudarCategoria(cat) {
+            currentCategory = cat;
+            toggleRDMenu();
+            iniciarJogo();
+        }
+
+        window.onload = () => {
+            const pathI = JOGO_CONFIG.caminhoIcons;
+            document.getElementById('header-icon').src = pathI + JOGO_CONFIG.iconesMenu.ano1;
+
+            const rdBox = document.getElementById('rdDropdownMenu');
+            Object.keys(JOGO_CONFIG.categorias).forEach(key => {
+                const cat = JOGO_CONFIG.categorias[key];
+                const div = document.createElement('div');
+                div.className = 'custom-menu-item';
+                div.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="height:30px; width:30px; object-fit:contain;"><span>${cat.nome}</span>`;
+                div.onclick = () => mudarCategoria(key);
+                rdBox.appendChild(div);
+            });
+            atualizarDots();
+        };
+    </script>
+</body>
+</html>
