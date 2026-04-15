@@ -295,6 +295,7 @@
         let selectedCells = [];
         let targetWord = "";
         let isDragging = false;
+        let score = 0;
 
         function atualizarProgressao(total, atual) {
             const container = document.getElementById('dots-container');
@@ -429,7 +430,6 @@
             el.classList.add('selected');
             selectedCells.push(el);
             
-            // Check instantâneo enquanto seleciona
             const currentString = selectedCells.map(x => x.innerText).join('');
             if(currentString === targetWord) {
                 isDragging = false;
@@ -445,6 +445,8 @@
         function checkWord() {
             const currentString = selectedCells.map(x => x.innerText).join('');
             if(currentString === targetWord) {
+                score += 100;
+                document.getElementById('points-label').innerText = score;
                 selectedCells.forEach(x => {
                     x.classList.remove('selected');
                     x.classList.add('correct');
@@ -452,6 +454,10 @@
                 document.getElementById('target-slots').innerText = itemsForGame[roundGlobal-1].nome.toUpperCase();
                 setTimeout(() => { roundGlobal++; loadRound(); }, 800);
             } else {
+                if(selectedCells.length > 0) {
+                    score = Math.max(0, score - 50);
+                    document.getElementById('points-label').innerText = score;
+                }
                 clearSelection();
             }
         }
@@ -463,6 +469,7 @@
             main.innerHTML = `
                 <div style="text-align:center; padding:20px;">
                     <h2 style="color:var(--primary-blue); font-size:2rem; margin-bottom:10px;">${JOGO_CONFIG.relatorio.titulo}</h2>
+                    <p style="font-weight:900; color:var(--primary-blue); font-size:1.5rem; margin-bottom:10px;">Pontos: ${score}</p>
                     <p style="font-weight:700; color:#667; margin-bottom:20px;">Tempo: ${document.getElementById('timer-display').innerText.replace('⏳','').trim()}</p>
                     <button onclick="location.reload()" class="btn-jogar" style="width:180px;">REPETIR</button>
                 </div>
@@ -473,14 +480,14 @@
             currentCategory = cat;
             roundGlobal = 1;
             timer = 0;
+            score = 0;
             if(timerInt) { clearInterval(timerInt); timerInt = null; }
             document.getElementById('timer-display').innerText = `⏳ 00:00`;
             document.getElementById('points-label').innerText = "0";
             
-            // Se estivermos no fim (ecrã final), precisamos de restaurar o HTML do main
             const main = document.getElementById('game-area');
             if(!main.querySelector('#inner-game')) {
-                location.reload(); // Forma mais segura de limpar o estado final
+                location.reload();
                 return;
             }
 
