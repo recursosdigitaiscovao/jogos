@@ -13,7 +13,15 @@ const JOGO_CONFIG = {
         ano3: "icon3.png",
         ano4: "icon4.png"
     },
-
+    links: {
+        home: "/jogos", 
+        pre: "/jogos/pre",
+        ano1: "/jogos/1",
+        ano2: "/jogos/2",
+        ano3: "/jogos/3",
+        ano4: "/jogos/4"
+    },
+    
     // LISTA DE JOGOS
     listaJogos: [
         { nome: "Conta as Sílabas", icon: "silabas.png", link: "silabas/" },
