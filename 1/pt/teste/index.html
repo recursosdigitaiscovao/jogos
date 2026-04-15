@@ -31,8 +31,11 @@
         }
         
         .hamburger-btn { 
-            font-size: 26px; color: var(--primary-blue); cursor: pointer; 
-            padding: 8px; display: flex; align-items: center; justify-content: center;
+            font-size: 26px; 
+            color: var(--primary-blue); 
+            cursor: pointer; 
+            padding: 8px;
+            display: flex; align-items: center; justify-content: center;
         }
 
         .header-center { 
@@ -48,23 +51,53 @@
         }
 
         .game-wrapper { 
-            flex: 1; display: flex; justify-content: center; 
-            padding: 5px 30px 15px 30px; min-height: 0; overflow: hidden;
+            flex: 1; 
+            display: flex; 
+            justify-content: center; 
+            padding: 5px 30px 15px 30px; 
+            min-height: 0;
+            overflow: hidden;
         }
 
         .game-card { 
-            background: var(--bg-page); width: 100%; max-width: 900px; 
-            height: 100%; border-radius: 35px; box-shadow: var(--outer-shadow); 
-            display: flex; flex-direction: column; position: relative; overflow: hidden;
-            transition: max-width 0.5s ease; /* Transição suave ao expandir */
+            background: var(--bg-page); 
+            width: 100%; 
+            max-width: 900px; 
+            height: 100%; 
+            border-radius: 35px; 
+            box-shadow: var(--outer-shadow); 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            overflow: hidden;
+            transition: max-width 0.4s ease;
         }
+
+        /* --- MENU HAMBURGUER (ORIGINAL) --- */
+        .menu-dropdown { 
+            position: absolute; top: 60px; left: 20px; 
+            display: none; flex-direction: column; gap: 8px; z-index: 2000; 
+        }
+
+        .custom-menu-item { 
+            display: flex; align-items: center; gap: 12px; padding: 12px 20px; 
+            background: white; border-radius: 18px; box-shadow: 4px 4px 10px #c5d4e3; 
+            cursor: pointer; min-width: 180px; text-decoration: none; 
+            color: #555; font-weight: 700;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .custom-menu-item:hover { 
+            background: var(--primary-blue) !important; 
+            transform: translateY(-2px);
+        }
+        .custom-menu-item:hover span { color: white; }
 
         /* Status Bar */
         .status { 
             height: 50px; flex-shrink: 0; display: flex; 
             justify-content: space-between; align-items: center; padding: 0 20px;
         }
-        
         #dots-container { display: flex; gap: 8px; align-items: center; justify-content: center; }
         .dot {
             width: 12px; height: 12px; border-radius: 50%;
@@ -73,12 +106,11 @@
         }
         .dot.active { background: var(--primary-blue); transform: scale(1.3); box-shadow: 0 0 8px var(--primary-blue); }
         .dot.completed { background: #a8d5ff; }
-
         .status-timer { font-weight: 700; color: #667788; min-width: 60px; }
         .status-right { display: flex; align-items: center; gap: 12px; min-width: 60px; justify-content: flex-end; }
         .rd-menu-btn { height: 24px; cursor: pointer; }
 
-        /* --- ESTILOS DO ECRÃ INICIAL (ORIGINAL) --- */
+        /* --- INTRO OVERLAY (ORIGINAL) --- */
         #intro-overlay {
             position: absolute; top: 0; left: 0; right: 0; height: 100%;
             background: var(--bg-page); z-index: 100;
@@ -103,7 +135,7 @@
             100% { transform: translate(0,0); opacity: 0; } 
         }
 
-        /* --- ESTILOS DA ÁREA DE JOGO (RESPONSIVA E EXPANSÍVEL) --- */
+        /* --- ÁREA DO JOGO (ADAPTÁVEL) --- */
         main { flex: 1; display: none; position: relative; }
 
         #inner-game { 
@@ -111,12 +143,11 @@
             align-items: center; justify-content: space-evenly; padding: 10px; 
         }
 
-        /* Ajuste Dinâmico da Grelha */
         .grid { 
             display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; 
             background: #d0e0f0; padding: 10px; border-radius: 20px; 
             touch-action: none; position: relative;
-            /* Ocupa o máximo possível sem quebrar o layout */
+            /* Ajusta o tamanho da sopa de acordo com o ecrã */
             width: min(85vw, 65vh); height: min(85vw, 65vh);
             max-width: 500px; max-height: 500px;
         }
@@ -131,7 +162,7 @@
         .hint-img { height: clamp(60px, 15vh, 100px); border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .slots { font-size: clamp(1.2rem, 4vw, 1.8rem); font-weight: 900; color: var(--primary-blue); letter-spacing: 5px; }
 
-        /* Adaptabilidade Horizontal no Jogo */
+        /* Layout Horizontal no Jogo */
         @media (orientation: landscape) and (min-height: 400px) {
             #inner-game { flex-direction: row; justify-content: space-evenly; }
             .hint-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
@@ -140,20 +171,14 @@
         .cell.selected { background: var(--primary-blue); color: white; transform: translateY(2px); box-shadow: none; }
         .cell.correct { background: #7ed321; color: white; box-shadow: none; }
 
-        /* Menus e Painéis */
-        .menu-dropdown { position: absolute; top: 60px; left: 20px; display: none; flex-direction: column; gap: 8px; z-index: 2000; }
+        /* RD Painel */
         .rd-panel {
             position: absolute; bottom: 0; left: 0; width: 100%; background: white; z-index: 2500;
             border-radius: 35px 35px 0 0; padding: 25px 20px; display: flex; flex-direction: column; gap: 12px;
             transform: translateY(101%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .rd-panel.active { transform: translateY(0); box-shadow: 0 -10px 25px rgba(0,0,0,0.1); }
-
-        .custom-menu-item { 
-            display: flex; align-items: center; gap: 12px; padding: 12px 20px; 
-            background: white; border-radius: 18px; box-shadow: 4px 4px 10px #c5d4e3; 
-            cursor: pointer; text-decoration: none; color: #555; font-weight: 700;
-        }
+        .rd-panel-header { width: 50px; height: 5px; background: #ccd6e0; border-radius: 10px; margin: -10px auto 15px auto; cursor: pointer; }
 
         footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #8899aa; font-size: 0.85rem; flex-shrink: 0; }
     </style>
@@ -186,7 +211,6 @@
                 </div>
             </section>
 
-            <!-- ECRÃ INICIAL (Preservado) -->
             <div id="intro-overlay">
                 <div class="intro-content">
                     <div style="position:relative; margin-bottom:20px; background:#dbe9f7; padding:15px; border-radius:20px;">
@@ -209,10 +233,9 @@
             </div>
 
             <div id="rdDropdownMenu" class="rd-panel">
-                <div style="width:50px; height:5px; background:#ccd6e0; border-radius:10px; margin:-10px auto 15px auto; cursor:pointer;" onclick="toggleRDMenu(event)"></div>
+                <div class="rd-panel-header" onclick="toggleRDMenu(event)"></div>
             </div>
 
-            <!-- ÁREA DE JOGO (Expandida ao iniciar) -->
             <main id="game-area">
                 <div id="inner-game">
                     <div class="hint-container">
@@ -272,9 +295,8 @@
         };
 
         function mostrarJogo() {
-            // Ao jogar, permitimos que o card cresça para aproveitar monitores grandes
+            // Expandir largura máxima apenas durante o jogo
             document.getElementById('main-card').style.maxWidth = "1100px";
-            
             document.getElementById('intro-overlay').style.display = 'none';
             document.getElementById('main-footer').style.display = 'none';
             document.getElementById('game-area').style.display = 'flex';
