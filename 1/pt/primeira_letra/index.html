@@ -12,6 +12,8 @@
             --primary-blue: #5ba4e5;
             --primary-dark: #3d7db8;
             --white: #ffffff;
+            --success: #7ed321;
+            --error: #ff4d4d;
             --outer-shadow: 0px 0px 25px #b0c4d9, 0px 0px 25px #ffffff;
         }
 
@@ -25,8 +27,7 @@
         }
 
         header { 
-            height: 60px; 
-            display: flex; align-items: center; justify-content: space-between; 
+            height: 60px; display: flex; align-items: center; justify-content: space-between; 
             padding: 0 20px; flex-shrink: 0; z-index: 1000;
         }
         
@@ -50,7 +51,7 @@
         }
 
         .game-card { 
-            background: var(--bg-page); width: 100%; max-width: 600px; 
+            background: var(--bg-page); width: 100%; max-width: 700px; 
             height: 100%; border-radius: 35px; box-shadow: var(--outer-shadow); 
             display: flex; flex-direction: column; position: relative; overflow: hidden;
         }
@@ -60,130 +61,141 @@
         #dots-container { display: flex; gap: 8px; }
         .dot { width: 12px; height: 12px; border-radius: 50%; background: #cbd9e6; transition: 0.3s; }
         .dot.active { background: var(--primary-blue); transform: scale(1.3); }
-        .dot.completed { background: #7ed321; }
+        .dot.completed { background: var(--success); }
 
-        /* Jogo */
+        /* Jogo Principal */
         main { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; }
         
-        #target-img { 
-            height: min(200px, 25vh); 
-            border-radius: 25px; 
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-            background: white; padding: 10px;
+        .image-box {
+            background: white; padding: 15px; border-radius: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
         }
+        #target-img { height: min(180px, 22vh); border-radius: 15px; display: block; }
 
-        .word-container {
+        .word-display {
             display: flex; align-items: center; justify-content: center;
-            font-size: clamp(2rem, 8vw, 3.5rem); font-weight: 900; color: #445;
-            letter-spacing: 4px; gap: 10px;
+            font-size: clamp(2.2rem, 10vw, 4rem); font-weight: 900; color: #445;
+            gap: 8px; text-transform: uppercase;
         }
 
         .drop-zone {
-            width: 60px; height: 70px;
-            border: 3px dashed var(--primary-blue);
-            border-radius: 15px;
+            width: 70px; height: 85px;
+            border: 4px dashed var(--primary-blue);
+            border-radius: 20px;
             display: flex; align-items: center; justify-content: center;
-            background: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.6);
             color: var(--primary-blue);
+            transition: all 0.2s ease;
+        }
+        .drop-zone.correct { border: 4px solid var(--success); color: var(--success); background: white; }
+        .drop-zone.wrong { border: 4px solid var(--error); color: var(--error); }
+        .drop-zone.hover { background: #d0e0f0; transform: scale(1.05); }
+
+        .letter-pool {
+            display: flex; gap: 12px; justify-content: center; width: 100%; padding: 10px;
         }
 
-        .drop-zone.hover { background: #d0e0f0; border-style: solid; }
-
-        .options-grid {
-            display: flex; gap: 15px; justify-content: center;
-            width: 100%; padding: 10px;
-        }
-
-        .letter-option {
-            width: 65px; height: 65px;
-            background: white; border-radius: 18px;
+        .letter-card {
+            width: clamp(60px, 15vw, 75px); height: clamp(60px, 15vw, 75px);
+            background: white; border-radius: 20px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; font-weight: 900; color: #445;
-            box-shadow: 0 5px 0 #cbd9e6; cursor: grab;
+            font-size: 2.2rem; font-weight: 900; color: #445;
+            box-shadow: 0 6px 0 #cbd9e6; cursor: grab;
             touch-action: none; user-select: none;
         }
+        .letter-card:active { cursor: grabbing; transform: translateY(2px); box-shadow: 0 2px 0 #cbd9e6; }
 
-        .letter-option:active { cursor: grabbing; }
+        /* Proxy de Arrastre */
+        #drag-proxy {
+            position: fixed; pointer-events: none; z-index: 3000;
+            width: 70px; height: 70px; background: white; border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.2rem; font-weight: 900; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            opacity: 0.9; display: none;
+        }
 
         /* Intro Overlay */
         #intro-overlay {
             position: absolute; inset: 0; background: var(--bg-page); z-index: 100;
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
         }
-
         .btn-jogar {
-            padding: 15px 50px; background: var(--primary-blue); 
-            color: white; border: none; border-radius: 20px; 
-            font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); 
-            font-size: 1.2rem;
+            padding: 18px 60px; background: var(--primary-blue); 
+            color: white; border: none; border-radius: 25px; 
+            font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); 
+            font-size: 1.3rem; transition: 0.2s;
         }
+        .btn-jogar:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--primary-dark); }
 
-        /* Menu de Categorias */
+        /* Painel Lateral (Categorias) */
         .rd-panel {
             position: absolute; bottom: 0; left: 0; width: 100%; background: white; z-index: 2500;
             border-radius: 35px 35px 0 0; padding: 25px 20px; display: flex; flex-direction: column; gap: 12px;
-            transform: translateY(101%); transition: transform 0.4s ease;
+            transform: translateY(101%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .rd-panel.active { transform: translateY(0); box-shadow: 0 -10px 25px rgba(0,0,0,0.1); }
+        .rd-panel.active { transform: translateY(0); box-shadow: 0 -10px 30px rgba(0,0,0,0.1); }
         .custom-menu-item { 
-            display: flex; align-items: center; gap: 12px; padding: 12px 20px; 
-            background: #f0f4f8; border-radius: 18px; cursor: pointer; text-decoration: none; 
-            color: #555; font-weight: 700;
+            display: flex; align-items: center; gap: 15px; padding: 15px 20px; 
+            background: #f8fafc; border-radius: 20px; cursor: pointer; text-decoration: none; 
+            color: #445; font-weight: 700; transition: 0.2s;
         }
+        .custom-menu-item:hover { background: #eef2f6; }
 
-        #drag-proxy {
-            position: fixed; pointer-events: none; z-index: 3000;
-            width: 65px; height: 65px; background: white; border-radius: 18px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; font-weight: 900; color: #445;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2); opacity: 0.9;
-            display: none;
-        }
     </style>
 </head>
 <body>
 
     <header>
-        <i class="fas fa-bars hamburger-btn" onclick="toggleRDMenu()"></i>
+        <i class="fas fa-bars hamburger-btn" onclick="toggleMenu()"></i>
         <div class="header-center">
             <img id="header-icon" src="" alt="">
-            <span>Qual é a Letra?</span>
+            <span>QUAL É A LETRA?</span>
         </div>
         <a href="../index.html" class="btn-voltar">VOLTAR</a>
     </header>
 
     <div class="game-wrapper">
         <div class="game-card">
+            
             <section class="status">
-                <div id="timer-display" style="font-weight: 700; color: #667;">⏳ 00:00</div>
+                <div id="timer-display" style="font-weight: 700; color: #667; min-width: 70px;">⏳ 00:00</div>
                 <div id="dots-container"></div>
-                <div id="points-display" style="font-weight: 900; color: var(--primary-blue);">0</div>
+                <div id="points-display" style="font-weight: 900; color: var(--primary-blue); min-width: 70px; text-align: right;">0</div>
             </section>
 
+            <!-- Ecrã Inicial -->
             <div id="intro-overlay">
+                <div style="background:white; padding:20px; border-radius:30px; margin-bottom:10px; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                    <img id="intro-img-preview" style="height:120px;" src="">
+                </div>
                 <h1 style="color:var(--primary-blue); font-weight:900;">Qual é a Letra?</h1>
-                <p style="text-align:center; padding: 0 20px;">Arrasta a primeira letra para completar a palavra!</p>
-                <button onclick="iniciarJogo()" class="btn-jogar">JOGAR</button>
+                <p style="text-align:center; padding: 0 30px; color:#678;">Arrasta a primeira letra para o lugar correto!</p>
+                <button onclick="começarJogo()" class="btn-jogar">JOGAR</button>
             </div>
 
+            <!-- Área do Jogo -->
             <main id="game-area">
-                <img id="target-img" src="">
+                <div class="image-box">
+                    <img id="target-img" src="">
+                </div>
                 
-                <div class="word-container">
+                <div class="word-display">
                     <div class="drop-zone" id="main-drop-zone">?</div>
                     <span id="word-rest"></span>
                 </div>
 
-                <div class="options-grid" id="options-container">
-                    <!-- Letras geradas por JS -->
+                <div class="letter-pool" id="options-container">
+                    <!-- Letras injetadas por JS -->
                 </div>
             </main>
 
+            <!-- Menu de Categorias -->
             <div id="rdDropdownMenu" class="rd-panel">
-                <div style="width:40px; height:5px; background:#ccc; margin:0 auto 10px; border-radius:10px;" onclick="toggleRDMenu()"></div>
-                <h3 style="text-align:center; color:var(--primary-blue); margin-bottom:10px;">Escolher Letra</h3>
-                <!-- Categorias JS -->
+                <div style="width:50px; height:6px; background:#dde4eb; margin:0 auto 15px; border-radius:10px;" onclick="toggleMenu()"></div>
+                <h3 style="text-align:center; color:var(--primary-blue); margin-bottom:10px; font-weight: 900;">ESCOLHER LETRA</h3>
+                <div id="categories-list" style="overflow-y: auto; max-height: 60vh; display: flex; flex-direction: column; gap: 8px;"></div>
             </div>
+
         </div>
     </div>
 
@@ -192,20 +204,21 @@
     <script src="dados.js"></script>
     <script>
         let currentRound = 0;
-        let totalRounds = 5;
+        const totalRounds = 5;
         let currentCategory = 'letra_a';
         let itemsForGame = [];
+        let points = 0;
         let timer = 0;
         let timerInt;
-        let points = 0;
         let correctLetter = "";
+        let fullWord = "";
 
         // Sons
         const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
         const sndErro = new Audio(JOGO_CONFIG.sons.erro);
         const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-        function iniciarJogo() {
+        function começarJogo() {
             document.getElementById('intro-overlay').style.display = 'none';
             document.getElementById('game-area').style.display = 'flex';
             
@@ -218,16 +231,14 @@
                 }, 1000);
             }
 
-            prepararRondas();
-            loadRound();
-        }
-
-        function prepararRondas() {
-            const itens = JOGO_CONFIG.categorias[currentCategory].itens;
-            itemsForGame = [...itens].sort(() => 0.5 - Math.random()).slice(0, totalRounds);
+            itemsForGame = [...JOGO_CONFIG.categorias[currentCategory].itens]
+                .sort(() => 0.5 - Math.random())
+                .slice(0, totalRounds);
+            
             currentRound = 0;
             points = 0;
-            atualizarUI();
+            updatePointsUI();
+            loadRound();
         }
 
         function loadRound() {
@@ -236,126 +247,139 @@
                 return;
             }
 
-            atualizarDots();
+            updateDots();
             const item = itemsForGame[currentRound];
-            const nomeOriginal = item.nome.toUpperCase();
-            
-            // Lógica para a primeira letra
-            correctLetter = nomeOriginal.charAt(0);
-            const restoDaPalavra = nomeOriginal.substring(1);
+            fullWord = item.nome.toUpperCase();
+            correctLetter = fullWord.charAt(0);
+            const rest = fullWord.substring(1);
 
             document.getElementById('target-img').src = JOGO_CONFIG.caminhoImg + item.img;
-            document.getElementById('word-rest').innerText = restoDaPalavra;
-            document.getElementById('main-drop-zone').innerText = "?";
-            document.getElementById('main-drop-zone').style.color = "var(--primary-blue)";
+            document.getElementById('word-rest').innerText = rest;
+            
+            // Reset Drop Zone
+            const dz = document.getElementById('main-drop-zone');
+            dz.innerText = "?";
+            dz.className = "drop-zone";
 
-            gerarOpcoes(correctLetter);
+            renderOptions(correctLetter);
         }
 
-        function gerarOpcoes(correta) {
+        function renderOptions(correct) {
             const container = document.getElementById('options-container');
             container.innerHTML = '';
             
-            let opcoes = [correta];
+            let options = [correct];
             const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-            while(opcoes.length < 4) {
-                let r = abc[Math.floor(Math.random() * abc.length)];
-                if(!opcoes.includes(r)) opcoes.push(r);
+            while(options.length < 4) {
+                let randomChar = abc[Math.floor(Math.random() * abc.length)];
+                if(!options.includes(randomChar)) options.push(randomChar);
             }
 
-            opcoes.sort(() => 0.5 - Math.random());
+            options.sort(() => 0.5 - Math.random());
 
-            opcoes.forEach(letra => {
+            options.forEach(letra => {
                 const div = document.createElement('div');
-                div.className = 'letter-option';
+                div.className = 'letter-card';
                 div.innerText = letra;
-                setupDragEvents(div);
+                bindDragEvents(div);
                 container.appendChild(div);
             });
         }
 
-        // Lógica de Drag and Drop (Mouse e Touch)
-        let activeDrag = null;
-        function setupDragEvents(el) {
-            const onStart = (e) => {
-                activeDrag = el;
-                const touch = e.touches ? e.touches[0] : e;
+        // Lógica de Drag & Drop
+        let activeElement = null;
+
+        function bindDragEvents(el) {
+            const start = (e) => {
+                activeElement = el;
+                const pos = e.touches ? e.touches[0] : e;
                 const proxy = document.getElementById('drag-proxy');
                 proxy.innerText = el.innerText;
                 proxy.style.display = 'flex';
-                proxy.style.left = (touch.clientX - 32) + 'px';
-                proxy.style.top = (touch.clientY - 32) + 'px';
-                el.style.opacity = "0.4";
+                proxy.style.left = (pos.clientX - 35) + 'px';
+                proxy.style.top = (pos.clientY - 35) + 'px';
+                el.style.opacity = "0.3";
             };
 
-            const onMove = (e) => {
-                if(!activeDrag) return;
-                const touch = e.touches ? e.touches[0] : e;
+            const move = (e) => {
+                if(!activeElement) return;
+                const pos = e.touches ? e.touches[0] : e;
                 const proxy = document.getElementById('drag-proxy');
-                proxy.style.left = (touch.clientX - 32) + 'px';
-                proxy.style.top = (touch.clientY - 32) + 'px';
+                proxy.style.left = (pos.clientX - 35) + 'px';
+                proxy.style.top = (pos.clientY - 35) + 'px';
 
-                // Check hover sobre a zona
-                const dropZone = document.getElementById('main-drop-zone');
-                const rect = dropZone.getBoundingClientRect();
-                if(touch.clientX > rect.left && touch.clientX < rect.right && 
-                   touch.clientY > rect.top && touch.clientY < rect.bottom) {
-                    dropZone.classList.add('hover');
+                // Check Hover
+                const dz = document.getElementById('main-drop-zone');
+                const rect = dz.getBoundingClientRect();
+                if(pos.clientX > rect.left && pos.clientX < rect.right && pos.clientY > rect.top && pos.clientY < rect.bottom) {
+                    dz.classList.add('hover');
                 } else {
-                    dropZone.classList.remove('hover');
+                    dz.classList.remove('hover');
                 }
             };
 
-            const onEnd = (e) => {
-                if(!activeDrag) return;
-                const touch = e.changedTouches ? e.changedTouches[0] : e;
-                const dropZone = document.getElementById('main-drop-zone');
-                const rect = dropZone.getBoundingClientRect();
+            const end = (e) => {
+                if(!activeElement) return;
+                const pos = e.changedTouches ? e.changedTouches[0] : e;
+                const dz = document.getElementById('main-drop-zone');
+                const rect = dz.getBoundingClientRect();
                 
                 document.getElementById('drag-proxy').style.display = 'none';
                 el.style.opacity = "1";
-                dropZone.classList.remove('hover');
+                dz.classList.remove('hover');
 
-                if(touch.clientX > rect.left && touch.clientX < rect.right && 
-                   touch.clientY > rect.top && touch.clientY < rect.bottom) {
-                    checkAnswer(el.innerText);
+                if(pos.clientX > rect.left && pos.clientX < rect.right && pos.clientY > rect.top && pos.clientY < rect.bottom) {
+                    processChoice(activeElement.innerText);
                 }
-                activeDrag = null;
+                activeElement = null;
             };
 
-            el.addEventListener('mousedown', onStart);
-            el.addEventListener('touchstart', onStart, {passive: false});
-            window.addEventListener('mousemove', onMove);
-            window.addEventListener('touchmove', onMove, {passive: false});
-            window.addEventListener('mouseup', onEnd);
-            window.addEventListener('touchend', onEnd);
+            el.addEventListener('mousedown', start);
+            el.addEventListener('touchstart', start, {passive: false});
+            window.addEventListener('mousemove', move);
+            window.addEventListener('touchmove', move, {passive: false});
+            window.addEventListener('mouseup', end);
+            window.addEventListener('touchend', end);
         }
 
-        function checkAnswer(letra) {
-            if(letra === correctLetter) {
+        function processChoice(letter) {
+            const dz = document.getElementById('main-drop-zone');
+
+            if(letter === correctLetter) {
+                // ACERTO
                 sndAcerto.play();
-                document.getElementById('main-drop-zone').innerText = letra;
-                document.getElementById('main-drop-zone').style.color = "#7ed321";
                 points += 100;
-                atualizarUI();
+                updatePointsUI();
+                dz.innerText = letter;
+                dz.classList.add('correct');
+                
+                // Mostrar a palavra toda por 1.5s antes de passar
                 setTimeout(() => {
                     currentRound++;
                     loadRound();
-                }, 1000);
+                }, 1500);
             } else {
+                // ERRO
                 sndErro.play();
-                const dz = document.getElementById('main-drop-zone');
-                dz.style.borderColor = "#ff4d4d";
-                setTimeout(() => dz.style.borderColor = "var(--primary-blue)", 500);
+                points = Math.max(0, points - 50); // Perde 50, não fica negativo
+                updatePointsUI();
+                dz.innerText = letter;
+                dz.classList.add('wrong');
+                
+                // Limpa o erro após 800ms para deixar tentar de novo
+                setTimeout(() => {
+                    dz.innerText = "?";
+                    dz.classList.remove('wrong');
+                }, 800);
             }
         }
 
-        function atualizarUI() {
+        function updatePointsUI() {
             document.getElementById('points-display').innerText = points;
         }
 
-        function atualizarDots() {
+        function updateDots() {
             const container = document.getElementById('dots-container');
             container.innerHTML = '';
             for (let i = 0; i < totalRounds; i++) {
@@ -371,42 +395,52 @@
             clearInterval(timerInt);
             sndVitoria.play();
             
-            let relatorio = JOGO_CONFIG.relatorios.find(r => points >= r.min);
+            let rel = JOGO_CONFIG.relatorios.find(r => points >= r.min) || JOGO_CONFIG.relatorios[3];
 
             document.getElementById('game-area').innerHTML = `
-                <div style="text-align:center; padding:20px;">
-                    <h2 style="color:var(--primary-blue); font-size:2rem; margin-bottom:10px;">${relatorio.titulo}</h2>
-                    <p style="font-weight:700; color:#667; margin-bottom:20px;">${relatorio.msg}</p>
-                    <p style="font-size:1.5rem; font-weight:900; margin-bottom:20px;">Pontos: ${points}</p>
+                <div style="text-align:center; padding:20px; animation: fadeIn 0.5s;">
+                    <h2 style="color:var(--primary-blue); font-size:2.2rem; margin-bottom:10px; font-weight:900;">${rel.titulo}</h2>
+                    <p style="font-weight:700; color:#678; margin-bottom:25px; font-size:1.1rem;">${rel.msg}</p>
+                    <div style="background:white; padding:20px; border-radius:25px; box-shadow:0 10px 20px rgba(0,0,0,0.05); margin-bottom:30px;">
+                        <p style="font-size:1.2rem; color:#89a;">Pontuação Final</p>
+                        <p style="font-size:3rem; font-weight:900; color:var(--primary-blue);">${points}</p>
+                    </div>
                     <button onclick="location.reload()" class="btn-jogar">REPETIR</button>
                 </div>
             `;
         }
 
-        function toggleRDMenu() {
+        function toggleMenu() {
             document.getElementById('rdDropdownMenu').classList.toggle('active');
         }
 
-        function mudarCategoria(cat) {
-            currentCategory = cat;
-            toggleRDMenu();
-            iniciarJogo();
+        function selectCategory(key) {
+            currentCategory = key;
+            toggleMenu();
+            começarJogo();
         }
 
         window.onload = () => {
             const pathI = JOGO_CONFIG.caminhoIcons;
+            const pathImg = JOGO_CONFIG.caminhoImg;
+            
             document.getElementById('header-icon').src = pathI + JOGO_CONFIG.iconesMenu.ano1;
+            
+            // Preview da imagem na intro
+            const firstCat = Object.keys(JOGO_CONFIG.categorias)[0];
+            document.getElementById('intro-img-preview').src = pathImg + JOGO_CONFIG.categorias[firstCat].imgCapa;
 
-            const rdBox = document.getElementById('rdDropdownMenu');
+            // Gerar lista de categorias no menu
+            const list = document.getElementById('categories-list');
             Object.keys(JOGO_CONFIG.categorias).forEach(key => {
                 const cat = JOGO_CONFIG.categorias[key];
-                const div = document.createElement('div');
-                div.className = 'custom-menu-item';
-                div.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="height:30px; width:30px; object-fit:contain;"><span>${cat.nome}</span>`;
-                div.onclick = () => mudarCategoria(key);
-                rdBox.appendChild(div);
+                const item = document.createElement('div');
+                item.className = 'custom-menu-item';
+                item.innerHTML = `<img src="${pathImg}${cat.imgCapa}" style="height:35px; width:35px; object-fit:contain;"><span>${cat.nome}</span>`;
+                item.onclick = () => selectCategory(key);
+                list.appendChild(item);
             });
-            atualizarDots();
+            updateDots();
         };
     </script>
 </body>
