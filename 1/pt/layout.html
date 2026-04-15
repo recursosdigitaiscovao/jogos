@@ -30,10 +30,7 @@
             padding: 0 20px; flex-shrink: 0; z-index: 1000;
         }
         
-        .hamburger-btn { 
-            font-size: 26px; color: var(--primary-blue); cursor: pointer; 
-            padding: 8px; z-index: 2001;
-        }
+        .hamburger-btn { font-size: 26px; color: var(--primary-blue); cursor: pointer; padding: 8px; }
 
         .header-center { 
             flex: 1; display: flex; align-items: center; justify-content: center; 
@@ -47,7 +44,6 @@
             font-size: 0.8rem; box-shadow: 0 4px 0 var(--primary-dark);
         }
 
-        /* MENU HAMBÚRGUER */
         .menu-dropdown { 
             position: absolute; top: 65px; left: 20px; 
             display: none; flex-direction: column; gap: 8px; z-index: 2000; 
@@ -58,73 +54,76 @@
             cursor: pointer; min-width: 180px; text-decoration: none; 
             color: #555; font-weight: 700; transition: 0.2s;
         }
-        .menu-item:hover { background: var(--primary-blue); color: white; }
 
-        /* GRID DE JOGOS (5 COLUNAS) */
         .game-wrapper { 
             flex: 1; 
             padding: 10px 30px; 
             overflow-y: auto;
             display: grid;
             grid-template-columns: repeat(5, 1fr); 
-            gap: 15px; /* Reduzi um pouco o espaço entre cards */
+            gap: 15px;
             justify-items: center;
             align-content: start;
         }
 
-        /* GAME CARD - ALTURA REDUZIDA */
+        /* GAME CARD - AJUSTE DE PADDING E ALTURA */
         .game-card { 
             background: var(--bg-page); 
             width: 100%; 
-            max-width: 220px;
-            /* Proporção 1.4/1 torna o card mais baixo e retangular */
-            aspect-ratio: 1.4 / 1; 
-            border-radius: 25px; 
+            max-width: 200px;
+            min-height: 140px; /* Altura reduzida mas suficiente para o icon grande */
+            border-radius: 35px; 
             box-shadow: var(--outer-shadow); 
             display: flex; 
             flex-direction: column; 
             align-items: center;
-            justify-content: center;
             text-decoration: none;
             transition: all 0.2s ease;
-            padding: 10px; /* Reduzi o padding interno */
+            /* Define a distância de 20px do topo, esquerda e direita */
+            padding: 20px 20px 15px 20px; 
             text-align: center;
+            position: relative;
         }
 
         .game-card:hover { transform: translateY(-3px); }
 
-        /* CONTAINER DO ÍCONE */
+        /* CONTAINER DO ÍCONE - OCUPA TODO O ESPAÇO ATÉ AOS 20PX DE MARGEM */
         .card-img-container {
-            width: 70px; height: 70px; /* Tamanho reduzido para caber no card baixo */
-            background: transparent;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 5px; /* Reduzi o espaço entre ícone e texto */
+            width: 100%; /* Largura total dentro do padding */
+            height: 70px; /* Altura fixa para manter o card baixo */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
         }
         
         .card-img-container img { 
-            height: 55px; /* Ajustado proporcionalmente */
-            width: auto; 
+            max-width: 100%; /* Aumenta até bater nos 20px laterais */
+            max-height: 100%; /* Aumenta até bater no limite de altura */
+            width: auto;
+            height: auto;
             object-fit: contain;
             filter: drop-shadow(2px 3px 4px rgba(0,0,0,0.1)); 
         }
 
-        /* TÍTULO DO JOGO */
         .game-card h2 {
             color: var(--primary-blue);
-            font-size: 0.85rem; /* Fonte ligeiramente menor */
+            font-size: 0.85rem; 
             font-weight: 900;
             margin: 0;
             line-height: 1.1;
+            /* Garante que o texto fique sempre no fundo se sobrar espaço */
+            margin-top: auto; 
         }
 
         footer { height: 35px; display: flex; align-items: center; justify-content: center; color: #8899aa; font-size: 0.8rem; }
 
-        /* RESPONSIVIDADE */
         @media (max-width: 1100px) { .game-wrapper { grid-template-columns: repeat(4, 1fr); } }
         @media (max-width: 850px) { .game-wrapper { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 600px) { 
             .game-wrapper { grid-template-columns: repeat(2, 1fr); padding: 10px; gap: 12px; } 
-            .game-card { aspect-ratio: 1.3 / 1; }
+            .game-card { padding: 15px 15px 12px 15px; min-height: 120px; }
+            .card-img-container { height: 60px; }
         }
     </style>
 </head>
@@ -161,7 +160,6 @@
         window.onload = () => {
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const config = JOGO_CONFIG;
-
                 document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.ano1;
 
                 const menuBox = document.getElementById('dropdownMenu');
