@@ -20,20 +20,30 @@
         
         body { 
             background-color: var(--bg-page); 
-            height: 100vh; width: 100vw; 
-            overflow: hidden; 
-            display: flex; flex-direction: column;
+            /* Fixa a altura do corpo na altura da janela */
+            height: 100vh; 
+            width: 100vw; 
+            overflow: hidden; /* Impede o scroll na página inteira */
+            display: flex; 
+            flex-direction: column; /* Alinha header e conteúdo em coluna */
         }
 
-        /* HEADER */
+        /* HEADER FIXO */
         header { 
             background: var(--bg-page);
-            width: 100%; margin: 0; padding: 0; border-radius: 0;
-            box-shadow: 0px 4px 10px rgba(176, 196, 217, 0.3);
+            width: 100%; 
+            margin: 0; 
+            padding: 0; 
+            border-radius: 0;
+            /* Sombra projetada para dar ideia de sobreposição */
+            box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.6);
             display: grid;
             grid-template-columns: 110px 1fr 110px;
-            align-items: start; flex-shrink: 0; z-index: 1000;
+            align-items: start; 
+            flex-shrink: 0; /* IMPEDE o header de encolher */
+            z-index: 1000;
             min-height: 120px;
+            position: relative;
         }
 
         .header-left { padding: 20px; display: flex; justify-content: flex-start; }
@@ -42,7 +52,6 @@
             font-size: 32px; color: var(--primary-blue); cursor: pointer;
             transition: all 0.2s ease;
         }
-        /* EFEITO HOVER RESTAURADO */
         .hamburger-btn:hover { color: var(--primary-dark); transform: scale(1.1); }
 
         .header-center-content {
@@ -70,10 +79,17 @@
             font-size: 0.85rem; font-weight: 400; margin: 10px 0 20px 0; padding: 0 20px;
         }
 
+        /* ÁREA DE CONTEÚDO COM SCROLL */
         .game-wrapper { 
-            flex: 1; padding: 10px 80px; overflow-y: auto;
-            display: grid; grid-template-columns: repeat(5, 1fr); 
-            gap: 25px; justify-items: center; align-content: start;
+            flex: 1; /* Ocupa todo o espaço restante abaixo do header */
+            padding: 20px 80px; 
+            overflow-y: auto; /* ATIVA O SCROLL APENAS AQUI */
+            display: grid; 
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 25px; 
+            justify-items: center; 
+            align-content: start;
+            -webkit-overflow-scrolling: touch; /* Melhora o scroll no iOS */
         }
 
         .game-card { 
@@ -112,9 +128,11 @@
             #header-icon { height: 75px; }
             .title-main { font-size: 1rem; }
             .title-sub { font-size: 0.75rem; }
-            .game-wrapper { grid-template-columns: repeat(2, 1fr); padding: 10px; }
+            .game-wrapper { grid-template-columns: repeat(2, 1fr); padding: 20px 15px; }
         }
-        @media (min-width: 601px) and (max-width: 1024px) { .game-wrapper { grid-template-columns: repeat(3, 1fr); padding: 10px 40px; } }
+        @media (min-width: 601px) and (max-width: 1024px) { 
+            .game-wrapper { grid-template-columns: repeat(3, 1fr); padding: 20px 40px; } 
+        }
     </style>
 </head>
 <body>
@@ -140,6 +158,7 @@
         </div>
     </header>
 
+    <!-- Tudo o que está aqui dentro desliza por baixo do header -->
     <div class="game-wrapper" id="gamesGrid">
         <div class="intro-text">Explora as letras, as palavras e diverte-te a ler!</div>
     </div>
@@ -157,10 +176,8 @@
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const config = JOGO_CONFIG;
                 
-                // Girafa do Header
                 document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.ano1;
 
-                // Menu Hamburguer Dinâmico usando config.links
                 const menuBox = document.getElementById('dropdownMenu');
                 const niveis = [
                     { l: 'Início', k: 'home' },
@@ -176,14 +193,12 @@
                         const a = document.createElement('a');
                         a.className = 'menu-item';
                         a.href = config.links[n.k];
-                        // Usa o ícone correspondente ou o da home se for o caso
                         const iconFile = (n.k === 'home') ? config.iconesMenu.ano1 : config.iconesMenu[n.k];
                         a.innerHTML = `<img src="${config.caminhoIconsMenu}${iconFile}" style="height:20px;"><span>${n.l}</span>`;
                         menuBox.appendChild(a);
                     }
                 });
 
-                // Gerar Jogos
                 const grid = document.getElementById('gamesGrid');
                 config.listaJogos.forEach(jogo => {
                     const card = document.createElement('a');
