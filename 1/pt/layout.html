@@ -30,21 +30,12 @@
             padding: 0 20px; flex-shrink: 0; z-index: 1000;
         }
         
-        .hamburger-btn { 
-            font-size: 26px; 
-            color: var(--primary-blue); 
-            cursor: pointer; 
-            padding: 8px;
-            display: flex; align-items: center; justify-content: center;
-        }
-
         .header-center { 
             flex: 1; display: flex; align-items: center; justify-content: center; 
             gap: 10px; color: var(--primary-blue); font-weight: 900; font-size: 1.2rem;
         }
         .header-center img { height: 30px; }
 
-        /* BOTÃO VOLTAR - ESTILO ORIGINAL */
         .btn-voltar { 
             background: var(--primary-blue); color: white; padding: 8px 16px; 
             border-radius: 12px; text-decoration: none; font-weight: 900; 
@@ -60,7 +51,6 @@
             overflow: hidden;
         }
 
-        /* GAME CARD - ESTILO ORIGINAL */
         .game-card { 
             background: var(--bg-page); 
             width: 100%; 
@@ -83,29 +73,26 @@
             padding: 0 20px;
         }
         
-        #dots-container {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            justify-content: center;
-        }
+        #dots-container { display: flex; gap: 8px; align-items: center; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; background: #cbd9e6; box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1); }
 
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #cbd9e6;
-            transition: all 0.3s ease;
-            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1);
-        }
-
-        /* PRIMEIRO ECRÃ - SIMPLIFICADO DENTRO DO CARD */
+        /* INTRO OVERLAY COMO BOTÃO */
         #intro-overlay {
             position: absolute; top: 0; left: 0; right: 0; height: 100%;
             background: var(--bg-page); z-index: 100;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 20px;
             text-align: center;
+            cursor: pointer; /* Transforma em botão */
+            transition: transform 0.2s ease;
+        }
+
+        #intro-overlay:hover {
+            transform: scale(1.01);
+        }
+
+        #intro-overlay:active {
+            transform: scale(0.98);
         }
 
         .intro-content {
@@ -113,6 +100,7 @@
             flex-direction: column;
             align-items: center;
             gap: 25px;
+            pointer-events: none; /* Garante que o clique passe para o overlay */
         }
 
         .intro-img-container {
@@ -120,7 +108,7 @@
             background: var(--bg-page);
             border-radius: 40px;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: var(--outer-shadow); /* Mesma sombra do card para consistência */
+            box-shadow: var(--outer-shadow);
         }
         
         #intro-img { height: 90px; width: auto; }
@@ -132,12 +120,14 @@
             margin: 0;
         }
 
-        main { flex: 1; display: none; }
+        main { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; }
         footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #8899aa; font-size: 0.85rem; }
 
         @media (max-width: 450px) { 
             .game-wrapper { padding: 5px 20px 15px 20px; } 
             .intro-content h1 { font-size: 1.8rem; }
+            .intro-img-container { width: 130px; height: 130px; }
+            #intro-img { height: 70px; }
         }
     </style>
 </head>
@@ -145,7 +135,7 @@
 
     <header>
         <div class="header-left">
-            <i class="fas fa-bars hamburger-btn"></i>
+            <i class="fas fa-bars hamburger-btn" style="font-size: 26px; color: var(--primary-blue); cursor: pointer; padding: 8px;"></i>
         </div>
         <div class="header-center">
             <img id="header-icon" src="" alt="">
@@ -166,17 +156,20 @@
                 </div>
             </section>
 
-            <!-- PRIMEIRO ECRÃ (APENAS ÍCONE E TÍTULO) -->
-            <div id="intro-overlay">
+            <!-- O CARD INTEIRO É UM BOTÃO -->
+            <div id="intro-overlay" onclick="mostrarJogo()">
                 <div class="intro-content">
                     <div class="intro-img-container">
-                        <img id="intro-img" src="" alt="Ícone">
+                        <img id="intro-img" src="" alt="Ícone do Jogo">
                     </div>
-                    <h1 id="game-title">Título do Jogo</h1>
+                    <h1 id="game-title">Carregando...</h1>
                 </div>
             </div>
 
-            <main id="game-area"></main>
+            <main id="game-area">
+                <!-- O conteúdo do jogo aparece aqui após o clique -->
+                <h2 style="color: var(--primary-blue);">O Jogo Começou!</h2>
+            </main>
         </div>
     </div>
 
@@ -184,14 +177,30 @@
 
     <script src="dados.js"></script>
     <script>
+        function mostrarJogo() {
+            document.getElementById('intro-overlay').style.display = 'none';
+            document.getElementById('game-area').style.display = 'flex';
+            // Aqui você iniciaria a lógica real do jogo
+            console.log("Jogo iniciado!");
+        }
+
         window.onload = () => {
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const config = JOGO_CONFIG;
-                document.getElementById('header-icon').src = config.caminhoIcons + config.iconesMenu.ano1;
-                document.getElementById('intro-img').src = config.caminhoIcons + config.iconesMenu.ano1;
-                document.getElementById('game-title').innerText = config.titulo || "Título do Jogo";
                 
-                // Inicializa progresso vazio
+                // 1. Define o ícone do cabeçalho (ex: icon1.png)
+                document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.ano1;
+                
+                // 2. Carrega os dados do PRIMEIRO jogo da lista como exemplo
+                // Em um cenário real, você poderia identificar qual jogo carregar via URL ou ID
+                const jogoAtual = config.listaJogos[0]; 
+                
+                if (jogoAtual) {
+                    document.getElementById('game-title').innerText = jogoAtual.nome;
+                    document.getElementById('intro-img').src = config.caminhoIconsJogos + jogoAtual.icon;
+                }
+
+                // 3. Inicializa os dots de progresso
                 const container = document.getElementById('dots-container');
                 for (let i = 0; i < 5; i++) {
                     const dot = document.createElement('div');
