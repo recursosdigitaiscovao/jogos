@@ -12,7 +12,7 @@
             --primary-blue: #5ba4e5;
             --primary-dark: #3d7db8;
             --white: #ffffff;
-            --outer-shadow: 0px 0px 25px #b0c4d9, 0px 0px 25px #ffffff;
+            --outer-shadow: 0px 0px 20px #b0c4d9, 0px 0px 20px #ffffff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
@@ -32,8 +32,7 @@
         
         .hamburger-btn { 
             font-size: 26px; color: var(--primary-blue); cursor: pointer; 
-            padding: 8px; display: flex; align-items: center; justify-content: center;
-            z-index: 2001;
+            padding: 8px; z-index: 2001;
         }
 
         .header-center { 
@@ -48,7 +47,7 @@
             font-size: 0.8rem; box-shadow: 0 4px 0 var(--primary-dark);
         }
 
-        /* MENU HAMBÚRGUER (DROPDOWN) */
+        /* MENU HAMBÚRGUER */
         .menu-dropdown { 
             position: absolute; top: 65px; left: 20px; 
             display: none; flex-direction: column; gap: 8px; z-index: 2000; 
@@ -61,72 +60,67 @@
         }
         .menu-item:hover { background: var(--primary-blue); color: white; }
 
-        /* CONTENTOR DE JOGOS (GRID) */
+        /* GRID DE JOGOS - CONFIGURADO PARA 5 COLUNAS */
         .game-wrapper { 
             flex: 1; 
-            padding: 20px; 
-            overflow-y: auto; /* Permite scroll se houver muitos jogos */
+            padding: 15px 30px; 
+            overflow-y: auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
+            /* Força 5 colunas no desktop */
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 20px;
             justify-items: center;
             align-content: start;
         }
 
-        /* ESTILO DO GAME CARD (TRANSFORMADO EM BOTÃO) */
+        /* CARD MAIS COMPACTO */
         .game-card { 
             background: var(--bg-page); 
             width: 100%; 
-            max-width: 350px;
-            aspect-ratio: 1/1; /* Mantém o card quadrado */
-            border-radius: 35px; 
+            max-width: 200px; /* Reduzido para caber melhor */
+            aspect-ratio: 0.9 / 1; 
+            border-radius: 25px; 
             box-shadow: var(--outer-shadow); 
             display: flex; 
             flex-direction: column; 
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            padding: 20px;
+            transition: all 0.2s ease;
+            padding: 15px;
             text-align: center;
-            cursor: pointer;
-            border: none;
         }
 
-        .game-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0px 10px 30px #b0c4d9;
-        }
-
-        .game-card:active {
-            transform: scale(0.98);
-        }
+        .game-card:hover { transform: translateY(-5px); }
 
         .card-img-container {
-            width: 120px; height: 120px;
+            width: 80px; height: 80px; /* Ícones menores */
             background: var(--bg-page);
-            border-radius: 30px;
+            border-radius: 20px;
             display: flex; align-items: center; justify-content: center;
             box-shadow: var(--outer-shadow);
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
         
-        .card-img-container img { height: 70px; width: auto; }
+        .card-img-container img { height: 45px; width: auto; }
 
+        /* TÍTULO COM FONTE MENOR */
         .game-card h2 {
             color: var(--primary-blue);
-            font-size: 1.4rem;
+            font-size: 0.95rem; /* Fonte diminuída */
             font-weight: 900;
             margin: 0;
-            line-height: 1.2;
+            line-height: 1.1;
         }
 
-        footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #8899aa; font-size: 0.85rem; flex-shrink: 0; }
+        footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #8899aa; font-size: 0.85rem; }
 
-        /* Scrollbar estilizada */
-        .game-wrapper::-webkit-scrollbar { width: 8px; }
-        .game-wrapper::-webkit-scrollbar-track { background: transparent; }
-        .game-wrapper::-webkit-scrollbar-thumb { background: #cbd9e6; border-radius: 10px; }
+        /* RESPONSIVIDADE PARA ECRÃS PEQUENOS */
+        @media (max-width: 1024px) { grid-template-columns: repeat(3, 1fr); }
+        @media (max-width: 600px) { 
+            .game-wrapper { grid-template-columns: repeat(2, 1fr); padding: 15px; gap: 15px; } 
+            .game-card h2 { font-size: 0.85rem; }
+        }
     </style>
 </head>
 <body>
@@ -134,9 +128,7 @@
     <header>
         <div class="header-left">
             <i class="fas fa-bars hamburger-btn" onclick="toggleMenu(event)"></i>
-            <div id="dropdownMenu" class="menu-dropdown">
-                <!-- Menu preenchido via JS -->
-            </div>
+            <div id="dropdownMenu" class="menu-dropdown"></div>
         </div>
         <div class="header-center">
             <img id="header-icon" src="" alt="">
@@ -147,70 +139,56 @@
         </div>
     </header>
 
-    <!-- Contentor onde os jogos serão inseridos -->
-    <div class="game-wrapper" id="gamesGrid">
-        <!-- Os cartões (game-card) entrarão aqui -->
-    </div>
+    <div class="game-wrapper" id="gamesGrid"></div>
 
     <footer>2026</footer>
 
     <script src="dados.js"></script>
     <script>
-        // FUNÇÃO PARA ABRIR/FECHAR O MENU
         function toggleMenu(e) {
             if(e) e.stopPropagation();
             const menu = document.getElementById('dropdownMenu');
             menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
         }
 
-        // FECHAR MENU AO CLICAR FORA
-        window.onclick = () => {
-            document.getElementById('dropdownMenu').style.display = 'none';
-        };
+        window.onclick = () => { document.getElementById('dropdownMenu').style.display = 'none'; };
 
         window.onload = () => {
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const config = JOGO_CONFIG;
 
-                // 1. Preencher Ícone do Header
+                // Header Icon
                 document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.ano1;
 
-                // 2. Criar Menu Hamburguer Dinâmico
+                // Menu Dropdown
                 const menuBox = document.getElementById('dropdownMenu');
-                const links = [
-                    { label: 'Pré-Escolar', key: 'pre' },
-                    { label: '1º Ano', key: 'ano1' },
-                    { label: '2º Ano', key: 'ano2' },
-                    { label: '3º Ano', key: 'ano3' },
-                    { label: '4º Ano', key: 'ano4' }
+                const niveis = [
+                    { l: 'Pré-Escolar', k: 'pre' },
+                    { l: '1º Ano', k: 'ano1' },
+                    { l: '2º Ano', k: 'ano2' },
+                    { l: '3º Ano', k: 'ano3' },
+                    { l: '4º Ano', k: 'ano4' }
                 ];
-
-                links.forEach(item => {
+                niveis.forEach(n => {
                     const a = document.createElement('a');
                     a.className = 'menu-item';
-                    a.href = `../${item.key}/index.html`; // Ajuste conforme a sua estrutura de pastas
-                    a.innerHTML = `
-                        <img src="${config.caminhoIconsMenu}${config.iconesMenu[item.key]}" style="height:24px;">
-                        <span>${item.label}</span>
-                    `;
+                    a.href = `../${n.k}/index.html`;
+                    a.innerHTML = `<img src="${config.caminhoIconsMenu}${config.iconesMenu[n.k]}" style="height:20px;"><span>${n.l}</span>`;
                     menuBox.appendChild(a);
                 });
 
-                // 3. Gerar Cartões de Jogos de acordo com a listaJogos
+                // Gerar Jogos (5 por linha no desktop)
                 const grid = document.getElementById('gamesGrid');
-                
                 config.listaJogos.forEach(jogo => {
                     const card = document.createElement('a');
                     card.className = 'game-card';
-                    card.href = jogo.link; // Direciona para a pasta do jogo
-
+                    card.href = jogo.link;
                     card.innerHTML = `
                         <div class="card-img-container">
                             <img src="${config.caminhoIconsJogos}${jogo.icon}" alt="${jogo.nome}">
                         </div>
                         <h2>${jogo.nome}</h2>
                     `;
-                    
                     grid.appendChild(card);
                 });
             }
