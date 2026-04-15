@@ -60,24 +60,22 @@
         }
         .menu-item:hover { background: var(--primary-blue); color: white; }
 
-        /* GRID DE JOGOS - CONFIGURADO PARA 5 COLUNAS */
+        /* GRID DE JOGOS (5 COLUNAS) */
         .game-wrapper { 
             flex: 1; 
             padding: 15px 30px; 
             overflow-y: auto;
             display: grid;
-            /* Força 5 colunas no desktop */
             grid-template-columns: repeat(5, 1fr); 
             gap: 20px;
             justify-items: center;
             align-content: start;
         }
 
-        /* CARD MAIS COMPACTO */
         .game-card { 
             background: var(--bg-page); 
             width: 100%; 
-            max-width: 200px; /* Reduzido para caber melhor */
+            max-width: 200px;
             aspect-ratio: 0.9 / 1; 
             border-radius: 25px; 
             box-shadow: var(--outer-shadow); 
@@ -93,21 +91,25 @@
 
         .game-card:hover { transform: translateY(-5px); }
 
+        /* CONTAINER DO ÍCONE SEM FUNDO E SEM SOMBRA */
         .card-img-container {
-            width: 80px; height: 80px; /* Ícones menores */
-            background: var(--bg-page);
-            border-radius: 20px;
+            width: 100px; height: 100px;
+            background: transparent; /* Removido o fundo */
             display: flex; align-items: center; justify-content: center;
-            box-shadow: var(--outer-shadow);
             margin-bottom: 12px;
         }
         
-        .card-img-container img { height: 45px; width: auto; }
+        .card-img-container img { 
+            height: 75px; /* Aumentado um pouco já que não tem o quadrado em volta */
+            width: auto; 
+            object-fit: contain;
+            /* Opcional: filtro para dar um leve destaque se o icon for muito claro */
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1)); 
+        }
 
-        /* TÍTULO COM FONTE MENOR */
         .game-card h2 {
             color: var(--primary-blue);
-            font-size: 0.95rem; /* Fonte diminuída */
+            font-size: 0.95rem; 
             font-weight: 900;
             margin: 0;
             line-height: 1.1;
@@ -115,7 +117,6 @@
 
         footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #8899aa; font-size: 0.85rem; }
 
-        /* RESPONSIVIDADE PARA ECRÃS PEQUENOS */
         @media (max-width: 1024px) { grid-template-columns: repeat(3, 1fr); }
         @media (max-width: 600px) { 
             .game-wrapper { grid-template-columns: repeat(2, 1fr); padding: 15px; gap: 15px; } 
@@ -157,17 +158,12 @@
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const config = JOGO_CONFIG;
 
-                // Header Icon
                 document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.ano1;
 
-                // Menu Dropdown
                 const menuBox = document.getElementById('dropdownMenu');
                 const niveis = [
-                    { l: 'Pré-Escolar', k: 'pre' },
-                    { l: '1º Ano', k: 'ano1' },
-                    { l: '2º Ano', k: 'ano2' },
-                    { l: '3º Ano', k: 'ano3' },
-                    { l: '4º Ano', k: 'ano4' }
+                    { l: 'Pré-Escolar', k: 'pre' }, { l: '1º Ano', k: 'ano1' },
+                    { l: '2º Ano', k: 'ano2' }, { l: '3º Ano', k: 'ano3' }, { l: '4º Ano', k: 'ano4' }
                 ];
                 niveis.forEach(n => {
                     const a = document.createElement('a');
@@ -177,7 +173,6 @@
                     menuBox.appendChild(a);
                 });
 
-                // Gerar Jogos (5 por linha no desktop)
                 const grid = document.getElementById('gamesGrid');
                 config.listaJogos.forEach(jogo => {
                     const card = document.createElement('a');
