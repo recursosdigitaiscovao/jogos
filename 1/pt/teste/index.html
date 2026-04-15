@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>1º Ano - Sopa de Letras</title>
+    <title>1º Ano</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -47,40 +47,25 @@
             font-size: 0.8rem; box-shadow: 0 4px 0 var(--primary-dark);
         }
 
-        /* Container Principal */
         .game-wrapper { 
-            flex: 1; 
-            display: flex; 
-            justify-content: center; 
-            padding: 10px 20px; 
-            min-height: 0;
-            overflow: hidden;
+            flex: 1; display: flex; justify-content: center; 
+            padding: 5px 30px 15px 30px; min-height: 0; overflow: hidden;
         }
 
         .game-card { 
-            background: var(--bg-page); 
-            width: 100%; 
-            max-width: 1100px; /* Aumentado para monitores maiores */
-            height: 100%; 
-            border-radius: 35px; 
-            box-shadow: var(--outer-shadow); 
-            display: flex; 
-            flex-direction: column; 
-            position: relative; 
-            overflow: hidden;
+            background: var(--bg-page); width: 100%; max-width: 900px; 
+            height: 100%; border-radius: 35px; box-shadow: var(--outer-shadow); 
+            display: flex; flex-direction: column; position: relative; overflow: hidden;
+            transition: max-width 0.5s ease; /* Transição suave ao expandir */
         }
 
         /* Status Bar */
         .status { 
-            height: 50px; 
-            flex-shrink: 0; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 0 20px;
+            height: 50px; flex-shrink: 0; display: flex; 
+            justify-content: space-between; align-items: center; padding: 0 20px;
         }
         
-        #dots-container { display: flex; gap: 8px; align-items: center; }
+        #dots-container { display: flex; gap: 8px; align-items: center; justify-content: center; }
         .dot {
             width: 12px; height: 12px; border-radius: 50%;
             background: #cbd9e6; transition: all 0.3s ease;
@@ -91,91 +76,75 @@
 
         .status-timer { font-weight: 700; color: #667788; min-width: 60px; }
         .status-right { display: flex; align-items: center; gap: 12px; min-width: 60px; justify-content: flex-end; }
-        .rd-menu-btn { height: 26px; cursor: pointer; }
+        .rd-menu-btn { height: 24px; cursor: pointer; }
 
-        /* Área do Jogo Responsiva */
-        main { flex: 1; display: none; position: relative; overflow: hidden; }
-
-        #inner-game {
-            width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: space-evenly;
-            padding: 15px;
-        }
-
-        /* Layout para Monitores/Horizontal */
-        @media (orientation: landscape) and (min-height: 400px) {
-            #inner-game { flex-direction: row; justify-content: space-evenly; padding: 20px; }
-            .hint-container { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-        }
-
-        .hint-img { 
-            height: clamp(70px, 18vh, 140px); 
-            border-radius: 20px; 
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1); 
-            object-fit: contain;
-            background: white;
-            padding: 5px;
-        }
-
-        .slots { 
-            font-size: clamp(1.3rem, 4vw, 2.2rem); 
-            font-weight: 900; color: var(--primary-blue); 
-            letter-spacing: 4px; margin: 10px 0; text-align: center;
-        }
-
-        /* Grelha Dinâmica */
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(8, 1fr); 
-            gap: clamp(4px, 1vw, 8px); 
-            background: #d0e0f0; 
-            padding: clamp(8px, 2vw, 15px); 
-            border-radius: 25px; 
-            touch-action: none;
-            /* Tamanho inteligente: 85% da largura ou 65% da altura (o que for menor) */
-            width: min(85vw, 65vh); 
-            height: min(85vw, 65vh);
-            max-width: 550px;
-            max-height: 550px;
-        }
-
-        .cell { 
-            width: 100%; height: 100%;
-            background: white; border-radius: clamp(5px, 1.5vw, 12px); 
-            display: flex; align-items: center; justify-content: center; 
-            font-weight: 900; 
-            font-size: clamp(1rem, 3.5vmin, 1.6rem); 
-            color: #445566; cursor: pointer; 
-            box-shadow: 0 4px 0 #cbd9e6; 
-            user-select: none; transition: all 0.15s;
-        }
-        .cell.selected { background: var(--primary-blue); color: white; transform: translateY(2px); box-shadow: none; }
-        .cell.correct { background: #7ed321 !important; color: white !important; box-shadow: none; transform: scale(0.95); }
-
-        /* Intro Overlay */
+        /* --- ESTILOS DO ECRÃ INICIAL (ORIGINAL) --- */
         #intro-overlay {
             position: absolute; top: 0; left: 0; right: 0; height: 100%;
             background: var(--bg-page); z-index: 100;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            display: flex; flex-direction: column; align-items: center; padding-bottom: 20px;
         }
+        .intro-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .intro-actions { display: flex; align-items: center; gap: 15px; width: 100%; padding: 0 25px; }
         .btn-jogar {
-            width: 200px; padding: 18px; background: var(--primary-blue); 
-            color: white; border: none; border-radius: 25px; 
-            font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); 
-            font-size: 1.3rem; transition: transform 0.2s;
+            flex: 1; padding: 15px; background: var(--primary-blue); 
+            color: white; border: none; border-radius: 20px; 
+            font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); 
+            font-size: 1.1rem;
         }
-        .btn-jogar:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--primary-dark); }
+        .rd-intro-btn { height: 50px; width: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .rd-intro-btn img { height: 40px; }
 
-        /* Menus */
-        .menu-dropdown { 
-            position: absolute; top: 65px; left: 20px; 
-            display: none; flex-direction: column; gap: 8px; z-index: 2000; 
+        @keyframes moveHand { 
+            0% { transform: translate(0,0); opacity: 0; } 
+            10% { opacity: 1; }
+            50% { transform: translate(-60px, 0); opacity: 1; } 
+            90% { opacity: 1; }
+            100% { transform: translate(0,0); opacity: 0; } 
         }
+
+        /* --- ESTILOS DA ÁREA DE JOGO (RESPONSIVA E EXPANSÍVEL) --- */
+        main { flex: 1; display: none; position: relative; }
+
+        #inner-game { 
+            width: 100%; height: 100%; display: flex; flex-direction: column; 
+            align-items: center; justify-content: space-evenly; padding: 10px; 
+        }
+
+        /* Ajuste Dinâmico da Grelha */
+        .grid { 
+            display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; 
+            background: #d0e0f0; padding: 10px; border-radius: 20px; 
+            touch-action: none; position: relative;
+            /* Ocupa o máximo possível sem quebrar o layout */
+            width: min(85vw, 65vh); height: min(85vw, 65vh);
+            max-width: 500px; max-height: 500px;
+        }
+
+        .cell { 
+            width: 100%; height: 100%; background: white; border-radius: 10px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 900; font-size: clamp(0.9rem, 3.5vmin, 1.4rem); color: #445566; 
+            cursor: pointer; box-shadow: 0 3px 0 #cbd9e6; user-select: none;
+        }
+
+        .hint-img { height: clamp(60px, 15vh, 100px); border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .slots { font-size: clamp(1.2rem, 4vw, 1.8rem); font-weight: 900; color: var(--primary-blue); letter-spacing: 5px; }
+
+        /* Adaptabilidade Horizontal no Jogo */
+        @media (orientation: landscape) and (min-height: 400px) {
+            #inner-game { flex-direction: row; justify-content: space-evenly; }
+            .hint-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        }
+
+        .cell.selected { background: var(--primary-blue); color: white; transform: translateY(2px); box-shadow: none; }
+        .cell.correct { background: #7ed321; color: white; box-shadow: none; }
+
+        /* Menus e Painéis */
+        .menu-dropdown { position: absolute; top: 60px; left: 20px; display: none; flex-direction: column; gap: 8px; z-index: 2000; }
         .rd-panel {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            background: white; z-index: 2500; border-radius: 35px 35px 0 0;
-            padding: 25px 20px; display: flex; flex-direction: column; gap: 12px;
+            position: absolute; bottom: 0; left: 0; width: 100%; background: white; z-index: 2500;
+            border-radius: 35px 35px 0 0; padding: 25px 20px; display: flex; flex-direction: column; gap: 12px;
             transform: translateY(101%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .rd-panel.active { transform: translateY(0); box-shadow: 0 -10px 25px rgba(0,0,0,0.1); }
@@ -186,16 +155,7 @@
             cursor: pointer; text-decoration: none; color: #555; font-weight: 700;
         }
 
-        footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #8899aa; font-size: 0.85rem; }
-
-        /* Tutorial Anim */
-        @keyframes moveHand { 
-            0% { transform: translate(0,0); opacity: 0; } 
-            10% { opacity: 1; }
-            50% { transform: translate(-60px, 0); opacity: 1; } 
-            90% { opacity: 1; }
-            100% { transform: translate(0,0); opacity: 0; } 
-        }
+        footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #8899aa; font-size: 0.85rem; flex-shrink: 0; }
     </style>
 </head>
 <body>
@@ -215,37 +175,44 @@
     </header>
 
     <div class="game-wrapper">
-        <div class="game-card">
+        <div id="main-card" class="game-card">
             
             <section class="status">
                 <div id="timer-display" class="status-timer">⏳ 00:00</div>
                 <div id="dots-container"></div>
                 <div class="status-right">
-                    <div style="font-weight: 900; color: var(--primary-blue); margin-right:5px;"><span id="points-label">0</span></div>
+                    <div style="font-weight: 900; color: var(--primary-blue);"><span id="points-label">0</span></div>
                     <img id="status-rd-img" class="rd-menu-btn" src="" alt="RD" onclick="toggleRDMenu(event)">
                 </div>
             </section>
 
-            <!-- INTRO -->
+            <!-- ECRÃ INICIAL (Preservado) -->
             <div id="intro-overlay">
-                <div style="position:relative; margin-bottom:30px; background:#dbe9f7; padding:20px; border-radius:25px;">
-                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
-                        <div style="width:40px;height:40px;background:white;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;">G</div>
-                        <div style="width:40px;height:40px;background:white;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;">A</div>
-                        <div style="width:40px;height:40px;background:white;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;">T</div>
+                <div class="intro-content">
+                    <div style="position:relative; margin-bottom:20px; background:#dbe9f7; padding:15px; border-radius:20px;">
+                        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:5px;">
+                            <div style="width:30px;height:30px;background:white;border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;">G</div>
+                            <div style="width:30px;height:30px;background:white;border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;">A</div>
+                            <div style="width:30px;height:30px;background:white;border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;">T</div>
+                        </div>
+                        <i class="fas fa-hand-pointer" style="position:absolute; color:#f1c40f; font-size:24px; bottom:5px; right:5px; animation: moveHand 2s infinite;"></i>
                     </div>
-                    <i class="fas fa-hand-pointer" style="position:absolute; color:#f1c40f; font-size:30px; bottom:5px; right:5px; animation: moveHand 2s infinite;"></i>
+                    <h1 id="intro-title" style="color:var(--primary-blue); font-weight:900; margin-bottom:25px; text-align:center;">Sopa de Letras</h1>
                 </div>
-                <h1 style="color:var(--primary-blue); font-weight:900; margin-bottom:30px; font-size: 2rem;">Sopa de Letras</h1>
-                <button onclick="mostrarJogo()" class="btn-jogar">JOGAR</button>
+                
+                <div class="intro-actions">
+                    <button onclick="mostrarJogo()" class="btn-jogar">JOGAR</button>
+                    <div class="rd-intro-btn" onclick="toggleRDMenu(event)">
+                        <img id="intro-rd-img" src="" alt="RD">
+                    </div>
+                </div>
             </div>
 
-            <!-- RD PANEL -->
             <div id="rdDropdownMenu" class="rd-panel">
                 <div style="width:50px; height:5px; background:#ccd6e0; border-radius:10px; margin:-10px auto 15px auto; cursor:pointer;" onclick="toggleRDMenu(event)"></div>
             </div>
 
-            <!-- ÁREA REAL DO JOGO -->
+            <!-- ÁREA DE JOGO (Expandida ao iniciar) -->
             <main id="game-area">
                 <div id="inner-game">
                     <div class="hint-container">
@@ -258,11 +225,9 @@
         </div>
     </div>
 
-    <footer id="main-footer">© 2024 EDUCAÇÃO DIVERTIDA</footer>
+    <footer id="main-footer">2026</footer>
 
-    <!-- Carrega os dados externos -->
     <script src="dados.js"></script>
-
     <script>
         let roundGlobal = 1;
         let currentCategory = 'animais';
@@ -273,21 +238,10 @@
         let targetWord = "";
         let isDragging = false;
 
-        // Configuração fallback caso o dados.js falhe
-        if (typeof JOGO_CONFIG === 'undefined') {
-            window.JOGO_CONFIG = {
-                caminhoImg: "", caminhoIcons: "", links: {}, iconesMenu: {},
-                relatorio: { titulo: "Muito Bem!" },
-                categorias: { animais: { nome: "Animais", imgCapa: "", itens: [{nome:"GATO", img:""}, {nome:"CÃO", img:""}] } }
-            };
-        }
-
         function atualizarProgressao(total, atual) {
             const container = document.getElementById('dots-container');
             container.innerHTML = '';
             let visualAtual = atual > 5 ? atual - 5 : atual;
-            if(atual === 0) visualAtual = 0;
-
             for (let i = 1; i <= 5; i++) {
                 const dot = document.createElement('div');
                 dot.className = 'dot';
@@ -310,9 +264,7 @@
             document.getElementById('rdDropdownMenu').classList.toggle('active');
         }
 
-        function closeRDMenu() {
-            document.getElementById('rdDropdownMenu').classList.remove('active');
-        }
+        function closeRDMenu() { document.getElementById('rdDropdownMenu').classList.remove('active'); }
 
         window.onclick = () => {
             document.getElementById('dropdownMenu').style.display = 'none';
@@ -320,7 +272,11 @@
         };
 
         function mostrarJogo() {
+            // Ao jogar, permitimos que o card cresça para aproveitar monitores grandes
+            document.getElementById('main-card').style.maxWidth = "1100px";
+            
             document.getElementById('intro-overlay').style.display = 'none';
+            document.getElementById('main-footer').style.display = 'none';
             document.getElementById('game-area').style.display = 'flex';
             
             if(!timerInt) {
@@ -338,24 +294,18 @@
 
         function prepararRondas() {
             const catData = JOGO_CONFIG.categorias[currentCategory].itens;
-            // Embaralha e pega 10 itens
-            itemsForGame = [...catData].sort(() => 0.5 - Math.random()).slice(0, 10);
+            const level1 = [...catData].sort(() => 0.5 - Math.random()).slice(0, 5);
+            const level2 = [...catData].sort(() => 0.5 - Math.random()).slice(0, 5);
+            itemsForGame = [...level1, ...level2];
         }
 
         function loadRound() {
             if(roundGlobal > 10) { finalizarJogo(); return; }
-            
             atualizarProgressao(5, roundGlobal);
             const item = itemsForGame[roundGlobal - 1];
-            
-            // Normalizar palavra (remover acentos)
             targetWord = item.nome.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/Ç/g, "C");
-            
             document.getElementById('target-img').src = JOGO_CONFIG.caminhoImg + item.img;
-            
-            // Se for nível 1 (rounds 1-5), mostra a palavra. Nível 2 (6-10), mostra traços.
             document.getElementById('target-slots').innerText = (roundGlobal <= 5) ? item.nome.toUpperCase() : "_ ".repeat(targetWord.length);
-            
             generateGrid(targetWord);
             selectedCells = [];
         }
@@ -365,37 +315,21 @@
             gridEl.innerHTML = '';
             const size = 8;
             let cells = Array(size * size).fill('');
-            
             const isHorizontal = Math.random() > 0.5;
-            let start;
+            const start = isHorizontal 
+                ? Math.floor(Math.random() * size) * size + Math.floor(Math.random() * (size - word.length))
+                : Math.floor(Math.random() * (size - word.length)) * size + Math.floor(Math.random() * size);
 
-            if(isHorizontal) {
-                const row = Math.floor(Math.random() * size);
-                const col = Math.floor(Math.random() * (size - word.length));
-                start = row * size + col;
-            } else {
-                const row = Math.floor(Math.random() * (size - word.length));
-                const col = Math.floor(Math.random() * size);
-                start = row * size + col;
-            }
-
-            for(let i=0; i<word.length; i++) {
-                cells[isHorizontal ? start + i : start + (i * size)] = word[i];
-            }
-
+            for(let i=0; i<word.length; i++) cells[isHorizontal ? start + i : start + (i * size)] = word[i];
             const abc = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
+            
             cells.forEach((l, idx) => {
                 const d = document.createElement('div');
                 d.className = 'cell';
                 d.innerText = l || abc[Math.floor(Math.random()*abc.length)];
-                
-                // Eventos Mouse
                 d.onmousedown = () => startSelection(d);
                 d.onmouseenter = () => moveSelection(d);
-                
-                // Eventos Touch
                 d.ontouchstart = (e) => { e.preventDefault(); startSelection(d); };
-                
                 gridEl.appendChild(d);
             });
 
@@ -405,20 +339,17 @@
                 let target = document.elementFromPoint(touch.clientX, touch.clientY);
                 if(target && target.classList.contains('cell')) moveSelection(target);
             };
+            window.onmouseup = window.ontouchend = () => endSelection();
         }
 
         function startSelection(el) { isDragging = true; clearSelection(); selectCell(el); }
         function moveSelection(el) { if(isDragging) selectCell(el); }
         function endSelection() { if(!isDragging) return; isDragging = false; checkWord(); }
 
-        window.onmouseup = window.ontouchend = endSelection;
-
         function selectCell(el) {
             if(el.classList.contains('correct') || selectedCells.includes(el)) return;
             el.classList.add('selected');
             selectedCells.push(el);
-            
-            // Verificação instantânea
             const currentString = selectedCells.map(x => x.innerText).join('');
             if(currentString === targetWord) { isDragging = false; checkWord(); }
         }
@@ -431,29 +362,20 @@
         function checkWord() {
             const currentString = selectedCells.map(x => x.innerText).join('');
             if(currentString === targetWord) {
-                selectedCells.forEach(x => x.classList.add('correct'));
+                selectedCells.forEach(x => { x.classList.remove('selected'); x.classList.add('correct'); });
                 document.getElementById('target-slots').innerText = itemsForGame[roundGlobal-1].nome.toUpperCase();
-                document.getElementById('points-label').innerText = roundGlobal * 10;
-                
-                setTimeout(() => {
-                    roundGlobal++;
-                    loadRound();
-                }, 1000);
-            } else {
-                clearSelection();
-            }
+                setTimeout(() => { roundGlobal++; loadRound(); }, 800);
+            } else { clearSelection(); }
         }
 
         function finalizarJogo() {
             clearInterval(timerInt);
             const main = document.getElementById('game-area');
             main.innerHTML = `
-                <div style="text-align:center; width:100%;">
-                    <h2 style="color:var(--primary-blue); font-size:2.5rem; margin-bottom:10px;">${JOGO_CONFIG.relatorio.titulo}</h2>
-                    <p style="font-weight:700; color:#667; margin-bottom:30px; font-size:1.2rem;">
-                        Tempo Total: ${document.getElementById('timer-display').innerText.replace('⏳','')}
-                    </p>
-                    <button onclick="location.reload()" class="btn-jogar">REPETIR</button>
+                <div style="text-align:center; padding:20px;">
+                    <h2 style="color:var(--primary-blue); font-size:2rem; margin-bottom:10px;">${JOGO_CONFIG.relatorio.titulo}</h2>
+                    <p style="font-weight:700; color:#667; margin-bottom:20px;">Tempo: ${document.getElementById('timer-display').innerText.replace('⏳','').trim()}</p>
+                    <button onclick="location.reload()" class="btn-jogar" style="width:180px;">REPETIR</button>
                 </div>
             `;
         }
@@ -468,36 +390,35 @@
         }
 
         window.onload = () => {
-            const pathI = JOGO_CONFIG.caminhoIcons;
-            const pathImg = JOGO_CONFIG.caminhoImg;
-            const icons = JOGO_CONFIG.iconesMenu;
-            
-            document.getElementById('header-icon').src = pathI + icons.ano1;
-            document.getElementById('status-rd-img').src = pathImg + "rd.png";
+            if (typeof JOGO_CONFIG !== 'undefined') {
+                const pathI = JOGO_CONFIG.caminhoIcons;
+                const pathImg = JOGO_CONFIG.caminhoImg;
+                const icons = JOGO_CONFIG.iconesMenu;
+                document.getElementById('header-icon').src = pathI + icons.ano1;
+                document.getElementById('status-rd-img').src = pathImg + "rd.png";
+                document.getElementById('intro-rd-img').src = pathImg + "rd.png";
 
-            // Menu Principal
-            const menuBox = document.getElementById('dropdownMenu');
-            const menuData = [{k:'home',l:'Início'},{k:'pre',l:'Pré'},{k:'ano1',l:'1º Ano'},{k:'ano2',l:'2º Ano'},{k:'ano3',l:'3º Ano'},{k:'ano4',l:'4º Ano'}];
-            menuData.forEach(m => {
-                const a = document.createElement('a');
-                a.className = 'custom-menu-item';
-                a.href = JOGO_CONFIG.links[m.k] || "#";
-                a.innerHTML = `<img src="${pathI}${icons[m.k]}" style="height:20px;"><span>${m.l}</span>`;
-                menuBox.appendChild(a);
-            });
+                const menuBox = document.getElementById('dropdownMenu');
+                const menuData = [{k:'home',l:'Início'},{k:'pre',l:'Pré'},{k:'ano1',l:'1º Ano'},{k:'ano2',l:'2º Ano'},{k:'ano3',l:'3º Ano'},{k:'ano4',l:'4º Ano'}];
+                menuData.forEach(m => {
+                    const a = document.createElement('a');
+                    a.className = 'custom-menu-item';
+                    a.href = JOGO_CONFIG.links[m.k];
+                    a.innerHTML = `<img src="${pathI}${icons[m.k]}" style="height:20px;"><span>${m.l}</span>`;
+                    menuBox.appendChild(a);
+                });
 
-            // Menu RD Categorias
-            const rdBox = document.getElementById('rdDropdownMenu');
-            Object.keys(JOGO_CONFIG.categorias).forEach(key => {
-                const cat = JOGO_CONFIG.categorias[key];
-                const div = document.createElement('div');
-                div.className = 'custom-menu-item';
-                div.innerHTML = `<img src="${pathImg}${cat.imgCapa}" style="height:25px; width:25px; object-fit:contain;"><span>${cat.nome}</span>`;
-                div.onclick = () => restartWithCategory(key);
-                rdBox.appendChild(div);
-            });
-
-            atualizarProgressao(5, 0);
+                const rdBox = document.getElementById('rdDropdownMenu');
+                Object.keys(JOGO_CONFIG.categorias).forEach(key => {
+                    const cat = JOGO_CONFIG.categorias[key];
+                    const div = document.createElement('div');
+                    div.className = 'custom-menu-item';
+                    div.innerHTML = `<img src="${pathImg}${cat.imgCapa}" style="height:25px; width:25px; object-fit:contain;"><span>${cat.nome}</span>`;
+                    div.onclick = () => restartWithCategory(key);
+                    rdBox.appendChild(div);
+                });
+                atualizarProgressao(5, 0);
+            }
         };
     </script>
 </body>
