@@ -12,6 +12,7 @@
             --primary-blue: #5ba4e5;
             --primary-dark: #3d7db8;
             --white: #ffffff;
+            --text-grey: #5d7082;
             --outer-shadow: 0px 0px 20px #b0c4d9, 0px 0px 20px #ffffff;
         }
 
@@ -55,16 +56,26 @@
             color: #555; font-weight: 700; transition: 0.2s;
         }
 
-        /* AJUSTE DO PADDING LATERAL DO CONTENTOR DE JOGOS */
         .game-wrapper { 
             flex: 1; 
-            padding: 20px 80px; /* Aumentado para 80px nas laterais */
+            padding: 20px 80px; 
             overflow-y: auto;
             display: grid;
             grid-template-columns: repeat(5, 1fr); 
-            gap: 30px; /* Aumentado para dar mais espaço entre cards */
+            gap: 30px;
             justify-items: center;
             align-content: start;
+        }
+
+        /* TEXTO DE INTRODUÇÃO DINÂMICO */
+        .intro-text {
+            grid-column: 1 / -1; /* Ocupa as 5 colunas da grelha */
+            text-align: center;
+            color: var(--text-grey);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 10px 0 30px 0;
+            line-height: 1.4;
         }
 
         /* GAME CARD */
@@ -80,7 +91,7 @@
             align-items: center;
             text-decoration: none;
             transition: all 0.2s ease;
-            padding: 20px 20px 15px 20px; /* 20px do topo/lados garantidos aqui */
+            padding: 20px 20px 15px 20px;
             text-align: center;
         }
 
@@ -89,17 +100,13 @@
         .card-img-container {
             width: 100%; 
             height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             margin-bottom: 10px;
         }
         
         .card-img-container img { 
-            max-width: 100%; 
-            max-height: 100%; 
-            width: auto;
-            height: auto;
+            max-width: 100%; max-height: 100%; 
+            width: auto; height: auto;
             object-fit: contain;
             filter: drop-shadow(2px 4px 5px rgba(0,0,0,0.12)); 
         }
@@ -115,17 +122,15 @@
 
         footer { height: 35px; display: flex; align-items: center; justify-content: center; color: #8899aa; font-size: 0.8rem; }
 
-        /* RESPONSIVIDADE PARA AJUSTAR O PADDING EM ECRÃS MENORES */
-        @media (max-width: 1200px) { 
-            .game-wrapper { padding: 20px 40px; } 
-        }
+        @media (max-width: 1200px) { .game-wrapper { padding: 20px 40px; } }
         @media (max-width: 1000px) { 
             .game-wrapper { grid-template-columns: repeat(3, 1fr); padding: 20px 30px; } 
+            .intro-text { font-size: 1.2rem; }
         }
         @media (max-width: 600px) { 
             .game-wrapper { grid-template-columns: repeat(2, 1fr); padding: 15px 20px; gap: 15px; } 
             .game-card { min-height: 150px; padding: 15px; }
-            .card-img-container { height: 80px; }
+            .intro-text { font-size: 1.1rem; margin-bottom: 15px; }
         }
     </style>
 </head>
@@ -145,7 +150,13 @@
         </div>
     </header>
 
-    <div class="game-wrapper" id="gamesGrid"></div>
+    <div class="game-wrapper" id="gamesGrid">
+        <!-- O texto de introdução -->
+        <div class="intro-text">
+            Explora as letras, as palavras e diverte-te a ler!
+        </div>
+        <!-- Os cartões de jogos serão inseridos abaixo pelo JavaScript -->
+    </div>
 
     <footer>2026</footer>
 
@@ -164,6 +175,7 @@
                 const config = JOGO_CONFIG;
                 document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.ano1;
 
+                // Preencher Menu Sidebar
                 const menuBox = document.getElementById('dropdownMenu');
                 const niveis = [
                     { l: 'Pré-Escolar', k: 'pre' }, { l: '1º Ano', k: 'ano1' },
@@ -177,6 +189,7 @@
                     menuBox.appendChild(a);
                 });
 
+                // Inserir Cartões de Jogos
                 const grid = document.getElementById('gamesGrid');
                 config.listaJogos.forEach(jogo => {
                     const card = document.createElement('a');
