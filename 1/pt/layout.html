@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>1º Ano</title>
+    <title>1º Ano - Jogos</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -19,7 +19,7 @@
         
         body { 
             background-color: var(--bg-page); 
-            height: 100dvh; width: 100vw; 
+            height: 100vh; width: 100vw; 
             overflow: hidden; 
             display: flex; flex-direction: column;
         }
@@ -30,6 +30,12 @@
             padding: 0 20px; flex-shrink: 0; z-index: 1000;
         }
         
+        .hamburger-btn { 
+            font-size: 26px; color: var(--primary-blue); cursor: pointer; 
+            padding: 8px; display: flex; align-items: center; justify-content: center;
+            z-index: 2001;
+        }
+
         .header-center { 
             flex: 1; display: flex; align-items: center; justify-content: center; 
             gap: 10px; color: var(--primary-blue); font-weight: 900; font-size: 1.2rem;
@@ -42,100 +48,95 @@
             font-size: 0.8rem; box-shadow: 0 4px 0 var(--primary-dark);
         }
 
+        /* MENU HAMBÚRGUER (DROPDOWN) */
+        .menu-dropdown { 
+            position: absolute; top: 65px; left: 20px; 
+            display: none; flex-direction: column; gap: 8px; z-index: 2000; 
+        }
+        .menu-item { 
+            display: flex; align-items: center; gap: 12px; padding: 12px 20px; 
+            background: white; border-radius: 18px; box-shadow: 4px 4px 10px #c5d4e3; 
+            cursor: pointer; min-width: 180px; text-decoration: none; 
+            color: #555; font-weight: 700; transition: 0.2s;
+        }
+        .menu-item:hover { background: var(--primary-blue); color: white; }
+
+        /* CONTENTOR DE JOGOS (GRID) */
         .game-wrapper { 
             flex: 1; 
-            display: flex; 
-            justify-content: center; 
-            padding: 5px 30px 15px 30px; 
-            min-height: 0;
-            overflow: hidden;
+            padding: 20px; 
+            overflow-y: auto; /* Permite scroll se houver muitos jogos */
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            justify-items: center;
+            align-content: start;
         }
 
+        /* ESTILO DO GAME CARD (TRANSFORMADO EM BOTÃO) */
         .game-card { 
             background: var(--bg-page); 
             width: 100%; 
-            max-width: 900px; 
-            height: 100%; 
+            max-width: 350px;
+            aspect-ratio: 1/1; /* Mantém o card quadrado */
             border-radius: 35px; 
             box-shadow: var(--outer-shadow); 
             display: flex; 
             flex-direction: column; 
-            position: relative; 
-            overflow: hidden;
-        }
-
-        .status { 
-            height: 50px; 
-            flex-shrink: 0; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 0 20px;
-        }
-        
-        #dots-container { display: flex; gap: 8px; align-items: center; }
-        .dot { width: 12px; height: 12px; border-radius: 50%; background: #cbd9e6; box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1); }
-
-        /* INTRO OVERLAY COMO BOTÃO */
-        #intro-overlay {
-            position: absolute; top: 0; left: 0; right: 0; height: 100%;
-            background: var(--bg-page); z-index: 100;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
             padding: 20px;
             text-align: center;
-            cursor: pointer; /* Transforma em botão */
-            transition: transform 0.2s ease;
+            cursor: pointer;
+            border: none;
         }
 
-        #intro-overlay:hover {
-            transform: scale(1.01);
+        .game-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0px 10px 30px #b0c4d9;
         }
 
-        #intro-overlay:active {
+        .game-card:active {
             transform: scale(0.98);
         }
 
-        .intro-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 25px;
-            pointer-events: none; /* Garante que o clique passe para o overlay */
-        }
-
-        .intro-img-container {
-            width: 160px; height: 160px;
+        .card-img-container {
+            width: 120px; height: 120px;
             background: var(--bg-page);
-            border-radius: 40px;
+            border-radius: 30px;
             display: flex; align-items: center; justify-content: center;
             box-shadow: var(--outer-shadow);
+            margin-bottom: 20px;
         }
         
-        #intro-img { height: 90px; width: auto; }
+        .card-img-container img { height: 70px; width: auto; }
 
-        .intro-content h1 {
+        .game-card h2 {
             color: var(--primary-blue);
-            font-size: 2.2rem;
+            font-size: 1.4rem;
             font-weight: 900;
             margin: 0;
+            line-height: 1.2;
         }
 
-        main { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #8899aa; font-size: 0.85rem; }
+        footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #8899aa; font-size: 0.85rem; flex-shrink: 0; }
 
-        @media (max-width: 450px) { 
-            .game-wrapper { padding: 5px 20px 15px 20px; } 
-            .intro-content h1 { font-size: 1.8rem; }
-            .intro-img-container { width: 130px; height: 130px; }
-            #intro-img { height: 70px; }
-        }
+        /* Scrollbar estilizada */
+        .game-wrapper::-webkit-scrollbar { width: 8px; }
+        .game-wrapper::-webkit-scrollbar-track { background: transparent; }
+        .game-wrapper::-webkit-scrollbar-thumb { background: #cbd9e6; border-radius: 10px; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="header-left">
-            <i class="fas fa-bars hamburger-btn" style="font-size: 26px; color: var(--primary-blue); cursor: pointer; padding: 8px;"></i>
+            <i class="fas fa-bars hamburger-btn" onclick="toggleMenu(event)"></i>
+            <div id="dropdownMenu" class="menu-dropdown">
+                <!-- Menu preenchido via JS -->
+            </div>
         </div>
         <div class="header-center">
             <img id="header-icon" src="" alt="">
@@ -146,67 +147,72 @@
         </div>
     </header>
 
-    <div class="game-wrapper">
-        <div class="game-card">
-            
-            <section class="status">
-                <div id="dots-container"></div>
-                <div style="font-weight: 900; color: var(--primary-blue);">
-                    <span id="points-label">0</span>
-                </div>
-            </section>
-
-            <!-- O CARD INTEIRO É UM BOTÃO -->
-            <div id="intro-overlay" onclick="mostrarJogo()">
-                <div class="intro-content">
-                    <div class="intro-img-container">
-                        <img id="intro-img" src="" alt="Ícone do Jogo">
-                    </div>
-                    <h1 id="game-title">Carregando...</h1>
-                </div>
-            </div>
-
-            <main id="game-area">
-                <!-- O conteúdo do jogo aparece aqui após o clique -->
-                <h2 style="color: var(--primary-blue);">O Jogo Começou!</h2>
-            </main>
-        </div>
+    <!-- Contentor onde os jogos serão inseridos -->
+    <div class="game-wrapper" id="gamesGrid">
+        <!-- Os cartões (game-card) entrarão aqui -->
     </div>
 
-    <footer id="main-footer">2026</footer>
+    <footer>2026</footer>
 
     <script src="dados.js"></script>
     <script>
-        function mostrarJogo() {
-            document.getElementById('intro-overlay').style.display = 'none';
-            document.getElementById('game-area').style.display = 'flex';
-            // Aqui você iniciaria a lógica real do jogo
-            console.log("Jogo iniciado!");
+        // FUNÇÃO PARA ABRIR/FECHAR O MENU
+        function toggleMenu(e) {
+            if(e) e.stopPropagation();
+            const menu = document.getElementById('dropdownMenu');
+            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
         }
+
+        // FECHAR MENU AO CLICAR FORA
+        window.onclick = () => {
+            document.getElementById('dropdownMenu').style.display = 'none';
+        };
 
         window.onload = () => {
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const config = JOGO_CONFIG;
-                
-                // 1. Define o ícone do cabeçalho (ex: icon1.png)
-                document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.ano1;
-                
-                // 2. Carrega os dados do PRIMEIRO jogo da lista como exemplo
-                // Em um cenário real, você poderia identificar qual jogo carregar via URL ou ID
-                const jogoAtual = config.listaJogos[0]; 
-                
-                if (jogoAtual) {
-                    document.getElementById('game-title').innerText = jogoAtual.nome;
-                    document.getElementById('intro-img').src = config.caminhoIconsJogos + jogoAtual.icon;
-                }
 
-                // 3. Inicializa os dots de progresso
-                const container = document.getElementById('dots-container');
-                for (let i = 0; i < 5; i++) {
-                    const dot = document.createElement('div');
-                    dot.className = 'dot';
-                    container.appendChild(dot);
-                }
+                // 1. Preencher Ícone do Header
+                document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.ano1;
+
+                // 2. Criar Menu Hamburguer Dinâmico
+                const menuBox = document.getElementById('dropdownMenu');
+                const links = [
+                    { label: 'Pré-Escolar', key: 'pre' },
+                    { label: '1º Ano', key: 'ano1' },
+                    { label: '2º Ano', key: 'ano2' },
+                    { label: '3º Ano', key: 'ano3' },
+                    { label: '4º Ano', key: 'ano4' }
+                ];
+
+                links.forEach(item => {
+                    const a = document.createElement('a');
+                    a.className = 'menu-item';
+                    a.href = `../${item.key}/index.html`; // Ajuste conforme a sua estrutura de pastas
+                    a.innerHTML = `
+                        <img src="${config.caminhoIconsMenu}${config.iconesMenu[item.key]}" style="height:24px;">
+                        <span>${item.label}</span>
+                    `;
+                    menuBox.appendChild(a);
+                });
+
+                // 3. Gerar Cartões de Jogos de acordo com a listaJogos
+                const grid = document.getElementById('gamesGrid');
+                
+                config.listaJogos.forEach(jogo => {
+                    const card = document.createElement('a');
+                    card.className = 'game-card';
+                    card.href = jogo.link; // Direciona para a pasta do jogo
+
+                    card.innerHTML = `
+                        <div class="card-img-container">
+                            <img src="${config.caminhoIconsJogos}${jogo.icon}" alt="${jogo.nome}">
+                        </div>
+                        <h2>${jogo.nome}</h2>
+                    `;
+                    
+                    grid.appendChild(card);
+                });
             }
         };
     </script>
