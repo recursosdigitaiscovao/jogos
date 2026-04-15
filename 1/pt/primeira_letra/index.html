@@ -14,188 +14,115 @@
             --white: #ffffff;
             --success: #7ed321;
             --error: #ff4d4d;
-            --outer-shadow: 0px 0px 25px #b0c4d9, 0px 0px 25px #ffffff;
+            --text-dark: #445566;
+            --outer-shadow: 10px 10px 20px #b0c4d9, -10px -10px 20px #ffffff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
         
-        body { 
-            background-color: var(--bg-page); 
-            height: 100dvh; width: 100vw; 
-            overflow: hidden; 
-            display: flex; flex-direction: column;
-        }
+        body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
 
-        header { 
-            height: 60px; display: flex; align-items: center; justify-content: space-between; 
-            padding: 0 20px; flex-shrink: 0; z-index: 1000;
-        }
-        
-        .hamburger-btn { font-size: 26px; color: var(--primary-blue); cursor: pointer; padding: 8px; }
-
-        .header-center { 
-            flex: 1; display: flex; align-items: center; justify-content: center; 
-            gap: 10px; color: var(--primary-blue); font-weight: 900; font-size: 1.2rem;
-        }
+        /* HEADER */
+        header { height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; flex-shrink: 0; z-index: 1000; position: relative; }
+        .hamburger-btn { font-size: 26px; color: var(--primary-blue); cursor: pointer; padding: 10px; }
+        .header-center { flex: 1; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--primary-blue); font-weight: 900; font-size: 1.2rem; }
         .header-center img { height: 30px; }
+        .btn-voltar { background: var(--primary-blue); color: white; padding: 8px 16px; border-radius: 12px; text-decoration: none; font-weight: 900; font-size: 0.8rem; box-shadow: 0 4px 0 var(--primary-dark); }
 
-        .btn-voltar { 
-            background: var(--primary-blue); color: white; padding: 8px 16px; 
-            border-radius: 12px; text-decoration: none; font-weight: 900; 
-            font-size: 0.8rem; box-shadow: 0 4px 0 var(--primary-dark);
+        /* MENU HAMBÚRGUER (PÁGINAS) */
+        .menu-dropdown { 
+            position: absolute; top: 60px; left: 20px; 
+            background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: none; flex-direction: column; padding: 10px; gap: 5px; z-index: 2000; min-width: 180px;
         }
+        .menu-link { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: #555; font-weight: 700; border-radius: 12px; transition: 0.2s; }
+        .menu-link:hover { background: var(--bg-page); color: var(--primary-blue); }
+        .menu-link img { height: 20px; width: 20px; object-fit: contain; }
 
-        .game-wrapper { 
-            flex: 1; display: flex; justify-content: center; 
-            padding: 5px 20px 15px 20px; overflow: hidden;
-        }
+        /* JOGO WRAPPER */
+        .game-wrapper { flex: 1; display: flex; justify-content: center; padding: 5px 20px 15px 20px; overflow: hidden; }
+        .game-card { background: var(--bg-page); width: 100%; max-width: 600px; height: 100%; border-radius: 40px; box-shadow: var(--outer-shadow); display: flex; flex-direction: column; position: relative; overflow: hidden; }
 
-        .game-card { 
-            background: var(--bg-page); width: 100%; max-width: 700px; 
-            height: 100%; border-radius: 35px; box-shadow: var(--outer-shadow); 
-            display: flex; flex-direction: column; position: relative; overflow: hidden;
-        }
-
-        /* Status Bar */
+        /* STATUS BAR */
         .status { height: 50px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
         #dots-container { display: flex; gap: 8px; }
-        .dot { width: 12px; height: 12px; border-radius: 50%; background: #cbd9e6; transition: 0.3s; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; background: #cbd9e6; }
         .dot.active { background: var(--primary-blue); transform: scale(1.3); }
         .dot.completed { background: var(--success); }
+        .rd-btn { height: 35px; cursor: pointer; transition: transform 0.2s; }
+        .rd-btn:hover { transform: scale(1.1); }
 
-        /* Jogo Principal */
-        main { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; }
+        /* ÁREA DE JOGO */
+        main { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px; }
+        .img-box { background: white; padding: 15px; border-radius: 30px; box-shadow: 5px 5px 15px #c5d4e3; width: 60%; max-width: 200px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; }
+        #target-img { max-width: 100%; max-height: 100%; object-fit: contain; }
         
-        .image-box {
-            background: white; padding: 15px; border-radius: 30px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-        }
-        #target-img { height: min(180px, 22vh); border-radius: 15px; display: block; }
+        .word-row { display: flex; align-items: center; justify-content: center; font-size: clamp(2.5rem, 10vw, 4rem); font-weight: 900; gap: 10px; color: var(--text-dark); }
+        .drop-zone { width: 70px; height: 90px; border: 4px dashed var(--primary-blue); border-radius: 20px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .drop-zone.hover { background: #d0e0f0; border-style: solid; transform: scale(1.1); }
+        .drop-zone.correct { border: 5px solid var(--success); color: var(--success); background: white; border-style: solid; }
+        .drop-zone.wrong { border: 5px solid var(--error); color: var(--error); border-style: solid; animation: shake 0.4s; }
 
-        .word-display {
-            display: flex; align-items: center; justify-content: center;
-            font-size: clamp(2.2rem, 10vw, 4rem); font-weight: 900; color: #445;
-            gap: 8px; text-transform: uppercase;
-        }
+        .options-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; max-width: 450px; padding: 10px; }
+        .letter-card { aspect-ratio: 1; background: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 900; box-shadow: 0 6px 0 #cbd9e6; cursor: grab; touch-action: none; }
 
-        .drop-zone {
-            width: 70px; height: 85px;
-            border: 4px dashed var(--primary-blue);
-            border-radius: 20px;
-            display: flex; align-items: center; justify-content: center;
-            background: rgba(255,255,255,0.6);
-            color: var(--primary-blue);
-            transition: all 0.2s ease;
-        }
-        .drop-zone.correct { border: 4px solid var(--success); color: var(--success); background: white; }
-        .drop-zone.wrong { border: 4px solid var(--error); color: var(--error); }
-        .drop-zone.hover { background: #d0e0f0; transform: scale(1.05); }
-
-        .letter-pool {
-            display: flex; gap: 12px; justify-content: center; width: 100%; padding: 10px;
-        }
-
-        .letter-card {
-            width: clamp(60px, 15vw, 75px); height: clamp(60px, 15vw, 75px);
-            background: white; border-radius: 20px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2.2rem; font-weight: 900; color: #445;
-            box-shadow: 0 6px 0 #cbd9e6; cursor: grab;
-            touch-action: none; user-select: none;
-        }
-        .letter-card:active { cursor: grabbing; transform: translateY(2px); box-shadow: 0 2px 0 #cbd9e6; }
-
-        /* Proxy de Arrastre */
-        #drag-proxy {
-            position: fixed; pointer-events: none; z-index: 3000;
-            width: 70px; height: 70px; background: white; border-radius: 20px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2.2rem; font-weight: 900; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            opacity: 0.9; display: none;
-        }
-
-        /* Intro Overlay */
-        #intro-overlay {
-            position: absolute; inset: 0; background: var(--bg-page); z-index: 100;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
-        }
-        .btn-jogar {
-            padding: 18px 60px; background: var(--primary-blue); 
-            color: white; border: none; border-radius: 25px; 
-            font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); 
-            font-size: 1.3rem; transition: 0.2s;
-        }
-        .btn-jogar:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--primary-dark); }
-
-        /* Painel Lateral (Categorias) */
-        .rd-panel {
-            position: absolute; bottom: 0; left: 0; width: 100%; background: white; z-index: 2500;
-            border-radius: 35px 35px 0 0; padding: 25px 20px; display: flex; flex-direction: column; gap: 12px;
-            transform: translateY(101%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        /* PAINEL RD (CATEGORIAS) */
+        .rd-panel { position: absolute; bottom: 0; left: 0; width: 100%; background: white; z-index: 2500; border-radius: 35px 35px 0 0; padding: 25px 20px; display: flex; flex-direction: column; gap: 10px; transform: translateY(101%); transition: transform 0.4s ease; }
         .rd-panel.active { transform: translateY(0); box-shadow: 0 -10px 30px rgba(0,0,0,0.1); }
-        .custom-menu-item { 
-            display: flex; align-items: center; gap: 15px; padding: 15px 20px; 
-            background: #f8fafc; border-radius: 20px; cursor: pointer; text-decoration: none; 
-            color: #445; font-weight: 700; transition: 0.2s;
-        }
-        .custom-menu-item:hover { background: #eef2f6; }
+        .cat-item { display: flex; align-items: center; gap: 15px; padding: 12px 20px; background: #f8fafc; border-radius: 18px; cursor: pointer; font-weight: 700; color: var(--text-dark); }
 
+        /* OUTROS */
+        #intro-overlay { position: absolute; inset: 0; background: var(--bg-page); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+        .btn-jogar { padding: 15px 60px; background: var(--primary-blue); color: white; border: none; border-radius: 20px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); font-size: 1.3rem; }
+        #drag-proxy { position: fixed; pointer-events: none; z-index: 3000; width: 70px; height: 70px; background: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 900; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: none; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
     </style>
 </head>
 <body>
 
     <header>
-        <i class="fas fa-bars hamburger-btn" onclick="toggleMenu()"></i>
+        <div class="header-left">
+            <i class="fas fa-bars hamburger-btn" onclick="toggleMainMenu(event)"></i>
+            <div id="dropdownMenu" class="menu-dropdown"></div>
+        </div>
         <div class="header-center">
             <img id="header-icon" src="" alt="">
-            <span>QUAL É A LETRA?</span>
+            <span>1º ANO</span>
         </div>
-        <a href="../index.html" class="btn-voltar">VOLTAR</a>
+        <div class="header-right">
+            <a href="../index.html" class="btn-voltar">VOLTAR</a>
+        </div>
     </header>
 
     <div class="game-wrapper">
         <div class="game-card">
-            
             <section class="status">
-                <div id="timer-display" style="font-weight: 700; color: #667; min-width: 70px;">⏳ 00:00</div>
+                <div id="timer-display" style="font-weight: 800; color: #678;">00:00</div>
                 <div id="dots-container"></div>
-                <div id="points-display" style="font-weight: 900; color: var(--primary-blue); min-width: 70px; text-align: right;">0</div>
+                <div class="status-right">
+                    <img id="rd-status-btn" class="rd-btn" src="" alt="Categorias" onclick="toggleCategoryMenu(event)">
+                </div>
             </section>
 
-            <!-- Ecrã Inicial -->
             <div id="intro-overlay">
-                <div style="background:white; padding:20px; border-radius:30px; margin-bottom:10px; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
-                    <img id="intro-img-preview" style="height:120px;" src="">
-                </div>
-                <h1 style="color:var(--primary-blue); font-weight:900;">Qual é a Letra?</h1>
-                <p style="text-align:center; padding: 0 30px; color:#678;">Arrasta a primeira letra para o lugar correto!</p>
-                <button onclick="começarJogo()" class="btn-jogar">JOGAR</button>
+                <h1 style="color:var(--primary-blue); font-weight:900; font-size: 2rem;">Qual é a Letra?</h1>
+                <button onclick="iniciarJogo()" class="btn-jogar">JOGAR</button>
             </div>
 
-            <!-- Área do Jogo -->
             <main id="game-area">
-                <div class="image-box">
-                    <img id="target-img" src="">
-                </div>
-                
-                <div class="word-display">
-                    <div class="drop-zone" id="main-drop-zone">?</div>
+                <div class="img-box"><img id="target-img" src=""></div>
+                <div class="word-row">
+                    <div class="drop-zone" id="main-drop">?</div>
                     <span id="word-rest"></span>
                 </div>
-
-                <div class="letter-pool" id="options-container">
-                    <!-- Letras injetadas por JS -->
-                </div>
+                <div class="options-grid" id="options-box"></div>
             </main>
 
-            <!-- Menu de Categorias -->
             <div id="rdDropdownMenu" class="rd-panel">
-                <div style="width:50px; height:6px; background:#dde4eb; margin:0 auto 15px; border-radius:10px;" onclick="toggleMenu()"></div>
-                <h3 style="text-align:center; color:var(--primary-blue); margin-bottom:10px; font-weight: 900;">ESCOLHER LETRA</h3>
-                <div id="categories-list" style="overflow-y: auto; max-height: 60vh; display: flex; flex-direction: column; gap: 8px;"></div>
+                <div style="width:50px; height:5px; background:#ddd; margin:0 auto 10px; border-radius:10px;" onclick="toggleCategoryMenu(event)"></div>
+                <h3 style="text-align:center; color:var(--primary-blue); margin-bottom:10px;">ESCOLHER LETRA</h3>
+                <div id="categories-list"></div>
             </div>
-
         </div>
     </div>
 
@@ -203,242 +130,155 @@
 
     <script src="dados.js"></script>
     <script>
-        let currentRound = 0;
-        const totalRounds = 5;
-        let currentCategory = 'letra_a';
-        let itemsForGame = [];
-        let points = 0;
-        let timer = 0;
-        let timerInt;
-        let correctLetter = "";
-        let fullWord = "";
-
-        // Sons
+        let round = 0, points = 0, timer = 0, timerInt, currentCat = 'letra_a', items = [], correctL = "";
         const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
         const sndErro = new Audio(JOGO_CONFIG.sons.erro);
         const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-        function começarJogo() {
-            document.getElementById('intro-overlay').style.display = 'none';
-            document.getElementById('game-area').style.display = 'flex';
-            
-            if(!timerInt) {
-                timerInt = setInterval(() => {
-                    timer++;
-                    const m = Math.floor(timer/60).toString().padStart(2,'0');
-                    const s = (timer%60).toString().padStart(2,'0');
-                    document.getElementById('timer-display').innerText = `⏳ ${m}:${s}`;
-                }, 1000);
-            }
-
-            itemsForGame = [...JOGO_CONFIG.categorias[currentCategory].itens]
-                .sort(() => 0.5 - Math.random())
-                .slice(0, totalRounds);
-            
-            currentRound = 0;
-            points = 0;
-            updatePointsUI();
-            loadRound();
+        // NAVEGAÇÃO ENTRE PÁGINAS (HAMBÚRGUER)
+        function toggleMainMenu(e) {
+            e.stopPropagation();
+            closeCategoryMenu();
+            const menu = document.getElementById('dropdownMenu');
+            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
         }
 
-        function loadRound() {
-            if(currentRound >= totalRounds) {
-                finalizarJogo();
-                return;
-            }
-
-            updateDots();
-            const item = itemsForGame[currentRound];
-            fullWord = item.nome.toUpperCase();
-            correctLetter = fullWord.charAt(0);
-            const rest = fullWord.substring(1);
-
-            document.getElementById('target-img').src = JOGO_CONFIG.caminhoImg + item.img;
-            document.getElementById('word-rest').innerText = rest;
-            
-            // Reset Drop Zone
-            const dz = document.getElementById('main-drop-zone');
-            dz.innerText = "?";
-            dz.className = "drop-zone";
-
-            renderOptions(correctLetter);
-        }
-
-        function renderOptions(correct) {
-            const container = document.getElementById('options-container');
-            container.innerHTML = '';
-            
-            let options = [correct];
-            const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-            while(options.length < 4) {
-                let randomChar = abc[Math.floor(Math.random() * abc.length)];
-                if(!options.includes(randomChar)) options.push(randomChar);
-            }
-
-            options.sort(() => 0.5 - Math.random());
-
-            options.forEach(letra => {
-                const div = document.createElement('div');
-                div.className = 'letter-card';
-                div.innerText = letra;
-                bindDragEvents(div);
-                container.appendChild(div);
-            });
-        }
-
-        // Lógica de Drag & Drop
-        let activeElement = null;
-
-        function bindDragEvents(el) {
-            const start = (e) => {
-                activeElement = el;
-                const pos = e.touches ? e.touches[0] : e;
-                const proxy = document.getElementById('drag-proxy');
-                proxy.innerText = el.innerText;
-                proxy.style.display = 'flex';
-                proxy.style.left = (pos.clientX - 35) + 'px';
-                proxy.style.top = (pos.clientY - 35) + 'px';
-                el.style.opacity = "0.3";
-            };
-
-            const move = (e) => {
-                if(!activeElement) return;
-                const pos = e.touches ? e.touches[0] : e;
-                const proxy = document.getElementById('drag-proxy');
-                proxy.style.left = (pos.clientX - 35) + 'px';
-                proxy.style.top = (pos.clientY - 35) + 'px';
-
-                // Check Hover
-                const dz = document.getElementById('main-drop-zone');
-                const rect = dz.getBoundingClientRect();
-                if(pos.clientX > rect.left && pos.clientX < rect.right && pos.clientY > rect.top && pos.clientY < rect.bottom) {
-                    dz.classList.add('hover');
-                } else {
-                    dz.classList.remove('hover');
-                }
-            };
-
-            const end = (e) => {
-                if(!activeElement) return;
-                const pos = e.changedTouches ? e.changedTouches[0] : e;
-                const dz = document.getElementById('main-drop-zone');
-                const rect = dz.getBoundingClientRect();
-                
-                document.getElementById('drag-proxy').style.display = 'none';
-                el.style.opacity = "1";
-                dz.classList.remove('hover');
-
-                if(pos.clientX > rect.left && pos.clientX < rect.right && pos.clientY > rect.top && pos.clientY < rect.bottom) {
-                    processChoice(activeElement.innerText);
-                }
-                activeElement = null;
-            };
-
-            el.addEventListener('mousedown', start);
-            el.addEventListener('touchstart', start, {passive: false});
-            window.addEventListener('mousemove', move);
-            window.addEventListener('touchmove', move, {passive: false});
-            window.addEventListener('mouseup', end);
-            window.addEventListener('touchend', end);
-        }
-
-        function processChoice(letter) {
-            const dz = document.getElementById('main-drop-zone');
-
-            if(letter === correctLetter) {
-                // ACERTO
-                sndAcerto.play();
-                points += 100;
-                updatePointsUI();
-                dz.innerText = letter;
-                dz.classList.add('correct');
-                
-                // Mostrar a palavra toda por 1.5s antes de passar
-                setTimeout(() => {
-                    currentRound++;
-                    loadRound();
-                }, 1500);
-            } else {
-                // ERRO
-                sndErro.play();
-                points = Math.max(0, points - 50); // Perde 50, não fica negativo
-                updatePointsUI();
-                dz.innerText = letter;
-                dz.classList.add('wrong');
-                
-                // Limpa o erro após 800ms para deixar tentar de novo
-                setTimeout(() => {
-                    dz.innerText = "?";
-                    dz.classList.remove('wrong');
-                }, 800);
-            }
-        }
-
-        function updatePointsUI() {
-            document.getElementById('points-display').innerText = points;
-        }
-
-        function updateDots() {
-            const container = document.getElementById('dots-container');
-            container.innerHTML = '';
-            for (let i = 0; i < totalRounds; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'dot';
-                if (i < currentRound) dot.classList.add('completed');
-                else if (i === currentRound) dot.classList.add('active');
-                container.appendChild(dot);
-            }
-        }
-
-        function finalizarJogo() {
-            clearInterval(timerInt);
-            sndVitoria.play();
-            
-            let rel = JOGO_CONFIG.relatorios.find(r => points >= r.min) || JOGO_CONFIG.relatorios[3];
-
-            document.getElementById('game-area').innerHTML = `
-                <div style="text-align:center; padding:20px; animation: fadeIn 0.5s;">
-                    <h2 style="color:var(--primary-blue); font-size:2.2rem; margin-bottom:10px; font-weight:900;">${rel.titulo}</h2>
-                    <p style="font-weight:700; color:#678; margin-bottom:25px; font-size:1.1rem;">${rel.msg}</p>
-                    <div style="background:white; padding:20px; border-radius:25px; box-shadow:0 10px 20px rgba(0,0,0,0.05); margin-bottom:30px;">
-                        <p style="font-size:1.2rem; color:#89a;">Pontuação Final</p>
-                        <p style="font-size:3rem; font-weight:900; color:var(--primary-blue);">${points}</p>
-                    </div>
-                    <button onclick="location.reload()" class="btn-jogar">REPETIR</button>
-                </div>
-            `;
-        }
-
-        function toggleMenu() {
+        // ESCOLHA DE CATEGORIAS (RD)
+        function toggleCategoryMenu(e) {
+            e.stopPropagation();
+            document.getElementById('dropdownMenu').style.display = 'none';
             document.getElementById('rdDropdownMenu').classList.toggle('active');
         }
 
-        function selectCategory(key) {
-            currentCategory = key;
-            toggleMenu();
-            começarJogo();
+        function closeCategoryMenu() { document.getElementById('rdDropdownMenu').classList.remove('active'); }
+
+        window.onclick = () => {
+            document.getElementById('dropdownMenu').style.display = 'none';
+            closeCategoryMenu();
+        };
+
+        function iniciarJogo() {
+            document.getElementById('intro-overlay').style.display = 'none';
+            document.getElementById('game-area').style.display = 'flex';
+            if(!timerInt) timerInt = setInterval(() => {
+                timer++;
+                const m = Math.floor(timer/60).toString().padStart(2,'0'), s = (timer%60).toString().padStart(2,'0');
+                document.getElementById('timer-display').innerText = `${m}:${s}`;
+            }, 1000);
+            items = [...JOGO_CONFIG.categorias[currentCat].itens].sort(() => 0.5 - Math.random()).slice(0, 5);
+            round = 0; points = 0; proximaRonda();
+        }
+
+        function proximaRonda() {
+            if(round >= 5) { finalizar(); return; }
+            updateDots();
+            const item = items[round];
+            correctL = item.nome.toUpperCase().charAt(0);
+            document.getElementById('target-img').src = JOGO_CONFIG.caminhoImg + item.img;
+            document.getElementById('word-rest').innerText = item.nome.toUpperCase().substring(1);
+            const dz = document.getElementById('main-drop');
+            dz.innerText = "?"; dz.className = "drop-zone";
+            gerarLetras(correctL);
+        }
+
+        function gerarLetras(correta) {
+            const box = document.getElementById('options-box');
+            box.innerHTML = '';
+            let opts = [correta];
+            const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            while(opts.length < 4) {
+                let r = abc[Math.floor(Math.random() * abc.length)];
+                if(!opts.includes(r)) opts.push(r);
+            }
+            opts.sort(() => 0.5 - Math.random()).forEach(l => {
+                const btn = document.createElement('div');
+                btn.className = 'letter-card'; btn.innerText = l;
+                initDrag(btn); box.appendChild(btn);
+            });
+        }
+
+        function initDrag(el) {
+            const start = (e) => {
+                activeEl = el; const p = e.touches ? e.touches[0] : e;
+                const prx = document.getElementById('drag-proxy');
+                prx.innerText = el.innerText; prx.style.display = 'flex';
+                prx.style.left = (p.clientX - 35) + 'px'; prx.style.top = (p.clientY - 35) + 'px';
+                el.style.opacity = "0.2";
+            };
+            const move = (e) => {
+                if(!activeEl) return; const p = e.touches ? e.touches[0] : e;
+                const prx = document.getElementById('drag-proxy');
+                prx.style.left = (p.clientX - 35) + 'px'; prx.style.top = (p.clientY - 35) + 'px';
+                const dz = document.getElementById('main-drop'), r = dz.getBoundingClientRect();
+                if(p.clientX > r.left && p.clientX < r.right && p.clientY > r.top && p.clientY < r.bottom) dz.classList.add('hover');
+                else dz.classList.remove('hover');
+            };
+            const end = (e) => {
+                if(!activeEl) return; const p = e.changedTouches ? e.changedTouches[0] : e;
+                const dz = document.getElementById('main-drop'), r = dz.getBoundingClientRect();
+                document.getElementById('drag-proxy').style.display = 'none'; el.style.opacity = "1";
+                dz.classList.remove('hover');
+                if(p.clientX > r.left && p.clientX < r.right && p.clientY > r.top && p.clientY < r.bottom) valida(activeEl.innerText);
+                activeEl = null;
+            };
+            el.addEventListener('mousedown', start); el.addEventListener('touchstart', start, {passive: false});
+            window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, {passive: false});
+            window.addEventListener('mouseup', end); window.addEventListener('touchend', end);
+        }
+
+        function valida(l) {
+            const dz = document.getElementById('main-drop');
+            if(l === correctL) {
+                sndAcerto.play(); points += 100;
+                dz.innerText = l; dz.classList.add('correct');
+                setTimeout(() => { round++; proximaRonda(); }, 1200);
+            } else {
+                sndErro.play(); points = Math.max(0, points - 50);
+                dz.innerText = l; dz.classList.add('wrong');
+                setTimeout(() => { dz.innerText = "?"; dz.classList.remove('wrong'); }, 800);
+            }
+        }
+
+        function updateDots() {
+            const c = document.getElementById('dots-container');
+            c.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const d = document.createElement('div');
+                d.className = 'dot' + (i < round ? ' completed' : (i === round ? ' active' : ''));
+                c.appendChild(d);
+            }
+        }
+
+        function finalizar() {
+            clearInterval(timerInt); sndVitoria.play();
+            const rel = JOGO_CONFIG.relatorios.find(r => points >= r.min) || JOGO_CONFIG.relatorios[3];
+            document.getElementById('game-area').innerHTML = `<div style="text-align:center;"><h2>${rel.titulo}</h2><p>${points} Pontos</p><button onclick="location.reload()" class="btn-jogar">REPETIR</button></div>`;
         }
 
         window.onload = () => {
-            const pathI = JOGO_CONFIG.caminhoIcons;
-            const pathImg = JOGO_CONFIG.caminhoImg;
-            
+            const pathI = JOGO_CONFIG.caminhoIcons, pathImg = JOGO_CONFIG.caminhoImg;
             document.getElementById('header-icon').src = pathI + JOGO_CONFIG.iconesMenu.ano1;
-            
-            // Preview da imagem na intro
-            const firstCat = Object.keys(JOGO_CONFIG.categorias)[0];
-            document.getElementById('intro-img-preview').src = pathImg + JOGO_CONFIG.categorias[firstCat].imgCapa;
+            document.getElementById('rd-status-btn').src = pathImg + "rd.png";
 
-            // Gerar lista de categorias no menu
-            const list = document.getElementById('categories-list');
+            // Preencher Menu Hambúrguer (Páginas)
+            const menuBox = document.getElementById('dropdownMenu');
+            const menuLinks = [{k:'home',n:'Início'},{k:'pre',n:'Pré-Escolar'},{k:'ano1',n:'1º Ano'},{k:'ano2',n:'2º Ano'},{k:'ano3',n:'3º Ano'},{k:'ano4',n:'4º Ano'}];
+            menuLinks.forEach(item => {
+                const a = document.createElement('a');
+                a.className = 'menu-link'; a.href = JOGO_CONFIG.links[item.k];
+                a.innerHTML = `<img src="${pathI}${JOGO_CONFIG.iconesMenu[item.k]}"><span>${item.n}</span>`;
+                menuBox.appendChild(a);
+            });
+
+            // Preencher Menu RD (Categorias do Jogo)
+            const catList = document.getElementById('categories-list');
             Object.keys(JOGO_CONFIG.categorias).forEach(key => {
                 const cat = JOGO_CONFIG.categorias[key];
-                const item = document.createElement('div');
-                item.className = 'custom-menu-item';
-                item.innerHTML = `<img src="${pathImg}${cat.imgCapa}" style="height:35px; width:35px; object-fit:contain;"><span>${cat.nome}</span>`;
-                item.onclick = () => selectCategory(key);
-                list.appendChild(item);
+                const div = document.createElement('div');
+                div.className = 'cat-item';
+                div.innerHTML = `<img src="${pathImg}${cat.imgCapa}" style="height:30px;"><span>${cat.nome}</span>`;
+                div.onclick = () => { currentCat = key; closeCategoryMenu(); iniciarJogo(); };
+                catList.appendChild(div);
             });
             updateDots();
         };
