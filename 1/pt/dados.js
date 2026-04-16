@@ -7,6 +7,7 @@ const JOGO_CONFIG = {
 
     // Nomes dos ficheiros de ícones do menu/sidebar
     iconesMenu: {
+        home: "home.png",
         pre: "iconpre.png",
         ano1: "icon1.png",
         ano2: "icon2.png",
