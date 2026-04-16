@@ -5,7 +5,7 @@ const JOGO_CONFIG = {
         tituloLinha2: "Leitores",
         subtitulo: "Português | 3º Ano",
         intro: "Explora os textos e diverte-te a ler!",
-        rodape: "&copy; Jovens Leitores - Recursos Educativos"
+        rodape: "&copy; Super Leitores - Recursos Educativos"
     },
 
     // Caminhos
