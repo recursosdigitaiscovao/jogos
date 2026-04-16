@@ -27,13 +27,12 @@
             overflow: hidden; 
         }
 
-        /* HEADER FIXO */
         header { 
             background: var(--bg-page);
             width: 100%; 
             box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4);
             display: grid;
-            grid-template-columns: 110px 1fr 110px; /* Mantemos as 3 colunas para o centro ficar alinhado */
+            grid-template-columns: 110px 1fr 110px;
             align-items: start; 
             flex-shrink: 0; 
             z-index: 1000;
@@ -63,10 +62,8 @@
         .title-main { color: var(--primary-blue); font-weight: 900; font-size: 1.4rem; text-transform: uppercase; }
         .title-sub { color: var(--text-grey); font-weight: 400; font-size: 0.85rem; margin-top: 6px; }
 
-        /* Lado direito agora vazio, mas mantido para equilíbrio do grid */
         .header-right { padding-top: 20px; padding-right: 20px; }
 
-        /* ÁREA CENTRAL COM SCROLL */
         .game-wrapper { 
             flex: 1; 
             padding: 20px 80px; 
@@ -97,7 +94,6 @@
         .card-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
         .game-card h2 { color: var(--primary-blue); font-size: 0.8rem; font-weight: 900; margin-top: auto; }
 
-        /* FOOTER */
         footer {
             background: var(--bg-page);
             width: 100%;
@@ -119,9 +115,18 @@
         .menu-item { 
             display: flex; align-items: center; gap: 12px; padding: 12px 20px; 
             background: white; border-radius: 18px; box-shadow: 4px 4px 10px #c5d4e3; 
-            cursor: pointer; min-width: 180px; text-decoration: none; color: #555; font-weight: 700;
+            cursor: pointer; min-width: 200px; text-decoration: none; color: #555; font-weight: 700;
+            transition: background 0.2s;
         }
         .menu-item:hover { background: var(--primary-blue); color: white; }
+        
+        /* SEPARADOR NO MENU */
+        .menu-divider {
+            height: 2px;
+            background-color: rgba(176, 196, 217, 0.4);
+            margin: 5px 10px;
+            border-radius: 2px;
+        }
 
         /* MOBILE */
         @media (max-width: 600px) { 
@@ -147,7 +152,7 @@
                 <div class="title-sub">Português | 1º Ano</div>
             </div>
         </div>
-        <div class="header-right"></div> <!-- Mantido vazio para manter o centro -->
+        <div class="header-right"></div>
     </header>
 
     <div class="game-wrapper" id="gamesGrid">
@@ -174,6 +179,21 @@
                 document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.ano1;
 
                 const menuBox = document.getElementById('dropdownMenu');
+
+                // 1. ADICIONAR O BOTÃO VOLTAR NO TOPO DO MENU
+                const btnVoltar = document.createElement('a');
+                btnVoltar.className = 'menu-item';
+                btnVoltar.href = '../index.html'; // Ajusta o link se necessário
+                // Aqui usamos o caminho das imagens do menu + o nome voltar.png
+                btnVoltar.innerHTML = `<img src="${config.caminhoIconsMenu}voltar.png" style="height:22px;"><span>VOLTAR</span>`;
+                menuBox.appendChild(btnVoltar);
+
+                // 2. ADICIONAR A DIVISÃO
+                const divider = document.createElement('div');
+                divider.className = 'menu-divider';
+                menuBox.appendChild(divider);
+
+                // 3. ADICIONAR OS RESTANTES NÍVEIS
                 const niveis = [
                     { l: 'Início', k: 'home' },
                     { l: 'Pré-Escolar', k: 'pre' },
@@ -194,6 +214,7 @@
                     }
                 });
 
+                // GRID DE JOGOS
                 const grid = document.getElementById('gamesGrid');
                 config.listaJogos.forEach(jogo => {
                     const card = document.createElement('a');
