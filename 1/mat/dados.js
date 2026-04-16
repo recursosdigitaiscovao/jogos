@@ -1,20 +1,39 @@
 const JOGO_CONFIG = {
-    // Caminho para os icons do menu (sobe dois níveis para jogos/icons/)
+    // Títulos e Textos da Página
+    textos: {
+        tituloLinha1: "Pequenos",
+        tituloLinha2: "Matemáticos",
+        subtitulo: "Matemática | 1º Ano",
+        intro: "Explora os números e aprende a contar!",
+        rodape: "&copy; Pequenos Matemáticos - Recursos Educativos"
+    },
+
+    // Caminhos
     caminhoIconsMenu: "../../icons/",
-    
-    // Caminho para os icons dos jogos (dentro da pasta local iconjogos/)
     caminhoIconsJogos: "iconjogos/",
 
-    // Nomes dos ficheiros de ícones do menu/sidebar (conforme solicitado)
+    // Ícones
     iconesMenu: {
+        home: "home.png",
         pre: "iconpre.png",
         ano1: "icon1.png",
         ano2: "icon2.png",
         ano3: "icon3.png",
-        ano4: "icon4.png"
+        ano4: "icon4.png",
+        voltar: "voltar.png"
     },
 
-    // Lista de jogos - O sistema vai criar os cards sozinho
+    // Links do Menu
+    links: {
+        home: "/jogos", 
+        pre: "/jogos/pre",
+        ano1: "/jogos/1",
+        ano2: "/jogos/2",
+        ano3: "/jogos/3",
+        ano4: "/jogos/4"
+    },
+    
+    // Lista de Jogos
     listaJogos: [
         { nome: "Contar os Números", icon: "conta.png", link: "conta/" },
         { nome: "Formas Geométricas", icon: "formas.png", link: "formas/" },
