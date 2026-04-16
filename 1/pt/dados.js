@@ -1,11 +1,18 @@
 const JOGO_CONFIG = {
-    // Caminho para os icons do menu (sobe dois níveis para jogos/icons/)
+    // Títulos e Textos da Página
+    textos: {
+        tituloLinha1: "Pequenos",
+        tituloLinha2: "Leitores",
+        subtitulo: "Português | 1º Ano",
+        intro: "Explora as letras, as palavras e diverte-te a ler!",
+        rodape: "&copy; Pequenos Leitores - Recursos Educativos"
+    },
+
+    // Caminhos
     caminhoIconsMenu: "../../icons/",
-    
-    // Caminho para os icons dos jogos (dentro da pasta local iconjogos/)
     caminhoIconsJogos: "iconjogos/",
 
-    // Nomes dos ficheiros de ícones do menu/sidebar
+    // Ícones
     iconesMenu: {
         home: "home.png",
         pre: "iconpre.png",
@@ -15,6 +22,8 @@ const JOGO_CONFIG = {
         ano4: "icon4.png",
         voltar: "voltar.png"
     },
+
+    // Links do Menu
     links: {
         home: "/jogos", 
         pre: "/jogos/pre",
@@ -24,15 +33,11 @@ const JOGO_CONFIG = {
         ano4: "/jogos/4"
     },
     
-    // LISTA DE JOGOS
+    // Lista de Jogos
     listaJogos: [
         { nome: "Conta as Sílabas", icon: "silabas.png", link: "silabas/" },
         { nome: "Forma Palavras", icon: "liga_letras.png", link: "liga_letras/" },
         { nome: "Descobre a Palavra", icon: "forca.png", link: "forca/" },
-        { nome: "Sopa de Letras", icon: "sopa_letras.png", link: "sopa_letras/" },
-        { nome: "Sopa de Letras", icon: "sopa_letras.png", link: "sopa_letras/" },
-        { nome: "Sopa de Letras", icon: "sopa_letras.png", link: "sopa_letras/" },
-        { nome: "Sopa de Letras", icon: "sopa_letras.png", link: "sopa_letras/" },
         { nome: "Sopa de Letras", icon: "sopa_letras.png", link: "sopa_letras/" },
         { nome: "Copia Palavras", icon: "copia_palavras.png", link: "copia_palavras/" }
     ]
