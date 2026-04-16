@@ -5,14 +5,14 @@ const JOGO_CONFIG = {
         tituloLinha2: "Matemáticos",
         subtitulo: "Matemática | 1º Ano",
         intro: "Explora os números e aprende a contar!",
-        rodape: "&copy; Pequenos Matemáticos - Recursos Educativos"
+        rodape: "&copy; 2024 Pequenos Matemáticos - Recursos Educativos"
     },
 
-    // Caminhos
-    caminhoIconsMenu: "../../icons/",
-    caminhoIconsJogos: "iconjogos/",
+    // Caminhos das Pastas (Ajusta se necessário)
+    caminhoIconsMenu: "../../icons/",  // Pasta de ícones geral (dois níveis acima)
+    caminhoIconsJogos: "iconjogos/",    // Pasta de capas dos jogos (na mesma pasta do index)
 
-    // Ícones
+    // Nomes dos ficheiros de ícones do Menu
     iconesMenu: {
         home: "home.png",
         pre: "iconpre.png",
@@ -23,26 +23,26 @@ const JOGO_CONFIG = {
         voltar: "voltar.png"
     },
 
-    // Links do Menu
+    // Links para onde as opções do menu levam
     links: {
-        home: "/jogos", 
-        pre: "/jogos/pre",
-        ano1: "/jogos/1",
-        ano2: "/jogos/2",
-        ano3: "/jogos/3",
-        ano4: "/jogos/4"
+        home: "../../index.html", 
+        pre: "../pre/index.html",
+        ano1: "index.html",
+        ano2: "../ano2/index.html",
+        ano3: "../ano3/index.html",
+        ano4: "../ano4/index.html"
     },
     
-    // Lista de Jogos
+    // Lista de Jogos que vão aparecer no centro
     listaJogos: [
-        { nome: "Contar os Números", icon: "conta.png", link: "conta/" },
-        { nome: "Formas Geométricas", icon: "formas.png", link: "formas/" },
-        { nome: "Somas Divertidas", icon: "soma.png", link: "soma/" },
-        { nome: "Subtração", icon: "subtrair.png", link: "subtrair/" },
-        { nome: "Liga os Pontos", icon: "liga.png", link: "liga/" },
-        { nome: "Compara Números", icon: "compara.png", link: "compara/" },
-        { nome: "Sequências", icon: "sequencias.png", link: "sequencias/" },
-        { nome: "Par ou Ímpar", icon: "parouimpar.png", link: "parouimpar/" },
-        { nome: "As Dezenas", icon: "dezenas.png", link: "dezenas/" }
+        { nome: "Contar os Números", icon: "conta.png", link: "conta/index.html" },
+        { nome: "Formas Geométricas", icon: "formas.png", link: "formas/index.html" },
+        { nome: "Somas Divertidas", icon: "soma.png", link: "soma/index.html" },
+        { nome: "Subtração", icon: "subtrair.png", link: "subtrair/index.html" },
+        { nome: "Liga os Pontos", icon: "liga.png", link: "liga/index.html" },
+        { nome: "Compara Números", icon: "compara.png", link: "compara/index.html" },
+        { nome: "Sequências", icon: "sequencias.png", link: "sequencias/index.html" },
+        { nome: "Par ou Ímpar", icon: "parouimpar.png", link: "parouimpar/index.html" },
+        { nome: "As Dezenas", icon: "dezenas.png", link: "dezenas/index.html" }
     ]
 };
