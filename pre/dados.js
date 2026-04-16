@@ -1,20 +1,39 @@
 const JOGO_CONFIG = {
-    // Caminho para os icons do menu
-    caminhoIconsMenu: "../icons/",
-    
-    // Caminho para os icons dos jogos
+    // Títulos e Textos da Página
+    textos: {
+        tituloLinha1: "Pequenos",
+        tituloLinha2: "Exploradores",
+        subtitulo: "Atividades | Pré-Escolar",
+        intro: "Brinca com os números, as cores e as formas!",
+        rodape: "&copy; Pequenos Exploradores - Recursos Educativos"
+    },
+
+    // Caminhos
+    caminhoIconsMenu: "../../icons/",
     caminhoIconsJogos: "iconjogos/",
 
-    // Nomes dos ficheiros de ícones do menu
+    // Ícones
     iconesMenu: {
+        home: "home.png",
         pre: "iconpre.png",
         ano1: "icon1.png",
         ano2: "icon2.png",
         ano3: "icon3.png",
-        ano4: "icon4.png"
+        ano4: "icon4.png",
+        voltar: "voltar.png"
     },
 
-    // Lista de jogos - ATENÇÃO ÀS VÍRGULAS NO FINAL DE CADA LINHA
+    // Links do Menu
+    links: {
+        home: "/jogos", 
+        pre: "/jogos/pre",
+        ano1: "/jogos/1",
+        ano2: "/jogos/2",
+        ano3: "/jogos/3",
+        ano4: "/jogos/4"
+    },
+    
+    // Lista de Jogos
     listaJogos: [
         { nome: "O meu par?", icon: "encontraopar.png", link: "encontraopar/" },
         { nome: "Monstro Comilão", icon: "monstrocomilao.png", link: "monstrocomilao/" },
