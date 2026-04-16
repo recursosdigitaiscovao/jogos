@@ -27,6 +27,7 @@
             overflow: hidden; 
         }
 
+        /* HEADER */
         header { 
             background: var(--bg-page);
             width: 100%; 
@@ -64,6 +65,7 @@
 
         .header-right { padding-top: 20px; padding-right: 20px; }
 
+        /* ÁREA CENTRAL */
         .game-wrapper { 
             flex: 1; 
             padding: 20px 80px; 
@@ -81,10 +83,10 @@
             font-size: 0.85rem; font-weight: 400; margin: 10px 0 20px 0; padding: 0 20px;
         }
 
-        /* CARD DOS JOGOS - Cantos menos redondos (de 35px para 18px) */
+        /* CARD DOS JOGOS - Cantos em 18px */
         .game-card { 
             background: var(--bg-page); width: 100%; max-width: 180px; min-height: 160px;
-            border-radius: 18px; /* Alterado aqui */
+            border-radius: 18px; 
             box-shadow: var(--outer-shadow); 
             display: flex; flex-direction: column; align-items: center;
             text-decoration: none; transition: all 0.2s ease;
@@ -96,6 +98,7 @@
         .card-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
         .game-card h2 { color: var(--primary-blue); font-size: 0.8rem; font-weight: 900; margin-top: auto; }
 
+        /* FOOTER */
         footer {
             background: var(--bg-page);
             width: 100%;
@@ -109,7 +112,7 @@
             z-index: 1000;
         }
 
-        /* DROPDOWN */
+        /* MENU HAMBURGUER / DROPDOWN */
         .menu-dropdown { 
             position: absolute; top: 70px; left: 20px; 
             display: none; flex-direction: column; gap: 8px; z-index: 2000; 
@@ -122,7 +125,6 @@
         }
         .menu-item:hover { background: var(--primary-blue); color: white; }
         
-        /* SEPARADOR NO MENU */
         .menu-divider {
             height: 2px;
             background-color: rgba(176, 196, 217, 0.4);
@@ -172,50 +174,65 @@
             const menu = document.getElementById('dropdownMenu');
             menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
         }
-        window.onclick = () => { document.getElementById('dropdownMenu').style.display = 'none'; };
+        
+        // Fecha o menu ao clicar fora
+        window.onclick = () => { 
+            const menu = document.getElementById('dropdownMenu');
+            if(menu) menu.style.display = 'none'; 
+        };
 
         window.onload = () => {
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const config = JOGO_CONFIG;
                 
+                // Define o ícone do header (Ano 1)
                 document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.ano1;
 
                 const menuBox = document.getElementById('dropdownMenu');
 
-                // 1. ADICIONAR OS NÍVEIS PRIMEIRO
+                // 1. GERAÇÃO DINÂMICA DOS ITENS DE NÍVEL (Incluindo Home com home.png)
                 const niveis = [
-                    { l: 'Início', k: 'home' },
-                    { l: 'Pré-Escolar', k: 'pre' },
-                    { l: '1º Ano', k: 'ano1' },
-                    { l: '2º Ano', k: 'ano2' },
-                    { l: '3º Ano', k: 'ano3' },
-                    { l: '4º Ano', k: 'ano4' }
+                    { label: 'Início', key: 'home' },
+                    { label: 'Pré-Escolar', key: 'pre' },
+                    { label: '1º Ano', key: 'ano1' },
+                    { label: '2º Ano', key: 'ano2' },
+                    { label: '3º Ano', key: 'ano3' },
+                    { label: '4º Ano', key: 'ano4' }
                 ];
 
                 niveis.forEach(n => {
-                    if(config.links[n.k]) {
+                    if(config.links[n.key]) {
                         const a = document.createElement('a');
                         a.className = 'menu-item';
-                        a.href = config.links[n.k];
-                        const iconFile = (n.k === 'home') ? config.iconesMenu.ano1 : config.iconesMenu[n.k];
-                        a.innerHTML = `<img src="${config.caminhoIconsMenu}${iconFile}" style="height:20px;"><span>${n.l}</span>`;
+                        a.href = config.links[n.key];
+                        
+                        // Busca o ícone dinamicamente do objeto iconesMenu no dados.js
+                        const iconFile = config.iconesMenu[n.key]; 
+                        
+                        a.innerHTML = `
+                            <img src="${config.caminhoIconsMenu}${iconFile}" style="height:22px; width:22px; object-fit:contain;">
+                            <span>${n.label}</span>
+                        `;
                         menuBox.appendChild(a);
                     }
                 });
 
-                // 2. ADICIONAR A DIVISÃO ANTES DO VOLTAR
+                // 2. ADICIONA O SEPARADOR
                 const divider = document.createElement('div');
                 divider.className = 'menu-divider';
                 menuBox.appendChild(divider);
 
-                // 3. ADICIONAR O BOTÃO VOLTAR POR ÚLTIMO
+                // 3. ADICIONA O BOTÃO VOLTAR (Último item)
                 const btnVoltar = document.createElement('a');
                 btnVoltar.className = 'menu-item';
-                btnVoltar.href = '../index.html'; 
-                btnVoltar.innerHTML = `<img src="${config.caminhoIconsMenu}voltar.png" style="height:22px;"><span>VOLTAR</span>`;
+                btnVoltar.href = '../index.html'; // Caminho fixo para sair da pasta do ano
+                btnVoltar.innerHTML = `
+                    <img src="${config.caminhoIconsMenu}${config.iconesMenu.voltar}" style="height:22px; width:22px; object-fit:contain;">
+                    <span>VOLTAR</span>
+                `;
                 menuBox.appendChild(btnVoltar);
 
-                // GRID DE JOGOS
+                // 4. GERAÇÃO DA GRID DE JOGOS
                 const grid = document.getElementById('gamesGrid');
                 config.listaJogos.forEach(jogo => {
                     const card = document.createElement('a');
