@@ -27,7 +27,7 @@
             overflow: hidden; 
         }
 
-        /* HEADER FIXO */
+        /* HEADER */
         header { 
             background: var(--bg-page);
             width: 100%; 
@@ -48,10 +48,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        .hamburger-btn:hover { 
-            color: var(--primary-dark); 
-            transform: scale(1.1); 
-        }
+        .hamburger-btn:hover { color: var(--primary-dark); transform: scale(1.1); }
 
         .header-center-content {
             display: flex; align-items: flex-start; justify-content: center;
@@ -64,20 +61,8 @@
         .title-sub { color: var(--text-grey); font-weight: 400; font-size: 0.85rem; margin-top: 6px; }
 
         .header-right { padding-top: 20px; padding-right: 20px; display: flex; justify-content: flex-end; }
-        
-        /* BOTÃO VOLTAR (Configuração para Monitores Grandes) */
-        .btn-voltar { 
-            background: var(--primary-blue); color: white; padding: 8px 16px; border-radius: 12px; 
-            text-decoration: none; font-weight: 900; font-size: 0.8rem; 
-            box-shadow: 0 4px 0 var(--primary-dark);
-            display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;
-        }
-        
-        .btn-voltar i { 
-            display: none; /* Esconde a seta em ecrãs grandes */
-        }
 
-        /* ÁREA CENTRAL COM SCROLL */
+        /* ÁREA CENTRAL */
         .game-wrapper { 
             flex: 1; 
             padding: 20px 80px; 
@@ -108,43 +93,39 @@
         .card-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
         .game-card h2 { color: var(--primary-blue); font-size: 0.8rem; font-weight: 900; margin-top: auto; }
 
-        /* FOOTER */
         footer {
             background: var(--bg-page);
-            width: 100%;
-            padding: 15px;
-            text-align: center;
-            flex-shrink: 0; 
+            width: 100%; padding: 15px; text-align: center; flex-shrink: 0; 
             border-top: 1px solid rgba(176, 196, 217, 0.3);
-            color: var(--text-grey);
-            font-weight: 700;
-            font-size: 0.8rem;
-            z-index: 1000;
+            color: var(--text-grey); font-weight: 700; font-size: 0.8rem;
         }
 
-        /* DROPDOWN */
+        /* DROPDOWN MENU */
         .menu-dropdown { 
             position: absolute; top: 70px; left: 20px; 
-            display: none; flex-direction: column; gap: 8px; z-index: 2000; 
+            display: none; flex-direction: column; gap: 4px; z-index: 2000; 
+            background: white; padding: 12px; border-radius: 20px;
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.1);
         }
         .menu-item { 
-            display: flex; align-items: center; gap: 12px; padding: 12px 20px; 
-            background: white; border-radius: 18px; box-shadow: 4px 4px 10px #c5d4e3; 
-            cursor: pointer; min-width: 180px; text-decoration: none; color: #555; font-weight: 700;
+            display: flex; align-items: center; gap: 12px; padding: 10px 15px; 
+            background: transparent; border-radius: 12px; 
+            cursor: pointer; min-width: 190px; text-decoration: none; 
+            color: #555; font-weight: 700; transition: all 0.2s;
         }
         .menu-item:hover { background: var(--primary-blue); color: white; }
+        .menu-item img { width: 24px; height: 24px; object-fit: contain; }
+        
+        /* Linha de quebra no menu */
+        .menu-divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 8px 10px;
+            border: none;
+        }
 
-        /* MOBILE / ECRÃS PEQUENOS */
         @media (max-width: 600px) { 
             header { grid-template-columns: 80px 1fr 80px; min-height: 110px; }
-            .header-left { padding: 30px 0 0 25px; }
-            .header-right { padding: 25px 25px 0 0; }
-            
-            /* Ajuste do Botão Voltar para ficar só a seta */
-            .btn-voltar { width: 50px; height: 50px; border-radius: 15px; padding: 0; }
-            .btn-voltar span { display: none; } /* Esconde o texto */
-            .btn-voltar i { display: block; font-size: 22px; } /* Mostra a seta */
-
             .game-wrapper { grid-template-columns: repeat(2, 1fr); padding: 10px; }
             #header-icon { height: 75px; }
         }
@@ -166,10 +147,7 @@
             </div>
         </div>
         <div class="header-right">
-            <a href="../index.html" class="btn-voltar">
-                <i class="fas fa-arrow-left"></i>
-                <span>VOLTAR</span>
-            </a>
+            <!-- O botão VOLTAR foi retirado daqui -->
         </div>
     </header>
 
@@ -181,6 +159,7 @@
         &copy; Pequenos Leitores - Recursos Educativos
     </footer>
 
+    <!-- Importante: dados.js deve vir antes do script principal -->
     <script src="dados.js"></script>
     <script>
         function toggleMenu(e) {
@@ -188,14 +167,20 @@
             const menu = document.getElementById('dropdownMenu');
             menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
         }
-        window.onclick = () => { document.getElementById('dropdownMenu').style.display = 'none'; };
+
+        // Fecha o menu ao clicar fora
+        window.onclick = () => { 
+            document.getElementById('dropdownMenu').style.display = 'none'; 
+        };
 
         window.onload = () => {
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const config = JOGO_CONFIG;
                 
+                // 1. Definir ícone do Header
                 document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.ano1;
 
+                // 2. Construir Menu Dropdown
                 const menuBox = document.getElementById('dropdownMenu');
                 const niveis = [
                     { l: 'Início', k: 'home' },
@@ -206,17 +191,31 @@
                     { l: '4º Ano', k: 'ano4' }
                 ];
 
+                // Adiciona os links dos anos
                 niveis.forEach(n => {
                     if(config.links[n.k]) {
                         const a = document.createElement('a');
                         a.className = 'menu-item';
                         a.href = config.links[n.k];
                         const iconFile = (n.k === 'home') ? config.iconesMenu.ano1 : config.iconesMenu[n.k];
-                        a.innerHTML = `<img src="${config.caminhoIconsMenu}${iconFile}" style="height:20px;"><span>${n.l}</span>`;
+                        a.innerHTML = `<img src="${config.caminhoIconsMenu}${iconFile}"><span>${n.l}</span>`;
                         menuBox.appendChild(a);
                     }
                 });
 
+                // Adiciona Linha de Quebra (HR)
+                const hr = document.createElement('hr');
+                hr.className = 'menu-divider';
+                menuBox.appendChild(hr);
+
+                // Adiciona Item Voltar
+                const btnVoltar = document.createElement('a');
+                btnVoltar.className = 'menu-item';
+                btnVoltar.href = "../"; // Volta um nível abaixo
+                btnVoltar.innerHTML = `<img src="${config.caminhoIconsMenu}${config.iconesMenu.voltar}"><span>Voltar</span>`;
+                menuBox.appendChild(btnVoltar);
+
+                // 3. Gerar Grid de Jogos
                 const grid = document.getElementById('gamesGrid');
                 config.listaJogos.forEach(jogo => {
                     const card = document.createElement('a');
