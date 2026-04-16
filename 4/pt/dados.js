@@ -5,7 +5,7 @@ const JOGO_CONFIG = {
         tituloLinha2: "Leitura",
         subtitulo: "Português | 4º Ano",
         intro: "Explora os livros e diverte-te a ler!",
-        rodape: "&copy; Mestres da Leitores - Recursos Educativos"
+        rodape: "&copy; Mestres da Leitura - Recursos Educativos"
     },
 
     // Caminhos
