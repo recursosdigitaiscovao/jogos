@@ -37,6 +37,9 @@ const JOGO_CONFIG = {
     listaJogos: [
         { nome: "Conta as Sílabas", icon: "silabas.png", link: "silabas/" },
         { nome: "Forma Palavras", icon: "liga_letras.png", link: "liga_letras/" },
+        { nome: "Forma Palavras", icon: "liga_letras.png", link: "liga_letras/" },
+        { nome: "Forma Palavras", icon: "liga_letras.png", link: "liga_letras/" },
+        { nome: "Forma Palavras", icon: "liga_letras.png", link: "liga_letras/" },
         { nome: "Descobre a Palavra", icon: "forca.png", link: "forca/" },
         { nome: "Sopa de Letras", icon: "sopa_letras.png", link: "sopa_letras/" },
         { nome: "Copia Palavras", icon: "copia_palavras.png", link: "copia_palavras/" }
