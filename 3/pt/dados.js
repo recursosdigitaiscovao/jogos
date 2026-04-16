@@ -1,10 +1,10 @@
 const JOGO_CONFIG = {
     // Títulos e Textos da Página
     textos: {
-        tituloLinha1: "Jovens",
+        tituloLinha1: "Super",
         tituloLinha2: "Leitores",
-        subtitulo: "Português | 2º Ano",
-        intro: "Explora as palavras, as frases e diverte-te a ler!",
+        subtitulo: "Português | 3º Ano",
+        intro: "Explora os textos e diverte-te a ler!",
         rodape: "&copy; Jovens Leitores - Recursos Educativos"
     },
 
