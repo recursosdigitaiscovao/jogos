@@ -9,7 +9,7 @@ const JOGO_CONFIG = {
     },
 
     // Caminhos
-    caminhoIconsMenu: "../../icons/",
+    caminhoIconsMenu: "../icons/",
     caminhoIconsJogos: "iconjogos/",
 
     // Ícones
