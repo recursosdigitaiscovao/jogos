@@ -4,15 +4,15 @@ const JOGO_CONFIG = {
         tituloLinha1: "Pequenos",
         tituloLinha2: "Matemáticos",
         subtitulo: "Matemática | 1º Ano",
-        intro: "Explora os números e aprende a contar!",
-        rodape: "&copy; 2024 Pequenos Matemáticos - Recursos Educativos"
+        intro: "Explora os números e diverte-te a contar!",
+        rodape: "&copy; Pequenos Matemáticos - Recursos Educativos"
     },
 
-    // Caminhos das Pastas (Ajusta se necessário)
-    caminhoIconsMenu: "../../icons/",  // Pasta de ícones geral (dois níveis acima)
-    caminhoIconsJogos: "iconjogos/",    // Pasta de capas dos jogos (na mesma pasta do index)
+    // Caminhos
+    caminhoIconsMenu: "../../icons/",
+    caminhoIconsJogos: "iconjogos/",
 
-    // Nomes dos ficheiros de ícones do Menu
+    // Ícones
     iconesMenu: {
         home: "home.png",
         pre: "iconpre.png",
@@ -23,17 +23,17 @@ const JOGO_CONFIG = {
         voltar: "voltar.png"
     },
 
-    // Links para onde as opções do menu levam
+    // Links do Menu
     links: {
-        home: "../../index.html", 
-        pre: "../pre/index.html",
-        ano1: "index.html",
-        ano2: "../ano2/index.html",
-        ano3: "../ano3/index.html",
-        ano4: "../ano4/index.html"
+        home: "/jogos", 
+        pre: "/jogos/pre",
+        ano1: "/jogos/1",
+        ano2: "/jogos/2",
+        ano3: "/jogos/3",
+        ano4: "/jogos/4"
     },
     
-    // Lista de Jogos que vão aparecer no centro
+    // Lista de Jogos
     listaJogos: [
         { nome: "Contar os Números", icon: "conta.png", link: "conta/index.html" },
         { nome: "Formas Geométricas", icon: "formas.png", link: "formas/index.html" },
