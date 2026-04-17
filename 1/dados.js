@@ -1,10 +1,10 @@
 const JOGO_CONFIG = {
     textos: {
-        tituloLinha1: "Jovens",
-        tituloLinha2: "Leitores",
-        subtitulo: "Português | 2º Ano",
+        tituloLinha1: "Pequenos",
+        tituloLinha2: "Exploradores",
+        subtitulo: "Atividades | 1º Ano",
         intro: "O que vamos aprender hoje?",
-        rodape: "&copy; Jovens Leitores - Recursos Educativos"
+        rodape: "&copy; Pequenos Exploradores - Recursos Educativos"
     },
     caminhoIconsMenu: "../icons/", 
     caminhoIconsJogos: "../icons/", 
