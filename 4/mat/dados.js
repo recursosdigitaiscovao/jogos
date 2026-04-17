@@ -4,7 +4,7 @@ const JOGO_CONFIG = {
         tituloLinha1: "Mestre dos",
         tituloLinha2: "Números",
         subtitulo: "Matemática | 4º Ano",
-        intro: "Explora as operações e diverte-te a calcular!",
+        intro: "Resolve os desafios e torna-te um Mestre!",
         rodape: "&copy; Mestre dos Números - Recursos Educativos"
     },
 
