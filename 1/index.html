@@ -3,167 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pequenos Leitores - 1º Ano</title>
+    <title>Pequenos Leitores</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --vibrant-orange: #ff6b1a;
+            --cor-bg-pagina: #edf5fd; /* A cor de fundo azulada da imagem */
+            
             --azul-card: #5ea2e6;
-            --azul-fundo: #e1efff;
+            --azul-fundo: #e3effd;
+            
             --verde-card: #45cfa8;
-            --verde-fundo: #e3f9f2;
+            --verde-fundo: #e8f7f2;
+            
             --vermelho-card: #ff4757;
-            --vermelho-fundo: #ffeef0;
-            --texto-cinza: #8c8c8c;
+            --vermelho-fundo: #fff1f2;
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Fredoka', sans-serif;
-            background: #fdfdfd;
+            background-color: var(--cor-bg-pagina);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* --- Header (Estilo Imagem) --- */
+        /* --- Cabeçalho com a curva da imagem --- */
         header {
             background: white;
-            padding: 15px 40px 60px 40px;
-            border-bottom-left-radius: 50% 15%;
-            border-bottom-right-radius: 50% 15%;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            padding: 20px 40px 50px 40px;
+            border-bottom-left-radius: 50% 25px; /* Curva suave nas pontas */
+            border-bottom-right-radius: 50% 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
             text-align: center;
-            position: relative;
+            z-index: 10;
         }
 
-        .header-top-row {
+        .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
         }
 
-        .menu-btn {
-            background: none; border: none; font-size: 30px; cursor: pointer; color: var(--azul-card);
-        }
+        .menu-btn { background: none; border: none; font-size: 28px; cursor: pointer; color: var(--azul-card); }
 
-        .logo-group {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            text-align: left;
-        }
-
-        .logo-img { height: 75px; width: auto; }
-
-        .logo-text h1 { 
-            font-size: 1.5rem; 
-            color: var(--azul-card); 
-            line-height: 1.1; 
-            text-transform: uppercase;
-            font-weight: 700;
-        }
-        .logo-text span { font-size: 0.85rem; color: var(--texto-cinza); display: block; margin-top: 4px; }
+        .logo-box { display: flex; align-items: center; gap: 12px; text-align: left; }
+        .logo-img { height: 65px; width: auto; }
+        .logo-text h1 { font-size: 1.4rem; color: var(--azul-card); line-height: 1; text-transform: uppercase; letter-spacing: 0.5px; }
+        .logo-text span { font-size: 0.8rem; color: #999; display: block; margin-top: 3px; }
 
         .btn-voltar {
             background-color: var(--vibrant-orange);
             color: white; text-decoration: none;
-            padding: 8px 22px; border-radius: 50px;
-            font-weight: 600; font-size: 0.9rem;
-            display: flex; align-items: center; gap: 8px;
-            transition: 0.2s;
+            padding: 6px 18px; border-radius: 50px;
+            font-weight: 600; font-size: 0.85rem;
+            display: flex; align-items: center; gap: 6px;
         }
 
-        .header-intro {
-            margin-top: 40px;
-            color: #444;
-            font-size: 1.2rem;
-            font-weight: 500;
-        }
+        .pergunta { margin-top: 25px; color: #555; font-size: 1.05rem; font-weight: 500; }
 
-        /* --- Sidebar --- */
-        .sidebar { 
-            position: fixed; top: 0; left: -260px; width: 240px; height: 100%; 
-            background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); 
-            transition: 0.3s; z-index: 2000; padding-top: 10px; 
-        }
-        .sidebar.active { left: 0; }
-        .sidebar-item { 
-            display: flex; align-items: center; padding: 15px 25px; 
-            color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9;
-            transition: all 0.3s ease;
-        }
-        .sidebar-item:hover {
-            color: white !important; background-color: var(--vibrant-orange); padding-left: 35px;
-        }
-        .img-icon-sidebar { height: 24px; width: auto; margin-right: 12px; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
-        .overlay.active { display: block; }
-
-        /* --- Main / Grid --- */
-        main {
-            flex: 1;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: center;
-        }
+        /* --- Grid de Jogos --- */
+        main { flex: 1; padding: 40px 20px; display: flex; justify-content: center; align-items: flex-start; }
 
         .games-grid {
             display: grid;
             width: 100%;
-            max-width: 1150px;
-            gap: 25px;
+            max-width: 1100px;
+            gap: 20px;
             grid-template-columns: repeat(3, 1fr);
         }
 
         .game-card {
-            background: white; 
-            border-radius: 35px; 
-            padding: 20px;
-            text-align: center; 
-            display: flex; 
+            background: white;
+            border-radius: 25px;
+            padding: 12px;
+            text-decoration: none;
+            transition: 0.3s;
+            display: flex;
             flex-direction: column;
-            text-decoration: none; 
-            transition: transform 0.3s;
-            border: 5px solid #eee;
+            border: 4px solid #eee; /* Cor base */
         }
-        .game-card:hover { transform: translateY(-8px); }
+        .game-card:hover { transform: translateY(-5px); }
 
-        .game-img-container {
-            flex: 1; 
-            width: 100%; 
-            border-radius: 25px; 
-            margin-bottom: 15px;
-            display: flex; 
-            align-items: center; 
+        .game-img-box {
+            width: 100%;
+            height: 280px; /* Altura generosa para a imagem */
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            min-height: 220px;
+            margin-bottom: 15px;
         }
-        .game-img-container img { max-width: 85%; max-height: 85%; object-fit: contain; }
+        .game-img-box img { max-width: 80%; max-height: 80%; object-fit: contain; }
 
-        .game-card h2 { font-size: 1.4rem; font-weight: 700; }
+        .game-card h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            padding: 10px 0;
+            color: #1a2a40; /* Cor do texto aproximada da imagem */
+        }
 
-        /* Cores Dinâmicas dos Cards */
-        .card-0 { border-color: var(--azul-card); color: var(--azul-card); }
-        .card-0 .game-img-container { background: var(--azul-fundo); }
+        /* Cores dos Cards iguais à imagem */
+        .card-0 { border-color: var(--azul-card); }
+        .card-0 .game-img-box { background-color: var(--azul-fundo); }
 
-        .card-1 { border-color: var(--verde-card); color: var(--verde-card); }
-        .card-1 .game-img-container { background: var(--verde-fundo); }
+        .card-1 { border-color: var(--verde-card); }
+        .card-1 .game-img-box { background-color: var(--verde-fundo); }
 
-        .card-2 { border-color: var(--vermelho-card); color: var(--vermelho-card); }
-        .card-2 .game-img-container { background: var(--vermelho-fundo); }
+        .card-2 { border-color: var(--vermelho-card); }
+        .card-2 .game-img-box { background-color: var(--vermelho-fundo); }
 
-        footer { padding: 20px; text-align: center; color: #bbb; font-size: 0.8rem; }
+        /* Sidebar e Overlay */
+        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; z-index: 2000; transition: 0.3s; padding-top: 10px; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
+        .sidebar.active { left: 0; }
+        .sidebar-item { display: flex; align-items: center; padding: 15px 25px; color: #555; text-decoration: none; border-bottom: 1px solid #f5f5f5; }
+        .sidebar-item:hover { background: var(--vibrant-orange); color: white; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
+        .overlay.active { display: block; }
 
-        @media (max-width: 900px) {
-            .games-grid { grid-template-columns: 1fr; max-width: 400px; }
-            .header-top-row { padding: 0; }
-            .logo-text h1 { font-size: 1.2rem; }
+        footer { padding: 20px; text-align: center; color: #999; font-size: 0.8rem; }
+
+        @media (max-width: 850px) {
+            .games-grid { grid-template-columns: 1fr; max-width: 380px; }
             .btn-voltar span { display: none; }
+            .logo-text h1 { font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -171,40 +138,32 @@
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
     <div class="sidebar" id="sidebar">
-        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: bold; color: var(--vibrant-orange);">MENU</span>
-            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer;">✕</button>
-        </div>
-        <div id="sidebar-content"></div>
+        <div style="padding: 15px; text-align: right;"><button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button></div>
+        <div id="side-links"></div>
     </div>
 
     <header>
-        <div class="header-top-row">
+        <div class="header-top">
             <button class="menu-btn" onclick="toggleMenu()">☰</button>
-            
-            <div class="logo-group">
-                <img id="logo-header" src="" class="logo-img">
+            <div class="logo-box">
+                <img id="logo-main" src="" class="logo-img">
                 <div class="logo-text">
-                    <h1 id="txt-l1"></h1>
-                    <h1 id="txt-l2"></h1>
-                    <span id="txt-sub"></span>
+                    <h1 id="tit-1"></h1>
+                    <h1 id="tit-2"></h1>
+                    <span id="tit-sub"></span>
                 </div>
             </div>
-
-            <a href="../" class="btn-voltar">
-                <span style="font-size: 1.2rem;">←</span> <span>Voltar</span>
-            </a>
+            <a href="../" class="btn-voltar">← <span>Voltar</span></a>
         </div>
-        <p class="header-intro" id="txt-intro"></p>
+        <p class="pergunta" id="tit-intro"></p>
     </header>
 
     <main>
-        <div class="games-grid" id="grid-jogos"></div>
+        <div class="games-grid" id="grid"></div>
     </main>
 
-    <footer id="txt-rodape"></footer>
+    <footer id="rodape"></footer>
 
-    <!-- Importante: O dados.js deve ser carregado antes deste script -->
     <script src="dados.js"></script>
     <script>
         function toggleMenu() {
@@ -212,41 +171,39 @@
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        function carregarPagina() {
-            const c = JOGO_CONFIG;
+        window.onload = () => {
+            const d = JOGO_CONFIG;
             
-            // Inserir textos do Header
-            document.getElementById('txt-l1').innerText = c.textos.tituloLinha1;
-            document.getElementById('txt-l2').innerText = c.textos.tituloLinha2;
-            document.getElementById('txt-sub').innerText = c.textos.subtitulo;
-            document.getElementById('txt-intro').innerText = c.textos.intro;
-            document.getElementById('txt-rodape').innerHTML = c.textos.rodape;
-            document.getElementById('logo-header').src = c.caminhoIconsMenu + c.iconesMenu.ano1;
+            // Textos Header
+            document.getElementById('tit-1').innerText = d.textos.tituloLinha1;
+            document.getElementById('tit-2').innerText = d.textos.tituloLinha2;
+            document.getElementById('tit-sub').innerText = d.textos.subtitulo;
+            document.getElementById('tit-intro').innerText = d.textos.intro;
+            document.getElementById('rodape').innerText = d.textos.rodape;
+            document.getElementById('logo-main').src = d.caminhoIconsMenu + d.iconesMenu.ano1;
 
-            // Gerar Sidebar
-            const menuHTML = `
-                <a href="${c.links.home}" class="sidebar-item"><img src="${c.caminhoIconsMenu}${c.iconesMenu.home}" class="img-icon-sidebar"> Início</a>
-                <a href="${c.links.pre}" class="sidebar-item"><img src="${c.caminhoIconsMenu}${c.iconesMenu.pre}" class="img-icon-sidebar"> Pré-Escolar</a>
-                <a href="${c.links.ano1}" class="sidebar-item"><img src="${c.caminhoIconsMenu}${c.iconesMenu.ano1}" class="img-icon-sidebar"> 1º Ano</a>
-                <a href="${c.links.ano2}" class="sidebar-item"><img src="${c.caminhoIconsMenu}${c.iconesMenu.ano2}" class="img-icon-sidebar"> 2º Ano</a>
-                <a href="${c.links.ano3}" class="sidebar-item"><img src="${c.caminhoIconsMenu}${c.iconesMenu.ano3}" class="img-icon-sidebar"> 3º Ano</a>
-                <a href="${c.links.ano4}" class="sidebar-item"><img src="${c.caminhoIconsMenu}${c.iconesMenu.ano4}" class="img-icon-sidebar"> 4º Ano</a>
-            `;
-            document.getElementById('sidebar-content').innerHTML = menuHTML;
+            // Sidebar
+            const links = [
+                {t: "Início", l: d.links.home, i: d.iconesMenu.home},
+                {t: "1º Ano", l: d.links.ano1, i: d.iconesMenu.ano1},
+                {t: "2º Ano", l: d.links.ano2, i: d.iconesMenu.ano2}
+            ];
+            document.getElementById('side-links').innerHTML = links.map(item => `
+                <a href="${item.l}" class="sidebar-item">
+                    <img src="${d.caminhoIconsMenu}${item.i}" style="height:22px; margin-right:10px;"> ${item.t}
+                </a>
+            `).join('');
 
-            // Gerar Cards de Jogos
-            const grid = document.getElementById('grid-jogos');
-            grid.innerHTML = c.listaJogos.map((j, i) => `
-                <a href="${j.link}" class="game-card card-${i}">
-                    <div class="game-img-container">
-                        <img src="${c.caminhoIconsJogos}${j.icon}" alt="${j.nome}">
+            // Grid de Jogos
+            document.getElementById('grid').innerHTML = d.listaJogos.map((j, idx) => `
+                <a href="${j.link}" class="game-card card-${idx}">
+                    <div class="game-img-box">
+                        <img src="${d.caminhoIconsJogos}${j.icon}">
                     </div>
                     <h2>${j.nome}</h2>
                 </a>
             `).join('');
-        }
-
-        window.onload = carregarPagina;
+        };
     </script>
 </body>
 </html>
