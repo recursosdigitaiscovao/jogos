@@ -6,7 +6,7 @@ const JOGO_CONFIG = {
         rodape: "Recursos Digitais Covão"
     },
 
-    caminhoIconsMenu: "../../icons/",
+    caminhoIconsMenu: "../icons/",
     caminhoIconsJogos: "iconjogos/",
 
     iconesMenu: {
