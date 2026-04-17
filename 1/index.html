@@ -12,71 +12,91 @@
             --white: #ffffff;
             --text-dark: #002d4b;
             --orange-btn: #ff7f27;
+            --blue-main: #52a2d4;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
         
         body { 
             background-color: var(--bg-content); 
-            height: 100vh;
+            min-height: 100vh;
             display: flex; 
             flex-direction: column; 
             overflow-x: hidden;
         }
 
+        /* HEADER */
         .header-container {
             background-color: var(--white);
             padding-bottom: 40px;
             position: relative;
-            z-index: 10;
+            z-index: 100; /* Aumentado para o menu não ficar atrás */
             border-bottom-left-radius: 50% 20px;
             border-bottom-right-radius: 50% 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
         header { 
             max-width: 1200px;
             margin: 0 auto;
             display: flex;
-            justify-content: space-between; /* Mantém o alinhamento mesmo sem o botão */
+            justify-content: space-between;
             align-items: center; 
             padding: 20px;
         }
 
-        .hamburger-btn { font-size: 24px; color: #7cb5d2; cursor: pointer; }
+        .header-left { position: relative; width: 40px; }
+        .hamburger-btn { font-size: 28px; color: #7cb5d2; cursor: pointer; padding: 5px; }
 
         .header-center { display: flex; align-items: center; gap: 15px; }
-        #header-logo { height: 80px; width: auto; }
+        #header-logo { height: 70px; width: auto; object-fit: contain; }
         
         .header-titles { display: flex; flex-direction: column; }
-        .title-main { color: #52a2d4; font-weight: 900; font-size: 1.6rem; letter-spacing: 1px; line-height: 1.1; }
+        .title-main { color: var(--blue-main); font-weight: 900; font-size: 1.6rem; letter-spacing: 1px; line-height: 1.1; }
         .title-sub { color: #88a0b0; font-weight: 700; font-size: 0.9rem; }
 
-        /* Estilo para manter o equilíbrio visual sem o botão da direita */
-        .header-spacer { width: 24px; } 
+        .header-right-spacer { width: 40px; } /* Mantém o centro equilibrado */
 
-        main {
-            flex: 1; 
+        /* MENU DROP-DOWN DINÂMICO */
+        .menu-dropdown { 
+            position: absolute; 
+            top: 50px; 
+            left: 0; 
+            display: none; 
+            flex-direction: column; 
+            width: 200px;
+            background: white; 
+            padding: 10px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            z-index: 1000;
+        }
+        .menu-dropdown.show { display: flex; }
+        
+        .menu-item { 
+            text-decoration: none; 
+            color: var(--text-dark); 
+            padding: 12px 15px; 
+            font-weight: 700; 
             display: flex;
-            flex-direction: column;
             align-items: center;
-            padding: 20px;
+            gap: 10px;
+            border-radius: 10px;
+            transition: background 0.2s;
         }
+        .menu-item:hover { background-color: #f0f8ff; color: var(--blue-main); }
+        .menu-item img { width: 24px; height: 24px; }
 
-        .intro-text {
-            text-align: center; 
-            color: var(--text-dark);
-            font-size: 1.1rem; 
-            font-weight: 700;
-            margin: 20px 0 40px 0;
-        }
+        /* GRID DE JOGOS */
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .intro-text { text-align: center; color: var(--text-dark); font-size: 1.1rem; font-weight: 700; margin: 20px 0 40px 0; }
 
         .game-grid { 
             width: 100%;
             max-width: 1100px; 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 30px; 
-            justify-content: center;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 25px; 
         }
 
         .game-card { 
@@ -89,55 +109,34 @@
             align-items: center;
             transition: transform 0.3s ease;
             border: 6px solid transparent;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.05);
         }
-        
-        .game-card:hover { transform: translateY(-10px); }
-
+        .game-card:hover { transform: translateY(-8px); }
         .card-inner-bg {
             width: 100%;
-            height: 220px;
+            height: 180px;
             border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
+        .card-inner-bg img { max-width: 75%; max-height: 75%; object-fit: contain; }
+        .game-card h2 { color: var(--text-dark); font-size: 1.3rem; font-weight: 900; }
 
-        .card-inner-bg img { max-width: 85%; max-height: 85%; object-fit: contain; }
-
-        .game-card h2 { 
-            color: #002d4b; 
-            font-size: 1.4rem; 
-            font-weight: 900; 
-            margin-bottom: 10px;
-        }
-
+        /* CORES DOS CARDS */
         .card-blue { border-color: #52a2d4; }
         .card-blue .card-inner-bg { background-color: #e2f1f9; }
         .card-green { border-color: #5bc08f; }
         .card-green .card-inner-bg { background-color: #e6f6ee; }
         .card-red { border-color: #f16d6d; }
-        .card-red .card-inner-bg { background-color: #fdeadc; }
+        .card-red .card-inner-bg { background-color: #fff0f0; }
 
-        footer {
-            padding: 20px;
-            text-align: center;
-            color: #88a0b0;
-            font-weight: 700;
-            font-size: 0.8rem;
-        }
-
-        .menu-dropdown { 
-            position: absolute; top: 70px; left: 20px; 
-            display: none; flex-direction: column; gap: 5px; z-index: 2000; 
-            background: white; padding: 10px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .menu-item { text-decoration: none; color: var(--text-dark); padding: 10px; font-weight: 700; display: block;}
+        footer { padding: 30px; text-align: center; color: #88a0b0; font-weight: 700; font-size: 0.85rem; }
 
         @media (max-width: 768px) {
             .title-main { font-size: 1.2rem; }
-            .game-grid { grid-template-columns: 1fr; }
+            #header-logo { height: 50px; }
         }
     </style>
 </head>
@@ -146,14 +145,14 @@
     <div class="header-container">
         <header>
             <div class="header-left">
-                <i class="fas fa-bars hamburger-btn" onclick="toggleMenu(event)"></i>
+                <i class="fas fa-bars hamburger-btn" id="menuBtn"></i>
                 <div id="dropdownMenu" class="menu-dropdown">
-                    <a href="#" class="menu-item">Início</a>
-                    <a href="#" class="menu-item">1º Ano</a>
+                    <!-- Gerado dinamicamente pelo JS -->
                 </div>
             </div>
 
             <div class="header-center">
+                <!-- O logo será injetado aqui -->
                 <img id="header-logo" src="" alt="Logo">
                 <div class="header-titles">
                     <div id="txt-titulo" class="title-main"></div>
@@ -161,8 +160,7 @@
                 </div>
             </div>
 
-            <!-- Espaçador para manter o logo centralizado (substitui o botão voltar) -->
-            <div class="header-spacer"></div>
+            <div class="header-right-spacer"></div>
         </header>
     </div>
 
@@ -173,35 +171,61 @@
 
     <footer id="txt-rodape"></footer>
 
+    <!-- Importante: Certifique-se que o arquivo dados.js está na mesma pasta -->
     <script src="dados.js"></script>
+
     <script>
-        function toggleMenu(e) {
-            if(e) e.stopPropagation();
-            const menu = document.getElementById('dropdownMenu');
-            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
-        }
-        
-        window.onclick = () => { document.getElementById('dropdownMenu').style.display = 'none'; };
+        // Função para abrir/fechar o menu
+        const menuBtn = document.getElementById('menuBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
+
+        window.onclick = () => dropdownMenu.classList.remove('show');
 
         window.onload = () => {
+            // Verifica se o objeto de configuração existe
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const config = JOGO_CONFIG;
-                
+
+                // 1. Preencher Textos
                 document.getElementById('txt-titulo').innerText = config.textos.titulo;
                 document.getElementById('txt-subtitulo').innerText = config.textos.subtitulo;
                 document.getElementById('txt-intro').innerText = config.textos.intro;
                 document.getElementById('txt-rodape').innerHTML = config.textos.rodape;
-                
-                // CORREÇÃO: Alterado de .girafa para .home (ou outra chave que exista no seu dados.js)
-                // Se no futuro adicionar 'girafa' ao JOGO_CONFIG, pode voltar a alterar aqui.
-                document.getElementById('header-logo').src = config.caminhoIconsMenu + (config.iconesMenu.home || "");
 
+                // 2. Corrigir Logo (Usando iconesMenu.ano1 como padrão para o 1º ano)
+                // Se quiser o ícone da home, mude para config.iconesMenu.home
+                const logoImg = config.caminhoIconsMenu + config.iconesMenu.ano1;
+                document.getElementById('header-logo').src = logoImg;
+
+                // 3. Gerar Menu Hambúrguer Completo
+                const menuItems = [
+                    { nome: 'Início', link: config.links.home, icon: config.iconesMenu.home },
+                    { nome: 'Pré-Escolar', link: config.links.pre, icon: config.iconesMenu.pre },
+                    { nome: '1º Ano', link: config.links.ano1, icon: config.iconesMenu.ano1 },
+                    { nome: '2º Ano', link: config.links.ano2, icon: config.iconesMenu.ano2 },
+                    { nome: '3º Ano', link: config.links.ano3, icon: config.iconesMenu.ano3 },
+                    { nome: '4º Ano', link: config.links.ano4, icon: config.iconesMenu.ano4 },
+                ];
+
+                menuItems.forEach(item => {
+                    const a = document.createElement('a');
+                    a.href = item.link;
+                    a.className = 'menu-item';
+                    a.innerHTML = `<img src="${config.caminhoIconsMenu}${item.icon}"> ${item.nome}`;
+                    dropdownMenu.appendChild(a);
+                });
+
+                // 4. Gerar Cards de Jogos
                 const grid = document.getElementById('gamesGrid');
                 config.listaJogos.forEach(jogo => {
                     const card = document.createElement('a');
                     card.className = `game-card ${jogo.classe}`;
                     card.href = jogo.link;
-                    
                     card.innerHTML = `
                         <div class="card-inner-bg">
                             <img src="${config.caminhoIconsJogos}${jogo.icon}" alt="${jogo.nome}">
@@ -210,6 +234,8 @@
                     `;
                     grid.appendChild(card);
                 });
+            } else {
+                console.error("Erro: JOGO_CONFIG não encontrado. Verifique o arquivo dados.js.");
             }
         };
     </script>
