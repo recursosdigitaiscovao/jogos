@@ -1,8 +1,8 @@
 const JOGO_CONFIG = {
     // Títulos e Textos da Página
     textos: {
-        tituloLinha1: "Pequenos",
-        tituloLinha2: "Leitores",
+        tituloLinha1: "1",
+        tituloLinha2: "Ano",
         subtitulo: "Português | 1º Ano",
         intro: "O que vamos aprender hoje?",
         rodape: "Recursos Digitais Covão"
