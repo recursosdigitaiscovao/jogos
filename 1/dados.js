@@ -1,14 +1,43 @@
-// dados.js
 const JOGO_CONFIG = {
-    caminhoIcons: "../icons/", // Pasta no nível anterior
-    icones: {
+    // Títulos e Textos da Página
+    textos: {
+        tituloLinha1: "Pequenos",
+        tituloLinha2: "Leitores",
+        subtitulo: "Português | 1º Ano",
+        intro: "O que vamos aprender hoje?",
+        rodape: "Recursos Digitais Covão"
+    },
+
+    // Caminhos (ajusta conforme a tua pasta)
+    caminhoIconsMenu: "../../icons/",
+    caminhoIconsJogos: "iconjogos/",
+
+    // Ícones do Menu/Interface
+    iconesMenu: {
+        home: "home.png",
         pre: "iconpre.png",
         ano1: "icon1.png",
         ano2: "icon2.png",
         ano3: "icon3.png",
         ano4: "icon4.png",
-        pt: "pt.png",
-        mat: "mat.png",
-        em: "em.png"
-    }
+        voltar: "voltar.png"
+    },
+
+    // Links da Sidebar
+    links: {
+        home: "/jogos", 
+        pre: "/jogos/pre",
+        ano1: "/jogos/1",
+        ano2: "/jogos/2",
+        ano3: "/jogos/3",
+        ano4: "/jogos/4"
+    },
+    
+    // Lista de Jogos (Aqui defines o que aparece nos 3 cards centrais)
+    // Cores automáticas: 1º Azul, 2º Verde, 3º Vermelho
+    listaJogos: [
+        { nome: "Conta as Sílabas", icon: "syllables.png", link: "conta-silabas/" },
+        { nome: "Forma Palavras", icon: "build-words.png", link: "forma-palavras/" },
+        { nome: "Descobre a Palavra", icon: "discover.png", link: "descobre-palavra/" },
+    ]
 };
