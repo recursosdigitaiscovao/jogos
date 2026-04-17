@@ -6,8 +6,8 @@ const JOGO_CONFIG = {
         intro: "O que vamos aprender hoje?",
         rodape: "&copy; Jovens Leitores - Recursos Educativos"
     },
-    caminhoIconsMenu: "../icons/", 
-    caminhoIconsJogos: "../icons/", 
+    caminhoIconsMenu: "../../icons/", 
+    caminhoIconsJogos: "icons/", 
     iconesMenu: {
         home: "home.png",
         pre: "iconpre.png",
