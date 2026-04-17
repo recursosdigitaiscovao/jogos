@@ -1,15 +1,18 @@
 const JOGO_CONFIG = {
+    // Títulos e Textos da Página
     textos: {
-        tituloLinha1: "PEQUENOS",
-        tituloLinha2: "LEITORES",
+        tituloLinha1: "Jovens",
+        tituloLinha2: "Leitores",
         subtitulo: "Português | 2º Ano",
-        intro: "O que vamos aprender hoje?",
+        intro: "Explora as palavras, as frases e diverte-te a ler!",
         rodape: "&copy; Jovens Leitores - Recursos Educativos"
     },
 
-    caminhoIconsMenu: "icons/", 
-    caminhoIconsJogos: "icons/", 
+    // Caminhos
+    caminhoIconsMenu: "../../icons/", // Caminho que tinhas
+    caminhoIconsJogos: "icons/",      // Ajustado para a pasta que indicaste
 
+    // Ícones
     iconesMenu: {
         home: "home.png",
         pre: "iconpre.png",
@@ -20,6 +23,7 @@ const JOGO_CONFIG = {
         voltar: "voltar.png"
     },
 
+    // Links do Menu
     links: {
         home: "/jogos", 
         pre: "/jogos/pre",
@@ -29,9 +33,10 @@ const JOGO_CONFIG = {
         ano4: "/jogos/4"
     },
     
+    // Lista de Jogos (Exatamente como pediste)
     listaJogos: [
-        { nome: "Conta as Sílabas", icon: "silabas.png", link: "silabas/", cor: "#5ba4e5" },
-        { nome: "Forma Palavras", icon: "palavras.png", link: "palavras/", cor: "#58bc8c" },
-        { nome: "Descobre a Palavra", icon: "descobre.png", link: "descobre/", cor: "#e85a5a" }
+        { nome: "Português", icon: "pt.png", link: "pt/" },
+        { nome: "Matemática", icon: "mat.png", link: "mat/" },
+        { nome: "Estudo do Meio", icon: "em.png", link: "em/" },
     ]
 };
