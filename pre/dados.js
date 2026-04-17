@@ -2,10 +2,10 @@ const JOGO_CONFIG = {
     // Títulos e Textos da Página
     textos: {
         tituloLinha1: "Pequenos",
-        tituloLinha2: "Exploradores",
+        tituloLinha2: "Curiosos",
         subtitulo: "Atividades | Pré-Escolar",
         intro: "Brinca com os números, as cores e as formas!",
-        rodape: "&copy; Pequenos Exploradores - Recursos Educativos"
+        rodape: "&copy; Pequenos Curiosos - Recursos Educativos"
     },
 
     // Caminhos
