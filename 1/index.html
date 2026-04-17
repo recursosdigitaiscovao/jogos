@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-content: #ebf4f8; /* Azul muito claro de fundo */
+            --bg-content: #ebf4f8; 
             --white: #ffffff;
             --text-dark: #002d4b;
             --orange-btn: #ff7f27;
@@ -24,13 +24,11 @@
             overflow-x: hidden;
         }
 
-        /* HEADER COM CURVA */
         .header-container {
             background-color: var(--white);
             padding-bottom: 40px;
             position: relative;
             z-index: 10;
-            /* Efeito de curva no fundo */
             border-bottom-left-radius: 50% 20px;
             border-bottom-right-radius: 50% 20px;
         }
@@ -39,7 +37,7 @@
             max-width: 1200px;
             margin: 0 auto;
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between; /* Mantém o alinhamento mesmo sem o botão */
             align-items: center; 
             padding: 20px;
         }
@@ -53,22 +51,9 @@
         .title-main { color: #52a2d4; font-weight: 900; font-size: 1.6rem; letter-spacing: 1px; line-height: 1.1; }
         .title-sub { color: #88a0b0; font-weight: 700; font-size: 0.9rem; }
 
-        .btn-voltar {
-            background-color: var(--orange-btn);
-            color: white;
-            text-decoration: none;
-            padding: 8px 20px;
-            border-radius: 25px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-            transition: transform 0.2s;
-        }
-        .btn-voltar:hover { transform: scale(1.05); }
+        /* Estilo para manter o equilíbrio visual sem o botão da direita */
+        .header-spacer { width: 24px; } 
 
-        /* ÁREA CENTRAL */
         main {
             flex: 1; 
             display: flex;
@@ -94,7 +79,6 @@
             justify-content: center;
         }
 
-        /* ESTILO DOS CARDS IGUAL À IMAGEM */
         .game-card { 
             background: white; 
             border-radius: 30px; 
@@ -104,7 +88,7 @@
             flex-direction: column;
             align-items: center;
             transition: transform 0.3s ease;
-            border: 6px solid transparent; /* Reservado para a cor */
+            border: 6px solid transparent;
             box-shadow: 0 10px 20px rgba(0,0,0,0.05);
         }
         
@@ -129,17 +113,13 @@
             margin-bottom: 10px;
         }
 
-        /* VARIAÇÕES DE CORES DOS CARDS */
         .card-blue { border-color: #52a2d4; }
         .card-blue .card-inner-bg { background-color: #e2f1f9; }
-
         .card-green { border-color: #5bc08f; }
         .card-green .card-inner-bg { background-color: #e6f6ee; }
-
         .card-red { border-color: #f16d6d; }
-        .card-red .card-inner-bg { background-color: #fdeadc; } /* Cor pastel avermelhada */
+        .card-red .card-inner-bg { background-color: #fdeadc; }
 
-        /* FOOTER */
         footer {
             padding: 20px;
             text-align: center;
@@ -148,7 +128,6 @@
             font-size: 0.8rem;
         }
 
-        /* MENU MOBILE */
         .menu-dropdown { 
             position: absolute; top: 70px; left: 20px; 
             display: none; flex-direction: column; gap: 5px; z-index: 2000; 
@@ -156,10 +135,8 @@
         }
         .menu-item { text-decoration: none; color: var(--text-dark); padding: 10px; font-weight: 700; display: block;}
 
-        /* Responsividade */
         @media (max-width: 768px) {
             .title-main { font-size: 1.2rem; }
-            .btn-voltar span { display: none; }
             .game-grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -171,7 +148,6 @@
             <div class="header-left">
                 <i class="fas fa-bars hamburger-btn" onclick="toggleMenu(event)"></i>
                 <div id="dropdownMenu" class="menu-dropdown">
-                    <!-- Gerado por JS se necessário -->
                     <a href="#" class="menu-item">Início</a>
                     <a href="#" class="menu-item">1º Ano</a>
                 </div>
@@ -185,19 +161,14 @@
                 </div>
             </div>
 
-            <a id="link-voltar" href="" class="btn-voltar">
-                <i class="fas fa-arrow-left"></i>
-                <span>Voltar</span>
-            </a>
+            <!-- Espaçador para manter o logo centralizado (substitui o botão voltar) -->
+            <div class="header-spacer"></div>
         </header>
     </div>
 
     <main>
         <div id="txt-intro" class="intro-text"></div>
-        
-        <div class="game-grid" id="gamesGrid">
-            <!-- Os cards são injetados aqui -->
-        </div>
+        <div class="game-grid" id="gamesGrid"></div>
     </main>
 
     <footer id="txt-rodape"></footer>
@@ -216,19 +187,18 @@
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const config = JOGO_CONFIG;
                 
-                // 1. Textos e Logo
                 document.getElementById('txt-titulo').innerText = config.textos.titulo;
                 document.getElementById('txt-subtitulo').innerText = config.textos.subtitulo;
                 document.getElementById('txt-intro').innerText = config.textos.intro;
                 document.getElementById('txt-rodape').innerHTML = config.textos.rodape;
-                document.getElementById('header-logo').src = config.caminhoIconsMenu + config.iconesMenu.girafa;
-                document.getElementById('link-voltar').href = config.links.voltar;
+                
+                // CORREÇÃO: Alterado de .girafa para .home (ou outra chave que exista no seu dados.js)
+                // Se no futuro adicionar 'girafa' ao JOGO_CONFIG, pode voltar a alterar aqui.
+                document.getElementById('header-logo').src = config.caminhoIconsMenu + (config.iconesMenu.home || "");
 
-                // 2. Gerar Cards
                 const grid = document.getElementById('gamesGrid');
                 config.listaJogos.forEach(jogo => {
                     const card = document.createElement('a');
-                    // Atribui a classe específica (card-blue, card-green, card-red)
                     card.className = `game-card ${jogo.classe}`;
                     card.href = jogo.link;
                     
