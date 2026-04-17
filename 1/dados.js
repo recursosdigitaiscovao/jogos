@@ -1,18 +1,13 @@
 const JOGO_CONFIG = {
-    // Títulos e Textos da Página
     textos: {
         tituloLinha1: "Jovens",
         tituloLinha2: "Leitores",
         subtitulo: "Português | 2º Ano",
-        intro: "Explora as palavras, as frases e diverte-te a ler!",
+        intro: "O que vamos aprender hoje?",
         rodape: "&copy; Jovens Leitores - Recursos Educativos"
     },
-
-    // Caminhos
-    caminhoIconsMenu: "../../icons/", // Caminho que tinhas
-    caminhoIconsJogos: "icons/",      // Ajustado para a pasta que indicaste
-
-    // Ícones
+    caminhoIconsMenu: "../../icons/", 
+    caminhoIconsJogos: "icons/", 
     iconesMenu: {
         home: "home.png",
         pre: "iconpre.png",
@@ -22,8 +17,6 @@ const JOGO_CONFIG = {
         ano4: "icon4.png",
         voltar: "voltar.png"
     },
-
-    // Links do Menu
     links: {
         home: "/jogos", 
         pre: "/jogos/pre",
@@ -32,8 +25,6 @@ const JOGO_CONFIG = {
         ano3: "/jogos/3",
         ano4: "/jogos/4"
     },
-    
-    // Lista de Jogos (Exatamente como pediste)
     listaJogos: [
         { nome: "Português", icon: "pt.png", link: "pt/" },
         { nome: "Matemática", icon: "mat.png", link: "mat/" },
