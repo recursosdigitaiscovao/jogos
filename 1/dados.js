@@ -36,8 +36,8 @@ const JOGO_CONFIG = {
     // Lista de Jogos (Aqui defines o que aparece nos 3 cards centrais)
     // Cores automáticas: 1º Azul, 2º Verde, 3º Vermelho
     listaJogos: [
-        { nome: "Conta as Sílabas", icon: "syllables.png", link: "conta-silabas/" },
-        { nome: "Forma Palavras", icon: "build-words.png", link: "forma-palavras/" },
-        { nome: "Descobre a Palavra", icon: "discover.png", link: "descobre-palavra/" },
+        { nome: "Português", icon: "pt.png", link: "pt/" },
+        { nome: "Matemática", icon: "mat.png", link: "mat/" },
+        { nome: "Estudo do Meio", icon: "em.png", link: "em/" },
     ]
 };
