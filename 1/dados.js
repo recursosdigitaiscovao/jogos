@@ -10,7 +10,12 @@ const JOGO_CONFIG = {
     caminhoIconsJogos: "iconjogos/",
 
     iconesMenu: {
-        girafa: "girafa_logo.png", // Nome do ficheiro da girafa
+        home: "home.png",
+        pre: "iconpre.png",
+        ano1: "icon1.png",
+        ano2: "icon2.png",
+        ano3: "icon3.png",
+        ano4: "icon4.png",
         voltar: "voltar.png"
     },
 
