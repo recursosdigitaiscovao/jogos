@@ -1,4 +1,8 @@
 const JOGO_CONFIG = {
+    // CONFIGURAÇÃO DE NAVEGAÇÃO (Altera aqui para mudar o destino do botão voltar)
+    linkVoltar: "../", 
+    textoVoltar: "VOLTAR",
+
     caminhoImg: "../../../img/",
     caminhoIcons: "../../../icons/",
     caminhoSom: "", 
@@ -11,7 +15,6 @@ const JOGO_CONFIG = {
         tituloLinha1: "Pequenos",
         tituloLinha2: "Leitores",
         subtitulo: "Português | 1º Ano",
-        intro: "Explora as letras, as palavras e diverte-te a ler!",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos"
     },
     iconesMenu: {
@@ -20,8 +23,7 @@ const JOGO_CONFIG = {
         ano1: "icon1.png",
         ano2: "icon2.png",
         ano3: "icon3.png",
-        ano4: "icon4.png",
-        voltar: "voltar.png"
+        ano4: "icon4.png"
     },
     links: {
         home: "/jogos", 
