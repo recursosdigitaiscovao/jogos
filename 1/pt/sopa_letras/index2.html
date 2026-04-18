@@ -15,6 +15,7 @@
             --error-red: #ff5e5e;
             --white: #ffffff;
             --text-grey: #5d7082;
+            --drag-dist: 140px; /* Variável para a animação da mão */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -55,8 +56,8 @@
         .screen { flex: 1; display: none; flex-direction: column; width: 100%; min-height: 0; }
         .screen.active { display: flex; }
 
-        /* JOGO CENTRAL */
-        .game-main-content { display: flex; justify-content: center; align-items: center; gap: clamp(15px, 4vw, 50px); width: 100%; flex: 1; min-height: 0; margin: 0 auto;}
+        /* JOGO CENTRAL - ALINHAMENTO HORIZONTAL PC */
+        .game-main-content { display: flex; justify-content: center; align-items: center; gap: clamp(20px, 5vw, 60px); width: 100%; flex: 1; min-height: 0; margin: 0 auto; }
         .hint-banner { background: white; padding: 10px; border-radius: 12px; border: 2px dashed #d0e0f0; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: clamp(120px, 20vw, 150px); height: clamp(120px, 20vh, 150px); transition: 0.3s; flex-shrink: 0; }
         .hint-banner img { width: 85%; height: 85%; object-fit: contain; }
         .hint-banner span { font-weight: 900; font-size: 18px; color: #333; margin-top: 5px; }
@@ -66,17 +67,18 @@
         /* GRELHA 8x8 */
         .grid-wrapper { background: #cbd9e6; padding: 5px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); touch-action: none; position: relative; user-select: none; margin: 0 auto; }
         .grid { display: grid; gap: 3px; grid-template-columns: repeat(8, 1fr); }
-        .cell { width: clamp(28px, 5.8vh, 44px); height: clamp(28px, 5.8vh, 44px); background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: clamp(16px, 2.8vh, 22px); color: #445; cursor: pointer; box-shadow: 0 2px 0 #cbd9e6; }
+        .cell { width: clamp(30px, 6vh, 44px); height: clamp(30px, 6vh, 44px); background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: clamp(17px, 2.8vh, 22px); color: #445; cursor: pointer; box-shadow: 0 2px 0 #cbd9e6; }
         .cell.highlight { background: var(--highlight-green); color: white; box-shadow: none; }
         .cell.selecting { background: #bbdefb; }
 
-        /* ANIMAÇÃO COMPACTA INTRO */
-        .intro-grid { display: grid; grid-template-columns: repeat(4, 40px); gap: 2px; background: #cbd9e6; padding: 4px; border-radius: 8px; position: relative; }
-        .hand-tutorial { position: absolute; color: #f1c40f; font-size: 35px; z-index: 50; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.2); animation: handDragGato 4s infinite; }
-        @keyframes handDragGato {
+        /* ANIMAÇÃO DINÂMICA (ECRÃ 1) */
+        .intro-grid { display: grid; gap: 2px; background: #cbd9e6; padding: 4px; border-radius: 8px; position: relative; width: fit-content; margin: 0 auto; }
+        .hand-tutorial { position: absolute; color: #f1c40f; font-size: 35px; z-index: 50; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.3); animation: handDragFull 4s infinite ease-in-out; }
+        
+        @keyframes handDragFull {
             0% { transform: translate(10px, 50px); opacity: 0; }
             10% { opacity: 1; }
-            50% { transform: translate(140px, 50px); opacity: 1; }
+            50% { transform: translate(var(--drag-dist), 50px); opacity: 1; }
             65% { opacity: 0; }
             100% { opacity: 0; }
         }
@@ -92,7 +94,10 @@
         .result-trophy { width: clamp(110px, 20vh, 160px); margin-bottom: 10px; }
         .stat-item { background: white; padding: 10px 25px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; }
 
-        /* PAINEL RD (CATEGORIAS) */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; color: #89a; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+
+        /* PAINEL RD (Categorias) */
         .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 20px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); max-height: 80vh; overflow-y: auto; }
         .rd-panel.active { bottom: 0; }
         #rd-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 10px 0; }
@@ -101,16 +106,12 @@
         .category-card img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 10px; }
         .category-card span { font-weight: 800; color: var(--text-grey); font-size: 15px; }
 
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
-        footer { height: 45px; display: flex; align-items: center; justify-content: center; color: #89a; font-size: 12px; font-weight: 700; flex-shrink: 0; }
-
         @media (max-width: 650px) {
             .logo-center { position: relative; left: 0; transform: none; margin-left: 5px; }
             .game-main-content { flex-direction: column; gap: 12px; }
             .grid-wrapper { width: auto; padding: 3px; }
             .cell { width: clamp(28px, 9vw, 38px); height: clamp(30px, 9vw, 38px); font-size: 17px; }
             #scr-intro .slots-area { margin-bottom: 75px; }
-            .intro-grid { grid-template-columns: repeat(4, 35px); }
             .category-card img { width: 55px; height: 55px; }
         }
     </style>
@@ -158,13 +159,12 @@
                     <div class="grid-wrapper" style="box-shadow:none; background:transparent; padding:0;">
                         <div class="intro-grid" id="intro-letter-cells">
                             <i class="fas fa-hand-pointer hand-tutorial"></i>
-                            <div class="cell">A</div><div class="cell">T</div><div class="cell">M</div><div class="cell">H</div>
-                            <div class="cell highlight">G</div><div class="cell highlight">A</div><div class="cell highlight">T</div><div class="cell highlight">O</div>
+                            <!-- Células geradas via JS -->
                         </div>
                     </div>
                 </div>
                 <div class="slots-area" id="intro-slots" style="margin-bottom:80px">
-                    <!-- Gerado dinamicamente -->
+                    <!-- Slots gerados via JS -->
                 </div>
                 <div class="action-container">
                     <button class="btn-jogar-stretch" onclick="startGame()">JOGAR</button>
@@ -231,9 +231,7 @@
             document.getElementById('rd-intro-btn').src = pImg + "rd.png";
             document.getElementById('btn-back-link').onclick = () => window.location.href = JOGO_CONFIG.links.home;
 
-            // MENU HAMBURGUER
             const menuBox = document.getElementById('dropdownMenu');
-            menuBox.innerHTML = '';
             ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
                 const label = k === 'home' ? 'Início' : (k === 'pre' ? 'Pré' : k.replace('ano', '') + 'º Ano');
                 const a = document.createElement('a'); a.className = 'menu-item'; a.href = JOGO_CONFIG.links[k];
@@ -243,49 +241,46 @@
             const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = '../index.html'; 
             btnV.innerHTML = `<img src="${pI}voltar.png"><span>VOLTAR</span>`; menuBox.appendChild(btnV);
 
-            // MENU RD
             const rdList = document.getElementById('rd-list');
-            rdList.innerHTML = '';
             Object.keys(JOGO_CONFIG.categorias).forEach(k => {
                 const c = JOGO_CONFIG.categorias[k];
-                const card = document.createElement('div');
-                card.className = 'category-card';
+                const card = document.createElement('div'); card.className = 'category-card';
                 card.innerHTML = `<img src="${pImg}${c.imgCapa}"><span>${c.nome}</span>`;
-                card.onclick = () => { selectCat(k); };
-                rdList.appendChild(card);
+                card.onclick = () => { selectCat(k); }; rdList.appendChild(card);
             });
 
             updateIntroTutorial(category);
         }
 
-        // NOVO: Atualiza a animação da Intro com base no tema escolhido
+        // ATUALIZA INTRO COM PALAVRA COMPLETA E ANIMAÇÃO DINÂMICA
         function updateIntroTutorial(catKey) {
             const cat = JOGO_CONFIG.categorias[catKey];
-            const item = cat.itens[0]; // Pega o primeiro item da categoria (ex: Vaca, Banana, etc)
+            const item = cat.itens[0];
             const pImg = JOGO_CONFIG.caminhoImg;
+            const introWord = item.nome.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             
-            // Imagem e Nome no Banner da Intro
             document.getElementById('intro-img').src = pImg + item.img;
-            document.getElementById('intro-name-label').innerText = item.nome.charAt(0).toUpperCase() + item.nome.slice(1).toLowerCase();
+            document.getElementById('intro-name-label').innerText = item.nome;
 
-            // Atualiza a grelha de demonstração (primeiras 4 letras)
-            const baseWord = item.nome.toUpperCase().replace(/[^\w]/g, ""); 
-            const demoWord = baseWord.padEnd(4, "X").substring(0, 4); // Garante 4 caracteres
             const gridCont = document.getElementById('intro-letter-cells');
+            gridCont.style.gridTemplateColumns = `repeat(${introWord.length}, 40px)`;
             
-            // Mantém a mão e reconstrói as células
+            // Define a distância do arrasto para o CSS (40px largura + 2px gap)
+            const dragDistance = (introWord.length - 1) * 42;
+            document.documentElement.style.setProperty('--drag-dist', `${dragDistance + 10}px`);
+
             gridCont.innerHTML = `<i class="fas fa-hand-pointer hand-tutorial"></i>`;
             const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            
             // Linha de cima (aleatória)
-            for(let i=0; i<4; i++) gridCont.innerHTML += `<div class="cell">${abc[Math.floor(Math.random()*abc.length)]}</div>`;
-            // Linha de baixo (a palavra do tema)
-            for(let i=0; i<4; i++) gridCont.innerHTML += `<div class="cell highlight">${demoWord[i]}</div>`;
+            for(let i=0; i<introWord.length; i++) gridCont.innerHTML += `<div class="cell" style="width:40px; height:40px; font-size:18px;">${abc[Math.floor(Math.random()*26)]}</div>`;
+            // Linha de baixo (A PALAVRA COMPLETA)
+            for(let i=0; i<introWord.length; i++) gridCont.innerHTML += `<div class="cell highlight" style="width:40px; height:40px; font-size:18px;">${introWord[i]}</div>`;
 
-            // Atualiza os slots da Intro
             const slotsCont = document.getElementById('intro-slots');
             slotsCont.innerHTML = '';
-            for(let i=0; i<demoWord.length; i++) {
-                slotsCont.innerHTML += `<div class="slot" style="border:3px solid #b8d9a7;">${demoWord[i]}</div>`;
+            for(let i=0; i<introWord.length; i++) {
+                slotsCont.innerHTML += `<div class="slot" style="border:3px solid #b8d9a7;">${introWord[i]}</div>`;
             }
         }
 
@@ -305,7 +300,8 @@
         }
 
         function loadRound() {
-            const it = itemsGame[roundGlobal]; word = it.nome.toUpperCase(); updateDots(5, roundGlobal % 5);
+            const it = itemsGame[roundGlobal]; word = it.nome.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
+            updateDots(5, roundGlobal % 5);
             document.getElementById('game-banner').classList.remove('feedback-correct', 'feedback-wrong');
             document.getElementById('game-name').innerText = it.nome;
             document.getElementById('game-name').style.visibility = roundGlobal >= 5 ? 'hidden' : 'visible';
@@ -325,7 +321,7 @@
             });
             window.onmouseup = window.ontouchend = endSelection;
             document.getElementById('grid-container').ontouchmove = (e) => {
-                e.preventDefault(); let t = e.touches[0]; let target = document.elementFromPoint(t.clientX, t.clientY);
+                e.preventDefault(); let touch = e.touches[0]; let target = document.elementFromPoint(touch.clientX, touch.clientY);
                 if (target && target.classList.contains('cell')) continueSelection(target);
             };
         }
@@ -338,7 +334,8 @@
         }
 
         function endSelection() {
-            if (!isDragging) return; isDragging = false; const res = selectedCells.map(c => c.innerText).join('');
+            if (!isDragging) return; isDragging = false;
+            const res = selectedCells.map(c => c.innerText).join('');
             const banner = document.getElementById('game-banner');
             if (res === word) {
                 banner.classList.add('feedback-correct');
@@ -346,14 +343,17 @@
                 score += 150; document.getElementById('score-val').innerText = score; playSound('acerto');
                 setTimeout(() => { roundGlobal++; if(roundGlobal >= 10) finish(); else loadRound(); }, 800);
             } else {
-                if(selectedCells.length > 0) { banner.classList.add('feedback-wrong'); playSound('erro'); score = Math.max(0, score - 20); document.getElementById('score-val').innerText = score; setTimeout(() => banner.classList.remove('feedback-wrong'), 800); }
+                if(selectedCells.length > 0) {
+                    banner.classList.add('feedback-wrong'); playSound('erro'); score = Math.max(0, score - 20); document.getElementById('score-val').innerText = score;
+                    setTimeout(() => banner.classList.remove('feedback-wrong'), 800);
+                }
                 selectedCells.forEach(el => el.classList.remove('selecting'));
             }
             selectedCells = [];
         }
 
         function finish() {
-            clearInterval(timerInt); playSound('vitoria'); show('scr-result'); document.getElementById('status-bar').style.display = 'none';
+            clearInterval(timerInt); playSound('vitoria'); show('scr-result');
             const rep = JOGO_CONFIG.relatorios.find(r => score >= r.min) || JOGO_CONFIG.relatorios[3];
             document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rep.img;
             document.getElementById('res-tit').innerText = rep.titulo; document.getElementById('res-msg').innerText = rep.msg;
@@ -365,17 +365,7 @@
             for(let i=0; i<total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i < current ? ' done' : (i === current ? ' active' : '')); c.appendChild(d); }
         }
 
-        function selectCat(k) { 
-            category = k; roundGlobal = 0; score = 0; timer = 0; 
-            if(timerInt) { clearInterval(timerInt); timerInt = null; }
-            updateIntroTutorial(k); 
-            closeMenus(); 
-            show('scr-intro');
-            document.getElementById('status-bar').style.display = 'none';
-            document.getElementById('mainFooter').style.display = 'flex';
-            document.getElementById('main-title').style.display = 'block';
-        }
-
+        function selectCat(k) { category = k; roundGlobal = 0; score = 0; timer = 0; closeMenus(); show('scr-intro'); updateIntroTutorial(k); document.getElementById('mainFooter').style.display = 'flex'; document.getElementById('main-title').style.display = 'block'; document.getElementById('status-bar').style.display = 'none'; }
         function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
         function playSound(t) { new Audio(JOGO_CONFIG.sons[t]).play().catch(()=>{}); }
         window.onload = init;
