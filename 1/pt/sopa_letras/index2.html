@@ -56,24 +56,35 @@
         .screen { flex: 1; display: none; flex-direction: column; width: 100%; min-height: 0; }
         .screen.active { display: flex; }
 
-        /* JOGO CENTRAL - ALINHAMENTO HORIZONTAL */
-        .game-main-content { display: flex; justify-content: center; align-items: center; gap: clamp(20px, 6vw, 60px); width: 100%; flex: 1; min-height: 0; margin: 0 auto; }
-        .hint-banner { background: white; padding: 10px; border-radius: 12px; border: 2px dashed #d0e0f0; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: clamp(120px, 20vw, 150px); height: clamp(120px, 20vh, 150px); transition: 0.3s; flex-shrink: 0; }
+        /* JOGO CENTRAL - AJUSTE DE PROXIMIDADE E CENTRAMENTO */
+        .game-main-content { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 25px; /* Espaço reduzido para juntar os elementos */
+            width: auto; 
+            max-width: 750px; /* Limita a largura para que não se afastem em ecrãs gigantes */
+            flex: 1; 
+            min-height: 0; 
+            margin: 0 auto;
+        }
+
+        .hint-banner { background: white; padding: 10px; border-radius: 12px; border: 2px dashed #d0e0f0; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: clamp(120px, 18vw, 150px); height: clamp(120px, 18vh, 150px); transition: 0.3s; flex-shrink: 0; }
         .hint-banner img { width: 85%; height: 85%; object-fit: contain; }
         .hint-banner span { font-weight: 900; font-size: 18px; color: #333; margin-top: 5px; }
         .hint-banner.feedback-correct { background-color: #e8f5e9 !important; border-color: var(--highlight-green); }
         .hint-banner.feedback-wrong { background-color: #ffebee !important; border-color: var(--error-red); }
 
         /* GRELHA 8x8 */
-        .grid-wrapper { background: #cbd9e6; padding: 5px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); touch-action: none; position: relative; user-select: none; margin: 0 auto; }
+        .grid-wrapper { background: #cbd9e6; padding: 5px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); touch-action: none; position: relative; user-select: none; }
         .grid { display: grid; gap: 3px; grid-template-columns: repeat(8, 1fr); }
-        .cell { width: clamp(28px, 5.8vh, 44px); height: clamp(28px, 5.8vh, 44px); background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: clamp(16px, 2.8vh, 22px); color: #445; cursor: pointer; box-shadow: 0 2px 0 #cbd9e6; }
+        .cell { width: clamp(30px, 6vh, 45px); height: clamp(30px, 6vh, 45px); background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: clamp(17px, 2.8vh, 22px); color: #445; cursor: pointer; box-shadow: 0 2px 0 #cbd9e6; transition: transform 0.1s; }
         .cell.highlight { background: var(--highlight-green); color: white; box-shadow: none; }
-        .cell.selecting { background: #bbdefb; }
+        .cell.selecting { background: #bbdefb; transform: scale(1.05); }
 
-        /* ANIMAÇÃO DINÂMICA INTRO */
+        /* ANIMAÇÃO COMPACTA INTRO DINÂMICA */
         .intro-grid { display: grid; gap: 2px; background: #cbd9e6; padding: 4px; border-radius: 8px; position: relative; width: fit-content; margin: 0 auto; }
-        .hand-tutorial { position: absolute; color: #f1c40f; font-size: 35px; z-index: 50; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.2); animation: handDragFull 4s infinite ease-in-out; }
+        .hand-tutorial { position: absolute; color: #f1c40f; font-size: 35px; z-index: 50; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.3); animation: handDragFull 4s infinite ease-in-out; }
         @keyframes handDragFull {
             0% { transform: translate(10px, 50px); opacity: 0; }
             10% { opacity: 1; }
@@ -88,12 +99,7 @@
         .action-container { position: absolute; bottom: 10px; left: 20px; right: 20px; display: flex; align-items: center; gap: 15px; }
         .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 20px; padding: 16px; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); }
         
-        /* RESULTADOS */
-        #scr-result { justify-content: center; align-items: center; padding-bottom: 20px; }
-        .result-trophy { width: clamp(110px, 20vh, 160px); margin-bottom: 10px; }
-        .stat-item { background: white; padding: 10px 25px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; }
-
-        /* PAINEL RD */
+        /* PAINEL RD (CATEGORIAS) */
         .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 20px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); max-height: 80vh; overflow-y: auto; }
         .rd-panel.active { bottom: 0; }
         #rd-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 10px 0; }
@@ -102,12 +108,17 @@
         .category-card img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 10px; }
         .category-card span { font-weight: 800; color: var(--text-grey); font-size: 15px; }
 
+        /* RESULTADOS */
+        #scr-result { justify-content: center; align-items: center; padding-bottom: 20px; }
+        .result-trophy { width: clamp(110px, 20vh, 150px); margin-bottom: 10px; }
+        .stat-item { background: white; padding: 10px 25px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; }
+
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
         footer { height: 45px; display: flex; align-items: center; justify-content: center; color: #89a; font-size: 12px; font-weight: 700; flex-shrink: 0; }
 
         @media (max-width: 650px) {
             .logo-center { position: relative; left: 0; transform: none; margin-left: 5px; }
-            .game-main-content { flex-direction: column; gap: 12px; }
+            .game-main-content { flex-direction: column; gap: 10px; width: 100%; }
             .grid-wrapper { width: auto; padding: 3px; }
             .cell { width: clamp(28px, 9vw, 38px); height: clamp(28px, 9vw, 38px); font-size: 17px; }
             #scr-intro .slots-area { margin-bottom: 75px; }
@@ -148,6 +159,7 @@
 
             <h2 class="game-title" id="main-title" style="text-align:center; color:var(--primary-blue); font-size:26px; font-weight:900; margin-bottom:10px;">SOPA DE LETRAS</h2>
 
+            <!-- ECRÃ 1 -->
             <div class="screen active" id="scr-intro">
                 <div class="game-main-content">
                     <div class="hint-banner">
@@ -167,6 +179,7 @@
                 </div>
             </div>
 
+            <!-- ECRÃ 2 -->
             <div class="screen" id="scr-game">
                 <div class="game-main-content">
                     <div class="hint-banner" id="game-banner">
@@ -179,6 +192,7 @@
                 </div>
             </div>
 
+            <!-- ECRÃ 3 -->
             <div class="screen" id="scr-result">
                 <img id="res-taca" class="result-trophy" src="">
                 <h2 id="res-tit" style="font-size:30px; color: var(--primary-blue); font-weight:900;"></h2>
@@ -222,6 +236,7 @@
             document.getElementById('head-logo').src = pI + JOGO_CONFIG.iconesMenu.ano1;
             document.getElementById('rd-game-btn').src = pImg + "rd.png";
             document.getElementById('rd-intro-btn').src = pImg + "rd.png";
+            document.getElementById('intro-img').src = pImg + JOGO_CONFIG.categorias.animais.itens[1].img;
             document.getElementById('btn-back-link').onclick = () => window.location.href = JOGO_CONFIG.links.home;
 
             const menuBox = document.getElementById('dropdownMenu');
@@ -235,7 +250,6 @@
             btnV.innerHTML = `<img src="${pI}voltar.png"><span>VOLTAR</span>`; menuBox.appendChild(btnV);
 
             const rdList = document.getElementById('rd-list');
-            rdList.innerHTML = '';
             Object.keys(JOGO_CONFIG.categorias).forEach(k => {
                 const c = JOGO_CONFIG.categorias[k];
                 const card = document.createElement('div'); card.className = 'category-card';
@@ -271,7 +285,7 @@
         }
 
         function toggleHamburger(e) { e.stopPropagation(); document.getElementById('dropdownMenu').style.display = (document.getElementById('dropdownMenu').style.display === 'flex') ? 'none' : 'flex'; }
-        function openRDMenu(e) { if(e) e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
+        function openRDMenu(e) { if(e) e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; document.getElementById('dropdownMenu').style.display = 'none'; }
         function closeMenus() { document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('rdMenu').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; }
         window.onclick = () => closeMenus();
 
@@ -307,7 +321,7 @@
             });
             window.onmouseup = window.ontouchend = endSelection;
             document.getElementById('grid-container').ontouchmove = (e) => {
-                e.preventDefault(); let t = e.touches[0]; let target = document.elementFromPoint(t.clientX, t.clientY);
+                e.preventDefault(); let touch = e.touches[0]; let target = document.elementFromPoint(touch.clientX, touch.clientY);
                 if (target && target.classList.contains('cell')) continueSelection(target);
             };
         }
@@ -340,6 +354,7 @@
 
         function finish() {
             clearInterval(timerInt); playSound('vitoria'); show('scr-result');
+            document.getElementById('status-bar').style.display = 'none';
             const rep = JOGO_CONFIG.relatorios.find(r => score >= r.min) || JOGO_CONFIG.relatorios[3];
             document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rep.img;
             document.getElementById('res-tit').innerText = rep.titulo; document.getElementById('res-msg').innerText = rep.msg;
