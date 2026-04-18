@@ -13,9 +13,15 @@
             --text-grey: #7a8b9a;
         }
 
-        /* Bloqueio total de scroll */
+        /* CONFIGURAÇÃO DE ECRÃ INTEIRO SEM SCROLL */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
-        html, body { height: 100vh; width: 100vw; overflow: hidden; position: fixed; }
+        
+        html, body { 
+            height: 100vh; 
+            width: 100vw; 
+            overflow: hidden; /* Proíbe scroll */
+            position: fixed; /* Evita bounces em iPhones */
+        }
 
         body { 
             background-color: var(--body-bg); 
@@ -26,17 +32,18 @@
         /* HEADER COMPACTO */
         header { 
             background: var(--header-bg); 
-            padding: 8px 15px; 
-            flex-shrink: 0;
+            padding: 8px 10px; 
+            flex-shrink: 0; /* Não encolhe */
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         
         .header-center { display: flex; align-items: center; justify-content: center; gap: 8px; }
         #header-icon { height: 40px; width: auto; }
-        .title-main { font-weight: 900; font-size: 1rem; text-transform: uppercase; line-height: 1; }
-        #txt-titulo1 { color: var(--primary-red); }
+        
+        .title-main { font-weight: 900; font-size: 1.1rem; text-transform: uppercase; line-height: 1; }
+        #txt-titulo1 { color: var(--primary-red); } /* MUNDO VERMELHO */
         #txt-titulo2 { color: #a5b4c4; }
-        .title-sub { color: var(--text-grey); font-weight: 700; font-size: 0.6rem; }
+        .title-sub { color: var(--text-grey); font-weight: 700; font-size: 0.6rem; display: block; }
 
         /* INTRO */
         .sub-header { 
@@ -49,29 +56,30 @@
         }
         .intro-text { color: #5d7082; font-size: 0.8rem; font-weight: 800; }
 
-        /* ÁREA CENTRAL - Ajuste Dinâmico */
+        /* ÁREA CENTRAL - Ajuste Dinâmico para os Cartões */
         main { 
-            flex: 1; 
-            padding: 10px; 
+            flex: 1; /* Ocupa todo o espaço restante */
+            min-height: 0; /* Permite que os filhos encolham se necessário */
+            padding: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 0; /* Importante para o flex encolher */
         }
 
         .game-wrapper { 
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: repeat(3, 1fr); /* 3 linhas para caber tudo sem scroll */
-            gap: 8px;
+            grid-template-rows: repeat(3, 1fr); /* 3 linhas iguais para caber os 5 itens */
+            gap: 10px;
             width: 100%;
-            height: 100%;
-            max-width: 500px;
+            height: 100%; /* Ocupa 100% da área útil do Main */
+            max-width: 450px;
+            max-height: 600px; /* Limite para não esticar demais em tablets */
         }
 
-        /* CARTÕES COLORIDOS */
+        /* CARTÕES QUE ENCOLHEM */
         .game-card { 
-            border-radius: 18px; 
+            border-radius: 20px; 
             border: 3px solid #fff; 
             text-decoration: none; 
             padding: 8px; 
@@ -79,24 +87,26 @@
             flex-direction: column; 
             align-items: center; 
             justify-content: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
 
-        /* O 5º item ocupa a linha de baixo toda para manter proporção */
-        .game-card:last-child {
+        /* O 5º item (4º Ano) fica centrado no fundo ocupando as duas colunas */
+        .game-card:nth-child(5) {
             grid-column: span 2;
+            width: 50%;
+            margin-left: 25%;
         }
 
         .card-img-container { 
-            flex: 1; /* Faz a imagem ocupar o máximo de espaço disponível */
+            flex: 1; /* Faz a imagem encolher ou crescer conforme o espaço do cartão */
             width: 100%; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            border-radius: 12px; 
-            margin-bottom: 4px;
+            border-radius: 15px; 
             background: rgba(255, 255, 255, 0.2);
-            min-height: 0;
+            min-height: 0; /* Crucial para o encolhimento */
         }
         
         .card-img-container img { 
@@ -110,33 +120,33 @@
             font-size: 0.85rem; 
             font-weight: 900; 
             text-align: center;
+            margin-top: 4px;
         }
 
-        /* RODAPÉ */
+        /* RODAPÉ SEMPRE NO FUNDO */
         footer { 
             padding: 5px; 
             text-align: center; 
             color: var(--text-grey); 
             font-size: 0.6rem; 
             font-weight: 700; 
-            flex-shrink: 0;
+            flex-shrink: 0; /* Não deixa o rodapé fugir */
         }
 
-        /* DESKTOP / TABLET */
+        /* AJUSTES PARA PC / TABLET */
         @media (min-width: 768px) {
-            header { padding: 15px; }
             #header-icon { height: 60px; }
-            .title-main { font-size: 1.6rem; }
-            .title-sub { font-size: 0.8rem; }
-            .intro-text { font-size: 1.1rem; }
+            .title-main { font-size: 1.8rem; }
+            .title-sub { font-size: 0.9rem; }
             .game-wrapper { 
                 grid-template-columns: repeat(5, 1fr); 
                 grid-template-rows: 1fr;
                 max-width: 1100px;
-                height: 350px;
+                height: 300px;
             }
-            .game-card:last-child { grid-column: span 1; }
+            .game-card:nth-child(5) { grid-column: span 1; width: 100%; margin-left: 0; }
             .game-card h2 { font-size: 1.1rem; }
+            header { padding: 15px; }
             footer { font-size: 0.8rem; padding: 15px; }
         }
     </style>
@@ -161,7 +171,9 @@
     </div>
 
     <main>
-        <div class="game-wrapper" id="gamesGrid"></div>
+        <div class="game-wrapper" id="gamesGrid">
+            <!-- Cards gerados aqui -->
+        </div>
     </main>
 
     <footer id="txt-rodape"></footer>
@@ -177,11 +189,13 @@
                 document.getElementById('txt-subtitulo').textContent = config.textos.subtitulo;
                 document.getElementById('txt-intro').textContent = config.textos.intro;
                 document.getElementById('txt-rodape').innerHTML = config.textos.rodape;
+                
                 document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.logo;
 
                 const grid = document.getElementById('gamesGrid');
                 config.listaJogos.forEach(jogo => {
                     const tema = config.temaCores[jogo.tema] || { borda: "#FFFFFF", fundo: "#5ba4e5" };
+                    
                     const card = document.createElement('a');
                     card.className = 'game-card';
                     card.href = jogo.link;
