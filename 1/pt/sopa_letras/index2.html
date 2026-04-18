@@ -6,70 +6,44 @@
     <title>Sopa de Letras - Pequenos Leitores</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- O CSS fica aqui para definir o aspeto visual -->
     <style>
-        /* CSS GLOBAL E ESTRUTURAL */
         :root { --bg-page: #e9f0f8; --primary-blue: #5ba4e5; --primary-dark: #3d7db8; --highlight-green: #7ed321; --error-red: #ff5e5e; --text-grey: #5d7082; --drag-dist: 130px; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
-        
-        header { height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: #f0f7ff; box-shadow: 0px 4px 15px rgba(176,196,217,0.4); position: relative; z-index: 1000; }
-        .header-left, .header-right { min-width: 120px; display: flex; align-items: center; }
-        .header-right { justify-content: flex-end; }
-        
-        .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
-        .logo-center { display: flex; align-items: center; gap: 10px; position: absolute; left: 50%; transform: translateX(-50%); pointer-events: none; white-space: nowrap; }
-        .logo-center img { height: 50px; }
-        .logo-text h1 { font-size: 18px; color: var(--primary-blue); font-weight: 900; line-height: 0.9; }
-        .logo-text p { font-size: 10px; color: #88a; font-weight: 700; }
-
-        .btn-voltar-header { background: var(--primary-blue); color: white; padding: 8px 18px; border-radius: 14px; text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 8px; font-size: 14px; box-shadow: 0 4px 0 var(--primary-dark); }
-        .btn-voltar-header img { height: 20px; width: 20px; }
-
-        /* Contentor e Screens */
+        header { height: 65px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; background: #f0f7ff; box-shadow: 0px 4px 12px rgba(176,196,217,0.3); position: relative; z-index: 1000; flex-shrink: 0; }
+        .hamburger-btn { font-size: 24px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
+        .logo-center { display: flex; align-items: center; gap: 8px; position: absolute; left: 50%; transform: translateX(-50%); pointer-events: none; white-space: nowrap; }
+        .logo-center img { height: 42px; }
+        .logo-text h1 { font-size: 15px; color: var(--primary-blue); font-weight: 900; line-height: 0.9; }
+        .logo-text p { font-size: 9px; color: #88a; font-weight: 700; }
+        .btn-voltar-header { background: var(--primary-blue); color: white; padding: 6px 14px; border-radius: 12px; text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 6px; font-size: 12px; box-shadow: 0 3px 0 var(--primary-dark); }
+        .btn-voltar-header img { height: 16px; width: 16px; }
+        .menu-dropdown { position: absolute; top: 60px; left: 10px; display: none; flex-direction: column; gap: 4px; z-index: 2000; background: white; padding: 8px; border-radius: 12px; box-shadow: 4px 4px 15px rgba(0,0,0,0.1); min-width: 170px; }
+        .menu-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 13px; border-radius: 8px; }
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden; }
-        .game-card { background: #f0f7ff; width: 100%; max-width: 950px; height: 100%; max-height: calc(100dvh - 130px); border-radius: 40px; box-shadow: 0 15px 35px rgba(176, 196, 217, 0.5); display: flex; flex-direction: column; position: relative; padding: 15px 25px; }
+        .game-card { background: #f0f7ff; width: 100%; max-width: 950px; height: 100%; max-height: calc(100dvh - 120px); border-radius: 35px; box-shadow: 0 15px 35px rgba(176, 196, 217, 0.4); display: flex; flex-direction: column; position: relative; padding: 15px 20px; }
         .screen { flex: 1; display: none; flex-direction: column; width: 100%; min-height: 0; }
         .screen.active { display: flex; }
-
-        /* Menus */
-        .menu-dropdown { position: absolute; top: 65px; left: 15px; display: none; flex-direction: column; gap: 8px; z-index: 2000; }
-        .menu-item { display: flex; align-items: center; gap: 10px; padding: 10px 18px; background: white; border-radius: 15px; box-shadow: 4px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: var(--text-grey); font-weight: 700; }
-        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 25px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); max-height: 80vh; overflow-y: auto; }
-        .rd-panel.active { bottom: 0; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
-
-        /* Jogo (Grelha e Hint) */
-        .game-main-content { display: flex; justify-content: center; align-items: center; gap: 20px; margin: auto; }
-        .hint-banner { background: white; padding: 10px; border-radius: 12px; border: 2px dashed #d0e0f0; display: flex; flex-direction: column; align-items: center; justify-content: center; width: clamp(120px, 18vw, 150px); height: clamp(120px, 18vh, 150px); }
+        .hint-banner { background: white; padding: 10px; border-radius: 15px; border: 2px dashed #d0e0f0; display: flex; flex-direction: column; align-items: center; justify-content: center; width: clamp(120px, 18vw, 150px); height: clamp(120px, 18vh, 150px); }
         .hint-banner img { width: 85%; height: 85%; object-fit: contain; }
-        .hint-banner.feedback-correct { border-color: var(--highlight-green); background: #f1f9ec; }
-        .hint-banner.feedback-wrong { border-color: var(--error-red); background: #fff5f5; }
-
-        .grid-wrapper { background: #cbd9e6; padding: 5px; border-radius: 15px; touch-action: none; position: relative; user-select: none; }
+        .grid-wrapper { background: #cbd9e6; padding: 5px; border-radius: 15px; touch-action: none; position: relative; }
         .grid { display: grid; gap: 3px; grid-template-columns: repeat(8, 1fr); }
         .cell { width: clamp(28px, 5.8vh, 44px); height: clamp(28px, 5.8vh, 44px); background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: clamp(17px, 2.8vh, 22px); color: #445; cursor: pointer; }
         .cell.highlight { background: var(--highlight-green); color: white; }
         .cell.selecting { background: #bbdefb; transform: scale(1.05); }
-
-        /* Animação Tutorial */
         .hand-tutorial { position: absolute; color: #f1c40f; font-size: 35px; z-index: 50; pointer-events: none; animation: handDragFull 4s infinite ease-in-out; }
-        @keyframes handDragFull {
-            0% { transform: translate(10px, 50px); opacity: 0; }
-            10% { opacity: 1; }
-            50% { transform: translate(var(--drag-dist), 50px); opacity: 1; }
-            65% { opacity: 0; }
-            100% { opacity: 0; }
-        }
-
-        .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 20px; padding: 16px; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); }
-        
-        @media (max-width: 650px) { .btn-voltar-header { display: none; } .game-main-content { flex-direction: column; } .logo-center img { height: 40px; } }
+        @keyframes handDragFull { 0% { transform: translate(10px, 50px); opacity: 0; } 10% { opacity: 1; } 50% { transform: translate(var(--drag-dist), 50px); opacity: 1; } 65% { opacity: 0; } 100% { opacity: 0; } }
+        .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 14px; font-size: 20px; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); }
+        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 20px; border-radius: 25px 25px 0 0; transition: 0.4s; max-height: 80vh; overflow-y: auto; }
+        .rd-panel.active { bottom: 0; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
+        @media (max-width: 650px) { .btn-voltar-header { display: none; } .logo-center img { height: 40px; } }
     </style>
 </head>
 <body>
-
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
-
     <header>
         <div class="header-left">
             <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
@@ -79,83 +53,50 @@
             <img id="head-logo" src="">
             <div class="logo-text"><h1>PEQUENOS LEITORES</h1><p>Português | 1º Ano</p></div>
         </div>
-        <div class="header-right">
-            <a href="#" id="link-voltar" class="btn-voltar-header"><img id="icon-voltar" src=""> VOLTAR</a>
-        </div>
+        <div class="header-right"><a href="#" id="link-voltar" class="btn-voltar-header"><img id="icon-voltar" src=""> VOLTAR</a></div>
     </header>
 
     <div class="game-container">
         <div class="game-card">
-            
+            <!-- Barra de Status -->
             <div class="status-bar" id="status-bar" style="display:none; align-items:center; justify-content:space-between; margin-bottom:10px;">
                 <div id="timer" style="font-weight:900; color:#667;">⏳ 00:00</div>
-                <div id="dots" style="display:flex; gap:8px;"></div>
-                <div style="font-weight:900; color:var(--primary-blue); display:flex; align-items:center; gap:8px;">
-                    <span id="score-val">0</span>
-                    <img id="rd-game-btn" src="" style="height:25px; cursor:pointer;" onclick="openRDMenu(event)">
-                </div>
+                <div id="dots" style="display:flex; gap:6px;"></div>
+                <div style="font-weight:900; color:var(--primary-blue); display:flex; align-items:center; gap:8px;"><span id="score-val">0</span><img id="rd-game-btn" src="" style="height:22px; cursor:pointer;" onclick="openRDMenu(event)"></div>
             </div>
 
-            <h2 id="main-title" style="text-align:center; color:var(--primary-blue); font-size:26px; font-weight:900; margin-bottom:10px;">SOPA DE LETRAS</h2>
+            <h2 id="main-title" style="text-align:center; color:var(--primary-blue); font-size:24px; font-weight:900; margin-bottom:10px;">SOPA DE LETRAS</h2>
 
-            <!-- Ecrã 1: Intro -->
+            <!-- Ecrãs -->
             <div class="screen active" id="scr-intro">
-                <div class="game-main-content">
-                    <div class="hint-banner">
-                        <img id="intro-img" src="">
-                        <span id="intro-name-label" style="font-weight:900; color:#333; margin-top:5px;">...</span>
-                    </div>
-                    <div class="grid-wrapper" style="background:transparent;">
-                        <div id="intro-letter-cells" style="display:grid; gap:2px; background:#cbd9e6; padding:4px; border-radius:8px; position:relative;">
-                            <i class="fas fa-hand-pointer hand-tutorial"></i>
-                        </div>
-                    </div>
+                <div style="display:flex; justify-content:center; align-items:center; gap:20px; margin:auto;">
+                    <div class="hint-banner"><img id="intro-img" src=""><span id="intro-name-label" style="font-weight:900; margin-top:5px; font-size:14px;">...</span></div>
+                    <div class="grid-wrapper" style="background:transparent;"><div id="intro-letter-cells" style="display:grid; gap:2px; background:#cbd9e6; padding:4px; border-radius:8px; position:relative;"><i class="fas fa-hand-pointer hand-tutorial"></i></div></div>
                 </div>
-                <div id="intro-slots" style="display:flex; justify-content:center; gap:10px; margin: 20px 0 80px;"></div>
-                <div style="position:absolute; bottom:10px; left:20px; right:20px; display:flex; align-items:center; gap:15px;">
-                    <button class="btn-jogar-stretch" onclick="startGame()">JOGAR</button>
-                    <img id="rd-intro-btn" src="" style="height:55px; cursor:pointer;" onclick="openRDMenu(event)">
-                </div>
+                <div id="intro-slots" style="display:flex; justify-content:center; gap:8px; margin: 15px 0 70px;"></div>
+                <div style="position:absolute; bottom:15px; left:20px; right:20px; display:flex; align-items:center; gap:12px;"><button class="btn-jogar-stretch" onclick="startGame()">JOGAR</button><img id="rd-intro-btn" src="" style="height:50px; cursor:pointer;" onclick="openRDMenu(event)"></div>
             </div>
 
-            <!-- Ecrã 2: Jogo -->
             <div class="screen" id="scr-game">
-                <div class="game-main-content">
-                    <div class="hint-banner" id="game-banner">
-                        <img id="game-img" src="">
-                        <span id="game-name" style="font-weight:900; color:#333; margin-top:5px;">...</span>
-                    </div>
-                    <div class="grid-wrapper" id="grid-container">
-                        <div class="grid" id="game-grid"></div>
-                    </div>
+                <div style="display:flex; justify-content:center; align-items:center; gap:20px; margin:auto;">
+                    <div class="hint-banner" id="game-banner"><img id="game-img" src=""><span id="game-name" style="font-weight:900; margin-top:5px; font-size:14px;">...</span></div>
+                    <div class="grid-wrapper" id="grid-container"><div class="grid" id="game-grid"></div></div>
                 </div>
             </div>
 
-            <!-- Ecrã 3: Resultados -->
             <div class="screen" id="scr-result" style="justify-content:center; align-items:center; text-align:center;">
-                <img id="res-taca" style="width:140px; margin-bottom:15px;" src="">
-                <h2 id="res-tit" style="font-size:30px; color: var(--primary-blue); font-weight:900;"></h2>
-                <p id="res-msg" style="color:#667; margin-bottom:20px; max-width:300px;"></p>
-                <div style="display:flex; gap:15px; margin-bottom:25px;">
-                    <div style="background:white; padding:15px 25px; border-radius:20px; box-shadow:0 5px 15px rgba(0,0,0,0.05);">
-                        <span id="res-pts" style="font-size:24px; font-weight:900; color:var(--primary-blue);">0</span><br><small>PONTOS</small>
-                    </div>
-                    <div style="background:white; padding:15px 25px; border-radius:20px; box-shadow:0 5px 15px rgba(0,0,0,0.05);">
-                        <span id="res-tim" style="font-size:24px; font-weight:900; color:var(--primary-blue);">00:00</span><br><small>TEMPO</small>
-                    </div>
-                </div>
-                <button class="btn-jogar-stretch" style="max-width:300px;" onclick="location.reload()">REPETIR</button>
+                <img id="res-taca" style="width:120px; margin-bottom:10px;" src=""><h2 id="res-tit" style="font-size:26px; color: var(--primary-blue); font-weight:900;"></h2><p id="res-msg" style="color:#667; margin-bottom:15px; font-size:14px; max-width:280px;"></p>
+                <div style="display:flex; gap:12px; margin-bottom:20px;"><div style="background:white; padding:12px 20px; border-radius:18px; box-shadow:0 4px 10px rgba(0,0,0,0.05);"><span id="res-pts" style="font-size:22px; font-weight:900; color:var(--primary-blue);">0</span><br><small style="font-size:10px;">PONTOS</small></div><div style="background:white; padding:12px 20px; border-radius:18px; box-shadow:0 4px 10px rgba(0,0,0,0.05);"><span id="res-tim" style="font-size:22px; font-weight:900; color:var(--primary-blue);">00:00</span><br><small style="font-size:10px;">TEMPO</small></div></div>
+                <button class="btn-jogar-stretch" style="max-width:280px;" onclick="location.reload()">REPETIR</button>
             </div>
         </div>
     </div>
 
-    <div id="rdMenu" class="rd-panel">
-        <h3 style="color:var(--primary-blue); text-align:center; margin-bottom:15px;">Escolher Tema</h3>
-        <div id="rd-list" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:15px;"></div>
-    </div>
+    <div id="rdMenu" class="rd-panel"><h3 style="color:var(--primary-blue); text-align:center; margin-bottom:15px; font-size:18px;">Escolher Tema</h3><div id="rd-list" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:12px;"></div></div>
 
-    <footer style="height:45px; display:flex; align-items:center; justify-content:center; color:#89a; font-size:12px; font-weight:700;">© Pequenos Leitores</footer>
+    <footer style="height:40px; display:flex; align-items:center; justify-content:center; color:#89a; font-size:11px; font-weight:700;">© Pequenos Leitores</footer>
 
+    <!-- AQUI CHAMAS OS OUTROS DOIS FICHEIROS -->
     <script src="dados.js"></script>
     <script src="sopa.js"></script>
 </body>
