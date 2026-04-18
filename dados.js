@@ -18,12 +18,12 @@ const JOGO_CONFIG = {
         voltar: "voltar.png"
     },
     links: {
-        home: "/jogos", 
-        pre: "/jogos/pre",
-        ano1: "/jogos/1",
-        ano2: "/jogos/2",
-        ano3: "/jogos/3",
-        ano4: "/jogos/4"
+        home: "index.html", 
+        pre: "pre/index.html",
+        ano1: "1/index.html",
+        ano2: "2/index.html",
+        ano3: "3/index.html",
+        ano4: "4/index.html"
     },
     temaCores: {
         rosa: { borda: "#FFFFFF", fundo: "#E691A7" },
@@ -37,6 +37,6 @@ const JOGO_CONFIG = {
         { nome: "1º Ano", icon: "icon1.png", link: "1/", tema: "laranja" },
         { nome: "2º Ano", icon: "icon2.png", link: "2/", tema: "verde" },
         { nome: "3º Ano", icon: "icon3.png", link: "3/", tema: "azul" },
-        { nome: "4º Ano", icon: "icon4.png", link: "4/", tema: "roxo" },
+        { nome: "4º Ano", icon: "icon4.png", link: "4/", tema: "roxo" }
     ]
 };
