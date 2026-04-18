@@ -25,80 +25,77 @@
         .logo-center img { height: 50px; }
         .logo-text h1 { font-size: 18px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 10px; color: #88a; font-weight: 700; }
-        .btn-voltar { background: var(--primary-blue); color: white; padding: 8px 18px; border-radius: 14px; text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 8px; font-size: 14px; box-shadow: 0 4px 0 var(--primary-dark); }
+        .btn-voltar-header { background: var(--primary-blue); color: white; padding: 8px 18px; border-radius: 14px; text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 8px; font-size: 14px; box-shadow: 0 4px 0 var(--primary-dark); }
 
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden; }
         .game-card { background: #f0f7ff; width: 100%; max-width: 950px; height: 100%; max-height: calc(100dvh - 130px); border-radius: 40px; box-shadow: 0 15px 35px rgba(176, 196, 217, 0.5); display: flex; flex-direction: column; position: relative; padding: 15px 20px; }
 
-        /* STATUS BAR */
         .status-bar { display: none; align-items: center; justify-content: space-between; padding-bottom: 8px; border-bottom: 2px solid rgba(0,0,0,0.03); margin-bottom: 8px; flex-shrink: 0; }
         .dots-container { display: flex; gap: 8px; }
-        .dot { width: 12px; height: 12px; border-radius: 50%; background: #d0e0f0; transition: 0.3s; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
-        .dot.active { background: var(--primary-blue); transform: scale(1.3); box-shadow: 0 0 8px var(--primary-blue); }
+        .dot { width: 12px; height: 12px; border-radius: 50%; background: #d0e0f0; transition: 0.3s; }
+        .dot.active { background: var(--primary-blue); transform: scale(1.3); }
         .dot.done { background: var(--primary-blue); }
 
         .screen { flex: 1; display: none; flex-direction: column; width: 100%; min-height: 0; }
         .screen.active { display: flex; }
 
-        /* BANNER */
-        .hint-banner { 
-            background: white; padding: 10px; border-radius: 10px; border: 2px dashed #d0e0f0; position: relative; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            width: clamp(120px, 18vw, 150px); height: clamp(120px, 18vh, 150px); transition: 0.3s; flex-shrink: 0; 
-        }
-        .hint-banner.feedback-correct { background-color: #e8f5e9 !important; border-color: var(--highlight-green); }
-        .hint-banner.feedback-wrong { background-color: #ffebee !important; border-color: var(--error-red); }
-        .hint-banner img { width: 85%; height: 85%; object-fit: contain; }
+        .game-main-content { display: flex; justify-content: center; align-items: center; gap: clamp(15px, 4vw, 40px); width: 100%; flex: 1; min-height: 0; }
+        .hint-banner { background: white; padding: 10px; border-radius: 10px; border: 2px dashed #d0e0f0; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: clamp(110px, 18vw, 140px); height: clamp(110px, 18vh, 140px); transition: 0.3s; flex-shrink: 0; }
+        .hint-banner img { width: 80%; height: 80%; object-fit: contain; }
         .hint-banner span { font-weight: 900; font-size: 18px; color: #333; margin-top: 5px; }
 
-        /* GRELHA DESTACADA */
-        .game-main-content { display: flex; justify-content: center; align-items: center; gap: clamp(20px, 5vw, 50px); width: 100%; flex: 1; min-height: 0; }
-        .grid-wrapper { 
-            background: #cbd9e6; padding: 5px; border-radius: 15px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1), 0 0 0 4px #f0f7ff; 
-            touch-action: none; user-select: none;
+        .grid-wrapper { background: #cbd9e6; padding: 4px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); touch-action: none; position: relative; }
+        .grid { display: grid; gap: 2px; grid-template-columns: repeat(8, 1fr); }
+        .cell { width: clamp(28px, 5.5vh, 40px); height: clamp(28px, 5.5vh, 40px); background: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: clamp(16px, 2.5vh, 20px); color: #445; cursor: pointer; box-shadow: 0 2px 0 #cbd9e6; }
+        .cell.highlight { background: var(--highlight-green); color: white; box-shadow: none; }
+        .cell.selecting { background: #bbdefb; }
+
+        /* ANIMAÇÃO DA MÃO NO ECRÃ 1 */
+        .hand-tutorial {
+            position: absolute; color: #f1c40f; font-size: 35px; z-index: 50; pointer-events: none;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            animation: handDrag 3s infinite;
         }
-        .grid { display: grid; gap: 3px; grid-template-columns: repeat(8, 1fr); }
-        .cell { 
-            width: clamp(28px, 5.8vh, 42px); height: clamp(28px, 5.8vh, 42px); 
-            background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; 
-            font-weight: 900; font-size: clamp(16px, 2.8vh, 22px); color: #445; cursor: pointer; 
-            box-shadow: 0 3px 0 #cbd9e6; transition: 0.1s;
+        @keyframes handDrag {
+            0% { transform: translate(45px, 60px); opacity: 0; }
+            10% { opacity: 1; }
+            50% { transform: translate(160px, 60px); opacity: 1; }
+            60% { opacity: 0; }
+            100% { opacity: 0; }
         }
-        .cell.highlight { background: var(--highlight-green); color: white; box-shadow: none; transform: translateY(2px); }
-        .cell.selecting { background: #bbdefb; color: var(--primary-dark); }
 
-        /* SLOTS */
-        .slots-area { display: flex; gap: clamp(6px, 1.5vw, 12px); margin: 15px 0; justify-content: center; min-height: 55px; }
-        .slot { width: clamp(45px, 7.5vh, 60px); height: clamp(45px, 7.5vh, 60px); background: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 900; box-shadow: 0 4px 10px rgba(0,0,0,0.05); color: #333; }
+        .slots-area { display: flex; gap: 8px; margin: 15px 0; justify-content: center; min-height: 50px; flex-shrink: 0; }
+        .slot { width: clamp(40px, 7vh, 55px); height: clamp(40px, 7vh, 55px); background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 900; box-shadow: 0 4px 8px rgba(0,0,0,0.05); color: #333; }
 
-        /* BOTÕES E ANIMAÇÃO MÃO */
-        .action-container { position: absolute; bottom: 10px; left: 20px; right: 20px; display: flex; align-items: center; gap: 15px; z-index: 100; }
-        .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 20px; padding: 18px; font-size: 24px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); position: relative; }
-        .rd-icon-btn { height: 60px; cursor: pointer; }
-        
-        .hand-on-button {
-            position: absolute; color: #f1c40f; font-size: 45px; 
-            top: 10px; right: 20px; pointer-events: none;
-            animation: handTap 1.5s infinite;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        @keyframes handTap { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2) translate(5px, 5px); } }
+        .action-container { position: absolute; bottom: 10px; left: 20px; right: 20px; display: flex; align-items: center; gap: 15px; }
+        .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 15px; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); }
+        .rd-icon-btn { height: 55px; cursor: pointer; }
 
-        /* RELATÓRIO FINAL */
-        #scr-result { justify-content: center; align-items: center; text-align: center; }
-        .result-trophy { width: clamp(140px, 28vh, 200px); margin-bottom: 20px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
-        .result-stats-card { background: white; padding: 25px 50px; border-radius: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 25px; border: 2px solid #f0f7ff; }
+        /* ECRÃ 3: RESULTADOS COMPACTO */
+        #scr-result { justify-content: center; align-items: center; padding-bottom: 20px; }
+        .result-trophy { width: clamp(100px, 18vh, 140px); margin-bottom: 10px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
+        .result-tit { font-size: 28px; color: var(--primary-blue); font-weight: 900; margin-bottom: 2px; }
+        .result-msg { color: #667; font-weight: 700; margin-bottom: 15px; font-size: 14px; text-align: center; max-width: 300px; }
+        .result-stats-row { display: flex; gap: 15px; margin-bottom: 20px; }
+        .stat-item { background: white; padding: 10px 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
+        .stat-val { font-size: 24px; font-weight: 900; color: var(--primary-blue); display: block; }
+        .stat-lbl { font-size: 11px; font-weight: 800; color: #89a; text-transform: uppercase; }
 
-        .badge-ano { position: absolute; top: 15px; right: 20px; background: #e1edf8; padding: 5px 12px; border-radius: 10px; display: flex; align-items: center; gap: 6px; font-weight: 900; color: var(--primary-blue); font-size: 13px; }
-        footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #89a; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+        .btn-group-final { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px; }
+        .btn-final { width: 100%; padding: 12px; border-radius: 15px; border: none; font-weight: 900; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+        .btn-repeat { background: var(--primary-blue); color: white; box-shadow: 0 4px 0 var(--primary-dark); }
+        .btn-themes { background: #fff; color: var(--primary-blue); border: 2px solid var(--primary-blue); }
+        .btn-back-games { background: #cbd9e6; color: #445; }
+
+        .badge-ano { position: absolute; top: 20px; right: 20px; background: #e1edf8; padding: 5px 12px; border-radius: 10px; font-weight: 900; color: var(--primary-blue); font-size: 13px; display: flex; align-items: center; gap: 6px;}
+        footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #89a; font-size: 11px; font-weight: 700; flex-shrink: 0; }
 
         @media (max-width: 600px) {
-            .btn-voltar, .badge-ano { display: none; }
+            .btn-voltar-header, .badge-ano { display: none; }
             .logo-center { position: relative; left: 0; transform: none; margin-left: 5px; }
             .game-main-content { flex-direction: column; gap: 10px; }
             #scr-intro .slots-area { margin-bottom: 75px; }
-            .cell { width: 34px; height: 34px; font-size: 18px; }
+            .cell { width: 32px; height: 32px; font-size: 16px; }
         }
     </style>
 </head>
@@ -110,6 +107,7 @@
         <h2 style="color:var(--primary-blue); margin-bottom:15px;">Jogos</h2>
         <div id="side-list"></div>
     </div>
+    
     <div id="rdMenu" style="position:fixed; bottom:-100%; left:0; width:100%; background:white; z-index:2100; padding:20px; border-radius:30px 30px 0 0; transition:0.4s;">
         <div style="width:40px; height:4px; background:#e0e6ed; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div>
         <div id="rd-list"></div>
@@ -124,7 +122,7 @@
                 <p>Português | 1º Ano</p>
             </div>
         </div>
-        <a href="../index.html" class="btn-voltar">
+        <a href="../index.html" class="btn-voltar-header">
             <img id="back-icon" src="" style="height:20px"> VOLTAR
         </a>
     </header>
@@ -145,7 +143,7 @@
                 <img id="badge-icon" src="" style="height:22px"> 1º Ano
             </div>
 
-            <h2 class="game-title" id="main-title" style="text-align:center; color:var(--primary-blue); font-size:28px; font-weight:900; margin-bottom:10px;">SOPA DE LETRAS</h2>
+            <h2 class="game-title" id="main-title" style="text-align:center; color:var(--primary-blue); font-size:26px; font-weight:900; margin-bottom:10px;">SOPA DE LETRAS</h2>
 
             <!-- ECRÃ 1 -->
             <div class="screen active" id="scr-intro">
@@ -155,6 +153,7 @@
                         <span>Gato</span>
                     </div>
                     <div class="grid-wrapper">
+                        <i class="fas fa-hand-pointer hand-tutorial"></i>
                         <div class="grid" style="grid-template-columns: repeat(4, 1fr);">
                             <div class="cell">A</div><div class="cell">T</div><div class="cell">M</div><div class="cell">H</div>
                             <div class="cell highlight">G</div><div class="cell highlight">A</div><div class="cell highlight">T</div><div class="cell highlight">O</div>
@@ -163,14 +162,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="slots-area" style="margin-bottom:85px">
+                <div class="slots-area" style="margin-bottom:80px">
                     <div class="slot" style="border:3px solid #b8d9a7;">G</div><div class="slot" style="border:3px solid #b8d9a7;">A</div><div class="slot">T</div>
                 </div>
                 <div class="action-container">
-                    <button class="btn-jogar-stretch" onclick="startGame()">
-                        JOGAR
-                        <i class="fas fa-hand-pointer hand-on-button"></i>
-                    </button>
+                    <button class="btn-jogar-stretch" onclick="startGame()">JOGAR</button>
                     <img id="rd-intro-btn" class="rd-icon-btn" onclick="openMenu('rdMenu')">
                 </div>
             </div>
@@ -192,15 +188,30 @@
             <!-- ECRÃ 3 -->
             <div class="screen" id="scr-result">
                 <img id="res-taca" class="result-trophy" src="">
-                <h2 id="res-tit" style="font-size:36px; color:var(--primary-blue); font-weight:900; margin-bottom:5px;"></h2>
-                <p id="res-msg" style="color:#667; font-weight:700; margin-bottom:25px;"></p>
-                <div class="result-stats-card">
-                    <div style="font-size:55px; font-weight:900; color:var(--primary-blue); line-height:1;" id="res-pts">0</div>
-                    <p style="color:#89a; font-weight:800; font-size:14px; margin-top:5px;">PONTOS TOTAIS</p>
-                    <p id="res-tim" style="margin-top:15px; color:#445; font-weight:800; font-size:18px;"></p>
+                <h2 id="res-tit" class="result-tit"></h2>
+                <p id="res-msg" class="result-msg"></p>
+                
+                <div class="result-stats-row">
+                    <div class="stat-item">
+                        <span class="stat-val" id="res-pts">0</span>
+                        <span class="stat-lbl">Pontos</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-val" id="res-tim">00:00</span>
+                        <span class="stat-lbl">Tempo</span>
+                    </div>
                 </div>
-                <div class="action-container">
-                    <button class="btn-jogar-stretch" onclick="location.reload()">REPETIR</button>
+
+                <div class="btn-group-final">
+                    <button class="btn-final btn-repeat" onclick="location.reload()">
+                        <i class="fas fa-redo"></i> REPETIR
+                    </button>
+                    <button class="btn-final btn-themes" onclick="openMenu('rdMenu')">
+                        <i class="fas fa-th-large"></i> OUTROS TEMAS
+                    </button>
+                    <button class="btn-final btn-back-games" id="btn-home-link">
+                        <i class="fas fa-arrow-left"></i> OUTROS JOGOS
+                    </button>
                 </div>
             </div>
 
@@ -212,7 +223,7 @@
     <script src="dados.js"></script>
     <script>
         let category = 'animais';
-        let roundGlobal = 0; // 0 a 9 (Total 10 rondas)
+        let roundGlobal = 0;
         let score = 0;
         let timer = 0;
         let timerInt;
@@ -230,6 +241,7 @@
             document.getElementById('rd-game-btn').src = pImg + "rd.png";
             document.getElementById('rd-intro-btn').src = pImg + "rd.png";
             document.getElementById('intro-img').src = pImg + JOGO_CONFIG.categorias.animais.itens[1].img;
+            document.getElementById('btn-home-link').onclick = () => window.location.href = JOGO_CONFIG.links.home;
 
             const side = document.getElementById('side-list');
             ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
@@ -249,35 +261,28 @@
             document.getElementById('top-badge').style.display = 'none';
             document.getElementById('main-title').style.display = 'none';
             
-            // Prepara 10 itens (5 para Nível 1, 5 para Nível 2)
             const all = [...JOGO_CONFIG.categorias[category].itens];
             const level1 = all.sort(() => 0.5 - Math.random()).slice(0, 5);
             const level2 = all.sort(() => 0.5 - Math.random()).slice(0, 5);
             itemsGame = [...level1, ...level2];
 
-            if(!timerInt) {
-                timerInt = setInterval(() => {
-                    timer++;
-                    let m = Math.floor(timer/60).toString().padStart(2,'0');
-                    let s = (timer%60).toString().padStart(2,'0');
-                    document.getElementById('timer').innerText = `⏳ ${m}:${s}`;
-                }, 1000);
-            }
+            timerInt = setInterval(() => {
+                timer++;
+                let m = Math.floor(timer/60).toString().padStart(2,'0');
+                let s = (timer%60).toString().padStart(2,'0');
+                document.getElementById('timer').innerText = `⏳ ${m}:${s}`;
+            }, 1000);
             loadRound();
         }
 
         function loadRound() {
             const it = itemsGame[roundGlobal];
             word = it.nome.toUpperCase();
+            updateDots(5, roundGlobal % 5);
             
-            // Lógica de Dots: mostra sempre 5 bolinhas. Reseta visualmente a cada 5 rondas.
-            const visualRound = roundGlobal % 5;
-            updateDots(5, visualRound);
-
             const banner = document.getElementById('game-banner');
             banner.classList.remove('feedback-correct', 'feedback-wrong');
-
-            // Nível 1 (0-4): Mostra nome | Nível 2 (5-9): Esconde nome
+            
             const isLevel2 = roundGlobal >= 5;
             document.getElementById('game-name').innerText = it.nome;
             document.getElementById('game-name').style.visibility = isLevel2 ? 'hidden' : 'visible';
@@ -326,27 +331,14 @@
             isDragging = false;
             const res = selectedCells.map(c => c.innerText).join('');
             const banner = document.getElementById('game-banner');
-            
             if (res === word) {
                 banner.classList.add('feedback-correct');
-                selectedCells.forEach((el, i) => {
-                    el.classList.remove('selecting'); el.classList.add('highlight');
-                    document.getElementById(`sl-${i}`).innerText = word[i];
-                    document.getElementById(`sl-${i}`).style.border = "3px solid #b8d9a7";
-                });
+                selectedCells.forEach((el, i) => { el.classList.remove('selecting'); el.classList.add('highlight'); document.getElementById(`sl-${i}`).innerText = word[i]; });
                 score += 150; document.getElementById('score-val').innerText = score;
                 playSound('acerto');
-                setTimeout(() => { 
-                    roundGlobal++; 
-                    if(roundGlobal >= 10) finish(); 
-                    else loadRound(); 
-                }, 800);
+                setTimeout(() => { roundGlobal++; if(roundGlobal >= 10) finish(); else loadRound(); }, 800);
             } else {
-                if(selectedCells.length > 0) {
-                    banner.classList.add('feedback-wrong'); playSound('erro');
-                    score = Math.max(0, score - 20); document.getElementById('score-val').innerText = score;
-                    setTimeout(() => banner.classList.remove('feedback-wrong'), 800);
-                }
+                if(selectedCells.length > 0) { banner.classList.add('feedback-wrong'); playSound('erro'); score = Math.max(0, score - 20); document.getElementById('score-val').innerText = score; setTimeout(() => banner.classList.remove('feedback-wrong'), 800); }
                 selectedCells.forEach(el => el.classList.remove('selecting'));
             }
             selectedCells = [];
@@ -360,14 +352,13 @@
             document.getElementById('res-tit').innerText = rep.titulo;
             document.getElementById('res-msg').innerText = rep.msg;
             document.getElementById('res-pts').innerText = score;
-            document.getElementById('res-tim').innerText = "Tempo Final: " + document.getElementById('timer').innerText.replace('⏳','');
+            document.getElementById('res-tim').innerText = document.getElementById('timer').innerText.replace('⏳ ','');
         }
 
         function updateDots(total, current) {
             const c = document.getElementById('dots'); c.innerHTML = '';
             for(let i=0; i<total; i++) {
-                const d = document.createElement('div'); 
-                d.className = 'dot' + (i < current ? ' done' : (i === current ? ' active' : ''));
+                const d = document.createElement('div'); d.className = 'dot' + (i < current ? ' done' : (i === current ? ' active' : ''));
                 c.appendChild(d);
             }
         }
@@ -379,6 +370,5 @@
         function playSound(t) { new Audio(JOGO_CONFIG.sons[t]).play().catch(()=>{}); }
         window.onload = init;
     </script>
-    <style> @keyframes hMove { 0%, 100% { transform: translate(-30px, 0); } 50% { transform: translate(30px, 0); } } </style>
 </body>
 </html>
