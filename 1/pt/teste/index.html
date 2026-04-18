@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>1º Ano</title>
+    <title>Sopa de Letras - Pequenos Leitores</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -11,437 +11,389 @@
             --bg-page: #e9f0f8;
             --primary-blue: #5ba4e5;
             --primary-dark: #3d7db8;
+            --highlight-green: #7ed321;
+            --error-red: #ff5e5e;
             --white: #ffffff;
-            --outer-shadow: 0px 0px 25px #b0c4d9, 0px 0px 25px #ffffff;
+            --text-grey: #5d7082;
+            --drag-dist: 130px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
-        
-        body { 
-            background-color: var(--bg-page); 
-            height: 100dvh; width: 100vw; 
-            overflow: hidden; 
-            display: flex; flex-direction: column;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
 
+        /* HEADER */
         header { 
-            height: 60px; 
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 0 20px; flex-shrink: 0; z-index: 1000;
+            height: 70px; display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 20px; background: #f0f7ff; z-index: 1000; flex-shrink: 0;
+            box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4);
+            position: relative;
         }
+        .header-left { position: relative; z-index: 10; }
+        .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; transition: transform 0.2s; }
         
-        .hamburger-btn { 
-            font-size: 26px; 
-            color: var(--primary-blue); 
-            cursor: pointer; 
-            padding: 8px;
-            display: flex; align-items: center; justify-content: center;
+        /* LOGO CENTRADO (PC E MOBILE) */
+        .logo-center { 
+            display: flex; align-items: center; gap: 10px; 
+            position: absolute; left: 50%; transform: translateX(-50%); 
+            text-align: left; pointer-events: none; white-space: nowrap;
         }
+        .logo-center img { height: 50px; }
+        .logo-text h1 { font-size: 18px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
+        .logo-text p { font-size: 10px; color: #88a; font-weight: 700; }
 
-        .header-center { 
-            flex: 1; display: flex; align-items: center; justify-content: center; 
-            gap: 10px; color: var(--primary-blue); font-weight: 900; font-size: 1.2rem;
+        .header-right { min-width: 120px; display: flex; justify-content: flex-end; z-index: 10; }
+        .btn-voltar-header { 
+            background: var(--primary-blue); color: white; padding: 8px 18px; border-radius: 14px; 
+            text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 8px; font-size: 14px;
+            box-shadow: 0 4px 0 var(--primary-dark); transition: all 0.2s;
         }
-        .header-center img { height: 30px; }
+        .btn-voltar-header img { height: 20px; width: 20px; object-fit: contain; }
 
-        .btn-voltar { 
-            background: var(--primary-blue); color: white; padding: 8px 16px; 
-            border-radius: 12px; text-decoration: none; font-weight: 900; 
-            font-size: 0.8rem; box-shadow: 0 4px 0 var(--primary-dark);
-        }
+        /* MENU DROPDOWN */
+        .menu-dropdown { position: absolute; top: 60px; left: 0; display: none; flex-direction: column; gap: 8px; z-index: 2000; }
+        .menu-item { display: flex; align-items: center; gap: 10px; padding: 10px 18px; background: white; border-radius: 15px; box-shadow: 4px 4px 10px rgba(176, 196, 217, 0.4); cursor: pointer; min-width: 190px; text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 0.9rem; transition: all 0.2s ease; }
+        .menu-item:hover { background: var(--primary-blue); color: white; }
+        .menu-item img { height: 22px; width: 22px; object-fit: contain; }
+        .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
+        .menu-item-voltar img { filter: brightness(0) invert(1); }
+        .menu-divider { height: 1px; background-color: rgba(176, 196, 217, 0.4); margin: 2px 10px; }
 
-        .game-wrapper { 
-            flex: 1; 
+        /* CONTENTOR JOGO */
+        .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden; }
+        .game-card { background: #f0f7ff; width: 100%; max-width: 950px; height: 100%; max-height: calc(100dvh - 130px); border-radius: 40px; box-shadow: 0 15px 35px rgba(176, 196, 217, 0.5); display: flex; flex-direction: column; position: relative; padding: 15px 25px; }
+
+        .status-bar { display: none; align-items: center; justify-content: space-between; padding-bottom: 8px; border-bottom: 2px solid rgba(0,0,0,0.03); margin-bottom: 10px; flex-shrink: 0; }
+        .dots-container { display: flex; gap: 8px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; background: #d0e0f0; transition: 0.3s; }
+        .dot.active { background: var(--primary-blue); transform: scale(1.3); }
+        .dot.done { background: var(--primary-blue); }
+
+        .screen { flex: 1; display: none; flex-direction: column; width: 100%; min-height: 0; }
+        .screen.active { display: flex; }
+
+        /* JOGO CENTRAL - ALINHAMENTO JUNTO E CENTRADO */
+        .game-main-content { 
             display: flex; 
             justify-content: center; 
-            padding: 5px 30px 15px 30px; 
-            min-height: 0;
-            overflow: hidden;
+            align-items: center; 
+            gap: 20px; /* Reduzido para ficar mais próximo */
+            width: fit-content; 
+            margin: 0 auto;
+            flex: 1; 
+            min-height: 0; 
         }
+        
+        .hint-banner { background: white; padding: 10px; border-radius: 12px; border: 2px dashed #d0e0f0; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: clamp(120px, 18vw, 150px); height: clamp(120px, 18vh, 150px); transition: 0.3s; flex-shrink: 0; }
+        .hint-banner img { width: 85%; height: 85%; object-fit: contain; }
+        .hint-banner span { font-weight: 900; font-size: 18px; color: #333; margin-top: 5px; }
+        .hint-banner.feedback-correct { background-color: #e8f5e9 !important; border-color: var(--highlight-green); }
+        .hint-banner.feedback-wrong { background-color: #ffebee !important; border-color: var(--error-red); }
 
-        .game-card { 
-            background: var(--bg-page); 
-            width: 100%; 
-            max-width: 900px; 
-            height: 100%; 
-            border-radius: 35px; 
-            box-shadow: var(--outer-shadow); 
-            display: flex; 
-            flex-direction: column; 
-            position: relative; 
-            overflow: hidden;
-            transition: max-width 0.4s ease;
-        }
+        /* GRELHA 8x8 */
+        .grid-wrapper { background: #cbd9e6; padding: 5px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); touch-action: none; position: relative; user-select: none; }
+        .grid { display: grid; gap: 3px; grid-template-columns: repeat(8, 1fr); }
+        .cell { width: clamp(28px, 5.8vh, 44px); height: clamp(28px, 5.8vh, 44px); background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: clamp(17px, 2.8vh, 22px); color: #445; cursor: pointer; box-shadow: 0 2px 0 #cbd9e6; transition: transform 0.1s; }
+        .cell.highlight { background: var(--highlight-green); color: white; box-shadow: none; }
+        .cell.selecting { background: #bbdefb; transform: scale(1.05); }
 
-        /* --- MENU HAMBURGUER (ORIGINAL) --- */
-        .menu-dropdown { 
-            position: absolute; top: 60px; left: 20px; 
-            display: none; flex-direction: column; gap: 8px; z-index: 2000; 
-        }
-
-        .custom-menu-item { 
-            display: flex; align-items: center; gap: 12px; padding: 12px 20px; 
-            background: white; border-radius: 18px; box-shadow: 4px 4px 10px #c5d4e3; 
-            cursor: pointer; min-width: 180px; text-decoration: none; 
-            color: #555; font-weight: 700;
-            transition: background 0.2s ease, transform 0.2s ease;
-        }
-
-        .custom-menu-item:hover { 
-            background: var(--primary-blue) !important; 
-            transform: translateY(-2px);
-        }
-        .custom-menu-item:hover span { color: white; }
-
-        /* Status Bar */
-        .status { 
-            height: 50px; flex-shrink: 0; display: flex; 
-            justify-content: space-between; align-items: center; padding: 0 20px;
-        }
-        #dots-container { display: flex; gap: 8px; align-items: center; justify-content: center; }
-        .dot {
-            width: 12px; height: 12px; border-radius: 50%;
-            background: #cbd9e6; transition: all 0.3s ease;
-            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1);
-        }
-        .dot.active { background: var(--primary-blue); transform: scale(1.3); box-shadow: 0 0 8px var(--primary-blue); }
-        .dot.completed { background: #a8d5ff; }
-        .status-timer { font-weight: 700; color: #667788; min-width: 60px; }
-        .status-right { display: flex; align-items: center; gap: 12px; min-width: 60px; justify-content: flex-end; }
-        .rd-menu-btn { height: 24px; cursor: pointer; }
-
-        /* --- INTRO OVERLAY (ORIGINAL) --- */
-        #intro-overlay {
-            position: absolute; top: 0; left: 0; right: 0; height: 100%;
-            background: var(--bg-page); z-index: 100;
-            display: flex; flex-direction: column; align-items: center; padding-bottom: 20px;
-        }
-        .intro-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .intro-actions { display: flex; align-items: center; gap: 15px; width: 100%; padding: 0 25px; }
-        .btn-jogar {
-            flex: 1; padding: 15px; background: var(--primary-blue); 
-            color: white; border: none; border-radius: 20px; 
-            font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); 
-            font-size: 1.1rem;
-        }
-        .rd-intro-btn { height: 50px; width: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .rd-intro-btn img { height: 40px; }
-
-        @keyframes moveHand { 
-            0% { transform: translate(0,0); opacity: 0; } 
+        /* ANIMAÇÃO DINÂMICA INTRO */
+        .intro-grid { display: grid; gap: 2px; background: #cbd9e6; padding: 4px; border-radius: 8px; position: relative; width: fit-content; margin: 0 auto; }
+        .hand-tutorial { position: absolute; color: #f1c40f; font-size: 35px; z-index: 50; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.2); animation: handDragFull 4s infinite ease-in-out; }
+        @keyframes handDragFull {
+            0% { transform: translate(10px, 50px); opacity: 0; }
             10% { opacity: 1; }
-            50% { transform: translate(-60px, 0); opacity: 1; } 
-            90% { opacity: 1; }
-            100% { transform: translate(0,0); opacity: 0; } 
+            50% { transform: translate(var(--drag-dist), 50px); opacity: 1; }
+            65% { opacity: 0; }
+            100% { opacity: 0; }
         }
 
-        /* --- ÁREA DO JOGO (ADAPTÁVEL) --- */
-        main { flex: 1; display: none; position: relative; }
+        .slots-area { display: flex; gap: 10px; margin: 20px 0; justify-content: center; min-height: 55px; flex-shrink: 0; }
+        .slot { width: 55px; height: 55px; background: white; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 900; box-shadow: 0 4px 8px rgba(0,0,0,0.05); color: #333; }
 
-        #inner-game { 
-            width: 100%; height: 100%; display: flex; flex-direction: column; 
-            align-items: center; justify-content: space-evenly; padding: 10px; 
+        .action-container { position: absolute; bottom: 10px; left: 20px; right: 20px; display: flex; align-items: center; gap: 15px; }
+        .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 20px; padding: 16px; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); }
+        
+        /* RESULTADOS */
+        #scr-result { justify-content: center; align-items: center; padding-bottom: 20px; }
+        .result-trophy { width: clamp(110px, 20vh, 160px); margin-bottom: 10px; }
+        .stat-item { background: white; padding: 10px 25px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; }
+
+        /* PAINEL RD */
+        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 20px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); max-height: 80vh; overflow-y: auto; }
+        .rd-panel.active { bottom: 0; }
+        #rd-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 10px 0; }
+        .category-card { background: white; border-radius: 20px; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: 0 4px 12px rgba(176, 196, 217, 0.4); cursor: pointer; transition: 0.2s; border: 1px solid rgba(0,0,0,0.02); }
+        .category-card:hover { transform: translateY(-5px); background: #f0f7ff; }
+        .category-card img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 10px; }
+        .category-card span { font-weight: 800; color: var(--text-grey); font-size: 15px; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; color: #89a; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+
+        @media (max-width: 650px) {
+            /* CENTRAMENTO ABSOLUTO NO MOBILE */
+            .logo-center { left: 50%; transform: translateX(-50%); width: auto; position: absolute; }
+            .btn-voltar-header { display: none; }
+            .header-right { display: none; }
+            .game-main-content { flex-direction: column; gap: 12px; width: 100%; }
+            .grid-wrapper { width: auto; padding: 3px; }
+            .cell { width: clamp(28px, 9vw, 38px); height: clamp(28px, 9vw, 38px); font-size: 17px; }
+            #scr-intro .slots-area { margin-bottom: 75px; }
+            .category-card img { width: 55px; height: 55px; }
         }
-
-        .grid { 
-            display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; 
-            background: #d0e0f0; padding: 10px; border-radius: 20px; 
-            touch-action: none; position: relative;
-            /* Ajusta o tamanho da sopa de acordo com o ecrã */
-            width: min(85vw, 65vh); height: min(85vw, 65vh);
-            max-width: 500px; max-height: 500px;
-        }
-
-        .cell { 
-            width: 100%; height: 100%; background: white; border-radius: 10px; 
-            display: flex; align-items: center; justify-content: center; 
-            font-weight: 900; font-size: clamp(0.9rem, 3.5vmin, 1.4rem); color: #445566; 
-            cursor: pointer; box-shadow: 0 3px 0 #cbd9e6; user-select: none;
-        }
-
-        .hint-img { height: clamp(60px, 15vh, 100px); border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .slots { font-size: clamp(1.2rem, 4vw, 1.8rem); font-weight: 900; color: var(--primary-blue); letter-spacing: 5px; }
-
-        /* Layout Horizontal no Jogo */
-        @media (orientation: landscape) and (min-height: 400px) {
-            #inner-game { flex-direction: row; justify-content: space-evenly; }
-            .hint-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        }
-
-        .cell.selected { background: var(--primary-blue); color: white; transform: translateY(2px); box-shadow: none; }
-        .cell.correct { background: #7ed321; color: white; box-shadow: none; }
-
-        /* RD Painel */
-        .rd-panel {
-            position: absolute; bottom: 0; left: 0; width: 100%; background: white; z-index: 2500;
-            border-radius: 35px 35px 0 0; padding: 25px 20px; display: flex; flex-direction: column; gap: 12px;
-            transform: translateY(101%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .rd-panel.active { transform: translateY(0); box-shadow: 0 -10px 25px rgba(0,0,0,0.1); }
-        .rd-panel-header { width: 50px; height: 5px; background: #ccd6e0; border-radius: 10px; margin: -10px auto 15px auto; cursor: pointer; }
-
-        footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #8899aa; font-size: 0.85rem; flex-shrink: 0; }
     </style>
 </head>
 <body>
 
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+
     <header>
         <div class="header-left">
-            <i class="fas fa-bars hamburger-btn" onclick="toggleMainMenu(event)"></i>
-            <div class="menu-dropdown" id="dropdownMenu"></div>
+            <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
+            <div id="dropdownMenu" class="menu-dropdown"></div>
         </div>
-        <div class="header-center">
-            <img id="header-icon" src="" alt="">
-            <span>1º Ano</span>
+        <div class="logo-center">
+            <img id="head-logo" src="">
+            <div class="logo-text">
+                <h1>PEQUENOS LEITORES</h1>
+                <p>Português | 1º Ano</p>
+            </div>
         </div>
         <div class="header-right">
-            <a href="../index.html" class="btn-voltar">VOLTAR</a>
+            <a href="../index.html" class="btn-voltar-header">
+                <img id="header-back-icon" src="" alt="">
+                VOLTAR
+            </a>
         </div>
     </header>
 
-    <div class="game-wrapper">
-        <div id="main-card" class="game-card">
+    <div class="game-container">
+        <div class="game-card" id="gameCard">
             
-            <section class="status">
-                <div id="timer-display" class="status-timer">⏳ 00:00</div>
-                <div id="dots-container"></div>
-                <div class="status-right">
-                    <div style="font-weight: 900; color: var(--primary-blue);"><span id="points-label">0</span></div>
-                    <img id="status-rd-img" class="rd-menu-btn" src="" alt="RD" onclick="toggleRDMenu(event)">
+            <div class="status-bar" id="status-bar">
+                <div id="timer" style="font-weight:900; color:#667; min-width:80px;">⏳ 00:00</div>
+                <div class="dots-container" id="dots"></div>
+                <div style="font-weight:900; color:var(--primary-blue); display:flex; align-items:center; gap:8px; min-width:80px; justify-content:flex-end;">
+                    <span id="score-val">0</span>
+                    <img id="rd-game-btn" src="" style="height:25px; cursor:pointer;" onclick="openRDMenu(event)">
                 </div>
-            </section>
+            </div>
 
-            <div id="intro-overlay">
-                <div class="intro-content">
-                    <div style="position:relative; margin-bottom:20px; background:#dbe9f7; padding:15px; border-radius:20px;">
-                        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:5px;">
-                            <div style="width:30px;height:30px;background:white;border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;">G</div>
-                            <div style="width:30px;height:30px;background:white;border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;">A</div>
-                            <div style="width:30px;height:30px;background:white;border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;">T</div>
+            <h2 class="game-title" id="main-title" style="text-align:center; color:var(--primary-blue); font-size:26px; font-weight:900; margin-bottom:10px;">SOPA DE LETRAS</h2>
+
+            <!-- ECRÃ 1 -->
+            <div class="screen active" id="scr-intro">
+                <div class="game-main-content">
+                    <div class="hint-banner">
+                        <img id="intro-img" src="">
+                        <span id="intro-name-label">...</span>
+                    </div>
+                    <div class="grid-wrapper" style="box-shadow:none; background:transparent; padding:0;">
+                        <div class="intro-grid" id="intro-letter-cells">
+                            <i class="fas fa-hand-pointer hand-tutorial"></i>
                         </div>
-                        <i class="fas fa-hand-pointer" style="position:absolute; color:#f1c40f; font-size:24px; bottom:5px; right:5px; animation: moveHand 2s infinite;"></i>
                     </div>
-                    <h1 id="intro-title" style="color:var(--primary-blue); font-weight:900; margin-bottom:25px; text-align:center;">Sopa de Letras</h1>
                 </div>
-                
-                <div class="intro-actions">
-                    <button onclick="mostrarJogo()" class="btn-jogar">JOGAR</button>
-                    <div class="rd-intro-btn" onclick="toggleRDMenu(event)">
-                        <img id="intro-rd-img" src="" alt="RD">
+                <div class="slots-area" id="intro-slots" style="margin-bottom:80px"></div>
+                <div class="action-container">
+                    <button class="btn-jogar-stretch" onclick="startGame()">JOGAR</button>
+                    <img id="rd-intro-btn" src="" style="height:55px; cursor:pointer;" onclick="openRDMenu(event)">
+                </div>
+            </div>
+
+            <!-- ECRÃ 2 -->
+            <div class="screen" id="scr-game">
+                <div class="game-main-content">
+                    <div class="hint-banner" id="game-banner">
+                        <img id="game-img" src="">
+                        <span id="game-name">...</span>
+                    </div>
+                    <div class="grid-wrapper" id="grid-container">
+                        <div class="grid" id="game-grid"></div>
                     </div>
                 </div>
             </div>
 
-            <div id="rdDropdownMenu" class="rd-panel">
-                <div class="rd-panel-header" onclick="toggleRDMenu(event)"></div>
-            </div>
-
-            <main id="game-area">
-                <div id="inner-game">
-                    <div class="hint-container">
-                        <img id="target-img" class="hint-img" src="">
-                        <div id="target-slots" class="slots"></div>
-                    </div>
-                    <div id="letter-grid" class="grid"></div>
+            <!-- ECRÃ 3 -->
+            <div class="screen" id="scr-result">
+                <img id="res-taca" class="result-trophy" src="">
+                <h2 id="res-tit" style="font-size:30px; color: var(--primary-blue); font-weight:900;"></h2>
+                <p id="res-msg" style="color: #667; font-weight: 700; font-size: 14px; margin-bottom: 15px; text-align: center; max-width: 300px;"></p>
+                <div style="display:flex; gap:15px; margin-bottom:20px;">
+                    <div class="stat-item"><span style="font-size:24px; font-weight:900; color:var(--primary-blue);" id="res-pts">0</span><br><small style="font-weight:800; color:#89a;">PONTOS</small></div>
+                    <div class="stat-item"><span style="font-size:24px; font-weight:900; color:var(--primary-blue);" id="res-tim">00:00</span><br><small style="font-weight:800; color:#89a;">TEMPO</small></div>
                 </div>
-            </main>
+                <div style="display:flex; flex-direction:column; gap:10px; width:100%; max-width:300px;">
+                    <button class="btn-jogar-stretch" style="padding:12px; font-size:18px;" onclick="location.reload()">REPETIR</button>
+                    <button class="btn-jogar-stretch" style="background:white; color:var(--primary-blue); border:2px solid var(--primary-blue); box-shadow:none; padding:10px; font-size:16px;" onclick="openRDMenu(event)">TEMAS</button>
+                    <button class="btn-jogar-stretch" style="background:#cbd9e6; color:#445; box-shadow:none; padding:10px; font-size:16px;" id="btn-back-link">OUTROS JOGOS</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <footer id="main-footer">2026</footer>
+    <div id="rdMenu" class="rd-panel">
+        <div style="width:50px; height:5px; background:#e0e6ed; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div>
+        <h3 style="color:var(--primary-blue); text-align:center; margin-bottom:15px;">Escolher Tema</h3>
+        <div id="rd-list"></div>
+    </div>
+
+    <footer id="mainFooter">© Pequenos Leitores - Recursos Educativos</footer>
 
     <script src="dados.js"></script>
     <script>
-        let roundGlobal = 1;
-        let currentCategory = 'animais';
-        let itemsForGame = [];
+        let category = 'animais';
+        let roundGlobal = 0;
+        let score = 0;
         let timer = 0;
         let timerInt;
-        let selectedCells = [];
-        let targetWord = "";
+        let word = "";
         let isDragging = false;
+        let selectedCells = [];
+        let itemsGame = [];
 
-        function atualizarProgressao(total, atual) {
-            const container = document.getElementById('dots-container');
-            container.innerHTML = '';
-            let visualAtual = atual > 5 ? atual - 5 : atual;
-            for (let i = 1; i <= 5; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'dot';
-                if (i < visualAtual) dot.classList.add('completed');
-                else if (i === visualAtual) dot.classList.add('active');
-                container.appendChild(dot);
-            }
+        function init() {
+            const pI = JOGO_CONFIG.caminhoIcons;
+            const pImg = JOGO_CONFIG.caminhoImg;
+            document.getElementById('head-logo').src = pI + JOGO_CONFIG.iconesMenu.ano1;
+            document.getElementById('header-back-icon').src = pI + "voltar.png";
+            document.getElementById('rd-game-btn').src = pImg + "rd.png";
+            document.getElementById('rd-intro-btn').src = pImg + "rd.png";
+            document.getElementById('btn-back-link').onclick = () => window.location.href = JOGO_CONFIG.links.home;
+
+            const menuBox = document.getElementById('dropdownMenu');
+            ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
+                const label = k === 'home' ? 'Início' : (k === 'pre' ? 'Pré' : k.replace('ano', '') + 'º Ano');
+                const a = document.createElement('a'); a.className = 'menu-item'; a.href = JOGO_CONFIG.links[k];
+                a.innerHTML = `<img src="${pI}${JOGO_CONFIG.iconesMenu[k]}"><span>${label}</span>`; menuBox.appendChild(a);
+            });
+            const div = document.createElement('div'); div.className = 'menu-divider'; menuBox.appendChild(div);
+            const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = '../index.html'; 
+            btnV.innerHTML = `<img src="${pI}voltar.png"><span>VOLTAR</span>`; menuBox.appendChild(btnV);
+
+            const rdList = document.getElementById('rd-list');
+            Object.keys(JOGO_CONFIG.categorias).forEach(k => {
+                const c = JOGO_CONFIG.categorias[k];
+                const card = document.createElement('div'); card.className = 'category-card';
+                card.innerHTML = `<img src="${pImg}${c.imgCapa}"><span>${c.nome}</span>`;
+                card.onclick = () => { selectCat(k); }; rdList.appendChild(card);
+            });
+
+            updateIntroTutorial(category);
         }
 
-        function toggleMainMenu(e) {
-            if(e) e.stopPropagation();
-            closeRDMenu();
-            const menu = document.getElementById('dropdownMenu');
-            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
-        }
-
-        function toggleRDMenu(e) {
-            if(e) e.stopPropagation();
-            document.getElementById('dropdownMenu').style.display = 'none';
-            document.getElementById('rdDropdownMenu').classList.toggle('active');
-        }
-
-        function closeRDMenu() { document.getElementById('rdDropdownMenu').classList.remove('active'); }
-
-        window.onclick = () => {
-            document.getElementById('dropdownMenu').style.display = 'none';
-            closeRDMenu();
-        };
-
-        function mostrarJogo() {
-            // Expandir largura máxima apenas durante o jogo
-            document.getElementById('main-card').style.maxWidth = "1100px";
-            document.getElementById('intro-overlay').style.display = 'none';
-            document.getElementById('main-footer').style.display = 'none';
-            document.getElementById('game-area').style.display = 'flex';
+        function updateIntroTutorial(catKey) {
+            const cat = JOGO_CONFIG.categorias[catKey];
+            const item = cat.itens[0];
+            const pImg = JOGO_CONFIG.caminhoImg;
+            const introWord = item.nome.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             
-            if(!timerInt) {
-                timerInt = setInterval(() => {
-                    timer++;
-                    const m = Math.floor(timer/60).toString().padStart(2,'0');
-                    const s = (timer%60).toString().padStart(2,'0');
-                    document.getElementById('timer-display').innerText = `⏳ ${m}:${s}`;
-                }, 1000);
-            }
+            document.getElementById('intro-img').src = pImg + item.img;
+            document.getElementById('intro-name-label').innerText = item.nome;
 
-            if(roundGlobal === 1) prepararRondas();
+            const gridCont = document.getElementById('intro-letter-cells');
+            gridCont.style.gridTemplateColumns = `repeat(${introWord.length}, 40px)`;
+            const dragDistance = (introWord.length - 1) * 42;
+            document.documentElement.style.setProperty('--drag-dist', `${dragDistance + 10}px`);
+
+            gridCont.innerHTML = `<i class="fas fa-hand-pointer hand-tutorial"></i>`;
+            const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            for(let i=0; i<introWord.length; i++) gridCont.innerHTML += `<div class="cell" style="width:40px; height:40px;">${abc[Math.floor(Math.random()*26)]}</div>`;
+            for(let i=0; i<introWord.length; i++) gridCont.innerHTML += `<div class="cell highlight" style="width:40px; height:40px;">${introWord[i]}</div>`;
+
+            const slotsCont = document.getElementById('intro-slots');
+            slotsCont.innerHTML = '';
+            for(let i=0; i<introWord.length; i++) {
+                slotsCont.innerHTML += `<div class="slot" style="border:3px solid #b8d9a7;">${introWord[i]}</div>`;
+            }
+        }
+
+        function toggleHamburger(e) { e.stopPropagation(); document.getElementById('dropdownMenu').style.display = (document.getElementById('dropdownMenu').style.display === 'flex') ? 'none' : 'flex'; }
+        function openRDMenu(e) { if(e) e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; document.getElementById('dropdownMenu').style.display = 'none'; }
+        function closeMenus() { document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('rdMenu').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; }
+        window.onclick = () => closeMenus();
+
+        function startGame() {
+            show('scr-game'); document.getElementById('status-bar').style.display = 'flex'; document.getElementById('main-title').style.display = 'none'; document.getElementById('mainFooter').style.display = 'none';
+            const all = [...JOGO_CONFIG.categorias[category].itens];
+            const l1 = all.sort(() => 0.5 - Math.random()).slice(0, 5);
+            const l2 = all.sort(() => 0.5 - Math.random()).slice(0, 5);
+            itemsGame = [...l1, ...l2];
+            timerInt = setInterval(() => { timer++; let m = Math.floor(timer/60).toString().padStart(2,'0'); let s = (timer%60).toString().padStart(2,'0'); document.getElementById('timer').innerText = `⏳ ${m}:${s}`; }, 1000);
             loadRound();
         }
 
-        function prepararRondas() {
-            const catData = JOGO_CONFIG.categorias[currentCategory].itens;
-            const level1 = [...catData].sort(() => 0.5 - Math.random()).slice(0, 5);
-            const level2 = [...catData].sort(() => 0.5 - Math.random()).slice(0, 5);
-            itemsForGame = [...level1, ...level2];
-        }
-
         function loadRound() {
-            if(roundGlobal > 10) { finalizarJogo(); return; }
-            atualizarProgressao(5, roundGlobal);
-            const item = itemsForGame[roundGlobal - 1];
-            targetWord = item.nome.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/Ç/g, "C");
-            document.getElementById('target-img').src = JOGO_CONFIG.caminhoImg + item.img;
-            document.getElementById('target-slots').innerText = (roundGlobal <= 5) ? item.nome.toUpperCase() : "_ ".repeat(targetWord.length);
-            generateGrid(targetWord);
-            selectedCells = [];
+            const it = itemsGame[roundGlobal]; word = it.nome.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
+            updateDots(5, roundGlobal % 5);
+            document.getElementById('game-banner').classList.remove('feedback-correct', 'feedback-wrong');
+            document.getElementById('game-name').innerText = it.nome;
+            document.getElementById('game-name').style.visibility = roundGlobal >= 5 ? 'hidden' : 'visible';
+            document.getElementById('game-img').src = JOGO_CONFIG.caminhoImg + it.img;
+            genGrid();
         }
 
-        function generateGrid(word) {
-            const gridEl = document.getElementById('letter-grid');
-            gridEl.innerHTML = '';
-            const size = 8;
-            let cells = Array(size * size).fill('');
-            const isHorizontal = Math.random() > 0.5;
-            const start = isHorizontal 
-                ? Math.floor(Math.random() * size) * size + Math.floor(Math.random() * (size - word.length))
-                : Math.floor(Math.random() * (size - word.length)) * size + Math.floor(Math.random() * size);
-
-            for(let i=0; i<word.length; i++) cells[isHorizontal ? start + i : start + (i * size)] = word[i];
+        function genGrid() {
+            const el = document.getElementById('game-grid'); el.innerHTML = ''; let cells = Array(64).fill('');
+            const isH = Math.random() > 0.5;
+            const start = isH ? Math.floor(Math.random()*8)*8 + Math.floor(Math.random()*(8-word.length)) : Math.floor(Math.random()*(8-word.length))*8 + Math.floor(Math.random()*8);
+            for(let i=0; i<word.length; i++) cells[isH ? start+i : start+(i*8)] = word[i];
             const abc = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
-            
-            cells.forEach((l, idx) => {
-                const d = document.createElement('div');
-                d.className = 'cell';
-                d.innerText = l || abc[Math.floor(Math.random()*abc.length)];
-                d.onmousedown = () => startSelection(d);
-                d.onmouseenter = () => moveSelection(d);
-                d.ontouchstart = (e) => { e.preventDefault(); startSelection(d); };
-                gridEl.appendChild(d);
+            cells.forEach(c => {
+                const d = document.createElement('div'); d.className = 'cell'; d.innerText = c || abc[Math.floor(Math.random()*abc.length)];
+                d.onmousedown = (e) => { e.preventDefault(); startSelection(d); }; d.onmouseenter = () => continueSelection(d); d.ontouchstart = (e) => { e.preventDefault(); startSelection(d); }; el.appendChild(d);
             });
-
-            gridEl.ontouchmove = (e) => {
-                e.preventDefault();
-                let touch = e.touches[0];
-                let target = document.elementFromPoint(touch.clientX, touch.clientY);
-                if(target && target.classList.contains('cell')) moveSelection(target);
+            window.onmouseup = window.ontouchend = endSelection;
+            document.getElementById('grid-container').ontouchmove = (e) => {
+                e.preventDefault(); let touch = e.touches[0]; let target = document.elementFromPoint(touch.clientX, touch.clientY);
+                if (target && target.classList.contains('cell')) continueSelection(target);
             };
-            window.onmouseup = window.ontouchend = () => endSelection();
         }
 
-        function startSelection(el) { isDragging = true; clearSelection(); selectCell(el); }
-        function moveSelection(el) { if(isDragging) selectCell(el); }
-        function endSelection() { if(!isDragging) return; isDragging = false; checkWord(); }
-
-        function selectCell(el) {
-            if(el.classList.contains('correct') || selectedCells.includes(el)) return;
-            el.classList.add('selected');
-            selectedCells.push(el);
-            const currentString = selectedCells.map(x => x.innerText).join('');
-            if(currentString === targetWord) { isDragging = false; checkWord(); }
+        function startSelection(el) { if (el.classList.contains('highlight')) return; isDragging = true; selectedCells = [el]; el.classList.add('selecting'); }
+        function continueSelection(el) {
+            if (!isDragging || el.classList.contains('highlight')) return;
+            if (selectedCells.length > 1 && el === selectedCells[selectedCells.length - 2]) { let last = selectedCells.pop(); last.classList.remove('selecting'); return; }
+            if (!selectedCells.includes(el)) { selectedCells.push(el); el.classList.add('selecting'); }
         }
 
-        function clearSelection() {
-            selectedCells.forEach(el => el.classList.remove('selected'));
+        function endSelection() {
+            if (!isDragging) return; isDragging = false;
+            const res = selectedCells.map(c => c.innerText).join('');
+            const banner = document.getElementById('game-banner');
+            if (res === word) {
+                banner.classList.add('feedback-correct');
+                selectedCells.forEach(el => { el.classList.remove('selecting'); el.classList.add('highlight'); });
+                score += 150; document.getElementById('score-val').innerText = score; playSound('acerto');
+                setTimeout(() => { roundGlobal++; if(roundGlobal >= 10) finish(); else loadRound(); }, 800);
+            } else {
+                if(selectedCells.length > 0) {
+                    banner.classList.add('feedback-wrong'); playSound('erro'); score = Math.max(0, score - 20); document.getElementById('score-val').innerText = score;
+                    setTimeout(() => banner.classList.remove('feedback-wrong'), 800);
+                }
+                selectedCells.forEach(el => el.classList.remove('selecting'));
+            }
             selectedCells = [];
         }
 
-        function checkWord() {
-            const currentString = selectedCells.map(x => x.innerText).join('');
-            if(currentString === targetWord) {
-                selectedCells.forEach(x => { x.classList.remove('selected'); x.classList.add('correct'); });
-                document.getElementById('target-slots').innerText = itemsForGame[roundGlobal-1].nome.toUpperCase();
-                setTimeout(() => { roundGlobal++; loadRound(); }, 800);
-            } else { clearSelection(); }
+        function finish() {
+            clearInterval(timerInt); playSound('vitoria'); show('scr-result');
+            document.getElementById('status-bar').style.display = 'none';
+            const rep = JOGO_CONFIG.relatorios.find(r => score >= r.min) || JOGO_CONFIG.relatorios[3];
+            document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rep.img;
+            document.getElementById('res-tit').innerText = rep.titulo; document.getElementById('res-msg').innerText = rep.msg;
+            document.getElementById('res-pts').innerText = score; document.getElementById('res-tim').innerText = document.getElementById('timer').innerText.replace('⏳ ','');
         }
 
-        function finalizarJogo() {
-            clearInterval(timerInt);
-            const main = document.getElementById('game-area');
-            main.innerHTML = `
-                <div style="text-align:center; padding:20px;">
-                    <h2 style="color:var(--primary-blue); font-size:2rem; margin-bottom:10px;">${JOGO_CONFIG.relatorio.titulo}</h2>
-                    <p style="font-weight:700; color:#667; margin-bottom:20px;">Tempo: ${document.getElementById('timer-display').innerText.replace('⏳','').trim()}</p>
-                    <button onclick="location.reload()" class="btn-jogar" style="width:180px;">REPETIR</button>
-                </div>
-            `;
+        function updateDots(total, current) {
+            const c = document.getElementById('dots'); c.innerHTML = '';
+            for(let i=0; i<total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i < current ? ' done' : (i === current ? ' active' : '')); c.appendChild(d); }
         }
 
-        function restartWithCategory(cat) {
-            currentCategory = cat;
-            roundGlobal = 1;
-            timer = 0;
-            if(timerInt) { clearInterval(timerInt); timerInt = null; }
-            mostrarJogo();
-            closeRDMenu();
-        }
-
-        window.onload = () => {
-            if (typeof JOGO_CONFIG !== 'undefined') {
-                const pathI = JOGO_CONFIG.caminhoIcons;
-                const pathImg = JOGO_CONFIG.caminhoImg;
-                const icons = JOGO_CONFIG.iconesMenu;
-                document.getElementById('header-icon').src = pathI + icons.ano1;
-                document.getElementById('status-rd-img').src = pathImg + "rd.png";
-                document.getElementById('intro-rd-img').src = pathImg + "rd.png";
-
-                const menuBox = document.getElementById('dropdownMenu');
-                const menuData = [{k:'home',l:'Início'},{k:'pre',l:'Pré'},{k:'ano1',l:'1º Ano'},{k:'ano2',l:'2º Ano'},{k:'ano3',l:'3º Ano'},{k:'ano4',l:'4º Ano'}];
-                menuData.forEach(m => {
-                    const a = document.createElement('a');
-                    a.className = 'custom-menu-item';
-                    a.href = JOGO_CONFIG.links[m.k];
-                    a.innerHTML = `<img src="${pathI}${icons[m.k]}" style="height:20px;"><span>${m.l}</span>`;
-                    menuBox.appendChild(a);
-                });
-
-                const rdBox = document.getElementById('rdDropdownMenu');
-                Object.keys(JOGO_CONFIG.categorias).forEach(key => {
-                    const cat = JOGO_CONFIG.categorias[key];
-                    const div = document.createElement('div');
-                    div.className = 'custom-menu-item';
-                    div.innerHTML = `<img src="${pathImg}${cat.imgCapa}" style="height:25px; width:25px; object-fit:contain;"><span>${cat.nome}</span>`;
-                    div.onclick = () => restartWithCategory(key);
-                    rdBox.appendChild(div);
-                });
-                atualizarProgressao(5, 0);
-            }
-        };
+        function selectCat(k) { category = k; roundGlobal = 0; score = 0; timer = 0; if(timerInt) clearInterval(timerInt); closeMenus(); show('scr-intro'); updateIntroTutorial(k); document.getElementById('mainFooter').style.display = 'flex'; document.getElementById('main-title').style.display = 'block'; document.getElementById('status-bar').style.display = 'none'; }
+        function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+        function playSound(t) { new Audio(JOGO_CONFIG.sons[t]).play().catch(()=>{}); }
+        window.onload = init;
     </script>
 </body>
 </html>
