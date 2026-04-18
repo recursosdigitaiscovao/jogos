@@ -46,7 +46,8 @@
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden; }
         
         .game-card { 
-            background: #f0f7ff; width: 100%; max-width: 900px; height: 100%; max-height: 520px;
+            background: #f0f7ff; width: 100%; max-width: 900px; height: 100%; 
+            max-height: calc(100dvh - 130px); /* Garante espaço para header e footer */
             border-radius: 40px; box-shadow: 0 10px 30px rgba(176, 196, 217, 0.4);
             display: flex; flex-direction: column; position: relative; padding: 20px;
         }
@@ -56,9 +57,9 @@
             border-radius: 10px; display: flex; align-items: center; gap: 6px; font-weight: 900; color: var(--primary-blue); font-size: 13px;
         }
 
-        .game-title { text-align: center; color: var(--primary-blue); font-size: 30px; font-weight: 900; margin-bottom: 15px; }
+        .game-title { text-align: center; color: var(--primary-blue); font-size: 28px; font-weight: 900; margin-bottom: 10px; }
 
-        /* STATUS BAR (Timer/Dots) */
+        /* STATUS BAR */
         .status-bar { display: none; align-items: center; justify-content: space-between; padding: 0 10px 10px; }
         .dots-container { display: flex; gap: 6px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; background: #d0e0f0; }
@@ -66,37 +67,44 @@
         .dot.done { background: var(--highlight-green); }
 
         /* ECRÃS */
-        .screen { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
+        .screen { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding-bottom: 70px; /* Espaço para os botões fixos */ }
         .screen.active { display: flex; }
 
         /* BANNER E GRELHA */
-        .game-main-content { display: flex; justify-content: center; align-items: center; gap: 30px; width: 100%; flex: 1; }
+        .game-main-content { display: flex; justify-content: center; align-items: center; gap: clamp(15px, 3vw, 30px); width: 100%; flex: 1; min-height: 0; }
 
         .hint-banner {
             background: white; padding: 12px; border-radius: 5px; border: 2px dashed #d0e0f0; 
-            position: relative; display: flex; flex-direction: column; align-items: center; width: 140px;
+            position: relative; display: flex; flex-direction: column; align-items: center; width: 130px;
         }
         .hint-banner::before, .hint-banner::after { content: ''; position: absolute; top: 50%; width: 10px; height: 20px; background: #f0f7ff; transform: translateY(-50%); }
         .hint-banner::before { left: -7px; border-radius: 0 50px 50px 0; border-right: 2px dashed #d0e0f0; }
         .hint-banner::after { right: -7px; border-radius: 50px 0 0 50px; border-left: 2px dashed #d0e0f0; }
-        .hint-banner img { width: 80px; height: 80px; object-fit: contain; }
+        .hint-banner img { width: 70px; height: 70px; object-fit: contain; }
         .hint-banner span { font-weight: 900; font-size: 18px; color: #333; }
 
         .grid-wrapper { background: #b2b2b2; padding: 2px; }
         .grid { display: grid; gap: 2px; }
-        .cell { width: 44px; height: 44px; background: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 19px; color: #333; cursor: pointer; }
+        .cell { width: clamp(35px, 6vh, 44px); height: clamp(35px, 6vh, 44px); background: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 19px; color: #333; cursor: pointer; }
         .cell.highlight { background: var(--highlight-green); }
 
         /* SLOTS */
-        .slots-area { display: flex; gap: 10px; margin: 15px 0; position: relative; }
-        .slot { width: 55px; height: 55px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 900; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .slots-area { display: flex; gap: 10px; margin: 10px 0; position: relative; }
+        .slot { width: 50px; height: 50px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
         .slot.active { border: 3px solid #b8d9a7; }
 
-        /* NOVO LAYOUT DO BOTÃO JOGAR NO ECRÃ 1 */
-        .action-container { display: flex; align-items: center; gap: 15px; width: 100%; max-width: 500px; margin-top: 10px; }
-        .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 16px; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); }
-        .rd-icon-btn { height: 58px; cursor: pointer; transition: transform 0.2s; }
-        .rd-icon-btn:active { transform: scale(0.95); }
+        /* BOTÕES FIXOS AO FUNDO DO CONTAINER (10px do fundo) */
+        .action-container { 
+            position: absolute; 
+            bottom: 10px; 
+            left: 20px; 
+            right: 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+        }
+        .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: clamp(12px, 2vh, 18px); font-size: clamp(18px, 4vw, 22px); font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); }
+        .rd-icon-btn { height: 55px; cursor: pointer; }
 
         /* TUTORIAL */
         .hand-pointer { position: absolute; color: #f1c40f; font-size: 32px; bottom: -8px; left: 50%; transform: translateX(-50%); animation: hMove 2s infinite ease-in-out; pointer-events: none; }
@@ -112,10 +120,10 @@
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
 
-        /* FOOTER VISÍVEL EM TUDO */
+        /* FOOTER GARANTIDO */
         footer { 
             height: 40px; display: flex; align-items: center; justify-content: center; 
-            color: #89a; font-size: 12px; font-weight: 700; background: transparent; flex-shrink: 0;
+            color: #89a; font-size: 11px; font-weight: 700; background: transparent; flex-shrink: 0;
         }
 
         @media (max-width: 600px) {
@@ -123,9 +131,8 @@
             .logo-center { position: relative; left: 0; transform: none; margin-left: 5px; }
             .badge-ano { display: none; }
             .game-main-content { flex-direction: column; gap: 10px; }
-            .cell { width: 38px; height: 38px; font-size: 17px; }
-            .slot { width: 45px; height: 45px; font-size: 22px; }
-            .hamburger-btn { font-size: 34px; }
+            .game-card { padding: 15px 15px 70px; }
+            .action-container { left: 15px; right: 15px; }
         }
     </style>
 </head>
@@ -195,7 +202,8 @@
                     <div class="slot active">G</div><div class="slot active">A</div><div class="slot">T</div>
                     <i class="fas fa-hand-pointer hand-pointer"></i>
                 </div>
-                <!-- Botão Jogar Extensível + RD ao lado -->
+                
+                <!-- BOTÕES FIXOS A 10PX DO FUNDO DO CARD -->
                 <div class="action-container">
                     <button class="btn-jogar-stretch" onclick="startGame()">JOGAR</button>
                     <img id="rd-intro-btn" class="rd-icon-btn" onclick="openMenu('rdMenu')">
@@ -222,7 +230,10 @@
                     <h2 id="res-tit" style="font-size:36px; color:var(--primary-blue);">BOM TRABALHO!</h2>
                     <div style="margin: 20px 0; font-size:45px; font-weight:900; color:var(--primary-blue);" id="res-pts">0</div>
                     <p id="res-tim" style="font-weight:800; color:#89a;"></p>
-                    <button class="btn-jogar-stretch" onclick="location.reload()" style="max-width:200px; margin-top:20px;">REPETIR</button>
+                    <!-- Botão Repetir também no container de ação -->
+                    <div class="action-container">
+                        <button class="btn-jogar-stretch" onclick="location.reload()">REPETIR</button>
+                    </div>
                 </div>
             </div>
 
