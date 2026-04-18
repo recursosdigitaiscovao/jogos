@@ -14,45 +14,48 @@
             --highlight-green: #7ed321;
             --error-red: #ff5e5e;
             --white: #ffffff;
+            --text-grey: #5d7082;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
 
         /* HEADER */
-        header { height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: #f0f7ff; z-index: 1000; flex-shrink: 0; }
-        .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
-        .logo-center { display: flex; align-items: center; gap: 10px; position: absolute; left: 50%; transform: translateX(-50%); text-align: left; }
+        header { 
+            height: 70px; display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 20px; background: #f0f7ff; z-index: 1000; flex-shrink: 0;
+            box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4);
+        }
+        .header-left { position: relative; }
+        .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; transition: transform 0.2s; }
+        .hamburger-btn:hover { transform: scale(1.1); }
+        
+        .logo-center { display: flex; align-items: center; gap: 10px; position: absolute; left: 50%; transform: translateX(-50%); text-align: left; pointer-events: none;}
         .logo-center img { height: 50px; }
         .logo-text h1 { font-size: 18px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 10px; color: #88a; font-weight: 700; }
-        .btn-voltar-header { background: var(--primary-blue); color: white; padding: 8px 18px; border-radius: 14px; text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 8px; font-size: 14px; box-shadow: 0 4px 0 var(--primary-dark); }
 
-        /* MENU HAMBURGUER (ESTILO DA IMAGEM) */
-        #sideMenu { 
-            position: fixed; top: 80px; left: -300px; width: 250px; 
-            z-index: 2000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            display: flex; flex-direction: column; gap: 12px; padding: 10px;
+        /* MENU HAMBURGUER (FORMATO DROPDOWN SOLICITADO) */
+        .menu-dropdown { 
+            position: absolute; top: 60px; left: 0; 
+            display: none; flex-direction: column; gap: 8px; z-index: 2000; 
         }
-        #sideMenu.active { left: 10px; }
+        .menu-item { 
+            display: flex; align-items: center; gap: 10px; padding: 10px 18px; 
+            background: white; border-radius: 15px; box-shadow: 4px 4px 10px rgba(176, 196, 217, 0.4);
+            cursor: pointer; min-width: 190px; text-decoration: none; 
+            color: var(--text-grey); font-weight: 700; font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        .menu-item:hover { background: var(--primary-blue); color: white; }
+        .menu-item img { height: 20px; width: 20px; object-fit: contain; }
 
-        .menu-pill {
-            background: white;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            padding: 12px 25px;
-            border-radius: 50px; /* Pill shape */
-            text-decoration: none;
-            color: #555;
-            font-weight: 800;
-            font-size: 20px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-            transition: transform 0.2s, background 0.2s;
-            border: 1px solid rgba(0,0,0,0.03);
-        }
-        .menu-pill:hover { transform: translateX(5px); background: #f9fbff; }
-        .menu-pill img { width: 32px; height: 32px; object-fit: contain; }
+        .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
+        .menu-item-voltar img { filter: brightness(0) invert(1); }
+        .menu-item-voltar:hover { background: white !important; color: var(--primary-blue) !important; }
+        .menu-item-voltar:hover img { filter: none; }
+
+        .menu-divider { height: 1px; background-color: rgba(176, 196, 217, 0.4); margin: 2px 10px; }
 
         /* GAME LAYOUT */
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden; }
@@ -67,10 +70,13 @@
         .screen { flex: 1; display: none; flex-direction: column; width: 100%; min-height: 0; }
         .screen.active { display: flex; }
 
+        /* JOGO CENTRAL */
         .game-main-content { display: flex; justify-content: center; align-items: center; gap: clamp(15px, 4vw, 40px); width: 100%; flex: 1; min-height: 0; }
         .hint-banner { background: white; padding: 10px; border-radius: 10px; border: 2px dashed #d0e0f0; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: clamp(110px, 18vw, 140px); height: clamp(110px, 18vh, 140px); transition: 0.3s; flex-shrink: 0; }
         .hint-banner img { width: 80%; height: 80%; object-fit: contain; }
         .hint-banner span { font-weight: 900; font-size: 18px; color: #333; margin-top: 5px; }
+        .hint-banner.feedback-correct { background-color: #e8f5e9 !important; border-color: var(--highlight-green); }
+        .hint-banner.feedback-wrong { background-color: #ffebee !important; border-color: var(--error-red); }
 
         .grid-wrapper { background: #cbd9e6; padding: 4px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); touch-action: none; position: relative; user-select: none; }
         .grid { display: grid; gap: 2px; grid-template-columns: repeat(8, 1fr); }
@@ -84,9 +90,13 @@
         .slots-area { display: flex; gap: 8px; margin: 15px 0; justify-content: center; min-height: 50px; flex-shrink: 0; }
         .slot { width: clamp(40px, 7vh, 50px); height: clamp(40px, 7vh, 50px); background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; box-shadow: 0 4px 8px rgba(0,0,0,0.05); color: #333; }
 
+        /* BOTÕES */
         .action-container { position: absolute; bottom: 10px; left: 20px; right: 20px; display: flex; align-items: center; gap: 15px; }
         .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 14px; font-size: 20px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); }
-        .rd-icon-btn { height: 50px; cursor: pointer; }
+        
+        /* MENU RD (Categorias) */
+        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 20px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 20px rgba(0,0,0,0.1); }
+        .rd-panel.active { bottom: 0; }
 
         /* RESULTADOS */
         #scr-result { justify-content: center; align-items: center; padding-bottom: 20px; }
@@ -104,14 +114,10 @@
         .btn-themes { background: #fff; color: var(--primary-blue); border: 2px solid var(--primary-blue); }
         .btn-back-games { background: #cbd9e6; color: #445; }
 
-        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 20px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 20px rgba(0,0,0,0.1); }
-        .rd-panel.active { bottom: 0; }
-
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
         footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #89a; font-size: 11px; font-weight: 700; flex-shrink: 0; }
 
         @media (max-width: 650px) {
-            .btn-voltar-header { display: none; }
             .logo-center { position: relative; left: 0; transform: none; margin-left: 5px; }
             .game-main-content { flex-direction: column; gap: 10px; }
             #scr-intro .slots-area { margin-bottom: 75px; }
@@ -122,20 +128,12 @@
 
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
 
-    <!-- MENU HAMBURGUER (Estilo Imagem Pill/Cápsula) -->
-    <div id="sideMenu">
-        <div id="side-list"></div>
-    </div>
-    
-    <!-- MENU RD -->
-    <div id="rdMenu" class="rd-panel">
-        <div style="width:40px; height:4px; background:#e0e6ed; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div>
-        <h3 style="color:var(--primary-blue); text-align:center; margin-bottom:15px;">Escolher Tema</h3>
-        <div id="rd-list" style="display:flex; flex-direction:column; gap:8px;"></div>
-    </div>
-
     <header>
-        <i class="fas fa-bars hamburger-btn" onclick="openMenu('sideMenu')"></i>
+        <div class="header-left">
+            <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
+            <!-- MENU HAMBURGUER FORMATO DROPDOWN -->
+            <div id="dropdownMenu" class="menu-dropdown"></div>
+        </div>
         <div class="logo-center">
             <img id="head-logo" src="">
             <div class="logo-text">
@@ -143,9 +141,7 @@
                 <p>Português | 1º Ano</p>
             </div>
         </div>
-        <a href="../index.html" class="btn-voltar-header">
-            <img id="back-icon" src="" style="height:20px"> VOLTAR
-        </a>
+        <div class="header-right"></div>
     </header>
 
     <div class="game-container">
@@ -156,7 +152,7 @@
                 <div class="dots-container" id="dots"></div>
                 <div style="font-weight:900; color:var(--primary-blue); display:flex; align-items:center; gap:8px; min-width:80px; justify-content:flex-end;">
                     <span id="score-val">0</span>
-                    <img id="rd-game-btn" src="" style="height:25px; cursor:pointer;" onclick="openMenu('rdMenu')">
+                    <img id="rd-game-btn" src="" style="height:25px; cursor:pointer;" onclick="openRDMenu()">
                 </div>
             </div>
 
@@ -184,7 +180,7 @@
                 </div>
                 <div class="action-container">
                     <button class="btn-jogar-stretch" onclick="startGame()">JOGAR</button>
-                    <img id="rd-intro-btn" class="rd-icon-btn" onclick="openMenu('rdMenu')">
+                    <img id="rd-intro-btn" src="" style="height:50px; cursor:pointer;" onclick="openRDMenu()">
                 </div>
             </div>
 
@@ -213,11 +209,18 @@
                 </div>
                 <div class="btn-group-final">
                     <button class="btn-final btn-repeat" onclick="location.reload()"><i class="fas fa-redo"></i> REPETIR</button>
-                    <button class="btn-final btn-themes" onclick="openMenu('rdMenu')"><i class="fas fa-th-large"></i> ESCOLHER TEMA</button>
+                    <button class="btn-final btn-themes" onclick="openRDMenu()"><i class="fas fa-th-large"></i> OUTROS TEMAS</button>
                     <button class="btn-final btn-back-games" id="btn-back-link"><i class="fas fa-arrow-left"></i> OUTROS JOGOS</button>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- MENU RD (CATEGORIAS) -->
+    <div id="rdMenu" class="rd-panel">
+        <div style="width:40px; height:4px; background:#e0e6ed; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div>
+        <h3 style="color:var(--primary-blue); text-align:center; margin-bottom:15px;">Escolher Tema</h3>
+        <div id="rd-list" style="display:flex; flex-direction:column; gap:8px;"></div>
     </div>
 
     <footer>© Pequenos Leitores - Recursos Educativos</footer>
@@ -237,37 +240,79 @@
         function init() {
             const pI = JOGO_CONFIG.caminhoIcons;
             const pImg = JOGO_CONFIG.caminhoImg;
+            
             document.getElementById('head-logo').src = pI + JOGO_CONFIG.iconesMenu.ano1;
-            document.getElementById('back-icon').src = pI + "voltar.png";
             document.getElementById('rd-game-btn').src = pImg + "rd.png";
             document.getElementById('rd-intro-btn').src = pImg + "rd.png";
             document.getElementById('intro-img').src = pImg + JOGO_CONFIG.categorias.animais.itens[1].img;
             
-            // Botão Retroceder um nível no Feedback
             document.getElementById('btn-back-link').onclick = () => window.location.href = JOGO_CONFIG.links.ano1;
 
-            // Menu Hambúrguer (PILL STYLE)
-            const side = document.getElementById('side-list');
-            const links = [
-                {k:'home', l:'Início'}, {k:'pre', l:'Pré'}, {k:'ano1', l:'1º Ano'}, 
-                {k:'ano2', l:'2º Ano'}, {k:'ano3', l:'3º Ano'}, {k:'ano4', l:'4º Ano'}
+            // 1. GERAR MENU HAMBURGUER (FORMATO DROPDOWN PILL)
+            const menuBox = document.getElementById('dropdownMenu');
+            const niveis = [
+                { label: 'Início', key: 'home' },
+                { label: 'Pré-Escolar', key: 'pre' },
+                { label: '1º Ano', key: 'ano1' },
+                { label: '2º Ano', key: 'ano2' },
+                { label: '3º Ano', key: 'ano3' },
+                { label: '4º Ano', key: 'ano4' }
             ];
-            links.forEach(it => {
-                side.innerHTML += `<a href="${JOGO_CONFIG.links[it.k]}" class="menu-pill">
-                    <img src="${pI}${JOGO_CONFIG.iconesMenu[it.k]}"><span>${it.l}</span>
-                </a>`;
+
+            niveis.forEach(n => {
+                const a = document.createElement('a');
+                a.className = 'menu-item';
+                a.href = JOGO_CONFIG.links[n.key];
+                a.innerHTML = `<img src="${pI}${JOGO_CONFIG.iconesMenu[n.key]}"><span>${n.label}</span>`;
+                menuBox.appendChild(a);
             });
 
-            // Menu RD (CATEGORIAS)
+            const divider = document.createElement('div');
+            divider.className = 'menu-divider';
+            menuBox.appendChild(divider);
+
+            const btnVoltar = document.createElement('a');
+            btnVoltar.className = 'menu-item menu-item-voltar'; 
+            btnVoltar.href = '../index.html'; 
+            btnVoltar.innerHTML = `<img src="${pI}voltar.png"><span>VOLTAR</span>`;
+            menuBox.appendChild(btnVoltar);
+
+            // 2. GERAR MENU RD (CATEGORIAS)
             const rd = document.getElementById('rd-list');
             Object.keys(JOGO_CONFIG.categorias).forEach(k => {
                 const c = JOGO_CONFIG.categorias[k];
-                rd.innerHTML += `<div class="menu-pill" style="cursor:pointer;" onclick="selectCat('${k}')">
-                    <img src="${pImg}${c.imgCapa}"><span>${c.nome}</span>
-                </div>`;
+                const div = document.createElement('div');
+                div.className = 'menu-item';
+                div.style.minWidth = "100%";
+                div.innerHTML = `<img src="${pImg}${c.imgCapa}"><span>${c.nome}</span>`;
+                div.onclick = () => { selectCat(k); closeMenus(); };
+                rd.appendChild(div);
             });
         }
 
+        // LOGICA DE MENUS
+        function toggleHamburger(e) {
+            if(e) e.stopPropagation();
+            const menu = document.getElementById('dropdownMenu');
+            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+            document.getElementById('rdMenu').classList.remove('active');
+        }
+
+        function openRDMenu() {
+            document.getElementById('rdMenu').classList.add('active');
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('dropdownMenu').style.display = 'none';
+        }
+
+        function closeMenus() {
+            document.getElementById('dropdownMenu').style.display = 'none';
+            document.getElementById('rdMenu').classList.remove('active');
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        window.onclick = () => closeMenus();
+
+        // LOGICA DE JOGO
         function startGame() {
             show('scr-game');
             document.getElementById('status-bar').style.display = 'flex';
@@ -326,6 +371,7 @@
         }
 
         function startSelection(el) { if (el.classList.contains('highlight')) return; isDragging = true; selectedCells = [el]; el.classList.add('selecting'); }
+        
         function continueSelection(el) {
             if (!isDragging || el.classList.contains('highlight')) return;
             if (selectedCells.length > 1 && el === selectedCells[selectedCells.length - 2]) {
@@ -375,9 +421,8 @@
 
         function selectCat(k) { category = k; roundGlobal = 0; score = 0; timer = 0; closeMenus(); if(document.getElementById('scr-game').classList.contains('active')) startGame(); }
         function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-        function openMenu(id) { if(id === 'sideMenu') document.getElementById(id).classList.add('active'); if(id === 'rdMenu') document.getElementById(id).classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
-        function closeMenus() { document.getElementById('sideMenu').classList.remove('active'); document.getElementById('rdMenu').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; }
         function playSound(t) { new Audio(JOGO_CONFIG.sons[t]).play().catch(()=>{}); }
+        
         window.onload = init;
     </script>
 </body>
