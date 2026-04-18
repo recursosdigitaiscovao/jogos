@@ -72,7 +72,7 @@
 
         /* ANIMAÇÃO COMPACTA GATO (ECRÃ 1) */
         .intro-grid { display: grid; grid-template-columns: repeat(4, 40px); gap: 2px; background: #cbd9e6; padding: 4px; border-radius: 8px; position: relative; }
-        .hand-tutorial { position: absolute; color: #f1c40f; font-size: 35px; z-index: 50; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.3); animation: handDragGato 4s infinite; }
+        .hand-tutorial { position: absolute; color: #f1c40f; font-size: 35px; z-index: 50; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.2); animation: handDragGato 4s infinite; }
         @keyframes handDragGato {
             0% { transform: translate(10px, 50px); opacity: 0; }
             10% { opacity: 1; }
@@ -99,18 +99,16 @@
         .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 25px; border-radius: 35px 35px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); }
         .rd-panel.active { bottom: 0; }
 
-        /* RESPONSIVIDADE ECRÃS PEQUENOS / VERTICAIS */
+        /* RESPONSIVIDADE */
         @media (max-width: 650px) {
             .logo-center { position: relative; left: 0; transform: none; margin-left: 5px; }
             .game-main-content { flex-direction: column; gap: 12px; }
-            .game-card { padding-left: 5px !important; padding-right: 5px !important; }
             
-            /* Grelha reduz um pouco para caber na vertical */
-            .grid-wrapper { width: 95%; padding: 3px; }
+            /* Removido o padding de 5px do card conforme pedido */
+            .grid-wrapper { width: auto; padding: 3px; }
             .cell { 
-                width: calc((100vw - 40px) / 8); 
-                height: calc((100vw - 40px) / 8); 
-                max-width: 40px; max-height: 40px;
+                width: clamp(30px, 9vw, 38px); 
+                height: clamp(30px, 9vw, 38px); 
                 font-size: 17px; 
             }
             #scr-intro .slots-area { margin-bottom: 75px; }
@@ -290,7 +288,7 @@
             });
             window.onmouseup = window.ontouchend = endSelection;
             document.getElementById('grid-container').ontouchmove = (e) => {
-                e.preventDefault(); let t = e.touches[0]; let target = document.elementFromPoint(t.clientX, t.clientY);
+                e.preventDefault(); let touch = e.touches[0]; let target = document.elementFromPoint(touch.clientX, touch.clientY);
                 if (target && target.classList.contains('cell')) continueSelection(target);
             };
         }
