@@ -9,18 +9,13 @@
         :root {
             --header-bg: #f0f5fa;    
             --body-bg: #e9f1f8;       
-            --primary-blue: #5ba4e5;
-            --primary-red: #E63946; /* Cor vermelha para o Mundo */
+            --primary-red: #E63946;
             --text-grey: #7a8b9a;
         }
 
+        /* Bloqueio total de scroll */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
-        
-        /* Previne o scroll na página inteira para forçar tudo a caber */
-        html, body { 
-            height: 100%; 
-            overflow: hidden; 
-        }
+        html, body { height: 100vh; width: 100vw; overflow: hidden; position: fixed; }
 
         body { 
             background-color: var(--body-bg); 
@@ -28,127 +23,120 @@
             flex-direction: column; 
         }
 
-        /* HEADER MAIS COMPACTO NO MOBILE */
+        /* HEADER COMPACTO */
         header { 
             background: var(--header-bg); 
-            padding: 10px 15px; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 8px 15px; 
             flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         
-        .header-center { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 10px;
-        }
-
-        #header-icon { 
-            height: 45px; /* Reduzido para caber melhor */
-            width: auto; 
-        }
-        
-        .title-main { 
-            font-weight: 900; 
-            font-size: 1.1rem; 
-            text-transform: uppercase; 
-            line-height: 1; 
-        }
-        
-        /* MUNDO EM VERMELHO */
+        .header-center { display: flex; align-items: center; justify-content: center; gap: 8px; }
+        #header-icon { height: 40px; width: auto; }
+        .title-main { font-weight: 900; font-size: 1rem; text-transform: uppercase; line-height: 1; }
         #txt-titulo1 { color: var(--primary-red); }
         #txt-titulo2 { color: #a5b4c4; }
+        .title-sub { color: var(--text-grey); font-weight: 700; font-size: 0.6rem; }
 
-        .title-sub { 
-            color: var(--text-grey); 
-            font-weight: 700; 
-            font-size: 0.65rem; 
-        }
-
-        /* SUB-HEADER */
+        /* INTRO */
         .sub-header { 
             background: white; 
             text-align: center; 
-            padding: 8px; 
-            border-bottom-left-radius: 25px; 
-            border-bottom-right-radius: 25px; 
+            padding: 5px; 
+            border-bottom-left-radius: 20px; 
+            border-bottom-right-radius: 20px; 
             flex-shrink: 0;
         }
-        .intro-text { color: #5d7082; font-size: 0.85rem; font-weight: 800; }
+        .intro-text { color: #5d7082; font-size: 0.8rem; font-weight: 800; }
 
-        /* ÁREA CENTRAL COM SCROLL INTERNO */
+        /* ÁREA CENTRAL - Ajuste Dinâmico */
         main { 
             flex: 1; 
-            overflow-y: auto; /* Permite scroll apenas aqui se houver muitos jogos */
-            padding: 15px 10px;
+            padding: 10px; 
             display: flex;
+            align-items: center;
             justify-content: center;
+            min-height: 0; /* Importante para o flex encolher */
         }
 
         .game-wrapper { 
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            grid-template-rows: repeat(3, 1fr); /* 3 linhas para caber tudo sem scroll */
+            gap: 8px;
             width: 100%;
-            max-width: 1100px;
-            align-content: start; /* Alinha os cards ao topo */
+            height: 100%;
+            max-width: 500px;
         }
 
-        /* CARTÕES */
+        /* CARTÕES COLORIDOS */
         .game-card { 
-            border-radius: 20px; 
+            border-radius: 18px; 
             border: 3px solid #fff; 
             text-decoration: none; 
-            padding: 12px; 
+            padding: 8px; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* O 5º item ocupa a linha de baixo toda para manter proporção */
+        .game-card:last-child {
+            grid-column: span 2;
         }
 
         .card-img-container { 
+            flex: 1; /* Faz a imagem ocupar o máximo de espaço disponível */
             width: 100%; 
-            aspect-ratio: 1/1; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            border-radius: 15px; 
-            margin-bottom: 8px;
+            border-radius: 12px; 
+            margin-bottom: 4px;
             background: rgba(255, 255, 255, 0.2);
+            min-height: 0;
         }
         
         .card-img-container img { 
-            max-height: 70%; 
-            max-width: 70%; 
+            max-height: 85%; 
+            max-width: 85%; 
             object-fit: contain;
         }
 
         .game-card h2 { 
             color: white; 
-            font-size: 0.9rem; 
+            font-size: 0.85rem; 
             font-weight: 900; 
             text-align: center;
         }
 
+        /* RODAPÉ */
         footer { 
-            padding: 10px; 
+            padding: 5px; 
             text-align: center; 
             color: var(--text-grey); 
-            font-size: 0.65rem; 
+            font-size: 0.6rem; 
             font-weight: 700; 
             flex-shrink: 0;
-            background: var(--body-bg);
         }
 
-        /* TABLET E PC */
+        /* DESKTOP / TABLET */
         @media (min-width: 768px) {
-            #header-icon { height: 65px; }
-            .title-main { font-size: 1.8rem; }
-            .title-sub { font-size: 0.9rem; }
-            .intro-text { font-size: 1.1rem; }
-            .game-wrapper { grid-template-columns: repeat(5, 1fr); gap: 20px; }
-            .game-card h2 { font-size: 1.1rem; }
             header { padding: 15px; }
+            #header-icon { height: 60px; }
+            .title-main { font-size: 1.6rem; }
+            .title-sub { font-size: 0.8rem; }
+            .intro-text { font-size: 1.1rem; }
+            .game-wrapper { 
+                grid-template-columns: repeat(5, 1fr); 
+                grid-template-rows: 1fr;
+                max-width: 1100px;
+                height: 350px;
+            }
+            .game-card:last-child { grid-column: span 1; }
+            .game-card h2 { font-size: 1.1rem; }
             footer { font-size: 0.8rem; padding: 15px; }
         }
     </style>
@@ -184,21 +172,16 @@
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const config = JOGO_CONFIG;
 
-                // Aplicar Textos
                 document.getElementById('txt-titulo1').textContent = config.textos.tituloLinha1;
                 document.getElementById('txt-titulo2').textContent = config.textos.tituloLinha2;
                 document.getElementById('txt-subtitulo').textContent = config.textos.subtitulo;
                 document.getElementById('txt-intro').textContent = config.textos.intro;
                 document.getElementById('txt-rodape').innerHTML = config.textos.rodape;
-                
-                // Aplicar Logo
                 document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.logo;
 
-                // Gerar Grelha
                 const grid = document.getElementById('gamesGrid');
                 config.listaJogos.forEach(jogo => {
                     const tema = config.temaCores[jogo.tema] || { borda: "#FFFFFF", fundo: "#5ba4e5" };
-                    
                     const card = document.createElement('a');
                     card.className = 'game-card';
                     card.href = jogo.link;
