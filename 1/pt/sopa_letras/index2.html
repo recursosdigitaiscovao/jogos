@@ -9,8 +9,7 @@
     
     <style>
         /* =========================================================
-           ÁREA 1: CSS GLOBAL E UI ESTRUTURAL (NÃO MUDAR)
-           Contém as variáveis, layout do header, menus e footer.
+           ÁREA 1: CSS GLOBAL E UI ESTRUTURAL
            ========================================================= */
         :root {
             --bg-page: #e9f0f8;
@@ -31,27 +30,48 @@
             padding: 0 20px; background: #f0f7ff; z-index: 1000; flex-shrink: 0;
             box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4); position: relative;
         }
+
+        /* Hambúrguer */
+        .header-left { position: relative; z-index: 1010; }
+        .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; padding: 5px; transition: 0.2s; }
+        .hamburger-btn:hover { transform: scale(1.1); }
+
+        /* Logo Central */
         .logo-center { 
             display: flex; align-items: center; gap: 10px; 
             position: absolute; left: 50%; transform: translateX(-50%); 
             pointer-events: none; white-space: nowrap;
         }
-        .logo-center img { height: 50px; }
-        .logo-text h1 { font-size: 18px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
+        .logo-center img { height: 45px; }
+        .logo-text h1 { font-size: 16px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 10px; color: #88a; font-weight: 700; }
 
-        .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
+        /* Botão Voltar Ajustado */
+        .header-right { z-index: 1010; }
         .btn-voltar-header { 
-            background: var(--primary-blue); color: white; padding: 8px 18px; border-radius: 14px; 
-            text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 8px; font-size: 14px;
-            box-shadow: 0 4px 0 var(--primary-dark);
+            background: var(--primary-blue); color: white; padding: 6px 14px; border-radius: 12px; 
+            text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 6px; font-size: 13px;
+            box-shadow: 0 3px 0 var(--primary-dark); transition: all 0.2s;
         }
+        .btn-voltar-header:active { transform: translateY(2px); box-shadow: none; }
+        .btn-voltar-header img { height: 16px; width: 16px; object-fit: contain; }
 
-        /* Menus Dropdown e RD */
-        .menu-dropdown { position: absolute; top: 60px; left: 0; display: none; flex-direction: column; gap: 8px; z-index: 2000; }
-        .menu-item { display: flex; align-items: center; gap: 10px; padding: 10px 18px; background: white; border-radius: 15px; box-shadow: 4px 4px 10px rgba(176,196,217,0.4); text-decoration: none; color: var(--text-grey); font-weight: 700; }
-        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 20px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); max-height: 80vh; overflow-y: auto; }
-        .rd-panel.active { bottom: 0; }
+        /* Menu Dropdown Estilizado */
+        .menu-dropdown { 
+            position: absolute; top: 60px; left: 0; display: none; flex-direction: column; 
+            gap: 5px; z-index: 2000; background: white; padding: 10px; border-radius: 15px;
+            box-shadow: 5px 5px 20px rgba(0,0,0,0.1); min-width: 180px;
+        }
+        .menu-item { 
+            display: flex; align-items: center; gap: 10px; padding: 10px; 
+            text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 14px;
+            border-radius: 10px; transition: 0.2s;
+        }
+        .menu-item:hover { background: #f0f7ff; color: var(--primary-blue); }
+        .menu-item img { height: 20px; width: 20px; }
+        .menu-divider { height: 1px; background: #eee; margin: 5px 0; }
+
+        /* Overlay */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
 
         /* Contentores Base Card */
@@ -63,26 +83,21 @@
 
         /* =========================================================
            ÁREA 2: CSS ESPECÍFICO DO JOGO (SOPA DE LETRAS)
-           Estilos que mudam conforme o tipo de jogo.
            ========================================================= */
         .game-main-content { display: flex; justify-content: center; align-items: center; gap: 20px; margin: 0 auto; flex: 1; min-height: 0; }
-        
-        /* Banner da Dica */
         .hint-banner { background: white; padding: 10px; border-radius: 12px; border: 2px dashed #d0e0f0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: clamp(120px, 18vw, 150px); height: clamp(120px, 18vh, 150px); }
         .hint-banner img { width: 85%; height: 85%; object-fit: contain; }
         .hint-banner.feedback-correct { background-color: #e8f5e9; border-color: var(--highlight-green); }
         .hint-banner.feedback-wrong { background-color: #ffebee; border-color: var(--error-red); }
 
-        /* Grelha de Letras */
         .grid-wrapper { background: #cbd9e6; padding: 5px; border-radius: 15px; touch-action: none; position: relative; user-select: none; }
         .grid { display: grid; gap: 3px; grid-template-columns: repeat(8, 1fr); }
         .cell { width: clamp(28px, 5.8vh, 44px); height: clamp(28px, 5.8vh, 44px); background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: clamp(17px, 2.8vh, 22px); color: #445; cursor: pointer; transition: 0.1s; }
         .cell.highlight { background: var(--highlight-green); color: white; }
         .cell.selecting { background: #bbdefb; transform: scale(1.05); }
 
-        /* Tutorial Intro */
-        .intro-grid { display: grid; gap: 2px; background: #cbd9e6; padding: 4px; border-radius: 8px; position: relative; }
-        .hand-tutorial { position: absolute; color: #f1c40f; font-size: 35px; z-index: 50; animation: handDragFull 4s infinite ease-in-out; }
+        /* Tutorial */
+        .hand-tutorial { position: absolute; color: #f1c40f; font-size: 35px; z-index: 50; animation: handDragFull 4s infinite ease-in-out; pointer-events: none; }
         @keyframes handDragFull {
             0% { transform: translate(10px, 50px); opacity: 0; }
             10% { opacity: 1; }
@@ -91,22 +106,15 @@
             100% { opacity: 0; }
         }
 
-        /* =========================================================
-           ÁREA 3: COMPONENTES DE UI REUTILIZÁVEIS
-           Resultados, botões e slots.
-           ========================================================= */
+        /* Botões */
         .action-container { position: absolute; bottom: 10px; left: 20px; right: 20px; display: flex; align-items: center; gap: 15px; }
         .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 20px; padding: 16px; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); }
-        .stat-item { background: white; padding: 10px 25px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; }
-        .dots-container { display: flex; gap: 8px; }
-        .dot { width: 12px; height: 12px; border-radius: 50%; background: #d0e0f0; transition: 0.3s; }
-        .dot.active { background: var(--primary-blue); transform: scale(1.3); }
-        .dot.done { background: var(--primary-blue); }
+        .btn-jogar-stretch:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
 
         @media (max-width: 650px) {
-            .logo-center { left: 50%; transform: translateX(-50%); }
-            .btn-voltar-header, .header-right { display: none; }
+            .btn-voltar-header { display: none; }
             .game-main-content { flex-direction: column; gap: 12px; }
+            .logo-center img { height: 35px; }
         }
     </style>
 </head>
@@ -114,11 +122,12 @@
 
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
 
-    <!-- ÁREA 4: ESTRUTURA HTML (HEADER E MENUS) -->
     <header>
         <div class="header-left">
             <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
-            <div id="dropdownMenu" class="menu-dropdown"></div>
+            <div id="dropdownMenu" class="menu-dropdown">
+                <!-- Preenchido via JS -->
+            </div>
         </div>
         <div class="logo-center">
             <img id="head-logo" src="">
@@ -135,44 +144,43 @@
     </header>
 
     <div class="game-container">
-        <div class="game-card" id="gameCard">
+        <div class="game-card">
             
-            <!-- Barra de Status (Tempo, Progresso, Pontos) -->
             <div class="status-bar" id="status-bar">
                 <div id="timer" style="font-weight:900; color:#667;">⏳ 00:00</div>
-                <div class="dots-container" id="dots"></div>
+                <div id="dots" style="display:flex; gap:8px;"></div>
                 <div style="font-weight:900; color:var(--primary-blue); display:flex; align-items:center; gap:8px;">
                     <span id="score-val">0</span>
                     <img id="rd-game-btn" src="" style="height:25px; cursor:pointer;" onclick="openRDMenu(event)">
                 </div>
             </div>
 
-            <h2 id="main-title" style="text-align:center; color:var(--primary-blue); font-size:26px; font-weight:900;">SOPA DE LETRAS</h2>
+            <h2 id="main-title" style="text-align:center; color:var(--primary-blue); font-size:26px; font-weight:900; margin-bottom: 10px;">SOPA DE LETRAS</h2>
 
-            <!-- ECRÃ 1: INTRODUÇÃO / TUTORIAL -->
             <div class="screen active" id="scr-intro">
                 <div class="game-main-content">
                     <div class="hint-banner">
                         <img id="intro-img" src="">
-                        <span id="intro-name-label">...</span>
+                        <span id="intro-name-label" style="font-weight:900; color:#333;">...</span>
                     </div>
-                    <div class="intro-grid" id="intro-letter-cells">
-                        <i class="fas fa-hand-pointer hand-tutorial"></i>
+                    <div class="grid-wrapper" style="background:transparent; padding:0;">
+                        <div class="intro-grid" id="intro-letter-cells" style="display:grid; gap:2px; background:#cbd9e6; padding:4px; border-radius:8px; position:relative;">
+                             <i class="fas fa-hand-pointer hand-tutorial"></i>
+                        </div>
                     </div>
                 </div>
-                <div class="slots-area" id="intro-slots" style="display:flex; justify-content:center; gap:10px; margin-bottom:80px;"></div>
+                <div id="intro-slots" style="display:flex; justify-content:center; gap:10px; margin: 20px 0 80px;"></div>
                 <div class="action-container">
                     <button class="btn-jogar-stretch" onclick="startGame()">JOGAR</button>
                     <img id="rd-intro-btn" src="" style="height:55px; cursor:pointer;" onclick="openRDMenu(event)">
                 </div>
             </div>
 
-            <!-- ECRÃ 2: O JOGO ATIVO -->
             <div class="screen" id="scr-game">
                 <div class="game-main-content">
                     <div class="hint-banner" id="game-banner">
                         <img id="game-img" src="">
-                        <span id="game-name">...</span>
+                        <span id="game-name" style="font-weight:900; color:#333;">...</span>
                     </div>
                     <div class="grid-wrapper" id="grid-container">
                         <div class="grid" id="game-grid"></div>
@@ -180,21 +188,25 @@
                 </div>
             </div>
 
-            <!-- ECRÃ 3: RESULTADOS FINAIS -->
             <div class="screen" id="scr-result" style="justify-content:center; align-items:center; text-align:center;">
                 <img id="res-taca" style="width:140px; margin-bottom:10px;" src="">
                 <h2 id="res-tit" style="font-size:30px; color: var(--primary-blue); font-weight:900;"></h2>
                 <p id="res-msg" style="color:#667; margin-bottom:20px;"></p>
                 <div style="display:flex; gap:15px; margin-bottom:20px;">
-                    <div class="stat-item"><span id="res-pts" style="font-size:24px; font-weight:900; color:var(--primary-blue);">0</span><br><small>PONTOS</small></div>
-                    <div class="stat-item"><span id="res-tim" style="font-size:24px; font-weight:900; color:var(--primary-blue);">00:00</span><br><small>TEMPO</small></div>
+                    <div style="background:white; padding:10px 20px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+                        <span id="res-pts" style="font-size:24px; font-weight:900; color:var(--primary-blue);">0</span><br>
+                        <small style="font-weight:800; color:#89a;">PONTOS</small>
+                    </div>
+                    <div style="background:white; padding:10px 20px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+                        <span id="res-tim" style="font-size:24px; font-weight:900; color:var(--primary-blue);">00:00</span><br>
+                        <small style="font-weight:800; color:#89a;">TEMPO</small>
+                    </div>
                 </div>
                 <button class="btn-jogar-stretch" style="max-width:300px;" onclick="location.reload()">REPETIR</button>
             </div>
         </div>
     </div>
 
-    <!-- Menu Lateral de Temas (RD) -->
     <div id="rdMenu" class="rd-panel">
         <div style="width:50px; height:5px; background:#e0e6ed; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div>
         <h3 style="color:var(--primary-blue); text-align:center; margin-bottom:15px;">Escolher Tema</h3>
@@ -205,12 +217,10 @@
         © Pequenos Leitores - Recursos Educativos
     </footer>
 
-    <!-- Scripts -->
     <script src="dados.js"></script>
     <script>
         /* =========================================================
-           ÁREA 5: LÓGICA CORE (NAVEGAÇÃO E UI)
-           Comum a quase todos os jogos.
+           ÁREA JS: LÓGICA CORE
            ========================================================= */
         let category = 'animais';
         let roundGlobal = 0;
@@ -222,18 +232,33 @@
         function init() {
             const pI = JOGO_CONFIG.caminhoIcons;
             const pImg = JOGO_CONFIG.caminhoImg;
+            
+            // Assets do Header
             document.getElementById('head-logo').src = pI + JOGO_CONFIG.iconesMenu.ano1;
             document.getElementById('header-back-icon').src = pI + "voltar.png";
             document.getElementById('rd-game-btn').src = pImg + "rd.png";
             document.getElementById('rd-intro-btn').src = pImg + "rd.png";
 
-            // Montar Menus
+            // 1. POPULAR MENU HAMBÚRGUER (CORREÇÃO)
+            const menuBox = document.getElementById('dropdownMenu');
+            menuBox.innerHTML = ''; // Limpa antes
+            ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
+                const label = k === 'home' ? 'Início' : (k === 'pre' ? 'Pré-Escolar' : k.replace('ano', '') + 'º Ano');
+                const a = document.createElement('a');
+                a.className = 'menu-item';
+                a.href = JOGO_CONFIG.links[k];
+                a.innerHTML = `<img src="${pI}${JOGO_CONFIG.iconesMenu[k]}"><span>${label}</span>`;
+                menuBox.appendChild(a);
+            });
+
+            // 2. POPULAR LISTA RD
             const rdList = document.getElementById('rd-list');
+            rdList.innerHTML = '';
             Object.keys(JOGO_CONFIG.categorias).forEach(k => {
                 const c = JOGO_CONFIG.categorias[k];
                 const card = document.createElement('div');
                 card.style = "background:white; padding:15px; border-radius:20px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); cursor:pointer;";
-                card.innerHTML = `<img src="${pImg}${c.imgCapa}" style="width:60px;"><br><span style="font-weight:800; font-size:14px;">${c.nome}</span>`;
+                card.innerHTML = `<img src="${pImg}${c.imgCapa}" style="width:55px; height:55px; object-fit:contain;"><br><span style="font-weight:800; font-size:13px;">${c.nome}</span>`;
                 card.onclick = () => selectCat(k);
                 rdList.appendChild(card);
             });
@@ -244,7 +269,11 @@
         function toggleHamburger(e) { 
             e.stopPropagation(); 
             const m = document.getElementById('dropdownMenu');
-            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; 
+            const overlay = document.getElementById('overlay');
+            const isOpen = m.style.display === 'flex';
+            
+            m.style.display = isOpen ? 'none' : 'flex'; 
+            overlay.style.display = isOpen ? 'none' : 'block';
         }
 
         function openRDMenu(e) { 
@@ -254,6 +283,7 @@
         }
 
         function closeMenus() { 
+            document.getElementById('dropdownMenu').style.display = 'none';
             document.getElementById('rdMenu').classList.remove('active'); 
             document.getElementById('overlay').style.display = 'none'; 
         }
@@ -270,8 +300,7 @@
         }
 
         /* =========================================================
-           ÁREA 6: LÓGICA DO MOTOR DO JOGO (SOPA DE LETRAS)
-           Aqui é onde a magia do jogo específico acontece.
+           ÁREA JS: MOTOR DO JOGO
            ========================================================= */
         let word = "";
         let isDragging = false;
@@ -280,17 +309,26 @@
         function updateIntroTutorial(catKey) {
             const item = JOGO_CONFIG.categorias[catKey].itens[0];
             const cleanWord = item.nome.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            
             document.getElementById('intro-img').src = JOGO_CONFIG.caminhoImg + item.img;
             document.getElementById('intro-name-label').innerText = item.nome;
-            // Configurar animação da mão e slots baseados na palavra
+
             const gridCont = document.getElementById('intro-letter-cells');
             gridCont.style.gridTemplateColumns = `repeat(${cleanWord.length}, 40px)`;
             document.documentElement.style.setProperty('--drag-dist', `${(cleanWord.length-1)*42}px`);
+
+            // Slots ilustrativos
+            const slots = document.getElementById('intro-slots');
+            slots.innerHTML = '';
+            for(let i=0; i<cleanWord.length; i++){
+                slots.innerHTML += `<div style="width:40px; height:40px; background:white; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); border:2px solid #cbd9e6;">${cleanWord[i]}</div>`;
+            }
         }
 
         function startGame() {
             show('scr-game');
             document.getElementById('status-bar').style.display = 'flex';
+            document.getElementById('main-title').style.display = 'none';
             const all = [...JOGO_CONFIG.categorias[category].itens];
             itemsGame = all.sort(() => 0.5 - Math.random()).slice(0, 10);
             
@@ -375,7 +413,7 @@
             const c = document.getElementById('dots'); c.innerHTML = '';
             for(let i=0; i<total; i++) {
                 const d = document.createElement('div');
-                d.className = 'dot' + (i < current ? ' done' : (i === current ? ' active' : ''));
+                d.style = `width:12px; height:12px; border-radius:50%; background:${i < current ? 'var(--primary-blue)' : (i === current ? 'var(--primary-blue)' : '#d0e0f0')}; transition:0.3s; ${i === current ? 'transform:scale(1.3);' : ''}`;
                 c.appendChild(d);
             }
         }
