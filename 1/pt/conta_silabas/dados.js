@@ -10,8 +10,8 @@ const JOGO_CONFIG = {
         vitoria: "https://cdn.pixabay.com/audio/2024/02/07/audio_293963428f.mp3"
     },
     textos: {
-        tituloLinha1: "CONTAR",
-        tituloLinha2: "SÍLABAS",
+        tituloLinha1: "Pequenos",
+        tituloLinha2: "Leitores",
         subtitulo: "Português | 1º Ano",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos"
     },
