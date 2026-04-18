@@ -4,7 +4,7 @@
 
 let category = Object.keys(JOGO_CONFIG.categorias)[0];
 let roundGlobal = 0;
-let levelInternal = 0; // 0 = Imagem+Nome, 1 = Só Imagem
+let levelInternal = 0; // 0 = Com nome, 1 = Sem nome
 let score = 0;
 let timer = 0;
 let timerInt;
@@ -15,24 +15,25 @@ function init() {
     const pI = JOGO_CONFIG.caminhoIcons;
     const pImg = JOGO_CONFIG.caminhoImg;
 
-    // Header Dinâmico
+    // Cabeçalho e Títulos dinâmicos
     document.getElementById('head-logo').src = pI + JOGO_CONFIG.iconesMenu.ano1;
     document.getElementById('header-back-icon').src = pI + "voltar.png";
+    document.getElementById('tit-l1').innerText = JOGO_CONFIG.textos.tituloLinha1;
+    document.getElementById('tit-l2').innerText = JOGO_CONFIG.textos.tituloLinha2;
+    document.getElementById('sub-tit').innerText = JOGO_CONFIG.textos.subtitulo;
+    document.getElementById('mainFooter').innerHTML = JOGO_CONFIG.textos.rodape;
+
+    // Botão Voltar Header
     const btnVoltarH = document.getElementById('link-voltar');
     btnVoltarH.href = JOGO_CONFIG.linkVoltar;
     btnVoltarH.innerHTML = `<img src="${pI}voltar.png"> ${JOGO_CONFIG.textoVoltar}`;
 
-    // Títulos
-    document.getElementById('tit-l1').innerText = JOGO_CONFIG.textos.tituloLinha1;
-    document.getElementById('sub-tit').innerText = JOGO_CONFIG.textos.subtitulo;
-    document.getElementById('mainFooter').innerHTML = JOGO_CONFIG.textos.rodape;
-
-    // RD Buttons
+    // Outros botões
     document.getElementById('rd-game-btn').src = pImg + "rd.png";
     document.getElementById('rd-intro-btn').src = pImg + "rd.png";
     document.getElementById('btn-back-link').onclick = () => window.location.href = JOGO_CONFIG.linkVoltar;
 
-    // MENU HAMBÚRGUER (RESTAURADO E COMPLETO)
+    // Menu Hambúrguer Dinâmico
     const menuBox = document.getElementById('dropdownMenu');
     menuBox.innerHTML = '';
     ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
@@ -49,7 +50,7 @@ function init() {
     btnV.innerHTML = `<img src="${pI}voltar.png"><span>${JOGO_CONFIG.textoVoltar}</span>`;
     menuBox.appendChild(btnV);
 
-    // RD Menu de Categorias
+    // RD Menu
     const rdList = document.getElementById('rd-list');
     rdList.innerHTML = '';
     Object.keys(JOGO_CONFIG.categorias).forEach(k => {
@@ -60,12 +61,6 @@ function init() {
         rdList.appendChild(card);
     });
 
-    // Forçar layout vertical via JS (para garantir que fica Imagem -> Nome -> Botões)
-    document.querySelectorAll('.game-main-content').forEach(el => {
-        el.style.flexDirection = "column";
-        el.style.gap = "15px";
-    });
-
     updateIntroTutorial();
 }
 
@@ -74,9 +69,8 @@ function updateIntroTutorial() {
     const item = cat.itens[0];
     document.getElementById('intro-img').src = JOGO_CONFIG.caminhoImg + item.img;
     document.getElementById('intro-name-label').innerText = item.nome;
-    document.getElementById('intro-letter-cells').innerHTML = `<div style="font-weight:900; color:var(--primary-blue); font-size:20px;">Quantas sílabas?</div>`;
     document.getElementById('intro-slots').innerHTML = `
-        <div class="cell" style="width:50px; background:var(--highlight-green); color:white;">?</div>
+        <div class="cell" style="width:50px; background:var(--highlight-green); color:white; box-shadow:none;">?</div>
     `;
 }
 
@@ -111,27 +105,16 @@ function loadTask() {
     const nameLabel = document.getElementById('game-name');
     nameLabel.innerText = currentItem.nome;
     nameLabel.style.visibility = (levelInternal === 0) ? 'visible' : 'hidden';
-    nameLabel.style.fontSize = "32px";
-    nameLabel.style.marginTop = "10px";
 
     renderButtons();
 }
 
 function renderButtons() {
     const grid = document.getElementById('game-grid');
-    // Forçar botões horizontais ou em grelha 2x2
-    grid.style.display = "flex";
-    grid.style.gap = "15px";
-    grid.style.justifyContent = "center";
     grid.innerHTML = '';
-
     for (let i = 1; i <= 4; i++) {
         const btn = document.createElement('div');
         btn.className = 'cell';
-        btn.style.width = "65px";
-        btn.style.height = "65px";
-        btn.style.fontSize = "30px";
-        btn.style.boxShadow = "0 5px 0 #cbd9e6";
         btn.innerText = i;
         btn.onclick = () => checkAnswer(i);
         grid.appendChild(btn);
