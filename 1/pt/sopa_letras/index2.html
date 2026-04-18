@@ -47,7 +47,7 @@
             display: flex; flex-direction: column; position: relative; padding: 20px;
         }
 
-        /* STATUS BAR - 2º ECRÃ */
+        /* STATUS BAR */
         .status-bar { 
             display: none; align-items: center; justify-content: space-between; 
             padding-bottom: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 10px; flex-shrink: 0;
@@ -76,17 +76,20 @@
         .cell { width: clamp(35px, 6vh, 44px); height: clamp(35px, 6vh, 44px); background: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 19px; color: #333; cursor: pointer; }
         .cell.highlight { background: var(--highlight-green); }
 
-        /* SLOTS */
+        /* SLOTS AREA */
         .slots-area { display: flex; gap: 10px; margin: 10px 0; position: relative; }
         .slot { width: 50px; height: 50px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
 
-        /* BOTÕES 1º ECRÃ - 10px do fundo */
+        /* BOTÕES 1º ECRÃ - FIXOS A 10PX DO FUNDO */
         .action-container { 
             position: absolute; bottom: 10px; left: 20px; right: 20px; 
-            display: flex; align-items: center; gap: 15px; 
+            display: flex; align-items: center; gap: 15px; z-index: 10;
         }
         .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 16px; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); }
         .rd-icon-btn { height: 55px; cursor: pointer; }
+
+        /* AJUSTE PARA O 1º ECRÃ NÃO SOBREPOR OS BOTÕES */
+        #scr-intro .slots-area { margin-bottom: 80px; } /* Abre espaço para os botões absolutos */
 
         .badge-ano { position: absolute; top: 20px; right: 20px; background: #e1edf8; padding: 5px 12px; border-radius: 10px; display: flex; align-items: center; gap: 6px; font-weight: 900; color: var(--primary-blue); font-size: 13px; }
 
@@ -97,6 +100,7 @@
             .btn-voltar, .badge-ano { display: none; }
             .logo-center { position: relative; left: 0; transform: none; margin-left: 5px; }
             .game-main-content { flex-direction: column; gap: 10px; }
+            #scr-intro .slots-area { margin-bottom: 70px; }
         }
     </style>
 </head>
@@ -104,11 +108,11 @@
 
     <div class="overlay" id="overlay" onclick="closeMenus()" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.2); display:none; z-index:1500;"></div>
 
-    <!-- Menus -->
     <div id="sideMenu" style="position:fixed; left:-280px; width:280px; height:100%; background:white; z-index:2000; transition:0.3s; padding:20px;">
         <h2 style="color:var(--primary-blue); margin-bottom:15px;">Jogos</h2>
         <div id="side-list"></div>
     </div>
+    
     <div id="rdMenu" style="position:fixed; bottom:-100%; left:0; width:100%; background:white; z-index:2100; padding:20px; border-radius:30px 30px 0 0; transition:0.4s;">
         <div style="width:40px; height:4px; background:#e0e6ed; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div>
         <div id="rd-list"></div>
@@ -131,7 +135,6 @@
     <div class="game-container">
         <div class="game-card">
             
-            <!-- BARRA DE ESTADO (Sempre topo do card no jogo) -->
             <div class="status-bar" id="status-bar">
                 <div id="timer" style="font-weight:900; color:#667; min-width:80px;">⏳ 00:00</div>
                 <div class="dots-container" id="dots"></div>
@@ -167,6 +170,7 @@
                     <div class="slot active" style="border:3px solid #b8d9a7;">G</div><div class="slot active" style="border:3px solid #b8d9a7;">A</div><div class="slot">T</div>
                     <i class="fas fa-hand-pointer" style="position:absolute; color:#f1c40f; font-size:32px; bottom:-10px; left:50%; transform:translateX(-50%); animation: hMove 2s infinite ease-in-out;"></i>
                 </div>
+                <!-- Container de Ação Fixo -->
                 <div class="action-container">
                     <button class="btn-jogar-stretch" onclick="startGame()">JOGAR</button>
                     <img id="rd-intro-btn" class="rd-icon-btn" onclick="openMenu('rdMenu')">
