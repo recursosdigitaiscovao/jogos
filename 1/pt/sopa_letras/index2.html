@@ -26,6 +26,7 @@
             padding: 0 20px; background: #f0f7ff; z-index: 1000; flex-shrink: 0;
             box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4);
         }
+        .header-left { position: relative; }
         .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; transition: transform 0.2s; }
         .logo-center { display: flex; align-items: center; gap: 10px; position: absolute; left: 50%; transform: translateX(-50%); text-align: left; pointer-events: none;}
         .logo-center img { height: 50px; }
@@ -69,7 +70,7 @@
         .cell.highlight { background: var(--highlight-green); color: white; box-shadow: none; }
         .cell.selecting { background: #bbdefb; }
 
-        /* ANIMAÇÃO COMPACTA GATO (ECRÃ 1) */
+        /* ANIMAÇÃO GATO */
         .intro-grid { display: grid; grid-template-columns: repeat(4, 40px); gap: 2px; background: #cbd9e6; padding: 4px; border-radius: 8px; position: relative; }
         .hand-tutorial { position: absolute; color: #f1c40f; font-size: 35px; z-index: 50; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.2); animation: handDragGato 4s infinite; }
         @keyframes handDragGato {
@@ -94,9 +95,47 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
         footer { height: 45px; display: flex; align-items: center; justify-content: center; color: #89a; font-size: 12px; font-weight: 700; flex-shrink: 0; }
 
-        /* PAINEL RD (Categorias) */
-        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 25px; border-radius: 35px 35px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); }
+        /* PAINEL RD (CATEGORIAS) - CONFIGURADO PARA 2 COLUNAS */
+        .rd-panel { 
+            position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; 
+            padding: 20px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); 
+            max-height: 80vh; overflow-y: auto;
+        }
         .rd-panel.active { bottom: 0; }
+        
+        #rd-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* DUAS COLUNAS */
+            gap: 15px;
+            padding: 10px 0;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 20px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(176, 196, 217, 0.4);
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        .category-card:hover { transform: translateY(-5px); background: #f0f7ff; }
+        .category-card img {
+            width: 70px; /* IMAGEM MAIOR */
+            height: 70px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+        .category-card span {
+            font-weight: 800;
+            color: var(--text-grey);
+            font-size: 15px;
+        }
 
         @media (max-width: 650px) {
             .logo-center { position: relative; left: 0; transform: none; margin-left: 5px; }
@@ -105,6 +144,7 @@
             .cell { width: clamp(28px, 9vw, 38px); height: clamp(30px, 9vw, 38px); font-size: 17px; }
             #scr-intro .slots-area { margin-bottom: 75px; }
             .intro-grid { grid-template-columns: repeat(4, 35px); }
+            .category-card img { width: 55px; height: 55px; }
         }
     </style>
 </head>
@@ -196,11 +236,11 @@
         </div>
     </div>
 
-    <!-- PAINEL RD (Categorias) -->
+    <!-- PAINEL RD (CATEGORIAS EM 2 COLUNAS) -->
     <div id="rdMenu" class="rd-panel">
         <div style="width:50px; height:5px; background:#e0e6ed; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div>
-        <h3 style="color:var(--primary-blue); text-align:center; margin-bottom:15px;">Escolher Tema</h3>
-        <div id="rd-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+        <h3 style="color:var(--primary-blue); text-align:center; margin-bottom:20px;">Escolher Tema</h3>
+        <div id="rd-list"></div>
     </div>
 
     <footer id="mainFooter">© Pequenos Leitores - Recursos Educativos</footer>
@@ -226,7 +266,7 @@
             document.getElementById('intro-img').src = pImg + JOGO_CONFIG.categorias.animais.itens[1].img;
             document.getElementById('btn-back-link').onclick = () => window.location.href = JOGO_CONFIG.links.home;
 
-            // 1. GERAR MENU HAMBURGUER DROPDOWN
+            // 1. MENU HAMBURGUER DROPDOWN
             const menuBox = document.getElementById('dropdownMenu');
             menuBox.innerHTML = '';
             ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
@@ -238,25 +278,25 @@
             const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = '../index.html'; 
             btnV.innerHTML = `<img src="${pI}voltar.png"><span>VOLTAR</span>`; menuBox.appendChild(btnV);
 
-            // 2. GERAR MENU RD (Categorias)
-            const rd = document.getElementById('rd-list');
-            rd.innerHTML = '';
+            // 2. MENU RD (CATEGORIAS EM CARD DE 2 COLUNAS)
+            const rdList = document.getElementById('rd-list');
+            rdList.innerHTML = '';
             Object.keys(JOGO_CONFIG.categorias).forEach(k => {
                 const c = JOGO_CONFIG.categorias[k];
-                const d = document.createElement('div'); d.className = 'menu-item'; d.style.minWidth = "100%";
-                d.innerHTML = `<img src="${pImg}${c.imgCapa}"><span>${c.nome}</span>`;
-                d.onclick = () => { selectCat(k); closeMenus(); }; rd.appendChild(d);
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.innerHTML = `<img src="${pImg}${c.imgCapa}"><span>${c.nome}</span>`;
+                card.onclick = () => { selectCat(k); closeMenus(); };
+                rdList.appendChild(card);
             });
         }
 
-        // LOGICA DE MENUS
         function toggleHamburger(e) { e.stopPropagation(); document.getElementById('dropdownMenu').style.display = (document.getElementById('dropdownMenu').style.display === 'flex') ? 'none' : 'flex'; closeRDMenu(); }
         function openRDMenu(e) { if(e) e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; document.getElementById('dropdownMenu').style.display = 'none'; }
         function closeRDMenu() { document.getElementById('rdMenu').classList.remove('active'); }
         function closeMenus() { document.getElementById('dropdownMenu').style.display = 'none'; closeRDMenu(); document.getElementById('overlay').style.display = 'none'; }
         window.onclick = () => closeMenus();
 
-        // LOGICA DE JOGO
         function startGame() {
             show('scr-game'); document.getElementById('status-bar').style.display = 'flex'; document.getElementById('main-title').style.display = 'none'; document.getElementById('mainFooter').style.display = 'none';
             const all = [...JOGO_CONFIG.categorias[category].itens];
