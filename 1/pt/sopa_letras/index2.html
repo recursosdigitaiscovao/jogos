@@ -19,6 +19,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
 
+        /* HEADER */
         header { height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: #f0f7ff; z-index: 1000; flex-shrink: 0; }
         .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
         .logo-center { display: flex; align-items: center; gap: 10px; position: absolute; left: 50%; transform: translateX(-50%); text-align: left; }
@@ -27,6 +28,33 @@
         .logo-text p { font-size: 10px; color: #88a; font-weight: 700; }
         .btn-voltar-header { background: var(--primary-blue); color: white; padding: 8px 18px; border-radius: 14px; text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 8px; font-size: 14px; box-shadow: 0 4px 0 var(--primary-dark); }
 
+        /* MENU HAMBURGUER (ESTILO DA IMAGEM) */
+        #sideMenu { 
+            position: fixed; top: 80px; left: -300px; width: 250px; 
+            z-index: 2000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            display: flex; flex-direction: column; gap: 12px; padding: 10px;
+        }
+        #sideMenu.active { left: 10px; }
+
+        .menu-pill {
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 12px 25px;
+            border-radius: 50px; /* Pill shape */
+            text-decoration: none;
+            color: #555;
+            font-weight: 800;
+            font-size: 20px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            transition: transform 0.2s, background 0.2s;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+        .menu-pill:hover { transform: translateX(5px); background: #f9fbff; }
+        .menu-pill img { width: 32px; height: 32px; object-fit: contain; }
+
+        /* GAME LAYOUT */
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden; }
         .game-card { background: #f0f7ff; width: 100%; max-width: 950px; height: 100%; max-height: calc(100dvh - 130px); border-radius: 40px; box-shadow: 0 15px 35px rgba(176, 196, 217, 0.5); display: flex; flex-direction: column; position: relative; padding: 15px 20px; }
 
@@ -41,8 +69,6 @@
 
         .game-main-content { display: flex; justify-content: center; align-items: center; gap: clamp(15px, 4vw, 40px); width: 100%; flex: 1; min-height: 0; }
         .hint-banner { background: white; padding: 10px; border-radius: 10px; border: 2px dashed #d0e0f0; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: clamp(110px, 18vw, 140px); height: clamp(110px, 18vh, 140px); transition: 0.3s; flex-shrink: 0; }
-        .hint-banner.feedback-correct { background-color: #e8f5e9 !important; border-color: var(--highlight-green); }
-        .hint-banner.feedback-wrong { background-color: #ffebee !important; border-color: var(--error-red); }
         .hint-banner img { width: 80%; height: 80%; object-fit: contain; }
         .hint-banner span { font-weight: 900; font-size: 18px; color: #333; margin-top: 5px; }
 
@@ -50,21 +76,10 @@
         .grid { display: grid; gap: 2px; grid-template-columns: repeat(8, 1fr); }
         .cell { width: clamp(28px, 5.5vh, 40px); height: clamp(28px, 5.5vh, 40px); background: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: clamp(16px, 2.5vh, 20px); color: #445; cursor: pointer; box-shadow: 0 2px 0 #cbd9e6; }
         .cell.highlight { background: var(--highlight-green); color: white; box-shadow: none; }
-        .cell.selecting { background: #bbdefb; color: var(--primary-dark); transform: scale(1.05); }
+        .cell.selecting { background: #bbdefb; }
 
-        /* ANIMAÇÃO DA MÃO NO ECRÃ 1 */
-        .hand-tutorial {
-            position: absolute; color: #f1c40f; font-size: clamp(25px, 5vw, 35px); z-index: 50; pointer-events: none;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            animation: handDrag 3.5s infinite;
-        }
-        @keyframes handDrag {
-            0% { transform: translate(45px, 60px); opacity: 0; }
-            10% { opacity: 1; }
-            50% { transform: translate(180px, 60px); opacity: 1; } /* Movimento maior para abranger G-A-T-O */
-            65% { opacity: 0; }
-            100% { opacity: 0; }
-        }
+        .hand-tutorial { position: absolute; color: #f1c40f; font-size: 35px; z-index: 50; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.3); animation: handDrag 3.5s infinite; }
+        @keyframes handDrag { 0% { transform: translate(45px, 60px); opacity: 0; } 10% { opacity: 1; } 50% { transform: translate(180px, 60px); opacity: 1; } 65% { opacity: 0; } 100% { opacity: 0; } }
 
         .slots-area { display: flex; gap: 8px; margin: 15px 0; justify-content: center; min-height: 50px; flex-shrink: 0; }
         .slot { width: clamp(40px, 7vh, 50px); height: clamp(40px, 7vh, 50px); background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; box-shadow: 0 4px 8px rgba(0,0,0,0.05); color: #333; }
@@ -73,7 +88,7 @@
         .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 14px; font-size: 20px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); }
         .rd-icon-btn { height: 50px; cursor: pointer; }
 
-        /* RESULTADOS COMPACTOS */
+        /* RESULTADOS */
         #scr-result { justify-content: center; align-items: center; padding-bottom: 20px; }
         .result-trophy { width: clamp(100px, 18vh, 130px); margin-bottom: 5px; }
         .result-tit { font-size: 26px; color: var(--primary-blue); font-weight: 900; }
@@ -89,6 +104,10 @@
         .btn-themes { background: #fff; color: var(--primary-blue); border: 2px solid var(--primary-blue); }
         .btn-back-games { background: #cbd9e6; color: #445; }
 
+        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 20px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 20px rgba(0,0,0,0.1); }
+        .rd-panel.active { bottom: 0; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
         footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #89a; font-size: 11px; font-weight: 700; flex-shrink: 0; }
 
         @media (max-width: 650px) {
@@ -96,22 +115,23 @@
             .logo-center { position: relative; left: 0; transform: none; margin-left: 5px; }
             .game-main-content { flex-direction: column; gap: 10px; }
             #scr-intro .slots-area { margin-bottom: 75px; }
-            .cell { width: 34px; height: 34px; font-size: 18px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="closeMenus()" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.2); display:none; z-index:1500;"></div>
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
 
-    <div id="sideMenu" style="position:fixed; left:-280px; width:280px; height:100%; background:white; z-index:2000; transition:0.3s; padding:20px;">
-        <h2 style="color:var(--primary-blue); margin-bottom:15px;">Jogos</h2>
+    <!-- MENU HAMBURGUER (Estilo Imagem Pill/Cápsula) -->
+    <div id="sideMenu">
         <div id="side-list"></div>
     </div>
     
-    <div id="rdMenu" style="position:fixed; bottom:-100%; left:0; width:100%; background:white; z-index:2100; padding:20px; border-radius:30px 30px 0 0; transition:0.4s;">
+    <!-- MENU RD -->
+    <div id="rdMenu" class="rd-panel">
         <div style="width:40px; height:4px; background:#e0e6ed; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div>
-        <div id="rd-list"></div>
+        <h3 style="color:var(--primary-blue); text-align:center; margin-bottom:15px;">Escolher Tema</h3>
+        <div id="rd-list" style="display:flex; flex-direction:column; gap:8px;"></div>
     </div>
 
     <header>
@@ -193,11 +213,10 @@
                 </div>
                 <div class="btn-group-final">
                     <button class="btn-final btn-repeat" onclick="location.reload()"><i class="fas fa-redo"></i> REPETIR</button>
-                    <button class="btn-final btn-themes" onclick="openMenu('rdMenu')"><i class="fas fa-th-large"></i> OUTROS TEMAS</button>
-                    <button class="btn-final btn-back-games" onclick="window.location.href='../index.html'"><i class="fas fa-arrow-left"></i> OUTROS JOGOS</button>
+                    <button class="btn-final btn-themes" onclick="openMenu('rdMenu')"><i class="fas fa-th-large"></i> ESCOLHER TEMA</button>
+                    <button class="btn-final btn-back-games" id="btn-back-link"><i class="fas fa-arrow-left"></i> OUTROS JOGOS</button>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -223,16 +242,29 @@
             document.getElementById('rd-game-btn').src = pImg + "rd.png";
             document.getElementById('rd-intro-btn').src = pImg + "rd.png";
             document.getElementById('intro-img').src = pImg + JOGO_CONFIG.categorias.animais.itens[1].img;
+            
+            // Botão Retroceder um nível no Feedback
+            document.getElementById('btn-back-link').onclick = () => window.location.href = JOGO_CONFIG.links.ano1;
 
+            // Menu Hambúrguer (PILL STYLE)
             const side = document.getElementById('side-list');
-            ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
-                side.innerHTML += `<a href="${JOGO_CONFIG.links[k]}" class="menu-item" style="display:flex; align-items:center; gap:12px; padding:12px; text-decoration:none; color:#445; font-weight:800;"><img src="${pI}${JOGO_CONFIG.iconesMenu[k]}" style="width:28px;"><span>${k.toUpperCase()}</span></a>`;
+            const links = [
+                {k:'home', l:'Início'}, {k:'pre', l:'Pré'}, {k:'ano1', l:'1º Ano'}, 
+                {k:'ano2', l:'2º Ano'}, {k:'ano3', l:'3º Ano'}, {k:'ano4', l:'4º Ano'}
+            ];
+            links.forEach(it => {
+                side.innerHTML += `<a href="${JOGO_CONFIG.links[it.k]}" class="menu-pill">
+                    <img src="${pI}${JOGO_CONFIG.iconesMenu[it.k]}"><span>${it.l}</span>
+                </a>`;
             });
 
+            // Menu RD (CATEGORIAS)
             const rd = document.getElementById('rd-list');
             Object.keys(JOGO_CONFIG.categorias).forEach(k => {
                 const c = JOGO_CONFIG.categorias[k];
-                rd.innerHTML += `<div class="menu-item" onclick="selectCat('${k}')" style="display:flex; align-items:center; gap:12px; padding:10px; cursor:pointer;"><img src="${pImg}${c.imgCapa}" style="width:30px;"><span>${c.nome}</span></div>`;
+                rd.innerHTML += `<div class="menu-pill" style="cursor:pointer;" onclick="selectCat('${k}')">
+                    <img src="${pImg}${c.imgCapa}"><span>${c.nome}</span>
+                </div>`;
             });
         }
 
@@ -279,19 +311,12 @@
             const abc = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
             cells.forEach(c => {
                 const d = document.createElement('div'); d.className = 'cell'; d.innerText = c || abc[Math.floor(Math.random()*abc.length)];
-                
-                // MOUSE
                 d.onmousedown = (e) => { e.preventDefault(); startSelection(d); };
                 d.onmouseenter = () => continueSelection(d);
-                
-                // TOUCH
                 d.ontouchstart = (e) => { e.preventDefault(); startSelection(d); };
-                
                 el.appendChild(d);
             });
             window.onmouseup = window.ontouchend = endSelection;
-            
-            // TOUCH MOVE LOGIC
             document.getElementById('grid-container').ontouchmove = (e) => {
                 e.preventDefault();
                 let touch = e.touches[0];
@@ -300,27 +325,15 @@
             };
         }
 
-        function startSelection(el) {
-            if (el.classList.contains('highlight')) return;
-            isDragging = true;
-            selectedCells = [el];
-            el.classList.add('selecting');
-        }
-
+        function startSelection(el) { if (el.classList.contains('highlight')) return; isDragging = true; selectedCells = [el]; el.classList.add('selecting'); }
         function continueSelection(el) {
             if (!isDragging || el.classList.contains('highlight')) return;
-
-            // BACKTRACKING LOGIC: Se o utilizador voltar à letra anterior, desmarca a atual
             if (selectedCells.length > 1 && el === selectedCells[selectedCells.length - 2]) {
                 let last = selectedCells.pop();
                 last.classList.remove('selecting');
                 return;
             }
-
-            if (!selectedCells.includes(el)) {
-                selectedCells.push(el);
-                el.classList.add('selecting');
-            }
+            if (!selectedCells.includes(el)) { selectedCells.push(el); el.classList.add('selecting'); }
         }
 
         function endSelection() {
@@ -362,8 +375,8 @@
 
         function selectCat(k) { category = k; roundGlobal = 0; score = 0; timer = 0; closeMenus(); if(document.getElementById('scr-game').classList.contains('active')) startGame(); }
         function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-        function openMenu(id) { if(id === 'sideMenu') document.getElementById(id).style.left = '0'; if(id === 'rdMenu') document.getElementById(id).style.bottom = '0'; document.getElementById('overlay').style.display = 'block'; }
-        function closeMenus() { document.getElementById('sideMenu').style.left = '-280px'; document.getElementById('rdMenu').style.bottom = '-100%'; document.getElementById('overlay').style.display = 'none'; }
+        function openMenu(id) { if(id === 'sideMenu') document.getElementById(id).classList.add('active'); if(id === 'rdMenu') document.getElementById(id).classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
+        function closeMenus() { document.getElementById('sideMenu').classList.remove('active'); document.getElementById('rdMenu').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; }
         function playSound(t) { new Audio(JOGO_CONFIG.sons[t]).play().catch(()=>{}); }
         window.onload = init;
     </script>
