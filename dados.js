@@ -9,6 +9,7 @@ const JOGO_CONFIG = {
     caminhoIconsMenu: "icons/", 
     caminhoIconsJogos: "icons/", 
     iconesMenu: {
+        logo: "jogo.png", // Imagem do título
         home: "home.png",
         pre: "iconpre.png",
         ano1: "icon1.png",
