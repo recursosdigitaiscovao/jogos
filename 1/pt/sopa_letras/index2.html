@@ -69,6 +69,11 @@
         .action-container { position: absolute; bottom: 10px; left: 20px; right: 20px; display: flex; align-items: center; gap: 15px; z-index: 10; }
         .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 16px; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); }
         .rd-icon-btn { height: 55px; cursor: pointer; }
+        
+        /* RESULTADOS */
+        .result-trophy { width: clamp(100px, 15vh, 140px); margin-bottom: 10px; }
+        .result-points-card { background: white; padding: 15px 30px; border-radius: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+
         #scr-intro .slots-area { margin-bottom: 80px; }
         .badge-ano { position: absolute; top: 20px; right: 20px; background: #e1edf8; padding: 5px 12px; border-radius: 10px; display: flex; align-items: center; gap: 6px; font-weight: 900; color: var(--primary-blue); font-size: 13px; }
 
@@ -79,8 +84,6 @@
             .logo-center { position: relative; left: 0; transform: none; margin-left: 5px; }
             .game-main-content { flex-direction: column; gap: 10px; }
             #scr-intro .slots-area { margin-bottom: 70px; }
-            .hint-banner { width: 120px; height: 125px; }
-            .hint-banner img { width: 70px; height: 70px; }
         }
     </style>
 </head>
@@ -172,9 +175,17 @@
             <!-- ECRÃ 3 -->
             <div class="screen" id="scr-result">
                 <div style="text-align:center;">
-                    <h2 id="res-tit" style="font-size:36px; color:var(--primary-blue);">BOM TRABALHO!</h2>
-                    <div style="margin: 20px 0; font-size:45px; font-weight:900; color:var(--primary-blue);" id="res-pts">0</div>
-                    <p id="res-tim" style="font-weight:800; color:#89a;"></p>
+                    <img id="res-taca" class="result-trophy" src="">
+                    <h2 id="res-tit" style="font-size:30px; color:var(--primary-blue); margin-bottom:5px;"></h2>
+                    <p id="res-msg" style="color:#667; font-weight:700; margin-bottom:15px; font-size:14px; padding: 0 10px;"></p>
+                    
+                    <div class="result-points-card">
+                        <div style="font-size:42px; font-weight:900; color:var(--primary-blue); line-height:1;" id="res-pts">0</div>
+                        <p style="color:#89a; font-weight:800; font-size:12px; margin-top:5px;">PONTOS</p>
+                    </div>
+                    
+                    <p id="res-tim" style="font-weight:800; color:#89a; font-size:14px;"></p>
+
                     <div class="action-container">
                         <button class="btn-jogar-stretch" onclick="location.reload()">REPETIR</button>
                     </div>
@@ -209,13 +220,13 @@
 
             const side = document.getElementById('side-list');
             ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
-                side.innerHTML += `<a href="${JOGO_CONFIG.links[k]}" class="menu-item"><img src="${pI}${JOGO_CONFIG.iconesMenu[k]}"><span>${k.toUpperCase()}</span></a>`;
+                side.innerHTML += `<a href="${JOGO_CONFIG.links[k]}" class="menu-item" style="display:flex; align-items:center; gap:12px; padding:12px; text-decoration:none; color:#445; font-weight:800;"><img src="${pI}${JOGO_CONFIG.iconesMenu[k]}" style="width:28px;"><span>${k.toUpperCase()}</span></a>`;
             });
 
             const rd = document.getElementById('rd-list');
             Object.keys(JOGO_CONFIG.categorias).forEach(k => {
                 const c = JOGO_CONFIG.categorias[k];
-                rd.innerHTML += `<div class="menu-item" onclick="selectCat('${k}')"><img src="${pImg}${c.imgCapa}"><span>${c.nome}</span></div>`;
+                rd.innerHTML += `<div class="menu-item" style="display:flex; align-items:center; gap:12px; padding:12px; cursor:pointer;" onclick="selectCat('${k}')"><img src="${pImg}${c.imgCapa}" style="width:28px;"><span>${c.nome}</span></div>`;
             });
         }
 
@@ -253,7 +264,7 @@
 
         function genGrid() {
             const el = document.getElementById('game-grid');
-            const size = Math.max(6, word.length + 1); // Garante que a grelha é grande o suficiente
+            const size = 6;
             el.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
             el.innerHTML = '';
             let cells = Array(size * size).fill('');
@@ -316,12 +327,19 @@
         }
 
         function finish() {
-            clearInterval(timerInt); playSound('vitoria'); show('scr-result');
+            clearInterval(timerInt); 
+            playSound('vitoria'); 
+            show('scr-result');
             document.getElementById('status-bar').style.display = 'none';
-            const rep = JOGO_CONFIG.relatorios.find(r => score >= r.min);
+            
+            // Encontrar o relatório correto baseado no score
+            const rep = JOGO_CONFIG.relatorios.find(r => score >= r.min) || JOGO_CONFIG.relatorios[JOGO_CONFIG.relatorios.length - 1];
+            
+            document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rep.img;
             document.getElementById('res-tit').innerText = rep.titulo;
+            document.getElementById('res-msg').innerText = rep.msg;
             document.getElementById('res-pts').innerText = score;
-            document.getElementById('res-tim').innerText = "Tempo: " + document.getElementById('timer').innerText.replace('⏳','');
+            document.getElementById('res-tim').innerText = "Tempo Total: " + document.getElementById('timer').innerText.replace('⏳','');
         }
 
         function updateDots(total) {
