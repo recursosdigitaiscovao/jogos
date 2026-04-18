@@ -1,1 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pequenos Leitores - Sopa de Letras</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #f0f7ff;
+            --primary-blue: #5ba4e5;
+            --primary-dark: #3d7db8;
+            --white: #ffffff;
+            --text-color: #5ba4e5;
+        }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
+        
+        body { 
+            background-color: #e9f0f8; 
+            height: 100dvh; width: 100vw; 
+            overflow: hidden; 
+            display: flex; flex-direction: column;
+        }
+
+        /* HEADER */
+        header { 
+            height: 80px; 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 30px; background: #f0f7ff;
+        }
+        
+        .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; }
+
+        .logo-container { display: flex; align-items: center; gap: 10px; text-align: left; }
+        .logo-container img { height: 60px; }
+        .logo-text { line-height: 1; }
+        .logo-text h1 { font-size: 22px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+        .logo-text p { font-size: 12px; color: #88a; font-weight: 700; }
+
+        .btn-voltar { 
+            background: var(--primary-blue); color: white; padding: 10px 20px; 
+            border-radius: 15px; text-decoration: none; font-weight: 900; 
+            display: flex; align-items: center; gap: 8px; font-size: 16px;
+            box-shadow: 0 4px 0 var(--primary-dark);
+        }
+        .btn-voltar img { height: 20px; }
+
+        /* GAME LAYOUT */
+        .game-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        
+        .game-card { 
+            background: #f0f7ff; 
+            width: 100%; max-width: 950px; height: 100%; max-height: 600px;
+            border-radius: 40px; 
+            box-shadow: 0 10px 30px rgba(176, 196, 217, 0.4);
+            display: flex; flex-direction: column; position: relative; padding: 40px;
+        }
+
+        .badge-ano {
+            position: absolute; top: 25px; right: 25px;
+            background: #e1edf8; padding: 5px 15px; border-radius: 12px;
+            display: flex; align-items: center; gap: 8px; font-weight: 900; color: var(--primary-blue);
+        }
+
+        .game-title { 
+            text-align: center; color: var(--primary-blue); 
+            font-size: 38px; font-weight: 900; margin-bottom: 30px; letter-spacing: 2px;
+        }
+
+        .game-content { display: flex; justify-content: center; align-items: center; gap: 40px; flex: 1; }
+
+        /* BANNER DO ANIMAL */
+        .hint-banner {
+            background: white; padding: 20px; border-radius: 10px;
+            border: 2px dashed #d0e0f0; position: relative;
+            display: flex; flex-direction: column; align-items: center; width: 180px;
+        }
+        /* Efeito de recorte nas laterais do banner */
+        .hint-banner::before, .hint-banner::after {
+            content: ''; position: absolute; top: 50%; width: 15px; height: 30px; background: #f0f7ff; transform: translateY(-50%);
+        }
+        .hint-banner::before { left: -10px; border-radius: 0 50px 50px 0; border-right: 2px dashed #d0e0f0; }
+        .hint-banner::after { right: -10px; border-radius: 50px 0 0 50px; border-left: 2px dashed #d0e0f0; }
+
+        .hint-banner img { width: 100px; height: 100px; object-fit: contain; margin-bottom: 10px; }
+        .hint-banner span { font-weight: 900; font-size: 20px; color: #333; }
+
+        /* GRELHA 4X4 */
+        .grid { 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; 
+            background: #b2b2b2; padding: 2px; border: 2px solid #b2b2b2;
+        }
+        .cell { 
+            width: 50px; height: 50px; background: white; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 900; font-size: 22px; color: #333; cursor: pointer;
+        }
+        .cell.highlight-green { background: #c6e8ba; } /* Estilo da imagem */
+
+        /* SLOTS DE BAIXO */
+        .slots-container { 
+            display: flex; justify-content: center; gap: 15px; margin-top: 30px; position: relative;
+        }
+        .slot {
+            width: 65px; height: 65px; background: white; border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; font-weight: 900; color: #000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .slot.active { border: 3px solid #b8d9a7; box-shadow: 0 0 15px #c6e8ba; }
+
+        /* MÃO TUTORIAL */
+        .hand-icon {
+            position: absolute; color: #f1c40f; font-size: 35px;
+            bottom: -15px; left: 50%; transform: translateX(-50%);
+            z-index: 10; animation: clickAnim 2s infinite;
+        }
+
+        @keyframes clickAnim {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(40px, 0); }
+        }
+
+        /* BOTÃO JOGAR */
+        .btn-main-jogar {
+            width: 100%; background: var(--primary-blue); color: white;
+            border: none; border-radius: 20px; padding: 18px;
+            font-size: 22px; font-weight: 900; margin-top: 40px;
+            cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark);
+        }
+
+        .footer-info {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 40px; color: #89a; font-size: 13px; font-weight: 700;
+        }
+        .settings-btn { font-size: 30px; color: #888; cursor: pointer; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-left">
+            <i class="fas fa-bars hamburger-btn"></i>
+        </div>
+        <div class="logo-container">
+            <img src="https://via.placeholder.com/60?text=🦒" alt="Girafa"> <!-- Substitua pelo seu ícone de girafa -->
+            <div class="logo-text">
+                <h1>Pequenos Leitores</h1>
+                <p>Português | 1º Ano</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <a href="#" class="btn-voltar">
+                <img src="https://via.placeholder.com/20?text=🦒" alt="">
+                VOLTAR
+            </a>
+        </div>
+    </header>
+
+    <div class="game-wrapper">
+        <div class="game-card">
+            
+            <div class="badge-ano">
+                <img src="https://via.placeholder.com/20?text=🦒" alt="" style="height:25px">
+                1º Ano
+            </div>
+
+            <h2 class="game-title">SOPA DE LETRAS</h2>
+
+            <div class="game-content">
+                <!-- Banner lateral -->
+                <div class="hint-banner">
+                    <img id="target-img" src="https://cdn-icons-png.flaticon.com/512/616/616430.png" alt="Gato">
+                    <span id="target-name">Gato</span>
+                </div>
+
+                <!-- Grelha 4x4 -->
+                <div class="grid" id="letter-grid">
+                    <div class="cell">A</div><div class="cell">T</div><div class="cell">M</div><div class="cell">H</div>
+                    <div class="cell highlight-green">G</div><div class="cell highlight-green">A</div><div class="cell highlight-green">T</div><div class="cell highlight-green">O</div>
+                    <div class="cell">G</div><div class="cell">S</div><div class="cell">O</div><div class="cell">L</div>
+                    <div class="cell">R</div><div class="cell">T</div><div class="cell">O</div><div class="cell">P</div>
+                </div>
+            </div>
+
+            <!-- ÁREA DE SELEÇÃO -->
+            <div class="slots-container">
+                <div class="slot active">G</div>
+                <div class="slot active">A</div>
+                <div class="slot">T</div>
+                <i class="fas fa-hand-pointer hand-icon"></i>
+            </div>
+
+            <button class="btn-main-jogar">JOGAR</button>
+
+            <!-- Ícone de Engrenagem -->
+            <i class="fas fa-cog settings-btn" style="position: absolute; bottom: 30px; right: 30px;"></i>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <span>© Pequenos Leitores - Recursos Educativos</span>
+    </div>
+
+    <script>
+        // O script pode ser mantido quase igual, mas ajuste a lógica de 
+        // generateGrid para criar 4x4 se quiser manter a simplicidade da imagem.
+        
+        /* 
+        DICA: Para o banner serrilhado perfeito, você pode usar uma imagem 
+        de fundo .png ou usar a propriedade CSS mask-image.
+        O exemplo acima usa bordas tracejadas para simular o efeito visual.
+        */
+    </script>
+</body>
+</html>
