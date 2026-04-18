@@ -67,9 +67,9 @@ const JOGO_CONFIG = {
         }
     },
     relatorios: [
-        { min: 900, titulo: "BRILHANTE!", msg: "És um verdadeiro mestre das palavras!" },
-        { min: 700, titulo: "MUITO BEM!", msg: "Excelente prestação!" },
-        { min: 400, titulo: "BOM TRABALHO!", msg: "Estás quase lá, continua a praticar!" },
-        { min: 0, titulo: "FOI POR POUCO!", msg: "Tenta outra vez para melhorares!" }
+        { min: 900, titulo: "BRILHANTE!", msg: "És um verdadeiro mestre das palavras!", img: "taca_1.png" },
+        { min: 700, titulo: "MUITO BEM!", msg: "Excelente prestação!", img: "taca_2.png" },
+        { min: 500, titulo: "BOM TRABALHO!", msg: "Estás quase lá, continua a praticar!", img: "taca_3.png" },
+        { min: 0, titulo: "NÃO FOI DESTA!", msg: "Tenta outra vez para melhorares!", img: "taca_4.png" }
     ]
 };
