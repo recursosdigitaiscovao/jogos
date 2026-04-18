@@ -3,192 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sopa de Letras - 1º Ano</title>
+    <title>Sopa de Letras - Pequenos Leitores</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-page: #e9f0f8;
+            --bg-page: #f0f7ff;
             --primary-blue: #5ba4e5;
             --primary-dark: #3d7db8;
-            --white: #ffffff;
             --highlight-green: #c6e8ba;
+            --white: #ffffff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
+        body { background-color: #e9f0f8; height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
 
         /* HEADER */
-        header { height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: #f8fbff; z-index: 100; }
-        .hamburger-btn { font-size: 26px; color: var(--primary-blue); cursor: pointer; padding: 10px; }
-        .logo-container { display: flex; align-items: center; gap: 10px; }
-        .logo-container img { height: 50px; }
-        .logo-text h1 { font-size: 18px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 1; }
+        header { 
+            height: 70px; display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 20px; background: #f0f7ff; z-index: 1000; flex-shrink: 0;
+        }
+        .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
+        
+        .logo-center { display: flex; align-items: center; gap: 10px; position: absolute; left: 50%; transform: translateX(-50%); text-align: left; pointer-events: none; }
+        .logo-center img { height: 55px; }
+        .logo-text h1 { font-size: 20px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 11px; color: #88a; font-weight: 700; }
+
         .btn-voltar { 
-            background: var(--primary-blue); color: white; padding: 8px 16px; border-radius: 12px; 
-            text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 8px; font-size: 14px;
+            background: var(--primary-blue); color: white; padding: 8px 18px; border-radius: 14px; 
+            text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 8px; font-size: 15px;
             box-shadow: 0 4px 0 var(--primary-dark);
         }
+        .btn-voltar img { height: 22px; }
 
-        /* COMPONENTES DE ESTRUTURA */
-        .game-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px 20px; }
+        /* ESTRUTURA DO CARD */
+        .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 15px; overflow: hidden; }
         .game-card { 
-            background: #f8fbff; width: 100%; max-width: 900px; height: 100%; max-height: 550px;
-            border-radius: 40px; box-shadow: 0 10px 30px rgba(176, 196, 217, 0.4);
-            display: flex; flex-direction: column; position: relative; overflow: hidden;
+            background: #f0f7ff; width: 100%; max-width: 950px; height: 100%; max-height: 550px;
+            border-radius: 45px; box-shadow: 0 10px 40px rgba(176, 196, 217, 0.4);
+            display: flex; flex-direction: column; position: relative; padding: 25px;
         }
 
-        /* STATUS BAR (Timer, Rondas, Pontos) */
-        .status-bar { height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 25px; visibility: hidden; }
-        .timer-txt { font-weight: 800; color: #667; min-width: 70px; }
-        .dots-container { display: flex; gap: 6px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: #d0e0f0; transition: 0.3s; }
+        .badge-ano {
+            position: absolute; top: 25px; right: 25px; background: #e1edf8; padding: 6px 15px; 
+            border-radius: 12px; display: flex; align-items: center; gap: 8px; font-weight: 900; color: var(--primary-blue); font-size: 14px;
+        }
+
+        .game-title { text-align: center; color: var(--primary-blue); font-size: clamp(24px, 5vw, 36px); font-weight: 900; margin-bottom: 20px; letter-spacing: 1px; }
+
+        /* STATUS BAR (Timer/Rondas) */
+        .status-bar { display: none; align-items: center; justify-content: space-between; padding: 0 20px 15px; }
+        .dots-container { display: flex; gap: 8px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; background: #d0e0f0; }
         .dot.active { background: var(--primary-blue); transform: scale(1.3); }
-        .dot.done { background: #b8d9a7; }
-        .points-box { display: flex; align-items: center; gap: 10px; font-weight: 900; color: var(--primary-blue); font-size: 18px; }
+        .dot.done { background: var(--highlight-green); }
 
         /* ECRÃS */
-        .screen { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .screen { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; position: relative; }
         .screen.active { display: flex; }
 
-        /* ECRÃ 1: EXPLICAÇÃO */
-        .intro-title { color: var(--primary-blue); font-size: 34px; font-weight: 900; margin: 20px 0; }
-        .tutorial-box { 
-            background: #dbe9f7; padding: 20px; border-radius: 20px; position: relative; margin-bottom: 30px;
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-        }
-        .tutorial-letter { width: 45px; height: 45px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #445; }
-        .hand-anim { position: absolute; color: #f1c40f; font-size: 32px; bottom: -5px; right: -5px; animation: moveHand 2s infinite ease-in-out; }
-        @keyframes moveHand { 0% { transform: translate(0,0); } 50% { transform: translate(-80px, 0); } 100% { transform: translate(0,0); } }
-        .btn-group { display: flex; align-items: center; gap: 15px; width: 100%; max-width: 400px; }
-        .btn-jogar { flex: 1; background: var(--primary-blue); color: white; padding: 18px; border-radius: 20px; border: none; font-weight: 900; font-size: 22px; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); }
-        .rd-btn-img { height: 55px; cursor: pointer; }
+        /* LAYOUT CENTRAL (Banner + Grid) */
+        .game-main-content { display: flex; justify-content: center; align-items: center; gap: clamp(20px, 5vw, 50px); width: 100%; flex: 1; }
 
-        /* ECRÃ 2: JOGO */
-        .game-main { display: flex; align-items: center; justify-content: center; gap: 40px; flex: 1; width: 100%; }
         .hint-banner {
-            background: white; padding: 15px; border-radius: 8px; border: 2px dashed #d0e0f0; 
+            background: white; padding: 15px; border-radius: 5px; border: 2px dashed #d0e0f0; 
             position: relative; display: flex; flex-direction: column; align-items: center; width: 160px;
         }
-        .hint-banner::before, .hint-banner::after { content: ''; position: absolute; top: 50%; width: 12px; height: 24px; background: #f8fbff; transform: translateY(-50%); }
-        .hint-banner::before { left: -8px; border-radius: 0 50px 50px 0; border-right: 2px dashed #d0e0f0; }
-        .hint-banner::after { right: -8px; border-radius: 50px 0 0 50px; border-left: 2px dashed #d0e0f0; }
+        .hint-banner::before, .hint-banner::after { content: ''; position: absolute; top: 50%; width: 12px; height: 24px; background: #f0f7ff; transform: translateY(-50%); }
+        .hint-banner::before { left: -9px; border-radius: 0 50px 50px 0; border-right: 2px dashed #d0e0f0; }
+        .hint-banner::after { right: -9px; border-radius: 50px 0 0 50px; border-left: 2px dashed #d0e0f0; }
         .hint-banner img { width: 90px; height: 90px; object-fit: contain; }
-        .hint-banner span { font-weight: 900; color: #333; margin-top: 5px; }
-        
-        .grid { display: grid; gap: 2px; background: #b0c4d9; padding: 2px; }
-        .cell { width: 48px; height: 48px; background: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 20px; color: #333; cursor: pointer; }
-        .cell.selected { background: var(--highlight-green); }
-        
-        .slots-area { display: flex; gap: 10px; margin-top: 25px; }
-        .slot { width: 55px; height: 55px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 900; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .hint-banner span { font-weight: 900; font-size: 20px; color: #333; margin-top: 5px; }
 
-        /* ECRÃ 3: FEEDBACK */
-        .feedback-card { background: white; padding: 30px; border-radius: 30px; text-align: center; width: 100%; max-width: 400px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .score-val { font-size: 40px; font-weight: 900; color: var(--primary-blue); margin: 10px 0; }
+        .grid-wrapper { background: #b2b2b2; padding: 2px; }
+        .grid { display: grid; gap: 2px; }
+        .cell { width: 45px; height: 45px; background: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 20px; color: #333; cursor: pointer; user-select: none; transition: 0.1s; }
+        .cell.highlight { background: var(--highlight-green); }
+
+        /* SLOTS E ANIMAÇÃO */
+        .slots-area { display: flex; gap: 15px; margin: 25px 0; position: relative; height: 60px; }
+        .slot { width: 60px; height: 60px; background: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 900; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .slot.active { border: 3px solid #b8d9a7; box-shadow: 0 0 15px var(--highlight-green); }
+
+        .hand-anim { position: absolute; color: #f1c40f; font-size: 35px; bottom: -10px; left: 50%; transform: translateX(-50%); animation: handMove 2s infinite ease-in-out; pointer-events: none; }
+        @keyframes handMove { 0%, 100% { transform: translate(-30px, 0); } 50% { transform: translate(30px, 0); } }
+
+        /* BOTÃO JOGAR */
+        .btn-main-jogar {
+            width: 100%; background: var(--primary-blue); color: white; border: none; border-radius: 20px; 
+            padding: clamp(12px, 3vh, 18px); font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark);
+        }
+        .btn-main-jogar:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--primary-dark); }
+
+        .cog-btn { position: absolute; bottom: 25px; right: 25px; font-size: 32px; color: #888; cursor: pointer; }
 
         /* MENUS */
-        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 200; padding: 20px; border-radius: 30px 30px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); transition: 0.4s; }
-        .rd-panel.active { bottom: 0; }
-        .menu-item { display: flex; align-items: center; gap: 15px; padding: 15px; text-decoration: none; color: #556; font-weight: 800; border-radius: 12px; cursor: pointer; }
-        .menu-item:hover { background: #f0f7ff; }
-        .menu-item img { width: 30px; }
-
-        #sideMenu { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: white; z-index: 300; transition: 0.4s; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
+        #sideMenu { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: white; z-index: 2000; transition: 0.3s; padding: 25px; box-shadow: 5px 0 20px rgba(0,0,0,0.1); }
         #sideMenu.active { left: 0; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 150; }
+        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 25px; border-radius: 35px 35px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); transition: 0.4s; }
+        .rd-panel.active { bottom: 0; }
+        .menu-item { display: flex; align-items: center; gap: 15px; padding: 15px; text-decoration: none; color: #445; font-weight: 800; border-radius: 14px; cursor: pointer; margin-bottom: 5px; }
+        .menu-item:hover { background: #f0f7ff; color: var(--primary-blue); }
+        .menu-item img { width: 32px; height: 32px; object-fit: contain; }
 
-        .footer-tag { padding: 10px; text-align: center; font-size: 12px; color: #89a; font-weight: 700; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
+
+        /* FOOTER */
+        footer { padding: 10px; text-align: center; color: #89a; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+
+        /* RESPONSIVIDADE MOBILE */
+        @media (max-width: 650px) {
+            .btn-voltar { display: none; }
+            .logo-center { position: relative; left: 0; transform: none; margin-left: 10px; }
+            .badge-ano { display: none; }
+            .game-card { padding: 15px; border-radius: 30px; }
+            .game-main-content { flex-direction: column; gap: 15px; }
+            .cell { width: 40px; height: 40px; font-size: 18px; }
+            .slot { width: 50px; height: 50px; font-size: 24px; }
+            .hamburger-btn { font-size: 36px; }
+        }
     </style>
 </head>
 <body>
 
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
 
+    <!-- Menus -->
+    <div id="sideMenu">
+        <h2 style="color:var(--primary-blue); margin-bottom:20px;">Jogos</h2>
+        <div id="side-list"></div>
+    </div>
+    <div id="rdMenu" class="rd-panel">
+        <div style="width:50px; height:5px; background:#e0e6ed; border-radius:10px; margin: -10px auto 15px;" onclick="closeMenus()"></div>
+        <h3 style="color:var(--primary-blue); text-align:center; margin-bottom:15px;">Temas</h3>
+        <div id="rd-list"></div>
+    </div>
+
     <header>
         <i class="fas fa-bars hamburger-btn" onclick="openMenu('sideMenu')"></i>
-        <div class="logo-container">
+        <div class="logo-center">
             <img id="header-logo" src="">
             <div class="logo-text">
-                <h1>Pequenos Leitores</h1>
+                <h1>PEQUENOS LEITORES</h1>
                 <p>Português | 1º Ano</p>
             </div>
         </div>
         <a href="../index.html" class="btn-voltar">
-            <img id="btn-voltar-icon" src=""> VOLTAR
+            <img id="icon-voltar" src="">
+            VOLTAR
         </a>
     </header>
 
-    <div class="game-wrapper">
+    <div class="game-container">
         <div class="game-card">
-            <!-- Barra de Status (Só aparece no jogo) -->
+            
             <div class="status-bar" id="status-bar">
-                <div class="timer-txt" id="timer">⏳ 00:00</div>
+                <div id="timer" style="font-weight:900; color:#667;">⏳ 00:00</div>
                 <div class="dots-container" id="dots"></div>
-                <div class="points-box">
+                <div style="font-weight:900; color:var(--primary-blue); display:flex; align-items:center; gap:8px;">
                     <span id="score">0</span>
-                    <img id="rd-status-btn" class="rd-btn-img" style="height:30px" onclick="openMenu('rdMenu')">
+                    <img id="rd-status-btn" src="" style="height:25px; cursor:pointer;" onclick="openMenu('rdMenu')">
                 </div>
             </div>
 
-            <!-- ECRÃ 1: INTRO -->
+            <div class="badge-ano">
+                <img id="badge-girafa" src="" style="height:25px">
+                1º Ano
+            </div>
+
+            <h2 class="game-title">SOPA DE LETRAS</h2>
+
+            <!-- ECRÃ 1: EXPLICAÇÃO -->
             <div class="screen active" id="screen-intro">
-                <div class="tutorial-box">
-                    <div class="tutorial-letter">G</div><div class="tutorial-letter">A</div><div class="tutorial-letter">T</div>
+                <div class="game-main-content">
+                    <div class="hint-banner">
+                        <img id="intro-hint-img" src="">
+                        <span>Gato</span>
+                    </div>
+                    <div class="grid-wrapper">
+                        <div class="grid" style="grid-template-columns: repeat(4, 1fr);">
+                            <div class="cell">A</div><div class="cell">T</div><div class="cell">M</div><div class="cell">H</div>
+                            <div class="cell highlight">G</div><div class="cell highlight">A</div><div class="cell highlight">T</div><div class="cell highlight">O</div>
+                            <div class="cell">G</div><div class="cell">S</div><div class="cell">O</div><div class="cell">L</div>
+                            <div class="cell">R</div><div class="cell">T</div><div class="cell">O</div><div class="cell">P</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slots-area">
+                    <div class="slot active">G</div><div class="slot active">A</div><div class="slot">T</div>
                     <i class="fas fa-hand-pointer hand-anim"></i>
                 </div>
-                <h2 class="intro-title">SOPA DE LETRAS</h2>
-                <div class="btn-group">
-                    <button class="btn-jogar" onclick="startGame()">JOGAR</button>
-                    <img id="rd-intro-btn" class="rd-btn-img" onclick="openMenu('rdMenu')">
-                </div>
+                <button class="btn-main-jogar" onclick="startGame()">JOGAR</button>
+                <i class="fas fa-cog cog-btn" onclick="openMenu('rdMenu')"></i>
             </div>
 
             <!-- ECRÃ 2: JOGO -->
             <div class="screen" id="screen-game">
-                <div class="game-main">
+                <div class="game-main-content">
                     <div class="hint-banner">
-                        <img id="hint-img" src="">
-                        <span id="hint-name">GATO</span>
+                        <img id="game-hint-img" src="">
+                        <span id="game-hint-name">...</span>
                     </div>
-                    <div class="grid" id="grid"></div>
+                    <div class="grid-wrapper">
+                        <div class="grid" id="game-grid"></div>
+                    </div>
                 </div>
-                <div class="slots-area" id="slots"></div>
+                <div class="slots-area" id="game-slots"></div>
+                <button class="btn-main-jogar" style="visibility:hidden" id="btn-proximo">PRÓXIMO</button>
             </div>
 
-            <!-- ECRÃ 3: FEEDBACK -->
-            <div class="screen" id="screen-end">
-                <div class="feedback-card">
-                    <h2 id="fb-titulo" style="color:var(--primary-blue)">EXCELENTE!</h2>
-                    <p id="fb-msg" style="color:#667; margin: 10px 0;">Fizeste um ótimo trabalho.</p>
-                    <div class="score-val"><span id="final-score">0</span> pts</div>
-                    <p id="final-time" style="color:#89a; margin-bottom: 20px;">Tempo: 00:00</p>
-                    <button class="btn-jogar" onclick="resetGame()">REPETIR</button>
+            <!-- ECRÃ 3: RESULTADO -->
+            <div class="screen" id="screen-result">
+                <div style="text-align:center;">
+                    <h2 id="res-titulo" style="font-size:38px; color:var(--primary-blue); margin-bottom:10px;">PARABÉNS!</h2>
+                    <p id="res-msg" style="color:#667; font-weight:700; margin-bottom:25px;">Fizeste um excelente trabalho!</p>
+                    <div style="background:white; padding:25px; border-radius:30px; box-shadow:0 10px 20px rgba(0,0,0,0.05); margin-bottom:30px;">
+                        <div style="font-size:45px; font-weight:900; color:var(--primary-blue);" id="res-score">0</div>
+                        <p style="color:#89a;">PONTOS TOTAIS</p>
+                        <p id="res-time" style="margin-top:10px; color:#555; font-weight:800;"></p>
+                    </div>
+                    <button class="btn-main-jogar" onclick="location.reload()" style="max-width:250px">REPETIR</button>
                 </div>
             </div>
+
         </div>
     </div>
 
-    <div class="footer-tag">© Pequenos Leitores - Recursos Educativos</div>
-
-    <!-- MENUS -->
-    <div id="sideMenu">
-        <h2 style="color:var(--primary-blue); margin-bottom:20px;">Menu</h2>
-        <div id="side-items"></div>
-    </div>
-    <div id="rdMenu" class="rd-panel">
-        <h3 style="color:var(--primary-blue); text-align:center; margin-bottom:15px;">Categorias</h3>
-        <div id="rd-items"></div>
-    </div>
+    <footer id="main-footer">
+        © Pequenos Leitores - Recursos Educativos
+    </footer>
 
     <script src="dados.js"></script>
     <script>
-        let currentCat = 'animais';
+        let currentCategory = 'animais';
         let round = 0;
         let score = 0;
         let timer = 0;
-        let timerInt;
+        let timerInterval;
         let currentWord = "";
         let foundWord = "";
 
@@ -196,76 +248,74 @@
             const pI = JOGO_CONFIG.caminhoIcons;
             const pImg = JOGO_CONFIG.caminhoImg;
             
-            // Assets Estáticos
+            // Assets do Header e Badge
             document.getElementById('header-logo').src = pI + JOGO_CONFIG.iconesMenu.ano1;
-            document.getElementById('btn-voltar-icon').src = pI + "voltar.png";
-            document.getElementById('rd-intro-btn').src = pImg + "rd.png";
+            document.getElementById('badge-girafa').src = pI + JOGO_CONFIG.iconesMenu.ano1;
+            document.getElementById('icon-voltar').src = pI + "voltar.png";
             document.getElementById('rd-status-btn').src = pImg + "rd.png";
+            document.getElementById('intro-hint-img').src = pImg + JOGO_CONFIG.categorias.animais.itens[1].img;
 
             // Menu Hambúrguer
-            const side = document.getElementById('side-items');
-            Object.keys(JOGO_CONFIG.iconesMenu).forEach(k => {
-                side.innerHTML += `<a href="${JOGO_CONFIG.links[k]}" class="menu-item"><img src="${pI}${JOGO_CONFIG.iconesMenu[k]}"><span>${k.toUpperCase()}</span></a>`;
+            const side = document.getElementById('side-list');
+            const links = [
+                {k:'home', l:'Início'}, {k:'pre', l:'Pré-Escolar'}, {k:'ano1', l:'1º Ano'}, 
+                {k:'ano2', l:'2º Ano'}, {k:'ano3', l:'3º Ano'}, {k:'ano4', l:'4º Ano'}
+            ];
+            links.forEach(it => {
+                side.innerHTML += `<a href="${JOGO_CONFIG.links[it.k]}" class="menu-item">
+                    <img src="${pI}${JOGO_CONFIG.iconesMenu[it.k]}"><span>${it.l}</span>
+                </a>`;
             });
 
-            // Menu RD
-            const rd = document.getElementById('rd-items');
+            // Menu RD (Categorias)
+            const rd = document.getElementById('rd-list');
             Object.keys(JOGO_CONFIG.categorias).forEach(k => {
                 const c = JOGO_CONFIG.categorias[k];
-                rd.innerHTML += `<div class="menu-item" onclick="selectCat('${k}')"><img src="${pImg}${c.imgCapa}"><span>${c.nome}</span></div>`;
+                rd.innerHTML += `<div class="menu-item" onclick="selectCategory('${k}')">
+                    <img src="${pImg}${c.imgCapa}"><span>${c.nome}</span>
+                </div>`;
             });
-            
-            renderDots();
-        }
-
-        function renderDots() {
-            const cont = document.getElementById('dots');
-            cont.innerHTML = '';
-            for(let i=0; i<7; i++) {
-                const d = document.createElement('div');
-                d.className = 'dot' + (i < round ? ' done' : (i === round ? ' active' : ''));
-                cont.appendChild(d);
-            }
         }
 
         function startGame() {
             showScreen('screen-game');
-            document.getElementById('status-bar').style.visibility = 'visible';
-            timer = 0;
-            timerInt = setInterval(() => {
+            document.getElementById('status-bar').style.display = 'flex';
+            document.getElementById('main-footer').style.display = 'none';
+            
+            timerInterval = setInterval(() => {
                 timer++;
                 let m = Math.floor(timer/60).toString().padStart(2,'0');
                 let s = (timer%60).toString().padStart(2,'0');
                 document.getElementById('timer').innerText = `⏳ ${m}:${s}`;
             }, 1000);
+            
             loadRound();
         }
 
         function loadRound() {
-            const item = JOGO_CONFIG.categorias[currentCat].itens[round];
+            const cat = JOGO_CONFIG.categorias[currentCategory];
+            const item = cat.itens[round];
             currentWord = item.nome.toUpperCase();
             foundWord = "";
-            renderDots();
             
-            document.getElementById('hint-img').src = JOGO_CONFIG.caminhoImg + item.img;
-            document.getElementById('hint-name').innerText = item.nome;
+            updateDots();
+            document.getElementById('game-hint-img').src = JOGO_CONFIG.caminhoImg + item.img;
+            document.getElementById('game-hint-name').innerText = item.nome;
 
-            // Slots
-            const slots = document.getElementById('slots');
+            // Criar Slots
+            const slots = document.getElementById('game-slots');
             slots.innerHTML = '';
-            for(let i=0; i<currentWord.length; i++) {
-                slots.innerHTML += `<div class="slot" id="slot-${i}"></div>`;
-            }
+            for(let i=0; i<currentWord.length; i++) slots.innerHTML += `<div class="slot" id="slot-${i}"></div>`;
 
             generateGrid();
         }
 
         function generateGrid() {
-            const grid = document.getElementById('grid');
-            const size = 6;
-            grid.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-            grid.innerHTML = '';
-            
+            const gridEl = document.getElementById('game-grid');
+            const size = 6; // Para o 1º ano, 6x6 é ideal para caber palavras maiores
+            gridEl.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+            gridEl.innerHTML = '';
+
             let cells = Array(size * size).fill('');
             const isH = Math.random() > 0.5;
             const start = isH 
@@ -273,31 +323,34 @@
                 : Math.floor(Math.random()*(size-currentWord.length))*size + Math.floor(Math.random()*size);
 
             for(let i=0; i<currentWord.length; i++) cells[isH ? start+i : start+(i*size)] = currentWord[i];
-            
+
             const abc = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
             cells.forEach((char, idx) => {
                 const d = document.createElement('div');
                 d.className = 'cell';
                 d.innerText = char || abc[Math.floor(Math.random()*abc.length)];
-                d.onclick = () => handleSelect(d);
-                grid.appendChild(d);
+                d.onclick = () => selectCell(d);
+                gridEl.appendChild(d);
             });
         }
 
-        function handleSelect(el) {
-            if(el.classList.contains('selected')) return;
+        function selectCell(el) {
             const charNeeded = currentWord[foundWord.length];
-            
-            if(el.innerText === charNeeded) {
-                el.classList.add('selected');
+            if(el.innerText === charNeeded && !el.classList.contains('highlight')) {
+                el.classList.add('highlight');
                 document.getElementById(`slot-${foundWord.length}`).innerText = charNeeded;
+                document.getElementById(`slot-${foundWord.length}`).classList.add('active');
                 foundWord += charNeeded;
                 playSound('acerto');
-                
+
                 if(foundWord === currentWord) {
                     score += 150;
                     document.getElementById('score').innerText = score;
-                    setTimeout(nextRound, 800);
+                    setTimeout(() => {
+                        round++;
+                        if(round >= 5) finishGame();
+                        else loadRound();
+                    }, 800);
                 }
             } else {
                 playSound('erro');
@@ -306,35 +359,35 @@
             }
         }
 
-        function nextRound() {
-            round++;
-            if(round >= 7) finish();
-            else loadRound();
+        function updateDots() {
+            const cont = document.getElementById('dots');
+            cont.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const d = document.createElement('div');
+                d.className = 'dot' + (i < round ? ' done' : (i === round ? ' active' : ''));
+                cont.appendChild(d);
+            }
         }
 
-        function finish() {
-            clearInterval(timerInt);
+        function finishGame() {
+            clearInterval(timerInterval);
             playSound('vitoria');
-            showScreen('screen-end');
-            document.getElementById('status-bar').style.visibility = 'hidden';
-            
+            showScreen('screen-result');
+            document.getElementById('status-bar').style.display = 'none';
+            document.getElementById('main-footer').style.display = 'none';
+
             const rep = JOGO_CONFIG.relatorios.find(r => score >= r.min);
-            document.getElementById('fb-titulo').innerText = rep.titulo;
-            document.getElementById('fb-msg').innerText = rep.msg;
-            document.getElementById('final-score').innerText = score;
-            document.getElementById('final-time').innerText = "Tempo: " + document.getElementById('timer').innerText.replace('⏳','');
+            document.getElementById('res-titulo').innerText = rep.titulo;
+            document.getElementById('res-msg').innerText = rep.msg;
+            document.getElementById('res-score').innerText = score;
+            document.getElementById('res-time').innerText = "Tempo total: " + document.getElementById('timer').innerText.replace('⏳','');
         }
 
-        function resetGame() {
-            round = 0; score = 0;
-            document.getElementById('score').innerText = "0";
-            showScreen('screen-intro');
-        }
-
-        function selectCat(k) {
-            currentCat = k;
+        function selectCategory(k) {
+            currentCategory = k;
+            round = 0; score = 0; timer = 0;
             closeMenus();
-            resetGame();
+            if(document.getElementById('screen-game').classList.contains('active')) startGame();
         }
 
         function showScreen(id) {
@@ -342,18 +395,9 @@
             document.getElementById(id).classList.add('active');
         }
 
-        function openMenu(id) {
-            document.getElementById(id).classList.add('active');
-            document.getElementById('overlay').style.display = 'block';
-        }
-
-        function closeMenus() {
-            document.getElementById('sideMenu').classList.remove('active');
-            document.getElementById('rdMenu').classList.remove('active');
-            document.getElementById('overlay').style.display = 'none';
-        }
-
-        function playSound(type) { new Audio(JOGO_CONFIG.sons[type]).play().catch(()=>{}); }
+        function openMenu(id) { document.getElementById(id).classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
+        function closeMenus() { document.getElementById('sideMenu').classList.remove('active'); document.getElementById('rdMenu').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; }
+        function playSound(t) { new Audio(JOGO_CONFIG.sons[t]).play().catch(()=>{}); }
 
         window.onload = init;
     </script>
