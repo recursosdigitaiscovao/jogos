@@ -1,1 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sopa de Letras - Pequenos Leitores</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #e9f0f8;
+            --primary-blue: #5ba4e5;
+            --primary-dark: #3d7db8;
+            --highlight-green: #7ed321;
+            --error-red: #ff5e5e;
+            --white: #ffffff;
+            --text-grey: #5d7082;
+            --drag-dist: 130px;
+        }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
+
+        header { 
+            height: 70px; display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 20px; background: #f0f7ff; z-index: 1000; flex-shrink: 0;
+            box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4);
+            position: relative;
+        }
+        .header-left { position: relative; z-index: 10; }
+        .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; transition: transform 0.2s; }
+        
+        .logo-center { 
+            display: flex; align-items: center; gap: 10px; 
+            position: absolute; left: 50%; transform: translateX(-50%); 
+            text-align: left; pointer-events: none; white-space: nowrap;
+        }
+        .logo-center img { height: 50px; }
+        .logo-text h1 { font-size: 18px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
+        .logo-text p { font-size: 10px; color: #88a; font-weight: 700; }
+
+        .header-right { min-width: 120px; display: flex; justify-content: flex-end; z-index: 10; }
+        .btn-voltar-header { 
+            background: var(--primary-blue); color: white; padding: 8px 18px; border-radius: 14px; 
+            text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 8px; font-size: 14px;
+            box-shadow: 0 4px 0 var(--primary-dark); transition: all 0.2s;
+        }
+        .btn-voltar-header img { height: 20px; width: 20px; object-fit: contain; }
+
+        .menu-dropdown { position: absolute; top: 60px; left: 0; display: none; flex-direction: column; gap: 8px; z-index: 2000; }
+        .menu-item { display: flex; align-items: center; gap: 10px; padding: 10px 18px; background: white; border-radius: 15px; box-shadow: 4px 4px 10px rgba(176, 196, 217, 0.4); cursor: pointer; min-width: 190px; text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 0.9rem; transition: all 0.2s ease; }
+        .menu-item:hover { background: var(--primary-blue); color: white; }
+        .menu-item img { height: 22px; width: 22px; object-fit: contain; }
+        .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
+        .menu-item-voltar img { filter: brightness(0) invert(1); }
+        .menu-divider { height: 1px; background-color: rgba(176, 196, 217, 0.4); margin: 2px 10px; }
+
+        .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden; }
+        .game-card { background: #f0f7ff; width: 100%; max-width: 950px; height: 100%; max-height: calc(100dvh - 130px); border-radius: 40px; box-shadow: 0 15px 35px rgba(176, 196, 217, 0.5); display: flex; flex-direction: column; position: relative; padding: 15px 25px; }
+
+        .status-bar { display: none; align-items: center; justify-content: space-between; padding-bottom: 8px; border-bottom: 2px solid rgba(0,0,0,0.03); margin-bottom: 10px; flex-shrink: 0; }
+        .dots-container { display: flex; gap: 8px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; background: #d0e0f0; transition: 0.3s; }
+        .dot.active { background: var(--primary-blue); transform: scale(1.3); }
+        .dot.done { background: var(--primary-blue); }
+
+        .screen { flex: 1; display: none; flex-direction: column; width: 100%; min-height: 0; }
+        .screen.active { display: flex; }
+
+        .game-main-content { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 20px;
+            width: fit-content; 
+            margin: 0 auto;
+            flex: 1; 
+            min-height: 0; 
+        }
+        
+        .hint-banner { background: white; padding: 10px; border-radius: 12px; border: 2px dashed #d0e0f0; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: clamp(120px, 18vw, 150px); height: clamp(120px, 18vh, 150px); transition: 0.3s; flex-shrink: 0; }
+        .hint-banner img { width: 85%; height: 85%; object-fit: contain; }
+        .hint-banner span { font-weight: 900; font-size: 18px; color: #333; margin-top: 5px; }
+        .hint-banner.feedback-correct { background-color: #e8f5e9 !important; border-color: var(--highlight-green); }
+        .hint-banner.feedback-wrong { background-color: #ffebee !important; border-color: var(--error-red); }
+
+        .grid-wrapper { background: #cbd9e6; padding: 5px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); touch-action: none; position: relative; user-select: none; }
+        .grid { display: grid; gap: 3px; grid-template-columns: repeat(8, 1fr); }
+        .cell { width: clamp(28px, 5.8vh, 44px); height: clamp(28px, 5.8vh, 44px); background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: clamp(17px, 2.8vh, 22px); color: #445; cursor: pointer; box-shadow: 0 2px 0 #cbd9e6; transition: transform 0.1s; }
+        .cell.highlight { background: var(--highlight-green); color: white; box-shadow: none; }
+        .cell.selecting { background: #bbdefb; transform: scale(1.05); }
+
+        .intro-grid { display: grid; gap: 2px; background: #cbd9e6; padding: 4px; border-radius: 8px; position: relative; width: fit-content; margin: 0 auto; }
+        .hand-tutorial { position: absolute; color: #f1c40f; font-size: 35px; z-index: 50; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.2); animation: handDragFull 4s infinite ease-in-out; }
+        @keyframes handDragFull {
+            0% { transform: translate(10px, 50px); opacity: 0; }
+            10% { opacity: 1; }
+            50% { transform: translate(var(--drag-dist), 50px); opacity: 1; }
+            65% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        .slots-area { display: flex; gap: 10px; margin: 20px 0; justify-content: center; min-height: 55px; flex-shrink: 0; }
+        .slot { width: 55px; height: 55px; background: white; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 900; box-shadow: 0 4px 8px rgba(0,0,0,0.05); color: #333; }
+
+        .action-container { position: absolute; bottom: 10px; left: 20px; right: 20px; display: flex; align-items: center; gap: 15px; }
+        .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 20px; padding: 16px; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); }
+        
+        #scr-result { justify-content: center; align-items: center; padding-bottom: 20px; }
+        .result-trophy { width: clamp(110px, 20vh, 160px); margin-bottom: 10px; }
+        .stat-item { background: white; padding: 10px 25px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; }
+
+        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 20px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); max-height: 80vh; overflow-y: auto; }
+        .rd-panel.active { bottom: 0; }
+        #rd-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 10px 0; }
+        .category-card { background: white; border-radius: 20px; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: 0 4px 12px rgba(176, 196, 217, 0.4); cursor: pointer; transition: 0.2s; border: 1px solid rgba(0,0,0,0.02); }
+        .category-card:hover { transform: translateY(-5px); background: #f0f7ff; }
+        .category-card img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 10px; }
+        .category-card span { font-weight: 800; color: var(--text-grey); font-size: 15px; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
+        footer { height: 45px; display: flex; align-items: center; justify-content: center; color: #89a; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+
+        @media (max-width: 650px) {
+            .logo-center { left: 50%; transform: translateX(-50%); width: auto; position: absolute; }
+            .btn-voltar-header { display: none; }
+            .header-right { display: none; }
+            .game-main-content { flex-direction: column; gap: 12px; width: 100%; }
+            .grid-wrapper { width: auto; padding: 3px; }
+            .cell { width: clamp(28px, 9vw, 38px); height: clamp(28px, 9vw, 38px); font-size: 17px; }
+            #scr-intro .slots-area { margin-bottom: 75px; }
+            .category-card img { width: 55px; height: 55px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+
+    <header>
+        <div class="header-left">
+            <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
+            <div id="dropdownMenu" class="menu-dropdown"></div>
+        </div>
+        <div class="logo-center">
+            <img id="head-logo" src="">
+            <div class="logo-text">
+                <h1 id="tit-l1">PEQUENOS</h1>
+                <p id="sub-tit">Português | 1º Ano</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <a href="#" id="link-voltar" class="btn-voltar-header">
+                <img id="header-back-icon" src="" alt="">
+                VOLTAR
+            </a>
+        </div>
+    </header>
+
+    <div class="game-container">
+        <div class="game-card" id="gameCard">
+            
+            <div class="status-bar" id="status-bar">
+                <div id="timer" style="font-weight:900; color:#667; min-width:80px;">⏳ 00:00</div>
+                <div class="dots-container" id="dots"></div>
+                <div style="font-weight:900; color:var(--primary-blue); display:flex; align-items:center; gap:8px; min-width:80px; justify-content:flex-end;">
+                    <span id="score-val">0</span>
+                    <img id="rd-game-btn" src="" style="height:25px; cursor:pointer;" onclick="openRDMenu(event)">
+                </div>
+            </div>
+
+            <h2 class="game-title" id="main-title" style="text-align:center; color:var(--primary-blue); font-size:26px; font-weight:900; margin-bottom:10px;">SOPA DE LETRAS</h2>
+
+            <!-- ECRÃ 1: INTRO -->
+            <div class="screen active" id="scr-intro">
+                <div class="game-main-content">
+                    <div class="hint-banner">
+                        <img id="intro-img" src="">
+                        <span id="intro-name-label">...</span>
+                    </div>
+                    <div class="grid-wrapper" style="box-shadow:none; background:transparent; padding:0;">
+                        <div class="intro-grid" id="intro-letter-cells">
+                            <i class="fas fa-hand-pointer hand-tutorial"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="slots-area" id="intro-slots" style="margin-bottom:80px"></div>
+                <div class="action-container">
+                    <button class="btn-jogar-stretch" onclick="startGame()">JOGAR</button>
+                    <img id="rd-intro-btn" src="" style="height:55px; cursor:pointer;" onclick="openRDMenu(event)">
+                </div>
+            </div>
+
+            <!-- ECRÃ 2: JOGO -->
+            <div class="screen" id="scr-game">
+                <div class="game-main-content">
+                    <div class="hint-banner" id="game-banner">
+                        <img id="game-img" src="">
+                        <span id="game-name">...</span>
+                    </div>
+                    <div class="grid-wrapper" id="grid-container">
+                        <div class="grid" id="game-grid"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ECRÃ 3: RESULTADOS -->
+            <div class="screen" id="scr-result">
+                <img id="res-taca" class="result-trophy" src="">
+                <h2 id="res-tit" style="font-size:30px; color: var(--primary-blue); font-weight:900;"></h2>
+                <p id="res-msg" style="color: #667; font-weight: 700; font-size: 14px; margin-bottom: 15px; text-align: center; max-width: 300px;"></p>
+                <div style="display:flex; gap:15px; margin-bottom:20px;">
+                    <div class="stat-item"><span style="font-size:24px; font-weight:900; color:var(--primary-blue);" id="res-pts">0</span><br><small style="font-weight:800; color:#89a;">PONTOS</small></div>
+                    <div class="stat-item"><span style="font-size:24px; font-weight:900; color:var(--primary-blue);" id="res-tim">00:00</span><br><small style="font-weight:800; color:#89a;">TEMPO</small></div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:10px; width:100%; max-width:300px;">
+                    <button class="btn-jogar-stretch" style="padding:12px; font-size:18px;" onclick="location.reload()">REPETIR</button>
+                    <button class="btn-jogar-stretch" style="background:white; color:var(--primary-blue); border:2px solid var(--primary-blue); box-shadow:none; padding:10px; font-size:16px;" onclick="openRDMenu(event)">TEMAS</button>
+                    <button class="btn-jogar-stretch" style="background:#cbd9e6; color:#445; box-shadow:none; padding:10px; font-size:16px;" id="btn-back-link">OUTROS JOGOS</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="rdMenu" class="rd-panel">
+        <div style="width:50px; height:5px; background:#e0e6ed; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div>
+        <h3 style="color:var(--primary-blue); text-align:center; margin-bottom:15px;">Escolher Tema</h3>
+        <div id="rd-list"></div>
+    </div>
+
+    <footer id="mainFooter">© Pequenos Leitores - Recursos Educativos</footer>
+
+    <!-- SCRIPTS -->
+    <script src="dados.js"></script>
+    <script src="jogo.js"></script>
+</body>
+</html>
