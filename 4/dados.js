@@ -1,14 +1,38 @@
-// dados.js
 const JOGO_CONFIG = {
-    caminhoIcons: "../icons/", // Pasta no nível anterior
-    icones: {
+    textos: {
+        tituloLinha1: "Mestres",
+        tituloLinha2: "Exploradores",
+        subtitulo: "Atividades | 4º Ano",
+        intro: "Rumo ao final do 1º Ciclo com sucesso!",
+        rodape: "&copy; Mestres Exploradores - Recursos Educativos"
+    },
+    caminhoIconsMenu: "../icons/", 
+    caminhoIconsJogos: "../icons/", 
+    iconesMenu: {
+        home: "home.png",
         pre: "iconpre.png",
         ano1: "icon1.png",
         ano2: "icon2.png",
         ano3: "icon3.png",
         ano4: "icon4.png",
-        pt: "pt.png",
-        mat: "mat.png",
-        em: "em.png"
-    }
+        voltar: "voltar.png"
+    },
+    links: {
+        home: "/jogos", 
+        pre: "/jogos/pre",
+        ano1: "/jogos/1",
+        ano2: "/jogos/2",
+        ano3: "/jogos/3",
+        ano4: "/jogos/4"
+    },
+    temaCores: {
+        azul: { borda: "#5ba4e5", fundo: "#e1f0ff" },
+        verde: { borda: "#58bc8c", fundo: "#e8f7f0" },
+        castanho: { borda: "#8b4513", fundo: "#ffe8cc" }
+    },
+    listaJogos: [
+        { nome: "Português", icon: "pt.png", link: "pt/", tema: "azul" },
+        { nome: "Matemática", icon: "mat.png", link: "mat/", tema: "verde" },
+        { nome: "Estudo do Meio", icon: "em.png", link: "em/", tema: "castanho" },
+    ]
 };
