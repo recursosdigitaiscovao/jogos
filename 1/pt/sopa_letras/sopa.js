@@ -11,7 +11,15 @@ let itemsGame = [];
 function init() {
     const pI = JOGO_CONFIG.caminhoIcons;
     const pImg = JOGO_CONFIG.caminhoImg;
+    const txt = JOGO_CONFIG.textos;
     
+    // Injeção de Textos (Novo)
+    document.getElementById('h-tit1').innerText = txt.tituloLinha1;
+    document.getElementById('h-tit2').innerText = txt.tituloLinha2;
+    document.getElementById('h-sub').innerText = txt.subtitulo;
+    document.getElementById('mainFooter').innerHTML = txt.rodape;
+
+    // Assets Visuais
     document.getElementById('head-logo').src = pI + JOGO_CONFIG.iconesMenu.ano1;
     document.getElementById('header-back-icon').src = pI + "voltar.png";
     document.getElementById('link-voltar-main').href = JOGO_CONFIG.links.ano1;
@@ -58,7 +66,7 @@ function updateIntroTutorial(catKey) {
     const slotsCont = document.getElementById('intro-slots');
     slotsCont.innerHTML = '';
     for(let i=0; i<introWord.length; i++) {
-        slotsCont.innerHTML += `<div class="slot" style="border:3px solid #cbd9e6; width:45px; height:45px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900;">${introWord[i]}</div>`;
+        slotsCont.innerHTML += `<div style="width:45px; height:45px; background:white; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); border:2px solid #cbd9e6;">${introWord[i]}</div>`;
     }
 }
 
