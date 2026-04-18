@@ -3,102 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sopa de Letras - Pequenos Leitores</title>
+    <title>Pequenos Leitores - Template</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     
+    <!-- Importar o CSS do Jogo aqui (ou colocar o fixo aqui) -->
     <style>
-        /* =========================================================
-           ÁREA 1: CSS ESTRUTURAL (HEADER, MENUS, LAYOUT GLOBAL)
-           Podes manter isto em quase todos os jogos.
-           ========================================================= */
-        :root {
-            --bg-page: #e9f0f8;
-            --primary-blue: #5ba4e5;
-            --primary-dark: #3d7db8;
-            --highlight-green: #7ed321;
-            --error-red: #ff5e5e;
-            --white: #ffffff;
-            --text-grey: #5d7082;
-            --drag-dist: 130px; /* Variável para a animação da mão */
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
-
-        header { 
-            height: 70px; display: flex; align-items: center; justify-content: space-between; 
-            padding: 0 20px; background: #f0f7ff; z-index: 1000; flex-shrink: 0;
-            box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4); position: relative;
-        }
-
-        .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; z-index: 10; }
-        
-        .logo-center { 
-            display: flex; align-items: center; gap: 10px; 
-            position: absolute; left: 50%; transform: translateX(-50%); 
-            text-align: left; pointer-events: none; white-space: nowrap;
-        }
-        .logo-center img { height: 50px; }
-        .logo-text h1 { font-size: 18px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
-        .logo-text p { font-size: 10px; color: #88a; font-weight: 700; }
-
-        .btn-voltar-header { 
-            background: var(--primary-blue); color: white; padding: 8px 18px; border-radius: 14px; 
-            text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 8px; font-size: 14px;
-            box-shadow: 0 4px 0 var(--primary-dark); z-index: 10;
-        }
-        .btn-voltar-header img { height: 20px; width: 20px; object-fit: contain; }
-
-        /* Dropdown Menu */
-        .menu-dropdown { position: absolute; top: 65px; left: 10px; display: none; flex-direction: column; gap: 8px; z-index: 2000; }
-        .menu-item { display: flex; align-items: center; gap: 10px; padding: 10px 18px; background: white; border-radius: 15px; box-shadow: 4px 4px 10px rgba(176, 196, 217, 0.4); text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 0.9rem; }
-        .menu-item img { height: 22px; width: 22px; }
-
-        /* RD Panel */
-        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 20px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); max-height: 80vh; overflow-y: auto; }
-        .rd-panel.active { bottom: 0; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
-
-        /* =========================================================
-           ÁREA 2: CSS ESPECÍFICO (ANIMAÇÕES E COMPONENTES JOGO)
-           Aqui defines a animação da mão e a grelha.
-           ========================================================= */
-        .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden; }
-        .game-card { background: #f0f7ff; width: 100%; max-width: 950px; height: 100%; max-height: calc(100dvh - 130px); border-radius: 40px; box-shadow: 0 15px 35px rgba(176, 196, 217, 0.5); display: flex; flex-direction: column; position: relative; padding: 15px 25px; }
-
-        /* ANIMAÇÃO DA MÃO (ORIGINAL) */
-        .hand-tutorial { position: absolute; color: #f1c40f; font-size: 35px; z-index: 50; pointer-events: none; animation: handDragFull 4s infinite ease-in-out; }
-        @keyframes handDragFull {
-            0% { transform: translate(10px, 50px); opacity: 0; }
-            10% { opacity: 1; }
-            50% { transform: translate(var(--drag-dist), 50px); opacity: 1; }
-            65% { opacity: 0; }
-            100% { opacity: 0; }
-        }
-
-        .grid-wrapper { background: #cbd9e6; padding: 5px; border-radius: 15px; touch-action: none; user-select: none; }
-        .grid { display: grid; gap: 3px; grid-template-columns: repeat(8, 1fr); }
-        .cell { width: clamp(28px, 5.8vh, 44px); height: clamp(28px, 5.8vh, 44px); background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: clamp(17px, 2.8vh, 22px); color: #445; cursor: pointer; }
-        .cell.highlight { background: var(--highlight-green); color: white; }
-        .cell.selecting { background: #bbdefb; transform: scale(1.05); }
-
-        /* UI de Apoio */
-        .hint-banner { background: white; padding: 10px; border-radius: 12px; border: 2px dashed #d0e0f0; display: flex; flex-direction: column; align-items: center; justify-content: center; width: clamp(120px, 18vw, 150px); height: clamp(120px, 18vh, 150px); }
-        .hint-banner img { width: 85%; height: 85%; object-fit: contain; }
-        .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 20px; padding: 16px; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); }
-
-        @media (max-width: 650px) {
-            .btn-voltar-header { display: none; }
-            .logo-center { left: 50%; transform: translateX(-50%); }
-        }
+        /* [COPIAR A ÁREA 1 E 2 DO CSS DO CÓDIGO ANTERIOR AQUI] */
     </style>
 </head>
 <body>
-
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
 
-    <!-- ÁREA 3: HTML ESTRUTURAL (HEADER) -->
     <header>
         <div class="header-left">
             <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
@@ -106,245 +22,42 @@
         </div>
         <div class="logo-center">
             <img id="head-logo" src="">
-            <div class="logo-text">
-                <h1>PEQUENOS LEITORES</h1>
-                <p>Português | 1º Ano</p>
-            </div>
+            <div class="logo-text"><h1>PEQUENOS LEITORES</h1><p>Português | 1º Ano</p></div>
         </div>
         <div class="header-right">
-            <a href="../index.html" class="btn-voltar-header">
-                <img id="header-back-icon" src="" alt=""> VOLTAR
-            </a>
+            <a href="../index.html" class="btn-voltar-header"><img id="header-back-icon" src=""> VOLTAR</a>
         </div>
     </header>
 
     <div class="game-container">
         <div class="game-card">
-            
-            <!-- Barra de Status Dinâmica -->
-            <div class="status-bar" id="status-bar" style="display:none; align-items:center; justify-content:space-between; margin-bottom:10px;">
-                <div id="timer" style="font-weight:900; color:#667;">⏳ 00:00</div>
-                <div id="dots" style="display:flex; gap:8px;"></div>
-                <div style="font-weight:900; color:var(--primary-blue); display:flex; align-items:center; gap:8px;">
-                    <span id="score-val">0</span>
-                    <img id="rd-game-btn" src="" style="height:25px; cursor:pointer;" onclick="openRDMenu(event)">
-                </div>
+            <!-- Barra de Status Comum -->
+            <div class="status-bar" id="status-bar" style="display:none;">
+                <div id="timer">⏳ 00:00</div>
+                <div id="dots"></div>
+                <div id="score"><span id="score-val">0</span> <img id="rd-game-btn" src=""></div>
             </div>
 
-            <h2 id="main-title" style="text-align:center; color:var(--primary-blue); font-size:26px; font-weight:900; margin-bottom:10px;">SOPA DE LETRAS</h2>
-
-            <!-- ÁREA 4: ECRÃS DO JOGO -->
-            
-            <!-- Ecrã 1: Intro com Animação da Mão -->
-            <div class="screen active" id="scr-intro" style="display:flex; flex-direction:column; flex:1;">
-                <div style="display:flex; justify-content:center; align-items:center; gap:20px; flex:1; margin: 0 auto;">
-                    <div class="hint-banner">
-                        <img id="intro-img" src="">
-                        <span id="intro-name-label" style="font-weight:900; color:#333;">...</span>
-                    </div>
-                    <div class="grid-wrapper" style="background:transparent;">
-                        <div id="intro-letter-cells" style="display:grid; gap:2px; background:#cbd9e6; padding:4px; border-radius:8px; position:relative;">
-                            <!-- Ícone da mão animado -->
-                            <i class="fas fa-hand-pointer hand-tutorial"></i>
-                        </div>
-                    </div>
-                </div>
-                <div id="intro-slots" style="display:flex; justify-content:center; gap:10px; margin-bottom:80px;"></div>
-                <div style="position:absolute; bottom:10px; left:20px; right:20px; display:flex; align-items:center; gap:15px;">
-                    <button class="btn-jogar-stretch" onclick="startGame()">JOGAR</button>
-                    <img id="rd-intro-btn" src="" style="height:55px; cursor:pointer;" onclick="openRDMenu(event)">
-                </div>
-            </div>
-
-            <!-- Ecrã 2: Jogo Ativo -->
-            <div class="screen" id="scr-game" style="display:none; flex-direction:column; flex:1;">
-                <div style="display:flex; justify-content:center; align-items:center; gap:20px; flex:1; margin: 0 auto;">
-                    <div class="hint-banner" id="game-banner">
-                        <img id="game-img" src="">
-                        <span id="game-name" style="font-weight:900; color:#333;">...</span>
-                    </div>
-                    <div class="grid-wrapper" id="grid-container">
-                        <div class="grid" id="game-grid"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Ecrã 3: Resultados -->
-            <div class="screen" id="scr-result" style="display:none; justify-content:center; align-items:center; flex-direction:column; text-align:center;">
-                <img id="res-taca" style="width:140px; margin-bottom:10px;" src="">
-                <h2 id="res-tit" style="font-size:30px; color: var(--primary-blue); font-weight:900;"></h2>
-                <div style="display:flex; gap:15px; margin: 20px 0;">
-                    <div style="background:white; padding:10px 25px; border-radius:20px; box-shadow:0 5px 15px rgba(0,0,0,0.05);">
-                        <span id="res-pts" style="font-size:24px; font-weight:900; color:var(--primary-blue);">0</span><br><small>PONTOS</small>
-                    </div>
-                    <div style="background:white; padding:10px 25px; border-radius:20px; box-shadow:0 5px 15px rgba(0,0,0,0.05);">
-                        <span id="res-tim" style="font-size:24px; font-weight:900; color:var(--primary-blue);">00:00</span><br><small>TEMPO</small>
-                    </div>
-                </div>
-                <button class="btn-jogar-stretch" style="max-width:300px;" onclick="location.reload()">REPETIR</button>
+            <!-- ÁREA ONDE O JOGO VAI SER INJETADO PELO JOGO.JS -->
+            <div id="game-screens-wrapper">
+                <!-- Os ecrãs scr-intro, scr-game e scr-result vivem aqui -->
             </div>
         </div>
     </div>
 
-    <!-- RD Menu -->
-    <div id="rdMenu" class="rd-panel">
-        <h3 style="color:var(--primary-blue); text-align:center; margin-bottom:15px;">Escolher Tema</h3>
-        <div id="rd-list" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:15px;"></div>
-    </div>
+    <div id="rdMenu" class="rd-panel"></div>
 
-    <footer id="mainFooter" style="height:45px; display:flex; align-items:center; justify-content:center; color:#89a; font-size:12px; font-weight:700;">© Pequenos Leitores</footer>
-
-    <script src="dados.js"></script>
+    <!-- ORDEM DAS SCRIPTS É IMPORTANTE -->
+    <script src="dados.js"></script> <!-- 1. Os dados -->
+    <script src="jogo.js"></script>  <!-- 2. A lógica do jogo -->
+    
     <script>
-        /* =========================================================
-           ÁREA 5: LÓGICA CORE (NAV, MENUS, TEMAS)
-           ========================================================= */
-        let category = 'animais';
-        let roundGlobal = 0;
-        let score = 0;
-        let timer = 0;
-        let timerInt;
-        let itemsGame = [];
-
-        function init() {
-            const pI = JOGO_CONFIG.caminhoIcons;
-            const pImg = JOGO_CONFIG.caminhoImg;
-            
-            document.getElementById('head-logo').src = pI + JOGO_CONFIG.iconesMenu.ano1;
-            document.getElementById('header-back-icon').src = pI + "voltar.png";
-            document.getElementById('rd-game-btn').src = pImg + "rd.png";
-            document.getElementById('rd-intro-btn').src = pImg + "rd.png";
-
-            // Preencher Hamburguer
-            const menuBox = document.getElementById('dropdownMenu');
-            ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
-                const a = document.createElement('a'); a.className = 'menu-item'; a.href = JOGO_CONFIG.links[k];
-                a.innerHTML = `<img src="${pI}${JOGO_CONFIG.iconesMenu[k]}"><span>${k==='home'?'Início':k==='pre'?'Pré':k.replace('ano','')+'º Ano'}</span>`;
-                menuBox.appendChild(a);
-            });
-
-            // Preencher RD
-            const rdList = document.getElementById('rd-list');
-            Object.keys(JOGO_CONFIG.categorias).forEach(k => {
-                const c = JOGO_CONFIG.categorias[k];
-                const card = document.createElement('div');
-                card.style = "background:white; padding:15px; border-radius:20px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); cursor:pointer;";
-                card.innerHTML = `<img src="${pImg}${c.imgCapa}" style="width:55px;"><br><span style="font-weight:800; font-size:13px;">${c.nome}</span>`;
-                card.onclick = () => selectCat(k); rdList.appendChild(card);
-            });
-
-            updateIntroTutorial(category);
-        }
-
-        function toggleHamburger(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); m.style.display = (m.style.display==='flex')?'none':'flex'; }
-        function openRDMenu(e) { e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display='block'; }
-        function closeMenus() { document.getElementById('dropdownMenu').style.display='none'; document.getElementById('rdMenu').classList.remove('active'); document.getElementById('overlay').style.display='none'; }
-
-        function selectCat(k) { category = k; roundGlobal = 0; score = 0; timer = 0; if(timerInt) clearInterval(timerInt); closeMenus(); updateIntroTutorial(k); }
-
-        /* =========================================================
-           ÁREA 6: LÓGICA DO MOTOR DO JOGO (SOPA DE LETRAS)
-           ========================================================= */
-        let word = "";
-        let isDragging = false;
-        let selectedCells = [];
-
-        function updateIntroTutorial(catKey) {
-            const item = JOGO_CONFIG.categorias[catKey].itens[0];
-            const cleanWord = item.nome.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            document.getElementById('intro-img').src = JOGO_CONFIG.caminhoImg + item.img;
-            document.getElementById('intro-name-label').innerText = item.nome;
-
-            const gridCont = document.getElementById('intro-letter-cells');
-            gridCont.style.gridTemplateColumns = `repeat(${cleanWord.length}, 40px)`;
-            document.documentElement.style.setProperty('--drag-dist', `${(cleanWord.length-1)*42 + 10}px`);
-
-            // Slots ilustrativos
-            const slots = document.getElementById('intro-slots'); slots.innerHTML = '';
-            for(let i=0; i<cleanWord.length; i++){
-                slots.innerHTML += `<div style="width:45px; height:45px; background:white; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); border:2px solid #cbd9e6;">${cleanWord[i]}</div>`;
-            }
-        }
-
-        function startGame() {
-            document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
-            document.getElementById('scr-game').style.display = 'flex';
-            document.getElementById('status-bar').style.display = 'flex';
-            document.getElementById('main-title').style.display = 'none';
-            const all = [...JOGO_CONFIG.categorias[category].itens];
-            itemsGame = all.sort(() => 0.5 - Math.random()).slice(0, 10);
-            timerInt = setInterval(() => { timer++; let m = Math.floor(timer/60).toString().padStart(2,'0'); let s = (timer%60).toString().padStart(2,'0'); document.getElementById('timer').innerText = `⏳ ${m}:${s}`; }, 1000);
-            loadRound();
-        }
-
-        function loadRound() {
-            const it = itemsGame[roundGlobal];
-            word = it.nome.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
-            updateDots(5, roundGlobal % 5);
-            document.getElementById('game-banner').className = 'hint-banner';
-            document.getElementById('game-name').innerText = it.nome;
-            document.getElementById('game-img').src = JOGO_CONFIG.caminhoImg + it.img;
-            genGrid();
-        }
-
-        function genGrid() {
-            const el = document.getElementById('game-grid'); el.innerHTML = ''; 
-            let cells = Array(64).fill('');
-            const isH = Math.random() > 0.5;
-            const start = isH ? Math.floor(Math.random()*8)*8 + Math.floor(Math.random()*(8-word.length)) : Math.floor(Math.random()*(8-word.length))*8 + Math.floor(Math.random()*8);
-            for(let i=0; i<word.length; i++) cells[isH ? start+i : start+(i*8)] = word[i];
-            const abc = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
-            cells.forEach(c => {
-                const d = document.createElement('div'); d.className = 'cell'; d.innerText = c || abc[Math.floor(Math.random()*abc.length)];
-                d.onmousedown = (e) => { e.preventDefault(); startSelection(d); }; d.onmouseenter = () => continueSelection(d);
-                d.ontouchstart = (e) => { e.preventDefault(); startSelection(d); }; el.appendChild(d);
-            });
-            window.onmouseup = window.ontouchend = endSelection;
-            document.getElementById('grid-container').ontouchmove = (e) => {
-                let t = e.touches[0]; let target = document.elementFromPoint(t.clientX, t.clientY);
-                if (target && target.classList.contains('cell')) continueSelection(target);
-            };
-        }
-
-        function startSelection(el) { isDragging = true; selectedCells = [el]; el.classList.add('selecting'); }
-        function continueSelection(el) { if (isDragging && !selectedCells.includes(el)) { selectedCells.push(el); el.classList.add('selecting'); } }
-
-        function endSelection() {
-            if (!isDragging) return; isDragging = false;
-            const res = selectedCells.map(c => c.innerText).join('');
-            if (res === word) {
-                document.getElementById('game-banner').classList.add('feedback-correct');
-                score += 150; document.getElementById('score-val').innerText = score;
-                setTimeout(() => { roundGlobal++; if(roundGlobal >= 10) finish(); else loadRound(); }, 800);
-            } else {
-                document.getElementById('game-banner').classList.add('feedback-wrong');
-                setTimeout(() => document.getElementById('game-banner').classList.remove('feedback-wrong'), 800);
-            }
-            selectedCells.forEach(el => el.classList.remove('selecting'));
-            selectedCells = [];
-        }
-
-        function finish() {
-            clearInterval(timerInt);
-            document.getElementById('scr-game').style.display = 'none';
-            document.getElementById('scr-result').style.display = 'flex';
-            document.getElementById('status-bar').style.display = 'none';
-            document.getElementById('res-pts').innerText = score;
-            document.getElementById('res-tim').innerText = document.getElementById('timer').innerText.replace('⏳ ','');
-            document.getElementById('res-tit').innerText = "MUITO BEM!";
-            document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + "trofeu.png";
-        }
-
-        function updateDots(total, current) {
-            const c = document.getElementById('dots'); c.innerHTML = '';
-            for(let i=0; i<total; i++) {
-                const d = document.createElement('div');
-                d.style = `width:12px; height:12px; border-radius:50%; background:${i <= current ? 'var(--primary-blue)' : '#d0e0f0'}; transition:0.3s; ${i===current?'transform:scale(1.3);':''}`;
-                c.appendChild(d);
-            }
-        }
-
-        window.onload = init;
+        // Lógica de interface comum (Menus, etc) fica aqui
+        // O jogo.js deve ter uma função init() que é chamada aqui
+        window.onload = () => {
+            initInterface(); // Função no template para menus
+            initJogo();      // Função dentro do jogo.js
+        };
     </script>
 </body>
 </html>
