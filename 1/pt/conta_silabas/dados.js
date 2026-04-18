@@ -1,6 +1,8 @@
 const JOGO_CONFIG = {
+    // NAVEGAÇÃO
     linkVoltar: "../", 
     textoVoltar: "VOLTAR",
+
     caminhoImg: "../../../img/",
     caminhoIcons: "../../../icons/",
     caminhoSom: "", 
@@ -10,8 +12,8 @@ const JOGO_CONFIG = {
         vitoria: "https://cdn.pixabay.com/audio/2024/02/07/audio_293963428f.mp3"
     },
     textos: {
-        tituloLinha1: "Pequenos",
-        tituloLinha2: "Leitores",
+        tituloLinha1: "PEQUENOS",
+        tituloLinha2: "LEITORES",
         subtitulo: "Português | 1º Ano",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos"
     },
@@ -50,9 +52,9 @@ const JOGO_CONFIG = {
         }
     },
     relatorios: [
-        { min: 1000, titulo: "BRILHANTE!", msg: "És um mestre da separação silábica!", img: "taca_1.png" },
-        { min: 700, titulo: "MUITO BEM!", msg: "Excelente trabalho!", img: "taca_2.png" },
-        { min: 400, titulo: "BOM TRABALHO!", msg: "Continua a praticar!", img: "taca_3.png" },
-        { min: 0, titulo: "NÃO FOI DESTA!", msg: "Tenta outra vez!", img: "taca_4.png" }
+        { min: 1000, titulo: "BRILHANTE!", img: "taca_1.png" },
+        { min: 700, titulo: "MUITO BEM!", img: "taca_2.png" },
+        { min: 400, titulo: "BOM TRABALHO!", img: "taca_3.png" },
+        { min: 0, titulo: "TENTA OUTRA VEZ!", img: "taca_4.png" }
     ]
 };
