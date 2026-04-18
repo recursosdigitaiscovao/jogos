@@ -48,7 +48,7 @@
             display: flex; flex-direction: column; position: relative; padding: 20px;
         }
 
-        /* STATUS BAR (Timer, Rondas, Pontos) */
+        /* STATUS BAR */
         .status-bar { 
             display: none; align-items: center; justify-content: space-between; 
             padding-bottom: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 10px; flex-shrink: 0;
@@ -56,29 +56,36 @@
         .dots-container { display: flex; gap: 6px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; background: #d0e0f0; transition: 0.3s; }
         .dot.active { background: var(--primary-blue); transform: scale(1.3); }
-        .dot.done { background: var(--primary-blue); } /* Rondas concluídas sempre em azul */
+        .dot.done { background: var(--primary-blue); } 
 
         /* ECRÃS */
         .screen { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 0; }
         .screen.active { display: flex; }
 
-        /* BANNER COM FEEDBACK VISUAL */
+        /* BANNER COM ALINHAMENTO CORRIGIDO */
         .hint-banner {
             background: white; padding: 12px; border-radius: 5px; border: 2px dashed #d0e0f0; 
-            position: relative; display: flex; flex-direction: column; align-items: center; width: 130px;
+            position: relative; 
+            display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; /* Centra horizontal e verticalmente */
+            text-align: center;
+            width: 135px; height: 140px; /* Tamanho fixo ajuda no centramento */
             transition: background-color 0.3s ease, border-color 0.3s ease;
+            flex-shrink: 0;
         }
-        /* Classes de Feedback */
         .hint-banner.feedback-correct { background-color: var(--highlight-green) !important; border-color: #8dbd7b; }
         .hint-banner.feedback-wrong { background-color: var(--error-red) !important; border-color: #d68a8a; }
 
         .hint-banner::before, .hint-banner::after { content: ''; position: absolute; top: 50%; height: 20px; background: #f0f7ff; transform: translateY(-50%); width: 10px;}
         .hint-banner::before { left: -7px; border-radius: 0 50px 50px 0; border-right: 2px dashed #d0e0f0; }
         .hint-banner::after { right: -7px; border-radius: 50px 0 0 50px; border-left: 2px dashed #d0e0f0; }
-        .hint-banner img { width: 70px; height: 70px; object-fit: contain; }
-        .hint-banner span { font-weight: 900; font-size: 18px; color: #333; }
+        
+        .hint-banner img { width: 85px; height: 85px; object-fit: contain; display: block; margin: 0 auto 5px; }
+        .hint-banner span { font-weight: 900; font-size: 18px; color: #333; display: block; width: 100%; }
 
-        /* GRELHA E SELEÇÃO */
+        /* CONTENT GRID */
+        .game-main-content { display: flex; justify-content: center; align-items: center; gap: clamp(20px, 5vw, 40px); width: 100%; flex: 1; min-height: 0; }
+
         .grid-wrapper { background: #b2b2b2; padding: 2px; touch-action: none; user-select: none; }
         .grid { display: grid; gap: 2px; }
         .cell { 
@@ -110,8 +117,10 @@
         @media (max-width: 600px) {
             .btn-voltar, .badge-ano { display: none; }
             .logo-center { position: relative; left: 0; transform: none; margin-left: 5px; }
-            .game-main-content { flex-direction: column; gap: 10px; }
+            .game-main-content { flex-direction: column; gap: 15px; }
             #scr-intro .slots-area { margin-bottom: 70px; }
+            .hint-banner { width: 120px; height: 125px; }
+            .hint-banner img { width: 70px; height: 70px; }
         }
     </style>
 </head>
@@ -119,7 +128,6 @@
 
     <div class="overlay" id="overlay" onclick="closeMenus()" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.2); display:none; z-index:1500;"></div>
 
-    <!-- Menus -->
     <div id="sideMenu" style="position:fixed; left:-280px; width:280px; height:100%; background:white; z-index:2000; transition:0.3s; padding:20px;">
         <h2 style="color:var(--primary-blue); margin-bottom:15px;">Jogos</h2>
         <div id="side-list"></div>
@@ -227,7 +235,6 @@
         let timerInt;
         let word = "";
         
-        // Lógica de Arrasto
         let isDragging = false;
         let selectedCells = [];
 
@@ -273,7 +280,6 @@
             word = it.nome.toUpperCase();
             updateDots();
             
-            // Limpa feedback visual do banner ao iniciar nova ronda
             const banner = document.getElementById('game-banner');
             banner.classList.remove('feedback-correct', 'feedback-wrong');
 
@@ -341,7 +347,6 @@
             const banner = document.getElementById('game-banner');
             
             if (res === word) {
-                // ACERTO: Feedback Verde no Banner
                 banner.classList.add('feedback-correct');
                 selectedCells.forEach((el, i) => {
                     el.classList.remove('selecting');
@@ -358,13 +363,11 @@
                     else loadRound(); 
                 }, 800);
             } else {
-                // ERRO: Feedback Vermelho no Banner
                 if(selectedCells.length > 0) {
                     banner.classList.add('feedback-wrong');
                     playSound('erro');
                     score = Math.max(0, score - 20);
                     document.getElementById('score-val').innerText = score;
-                    // Remove a cor de erro após um curto período
                     setTimeout(() => banner.classList.remove('feedback-wrong'), 800);
                 }
                 selectedCells.forEach(el => el.classList.remove('selecting'));
