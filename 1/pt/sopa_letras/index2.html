@@ -42,97 +42,89 @@
             box-shadow: 0 4px 0 var(--primary-dark);
         }
 
-        /* CARD PRINCIPAL */
+        /* CONTENTOR DO JOGO */
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden; }
         
         .game-card { 
             background: #f0f7ff; width: 100%; max-width: 900px; height: 100%; 
-            max-height: calc(100dvh - 130px); /* Garante espaço para header e footer */
+            max-height: calc(100dvh - 130px);
             border-radius: 40px; box-shadow: 0 10px 30px rgba(176, 196, 217, 0.4);
-            display: flex; flex-direction: column; position: relative; padding: 20px;
+            display: flex; flex-direction: column; position: relative; padding: 15px 20px;
         }
 
-        .badge-ano {
-            position: absolute; top: 20px; right: 20px; background: #e1edf8; padding: 5px 12px; 
-            border-radius: 10px; display: flex; align-items: center; gap: 6px; font-weight: 900; color: var(--primary-blue); font-size: 13px;
+        /* STATUS BAR (Sempre visível no PC e Mobile quando no jogo) */
+        .status-bar { 
+            display: none; /* Ativado via JS no startGame */
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 5px 10px 15px; 
+            border-bottom: 2px solid rgba(0,0,0,0.03);
+            margin-bottom: 10px;
+            flex-shrink: 0;
         }
-
-        .game-title { text-align: center; color: var(--primary-blue); font-size: 28px; font-weight: 900; margin-bottom: 10px; }
-
-        /* STATUS BAR */
-        .status-bar { display: none; align-items: center; justify-content: space-between; padding: 0 10px 10px; }
-        .dots-container { display: flex; gap: 6px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: #d0e0f0; }
+        .dots-container { display: flex; gap: 8px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; background: #d0e0f0; transition: 0.3s; }
         .dot.active { background: var(--primary-blue); transform: scale(1.3); }
         .dot.done { background: var(--highlight-green); }
 
         /* ECRÃS */
-        .screen { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding-bottom: 70px; /* Espaço para os botões fixos */ }
+        .screen { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 0; }
         .screen.active { display: flex; }
 
-        /* BANNER E GRELHA */
-        .game-main-content { display: flex; justify-content: center; align-items: center; gap: clamp(15px, 3vw, 30px); width: 100%; flex: 1; min-height: 0; }
+        /* JOGO OCUPA O RESTO DO CONTENTOR */
+        .game-main-content { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: clamp(20px, 4vw, 50px); 
+            width: 100%; 
+            flex: 1; /* Isto faz com que ocupe o espaço restante */
+            min-height: 0; 
+        }
 
         .hint-banner {
             background: white; padding: 12px; border-radius: 5px; border: 2px dashed #d0e0f0; 
-            position: relative; display: flex; flex-direction: column; align-items: center; width: 130px;
+            position: relative; display: flex; flex-direction: column; align-items: center; width: clamp(120px, 20vw, 150px);
         }
-        .hint-banner::before, .hint-banner::after { content: ''; position: absolute; top: 50%; width: 10px; height: 20px; background: #f0f7ff; transform: translateY(-50%); }
-        .hint-banner::before { left: -7px; border-radius: 0 50px 50px 0; border-right: 2px dashed #d0e0f0; }
-        .hint-banner::after { right: -7px; border-radius: 50px 0 0 50px; border-left: 2px dashed #d0e0f0; }
-        .hint-banner img { width: 70px; height: 70px; object-fit: contain; }
-        .hint-banner span { font-weight: 900; font-size: 18px; color: #333; }
+        .hint-banner img { width: 80%; height: auto; object-fit: contain; }
+        .hint-banner span { font-weight: 900; font-size: 20px; color: #333; margin-top: 5px; }
 
         .grid-wrapper { background: #b2b2b2; padding: 2px; }
         .grid { display: grid; gap: 2px; }
-        .cell { width: clamp(35px, 6vh, 44px); height: clamp(35px, 6vh, 44px); background: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 19px; color: #333; cursor: pointer; }
+        .cell { 
+            width: clamp(38px, 7vh, 48px); 
+            height: clamp(38px, 7vh, 48px); 
+            background: white; display: flex; align-items: center; justify-content: center; 
+            font-weight: 900; font-size: 22px; color: #333; cursor: pointer;
+        }
         .cell.highlight { background: var(--highlight-green); }
 
-        /* SLOTS */
-        .slots-area { display: flex; gap: 10px; margin: 10px 0; position: relative; }
-        .slot { width: 50px; height: 50px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        /* SLOTS AREA */
+        .slots-area { display: flex; gap: 12px; margin: 15px 0; position: relative; height: clamp(50px, 8vh, 65px); flex-shrink: 0; }
+        .slot { width: clamp(50px, 8vh, 65px); height: clamp(50px, 8vh, 65px); background: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 900; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
         .slot.active { border: 3px solid #b8d9a7; }
 
-        /* BOTÕES FIXOS AO FUNDO DO CONTAINER (10px do fundo) */
+        /* BOTÕES NO FUNDO (ECRÃ 1) */
         .action-container { 
-            position: absolute; 
-            bottom: 10px; 
-            left: 20px; 
-            right: 20px; 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
+            position: absolute; bottom: 10px; left: 20px; right: 20px; 
+            display: flex; align-items: center; gap: 15px; 
         }
-        .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: clamp(12px, 2vh, 18px); font-size: clamp(18px, 4vw, 22px); font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); }
+        .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 16px; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); }
         .rd-icon-btn { height: 55px; cursor: pointer; }
 
-        /* TUTORIAL */
-        .hand-pointer { position: absolute; color: #f1c40f; font-size: 32px; bottom: -8px; left: 50%; transform: translateX(-50%); animation: hMove 2s infinite ease-in-out; pointer-events: none; }
-        @keyframes hMove { 0%, 100% { transform: translate(-30px, 0); } 50% { transform: translate(30px, 0); } }
-
-        /* MENUS */
-        #sideMenu { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: white; z-index: 2000; transition: 0.3s; padding: 20px; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
-        #sideMenu.active { left: 0; }
-        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 20px; border-radius: 30px 30px 0 0; box-shadow: 0 -10px 20px rgba(0,0,0,0.1); transition: 0.4s; }
-        .rd-panel.active { bottom: 0; }
-        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px; text-decoration: none; color: #445; font-weight: 800; border-radius: 12px; cursor: pointer; }
-        .menu-item img { width: 28px; height: 28px; }
-
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
-
-        /* FOOTER GARANTIDO */
-        footer { 
-            height: 40px; display: flex; align-items: center; justify-content: center; 
-            color: #89a; font-size: 11px; font-weight: 700; background: transparent; flex-shrink: 0;
+        .badge-ano {
+            position: absolute; top: 15px; right: 20px; background: #e1edf8; padding: 5px 12px; 
+            border-radius: 10px; display: flex; align-items: center; gap: 6px; font-weight: 900; color: var(--primary-blue); font-size: 13px;
         }
 
+        /* FOOTER */
+        footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #89a; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+
         @media (max-width: 600px) {
-            .btn-voltar { display: none; }
+            .btn-voltar, .badge-ano { display: none; }
             .logo-center { position: relative; left: 0; transform: none; margin-left: 5px; }
-            .badge-ano { display: none; }
-            .game-main-content { flex-direction: column; gap: 10px; }
-            .game-card { padding: 15px 15px 70px; }
-            .action-container { left: 15px; right: 15px; }
+            .game-main-content { flex-direction: column; gap: 15px; }
+            .game-card { padding-bottom: 75px; } /* Espaço para botões no mobile */
         }
     </style>
 </head>
@@ -140,12 +132,12 @@
 
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
 
-    <div id="sideMenu">
+    <div id="sideMenu" style="position:fixed; left:-280px; width:280px; height:100%; background:white; z-index:2000; transition:0.3s; padding:20px;">
         <h2 style="color:var(--primary-blue); margin-bottom:15px;">Jogos</h2>
         <div id="side-list"></div>
     </div>
     
-    <div id="rdMenu" class="rd-panel">
+    <div id="rdMenu" class="rd-panel" style="position:fixed; bottom:-100%; left:0; width:100%; background:white; z-index:2100; padding:20px; border-radius:30px 30px 0 0; transition:0.4s;">
         <div style="width:40px; height:4px; background:#e0e6ed; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div>
         <div id="rd-list"></div>
     </div>
@@ -168,19 +160,19 @@
         <div class="game-card">
             
             <div class="status-bar" id="status-bar">
-                <div id="timer" style="font-weight:900; color:#667;">⏳ 00:00</div>
+                <div id="timer" style="font-weight:900; color:#667; min-width:80px;">⏳ 00:00</div>
                 <div class="dots-container" id="dots"></div>
-                <div style="font-weight:900; color:var(--primary-blue); display:flex; align-items:center; gap:5px;">
+                <div style="font-weight:900; color:var(--primary-blue); display:flex; align-items:center; gap:8px; min-width:80px; justify-content: flex-end;">
                     <span id="score-val">0</span>
-                    <img id="rd-game-btn" src="" style="height:22px; cursor:pointer;" onclick="openMenu('rdMenu')">
+                    <img id="rd-game-btn" src="" style="height:25px; cursor:pointer;" onclick="openMenu('rdMenu')">
                 </div>
             </div>
 
-            <div class="badge-ano">
+            <div class="badge-ano" id="badge-top">
                 <img id="badge-icon" src="" style="height:22px"> 1º Ano
             </div>
 
-            <h2 class="game-title">SOPA DE LETRAS</h2>
+            <h2 class="game-title" id="main-title">SOPA DE LETRAS</h2>
 
             <!-- ECRÃ 1 -->
             <div class="screen active" id="scr-intro">
@@ -200,10 +192,8 @@
                 </div>
                 <div class="slots-area">
                     <div class="slot active">G</div><div class="slot active">A</div><div class="slot">T</div>
-                    <i class="fas fa-hand-pointer hand-pointer"></i>
+                    <i class="fas fa-hand-pointer" style="position:absolute; color:#f1c40f; font-size:32px; bottom:-10px; left:50%; transform:translateX(-50%); animation: hMove 2s infinite ease-in-out;"></i>
                 </div>
-                
-                <!-- BOTÕES FIXOS A 10PX DO FUNDO DO CARD -->
                 <div class="action-container">
                     <button class="btn-jogar-stretch" onclick="startGame()">JOGAR</button>
                     <img id="rd-intro-btn" class="rd-icon-btn" onclick="openMenu('rdMenu')">
@@ -227,10 +217,9 @@
             <!-- ECRÃ 3 -->
             <div class="screen" id="scr-result">
                 <div style="text-align:center;">
-                    <h2 id="res-tit" style="font-size:36px; color:var(--primary-blue);">BOM TRABALHO!</h2>
-                    <div style="margin: 20px 0; font-size:45px; font-weight:900; color:var(--primary-blue);" id="res-pts">0</div>
-                    <p id="res-tim" style="font-weight:800; color:#89a;"></p>
-                    <!-- Botão Repetir também no container de ação -->
+                    <h2 id="res-tit" style="font-size:38px; color:var(--primary-blue);">BOM TRABALHO!</h2>
+                    <div style="margin: 20px 0; font-size:50px; font-weight:900; color:var(--primary-blue);" id="res-pts">0</div>
+                    <p id="res-tim" style="font-weight:800; color:#89a; font-size:18px;"></p>
                     <div class="action-container">
                         <button class="btn-jogar-stretch" onclick="location.reload()">REPETIR</button>
                     </div>
@@ -264,22 +253,23 @@
             document.getElementById('intro-img').src = pImg + JOGO_CONFIG.categorias.animais.itens[1].img;
 
             const side = document.getElementById('side-list');
-            const links = ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'];
-            const labels = ['Início', 'Pré', '1º Ano', '2º Ano', '3º Ano', '4º Ano'];
-            links.forEach((k, i) => {
-                side.innerHTML += `<a href="${JOGO_CONFIG.links[k]}" class="menu-item"><img src="${pI}${JOGO_CONFIG.iconesMenu[k]}"><span>${labels[i]}</span></a>`;
+            ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
+                side.innerHTML += `<a href="${JOGO_CONFIG.links[k]}" style="display:flex; align-items:center; gap:12px; padding:12px; text-decoration:none; color:#445; font-weight:800;"><img src="${pI}${JOGO_CONFIG.iconesMenu[k]}" style="width:28px;"><span>${k.toUpperCase()}</span></a>`;
             });
 
             const rd = document.getElementById('rd-list');
             Object.keys(JOGO_CONFIG.categorias).forEach(k => {
                 const c = JOGO_CONFIG.categorias[k];
-                rd.innerHTML += `<div class="menu-item" onclick="selectCat('${k}')"><img src="${pImg}${c.imgCapa}"><span>${c.nome}</span></div>`;
+                rd.innerHTML += `<div style="display:flex; align-items:center; gap:12px; padding:12px; cursor:pointer;" onclick="selectCat('${k}')"><img src="${pImg}${c.imgCapa}" style="width:28px;"><span>${c.nome}</span></div>`;
             });
         }
 
         function startGame() {
             show('scr-game');
             document.getElementById('status-bar').style.display = 'flex';
+            document.getElementById('badge-top').style.display = 'none';
+            document.getElementById('main-title').style.display = 'none';
+            
             timerInt = setInterval(() => {
                 timer++;
                 let m = Math.floor(timer/60).toString().padStart(2,'0');
@@ -293,15 +283,12 @@
             const it = JOGO_CONFIG.categorias[category].itens[round];
             word = it.nome.toUpperCase();
             progress = "";
-            
             updateDots();
             document.getElementById('game-img').src = JOGO_CONFIG.caminhoImg + it.img;
             document.getElementById('game-name').innerText = it.nome;
-
             const slots = document.getElementById('game-slots');
             slots.innerHTML = '';
             for(let i=0; i<word.length; i++) slots.innerHTML += `<div class="slot" id="sl-${i}"></div>`;
-            
             genGrid();
         }
 
@@ -315,15 +302,11 @@
             const start = isH 
                 ? Math.floor(Math.random()*size)*size + Math.floor(Math.random()*(size-word.length))
                 : Math.floor(Math.random()*(size-word.length))*size + Math.floor(Math.random()*size);
-
             for(let i=0; i<word.length; i++) cells[isH ? start+i : start+(i*size)] = word[i];
             const abc = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
             cells.forEach(c => {
-                const d = document.createElement('div');
-                d.className = 'cell';
-                d.innerText = c || abc[Math.floor(Math.random()*abc.length)];
-                d.onclick = () => selectCell(d);
-                el.appendChild(d);
+                const d = document.createElement('div'); d.className = 'cell'; d.innerText = c || abc[Math.floor(Math.random()*abc.length)];
+                d.onclick = () => selectCell(d); el.appendChild(d);
             });
         }
 
@@ -336,25 +319,14 @@
                 progress += target;
                 playSound('acerto');
                 if(progress === word) {
-                    score += 150;
-                    document.getElementById('score-val').innerText = score;
-                    setTimeout(() => {
-                        round++;
-                        if(round >= 5) finish();
-                        else loadRound();
-                    }, 800);
+                    score += 150; document.getElementById('score-val').innerText = score;
+                    setTimeout(() => { round++; if(round >= 5) finish(); else loadRound(); }, 800);
                 }
-            } else {
-                playSound('erro');
-                score = Math.max(0, score - 20);
-                document.getElementById('score-val').innerText = score;
-            }
+            } else { playSound('erro'); score = Math.max(0, score - 20); document.getElementById('score-val').innerText = score; }
         }
 
         function finish() {
-            clearInterval(timerInt);
-            playSound('vitoria');
-            show('scr-result');
+            clearInterval(timerInt); playSound('vitoria'); show('scr-result');
             document.getElementById('status-bar').style.display = 'none';
             const rep = JOGO_CONFIG.relatorios.find(r => score >= r.min);
             document.getElementById('res-tit').innerText = rep.titulo;
@@ -363,27 +335,22 @@
         }
 
         function updateDots() {
-            const c = document.getElementById('dots');
-            c.innerHTML = '';
+            const c = document.getElementById('dots'); c.innerHTML = '';
             for(let i=0; i<5; i++) {
-                const d = document.createElement('div');
-                d.className = 'dot' + (i < round ? ' done' : (i === round ? ' active' : ''));
+                const d = document.createElement('div'); d.className = 'dot' + (i < round ? ' done' : (i === round ? ' active' : ''));
                 c.appendChild(d);
             }
         }
 
-        function selectCat(k) {
-            category = k; round = 0; score = 0; timer = 0;
-            closeMenus();
-            if(document.getElementById('scr-game').classList.contains('active')) loadRound();
-        }
-
+        function selectCat(k) { category = k; round = 0; score = 0; timer = 0; closeMenus(); if(document.getElementById('scr-game').classList.contains('active')) loadRound(); }
         function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-        function openMenu(id) { document.getElementById(id).classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
-        function closeMenus() { document.getElementById('sideMenu').classList.remove('active'); document.getElementById('rdMenu').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; }
+        function openMenu(id) { document.getElementById(id).style.left = id === 'sideMenu' ? '0' : ''; if(id === 'rdMenu') document.getElementById(id).style.bottom = '0'; document.getElementById('overlay').style.display = 'block'; }
+        function closeMenus() { document.getElementById('sideMenu').style.left = '-280px'; document.getElementById('rdMenu').style.bottom = '-100%'; document.getElementById('overlay').style.display = 'none'; }
         function playSound(t) { new Audio(JOGO_CONFIG.sons[t]).play().catch(()=>{}); }
-
         window.onload = init;
     </script>
+    <style>
+        @keyframes hMove { 0%, 100% { transform: translate(-30px, 0); } 50% { transform: translate(30px, 0); } }
+    </style>
 </body>
 </html>
