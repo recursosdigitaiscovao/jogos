@@ -12,6 +12,7 @@
             --primary-blue: #5ba4e5;
             --primary-dark: #3d7db8;
             --highlight-green: #c6e8ba;
+            --error-red: #ffb3b3;
             --white: #ffffff;
         }
 
@@ -47,7 +48,7 @@
             display: flex; flex-direction: column; position: relative; padding: 20px;
         }
 
-        /* STATUS BAR */
+        /* STATUS BAR (Timer, Rondas, Pontos) */
         .status-bar { 
             display: none; align-items: center; justify-content: space-between; 
             padding-bottom: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 10px; flex-shrink: 0;
@@ -61,19 +62,23 @@
         .screen { flex: 1; display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 0; }
         .screen.active { display: flex; }
 
-        /* CONTENT GRID E BANNER */
-        .game-main-content { display: flex; justify-content: center; align-items: center; gap: clamp(15px, 3vw, 30px); width: 100%; flex: 1; min-height: 0; }
-
+        /* BANNER COM FEEDBACK VISUAL */
         .hint-banner {
             background: white; padding: 12px; border-radius: 5px; border: 2px dashed #d0e0f0; 
             position: relative; display: flex; flex-direction: column; align-items: center; width: 130px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        .hint-banner::before, .hint-banner::after { content: ''; position: absolute; top: 50%; width: 100px; height: 20px; background: #f0f7ff; transform: translateY(-50%); width: 10px;}
+        /* Classes de Feedback */
+        .hint-banner.feedback-correct { background-color: var(--highlight-green) !important; border-color: #8dbd7b; }
+        .hint-banner.feedback-wrong { background-color: var(--error-red) !important; border-color: #d68a8a; }
+
+        .hint-banner::before, .hint-banner::after { content: ''; position: absolute; top: 50%; height: 20px; background: #f0f7ff; transform: translateY(-50%); width: 10px;}
         .hint-banner::before { left: -7px; border-radius: 0 50px 50px 0; border-right: 2px dashed #d0e0f0; }
         .hint-banner::after { right: -7px; border-radius: 50px 0 0 50px; border-left: 2px dashed #d0e0f0; }
         .hint-banner img { width: 70px; height: 70px; object-fit: contain; }
         .hint-banner span { font-weight: 900; font-size: 18px; color: #333; }
 
+        /* GRELHA E SELEÇÃO */
         .grid-wrapper { background: #b2b2b2; padding: 2px; touch-action: none; user-select: none; }
         .grid { display: grid; gap: 2px; }
         .cell { 
@@ -88,7 +93,7 @@
         .slots-area { display: flex; gap: 10px; margin: 10px 0; position: relative; }
         .slot { width: 50px; height: 50px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
 
-        /* BOTÕES FIXOS A 10PX DO FUNDO */
+        /* BOTÕES 1º ECRÃ */
         .action-container { 
             position: absolute; bottom: 10px; left: 20px; right: 20px; 
             display: flex; align-items: center; gap: 15px; z-index: 10;
@@ -96,12 +101,10 @@
         .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 16px; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); }
         .rd-icon-btn { height: 55px; cursor: pointer; }
 
-        /* MARGEM NO ECRÃ 1 PARA NÃO TAPAR SLOTS */
         #scr-intro .slots-area { margin-bottom: 80px; }
 
         .badge-ano { position: absolute; top: 20px; right: 20px; background: #e1edf8; padding: 5px 12px; border-radius: 10px; display: flex; align-items: center; gap: 6px; font-weight: 900; color: var(--primary-blue); font-size: 13px; }
 
-        /* FOOTER */
         footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #89a; font-size: 11px; font-weight: 700; flex-shrink: 0; }
 
         @media (max-width: 600px) {
@@ -187,7 +190,7 @@
             <!-- ECRÃ 2 -->
             <div class="screen" id="scr-game">
                 <div class="game-main-content">
-                    <div class="hint-banner">
+                    <div class="hint-banner" id="game-banner">
                         <img id="game-img" src="">
                         <span id="game-name">...</span>
                     </div>
@@ -269,6 +272,11 @@
             const it = JOGO_CONFIG.categorias[category].itens[round];
             word = it.nome.toUpperCase();
             updateDots();
+            
+            // Limpa feedback visual do banner ao iniciar nova ronda
+            const banner = document.getElementById('game-banner');
+            banner.classList.remove('feedback-correct', 'feedback-wrong');
+
             document.getElementById('game-img').src = JOGO_CONFIG.caminhoImg + it.img;
             document.getElementById('game-name').innerText = it.nome;
             const slots = document.getElementById('game-slots');
@@ -295,7 +303,6 @@
                 d.className = 'cell'; 
                 d.innerText = c || abc[Math.floor(Math.random()*abc.length)];
                 
-                // Eventos de Seleção
                 d.onmousedown = () => startSelection(d);
                 d.onmouseenter = () => continueSelection(d);
                 d.ontouchstart = (e) => { e.preventDefault(); startSelection(d); };
@@ -331,8 +338,11 @@
             if (!isDragging) return;
             isDragging = false;
             const res = selectedCells.map(c => c.innerText).join('');
+            const banner = document.getElementById('game-banner');
             
             if (res === word) {
+                // ACERTO: Feedback Verde no Banner
+                banner.classList.add('feedback-correct');
                 selectedCells.forEach((el, i) => {
                     el.classList.remove('selecting');
                     el.classList.add('highlight');
@@ -348,10 +358,14 @@
                     else loadRound(); 
                 }, 800);
             } else {
+                // ERRO: Feedback Vermelho no Banner
                 if(selectedCells.length > 0) {
+                    banner.classList.add('feedback-wrong');
                     playSound('erro');
                     score = Math.max(0, score - 20);
                     document.getElementById('score-val').innerText = score;
+                    // Remove a cor de erro após um curto período
+                    setTimeout(() => banner.classList.remove('feedback-wrong'), 800);
                 }
                 selectedCells.forEach(el => el.classList.remove('selecting'));
             }
