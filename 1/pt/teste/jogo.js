@@ -1,6 +1,6 @@
 /**
- * MOTOR DO JOGO: SOPA DE LETRAS 
- * Layout Adaptável | Tutorial Dinâmico | 10 Rondas Totais
+ * MOTOR DO JOGO: SOPA DE LETRAS PROFISSIONAL
+ * 2 Níveis | 10 Rondas | Layout 8x7 (PC) e 7x8 (Mobile)
  */
 
 let currentCat = 'animais';
@@ -17,7 +17,7 @@ let isSelecting = false;
 let selectStart = null; 
 let currentSelection = [];
 
-// 1. INICIALIZAÇÃO
+// 1. INICIALIZAÇÃO E SETUP
 function initGame() {
     const allItems = [...JOGO_CONFIG.categorias[currentCat].itens].sort(() => 0.5 - Math.random());
     gameItems = allItems;
@@ -27,6 +27,10 @@ function initGame() {
     timer = 0;
     document.getElementById('score-val').innerText = "0";
     
+    // Limpar ecrã de intro
+    const staticIcon = document.getElementById('intro-icon');
+    if(staticIcon) staticIcon.style.display = 'none';
+
     renderDots(); 
     startTimer();
     loadRound();
@@ -42,7 +46,7 @@ function startTimer() {
     }, 1000);
 }
 
-// 2. CARREGAR RONDA (Padding 15px)
+// 2. CARREGAR RONDA (Layout Adaptável)
 function loadRound() {
     const container = document.getElementById('game-main-content');
     container.innerHTML = ''; 
@@ -56,8 +60,11 @@ function loadRound() {
     if (currentLevel === 1) {
         wordsToFind.push(gameItems[roundGlobal % gameItems.length].nome);
     } else {
+        // Nível 2: 3 palavras
         const startIdx = (roundGlobal * 3) % gameItems.length;
-        for(let i=0; i<3; i++) wordsToFind.push(gameItems[(startIdx + i) % gameItems.length].nome);
+        for(let i=0; i<3; i++) {
+            wordsToFind.push(gameItems[(startIdx + i) % gameItems.length].nome);
+        }
     }
 
     const gameWrapper = document.createElement('div');
@@ -74,9 +81,9 @@ function loadRound() {
         const item = gameItems.find(it => it.nome === w);
         const card = document.createElement('div');
         card.id = `card-${w}`;
-        card.style.cssText = "background:white; padding:6px; border-radius:15px; display:flex; flex-direction:column; align-items:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); width: clamp(75px, 16vw, 110px); border: 3px solid transparent;";
-        card.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:100%; height:clamp(45px, 10vh, 70px); object-fit:contain;">
-                          <b style="font-size: clamp(10px, 1.8vh, 14px); color:var(--text-grey); margin-top:3px;">${currentLevel === 1 ? w : '???'}</b>`;
+        card.style.cssText = "background:white; padding:6px; border-radius:15px; display:flex; flex-direction:column; align-items:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); width: clamp(75px, 16vw, 105px); border: 3px solid transparent;";
+        card.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:100%; height:clamp(40px, 8vh, 65px); object-fit:contain;">
+                          <b style="font-size: clamp(10px, 1.6vh, 13px); color:var(--text-grey); margin-top:3px;">${currentLevel === 1 ? w : '???'}</b>`;
         panel.appendChild(card);
     });
 
@@ -98,7 +105,7 @@ function loadRound() {
         row.forEach((char, c) => {
             const cell = document.createElement('div');
             cell.className = 'sopa-cell';
-            cell.style.cssText = `width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8fbff; border-radius:6px; font-weight:900; font-size:clamp(14px, 2.8vh, 24px); color:var(--text-grey); cursor:pointer;`;
+            cell.style.cssText = `width:${cellSize}; height:${cellSize}; display:flex; align-items:center; justify-content:center; background:#f8fbff; border-radius:6px; font-weight:900; font-size:clamp(14px, 2.8vh, 22px); color:var(--text-grey); cursor:pointer;`;
             cell.innerText = char;
             cell.dataset.r = r; cell.dataset.c = c;
             cell.onmousedown = () => handleStart(r, c);
@@ -170,7 +177,7 @@ function handleEnd(targets) {
                     if (currentLevel === 1) {
                         currentLevel = 2; roundGlobal = 0; renderDots(); loadRound();
                     } else {
-                        finishGame(); // VAI PARA ECRÃ 3
+                        finishGame(); // FIM DAS 10 RONDAS
                     }
                 }
             }, 800);
@@ -215,7 +222,7 @@ function generateGrid(rows, cols, words) {
     return grid.map(row => row.map(l => l === '' ? abc[Math.floor(Math.random()*26)] : l));
 }
 
-// 4. STATUS BAR E RESULTADOS
+// 4. BARRAS DE STATUS E FINALIZAÇÃO
 function renderDots() {
     const dots = document.getElementById('dots-container');
     dots.innerHTML = '';
@@ -248,23 +255,27 @@ function finishGame() {
 
 function playSound(s) { if(JOGO_CONFIG.sons[s]) new Audio(JOGO_CONFIG.sons[s]).play().catch(()=>{}); }
 
-// 5. ANIMAÇÃO DINÂMICA
+// 5. ANIMAÇÃO DINÂMICA (Apresentação por Categoria)
 function updateIntroAnimation() {
     const container = document.getElementById('intro-animation-container');
     if(!container) return;
+
+    // Limpar ícone do index
+    const staticIcon = document.getElementById('intro-icon');
+    if(staticIcon) staticIcon.style.display = 'none';
 
     const cat = JOGO_CONFIG.categorias[currentCat] || JOGO_CONFIG.categorias.animais;
     const item = cat.itens[0];
     const word = item.nome;
     
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:15px; margin-top:20px;">
-            <div style="background:white; padding:15px; border-radius:20px; box-shadow:0 4px 15px rgba(0,0,0,0.1); text-align:center;">
-                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:80px; height:80px; object-fit:contain;">
-                <div style="font-weight:900; color:var(--primary-blue); font-size:16px; margin-top:5px;">${word}</div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:15px; margin-top:10px;">
+            <div style="background:white; padding:12px; border-radius:20px; box-shadow:0 4px 15px rgba(0,0,0,0.1); text-align:center; width:100px;">
+                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:70px; height:70px; object-fit:contain;">
+                <div style="font-weight:900; color:var(--primary-blue); font-size:14px; margin-top:5px;">${word}</div>
             </div>
             <div id="tut-grid-box" style="display:grid; grid-template-columns: repeat(${word.length}, 38px); gap:5px; background:white; padding:10px; border-radius:15px; position:relative; box-shadow:0 4px 20px rgba(0,0,0,0.1);">
-                ${word.split('').map(l => `<div class="tut-cell" style="width:38px; height:38px; background:#f0f7ff; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:18px; color:var(--text-grey); transition:0.3s;">${l}</div>`).join('')}
+                ${word.split('').map(l => `<div class="tut-cell" style="width:38px; height:38px; background:#f0f7ff; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:20px; color:var(--text-grey); transition:0.3s;">${l}</div>`).join('')}
                 <div id="hand-tut" style="position:absolute; top:28px; left:18px; font-size:38px; color:var(--primary-blue); z-index:10; transition: 2s ease-in-out; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));">
                     <i class="fas fa-hand-pointer"></i>
                 </div>
@@ -293,13 +304,24 @@ function updateIntroAnimation() {
     setInterval(runTutorial, 4500);
 }
 
+// 6. FUNÇÃO PARA MUDAR DE CATEGORIA (Botão RD)
 window.selectCategory = function(cat) { 
     currentCat = cat; 
+    if(timerInt) clearInterval(timerInt);
+
+    // Reset Visual: Volta ao Ecrã 1
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('scr-intro').classList.add('active');
+    document.getElementById('status-bar').style.display = 'none';
+    document.getElementById('main-game-title').style.display = 'block';
+    document.body.classList.replace('no-footer', 'with-footer');
+
     initUI(); 
     updateIntroAnimation(); 
+    if(window.closeMenus) window.closeMenus();
 };
 
 window.addEventListener('DOMContentLoaded', () => { 
     initUI();
-    setTimeout(updateIntroAnimation, 50); 
+    setTimeout(updateIntroAnimation, 100); 
 });
