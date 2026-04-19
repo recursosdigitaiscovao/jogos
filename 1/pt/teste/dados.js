@@ -8,8 +8,8 @@ const JOGO_CONFIG = {
     // CONFIGURAÇÃO DE PONTUAÇÃO
     pontuacao: {
         acertoNivel1: 100,  // Pontos por palavra no Nível 1
-        acertoNivel2: 200,  // Pontos por palavra no Nível 2
-        erro: 10            // Pontos a retirar em caso de erro
+        acertoNivel2: 100,  // Pontos por palavra no Nível 2
+        erro: 50            // Pontos a retirar em caso de erro
     },
 
     textos: {
