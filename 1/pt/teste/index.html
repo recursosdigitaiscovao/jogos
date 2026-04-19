@@ -21,19 +21,21 @@
             box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4); position: relative;
         }
         .logo-center { display: flex; align-items: center; gap: 10px; position: absolute; left: 50%; transform: translateX(-50%); pointer-events: none; white-space: nowrap; }
-        .logo-center img { height: 45px; }
-        .logo-text h1 { font-size: 16px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
+        .logo-center img { height: 48px; }
+        .logo-text h1 { font-size: 17px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 9px; color: #88a; font-weight: 700; }
 
-        /* MENU HAMBURGUER MINI */
-        .menu-dropdown { position: absolute; top: 55px; left: 15px; display: none; flex-direction: column; gap: 4px; z-index: 2000; }
+        /* MENU HAMBURGUER EQUILIBRADO */
+        .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
+        .menu-dropdown { position: absolute; top: 60px; left: 15px; display: none; flex-direction: column; gap: 6px; z-index: 2000; }
         .menu-item { 
-            display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: white; border-radius: 10px; 
-            box-shadow: 2px 2px 6px rgba(0,0,0,0.1); cursor: pointer; min-width: 150px; text-decoration: none; 
-            color: var(--text-grey); font-weight: 700; font-size: 0.75rem; transition: background 0.2s;
+            display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: white; border-radius: 12px; 
+            box-shadow: 2px 4px 10px rgba(0,0,0,0.1); cursor: pointer; min-width: 180px; text-decoration: none; 
+            color: var(--text-grey); font-weight: 700; font-size: 0.85rem; transition: background 0.2s;
         }
+        /* Hover Azul: Texto e Imagem mantêm a cor */
         .menu-item:hover { background: var(--primary-blue); }
-        .menu-item img { height: 16px; width: 16px; object-fit: contain; }
+        .menu-item img { height: 20px; width: 20px; object-fit: contain; }
 
         .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
         .menu-item-voltar img { filter: brightness(0) invert(1); }
@@ -49,15 +51,15 @@
             font-size: 13px; box-shadow: 0 4px 0 var(--primary-dark);
         }
 
+        /* CARD PRINCIPAL */
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; transition: padding 0.3s; }
         .game-card { 
             background: #f0f7ff; width: 100%; max-width: 1000px; height: 100%; 
             border-radius: 40px; box-shadow: 0 15px 35px rgba(176,196,217,0.5); 
             display: flex; flex-direction: column; padding: 15px; position: relative;
-            transition: max-height 0.3s;
         }
 
-        /* GESTÃO DO FOOTER E TAMANHO DO CARD */
+        /* GESTÃO FOOTER */
         body.with-footer .game-card { max-height: calc(100dvh - 130px); }
         body.with-footer footer { display: flex; }
         body.no-footer footer { display: none; }
@@ -101,7 +103,7 @@
 
     <header>
         <div class="header-left">
-            <i class="fas fa-bars" style="font-size:24px; color:var(--primary-blue); cursor:pointer;" onclick="toggleHamburger(event)"></i>
+            <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
             <div id="dropdownMenu" class="menu-dropdown"></div>
         </div>
         <div class="logo-center">
@@ -122,9 +124,7 @@
             
             <div class="status-bar" id="status-bar">
                 <div id="timer" style="font-weight:900; color:var(--text-grey); font-size:14px;">⏳ 00:00</div>
-                <div class="dots-container" id="dots-container">
-                    <!-- Gerado via JS para ser dinâmico -->
-                </div>
+                <div class="dots-container" id="dots-container"></div>
                 <div style="font-weight:900; color:var(--primary-blue); display:flex; align-items:center; gap:8px;">
                     <span id="score-val">0</span>
                     <img id="rd-game-btn" src="" style="height:24px; cursor:pointer;" onclick="openRDMenu(event)">
@@ -138,7 +138,7 @@
                 <div style="background:white; padding:30px; border-radius:25px; border:3px dashed var(--primary-blue); margin: 15px 0;">
                     <i id="intro-icon" class="" style="font-size:55px; color:var(--primary-blue); animation: introAnim 3s infinite ease-in-out;"></i>
                 </div>
-                <p id="intro-instr" style="font-weight:800; color:var(--text-grey); text-align:center; max-width:300px; margin-bottom: 20px; font-size: 0.95rem;"></p>
+                <p id="intro-instr" style="font-weight:800; color:var(--text-grey); text-align:center; max-width:300px; margin-bottom: 20px; font-size: 1rem;"></p>
                 <div class="action-container">
                     <button class="btn-jogar-stretch" onclick="goToGame()">JOGAR</button>
                     <img id="rd-intro-btn" src="" style="height:55px; cursor:pointer;" onclick="openRDMenu(event)">
@@ -199,16 +199,13 @@
             document.getElementById('btn-outro-jogo').onclick = () => window.location.href = conf.linkVoltar;
             document.getElementById('link-voltar-header').href = conf.linkVoltar;
 
-            // Gerar Bolinhas da Barra de Status (5 rondas por defeito)
             const dots = document.getElementById('dots-container');
             dots.innerHTML = '';
             for(let i=0; i<5; i++) {
-                const d = document.createElement('div');
-                d.className = 'dot' + (i===0?' active':'');
+                const d = document.createElement('div'); d.className = 'dot' + (i===0?' active':'');
                 dots.appendChild(d);
             }
 
-            // Menu Hambúrguer Mini
             const menuBox = document.getElementById('dropdownMenu');
             menuBox.innerHTML = '';
             ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
@@ -221,7 +218,6 @@
             btnV.innerHTML = `<img src="${conf.caminhoIcons}voltar.png"><span>${conf.textoVoltar}</span>`;
             menuBox.appendChild(btnV);
 
-            // Categorias RD
             const rdList = document.getElementById('rd-list');
             rdList.innerHTML = '';
             Object.keys(conf.categorias).forEach(k => {
