@@ -1,11 +1,11 @@
 /**
  * MOTOR DO JOGO: CONTAR SÍLABAS 
- * Lógica: 10 Itens Únicos (5 para Nível 1 + 5 para Nível 2)
+ * Animação no tutorial + 5 rondas Nível 1 + 5 rondas Nível 2 (Imagens diferentes)
  */
 
 let category = 'animais';
-let roundGlobal = 0; // 0 a 4 dentro de cada nível
-let currentLevel = 1; // 1 ou 2
+let roundGlobal = 0; 
+let currentLevel = 1; 
 let score = 0;
 let timer = 0;
 let timerInt;
@@ -16,7 +16,7 @@ function init() {
     const pI = JOGO_CONFIG.caminhoIcons;
     const pImg = JOGO_CONFIG.caminhoImg;
 
-    // Configuração Header Dinâmico
+    // Cabeçalho e Títulos
     document.getElementById('head-logo').src = pI + JOGO_CONFIG.iconesMenu.ano1;
     document.getElementById('header-back-icon').src = pI + "voltar.png";
     document.getElementById('tit-l1').innerText = JOGO_CONFIG.textos.tituloLinha1;
@@ -24,21 +24,21 @@ function init() {
     document.getElementById('sub-tit').innerText = JOGO_CONFIG.textos.subtitulo;
     document.getElementById('mainFooter').innerHTML = JOGO_CONFIG.textos.rodape;
 
+    // Botão Voltar
     const btnVoltarH = document.getElementById('link-voltar');
     btnVoltarH.href = JOGO_CONFIG.linkVoltar;
     btnVoltarH.innerHTML = `<img src="${pI}voltar.png"> ${JOGO_CONFIG.textoVoltar}`;
 
+    // Botões auxiliares
     document.getElementById('rd-game-btn').src = pImg + "rd.png";
     document.getElementById('rd-intro-btn').src = pImg + "rd.png";
     document.getElementById('btn-back-link').onclick = () => window.location.href = JOGO_CONFIG.linkVoltar;
 
-    // Menu Hambúrguer Dinâmico
+    // Menu Hambúrguer
     const menuBox = document.getElementById('dropdownMenu');
     menuBox.innerHTML = '';
     ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
-        const a = document.createElement('a'); 
-        a.className = 'menu-item'; 
-        a.href = JOGO_CONFIG.links[k];
+        const a = document.createElement('a'); a.className = 'menu-item'; a.href = JOGO_CONFIG.links[k];
         a.innerHTML = `<img src="${pI}${JOGO_CONFIG.iconesMenu[k]}"><span>${k==='home'?'Início':k.replace('ano',' ')+'º Ano'}</span>`;
         menuBox.appendChild(a);
     });
@@ -47,7 +47,7 @@ function init() {
     btnV.innerHTML = `<img src="${pI}voltar.png"><span>${JOGO_CONFIG.textoVoltar}</span>`;
     menuBox.appendChild(btnV);
 
-    // RD Menu Temas
+    // RD Menu
     const rdList = document.getElementById('rd-list');
     rdList.innerHTML = '';
     Object.keys(JOGO_CONFIG.categorias).forEach(k => {
@@ -63,47 +63,54 @@ function init() {
 
 function updateIntroTutorial() {
     const cat = JOGO_CONFIG.categorias[category];
-    const item = cat.itens[0];
+    const item = cat.itens[0]; // Item de exemplo
+    
     document.getElementById('intro-img').src = JOGO_CONFIG.caminhoImg + item.img;
     document.getElementById('intro-name-label').innerText = item.nome;
     
     const slotsArea = document.getElementById('intro-slots');
-    slotsArea.innerHTML = '';
-    slotsArea.style.position = "relative";
-    slotsArea.style.display = "flex";
-    slotsArea.style.justifyContent = "center";
-    slotsArea.style.gap = "10px";
+    slotsArea.innerHTML = ''; // Limpa
     
+    // Criar botões 1, 2, 3, 4 no ecrã inicial
     for(let i=1; i<=4; i++) {
         const b = document.createElement('div');
         b.className = 'cell';
-        b.style.width = "55px"; b.style.height = "55px";
+        b.style.width = "60px"; b.style.height = "60px";
         b.innerText = i;
-        if(i === item.silabas) b.id = "target-btn-tutorial";
+        if(i === item.silabas) b.id = "hand-target"; // Marca o correto para a mão
         slotsArea.appendChild(b);
     }
 
+    // Criar a mão
     const hand = document.createElement('i');
     hand.className = "fas fa-hand-pointer hand-tutorial";
     hand.style.position = "absolute";
-    hand.style.top = "60px";
-    hand.id = "tutorial-hand";
+    hand.style.top = "65px"; // Ajustado para ficar por cima dos números
+    hand.id = "moving-hand";
     slotsArea.appendChild(hand);
 
+    // Animação da mão
     setTimeout(() => {
-        const target = document.getElementById('target-btn-tutorial');
-        const handEl = document.getElementById('tutorial-hand');
+        const target = document.getElementById('hand-target');
+        const handEl = document.getElementById('moving-hand');
         if(target && handEl) {
-            const rect = target.offsetLeft;
-            handEl.style.transition = "all 0.8s ease-in-out";
-            handEl.style.left = (rect + 15) + "px";
+            const pos = target.offsetLeft + (target.offsetWidth / 2) - 10;
+            handEl.style.transition = "left 1s ease-in-out";
+            handEl.style.left = pos + "px";
             
+            // Efeito de "clique" (pulsação)
             setInterval(() => {
-                handEl.style.transform = "translateY(0)";
-                setTimeout(() => handEl.style.transform = "translateY(-10px)", 500);
-            }, 1000);
+                handEl.style.transform = "scale(1.2)";
+                target.style.transform = "scale(1.1)";
+                target.style.backgroundColor = "#e9f0f8";
+                setTimeout(() => {
+                    handEl.style.transform = "scale(1)";
+                    target.style.transform = "scale(1)";
+                    target.style.backgroundColor = "white";
+                }, 500);
+            }, 1500);
         }
-    }, 200);
+    }, 300);
 }
 
 function startGame() {
@@ -111,17 +118,15 @@ function startGame() {
     document.getElementById('status-bar').style.display = 'flex';
     document.getElementById('main-title').style.display = 'none';
     
-    // LOGICA DE SORTEIO: 10 ITENS DIFERENTES
+    // SORTEIO: 10 ITENS ÚNICOS (5+5)
     const all = [...JOGO_CONFIG.categorias[category].itens].sort(() => 0.5 - Math.random());
-    
-    // Pegamos 10 itens. Se a categoria tiver menos de 10, ele repete alguns para completar.
     itemsGame = all.slice(0, 10);
-    if (itemsGame.length < 10) {
-        while(itemsGame.length < 10) {
-            itemsGame.push(all[Math.floor(Math.random() * all.length)]);
-        }
-    }
     
+    // Se a categoria tiver menos de 10, preenchemos para não dar erro
+    if(itemsGame.length < 10) {
+        while(itemsGame.length < 10) itemsGame.push(all[Math.floor(Math.random()*all.length)]);
+    }
+
     roundGlobal = 0; currentLevel = 1; score = 0; timer = 0;
     timerInt = setInterval(() => {
         timer++;
@@ -134,9 +139,9 @@ function startGame() {
 }
 
 function loadTask() {
-    // Se Nível 1: usa índices 0-4 | Se Nível 2: usa índices 5-9
-    let index = (currentLevel === 1) ? roundGlobal : (roundGlobal + 5);
-    currentItem = itemsGame[index];
+    // Se Level 1 usa 0-4 | Se Level 2 usa 5-9
+    const idx = (currentLevel === 1) ? roundGlobal : (roundGlobal + 5);
+    currentItem = itemsGame[idx];
 
     updateDots(5, roundGlobal);
     
@@ -144,10 +149,8 @@ function loadTask() {
     banner.classList.remove('feedback-correct', 'feedback-wrong');
     
     document.getElementById('game-img').src = JOGO_CONFIG.caminhoImg + currentItem.img;
-    
     const nameLabel = document.getElementById('game-name');
     nameLabel.innerText = currentItem.nome;
-    // Nível 1: Mostra Nome | Nível 2: Esconde Nome
     nameLabel.style.visibility = (currentLevel === 1) ? 'visible' : 'hidden';
 
     renderButtons();
@@ -156,9 +159,14 @@ function loadTask() {
 function renderButtons() {
     const grid = document.getElementById('game-grid');
     grid.innerHTML = '';
+    grid.style.display = "flex";
+    grid.style.justifyContent = "center";
+    grid.style.gap = "15px";
+
     for (let i = 1; i <= 4; i++) {
         const btn = document.createElement('div');
         btn.className = 'cell';
+        btn.style.width = "70px"; btn.style.height = "70px"; btn.style.fontSize = "32px";
         btn.innerText = i;
         btn.onclick = () => checkAnswer(i);
         grid.appendChild(btn);
@@ -178,7 +186,7 @@ function checkAnswer(num) {
             if (roundGlobal >= 5) {
                 if (currentLevel === 1) {
                     currentLevel = 2;
-                    roundGlobal = 0;
+                    roundGlobal = 0; // Reinicia contador para o segundo grupo de 5
                     loadTask();
                 } else {
                     finish();
