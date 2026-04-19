@@ -1,6 +1,6 @@
 /**
  * MOTOR DO JOGO: SOPA DE LETRAS 
- * Layout Assimétrico 8x7 / 7x8 | Tutorial Dinâmico | 10 Rondas Totais
+ * Layout Adaptável | Tutorial Dinâmico | 10 Rondas Totais
  */
 
 let currentCat = 'animais';
@@ -17,7 +17,7 @@ let isSelecting = false;
 let selectStart = null; 
 let currentSelection = [];
 
-// 1. INICIALIZAÇÃO DO JOGO
+// 1. INICIALIZAÇÃO
 function initGame() {
     const allItems = [...JOGO_CONFIG.categorias[currentCat].itens].sort(() => 0.5 - Math.random());
     gameItems = allItems;
@@ -27,10 +27,6 @@ function initGame() {
     timer = 0;
     document.getElementById('score-val').innerText = "0";
     
-    // Limpa o ícone estático do ecrã de intro para não haver conflito com a animação
-    const staticIcon = document.getElementById('intro-icon');
-    if(staticIcon) staticIcon.style.display = 'none';
-
     renderDots(); 
     startTimer();
     loadRound();
@@ -46,7 +42,7 @@ function startTimer() {
     }, 1000);
 }
 
-// 2. CARREGAR RONDA (Layout Adaptável com Padding 15px)
+// 2. CARREGAR RONDA (Padding 15px)
 function loadRound() {
     const container = document.getElementById('game-main-content');
     container.innerHTML = ''; 
@@ -86,7 +82,6 @@ function loadRound() {
 
     const grid = document.createElement('div');
     grid.id = 'sopa-grid';
-    // Cálculo do tamanho das células para ocupar o gameCard sem transbordar
     const cellW = `calc((100vw - ${isMobile ? '50px' : '250px'}) / ${cols})`;
     const cellH = `calc((100vh - 260px) / ${rows})`;
     const cellSize = `min(50px, ${cellW}, ${cellH})`;
@@ -113,7 +108,6 @@ function loadRound() {
         });
     });
 
-    // Eventos globais de soltar para suportar arrastar para fora da grelha
     window.onmouseup = () => handleEnd(wordsToFind);
     grid.ontouchend = () => handleEnd(wordsToFind);
     grid.ontouchmove = (e) => {
@@ -127,7 +121,7 @@ function loadRound() {
     container.appendChild(gameWrapper);
 }
 
-// 3. LÓGICA DE SELEÇÃO (Com suporte a retrocesso)
+// 3. LÓGICA DE SELEÇÃO
 function handleStart(r, c) { isSelecting = true; selectStart = {r, c}; clearSelectionStyles(); }
 function handleMove(r, c) {
     if(!isSelecting) return;
@@ -135,8 +129,6 @@ function handleMove(r, c) {
     const end = {r, c};
     clearSelectionStyles();
     currentSelection = [];
-    
-    // Apenas permite seleção perfeitamente horizontal ou vertical
     if(selectStart.r === end.r) {
         const min = Math.min(selectStart.c, end.c); const max = Math.max(selectStart.c, end.c);
         for(let i=min; i<=max; i++){
@@ -164,9 +156,7 @@ function handleEnd(targets) {
         currentSelection.forEach(el => { el.classList.add('found'); el.style.background = "var(--highlight-green)"; el.style.color="white"; });
         document.getElementById(`card-${match}`).style.borderColor = "var(--highlight-green)";
         
-        // CÁLCULO DE PONTUAÇÃO DINÂMICO
         score += (currentLevel === 1 ? JOGO_CONFIG.pontuacao.acertoNivel1 : JOGO_CONFIG.pontuacao.acertoNivel2);
-        
         document.getElementById('score-val').innerText = score;
         playSound('acerto');
 
@@ -180,7 +170,7 @@ function handleEnd(targets) {
                     if (currentLevel === 1) {
                         currentLevel = 2; roundGlobal = 0; renderDots(); loadRound();
                     } else {
-                        finishGame(); // TRANSIÇÃO PARA RELATÓRIO APÓS 10 RONDAS TOTAIS
+                        finishGame(); // VAI PARA ECRÃ 3
                     }
                 }
             }, 800);
@@ -225,7 +215,7 @@ function generateGrid(rows, cols, words) {
     return grid.map(row => row.map(l => l === '' ? abc[Math.floor(Math.random()*26)] : l));
 }
 
-// 4. BARRAS DE STATUS E FINALIZAÇÃO
+// 4. STATUS BAR E RESULTADOS
 function renderDots() {
     const dots = document.getElementById('dots-container');
     dots.innerHTML = '';
@@ -245,8 +235,6 @@ function updateDots() {
 function finishGame() {
     clearInterval(timerInt);
     playSound('vitoria');
-    
-    // Ativa o Ecrã 3 (Relatório)
     if(window.goToResult) window.goToResult(); 
     
     const finalTime = document.getElementById('timer').innerText.replace('⏳ ', '');
@@ -260,29 +248,26 @@ function finishGame() {
 
 function playSound(s) { if(JOGO_CONFIG.sons[s]) new Audio(JOGO_CONFIG.sons[s]).play().catch(()=>{}); }
 
-// 5. ANIMAÇÃO DINÂMICA (IMAGEM + GRELHA + SELEÇÃO POR CATEGORIA)
+// 5. ANIMAÇÃO DINÂMICA
 function updateIntroAnimation() {
-    const introBox = document.getElementById('intro-animation');
-    if(!introBox) return;
-
-    // Remove o ícone estático que vem do HTML
-    const staticIcon = document.getElementById('intro-icon');
-    if(staticIcon) staticIcon.style.display = 'none';
+    const container = document.getElementById('intro-animation-container');
+    if(!container) return;
 
     const cat = JOGO_CONFIG.categorias[currentCat] || JOGO_CONFIG.categorias.animais;
     const item = cat.itens[0];
     const word = item.nome;
     
-    introBox.style.cssText = "display:flex; flex-direction:column; align-items:center; gap:15px; border:none; background:transparent;";
-    introBox.innerHTML = `
-        <div style="background:white; padding:15px; border-radius:20px; box-shadow:0 4px 15px rgba(0,0,0,0.1); text-align:center;">
-            <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:80px; height:80px; object-fit:contain;">
-            <div style="font-weight:900; color:var(--primary-blue); font-size:16px; margin-top:5px;">${word}</div>
-        </div>
-        <div id="tut-grid-box" style="display:grid; grid-template-columns: repeat(${word.length}, 38px); gap:5px; background:white; padding:10px; border-radius:15px; position:relative; box-shadow:0 4px 20px rgba(0,0,0,0.1);">
-            ${word.split('').map(l => `<div class="tut-cell" style="width:38px; height:38px; background:#f0f7ff; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:18px; color:var(--text-grey); transition:0.3s;">${l}</div>`).join('')}
-            <div id="hand-tut" style="position:absolute; top:28px; left:18px; font-size:38px; color:var(--primary-blue); z-index:10; transition: 2s ease-in-out; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));">
-                <i class="fas fa-hand-pointer"></i>
+    container.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; gap:15px; margin-top:20px;">
+            <div style="background:white; padding:15px; border-radius:20px; box-shadow:0 4px 15px rgba(0,0,0,0.1); text-align:center;">
+                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:80px; height:80px; object-fit:contain;">
+                <div style="font-weight:900; color:var(--primary-blue); font-size:16px; margin-top:5px;">${word}</div>
+            </div>
+            <div id="tut-grid-box" style="display:grid; grid-template-columns: repeat(${word.length}, 38px); gap:5px; background:white; padding:10px; border-radius:15px; position:relative; box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+                ${word.split('').map(l => `<div class="tut-cell" style="width:38px; height:38px; background:#f0f7ff; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:18px; color:var(--text-grey); transition:0.3s;">${l}</div>`).join('')}
+                <div id="hand-tut" style="position:absolute; top:28px; left:18px; font-size:38px; color:var(--primary-blue); z-index:10; transition: 2s ease-in-out; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));">
+                    <i class="fas fa-hand-pointer"></i>
+                </div>
             </div>
         </div>
     `;
@@ -308,7 +293,6 @@ function updateIntroAnimation() {
     setInterval(runTutorial, 4500);
 }
 
-// Eventos Globais
 window.selectCategory = function(cat) { 
     currentCat = cat; 
     initUI(); 
@@ -317,5 +301,5 @@ window.selectCategory = function(cat) {
 
 window.addEventListener('DOMContentLoaded', () => { 
     initUI();
-    setTimeout(updateIntroAnimation, 100); 
+    setTimeout(updateIntroAnimation, 50); 
 });
