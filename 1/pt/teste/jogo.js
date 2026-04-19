@@ -1,12 +1,12 @@
 /**
  * MOTOR DO JOGO: SOPA DE LETRAS DINÂMICO
- * 2 Níveis | 10 Rondas Totais | Layout Adaptável (8x7 vs 7x8)
+ * 2 Níveis | 10 Rondas Totais | Layout 8x7 (PC) vs 7x8 (Mobile)
  */
 
 let currentCat = 'animais';
 let gameItems = [];
-let roundGlobal = 0; // 0 a 4
-let currentLevel = 1; // 1 ou 2
+let roundGlobal = 0; 
+let currentLevel = 1; 
 let score = 0;
 let timer = 0;
 let timerInt;
@@ -25,7 +25,6 @@ function initGame() {
     currentLevel = 1;
     score = 0;
     timer = 0;
-    
     document.getElementById('score-val').innerText = "0";
     renderDots(); 
     startTimer();
@@ -42,7 +41,7 @@ function startTimer() {
     }, 1000);
 }
 
-// 2. CARREGAR RONDA (Layout 8x7 Desktop / 7x8 Mobile)
+// 2. CARREGAR RONDA (Layout 8x7 PC / 7x8 Telemóvel)
 function loadRound() {
     const container = document.getElementById('game-main-content');
     container.innerHTML = ''; 
@@ -60,51 +59,38 @@ function loadRound() {
         for(let i=0; i<3; i++) wordsToFind.push(gameItems[(startIdx + i) % gameItems.length].nome);
     }
 
-    // CONTENTOR PRINCIPAL
     const gameWrapper = document.createElement('div');
     gameWrapper.style.cssText = `
-        display: flex; 
-        flex-direction: ${isMobile ? 'column' : 'row'}; 
-        align-items: center; 
-        justify-content: center;
-        width: 100%; height: 100%;
-        gap: 20px;
-        box-sizing: border-box;
-        padding: ${isMobile ? '10px 50px 50px 50px' : '10px'};
+        display: flex; flex-direction: ${isMobile ? 'column' : 'row'}; 
+        align-items: center; justify-content: center; width: 100%; height: 100%; gap: 15px;
+        box-sizing: border-box; padding: ${isMobile ? '0 5px 5px 5px' : '10px'};
     `;
 
-    // PAINEL DE IMAGENS
     const panel = document.createElement('div');
-    panel.style.cssText = `
-        display: flex; 
-        flex-direction: ${isMobile ? 'row' : 'column'}; 
-        flex-wrap: wrap; gap: 10px; justify-content: center;
-    `;
+    panel.style.cssText = `display: flex; flex-direction: ${isMobile ? 'row' : 'column'}; flex-wrap: wrap; gap: 8px; justify-content: center;`;
     
     wordsToFind.forEach(w => {
         const item = gameItems.find(it => it.nome === w);
         const card = document.createElement('div');
         card.id = `card-${w}`;
-        card.style.cssText = "background:white; padding:8px; border-radius:15px; display:flex; flex-direction:column; align-items:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); width: clamp(80px, 15vw, 110px); border: 3px solid transparent;";
-        card.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:100%; height:clamp(40px, 8vh, 70px); object-fit:contain;">
-                          <b style="font-size: clamp(10px, 1.8vh, 14px); color:var(--text-grey); margin-top:4px;">${currentLevel === 1 ? w : '???'}</b>`;
+        card.style.cssText = "background:white; padding:6px; border-radius:15px; display:flex; flex-direction:column; align-items:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); width: clamp(75px, 16vw, 100px); border: 3px solid transparent;";
+        card.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:100%; height:clamp(40px, 8vh, 65px); object-fit:contain;">
+                          <b style="font-size: clamp(10px, 1.8vh, 13px); color:var(--text-grey); margin-top:3px;">${currentLevel === 1 ? w : '???'}</b>`;
         panel.appendChild(card);
     });
 
-    // GRELHA DINÂMICA
     const grid = document.createElement('div');
     grid.id = 'sopa-grid';
-    // Cálculo do tamanho das células para ocupar o card
-    const cellW = `calc((100vw - ${isMobile ? '140px' : '250px'}) / ${cols})`;
-    const cellH = `calc((100vh - 250px) / ${rows})`;
-    const cellSize = `min(50px, ${cellW}, ${cellH})`;
+    // cellSize ajustado para respeitar os 5px laterais
+    const cellW = `calc((100vw - ${isMobile ? '30px' : '220px'}) / ${cols})`;
+    const cellH = `calc((100vh - 240px) / ${rows})`;
+    const cellSize = `min(48px, ${cellW}, ${cellH})`;
 
     grid.style.cssText = `
-        display:grid; 
-        grid-template-columns: repeat(${cols}, ${cellSize}); 
-        grid-template-rows: repeat(${rows}, ${cellSize});
-        gap:4px; background:white; padding:10px; border-radius:20px; 
-        box-shadow:0 8px 25px rgba(0,0,0,0.1); user-select:none; touch-action:none;
+        display:grid; grid-template-columns: repeat(${cols}, ${cellSize}); 
+        grid-template-rows: repeat(${rows}, ${cellSize}); gap:4px; background:white; 
+        padding:8px; border-radius:18px; box-shadow:0 8px 20px rgba(0,0,0,0.1); 
+        user-select:none; touch-action:none;
     `;
 
     const letters = generateGrid(rows, cols, wordsToFind);
@@ -112,10 +98,9 @@ function loadRound() {
         row.forEach((char, c) => {
             const cell = document.createElement('div');
             cell.className = 'sopa-cell';
-            cell.style.cssText = `width:${cellSize}; height:${cellSize}; display:flex; align-items:center; justify-content:center; background:#f8fbff; border-radius:6px; font-weight:900; font-size:clamp(14px, 2.5vh, 24px); color:var(--text-grey); cursor:pointer;`;
+            cell.style.cssText = `width:${cellSize}; height:${cellSize}; display:flex; align-items:center; justify-content:center; background:#f8fbff; border-radius:6px; font-weight:900; font-size:clamp(14px, 2.8vh, 22px); color:var(--text-grey); cursor:pointer;`;
             cell.innerText = char;
             cell.dataset.r = r; cell.dataset.c = c;
-            
             cell.onmousedown = () => handleStart(r, c);
             cell.onmouseenter = () => handleMove(r, c);
             cell.ontouchstart = (e) => { e.preventDefault(); handleStart(r, c); };
@@ -182,12 +167,9 @@ function handleEnd(targets) {
                     updateDots();
                 } else {
                     if (currentLevel === 1) {
-                        currentLevel = 2;
-                        roundGlobal = 0;
-                        renderDots();
-                        loadRound();
+                        currentLevel = 2; roundGlobal = 0; renderDots(); loadRound();
                     } else {
-                        finishGame(); // AQUI: Chama o Ecrã 3
+                        finishGame(); // TRANSIÇÃO PARA ECRÃ 3 APÓS 10 RONDAS
                     }
                 }
             }, 800);
@@ -216,14 +198,12 @@ function generateGrid(rows, cols, words) {
             let c = Math.floor(Math.random() * (hor ? cols - word.length : cols));
             let fits = true;
             for(let i=0; i<word.length; i++) {
-                let checkR = hor ? r : r + i;
-                let checkC = hor ? c + i : c;
+                let checkR = hor ? r : r + i; let checkC = hor ? c + i : c;
                 if(grid[checkR][checkC] !== '') { fits = false; break; }
             }
             if(fits) {
                 for(let i=0; i<word.length; i++) {
-                    let fillR = hor ? r : r + i;
-                    let fillC = hor ? c + i : c;
+                    let fillR = hor ? r : r + i; let fillC = hor ? c + i : c;
                     grid[fillR][fillC] = word[i];
                 }
                 placed = true;
@@ -254,16 +234,9 @@ function updateDots() {
 function finishGame() {
     clearInterval(timerInt);
     playSound('vitoria');
-    
-    // Transição para o Ecrã 3 (Relatório)
-    document.body.classList.replace('no-footer', 'with-footer');
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('scr-result').classList.add('active');
-    document.getElementById('status-bar').style.display = 'none';
-    
+    if(window.goToResult) window.goToResult(); // Chama o ecrã 3
     const finalTime = document.getElementById('timer').innerText.replace('⏳ ', '');
     const report = JOGO_CONFIG.relatorios.find(r => score >= r.min) || JOGO_CONFIG.relatorios[JOGO_CONFIG.relatorios.length-1];
-    
     document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + report.img;
     document.getElementById('res-tit').innerText = report.titulo;
     document.getElementById('res-pts').innerText = score;
@@ -272,26 +245,23 @@ function finishGame() {
 
 function playSound(s) { if(JOGO_CONFIG.sons[s]) new Audio(JOGO_CONFIG.sons[s]).play().catch(()=>{}); }
 
-// 5. ANIMAÇÃO EXPLICATIVA (ECRÃ 1)
+// 5. ANIMAÇÃO DINÂMICA (IMAGEM + GRELHA + SUBILNHAR)
 function updateIntroAnimation() {
     const introBox = document.getElementById('intro-animation');
     if(!introBox) return;
-
-    // Pega o primeiro item da categoria atual
     const cat = JOGO_CONFIG.categorias[currentCat] || JOGO_CONFIG.categorias.animais;
     const item = cat.itens[0];
     const word = item.nome;
     
-    introBox.style.cssText = "display:flex; flex-direction:column; align-items:center; gap:15px; border:none; background:transparent;";
-
+    introBox.style.cssText = "display:flex; flex-direction:column; align-items:center; gap:10px; border:none; background:transparent;";
     introBox.innerHTML = `
-        <div style="background:white; padding:15px; border-radius:20px; box-shadow:0 4px 15px rgba(0,0,0,0.1); text-align:center;">
-            <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:70px; height:70px; object-fit:contain;">
-            <div style="font-weight:900; color:var(--primary-blue); margin-top:5px;">${word}</div>
+        <div style="background:white; padding:10px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:center;">
+            <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:65px; height:65px; object-fit:contain;">
+            <div style="font-weight:900; color:var(--primary-blue); font-size:12px;">${word}</div>
         </div>
-        <div style="display:grid; grid-template-columns: repeat(${word.length}, 35px); gap:5px; background:white; padding:10px; border-radius:15px; position:relative; box-shadow:0 4px 20px rgba(0,0,0,0.1);">
-            ${word.split('').map(l => `<div class="tut-cell" style="width:35px; height:35px; background:#f0f7ff; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:18px; color:var(--text-grey); transition:0.3s;">${l}</div>`).join('')}
-            <div id="hand-tut" style="position:absolute; top:25px; left:15px; font-size:35px; color:var(--primary-blue); z-index:10; transition: 2s ease-in-out; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));">
+        <div style="display:grid; grid-template-columns: repeat(${word.length}, 32px); gap:4px; background:white; padding:8px; border-radius:12px; position:relative; box-shadow:0 4px 15px rgba(0,0,0,0.1);">
+            ${word.split('').map(l => `<div class="tut-cell" style="width:32px; height:32px; background:#f0f7ff; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:16px; color:var(--text-grey); transition:0.3s;">${l}</div>`).join('')}
+            <div id="hand-tut" style="position:absolute; top:25px; left:12px; font-size:32px; color:var(--primary-blue); z-index:10; transition: 2s ease-in-out; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));">
                 <i class="fas fa-hand-pointer"></i>
             </div>
         </div>
@@ -299,36 +269,16 @@ function updateIntroAnimation() {
 
     const hand = document.getElementById('hand-tut');
     const cells = document.querySelectorAll('.tut-cell');
-    
-    const runAnim = () => {
-        // Início
+    const run = () => {
         hand.style.transform = `translateX(0)`;
         cells.forEach(c => { c.style.background = "#f0f7ff"; c.style.color = "var(--text-grey)"; });
-
         setTimeout(() => {
-            // Arrastar
-            hand.style.transform = `translateX(${(word.length - 1) * 40}px)`;
-            cells.forEach((c, idx) => {
-                setTimeout(() => {
-                    c.style.background = "var(--primary-blue)";
-                    c.style.color = "white";
-                }, idx * 250);
-            });
-        }, 1000);
+            hand.style.transform = `translateX(${(word.length - 1) * 36}px)`;
+            cells.forEach((c, idx) => setTimeout(() => { c.style.background = "var(--primary-blue)"; c.style.color = "white"; }, idx * 250));
+        }, 800);
     };
-
-    runAnim();
-    setInterval(runAnim, 4500);
+    run(); setInterval(run, 4000);
 }
 
-// Iniciar animação e categoria
-window.selectCategory = function(cat) { 
-    currentCat = cat; 
-    initUI(); 
-    updateIntroAnimation(); 
-};
-
-window.addEventListener('DOMContentLoaded', () => {
-    initUI();
-    updateIntroAnimation();
-});
+window.selectCategory = function(cat) { currentCat = cat; initUI(); updateIntroAnimation(); };
+window.addEventListener('DOMContentLoaded', () => { initUI(); updateIntroAnimation(); });
