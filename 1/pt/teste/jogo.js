@@ -1,222 +1,163 @@
-/** 
- * MOTOR DE SOPA DE LETRAS - Pequenos Leitores
- */
-
-let categoriaSelecionada = null;
+let catAtiva = null;
 let palavrasEncontradas = [];
-let selecaoAtual = [];
+let selecaoIndices = [];
 let isDragging = false;
-let pontuacaoFinal = 0;
 
-// Inicialização
 window.onload = () => {
-    carregarInterfaceConfig();
-    renderCategoriasIntro();
-    renderMenuHamburguer();
+    configurarCabecalho();
+    renderMenu();
+    renderIntro();
 };
 
-function carregarInterfaceConfig() {
-    document.getElementById('txt-tit-1').innerText = JOGO_CONFIG.textos.tituloLinha1;
-    document.getElementById('txt-tit-2').innerText = JOGO_CONFIG.textos.tituloLinha2;
-    document.getElementById('txt-subtit').innerText = JOGO_CONFIG.textos.subtitulo;
-    document.getElementById('logo-img').src = JOGO_CONFIG.caminhoIcons + "logo.png"; // Ajuste conforme seu logo
-    document.getElementById('intro-msg').innerText = JOGO_CONFIG.textos.intro;
-    document.getElementById('link-voltar-top').href = JOGO_CONFIG.links.home;
+function configurarCabecalho() {
+    // Aqui injetamos as 3 linhas do título
+    document.getElementById('txt-l1').innerText = JOGO_CONFIG.textos.tituloLinha1;
+    document.getElementById('txt-l2').innerText = JOGO_CONFIG.textos.tituloLinha2;
+    document.getElementById('txt-sub').innerText = JOGO_CONFIG.textos.subtitulo;
+    document.getElementById('head-logo').src = JOGO_CONFIG.caminhoIcons + "logo.png";
+    document.getElementById('btn-topo-voltar').href = JOGO_CONFIG.links.home;
 }
 
-// Menu Hamburguer Dinâmico
-function renderMenuHamburguer() {
+function renderMenu() {
     const menu = document.getElementById('dropdownMenu');
     const links = JOGO_CONFIG.links;
     const icons = JOGO_CONFIG.iconesMenu;
     const path = JOGO_CONFIG.caminhoIcons;
 
     const itens = [
-        { label: 'Início', link: links.home, img: icons.home },
-        { label: 'Pré-Escolar', link: links.pre, img: icons.pre },
-        { label: '1º Ano', link: links.ano1, img: icons.ano1 },
-        { label: '2º Ano', link: links.ano2, img: icons.ano2 },
-        { label: '3º Ano', link: links.ano3, img: icons.ano3 },
-        { label: '4º Ano', link: links.ano4, img: icons.ano4 }
+        { n: 'Início', l: links.home, i: icons.home },
+        { n: 'Pré-Escolar', l: links.pre, i: icons.pre },
+        { n: '1º Ano', l: links.ano1, i: icons.ano1 },
+        { n: '2º Ano', l: links.ano2, i: icons.ano2 },
+        { n: '3º Ano', l: links.ano3, i: icons.ano3 },
+        { n: '4º Ano', l: links.ano4, i: icons.ano4 }
     ];
 
-    menu.innerHTML = itens.map(i => `
-        <a href="${i.link}" class="menu-item">
-            <img src="${path}${i.img}">
-            <span>${i.label}</span>
+    menu.innerHTML = itens.map(item => `
+        <a href="${item.l}" class="menu-item">
+            <img src="${path}${item.i}">
+            <span>${item.n}</span>
         </a>
     `).join('');
-
-    document.getElementById('btn-hamburger').onclick = (e) => {
-        e.stopPropagation();
-        menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-        document.getElementById('overlay').style.display = menu.style.display === 'flex' ? 'block' : 'none';
-    };
 }
 
-// Renderizar Categorias no Ecrã Inicial
-function renderCategoriasIntro() {
-    const container = document.getElementById('intro-categories');
-    const rdList = document.getElementById('rd-list');
+function renderIntro() {
+    const container = document.getElementById('intro-cats');
+    const rd = document.getElementById('rd-list');
     
-    Object.keys(JOGO_CONFIG.categorias).forEach(key => {
-        const cat = JOGO_CONFIG.categorias[key];
-        const cardHtml = `
-            <div class="cat-card" onclick="iniciarJogo('${key}')" style="background:white; padding:15px; border-radius:25px; text-align:center; cursor:pointer; box-shadow:0 10px 0 #cbd9e6;">
-                <img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="width:80px; height:80px; object-fit:contain;">
-                <h3 style="color:var(--text-grey); font-size:16px; margin-top:10px;">${cat.nome}</h3>
+    Object.keys(JOGO_CONFIG.categorias).forEach(id => {
+        const c = JOGO_CONFIG.categorias[id];
+        const card = `
+            <div onclick="iniciarJogo('${id}')" style="background:white; padding:20px; border-radius:25px; text-align:center; cursor:pointer; box-shadow:0 8px 0 #cbd9e6;">
+                <img src="${JOGO_CONFIG.caminhoImg}${c.imgCapa}" style="width:70px; height:70px; object-fit:contain;">
+                <h3 style="margin-top:10px; font-size:15px; color:#5d7082;">${c.nome.toUpperCase()}</h3>
             </div>
         `;
-        container.innerHTML += cardHtml;
-        rdList.innerHTML += cardHtml;
+        container.innerHTML += card;
+        rd.innerHTML += card;
     });
 }
 
-// Lógica de Início de Jogo
-function iniciarJogo(key) {
-    categoriaSelecionada = JOGO_CONFIG.categorias[key];
+function iniciarJogo(id) {
+    catAtiva = JOGO_CONFIG.categorias[id];
     palavrasEncontradas = [];
     document.getElementById('scr-intro').classList.remove('active');
     document.getElementById('scr-game').classList.add('active');
     fecharMenus();
-    gerarSopaLetras();
+    gerarSopa();
 }
 
-// GERADOR DE SOPA DE LETRAS
-function gerarSopaLetras() {
-    const gridBoard = document.getElementById('grid-board');
-    const wordsListContainer = document.getElementById('words-list');
+function gerarSopa() {
     const size = 10;
-    let grid = Array(size).fill().map(() => Array(size).fill(''));
-    
-    const palavras = categoriaSelecionada.itens.map(i => i.nome.toUpperCase());
-    
-    // 1. Colocar palavras no grid (Horizontal ou Vertical)
+    const grid = Array(size).fill().map(() => Array(size).fill(''));
+    const palavras = catAtiva.itens.map(i => i.nome.toUpperCase());
+
+    // Colocação Básica (Horizontal ou Vertical)
     palavras.forEach(word => {
         let colocada = false;
         while (!colocada) {
-            let isVert = Math.random() > 0.5;
-            let row = Math.floor(Math.random() * (isVert ? size - word.length : size));
-            let col = Math.floor(Math.random() * (isVert ? size : size - word.length));
+            let horizontal = Math.random() > 0.5;
+            let r = Math.floor(Math.random() * (horizontal ? size : size - word.length));
+            let c = Math.floor(Math.random() * (horizontal ? size - word.length : size));
             
-            let cabe = true;
-            for (let i = 0; i < word.length; i++) {
-                let r = isVert ? row + i : row;
-                let c = isVert ? col : col + i;
-                if (grid[r][c] !== '' && grid[r][c] !== word[i]) { cabe = false; break; }
+            let ocupado = false;
+            for(let i=0; i<word.length; i++) {
+                if(grid[horizontal ? r : r+i][horizontal ? c+i : c] !== '') ocupado = true;
             }
 
-            if (cabe) {
-                for (let i = 0; i < word.length; i++) {
-                    grid[isVert ? row + i : row][isVert ? col : col + i] = word[i];
-                }
+            if(!ocupado) {
+                for(let i=0; i<word.length; i++) grid[horizontal ? r : r+i][horizontal ? c+i : c] = word[i];
                 colocada = true;
             }
         }
     });
 
-    // 2. Preencher espaços vazios com letras aleatórias
+    // Encher vazios
     const letras = "ABCDEfGHIJKLMNOPQRSTUVWXYZ";
-    for(let r=0; r<size; r++) {
-        for(let c=0; c<size; c++) {
-            if(grid[r][c] === '') grid[r][c] = letras[Math.floor(Math.random()*letras.length)];
-        }
-    }
-
-    // 3. Renderizar Grid
-    gridBoard.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-    gridBoard.innerHTML = '';
+    const board = document.getElementById('grid-board');
+    board.innerHTML = '';
+    
     grid.forEach((row, r) => {
-        row.forEach((letra, c) => {
-            const el = document.createElement('div');
-            el.className = 'letter';
-            el.innerText = letra;
-            el.dataset.row = r;
-            el.dataset.col = c;
+        row.forEach((char, c) => {
+            const l = char || letras[Math.floor(Math.random()*letras.length)];
+            const div = document.createElement('div');
+            div.className = 'letter';
+            div.innerText = l;
+            div.dataset.pos = `${r}-${c}`;
             
-            // Eventos de Touch/Mouse
-            el.onmousedown = () => startSelection(el);
-            el.onmouseover = () => updateSelection(el);
-            el.ontouchstart = (e) => { e.preventDefault(); startSelection(el); };
-            
-            gridBoard.appendChild(el);
+            // Eventos Mouse/Touch
+            div.onmousedown = () => startSelect(div);
+            div.onmouseover = () => moveSelect(div);
+            div.ontouchstart = (e) => { e.preventDefault(); startSelect(div); };
+            board.appendChild(div);
         });
     });
 
-    document.onmouseup = endSelection;
-    gridBoard.ontouchend = endSelection;
-    gridBoard.ontouchmove = (e) => {
-        const touch = e.touches[0];
-        const target = document.elementFromPoint(touch.clientX, touch.clientY);
-        if(target && target.classList.contains('letter')) updateSelection(target);
+    document.onmouseup = endSelect;
+    board.ontouchend = endSelect;
+    board.ontouchmove = (e) => {
+        const t = e.touches[0];
+        const el = document.elementFromPoint(t.clientX, t.clientY);
+        if(el && el.classList.contains('letter')) moveSelect(el);
     };
 
-    // 4. Renderizar Lista de Palavras
-    wordsListContainer.innerHTML = palavras.map(p => `<div class="word-item" id="word-${p}">${p}</div>`).join('');
+    document.getElementById('words-list').innerHTML = palavras.map(p => `<div class="word-tag" id="tag-${p}">${p}</div>`).join('');
 }
 
-// Interatividade da Sopa de Letras
-function startSelection(el) {
-    isDragging = true;
-    selecaoAtual = [el];
-    el.classList.add('selected');
-}
+function startSelect(el) { isDragging = true; selecaoIndices = [el]; el.classList.add('selected'); }
+function moveSelect(el) { if(isDragging && !selecaoIndices.includes(el)) { selecaoIndices.push(el); el.classList.add('selected'); } }
 
-function updateSelection(el) {
-    if(!isDragging || selecaoAtual.includes(el)) return;
-    selecaoAtual.push(el);
-    el.classList.add('selected');
-}
-
-function endSelection() {
+function endSelect() {
     if(!isDragging) return;
     isDragging = false;
-    
-    const palavraFormada = selecaoAtual.map(el => el.innerText).join('');
-    const palavraReversa = palavraFormada.split('').reverse().join('');
-    
-    const palavrasAlvo = categoriaSelecionada.itens.map(i => i.nome.toUpperCase());
-    
-    if (palavrasAlvo.includes(palavraFormada) || palavrasAlvo.includes(palavraReversa)) {
-        const p = palavrasAlvo.includes(palavraFormada) ? palavraFormada : palavraReversa;
-        if (!palavrasEncontradas.includes(p)) {
-            palavrasEncontradas.push(p);
-            selecaoAtual.forEach(el => el.classList.add('found'));
-            document.getElementById(`word-${p}`).classList.add('found');
+    const word = selecaoIndices.map(el => el.innerText).join('');
+    const rev = word.split('').reverse().join('');
+    const lista = catAtiva.itens.map(i => i.nome.toUpperCase());
+
+    if(lista.includes(word) || lista.includes(rev)) {
+        const certa = lista.includes(word) ? word : rev;
+        if(!palavrasEncontradas.includes(certa)) {
+            palavrasEncontradas.push(certa);
+            selecaoIndices.forEach(el => el.classList.add('found'));
+            document.getElementById(`tag-${certa}`).classList.add('found');
             tocarSom('acerto');
         }
     }
-    
-    selecaoAtual.forEach(el => el.classList.remove('selected'));
-    selecaoAtual = [];
-
-    if(palavrasEncontradas.length === categoriaSelecionada.itens.length) {
-        setTimeout(finalizarJogo, 1000);
-    }
+    selecaoIndices.forEach(el => el.classList.remove('selected'));
+    selecaoIndices = [];
+    if(palavrasEncontradas.length === lista.length) setTimeout(finalizar, 800);
 }
 
-function tocarSom(tipo) {
-    const audio = new Audio(JOGO_CONFIG.sons[tipo]);
-    audio.play().catch(() => {});
-}
-
-function finalizarJogo() {
+function finalizar() {
     tocarSom('vitoria');
     document.getElementById('scr-game').classList.remove('active');
     document.getElementById('scr-result').classList.add('active');
-    
-    const percentagem = 100; // Como encontrou todas as palavras
-    const relatorio = JOGO_CONFIG.relatorios.find(r => percentagem >= r.min);
-    
-    document.getElementById('res-tit').innerText = relatorio.titulo;
-    document.getElementById('res-msg').innerText = relatorio.msg;
-    document.getElementById('res-img').src = JOGO_CONFIG.caminhoIcons + relatorio.img;
+    const rel = JOGO_CONFIG.relatorios[0]; // Simplificado
+    document.getElementById('res-tit').innerText = rel.titulo;
+    document.getElementById('res-msg').innerText = rel.msg;
+    document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rel.img;
 }
 
-function fecharMenus() {
-    document.getElementById('dropdownMenu').style.display = 'none';
-    document.getElementById('overlay').style.display = 'none';
-    document.getElementById('rdMenu').classList.remove('active');
-}
-
-document.getElementById('overlay').onclick = fecharMenus;
+function tocarSom(s) { new Audio(JOGO_CONFIG.sons[s]).play().catch(()=>{}); }
+function toggleMenu(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; document.getElementById('overlay').style.display = m.style.display; }
+function fecharMenus() { document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('rdMenu').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; }
