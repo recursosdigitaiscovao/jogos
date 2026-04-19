@@ -1,196 +1,152 @@
-let category = Object.keys(JOGO_CONFIG.categorias)[0];
-let roundGlobal = 0; 
-let currentLevel = 1; 
+let category = 'animais';
+let roundGlobal = 0;
 let score = 0;
 let timer = 0;
 let timerInt;
+let word = "";
+let isDragging = false;
+let selectedCells = [];
 let itemsGame = [];
-let currentItem = null;
 
 function init() {
     const pI = JOGO_CONFIG.caminhoIcons;
     const pImg = JOGO_CONFIG.caminhoImg;
+    const txt = JOGO_CONFIG.textos;
+    
+    // Injeção de Textos das 3 Linhas
+    document.getElementById('h-tit1').innerText = txt.tituloLinha1;
+    document.getElementById('h-tit2').innerText = txt.tituloLinha2;
+    document.getElementById('h-sub').innerText = txt.subtitulo;
+    document.getElementById('mainFooter').innerHTML = txt.rodape;
 
-    // PREENCHER OS 3 TÍTULOS DINÂMICOS
+    // Assets Visuais e Navegação
     document.getElementById('head-logo').src = pI + JOGO_CONFIG.iconesMenu.ano1;
     document.getElementById('header-back-icon').src = pI + "voltar.png";
-    document.getElementById('tit-l1').innerText = JOGO_CONFIG.textos.tituloLinha1;
-    document.getElementById('tit-l2').innerText = JOGO_CONFIG.textos.tituloLinha2;
-    document.getElementById('sub-tit').innerText = JOGO_CONFIG.textos.subtitulo;
-    document.getElementById('mainFooter').innerHTML = JOGO_CONFIG.textos.rodape;
-
-    const btnVoltarH = document.getElementById('link-voltar');
-    btnVoltarH.href = JOGO_CONFIG.linkVoltar;
-    btnVoltarH.innerHTML = `<img src="${pI}voltar.png"> ${JOGO_CONFIG.textoVoltar}`;
-
+    document.getElementById('link-voltar-main').href = JOGO_CONFIG.links.ano1;
     document.getElementById('rd-game-btn').src = pImg + "rd.png";
     document.getElementById('rd-intro-btn').src = pImg + "rd.png";
-    document.getElementById('btn-back-link').onclick = () => window.location.href = JOGO_CONFIG.linkVoltar;
+    document.getElementById('btn-back-link').onclick = () => window.location.href = JOGO_CONFIG.links.home;
 
-    // MENU HAMBÚRGUER
     const menuBox = document.getElementById('dropdownMenu');
-    menuBox.innerHTML = '';
+    menuBox.innerHTML = ''; // Limpa antes de gerar
     ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
+        const label = k === 'home' ? 'Início' : (k === 'pre' ? 'Pré' : k.replace('ano', '') + 'º Ano');
         const a = document.createElement('a'); a.className = 'menu-item'; a.href = JOGO_CONFIG.links[k];
-        a.innerHTML = `<img src="${pI}${JOGO_CONFIG.iconesMenu[k]}"><span>${k === 'home' ? 'Início' : k.replace('ano',' ')+'º Ano'}</span>`; 
-        menuBox.appendChild(a);
+        a.innerHTML = `<img src="${pI}${JOGO_CONFIG.iconesMenu[k]}"><span>${label}</span>`; menuBox.appendChild(a);
     });
-    const div = document.createElement('div'); div.className = 'menu-divider'; menuBox.appendChild(div);
-    const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = JOGO_CONFIG.linkVoltar;
-    btnV.innerHTML = `<img src="${pI}voltar.png"><span>${JOGO_CONFIG.textoVoltar}</span>`;
-    menuBox.appendChild(btnV);
 
-    // RD MENU
     const rdList = document.getElementById('rd-list');
-    rdList.innerHTML = '';
+    rdList.innerHTML = ''; // Limpa antes de gerar
     Object.keys(JOGO_CONFIG.categorias).forEach(k => {
         const c = JOGO_CONFIG.categorias[k];
-        const card = document.createElement('div'); card.className = 'category-card';
-        card.innerHTML = `<img src="${pImg}${c.imgCapa}"><span>${c.nome}</span>`;
-        card.onclick = (e) => { e.stopPropagation(); selectCat(k); }; 
-        rdList.appendChild(card);
+        const card = document.createElement('div');
+        card.style = "background:white; border-radius:20px; padding:15px; display:flex; flex-direction:column; align-items:center; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.05); text-align:center;";
+        card.innerHTML = `<img src="${pImg}${c.imgCapa}" style="width:55px; height:55px; object-fit:contain; margin-bottom:10px;"><span style="font-weight:800; color:#5d7082; font-size:14px;">${c.nome}</span>`;
+        card.onclick = () => { selectCat(k); }; rdList.appendChild(card);
     });
 
-    updateIntroTutorial();
+    updateIntroTutorial(category);
 }
 
-function updateIntroTutorial() {
-    const cat = JOGO_CONFIG.categorias[category];
-    const item = cat.itens[0];
-    document.getElementById('intro-img').src = JOGO_CONFIG.caminhoImg + item.img;
-    document.getElementById('intro-name-label').innerText = item.nome;
+function updateIntroTutorial(catKey) {
+    const item = JOGO_CONFIG.categorias[catKey].itens[0];
+    const pImg = JOGO_CONFIG.caminhoImg;
+    const introWord = item.nome.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     
-    const slotsArea = document.getElementById('intro-slots');
-    slotsArea.innerHTML = ''; 
-    for(let i=1; i<=4; i++) {
-        const b = document.createElement('div');
-        b.className = 'cell'; b.style.width = "65px"; b.style.height = "65px";
-        b.innerText = i;
-        if(i === item.silabas) b.id = "hand-target"; 
-        slotsArea.appendChild(b);
+    document.getElementById('intro-img').src = pImg + item.img;
+    document.getElementById('intro-name-label').innerText = item.nome;
+
+    const gridCont = document.getElementById('intro-letter-cells');
+    gridCont.style.gridTemplateColumns = `repeat(${introWord.length}, 40px)`;
+    document.documentElement.style.setProperty('--drag-dist', `${(introWord.length - 1) * 42 + 10}px`);
+
+    gridCont.innerHTML = `<i class="fas fa-hand-pointer hand-tutorial"></i>`;
+    const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for(let i=0; i<introWord.length; i++) gridCont.innerHTML += `<div class="cell" style="width:40px; height:40px;">${abc[Math.floor(Math.random()*26)]}</div>`;
+    for(let i=0; i<introWord.length; i++) gridCont.innerHTML += `<div class="cell highlight" style="width:40px; height:40px;">${introWord[i]}</div>`;
+
+    const slotsCont = document.getElementById('intro-slots');
+    slotsCont.innerHTML = '';
+    for(let i=0; i<introWord.length; i++) {
+        slotsCont.innerHTML += `<div style="width:45px; height:45px; background:white; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); border:2px solid #cbd9e6;">${introWord[i]}</div>`;
     }
-
-    const hand = document.createElement('i');
-    hand.className = "fas fa-hand-pointer hand-tutorial";
-    hand.id = "moving-hand";
-    hand.style.top = "50px";
-    slotsArea.appendChild(hand);
-
-    setTimeout(() => {
-        const target = document.getElementById('hand-target');
-        const handEl = document.getElementById('moving-hand');
-        if(target && handEl) {
-            const pos = target.offsetLeft + (target.offsetWidth / 2) - 10;
-            handEl.style.left = pos + "px";
-            setInterval(() => {
-                handEl.style.transform = "translateY(15px) scale(0.9)";
-                target.style.backgroundColor = "#bbdefb";
-                setTimeout(() => {
-                    handEl.style.transform = "translateY(0) scale(1.1)";
-                    target.style.backgroundColor = "white";
-                }, 500);
-            }, 1500);
-        }
-    }, 400);
 }
 
 function startGame() {
-    show('scr-game');
-    document.getElementById('status-bar').style.display = 'flex';
+    showScreen('scr-game'); 
+    document.getElementById('status-bar').style.display = 'flex'; 
     document.getElementById('main-title').style.display = 'none';
+    const all = [...JOGO_CONFIG.categorias[category].itens];
+    // Sorteia 10 itens
+    itemsGame = all.sort(() => 0.5 - Math.random()).slice(0, 10);
+    // Caso a categoria tenha menos que 10 itens, completa repetindo
+    while(itemsGame.length < 10) { itemsGame.push(all[Math.floor(Math.random()*all.length)]); }
     
-    const all = [...JOGO_CONFIG.categorias[category].itens].sort(() => 0.5 - Math.random());
-    itemsGame = all.slice(0, 10);
-    if(itemsGame.length < 10) {
-        while(itemsGame.length < 10) itemsGame.push(all[Math.floor(Math.random()*all.length)]);
-    }
-
-    roundGlobal = 0; currentLevel = 1; score = 0; timer = 0;
-    timerInt = setInterval(() => {
-        timer++;
-        let m = Math.floor(timer/60).toString().padStart(2,'0');
-        let s = (timer%60).toString().padStart(2,'0');
-        document.getElementById('timer').innerText = `⏳ ${m}:${s}`;
-    }, 1000);
-    loadTask();
+    timer = 0;
+    timerInt = setInterval(() => { timer++; let m = Math.floor(timer/60).toString().padStart(2,'0'); let s = (timer%60).toString().padStart(2,'0'); document.getElementById('timer').innerText = `⏳ ${m}:${s}`; }, 1000);
+    loadRound();
 }
 
-function loadTask() {
-    const idx = (currentLevel === 1) ? roundGlobal : (roundGlobal + 5);
-    currentItem = itemsGame[idx];
-    updateDots(5, roundGlobal);
+function loadRound() {
+    const it = itemsGame[roundGlobal]; word = it.nome.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
+    updateDots(5, roundGlobal % 5);
     document.getElementById('game-banner').classList.remove('feedback-correct', 'feedback-wrong');
-    document.getElementById('game-img').src = JOGO_CONFIG.caminhoImg + currentItem.img;
-    const nl = document.getElementById('game-name');
-    nl.innerText = currentItem.nome;
-    nl.style.visibility = (currentLevel === 1) ? 'visible' : 'hidden';
-    renderButtons();
+    document.getElementById('game-name').innerText = it.nome;
+    document.getElementById('game-name').style.visibility = roundGlobal >= 5 ? 'hidden' : 'visible';
+    document.getElementById('game-img').src = JOGO_CONFIG.caminhoImg + it.img;
+    genGrid();
 }
 
-function renderButtons() {
-    const grid = document.getElementById('game-grid'); grid.innerHTML = '';
-    for (let i = 1; i <= 4; i++) {
-        const btn = document.createElement('div');
-        btn.className = 'cell'; btn.innerText = i;
-        btn.onclick = () => checkAnswer(i);
-        grid.appendChild(btn);
-    }
+function genGrid() {
+    const el = document.getElementById('game-grid'); el.innerHTML = ''; let cells = Array(64).fill('');
+    const isH = Math.random() > 0.5;
+    const start = isH ? Math.floor(Math.random()*8)*8 + Math.floor(Math.random()*(8-word.length)) : Math.floor(Math.random()*(8-word.length))*8 + Math.floor(Math.random()*8);
+    for(let i=0; i<word.length; i++) cells[isH ? start+i : start+(i*8)] = word[i];
+    const abc = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
+    cells.forEach(c => {
+        const d = document.createElement('div'); d.className = 'cell'; d.innerText = c || abc[Math.floor(Math.random()*abc.length)];
+        d.onmousedown = (e) => { e.preventDefault(); startSel(d); }; d.onmouseenter = () => contSel(d); d.ontouchstart = (e) => { e.preventDefault(); startSel(d); }; el.appendChild(d);
+    });
+    window.onmouseup = window.ontouchend = endSel;
+    document.getElementById('grid-container').ontouchmove = (e) => {
+        let touch = e.touches[0]; let target = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (target && target.classList.contains('cell')) contSel(target);
+    };
 }
 
-function checkAnswer(num) {
-    const banner = document.getElementById('game-banner');
-    if (num === currentItem.silabas) {
-        banner.classList.add('feedback-correct');
-        score += (currentLevel === 1) ? 100 : 200;
-        document.getElementById('score-val').innerText = score;
-        playSound('acerto');
-        setTimeout(() => {
-            roundGlobal++;
-            if (roundGlobal >= 5) {
-                if (currentLevel === 1) { currentLevel = 2; roundGlobal = 0; loadTask(); }
-                else finish();
-            } else loadTask();
-        }, 800);
+function startSel(el) { isDragging = true; selectedCells = [el]; el.classList.add('selecting'); }
+function contSel(el) { if (isDragging && !selectedCells.includes(el)) { selectedCells.push(el); el.classList.add('selecting'); } }
+function endSel() {
+    if (!isDragging) return; isDragging = false;
+    const res = selectedCells.map(c => c.innerText).join('');
+    if (res === word) {
+        document.getElementById('game-banner').classList.add('feedback-correct');
+        selectedCells.forEach(el => { el.classList.remove('selecting'); el.classList.add('highlight'); });
+        score += 150; document.getElementById('score-val').innerText = score; playSound('acerto');
+        setTimeout(() => { roundGlobal++; if(roundGlobal >= 10) finish(); else loadRound(); }, 800);
     } else {
-        banner.classList.add('feedback-wrong'); playSound('erro');
-        score = Math.max(0, score - 20); document.getElementById('score-val').innerText = score;
-        setTimeout(() => banner.classList.remove('feedback-wrong'), 800);
+        document.getElementById('game-banner').classList.add('feedback-wrong'); playSound('erro');
+        setTimeout(() => document.getElementById('game-banner').classList.remove('feedback-wrong'), 800);
+        selectedCells.forEach(el => el.classList.remove('selecting'));
     }
+    selectedCells = [];
 }
 
 function finish() {
-    clearInterval(timerInt); playSound('vitoria'); show('scr-result');
+    clearInterval(timerInt); playSound('vitoria'); showScreen('scr-result');
     document.getElementById('status-bar').style.display = 'none';
     const rep = JOGO_CONFIG.relatorios.find(r => score >= r.min) || JOGO_CONFIG.relatorios[3];
     document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rep.img;
-    document.getElementById('res-tit').innerText = rep.titulo;
-    document.getElementById('res-pts').innerText = score;
-    document.getElementById('res-tim').innerText = document.getElementById('timer').innerText.replace('⏳ ','');
+    document.getElementById('res-tit').innerText = rep.titulo; document.getElementById('res-msg').innerText = rep.msg;
+    document.getElementById('res-pts').innerText = score; document.getElementById('res-tim').innerText = document.getElementById('timer').innerText.replace('⏳ ','');
 }
 
-function updateDots(total, current) {
-    const c = document.getElementById('dots'); c.innerHTML = '';
-    for(let i=0; i<total; i++) {
-        const d = document.createElement('div');
-        d.className = 'dot' + (i < current ? ' done' : (i === current ? ' active' : ''));
-        c.appendChild(d);
-    }
-}
-
-function selectCat(k) {
-    category = k; roundGlobal = 0; currentLevel = 1; score = 0;
-    if(timerInt) clearInterval(timerInt);
-    closeMenus(); show('scr-intro'); updateIntroTutorial();
-}
-
-function show(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-}
-
-function toggleHamburger(e) { e.stopPropagation(); document.getElementById('dropdownMenu').style.display = (document.getElementById('dropdownMenu').style.display === 'flex') ? 'none' : 'flex'; }
-function openRDMenu(e) { if(e) e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
+function toggleHamburger(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
+function openRDMenu(e) { e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
 function closeMenus() { document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('rdMenu').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; }
+function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function updateDots(total, current) { const c = document.getElementById('dots'); c.innerHTML = ''; for(let i=0; i<total; i++) { const d = document.createElement('div'); d.style = `width:12px; height:12px; border-radius:50%; background:${i < current ? 'var(--primary-blue)' : (i === current ? 'var(--primary-blue)' : '#d0e0f0')}; transition:0.3s; ${i===current?'transform:scale(1.3);':''}`; c.appendChild(d); } }
 function playSound(t) { if(JOGO_CONFIG.sons[t]) new Audio(JOGO_CONFIG.sons[t]).play().catch(()=>{}); }
+function selectCat(k) { category = k; roundGlobal = 0; score = 0; timer = 0; if(timerInt) clearInterval(timerInt); closeMenus(); showScreen('scr-intro'); updateIntroTutorial(k); }
 
 window.onload = init;
