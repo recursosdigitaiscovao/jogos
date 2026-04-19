@@ -35,14 +35,45 @@ const JOGO_CONFIG = {
             imgCapa: "animaisdomesticos/gato.png",
             itens: [
                 { nome: "VACA", img: "animaisdomesticos/vaca.png" },
+                { nome: "RATO", img: "animaisdomesselvagens/rato.png" },
+                { nome: "LEÃO", img: "animaisdomesselvagens/leao.png" },
                 { nome: "GATO", img: "animaisdomesticos/gato.png" },
+                { nome: "POMBO", img: "animaisdomesselvagens/pombo.png" },
+                { nome: "ELEFANTE", img: "animaisdomesselvagens/elefante.png" },
                 { nome: "PATO", img: "animaisdomesticos/pato.png" },
+                { nome: "ÁGUIA", img: "animaisdomesselvagens/aguia.png" },
+                { nome: "GALO", img: "animaisdomesticos/galo.png" },
+                { nome: "URSO", img: "animaisdomesselvagens/urso.png" },
                 { nome: "PERU", img: "animaisdomesticos/peru.png" },
+                { nome: "GORILA", img: "animaisdomesselvagens/gorila.png" },
+                { nome: "FOCA", img: "animaisdomesselvagens/foca.png" },
                 { nome: "CÃO", img: "animaisdomesticos/cao.png" },
+                { nome: "MACACO", img: "animaisdomesselvagens/macaco.png" },
+                { nome: "RAIA", img: "animaisdomesselvagens/raia.png" },
                 { nome: "CAVALO", img: "animaisdomesticos/cavalo.png" },
+                { nome: "TUBARÃO", img: "animaisdomesselvagens/tubarao.png" },
                 { nome: "BURRO", img: "animaisdomesticos/burro.png" },
+                { nome: "PAPAGAIO", img: "animaisdomesselvagens/papagaio.png" },
                 { nome: "GALINHA", img: "animaisdomesticos/galinha.png" },
                 { nome: "COELHO", img: "animaisdomesticos/coelho.png" }
+            ]
+        },
+          objeros: {
+            nome: "Objetos",
+            imgCapa: "objetos/vassoura.png",
+            itens: [
+                { nome: "VASSOURA", img: "objetos/vassoura.png" },
+                { nome: "GARFO", img: "objetos/garfo.png" },
+                { nome: "PINCEL", img: "objetos/pincel.png" },
+                { nome: "ESCOVA", img: "objetos/escova.png" },
+                { nome: "GARRAFA", img: "objetos/garrafa.png" },
+                { nome: "COPO", img: "objetos/copo.png" },
+                { nome: "BALDE", img: "objetos/balde.png" },
+                { nome: "PÁ", img: "objetos/pa.png" },
+                { nome: "ÓCULOS", img: "objetos/oculos.png" },
+                { nome: "CESTO", img: "objetos/cesto.png" },
+                { nome: "DEDAL", img: "objetos/dedal.png" },
+                { nome: "COLHER", img: "objetos/colher.png" }
             ]
         },
         frutos: {
