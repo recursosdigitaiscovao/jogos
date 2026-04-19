@@ -1,6 +1,6 @@
 /**
  * MOTOR DO JOGO: SOPA DE LETRAS 
- * Layout 8x7 (PC) / 7x8 (Telemóvel) | Padding 10px
+ * Layout Adaptável | Tutorial Dinâmico | Transição Final Corrigida
  */
 
 let currentCat = 'animais';
@@ -27,7 +27,7 @@ function initGame() {
     timer = 0;
     document.getElementById('score-val').innerText = "0";
     
-    // Esconder o ícone estático do index para mostrar a nossa animação
+    // Forçar limpeza do ícone estático do ecrã de intro
     const staticIcon = document.getElementById('intro-icon');
     if(staticIcon) staticIcon.style.display = 'none';
 
@@ -46,7 +46,7 @@ function startTimer() {
     }, 1000);
 }
 
-// 2. CARREGAR RONDA (Padding 10px)
+// 2. CARREGAR RONDA (Padding 15px)
 function loadRound() {
     const container = document.getElementById('game-main-content');
     container.innerHTML = ''; 
@@ -68,7 +68,7 @@ function loadRound() {
     gameWrapper.style.cssText = `
         display: flex; flex-direction: ${isMobile ? 'column' : 'row'}; 
         align-items: center; justify-content: center; width: 100%; height: 100%; gap: 15px;
-        box-sizing: border-box; padding: ${isMobile ? '10px' : '10px'};
+        box-sizing: border-box; padding: 15px;
     `;
 
     const panel = document.createElement('div');
@@ -78,16 +78,16 @@ function loadRound() {
         const item = gameItems.find(it => it.nome === w);
         const card = document.createElement('div');
         card.id = `card-${w}`;
-        card.style.cssText = "background:white; padding:6px; border-radius:15px; display:flex; flex-direction:column; align-items:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); width: clamp(80px, 16vw, 110px); border: 3px solid transparent;";
-        card.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:100%; height:clamp(45px, 9vh, 70px); object-fit:contain;">
+        card.style.cssText = "background:white; padding:6px; border-radius:15px; display:flex; flex-direction:column; align-items:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); width: clamp(75px, 16vw, 110px); border: 3px solid transparent;";
+        card.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:100%; height:clamp(45px, 10vh, 70px); object-fit:contain;">
                           <b style="font-size: clamp(10px, 1.8vh, 14px); color:var(--text-grey); margin-top:3px;">${currentLevel === 1 ? w : '???'}</b>`;
         panel.appendChild(card);
     });
 
     const grid = document.createElement('div');
     grid.id = 'sopa-grid';
-    const cellW = `calc((100vw - ${isMobile ? '40px' : '240px'}) / ${cols})`;
-    const cellH = `calc((100vh - 250px) / ${rows})`;
+    const cellW = `calc((100vw - ${isMobile ? '50px' : '250px'}) / ${cols})`;
+    const cellH = `calc((100vh - 260px) / ${rows})`;
     const cellSize = `min(50px, ${cellW}, ${cellH})`;
 
     grid.style.cssText = `
@@ -102,7 +102,7 @@ function loadRound() {
         row.forEach((char, c) => {
             const cell = document.createElement('div');
             cell.className = 'sopa-cell';
-            cell.style.cssText = `width:${cellSize}; height:${cellSize}; display:flex; align-items:center; justify-content:center; background:#f8fbff; border-radius:6px; font-weight:900; font-size:clamp(14px, 2.8vh, 22px); color:var(--text-grey); cursor:pointer;`;
+            cell.style.cssText = `width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8fbff; border-radius:6px; font-weight:900; font-size:clamp(14px, 2.8vh, 24px); color:var(--text-grey); cursor:pointer;`;
             cell.innerText = char;
             cell.dataset.r = r; cell.dataset.c = c;
             cell.onmousedown = () => handleStart(r, c);
@@ -125,7 +125,7 @@ function loadRound() {
     container.appendChild(gameWrapper);
 }
 
-// 3. SELEÇÃO
+// 3. LÓGICA DE SELEÇÃO
 function handleStart(r, c) { isSelecting = true; selectStart = {r, c}; clearSelectionStyles(); }
 function handleMove(r, c) {
     if(!isSelecting) return;
@@ -173,7 +173,7 @@ function handleEnd(targets) {
                     if (currentLevel === 1) {
                         currentLevel = 2; roundGlobal = 0; renderDots(); loadRound();
                     } else {
-                        finishGame(); // TRANSIÇÃO PARA ECRÃ 3
+                        finishGame(); // AQUI: Ativa o Ecrã 3 após 5 rondas do Nível 2
                     }
                 }
             }, 800);
@@ -238,7 +238,8 @@ function updateDots() {
 function finishGame() {
     clearInterval(timerInt);
     playSound('vitoria');
-    // Forçar transição no index.html
+    
+    // Mudar para ecrã de resultados (Ecrã 3)
     if(window.goToResult) window.goToResult(); 
     
     const finalTime = document.getElementById('timer').innerText.replace('⏳ ', '');
@@ -252,12 +253,12 @@ function finishGame() {
 
 function playSound(s) { if(JOGO_CONFIG.sons[s]) new Audio(JOGO_CONFIG.sons[s]).play().catch(()=>{}); }
 
-// 5. ANIMAÇÃO DINÂMICA (FORÇANDO LIMPEZA DO ÍCONE DO INDEX)
+// 5. ANIMAÇÃO DINÂMICA (IMAGEM + GRELHA + SUBILNHAR)
 function updateIntroAnimation() {
     const introBox = document.getElementById('intro-animation');
     if(!introBox) return;
 
-    // LIMPAR O ÍCONE DO DADOS.JS QUE ESTÁ NO INDEX
+    // ESCONDER O ÍCONE DO DADOS.JS NO INDEX
     const staticIcon = document.getElementById('intro-icon');
     if(staticIcon) staticIcon.style.display = 'none';
 
@@ -267,13 +268,13 @@ function updateIntroAnimation() {
     
     introBox.style.cssText = "display:flex; flex-direction:column; align-items:center; gap:15px; border:none; background:transparent;";
     introBox.innerHTML = `
-        <div style="background:white; padding:12px; border-radius:20px; box-shadow:0 4px 15px rgba(0,0,0,0.1); text-align:center;">
-            <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:75px; height:75px; object-fit:contain;">
-            <div style="font-weight:900; color:var(--primary-blue); font-size:14px; margin-top:5px;">${word}</div>
+        <div style="background:white; padding:15px; border-radius:20px; box-shadow:0 4px 15px rgba(0,0,0,0.1); text-align:center;">
+            <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:80px; height:80px; object-fit:contain;">
+            <div style="font-weight:900; color:var(--primary-blue); font-size:16px; margin-top:5px;">${word}</div>
         </div>
-        <div style="display:grid; grid-template-columns: repeat(${word.length}, 35px); gap:5px; background:white; padding:10px; border-radius:15px; position:relative; box-shadow:0 4px 20px rgba(0,0,0,0.1);">
-            ${word.split('').map(l => `<div class="tut-cell" style="width:35px; height:35px; background:#f0f7ff; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:18px; color:var(--text-grey); transition:0.3s;">${l}</div>`).join('')}
-            <div id="hand-tut" style="position:absolute; top:25px; left:15px; font-size:35px; color:var(--primary-blue); z-index:10; transition: 2s ease-in-out; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));">
+        <div id="tut-grid-box" style="display:grid; grid-template-columns: repeat(${word.length}, 38px); gap:5px; background:white; padding:10px; border-radius:15px; position:relative; box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+            ${word.split('').map(l => `<div class="tut-cell" style="width:38px; height:38px; background:#f0f7ff; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:20px; color:var(--text-grey); transition:0.3s;">${l}</div>`).join('')}
+            <div id="hand-tut" style="position:absolute; top:28px; left:18px; font-size:38px; color:var(--primary-blue); z-index:10; transition: 2s ease-in-out; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));">
                 <i class="fas fa-hand-pointer"></i>
             </div>
         </div>
@@ -281,20 +282,34 @@ function updateIntroAnimation() {
 
     const hand = document.getElementById('hand-tut');
     const cells = document.querySelectorAll('.tut-cell');
-    const run = () => {
+    
+    const runTutorial = () => {
         if(!hand) return;
         hand.style.transform = `translateX(0)`;
         cells.forEach(c => { c.style.background = "#f0f7ff"; c.style.color = "var(--text-grey)"; });
+        
         setTimeout(() => {
-            hand.style.transform = `translateX(${(word.length - 1) * 40}px)`;
-            cells.forEach((c, idx) => setTimeout(() => { c.style.background = "var(--primary-blue)"; c.style.color = "white"; }, idx * 250));
+            hand.style.transform = `translateX(${(word.length - 1) * 43}px)`;
+            cells.forEach((c, idx) => setTimeout(() => {
+                c.style.background = "var(--primary-blue)";
+                c.style.color = "white";
+            }, idx * 250));
         }, 800);
     };
-    run(); setInterval(run, 4000);
+
+    runTutorial();
+    setInterval(runTutorial, 4500);
 }
 
-window.selectCategory = function(cat) { currentCat = cat; initUI(); updateIntroAnimation(); };
+// Eventos de Sistema
+window.selectCategory = function(cat) { 
+    currentCat = cat; 
+    initUI(); // Atualiza textos do index
+    updateIntroAnimation(); // Atualiza animação
+};
+
 window.addEventListener('DOMContentLoaded', () => { 
-    // Garante que a animação corre mesmo após o initUI do index
-    setTimeout(updateIntroAnimation, 50); 
+    initUI();
+    // Pequeno delay para garantir que o ícone do index já foi carregado para o podermos esconder
+    setTimeout(updateIntroAnimation, 100); 
 });
