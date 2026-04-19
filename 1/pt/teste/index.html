@@ -15,7 +15,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* HEADER */
         header { 
             height: 70px; display: flex; align-items: center; justify-content: space-between; 
             padding: 0 20px; background: #f0f7ff; z-index: 1000; flex-shrink: 0;
@@ -26,23 +25,30 @@
         .logo-text h1 { font-size: 18px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 10px; color: #88a; font-weight: 700; }
 
-        /* MENU HAMBURGUER COMPACTO */
+        /* MENU HAMBURGUER */
         .menu-dropdown { position: absolute; top: 60px; left: 15px; display: none; flex-direction: column; gap: 5px; z-index: 2000; }
         .menu-item { 
             display: flex; align-items: center; gap: 10px; padding: 8px 15px; background: white; border-radius: 12px; 
-            box-shadow: 2px 2px 8px rgba(0,0,0,0.1); cursor: pointer; min-width: 170px; text-decoration: none; 
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1); cursor: pointer; min-width: 180px; text-decoration: none; 
             color: var(--text-grey); font-weight: 700; font-size: 0.85rem; transition: background 0.2s;
         }
-        .menu-item:hover { background: #d0e4f7; } /* Apenas fundo muda */
-        .menu-item img { height: 18px; width: 18px; object-fit: contain; }
+        /* Hover: Fundo azul igual ao botão, texto/imagem não mudam */
+        .menu-item:hover { background: var(--primary-blue); }
 
-        /* Botão Voltar no Menu */
         .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
         .menu-item-voltar img { filter: brightness(0) invert(1); }
         .menu-item-voltar:hover { background: white !important; color: var(--primary-blue) !important; }
         .menu-item-voltar:hover img { filter: none; }
 
-        /* JOGO CARD */
+        .menu-divider { height: 1px; background-color: rgba(0,0,0,0.05); margin: 2px 10px; }
+
+        /* HEADER VOLTAR - ESCONDE NO MOBILE */
+        .btn-voltar-header { 
+            background: var(--primary-blue); color: white; padding: 7px 15px; border-radius: 12px; 
+            text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 8px; 
+            font-size: 13px; box-shadow: 0 4px 0 var(--primary-dark);
+        }
+
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden; }
         .game-card { 
             background: #f0f7ff; width: 100%; max-width: 1000px; height: 100%; 
@@ -51,7 +57,6 @@
             padding: 15px; position: relative;
         }
 
-        /* STATUS BAR */
         .status-bar { display: none; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-shrink: 0; }
         .dots-container { display: flex; gap: 6px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; background: #d0e0f0; transition: 0.3s; }
@@ -61,22 +66,13 @@
         .screen { flex: 1; display: none; width: 100%; min-height: 0; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
 
-        /* BOTÕES FIXOS A 5PX DO FUNDO */
-        .action-container { 
-            position: absolute; bottom: 5px; left: 15px; right: 15px;
-            display: flex; align-items: center; gap: 12px; padding-bottom: 5px;
-        }
-        .btn-jogar-stretch { 
-            flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 18px; 
-            padding: 14px; font-size: 20px; font-weight: 900; cursor: pointer; 
-            box-shadow: 0 5px 0 var(--primary-dark); transition: 0.1s;
-        }
+        /* BOTÕES FUNDO A 5PX */
+        .action-container { position: absolute; bottom: 5px; left: 15px; right: 15px; display: flex; align-items: center; gap: 12px; padding-bottom: 5px; }
+        .btn-jogar-stretch { flex: 1; background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 14px; font-size: 20px; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); transition: 0.1s; }
         .btn-jogar-stretch:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--primary-dark); }
 
-        /* CONTEÚDO DINÂMICO DO JOGO */
         .dynamic-game-content { width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; padding-bottom: 70px; }
 
-        /* PAINEL RD */
         .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 20px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); max-height: 80vh; overflow-y: auto; }
         .rd-panel.active { bottom: 0; }
         #rd-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -85,7 +81,12 @@
         footer { height: 40px; display: flex; align-items: center; justify-content: center; color: #89a; font-size: 11px; font-weight: 700; }
 
         @keyframes introAnim { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(10px, -10px); } }
-        @media (max-width: 650px) { .btn-voltar-header { display: none; } }
+        
+        /* MEDIA QUERY MOBILE */
+        @media (max-width: 650px) { 
+            .btn-voltar-header { display: none !important; } 
+            .logo-center { left: 50%; transform: translateX(-50%); }
+        }
     </style>
 </head>
 <body>
@@ -104,7 +105,7 @@
             </div>
         </div>
         <div class="header-right">
-            <a href="#" id="link-voltar" class="btn-voltar-header" style="background:var(--primary-blue); color:white; padding:7px 15px; border-radius:12px; text-decoration:none; font-weight:900; display:flex; align-items:center; gap:8px; font-size:13px; box-shadow:0 4px 0 var(--primary-dark);">
+            <a href="#" id="link-voltar-header" class="btn-voltar-header">
                 <img id="header-back-icon" src="" width="18"> <span id="txt-voltar-header"></span>
             </a>
         </div>
@@ -115,7 +116,9 @@
             
             <div class="status-bar" id="status-bar">
                 <div id="timer" style="font-weight:900; color:var(--text-grey); font-size:14px;">⏳ 00:00</div>
-                <div class="dots-container" id="dots-container"></div>
+                <div class="dots-container" id="dots-container">
+                    <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                </div>
                 <div style="font-weight:900; color:var(--primary-blue); display:flex; align-items:center; gap:8px;">
                     <span id="score-val">0</span>
                     <img id="rd-game-btn" src="" style="height:24px; cursor:pointer;" onclick="openRDMenu(event)">
@@ -136,11 +139,9 @@
                 </div>
             </div>
 
-            <!-- ECRÃ 2: JOGO (Contentor Genérico) -->
+            <!-- ECRÃ 2: JOGO -->
             <div class="screen" id="scr-game">
-                <div id="game-main-content" class="dynamic-game-content">
-                    <!-- O jogo.js injeta aqui o conteúdo -->
-                </div>
+                <div id="game-main-content" class="dynamic-game-content"></div>
             </div>
 
             <!-- ECRÃ 3: RESULTADOS -->
@@ -168,7 +169,7 @@
 
     <div id="rdMenu" class="rd-panel">
         <div style="width:40px; height:4px; background:#eee; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div>
-        <h3 id="rd-title" style="text-align:center; color:var(--primary-blue); margin-bottom:15px;">Escolher Tema</h3>
+        <h3 style="text-align:center; color:var(--primary-blue); margin-bottom:15px;">Escolher Tema</h3>
         <div id="rd-list"></div>
     </div>
 
@@ -189,8 +190,10 @@
             document.getElementById('mainFooter').innerHTML = conf.textos.rodape;
             document.getElementById('rd-game-btn').src = conf.caminhoImg + "rd.png";
             document.getElementById('rd-intro-btn').src = conf.caminhoImg + "rd.png";
+            
+            // Ambos os botões de voltar usam o linkVoltar do dados.js
             document.getElementById('btn-outro-jogo').onclick = () => window.location.href = conf.linkVoltar;
-            document.getElementById('link-voltar').href = conf.linkVoltar;
+            document.getElementById('link-voltar-header').href = conf.linkVoltar;
 
             // Menu Hambúrguer
             const menuBox = document.getElementById('dropdownMenu');
