@@ -1,6 +1,7 @@
 /**
  * MOTOR DO JOGO: CONTAR SÍLABAS 
- * Animação no tutorial + 5 rondas Nível 1 + 5 rondas Nível 2 (Imagens diferentes)
+ * Lógica: 10 Itens Únicos (5 Nível 1 + 5 Nível 2)
+ * Animação Tutorial: Mão clica no número certo.
  */
 
 let category = 'animais';
@@ -16,7 +17,7 @@ function init() {
     const pI = JOGO_CONFIG.caminhoIcons;
     const pImg = JOGO_CONFIG.caminhoImg;
 
-    // Cabeçalho e Títulos
+    // Configuração de Títulos Dinâmicos
     document.getElementById('head-logo').src = pI + JOGO_CONFIG.iconesMenu.ano1;
     document.getElementById('header-back-icon').src = pI + "voltar.png";
     document.getElementById('tit-l1').innerText = JOGO_CONFIG.textos.tituloLinha1;
@@ -24,17 +25,16 @@ function init() {
     document.getElementById('sub-tit').innerText = JOGO_CONFIG.textos.subtitulo;
     document.getElementById('mainFooter').innerHTML = JOGO_CONFIG.textos.rodape;
 
-    // Botão Voltar
+    // Botão Voltar Dinâmico
     const btnVoltarH = document.getElementById('link-voltar');
     btnVoltarH.href = JOGO_CONFIG.linkVoltar;
     btnVoltarH.innerHTML = `<img src="${pI}voltar.png"> ${JOGO_CONFIG.textoVoltar}`;
 
-    // Botões auxiliares
     document.getElementById('rd-game-btn').src = pImg + "rd.png";
     document.getElementById('rd-intro-btn').src = pImg + "rd.png";
     document.getElementById('btn-back-link').onclick = () => window.location.href = JOGO_CONFIG.linkVoltar;
 
-    // Menu Hambúrguer
+    // Menu Hambúrguer Dinâmico
     const menuBox = document.getElementById('dropdownMenu');
     menuBox.innerHTML = '';
     ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
@@ -47,7 +47,7 @@ function init() {
     btnV.innerHTML = `<img src="${pI}voltar.png"><span>${JOGO_CONFIG.textoVoltar}</span>`;
     menuBox.appendChild(btnV);
 
-    // RD Menu
+    // Menu de Temas RD
     const rdList = document.getElementById('rd-list');
     rdList.innerHTML = '';
     Object.keys(JOGO_CONFIG.categorias).forEach(k => {
@@ -63,54 +63,50 @@ function init() {
 
 function updateIntroTutorial() {
     const cat = JOGO_CONFIG.categorias[category];
-    const item = cat.itens[0]; // Item de exemplo
+    const item = cat.itens[0]; 
     
     document.getElementById('intro-img').src = JOGO_CONFIG.caminhoImg + item.img;
     document.getElementById('intro-name-label').innerText = item.nome;
     
     const slotsArea = document.getElementById('intro-slots');
-    slotsArea.innerHTML = ''; // Limpa
+    slotsArea.innerHTML = ''; 
     
-    // Criar botões 1, 2, 3, 4 no ecrã inicial
+    // Gerar números de exemplo 1-4
     for(let i=1; i<=4; i++) {
         const b = document.createElement('div');
         b.className = 'cell';
-        b.style.width = "60px"; b.style.height = "60px";
+        b.style.width = "65px"; b.style.height = "65px";
         b.innerText = i;
-        if(i === item.silabas) b.id = "hand-target"; // Marca o correto para a mão
+        if(i === item.silabas) b.id = "target-btn"; 
         slotsArea.appendChild(b);
     }
 
-    // Criar a mão
+    // Gerar Mão Tutorial
     const hand = document.createElement('i');
     hand.className = "fas fa-hand-pointer hand-tutorial";
     hand.style.position = "absolute";
-    hand.style.top = "65px"; // Ajustado para ficar por cima dos números
-    hand.id = "moving-hand";
+    hand.style.top = "50px"; 
+    hand.id = "hand-moving";
     slotsArea.appendChild(hand);
 
-    // Animação da mão
     setTimeout(() => {
-        const target = document.getElementById('hand-target');
-        const handEl = document.getElementById('moving-hand');
+        const target = document.getElementById('target-btn');
+        const handEl = document.getElementById('hand-moving');
         if(target && handEl) {
             const pos = target.offsetLeft + (target.offsetWidth / 2) - 10;
-            handEl.style.transition = "left 1s ease-in-out";
             handEl.style.left = pos + "px";
             
-            // Efeito de "clique" (pulsação)
+            // Ciclo de animação: Mão clica no botão
             setInterval(() => {
-                handEl.style.transform = "scale(1.2)";
-                target.style.transform = "scale(1.1)";
-                target.style.backgroundColor = "#e9f0f8";
+                handEl.style.transform = "translateY(15px) scale(0.9)";
+                target.style.backgroundColor = "#bbdefb";
                 setTimeout(() => {
-                    handEl.style.transform = "scale(1)";
-                    target.style.transform = "scale(1)";
+                    handEl.style.transform = "translateY(0) scale(1.1)";
                     target.style.backgroundColor = "white";
                 }, 500);
-            }, 1500);
+            }, 1600);
         }
-    }, 300);
+    }, 400);
 }
 
 function startGame() {
@@ -118,11 +114,11 @@ function startGame() {
     document.getElementById('status-bar').style.display = 'flex';
     document.getElementById('main-title').style.display = 'none';
     
-    // SORTEIO: 10 ITENS ÚNICOS (5+5)
+    // Sorteia 10 ITENS ÚNICOS (Baralha e tira 10)
     const all = [...JOGO_CONFIG.categorias[category].itens].sort(() => 0.5 - Math.random());
     itemsGame = all.slice(0, 10);
     
-    // Se a categoria tiver menos de 10, preenchemos para não dar erro
+    // Caso a categoria tenha menos de 10, preenche para não falhar
     if(itemsGame.length < 10) {
         while(itemsGame.length < 10) itemsGame.push(all[Math.floor(Math.random()*all.length)]);
     }
@@ -139,7 +135,7 @@ function startGame() {
 }
 
 function loadTask() {
-    // Se Level 1 usa 0-4 | Se Level 2 usa 5-9
+    // Level 1: 0 a 4 | Level 2: 5 a 9 (Imagens Diferentes)
     const idx = (currentLevel === 1) ? roundGlobal : (roundGlobal + 5);
     currentItem = itemsGame[idx];
 
@@ -159,10 +155,6 @@ function loadTask() {
 function renderButtons() {
     const grid = document.getElementById('game-grid');
     grid.innerHTML = '';
-    grid.style.display = "flex";
-    grid.style.justifyContent = "center";
-    grid.style.gap = "15px";
-
     for (let i = 1; i <= 4; i++) {
         const btn = document.createElement('div');
         btn.className = 'cell';
@@ -185,8 +177,8 @@ function checkAnswer(num) {
             roundGlobal++;
             if (roundGlobal >= 5) {
                 if (currentLevel === 1) {
-                    currentLevel = 2;
-                    roundGlobal = 0; // Reinicia contador para o segundo grupo de 5
+                    currentLevel = 2; // Passa para o segundo grupo de 5 imagens
+                    roundGlobal = 0;
                     loadTask();
                 } else {
                     finish();
