@@ -5,11 +5,10 @@ const JOGO_CONFIG = {
     caminhoImg: "../../../img/",
     caminhoIcons: "../../../icons/",
     
-    // CONFIGURAÇÃO DE PONTUAÇÃO
     pontuacao: {
-        acertoNivel1: 100,  // Pontos por palavra no Nível 1
-        acertoNivel2: 100,  // Pontos por palavra no Nível 2
-        erro: 50            // Pontos a retirar em caso de erro
+        acertoNivel1: 100, 
+        acertoNivel2: 100, 
+        erro: 50            
     },
 
     textos: {
@@ -18,8 +17,7 @@ const JOGO_CONFIG = {
         tituloLinha2: "LEITORES",
         subtitulo: "Português | 1º Ano",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos",
-        instrucao: "Encontra o nome das imagens na sopa de letras!",
-        iconIntro: "fas fa-search" // Este ícone é substituído pela animação no jogo.js
+        instrucao: "Encontra o nome das imagens na sopa de letras!"
     },
 
     sons: {
