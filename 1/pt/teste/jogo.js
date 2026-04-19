@@ -14,7 +14,7 @@ function init() {
     const pImg = JOGO_CONFIG.caminhoImg;
     const txt = JOGO_CONFIG.textos;
 
-    // Preencher Textos e Logotipo
+    // Preencher Textos e Logotipo no Header e Footer
     document.getElementById('head-logo').src = pI + JOGO_CONFIG.iconesMenu.ano1;
     document.getElementById('header-back-icon').src = pI + "voltar.png";
     document.getElementById('txt-titulo-linha1').innerHTML = `${txt.tituloLinha1}<br>${txt.tituloLinha2}`;
@@ -25,8 +25,10 @@ function init() {
     document.getElementById('rd-intro-btn').src = pImg + "rd.png";
     document.getElementById('btn-back-header').href = JOGO_CONFIG.links.home;
 
-    // Menu Hamburger
+    // Menu Hamburger - Construção Dinâmica
     const menuBox = document.getElementById('dropdownMenu');
+    menuBox.innerHTML = ''; // Limpar antes de preencher
+
     ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
         const label = k === 'home' ? 'Início' : (k === 'pre' ? 'Pré' : k.replace('ano', '') + 'º Ano');
         const a = document.createElement('a'); 
@@ -36,8 +38,20 @@ function init() {
         menuBox.appendChild(a);
     });
 
-    // Lista de Temas (RD)
+    // Adicionar Separador e Botão Voltar no Menu Hamburger
+    const divider = document.createElement('div');
+    divider.className = 'menu-divider';
+    menuBox.appendChild(divider);
+
+    const btnV = document.createElement('a');
+    btnV.className = 'menu-item menu-item-voltar';
+    btnV.href = '../index.html'; // Caminho para sair da pasta do jogo
+    btnV.innerHTML = `<img src="${pI}voltar.png" style="filter: brightness(0) invert(1);"><span>VOLTAR</span>`;
+    menuBox.appendChild(btnV);
+
+    // Lista de Temas (Painel RD)
     const rdList = document.getElementById('rd-list');
+    rdList.innerHTML = ''; // Limpar antes de preencher
     Object.keys(JOGO_CONFIG.categorias).forEach(k => {
         const c = JOGO_CONFIG.categorias[k];
         const card = document.createElement('div'); 
@@ -50,11 +64,32 @@ function init() {
     updateIntroTutorial(category);
 }
 
-// GESTÃO DE MENUS
-function toggleHamburger(e) { e.stopPropagation(); document.getElementById('dropdownMenu').style.display = (document.getElementById('dropdownMenu').style.display === 'flex') ? 'none' : 'flex'; }
-function openRDMenu(e) { if(e) e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; closeHamburger(); }
-function closeHamburger() { document.getElementById('dropdownMenu').style.display = 'none'; }
-function closeMenus() { closeHamburger(); document.getElementById('rdMenu').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; }
+// GESTÃO DE MENUS E OVERLAY
+function toggleHamburger(e) { 
+    e.stopPropagation(); 
+    const menu = document.getElementById('dropdownMenu');
+    const isVisible = menu.style.display === 'flex';
+    menu.style.display = isVisible ? 'none' : 'flex'; 
+    document.getElementById('overlay').style.display = isVisible ? 'none' : 'block';
+}
+
+function openRDMenu(e) { 
+    if(e) e.stopPropagation(); 
+    document.getElementById('rdMenu').classList.add('active'); 
+    document.getElementById('overlay').style.display = 'block'; 
+    closeHamburger(); 
+}
+
+function closeHamburger() { 
+    document.getElementById('dropdownMenu').style.display = 'none'; 
+}
+
+function closeMenus() { 
+    closeHamburger(); 
+    document.getElementById('rdMenu').classList.remove('active'); 
+    document.getElementById('overlay').style.display = 'none'; 
+}
+
 window.onclick = () => closeMenus();
 
 // LÓGICA DO JOGO
@@ -102,8 +137,8 @@ function startGame() {
     document.getElementById('mainFooter').style.display = 'none';
     
     const all = [...JOGO_CONFIG.categorias[category].itens];
-    // Criar lista de 10 palavras (pode repetir se a categoria tiver poucas)
     itemsGame = [];
+    // Criar lista de 10 palavras para o jogo
     for(let i=0; i<10; i++) itemsGame.push(all[Math.floor(Math.random()*all.length)]);
 
     timer = 0;
