@@ -58,7 +58,7 @@ const JOGO_CONFIG = {
                 { nome: "COELHO", img: "animaisdomesticos/coelho.png" }
             ]
         },
-          objeros: {
+        objetos: {
             nome: "Objetos",
             imgCapa: "objetos/vassoura.png",
             itens: [
