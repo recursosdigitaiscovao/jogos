@@ -7,12 +7,10 @@ const JOGO_CONFIG = {
         erro: "https://cdn.pixabay.com/audio/2022/03/10/audio_c330c67761.mp3",
         vitoria: "https://cdn.pixabay.com/audio/2024/02/07/audio_293963428f.mp3"
     },
-    // Títulos e Textos da Página
     textos: {
         tituloLinha1: "Pequenos",
         tituloLinha2: "Leitores",
         subtitulo: "Português | 1º Ano",
-        intro: "Explora as letras, as palavras e diverte-te a ler!",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos"
     },
     iconesMenu: {
