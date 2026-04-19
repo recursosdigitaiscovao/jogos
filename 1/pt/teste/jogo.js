@@ -13,13 +13,13 @@ function init() {
     const pImg = JOGO_CONFIG.caminhoImg;
     const txt = JOGO_CONFIG.textos;
     
-    // Injeção de Textos das 3 Linhas
+    // Injeção de Textos das 3 Linhas no Header
     document.getElementById('h-tit1').innerText = txt.tituloLinha1;
     document.getElementById('h-tit2').innerText = txt.tituloLinha2;
     document.getElementById('h-sub').innerText = txt.subtitulo;
     document.getElementById('mainFooter').innerHTML = txt.rodape;
 
-    // Assets Visuais e Navegação
+    // Configuração de Assets Visuais e Botão Voltar do Header (Desktop)
     document.getElementById('head-logo').src = pI + JOGO_CONFIG.iconesMenu.ano1;
     document.getElementById('header-back-icon').src = pI + "voltar.png";
     document.getElementById('link-voltar-main').href = JOGO_CONFIG.linkVoltar; 
@@ -27,23 +27,11 @@ function init() {
     document.getElementById('rd-intro-btn').src = pImg + "rd.png";
     document.getElementById('btn-back-link').onclick = () => window.location.href = JOGO_CONFIG.linkVoltar;
 
-    // --- CONFIGURAÇÃO DO MENU HAMBÚRGUER ---
+    // --- CONSTRUÇÃO DO MENU HAMBÚRGUER ---
     const menuBox = document.getElementById('dropdownMenu');
     menuBox.innerHTML = ''; 
 
-    // 1. Adiciona o botão VOLTAR no topo do menu hambúrguer
-    const btnVoltarMenu = document.createElement('a');
-    btnVoltarMenu.className = 'menu-item menu-item-voltar';
-    btnVoltarMenu.href = JOGO_CONFIG.linkVoltar;
-    btnVoltarMenu.innerHTML = `<img src="${pI}voltar.png"><span>${JOGO_CONFIG.textoVoltar}</span>`;
-    menuBox.appendChild(btnVoltarMenu);
-
-    // 2. Adiciona a linha divisória
-    const divisor = document.createElement('div');
-    divisor.className = 'menu-divider';
-    menuBox.appendChild(divisor);
-
-    // 3. Gera os outros links de navegação (Home, Pré, Anos...)
+    // 1. Primeiro, gera os links normais (Home, Pré, Anos...)
     ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
         const label = k === 'home' ? 'Início' : (k === 'pre' ? 'Pré' : k.replace('ano', '') + 'º Ano');
         const a = document.createElement('a'); 
@@ -52,8 +40,20 @@ function init() {
         a.innerHTML = `<img src="${pI}${JOGO_CONFIG.iconesMenu[k]}"><span>${label}</span>`; 
         menuBox.appendChild(a);
     });
-    // ---------------------------------------
 
+    // 2. Adiciona a linha divisória antes do botão voltar
+    const divisor = document.createElement('div');
+    divisor.className = 'menu-divider';
+    menuBox.appendChild(divisor);
+
+    // 3. Adiciona o botão VOLTAR como ÚLTIMO item da lista
+    const btnVoltarMenu = document.createElement('a');
+    btnVoltarMenu.className = 'menu-item menu-item-voltar';
+    btnVoltarMenu.href = JOGO_CONFIG.linkVoltar;
+    btnVoltarMenu.innerHTML = `<img src="${pI}voltar.png"><span>${JOGO_CONFIG.textoVoltar}</span>`;
+    menuBox.appendChild(btnVoltarMenu);
+
+    // --- MENU DE TEMAS (RD) ---
     const rdList = document.getElementById('rd-list');
     rdList.innerHTML = ''; 
     Object.keys(JOGO_CONFIG.categorias).forEach(k => {
@@ -61,7 +61,8 @@ function init() {
         const card = document.createElement('div');
         card.style = "background:white; border-radius:20px; padding:15px; display:flex; flex-direction:column; align-items:center; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.05); text-align:center;";
         card.innerHTML = `<img src="${pImg}${c.imgCapa}" style="width:55px; height:55px; object-fit:contain; margin-bottom:10px;"><span style="font-weight:800; color:#5d7082; font-size:14px;">${c.nome}</span>`;
-        card.onclick = () => { selectCat(k); }; rdList.appendChild(card);
+        card.onclick = () => { selectCat(k); }; 
+        rdList.appendChild(card);
     });
 
     updateIntroTutorial(category);
@@ -133,6 +134,7 @@ function genGrid() {
 
 function startSel(el) { isDragging = true; selectedCells = [el]; el.classList.add('selecting'); }
 function contSel(el) { if (isDragging && !selectedCells.includes(el)) { selectedCells.push(el); el.classList.add('selecting'); } }
+
 function endSel() {
     if (!isDragging) return; isDragging = false;
     const res = selectedCells.map(c => c.innerText).join('');
@@ -160,19 +162,31 @@ function finish() {
     document.getElementById('res-tim').innerText = document.getElementById('timer').innerText.replace('⏳ ','');
 }
 
+// Controle do Menu e Overlay
 function toggleHamburger(e) { 
     e.stopPropagation(); 
     const m = document.getElementById('dropdownMenu'); 
-    const overlay = document.getElementById('overlay');
-    const isVisible = m.style.display === 'flex';
-    
+    const isVisible = (m.style.display === 'flex');
     m.style.display = isVisible ? 'none' : 'flex'; 
-    overlay.style.display = isVisible ? 'none' : 'block';
+    document.getElementById('overlay').style.display = isVisible ? 'none' : 'block';
 }
 
-function openRDMenu(e) { e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
-function closeMenus() { document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('rdMenu').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; }
-function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function openRDMenu(e) { 
+    e.stopPropagation(); 
+    document.getElementById('rdMenu').classList.add('active'); 
+    document.getElementById('overlay').style.display = 'block'; 
+}
+
+function closeMenus() { 
+    document.getElementById('dropdownMenu').style.display = 'none'; 
+    document.getElementById('rdMenu').classList.remove('active'); 
+    document.getElementById('overlay').style.display = 'none'; 
+}
+
+function showScreen(id) { 
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
+    document.getElementById(id).classList.add('active'); 
+}
 
 function updateDots(total, current) { 
     const c = document.getElementById('dots'); 
@@ -185,6 +199,13 @@ function updateDots(total, current) {
 }
 
 function playSound(t) { if(JOGO_CONFIG.sons[t]) new Audio(JOGO_CONFIG.sons[t]).play().catch(()=>{}); }
-function selectCat(k) { category = k; roundGlobal = 0; score = 0; timer = 0; if(timerInt) clearInterval(timerInt); closeMenus(); showScreen('scr-intro'); updateIntroTutorial(k); }
+
+function selectCat(k) { 
+    category = k; roundGlobal = 0; score = 0; timer = 0; 
+    if(timerInt) clearInterval(timerInt); 
+    closeMenus(); 
+    showScreen('scr-intro'); 
+    updateIntroTutorial(k); 
+}
 
 window.onload = init;
