@@ -1,8 +1,4 @@
 const JOGO_CONFIG = {
-    // NAVEGAÇÃO
-    linkVoltar: "../", 
-    textoVoltar: "VOLTAR",
-
     caminhoImg: "../../../img/",
     caminhoIcons: "../../../icons/",
     caminhoSom: "", 
@@ -11,72 +7,77 @@ const JOGO_CONFIG = {
         erro: "https://cdn.pixabay.com/audio/2022/03/10/audio_c330c67761.mp3",
         vitoria: "https://cdn.pixabay.com/audio/2024/02/07/audio_293963428f.mp3"
     },
+    // Títulos e Textos da Página
     textos: {
         tituloLinha1: "Pequenos",
         tituloLinha2: "Leitores",
         subtitulo: "Português | 1º Ano",
+        intro: "Explora as letras, as palavras e diverte-te a ler!",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos"
     },
     iconesMenu: {
-        home: "home.png", pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png"
+        home: "home.png",
+        pre: "iconpre.png",
+        ano1: "icon1.png",
+        ano2: "icon2.png",
+        ano3: "icon3.png",
+        ano4: "icon4.png"
     },
     links: {
-        home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4"
+        home: "/jogos", 
+        pre: "/jogos/pre",
+        ano1: "/jogos/1",
+        ano2: "/jogos/2",
+        ano3: "/jogos/3",
+        ano4: "/jogos/4"
     },
     categorias: {
         animais: {
             nome: "Animais",
             imgCapa: "animaisdomesticos/gato.png",
             itens: [
-                { nome: "VACA", silabas: 2, img: "animaisdomesticos/vaca.png" },
-                { nome: "GATO", silabas: 2, img: "animaisdomesticos/gato.png" },
-                { nome: "PATO", silabas: 2, img: "animaisdomesticos/pato.png" },
-                { nome: "PERU", silabas: 2, img: "animaisdomesticos/peru.png" },
-                { nome: "CÃO", silabas: 1, img: "animaisdomesticos/cao.png" },
-                { nome: "CAVALO", silabas: 3, img: "animaisdomesticos/cavalo.png" },
-                { nome: "COELHO", silabas: 3, img: "animaisdomesticos/coelho.png" },
-                { nome: "OVELHA", silabas: 3, img: "animaisdomesticos/ovelha.png" },
-                { nome: "PORCO", silabas: 2, img: "animaisdomesticos/porco.png" },
-                { nome: "GALINHA", silabas: 3, img: "animaisdomesticos/galinha.png" }
+                { nome: "VACA", img: "animaisdomesticos/vaca.png" },
+                { nome: "GATO", img: "animaisdomesticos/gato.png" },
+                { nome: "PATO", img: "animaisdomesticos/pato.png" },
+                { nome: "PERU", img: "animaisdomesticos/peru.png" },
+                { nome: "CÃO", img: "animaisdomesticos/cao.png" },
+                { nome: "CAVALO", img: "animaisdomesticos/cavalo.png" },
+                { nome: "COELHO", img: "animaisdomesticos/coelho.png" }
             ]
         },
         frutos: {
             nome: "Frutos",
             imgCapa: "frutas/morango.png",
             itens: [
-                { nome: "BANANA", silabas: 3, img: "frutas/banana.png" },
-                { nome: "CEREJA", silabas: 3, img: "frutas/cereja.png" },
-                { nome: "UVAS", silabas: 2, img: "frutas/uvas.png" },
-                { nome: "MORANGO", silabas: 3, img: "frutas/morango.png" },
-                { nome: "LARANJA", silabas: 3, img: "frutas/laranja.png" },
-                { nome: "PAPAIA", silabas: 3, img: "frutas/papaia.png" },
-                { nome: "MAÇÃ", silabas: 2, img: "frutas/maca.png" },
-                { nome: "PERA", silabas: 2, img: "frutas/pera.png" },
-                { nome: "LIMÃO", silabas: 2, img: "frutas/limao.png" },
-                { nome: "KIWI", silabas: 2, img: "frutas/kiwi.png" }
+                { nome: "BANANA", img: "frutas/banana.png" },
+                { nome: "CEREJA", img: "frutas/cereja.png" },
+                { nome: "UVAS", img: "frutas/uvas.png" },
+                { nome: "MORANGO", img: "frutas/morango.png" },
+                { nome: "LARANJA", img: "frutas/laranja.png" },
+                { nome: "PAPAIA", img: "frutas/papaia.png" },
+                { nome: "MAÇÃ", img: "frutas/maca.png" }
             ]
         },
         material: {
             nome: "Material Escolar",
             imgCapa: "materialescolar/afia.png",
             itens: [
-                { nome: "MOCHILA", silabas: 3, img: "materialescolar/mochila.png" },
-                { nome: "TESOURA", silabas: 3, img: "materialescolar/tesoura.png" },
-                { nome: "LÁPIS", silabas: 2, img: "materialescolar/lapis.png" },
-                { nome: "LIVRO", silabas: 2, img: "materialescolar/livro.png" },
-                { nome: "AFIA", silabas: 2, img: "materialescolar/afia.png" },
-                { nome: "COLA", silabas: 2, img: "materialescolar/cola.png" },
-                { nome: "ESTOJO", silabas: 3, img: "materialescolar/estojo.png" },
-                { nome: "FOLHA", silabas: 2, img: "materialescolar/folha.png" },
-                { nome: "CANETA", silabas: 3, img: "materialescolar/caneta.png" },
-                { nome: "RÉGUA", silabas: 2, img: "materialescolar/regua.png" }
+                { nome: "MOCHILA", img: "materialescolar/mochila.png" },
+                { nome: "TESOURA", img: "materialescolar/tesoura.png" },
+                { nome: "LÁPIS", img: "materialescolar/lapis.png" },
+                { nome: "LIVRO", img: "materialescolar/livro.png" },
+                { nome: "CAPA", img: "materialescolar/capa.png" },
+                { nome: "AFIA", img: "materialescolar/afia.png" },
+                { nome: "COLA", img: "materialescolar/cola.png" },
+                { nome: "FOLHA", img: "materialescolar/folha.png" },
+                { nome: "ESTOJO", img: "materialescolar/estojo.png" }
             ]
         }
     },
     relatorios: [
-        { min: 1200, titulo: "BRILHANTE!", img: "taca_1.png" },
-        { min: 800, titulo: "MUITO BEM!", img: "taca_2.png" },
-        { min: 500, titulo: "BOM TRABALHO!", img: "taca_3.png" },
-        { min: 0, titulo: "TENTA OUTRA VEZ!", img: "taca_4.png" }
+        { min: 900, titulo: "BRILHANTE!", msg: "És um verdadeiro mestre das palavras!", img: "taca_1.png" },
+        { min: 700, titulo: "MUITO BEM!", msg: "Excelente prestação!", img: "taca_2.png" },
+        { min: 500, titulo: "BOM TRABALHO!", msg: "Estás quase lá, continua a praticar!", img: "taca_3.png" },
+        { min: 0, titulo: "NÃO FOI DESTA!", msg: "Tenta outra vez para melhorares!", img: "taca_4.png" }
     ]
 };
