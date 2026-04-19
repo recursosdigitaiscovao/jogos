@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pequenos Leitores - Sopa de Letras</title>
+    <title>Sopa de Letras - Pequenos Leitores</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -21,118 +21,131 @@
         body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
 
         header { 
-            height: 70px; display: flex; align-items: center; justify-content: space-between; 
+            height: 75px; display: flex; align-items: center; justify-content: space-between; 
             padding: 0 20px; background: #f0f7ff; z-index: 1000; flex-shrink: 0;
             box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4); position: relative;
         }
-        .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; z-index: 10; }
         
+        .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; z-index: 10; }
+
         .logo-center { 
             display: flex; align-items: center; gap: 10px; 
             position: absolute; left: 50%; transform: translateX(-50%); text-align: left;
         }
-        .logo-center img { height: 50px; }
-        .logo-text h1 { font-size: 18px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
-        .logo-text p { font-size: 10px; color: #88a; font-weight: 700; }
+        .logo-center img { height: 55px; }
+        .logo-text h1 { font-size: 18px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.85; margin: 0; }
+        .logo-text p { font-size: 11px; color: #88a; font-weight: 700; margin-top: 2px; }
 
         .btn-voltar-header { 
             background: var(--primary-blue); color: white; padding: 8px 18px; border-radius: 14px; 
-            text-decoration: none; font-weight: 900; display: flex; align-items: center; gap: 8px; font-size: 14px;
-            box-shadow: 0 4px 0 var(--primary-dark);
+            text-decoration: none; font-weight: 900; font-size: 14px; box-shadow: 0 4px 0 var(--primary-dark);
         }
 
-        /* Menu Dropdown Estilizado */
+        /* Menu */
         .menu-dropdown { 
-            position: absolute; top: 75px; left: 20px; display: none; flex-direction: column; 
+            position: absolute; top: 80px; left: 20px; display: none; flex-direction: column; 
             gap: 5px; z-index: 2000; background: white; padding: 10px; border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 2px solid #eef2f7;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 220px;
         }
-        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; text-decoration: none; color: var(--text-grey); font-weight: 800; border-radius: 12px; transition: 0.2s; }
-        .menu-item:hover { background: #f0f7ff; color: var(--primary-blue); }
-        .menu-item img { width: 24px; height: 24px; object-fit: contain; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text-grey); font-weight: 800; border-radius: 12px; }
+        .menu-item img { width: 22px; }
 
+        /* Jogo Layout */
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden; }
         .game-card { background: #f0f7ff; width: 100%; max-width: 1000px; height: 100%; border-radius: 40px; box-shadow: 0 15px 35px rgba(176,196,217,0.5); display: flex; flex-direction: column; padding: 20px; position: relative; }
 
         .screen { flex: 1; display: none; flex-direction: column; align-items: center; min-height: 0; }
         .screen.active { display: flex; }
 
-        /* SOPA DE LETRAS GRID */
-        #word-search-container { display: flex; gap: 20px; width: 100%; height: 100%; justify-content: center; align-items: center; }
-        .grid-board { display: grid; background: white; padding: 10px; border-radius: 20px; box-shadow: 0 8px 0 #cbd9e6; user-select: none; touch-action: none; }
-        .letter { width: clamp(30px, 7vw, 45px); height: clamp(30px, 7vw, 45px); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.2rem; color: #445; border-radius: 8px; cursor: pointer; transition: 0.1s; }
+        /* Grid Sopa de Letras */
+        .game-content-layout { display: flex; gap: 20px; width: 100%; height: 100%; align-items: center; justify-content: center; }
+        
+        .grid-board { 
+            display: grid; background: white; padding: 10px; border-radius: 20px; 
+            box-shadow: 0 8px 0 #cbd9e6; user-select: none; touch-action: none;
+            grid-template-columns: repeat(10, clamp(30px, 7.5vw, 48px));
+        }
+        .letter { 
+            width: clamp(30px, 7.5vw, 48px); height: clamp(30px, 7.5vw, 48px); 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 900; font-size: clamp(16px, 4vw, 22px); color: #445; 
+            border-radius: 8px; cursor: pointer; 
+        }
         .letter.selected { background: var(--primary-blue); color: white; }
         .letter.found { background: var(--highlight-green) !important; color: white !important; }
 
-        .words-list { width: 200px; display: flex; flex-direction: column; gap: 10px; padding: 10px; background: rgba(255,255,255,0.5); border-radius: 20px; }
-        .word-item { font-weight: 800; color: #89a; font-size: 1.1rem; text-transform: uppercase; }
-        .word-item.found { text-decoration: line-through; color: var(--highlight-green); opacity: 0.6; }
+        .words-sidebar { 
+            width: 220px; height: 100%; background: rgba(255,255,255,0.4); 
+            border-radius: 25px; padding: 20px; display: flex; flex-direction: column; gap: 10px;
+            overflow-y: auto;
+        }
+        .word-tag { font-weight: 800; color: #5d7082; font-size: 1.1rem; text-transform: uppercase; padding: 5px 0; }
+        .word-tag.found { color: var(--highlight-green); text-decoration: line-through; opacity: 0.5; }
 
-        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 20px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); }
+        /* RD Painel */
+        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; padding: 25px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); }
         .rd-panel.active { bottom: 0; }
-        #rd-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
-        
+        #rd-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px; }
+
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
-        
-        @media (max-width: 768px) {
-            #word-search-container { flex-direction: column; }
-            .words-list { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: center; height: auto; }
+
+        @media (max-width: 850px) {
+            .game-content-layout { flex-direction: column; }
+            .words-sidebar { width: 100%; height: auto; flex-direction: row; flex-wrap: wrap; justify-content: center; }
             .btn-voltar-header { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay"></div>
+    <div class="overlay" id="overlay" onclick="fecharMenus()"></div>
 
     <header>
-        <i class="fas fa-bars hamburger-btn" id="btn-hamburger"></i>
+        <i class="fas fa-bars hamburger-btn" onclick="toggleMenu(event)"></i>
         <div id="dropdownMenu" class="menu-dropdown"></div>
         
         <div class="logo-center">
-            <img id="logo-img" src="" alt="Logo">
+            <img id="head-logo" src="" alt="">
             <div class="logo-text">
-                <h1 id="txt-tit-1"></h1>
-                <h1 id="txt-tit-2"></h1>
-                <p id="txt-subtit"></p>
+                <h1 id="txt-l1"></h1>
+                <h1 id="txt-l2"></h1>
+                <p id="txt-sub"></p>
             </div>
         </div>
 
-        <a href="#" id="link-voltar-top" class="btn-voltar-header">VOLTAR</a>
+        <a href="#" id="btn-topo-voltar" class="btn-voltar-header">VOLTAR</a>
     </header>
 
     <div class="game-container">
         <div class="game-card">
             
-            <!-- ECRÃ 1: SELEÇÃO (INTRO) -->
+            <!-- ECRÃ INICIAL -->
             <div class="screen active" id="scr-intro">
-                <h2 id="intro-msg" style="margin-top: 40px; color: var(--primary-blue); text-align: center;"></h2>
-                <div id="intro-categories" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; width: 100%; padding: 40px;">
-                    <!-- Gerado por JS -->
-                </div>
+                <h2 style="color:var(--primary-blue); margin: 30px 0 10px; text-align:center;">ESCOLHE UM TEMA</h2>
+                <div id="intro-cats" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:20px; width:100%; padding:20px;"></div>
             </div>
 
-            <!-- ECRÃ 2: JOGO -->
+            <!-- ECRÃ JOGO -->
             <div class="screen" id="scr-game">
-                <div id="word-search-container">
+                <div class="game-content-layout">
                     <div class="grid-board" id="grid-board"></div>
-                    <div class="words-list" id="words-list"></div>
+                    <div class="words-sidebar" id="words-list"></div>
                 </div>
             </div>
 
-            <!-- ECRÃ 3: RESULTADOS -->
-            <div class="screen" id="scr-result" style="justify-content: center;">
-                <img id="res-img" src="" style="width: 150px; margin-bottom: 20px;">
-                <h2 id="res-tit" style="font-size: 32px; color: var(--primary-blue);"></h2>
-                <p id="res-msg" style="font-weight: 700; color: #678; margin-bottom: 30px;"></p>
-                <button class="btn-voltar-header" style="font-size: 20px; padding: 15px 40px;" onclick="location.reload()">JOGAR NOVAMENTE</button>
+            <!-- ECRÃ RESULTADOS -->
+            <div class="screen" id="scr-result" style="justify-content: center; text-align: center;">
+                <img id="res-taca" src="" style="width:140px; margin-bottom:20px;">
+                <h2 id="res-tit" style="font-size:32px; color:var(--primary-blue);"></h2>
+                <p id="res-msg" style="font-weight:700; color:#678; margin-bottom:30px;"></p>
+                <button class="btn-voltar-header" style="padding:15px 40px; font-size:18px;" onclick="location.reload()">REPETIR JOGO</button>
             </div>
 
         </div>
     </div>
 
     <div id="rdMenu" class="rd-panel">
-        <h3 style="text-align:center; margin-bottom:15px; color:var(--primary-blue);">TEMAS</h3>
+        <h3 style="text-align:center; margin-bottom:20px; color:var(--primary-blue);">MUDAR TEMA</h3>
         <div id="rd-list"></div>
     </div>
 
