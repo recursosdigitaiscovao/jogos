@@ -32,6 +32,8 @@ const JOGO_CONFIG = {
                 { nome: "PERU", silabas: 2, img: "animaisdomesticos/peru.png" },
                 { nome: "CÃO", silabas: 1, img: "animaisdomesticos/cao.png" },
                 { nome: "CAVALO", silabas: 3, img: "animaisdomesticos/cavalo.png" },
+                { nome: "BURRO", silabas: 2, img: "animaisdomesticos/burro.png" },
+                { nome: "GALINHA", silabas: 3, img: "animaisdomesticos/galinha.png" },
                 { nome: "COELHO", silabas: 3, img: "animaisdomesticos/coelho.png" }
             ]
         },
@@ -43,6 +45,7 @@ const JOGO_CONFIG = {
                 { nome: "CEREJA", silabas: 3, img: "frutas/cereja.png" },
                 { nome: "UVAS", silabas: 2, img: "frutas/uvas.png" },
                 { nome: "MORANGO", silabas: 3, img: "frutas/morango.png" },
+                { nome: "MELANCIA", silabas: 4, img: "frutas/melancia.png" },
                 { nome: "LARANJA", silabas: 3, img: "frutas/laranja.png" },
                 { nome: "PAPAIA", silabas: 3, img: "frutas/papaia.png" },
                 { nome: "MAÇÃ", silabas: 2, img: "frutas/maca.png" }
@@ -57,6 +60,9 @@ const JOGO_CONFIG = {
                 { nome: "LÁPIS", silabas: 2, img: "materialescolar/lapis.png" },
                 { nome: "LIVRO", silabas: 2, img: "materialescolar/livro.png" },
                 { nome: "AFIA", silabas: 2, img: "materialescolar/afia.png" },
+                { nome: "CANETA", silabas: 3, img: "materialescolar/caneta.png" },
+                { nome: "RÉGUA", silabas: 3, img: "materialescolar/regua.png" },
+                { nome: "BORACHA", silabas: 3, img: "materialescolar/borracha.png" },
                 { nome: "COLA", silabas: 2, img: "materialescolar/cola.png" },
                 { nome: "ESTOJO", silabas: 3, img: "materialescolar/estojo.png" }
             ]
