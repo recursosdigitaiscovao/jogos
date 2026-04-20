@@ -6,7 +6,7 @@ let currentLevel = 1;
 let score = 0;
 let timerSeconds = 0;
 let timerInterval;
-let selectedSyllables = [];
+let selectedSyllables = []; // Guarda as sílabas colocadas e a referência ao elemento original
 let draggedElement = null;
 
 const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
@@ -14,25 +14,20 @@ const sndErro = new Audio(JOGO_CONFIG.sons.erro);
 const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
 window.addEventListener('load', () => {
-    // Configuração inicial dos ícones
     document.getElementById('rd-intro-btn').src = JOGO_CONFIG.caminhoImg + "rd.png";
     document.getElementById('rd-game-btn').src = JOGO_CONFIG.caminhoImg + "rd.png";
-
-    // Iniciar com a primeira categoria
     selectCategory(Object.keys(JOGO_CONFIG.categorias)[0]);
 });
 
-// Função para mudar de categoria (pode ser chamada a qualquer momento)
+// Seleção de categoria e atualização do Tutorial
 window.selectCategory = function(key) {
     currentCategory = key;
     const cat = JOGO_CONFIG.categorias[key];
     let all = [...cat.itens].sort(() => Math.random() - 0.5);
     gameItems = all.slice(0, 10);
 
-    // Gerar Tutorial Animado para esta categoria
     renderTutorial(cat);
 
-    // Se estiver no meio de um jogo, reinicia
     if(document.getElementById('scr-game').classList.contains('active')) {
         initGame();
     }
@@ -40,39 +35,42 @@ window.selectCategory = function(key) {
 
 function renderTutorial(cat) {
     const container = document.getElementById('intro-animation-container');
-    const itemExemplo = cat.itens[0]; // Usa o primeiro item para o exemplo
+    const item = cat.itens[0];
+    const sil Shuffled = [...item.silabas].reverse(); // Simula desordem
     
     container.innerHTML = `
-        <div style="position:relative; width:220px; height:180px; background:white; border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.1); display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden;">
-            <img src="${JOGO_CONFIG.caminhoImg}${itemExemplo.img}" style="height:70px; margin-bottom:10px;">
-            <div style="display:flex; gap:5px; margin-bottom:15px;">
-                <div style="width:30px; height:30px; border:2px dashed #ccc; border-radius:5px;"></div>
-                <div style="width:30px; height:30px; border:2px dashed #ccc; border-radius:5px;"></div>
+        <div class="tutorial-box" style="position:relative; width:260px; height:200px; background:white; border-radius:25px; box-shadow:0 10px 30px rgba(0,0,0,0.1); display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden; border: 4px solid #f0f7ff;">
+            <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:60px; margin-bottom:10px;">
+            
+            <!-- Caixas de destino -->
+            <div style="display:flex; gap:8px; margin-bottom:20px;">
+                <div class="tuto-target" style="width:35px; height:35px; border:2px dashed #ddd; border-radius:8px;"></div>
+                <div class="tuto-target" style="width:35px; height:35px; border:2px dashed #ddd; border-radius:8px;"></div>
             </div>
-            <div id="tuto-silaba" style="background:var(--primary-blue); color:white; padding:5px 10px; border-radius:8px; font-weight:900; font-size:14px; position:absolute; bottom:20px; left:30px; z-index:10;">
-                ${itemExemplo.silabas[0]}
+
+            <!-- Sílabas desordenadas -->
+            <div style="display:flex; gap:10px;">
+                <div id="tuto-sil-1" style="background:#eee; padding:5px 10px; border-radius:8px; font-weight:900; font-size:14px; color:#999;">${silShuffled[0]}</div>
+                <div id="tuto-sil-drag" style="background:var(--primary-blue); color:white; padding:5px 10px; border-radius:8px; font-weight:900; font-size:14px; position:absolute; z-index:10; left:140px; bottom:30px;">${item.silabas[0]}</div>
             </div>
-            <i class="fas fa-hand-pointer" id="tuto-hand" style="position:absolute; bottom:10px; left:50px; color:#f39c12; font-size:24px; z-index:11;"></i>
+
+            <i class="fas fa-hand-pointer" id="tuto-hand" style="position:absolute; bottom:20px; left:155px; color:#f39c12; font-size:24px; z-index:11;"></i>
         </div>
         <style>
-            @keyframes handMove {
+            @keyframes tutoMove {
                 0% { transform: translate(0,0); }
-                50% { transform: translate(40px, -70px); }
-                100% { transform: translate(40px, -70px); opacity:0; }
+                30% { transform: translate(-60px, -90px); }
+                70% { transform: translate(-60px, -90px); opacity:1; }
+                100% { transform: translate(-60px, -90px); opacity:0; }
             }
-            #tuto-hand, #tuto-silaba { animation: handMove 2s infinite ease-in-out; }
+            #tuto-hand, #tuto-sil-drag { animation: tutoMove 3s infinite ease-in-out; }
         </style>
     `;
 }
 
 function initGame() {
-    currentIndex = 0;
-    roundInLevel = 0;
-    currentLevel = 1;
-    score = 0;
-    timerSeconds = 0;
+    currentIndex = 0; roundInLevel = 0; currentLevel = 1; score = 0; timerSeconds = 0;
     document.getElementById('score-val').innerText = score;
-    
     setupDots();
     startTimer();
     renderRound();
@@ -112,21 +110,18 @@ function renderRound() {
 
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:10px;">
-            <div style="color:var(--primary-blue); font-weight:900; font-size:12px; background:#fff; padding:2px 15px; border-radius:20px;">NÍVEL ${currentLevel}</div>
-            
-            <div id="word-hint" style="font-size:26px; font-weight:900; color:var(--primary-blue); letter-spacing:4px; height:35px;">
-                ${isLevel2 ? '???' : item.nome}
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:8px;">
+            <div style="color:var(--primary-blue); font-weight:900; font-size:12px; background:#fff; padding:2px 15px; border-radius:20px; border:1px solid #d0e0f0;">NÍVEL ${currentLevel}</div>
+            <div id="word-hint" style="font-size:26px; font-weight:900; color:var(--primary-blue); letter-spacing:4px; height:35px;">${isLevel2 ? '???' : item.nome}</div>
+
+            <div style="background:white; padding:10px; border-radius:25px; box-shadow:0 8px 20px rgba(0,0,0,0.05); margin-bottom:5px;">
+                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:110px; max-width:180px; object-fit:contain;" draggable="false">
             </div>
 
-            <div style="background:white; padding:10px; border-radius:25px; box-shadow:0 8px 20px rgba(0,0,0,0.05);">
-                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:120px; max-width:200px; object-fit:contain;" draggable="false">
-            </div>
-
-            <div id="drop-zones" style="display:flex; gap:10px; min-height:70px; justify-content:center; width:100%; margin: 10px 0;">
+            <div id="drop-zones" style="display:flex; gap:10px; min-height:70px; justify-content:center; width:100%;">
                 ${item.silabas.map((_, i) => `
-                    <div class="target-box" data-idx="${i}" 
-                         style="width:65px; height:65px; border:3px dashed #cbd9e6; border-radius:15px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:22px; color:var(--primary-dark); background:rgba(255,255,255,0.5);">
+                    <div class="target-box" data-idx="${i}" onclick="removeSyllable(${i})"
+                         style="width:65px; height:65px; border:3px dashed #cbd9e6; border-radius:15px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:22px; color:var(--primary-dark); background:rgba(255,255,255,0.5); cursor:pointer;">
                     </div>
                 `).join('')}
             </div>
@@ -135,11 +130,9 @@ function renderRound() {
                 ${shuffleArray([...item.silabas]).map((sil, i) => `
                     <div class="silaba-card" 
                          draggable="true"
-                         onclick="handleSyllableClick(this, '${sil}')"
-                         onmousedown="startDrag(event)" 
-                         ontouchstart="startDrag(event)"
-                         data-silaba="${sil}"
-                         style="background:white; padding:12px 18px; border-radius:15px; font-weight:900; font-size:22px; color:var(--text-grey); cursor:grab; box-shadow:0 5px 0 #d0e0f0; border:1px solid #eee; touch-action:none; user-select:none;">
+                         onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
+                         data-silaba="${sil}" id="sil-orig-${currentIndex}-${i}"
+                         style="background:white; padding:12px 18px; border-radius:15px; font-weight:900; font-size:22px; color:var(--text-grey); cursor:grab; box-shadow:0 5px 0 #d0e0f0; border:1px solid #eee; touch-action:none;">
                         ${sil}
                     </div>
                 `).join('')}
@@ -148,35 +141,39 @@ function renderRound() {
     `;
 }
 
-// --- CLIQUE ---
-function handleSyllableClick(el, sil) {
-    if (el.style.visibility === 'hidden') return;
-    const targets = document.querySelectorAll('.target-box');
-    for (let i = 0; i < targets.length; i++) {
-        if (!selectedSyllables[i]) {
-            fillTarget(i, sil, el);
-            break;
-        }
-    }
-}
+// REMOVER SÍLABA (CORREÇÃO)
+window.removeSyllable = function(idx) {
+    const data = selectedSyllables[idx];
+    if(!data) return;
+
+    // Torna a sílaba original visível novamente
+    const originalEl = document.getElementById(data.originalId);
+    if(originalEl) originalEl.style.visibility = 'visible';
+
+    // Limpa a caixa
+    const target = document.querySelector(`.target-box[data-idx="${idx}"]`);
+    target.innerText = "";
+    target.style.background = "rgba(255,255,255,0.5)";
+    target.style.border = "3px dashed #cbd9e6";
+    
+    selectedSyllables[idx] = null;
+};
 
 function fillTarget(targetIdx, silaba, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
     target.innerText = silaba;
     target.style.background = "white";
     target.style.border = "2px solid var(--primary-blue)";
-    target.style.transform = "scale(1.1)";
-    setTimeout(() => target.style.transform = "scale(1)", 150);
     
     originalEl.style.visibility = 'hidden';
-    selectedSyllables[targetIdx] = silaba;
+    selectedSyllables[targetIdx] = { silaba: silaba, originalId: originalEl.id };
 
     if (selectedSyllables.filter(s => s !== null).length === gameItems[currentIndex].silabas.length) {
         setTimeout(checkWord, 400);
     }
 }
 
-// --- DRAG & DROP AFINADO ---
+// DRAG & DROP COM LANÇAMENTO
 function startDrag(e) {
     draggedElement = e.target.closest('.silaba-card');
     if (!draggedElement || draggedElement.style.visibility === 'hidden') return;
@@ -188,8 +185,8 @@ function startDrag(e) {
     const offsetY = startY - rect.top;
 
     draggedElement.style.zIndex = '2000';
-    draggedElement.style.transform = 'scale(1.1)';
-    draggedElement.style.boxShadow = '0 15px 30px rgba(0,0,0,0.2)';
+    draggedElement.style.transform = 'scale(1.1) rotate(3deg)';
+    draggedElement.style.pointerEvents = 'none'; // Importante para o elementFromPoint
 
     const moveEvent = e.type === 'touchstart' ? 'touchmove' : 'mousemove';
     const upEvent = e.type === 'touchstart' ? 'touchend' : 'mouseup';
@@ -197,20 +194,9 @@ function startDrag(e) {
     function onMove(ev) {
         const x = (ev.type === 'touchmove' ? ev.touches[0].clientX : ev.clientX);
         const y = (ev.type === 'touchmove' ? ev.touches[0].clientY : ev.clientY);
-        
         draggedElement.style.position = 'fixed';
         draggedElement.style.left = (x - offsetX) + 'px';
         draggedElement.style.top = (y - offsetY) + 'px';
-
-        // Feedback visual de hover
-        document.querySelectorAll('.target-box').forEach(box => {
-            const b = box.getBoundingClientRect();
-            if (x > b.left && x < b.right && y > b.top && y < b.bottom) {
-                box.style.background = "#d0e8ff";
-            } else {
-                box.style.background = "rgba(255,255,255,0.5)";
-            }
-        });
     }
 
     function onUp(ev) {
@@ -220,34 +206,32 @@ function startDrag(e) {
         const endX = (ev.type === 'touchend' ? ev.changedTouches[0].clientX : ev.clientX);
         const endY = (ev.type === 'touchend' ? ev.changedTouches[0].clientY : ev.clientY);
 
-        // Encontrar a caixa de destino
+        // Verifica o que está por baixo da posição onde soltou
         const dropTarget = document.elementFromPoint(endX, endY)?.closest('.target-box');
 
         if (dropTarget && !selectedSyllables[dropTarget.dataset.idx]) {
             fillTarget(dropTarget.dataset.idx, draggedElement.dataset.silaba, draggedElement);
-            // Reset parcial para não "saltar" antes de ocultar
             draggedElement.style.position = '';
         } else {
-            // Volta para a origem
+            // Volta para a posição original
             draggedElement.style.transition = '0.3s';
             draggedElement.style.position = '';
             draggedElement.style.left = '';
             draggedElement.style.top = '';
             draggedElement.style.transform = '';
-            draggedElement.style.boxShadow = '0 5px 0 #d0e0f0';
             setTimeout(() => draggedElement.style.transition = '', 300);
         }
         draggedElement.style.zIndex = '';
+        draggedElement.style.pointerEvents = 'auto';
     }
 
     document.addEventListener(moveEvent, onMove);
     document.addEventListener(upEvent, onUp);
 }
 
-// --- LOGICA DE JOGO ---
 function checkWord() {
     const item = gameItems[currentIndex];
-    const userWord = selectedSyllables.join('');
+    const userWord = selectedSyllables.map(s => s ? s.silaba : "").join('');
     const correctWord = item.silabas.join('');
 
     if (userWord === correctWord) {
@@ -261,25 +245,19 @@ function checkWord() {
         score = Math.max(0, score - JOGO_CONFIG.pontuacao.erro);
         document.getElementById('score-val').innerText = score;
         document.querySelectorAll('.target-box').forEach(b => b.style.borderColor = "var(--error-red)");
-        setTimeout(renderRound, 800);
+        // Não reseta automático para permitir que o aluno corrija clicando na caixa
     }
 }
 
 function nextRound() {
-    currentIndex++;
-    roundInLevel++;
-
-    if (roundInLevel < 5) {
-        renderRound();
-    } else {
+    currentIndex++; roundInLevel++;
+    if (roundInLevel < 5) renderRound();
+    else {
         if (currentLevel === 1) {
-            currentLevel = 2;
-            roundInLevel = 0;
-            setupDots();
-            renderRound();
-        } else {
-            finishGame();
-        }
+            currentLevel = 2; roundInLevel = 0;
+            alert("Nível 1 concluído! Agora sem ajuda!");
+            setupDots(); renderRound();
+        } else finishGame();
     }
 }
 
@@ -288,7 +266,6 @@ function finishGame() {
     sndVitoria.play();
     document.getElementById('res-pts').innerText = score;
     document.getElementById('res-tim').innerText = document.getElementById('timer').innerText.replace('⏳ ', '');
-    
     let rel = JOGO_CONFIG.relatorios.find(r => score >= r.min) || JOGO_CONFIG.relatorios[JOGO_CONFIG.relatorios.length-1];
     document.getElementById('res-tit').innerText = rel.titulo;
     document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rel.img;
