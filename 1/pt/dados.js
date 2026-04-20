@@ -35,7 +35,7 @@ const JOGO_CONFIG = {
     
     // Lista de Jogos
     listaJogos: [
-        { nome: "Conta as Sílabas", icon: "silabas.png", link: "silabas/" },
+        { nome: "Conta as Sílabas", icon: "conta_silabas.png", link: "conta_silabas/" },
         { nome: "Forma Palavras", icon: "liga_letras.png", link: "liga_letras/" },
         { nome: "Forma Palavras", icon: "liga_letras.png", link: "liga_letras/" },
         { nome: "Forma Palavras", icon: "liga_letras.png", link: "liga_letras/" },
