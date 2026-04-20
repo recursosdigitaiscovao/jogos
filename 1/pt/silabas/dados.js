@@ -17,7 +17,7 @@ const JOGO_CONFIG = {
         tituloLinha2: "LEITORES",
         subtitulo: "Português | 1º Ano",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos",
-        instrucao: "Ordena as sílabas para formar a palavra correta!"
+        instrucao: "Ordena as sílabas para formar a palavra!"
     },
 
     sons: {
@@ -42,9 +42,7 @@ const JOGO_CONFIG = {
                 { nome: "PATO", silabas: ["PA", "TO"], img: "animaisdomesticos/pato.png" },
                 { nome: "GALO", silabas: ["GA", "LO"], img: "animaisdomesticos/galo.png" },
                 { nome: "URSO", silabas: ["UR", "SO"], img: "animaisselvagens/urso.png" },
-                { nome: "PERU", silabas: ["PE", "RU"], img: "animaisdomesticos/peru.png" },
                 { nome: "FOCA", silabas: ["FO", "CA"], img: "animaisselvagens/foca.png" },
-                { nome: "CÃO", silabas: ["CÃO"], img: "animaisdomesticos/cao.png" },
                 { nome: "MACACO", silabas: ["MA", "CA", "CO"], img: "animaisselvagens/macaco.png" },
                 { nome: "CAVALO", silabas: ["CA", "VA", "LO"], img: "animaisdomesticos/cavalo.png" },
                 { nome: "GALINHA", silabas: ["GA", "LI", "NHA"], img: "animaisdomesticos/galinha.png" },
@@ -78,7 +76,33 @@ const JOGO_CONFIG = {
                 { nome: "MELANCIA", silabas: ["ME", "LAN", "CI", "A"], img: "frutas/melancia.png" },
                 { nome: "LARANJA", silabas: ["LA", "RAN", "JA"], img: "frutas/laranja.png" },
                 { nome: "PAPAIA", silabas: ["PA", "PA", "IA"], img: "frutas/papaia.png" },
-                { nome: "MAÇÃ", silabas: ["MA", "ÇÃ"], img: "frutas/maca.png" }
+                { nome: "MAÇÃ", silabas: ["MA", "ÇÃ"], img: "frutas/maca.png" },
+                // Novos frutos da imagem:
+                { nome: "AMORA", silabas: ["A", "MO", "RA"], img: "frutas/amora.png" },
+                { nome: "MELÃO", silabas: ["ME", "LÃO"], img: "frutas/melao.png" },
+                { nome: "MARACUJÁ", silabas: ["MA", "RA", "CU", "JÁ"], img: "frutas/maracuja.png" },
+                { nome: "LIMÃO", silabas: ["LI", "MÃO"], img: "frutas/limao.png" },
+                { nome: "GOIABA", silabas: ["GOI", "A", "BA"], img: "frutas/goiaba.png" },
+                { nome: "FIGO", silabas: ["FI", "GO"], img: "frutas/figo.png" },
+                { nome: "DIÓSPIRO", silabas: ["DI", "ÓS", "PI", "RO"], img: "frutas/diospiro.png" },
+                { nome: "CASTANHA", silabas: ["CAS", "TA", "NHA"], img: "frutas/castanha.png" },
+                { nome: "ROMÃ", silabas: ["RO", "MÃ"], img: "frutas/roma.png" }
+            ]
+        },
+        material: {
+            nome: "Material Escolar",
+            imgCapa: "materialescolar/afia.png",
+            itens: [
+                { nome: "MOCHILA", silabas: ["MO", "CHI", "LA"], img: "materialescolar/mochila.png" },
+                { nome: "TESOURA", silabas: ["TE", "SOU", "RA"], img: "materialescolar/tesoura.png" },
+                { nome: "LÁPIS", silabas: ["LÁ", "PIS"], img: "materialescolar/lapis.png" },
+                { nome: "LIVRO", silabas: ["LI", "VRO"], img: "materialescolar/livro.png" },
+                { nome: "AFIA", silabas: ["A", "FIA"], img: "materialescolar/afia.png" },
+                { nome: "CANETA", silabas: ["CA", "NE", "TA"], img: "materialescolar/caneta.png" },
+                { nome: "RÉGUA", silabas: ["RÉ", "GUA"], img: "materialescolar/regua.png" },
+                { nome: "BORRACHA", silabas: ["BOR", "RA", "CHA"], img: "materialescolar/borracha.png" },
+                { nome: "COLA", silabas: ["CO", "LA"], img: "materialescolar/cola.png" },
+                { nome: "ESTOJO", silabas: ["ES", "TO", "JO"], img: "materialescolar/estojo.png" }
             ]
         }
     },
