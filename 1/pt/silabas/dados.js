@@ -1,65 +1,92 @@
 const JOGO_CONFIG = {
+    nomeJogo: "ORDENAR SÍLABAS",
+    linkVoltar: "../", 
+    textoVoltar: "VOLTAR",
     caminhoImg: "../../../img/",
     caminhoIcons: "../../../icons/",
-    iconesMenu: {
-        pre: "iconpre.png",
-        ano1: "icon1.png",
-        ano2: "icon2.png",
-        ano3: "icon3.png",
-        ano4: "icon4.png"
+    
+    pontuacao: {
+        acertoNivel1: 100, 
+        acertoNivel2: 150, 
+        erro: 20            
     },
+
+    textos: {
+        tituloPagina: "Pequenos Leitores - Ordenar Sílabas",
+        tituloLinha1: "PEQUENOS",
+        tituloLinha2: "LEITORES",
+        subtitulo: "Português | 1º Ano",
+        rodape: "&copy; Pequenos Leitores - Recursos Educativos",
+        instrucao: "Ordena as sílabas para formar a palavra correta!"
+    },
+
+    sons: {
+        acerto: "https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3",
+        erro: "https://cdn.pixabay.com/audio/2022/03/10/audio_c330c67761.mp3",
+        vitoria: "https://cdn.pixabay.com/audio/2024/02/07/audio_293963428f.mp3"
+    },
+
+    iconesMenu: { home: "home.png", pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png" },
+    links: { home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4" },
+
     categorias: {
-        contar: {
-            nome: "Contar Sílabas",
-            img: "animaisdomesticos/silabas_1.png",
-            tipo: "contar",
-            // ADICIONE MAIS PALAVRAS AQUI
+        animais: {
+            nome: "Animais",
+            imgCapa: "animaisdomesticos/gato.png",
             itens: [
-                { nome: "VACA", img: "animaisdomesticos/vaca.png", divisao: "VA-CA" },
-                { nome: "GATO", img: "animaisdomesticos/gato.png", divisao: "GA-TO" },
-                { nome: "BANANA", img: "frutas/banana.png", divisao: "BA-NA-NA" },
-                { nome: "MOCHILA", img: "materialescolar/mochila.png", divisao: "MO-CHI-LA" },
-                { nome: "TESOURA", img: "materialescolar/tesoura.png", divisao: "TE-SOU-RA" },
-                { nome: "CAVALO", img: "animaisdomesticos/cavalo.png", divisao: "CA-VA-LO" },
-                { nome: "OVELHA", img: "animaisdomesticos/ovelha.png", divisao: "O-VE-LHA" },
-                { nome: "PERU", img: "animaisdomesticos/peru.png", divisao: "PE-RU" },
-                { nome: "PATO", img: "animaisdomesticos/pato.png", divisao: "PA-TO" },
-                { nome: "COELHO", img: "animaisdomesticos/coelho.png", divisao: "CO-E-LHO" },
-                { nome: "CABRA", img: "animaisdomesticos/cabra.png", divisao: "CA-BRA" },
-                { nome: "CÃO", img: "animaisdomesticos/cao.png", divisao: "CÃO" },
-                { nome: "CEREJA", img: "frutas/cereja.png", divisao: "CE-RE-JA" },
-                { nome: "LARANJA", img: "frutas/laranja.png", divisao: "LA-RAN-JA" },
-                { nome: "PAPAIA", img: "frutas/papaia.png", divisao: "PA-PAI-A" },
-                { nome: "MACACO", img: "animais/macaco.png", divisao: "MA-CA-CO" } // Exemplo de nova palavra
+                { nome: "VACA", silabas: ["VA", "CA"], img: "animaisdomesticos/vaca.png" },
+                { nome: "RATO", silabas: ["RA", "TO"], img: "animaisselvagens/rato.png" },
+                { nome: "LEÃO", silabas: ["LE", "ÃO"], img: "animaisselvagens/leao.png" },
+                { nome: "GATO", silabas: ["GA", "TO"], img: "animaisdomesticos/gato.png" },
+                { nome: "POMBO", silabas: ["POM", "BO"], img: "animaisselvagens/pombo.png" },
+                { nome: "PATO", silabas: ["PA", "TO"], img: "animaisdomesticos/pato.png" },
+                { nome: "GALO", silabas: ["GA", "LO"], img: "animaisdomesticos/galo.png" },
+                { nome: "URSO", silabas: ["UR", "SO"], img: "animaisselvagens/urso.png" },
+                { nome: "PERU", silabas: ["PE", "RU"], img: "animaisdomesticos/peru.png" },
+                { nome: "FOCA", silabas: ["FO", "CA"], img: "animaisselvagens/foca.png" },
+                { nome: "CÃO", silabas: ["CÃO"], img: "animaisdomesticos/cao.png" },
+                { nome: "MACACO", silabas: ["MA", "CA", "CO"], img: "animaisselvagens/macaco.png" },
+                { nome: "CAVALO", silabas: ["CA", "VA", "LO"], img: "animaisdomesticos/cavalo.png" },
+                { nome: "GALINHA", silabas: ["GA", "LI", "NHA"], img: "animaisdomesticos/galinha.png" },
+                { nome: "COELHO", silabas: ["CO", "E", "LHO"], img: "animaisdomesticos/coelho.png" }
             ]
         },
-        ordenar: {
-            nome: "Ordenar Sílabas",
-            img: "animaisdomesticos/silabas_2.png",
-            tipo: "ordenar",
-            // ADICIONE MAIS PALAVRAS AQUI
+        objetos: {
+            nome: "Objetos",
+            imgCapa: "objetos/vassoura.png",
             itens: [
-                { nome: "VACA", img: "animaisdomesticos/vaca.png", divisao: "VA-CA" },
-                { nome: "GATO", img: "animaisdomesticos/gato.png", divisao: "GA-TO" },
-                { nome: "BANANA", img: "frutas/banana.png", divisao: "BA-NA-NA" },
-                { nome: "MOCHILA", img: "materialescolar/mochila.png", divisao: "MO-CHI-LA" },
-                { nome: "TESOURA", img: "materialescolar/tesoura.png", divisao: "TE-SOU-RA" },
-                { nome: "CAVALO", img: "animaisdomesticos/cavalo.png", divisao: "CA-VA-LO" },
-                { nome: "OVELHA", img: "animaisdomesticos/ovelha.png", divisao: "O-VE-LHA" },
-                { nome: "PERU", img: "animaisdomesticos/peru.png", divisao: "PE-RU" },
-                { nome: "PATO", img: "animaisdomesticos/pato.png", divisao: "PA-TO" },
-                { nome: "COELHO", img: "animaisdomesticos/coelho.png", divisao: "CO-E-LHO" },
-                { nome: "CABRA", img: "animaisdomesticos/cabra.png", divisao: "CA-BRA" },
-                { nome: "CÃO", img: "animaisdomesticos/cao.png", divisao: "CÃO" },
-                { nome: "CEREJA", img: "frutas/cereja.png", divisao: "CE-RE-JA" },
-                { nome: "LARANJA", img: "frutas/laranja.png", divisao: "LA-RAN-JA" },
-                { nome: "PAPAIA", img: "frutas/papaia.png", divisao: "PA-PAI-A" }
+                { nome: "VASSOURA", silabas: ["VAS", "SOU", "RA"], img: "objetos/vassoura.png" },
+                { nome: "GARFO", silabas: ["GAR", "FO"], img: "objetos/garfo.png" },
+                { nome: "PINCEL", silabas: ["PIN", "CEL"], img: "objetos/pincel.png" },
+                { nome: "ESCOVA", silabas: ["ES", "CO", "VA"], img: "objetos/escova.png" },
+                { nome: "GARRAFA", silabas: ["GAR", "RA", "FA"], img: "objetos/garrafa.png" },
+                { nome: "COPO", silabas: ["CO", "PO"], img: "objetos/copo.png" },
+                { nome: "BALDE", silabas: ["BAL", "DE"], img: "objetos/balde.png" },
+                { nome: "ÓCULOS", silabas: ["Ó", "CU", "LOS"], img: "objetos/oculos.png" },
+                { nome: "CESTO", silabas: ["CES", "TO"], img: "objetos/cesto.png" },
+                { nome: "COLHER", silabas: ["CO", "LHER"], img: "objetos/colher.png" }
+            ]
+        },
+        frutos: {
+            nome: "Frutos",
+            imgCapa: "frutas/morango.png",
+            itens: [
+                { nome: "BANANA", silabas: ["BA", "NA", "NA"], img: "frutas/banana.png" },
+                { nome: "CEREJA", silabas: ["CE", "RE", "JA"], img: "frutas/cereja.png" },
+                { nome: "UVAS", silabas: ["U", "VAS"], img: "frutas/uvas.png" },
+                { nome: "MORANGO", silabas: ["MO", "RAN", "GO"], img: "frutas/morango.png" },
+                { nome: "MELANCIA", silabas: ["ME", "LAN", "CI", "A"], img: "frutas/melancia.png" },
+                { nome: "LARANJA", silabas: ["LA", "RAN", "JA"], img: "frutas/laranja.png" },
+                { nome: "PAPAIA", silabas: ["PA", "PA", "IA"], img: "frutas/papaia.png" },
+                { nome: "MAÇÃ", silabas: ["MA", "ÇÃ"], img: "frutas/maca.png" }
             ]
         }
     },
-    relatorio: {
-        titulo: "MUITO BEM!",
-        pontosTotal: "Acertaste:",
-        tempoTotal: "Tempo:"
-    }
+
+    relatorios: [
+        { min: 1200, titulo: "BRILHANTE!", img: "taca_1.png" },
+        { min: 800, titulo: "MUITO BEM!", img: "taca_2.png" },
+        { min: 500, titulo: "BOM TRABALHO!", img: "taca_3.png" },
+        { min: 0, titulo: "TENTA OUTRA VEZ!", img: "taca_4.png" }
+    ]
 };
