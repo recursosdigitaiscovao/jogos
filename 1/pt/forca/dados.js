@@ -1,5 +1,5 @@
 const JOGO_CONFIG = {
-    nomeJogo: "JOGO DA FORCA",
+    nomeJogo: "FORCA DOS BALÕES",
     linkVoltar: "../", 
     textoVoltar: "VOLTAR",
     caminhoImg: "../../../img/",
@@ -8,16 +8,16 @@ const JOGO_CONFIG = {
     pontuacao: {
         acertoNivel1: 100, 
         acertoNivel2: 200, 
-        erroLetra: 10 // Pontos que perde por cada letra errada
+        erroLetra: 10
     },
 
     textos: {
-        tituloPagina: "Pequenos Leitores - Jogo da Forca",
+        tituloPagina: "Pequenos Leitores - Forca dos Balões",
         tituloLinha1: "PEQUENOS",
         tituloLinha2: "LEITORES",
         subtitulo: "Português | 1º Ano",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos",
-        instrucao: "Descobre a palavra antes que o boneco apareça!"
+        instrucao: "Adivinha a palavra para salvar o boneco!"
     },
 
     sons: {
@@ -30,66 +30,64 @@ const JOGO_CONFIG = {
     links: { home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4" },
 
     categorias: {
-        frutos: {
-            nome: "Frutos",
-            imgCapa: "frutas/morango.png",
-            itens: [
-                { nome: "AMORA", img: "frutas/amora.png" }, { nome: "MELÃO", img: "frutas/melao.png" },
-                { nome: "MARACUJÁ", img: "frutas/maracuja.png" }, { nome: "LIMÃO", img: "frutas/limao.png" },
-                { nome: "GOIABA", img: "frutas/goiaba.png" }, { nome: "FIGO", img: "frutas/figo.png" },
-                { nome: "DIÓSPIRO", img: "frutas/diospiro.png" }, { nome: "CASTANHA", img: "frutas/castanha.png" },
-                { nome: "ROMÃ", img: "frutas/roma.png" }, { nome: "BANANA", img: "frutas/banana.png" },
-                { nome: "CEREJA", img: "frutas/cereja.png" }, { nome: "UVAS", img: "frutas/uvas.png" },
-                { nome: "MORANGO", img: "frutas/morango.png" }, { nome: "MELANCIA", img: "frutas/melancia.png" },
-                { nome: "LARANJA", img: "frutas/laranja.png" }, { nome: "PAPAIA", img: "frutas/papaia.png" },
-                { nome: "MAÇÃ", img: "frutas/maca.png" }
-            ]
-        },
-        numeros: {
-            nome: "Números",
-            imgCapa: "numeros/cinco.png",
-            itens: [
-                { nome: "ZERO", img: "numeros/zero.png" }, { nome: "UM", img: "numeros/um.png" },
-                { nome: "DOIS", img: "numeros/dois.png" }, { nome: "TRÊS", img: "numeros/tres.png" },
-                { nome: "QUATRO", img: "numeros/quatro.png" }, { nome: "CINCO", img: "numeros/cinco.png" },
-                { nome: "SEIS", img: "numeros/seis.png" }, { nome: "SETE", img: "numeros/sete.png" },
-                { nome: "OITO", img: "numeros/oito.png" }, { nome: "NOVE", img: "numeros/nove.png" },
-                { nome: "DEZ", img: "numeros/dez.png" }
-            ]
-        },
         animais: {
-            nome: "Animais",
-            imgCapa: "animaisdomesticos/gato.png",
+            nome: "Animais", imgCapa: "animaisdomesticos/cao.png",
             itens: [
-                { nome: "VACA", img: "animaisdomesticos/vaca.png" }, { nome: "RATO", img: "animaisselvagens/rato.png" },
-                { nome: "LEÃO", img: "animaisselvagens/leao.png" }, { nome: "GATO", img: "animaisdomesticos/gato.png" },
-                { nome: "POMBO", img: "animaisselvagens/pombo.png" }, { nome: "PATO", img: "animaisdomesticos/pato.png" },
-                { nome: "GALO", img: "animaisdomesticos/galo.png" }, { nome: "URSO", img: "animaisselvagens/urso.png" },
-                { nome: "FOCA", img: "animaisselvagens/foca.png" }, { nome: "MACACO", img: "animaisselvagens/macaco.png" },
-                { nome: "CAVALO", img: "animaisdomesticos/cavalo.png" }, { nome: "GALINHA", img: "animaisdomesticos/galinha.png" },
-                { nome: "COELHO", img: "animaisdomesticos/coelho.png" }
+                { letras: "CÃO" }, { letras: "GATO" }, { letras: "PATO" }, { letras: "PERU" },
+                { letras: "VACA" }, { letras: "COELHO" }, { letras: "CABRA" }, { letras: "PORCO" },
+                { letras: "OVELHA" }, { letras: "GALO" }, { letras: "GALINHA" }, { letras: "BURRO" },
+                { letras: "CAVALO" }, { letras: "RATO" }, { letras: "PEIXE" }, { letras: "POMBO" },
+                { letras: "CANÁRIO" }, { letras: "HAMSTER" }, { letras: "PÔNEI" }, { letras: "CÁGADO" }
             ]
         },
-        objetos: {
-            nome: "Objetos",
-            imgCapa: "objetos/vassoura.png",
+        frutos: {
+            nome: "Frutos", imgCapa: "frutas/maca.png",
             itens: [
-                { nome: "VASSOURA", img: "objetos/vassoura.png" }, { nome: "GARFO", img: "objetos/garfo.png" },
-                { nome: "PINCEL", img: "objetos/pincel.png" }, { nome: "ESCOVA", img: "objetos/escova.png" },
-                { nome: "GARRAFA", img: "objetos/garrafa.png" }, { nome: "COPO", img: "objetos/copo.png" },
-                { nome: "BALDE", img: "objetos/balde.png" }, { nome: "ÓCULOS", img: "objetos/oculos.png" },
-                { nome: "CESTO", img: "objetos/cesto.png" }, { nome: "COLHER", img: "objetos/colher.png" }
+                { letras: "MAÇÃ" }, { letras: "PÊRA" }, { letras: "UVA" }, { letras: "FIGO" },
+                { letras: "MELÃO" }, { letras: "BANANA" }, { letras: "LARANJA" }, { letras: "MORANGO" },
+                { letras: "CEREJA" }, { letras: "ANANÁS" }, { letras: "LIMÃO" }, { letras: "PÊSSEGO" },
+                { letras: "AMEIXA" }, { letras: "KIWI" }, { letras: "MANGA" }, { letras: "PAPAIA" },
+                { letras: "MELANCIA" }, { letras: "AMORA" }, { letras: "FRAMBOESA" }, { letras: "ROMÃ" }
             ]
         },
         material: {
-            nome: "Material Escolar",
-            imgCapa: "materialescolar/afia.png",
+            nome: "Material Escolar", imgCapa: "materialescolar/lapis.png",
             itens: [
-                { nome: "MOCHILA", img: "materialescolar/mochila.png" }, { nome: "TESOURA", img: "materialescolar/tesoura.png" },
-                { nome: "LÁPIS", img: "materialescolar/lapis.png" }, { nome: "LIVRO", img: "materialescolar/livro.png" },
-                { nome: "AFIA", img: "materialescolar/afia.png" }, { nome: "CANETA", img: "materialescolar/caneta.png" },
-                { nome: "RÉGUA", img: "materialescolar/regua.png" }, { nome: "BORRACHA", img: "materialescolar/borracha.png" },
-                { nome: "COLA", img: "materialescolar/cola.png" }, { nome: "ESTOJO", img: "materialescolar/estojo.png" }
+                { letras: "AFIA" }, { letras: "LÁPIS" }, { letras: "RÉGUA" }, { letras: "COLA" },
+                { letras: "LIVRO" }, { letras: "CADERNO" }, { letras: "MOCHILA" }, { letras: "TESOURA" },
+                { letras: "BORRACHA" }, { letras: "ESTOJO" }, { letras: "CANETA" }, { letras: "MARCADOR" },
+                { letras: "QUADRO" }, { letras: "GIZ" }, { letras: "PINCEL" }, { letras: "PASTA" },
+                { letras: "TINTA" }, { letras: "MAPA" }, { letras: "AGRAFADOR" }, { letras: "COMPASSO" }
+            ]
+        },
+        selvagens: {
+            nome: "Animais Selvagens", imgCapa: "animaisselvagens/leao.png",
+            itens: [
+                { letras: "LEÃO" }, { letras: "TIGRE" }, { letras: "ZEBRA" }, { letras: "GIRAFA" },
+                { letras: "COBRA" }, { letras: "ELEFANTE" }, { letras: "MACACO" }, { letras: "URSO" },
+                { letras: "LOBO" }, { letras: "RAPOSA" }, { letras: "ÁGUIA" }, { letras: "BALEIA" },
+                { letras: "TUBARÃO" }, { letras: "JACARÉ" }, { letras: "ESQUILO" }, { letras: "VEADO" },
+                { letras: "CANGURU" }, { letras: "MORCEGO" }
+            ]
+        },
+        paises: {
+            nome: "Países", imgCapa: "outros/paises.png",
+            itens: [
+                { letras: "PORTUGAL" }, { letras: "ESPANHA" }, { letras: "FRANÇA" }, { letras: "ITÁLIA" },
+                { letras: "BRASIL" }, { letras: "ANGOLA" }, { letras: "ALEMANHA" }, { letras: "BÉLGICA" },
+                { letras: "GRÉCIA" }, { letras: "CHINA" }, { letras: "JAPÃO" }, { letras: "MÉXICO" },
+                { letras: "CANADÁ" }, { letras: "EGIPTO" }, { letras: "MARROCOS" }, { letras: "SUÍÇA" },
+                { letras: "TIMOR" }, { letras: "GUINÉ" }
+            ]
+        },
+        transportes: {
+            nome: "Transportes", imgCapa: "outros/transportes.png",
+            itens: [
+                { letras: "AVIÃO" }, { letras: "BARCO" }, { letras: "CARRO" }, { letras: "MOTA" },
+                { letras: "COMBOIO" }, { letras: "AUTOCARRO" }, { letras: "METRO" }, { letras: "ELÉTRICO" },
+                { letras: "BICICLETA" }, { letras: "CAMIÃO" }, { letras: "NAVIO" }, { letras: "FOGUETE" },
+                { letras: "TRATOR" }, { letras: "TÁXI" }, { letras: "CANOA" }, { letras: "BALÃO" },
+                { letras: "SUBMARINO" }
             ]
         }
     },
