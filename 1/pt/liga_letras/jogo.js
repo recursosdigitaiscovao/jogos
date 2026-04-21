@@ -52,7 +52,6 @@ function renderTutorial(cat) {
     container.innerHTML = `
         <div style="position:relative; width:260px; height:200px; background:white; border-radius:25px; box-shadow:0 10px 30px rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; border: 4px solid #f0f7ff; overflow:hidden;">
             <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:70px; z-index:2;">
-            <!-- Letras fixas para o tutorial -->
             <div class="tuto-node" style="position:absolute; top:30px; left:110px; width:35px; height:35px; background:var(--primary-blue); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; z-index:3;">${item.nome[0]}</div>
             <div class="tuto-node" style="position:absolute; top:130px; left:160px; width:35px; height:35px; background:var(--primary-blue); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; z-index:3;">${item.nome[1]}</div>
             
@@ -128,8 +127,10 @@ function renderRound() {
     let shuffled = [...lettersOrder].sort(() => Math.random() - 0.5);
 
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; position:relative; min-height:360px; touch-action:none;">
-            <div id="word-guide" style="font-size:32px; font-weight:900; color:var(--primary-blue); letter-spacing:8px; height:40px; margin-bottom:10px;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; position:relative; min-height:400px; touch-action:none; padding-top:10px;">
+            
+            <!-- WORD GUIDE: Aumentado o margin-bottom de 10px para 35px -->
+            <div id="word-guide" style="font-size:32px; font-weight:900; color:var(--primary-blue); letter-spacing:8px; height:45px; margin-bottom:35px; text-align:center;">
                 ${isLevel2 ? lettersOrder.map(()=>'_').join(' ') : item.nome}
             </div>
             
@@ -179,9 +180,8 @@ function setupInteractions() {
     const handleEnd = () => {
         if (!isDrawing) return;
         isDrawing = false;
-        // Se a palavra não estiver completa, as linhas ficam mas o arrasto para
         if (currentPathNodes.length < lettersOrder.length) {
-             drawLines(); // Desenha apenas as conexões fixas
+             drawLines(); 
         }
     };
 
@@ -234,7 +234,7 @@ function triggerError(node) {
     node.style.background = "var(--error-red)";
     setTimeout(() => {
         const ctx = document.getElementById('line-canvas').getContext('2d');
-        ctx.clearRect(0, 0, 260, 260);
+        if(ctx) ctx.clearRect(0, 0, 260, 260);
         currentPathNodes = [];
         document.querySelectorAll('.letter-node').forEach(n => {
             n.style.background = "var(--primary-blue)";
