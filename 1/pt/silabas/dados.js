@@ -5,10 +5,11 @@ const JOGO_CONFIG = {
     caminhoImg: "../../../img/",
     caminhoIcons: "../../../icons/",
     
+    // SISTEMA DE PONTOS DEFINIDO AQUI
     pontuacao: {
         acertoNivel1: 100, 
-        acertoNivel2: 150, 
-        erro: 20            
+        acertoNivel2: 100, 
+        erro: 50            
     },
 
     textos: {
@@ -77,7 +78,6 @@ const JOGO_CONFIG = {
                 { nome: "LARANJA", silabas: ["LA", "RAN", "JA"], img: "frutas/laranja.png" },
                 { nome: "PAPAIA", silabas: ["PA", "PAI", "A"], img: "frutas/papaia.png" },
                 { nome: "MAÇÃ", silabas: ["MA", "ÇÃ"], img: "frutas/maca.png" },
-                // Novos frutos da imagem:
                 { nome: "AMORA", silabas: ["A", "MO", "RA"], img: "frutas/amora.png" },
                 { nome: "MELÃO", silabas: ["ME", "LÃO"], img: "frutas/melao.png" },
                 { nome: "MARACUJÁ", silabas: ["MA", "RA", "CU", "JÁ"], img: "frutas/maracuja.png" },
@@ -108,8 +108,8 @@ const JOGO_CONFIG = {
     },
 
     relatorios: [
-        { min: 1200, titulo: "BRILHANTE!", img: "taca_1.png" },
-        { min: 800, titulo: "MUITO BEM!", img: "taca_2.png" },
+        { min: 1000, titulo: "BRILHANTE!", img: "taca_1.png" },
+        { min: 750, titulo: "MUITO BEM!", img: "taca_2.png" },
         { min: 500, titulo: "BOM TRABALHO!", img: "taca_3.png" },
         { min: 0, titulo: "TENTA OUTRA VEZ!", img: "taca_4.png" }
     ]
