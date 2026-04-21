@@ -14,12 +14,12 @@ const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
 const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// --- COORDENADAS RECALIBRADAS (Redução de 7% e Top 37%) ---
+// --- COORDENADAS AJUSTADAS (+10% largura) ---
 const BOX_CFG = {
     top: 37,          
-    height: 38,       // Reduzido para ~38 (7% menor que o original 41)
-    width: 16.2,      // Reduzido para ~16.2 (7% menor que o original 17.5)
-    lefts: [7.8, 30.7, 53.6, 76.5] // Reajustado para centralizar
+    height: 38,       
+    width: 17.8,      // Aumentado em 10% (de 16.2 para 17.8)
+    lefts: [6.5, 30.0, 53.5, 77.0] // Ajustado para a nova largura
 };
 
 function startLogic() {
@@ -78,7 +78,7 @@ function renderRound() {
                     <div class="sort-card" 
                          onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
                          data-val="${item}" id="card-${currentIndex}-${i}"
-                         style="background:white; padding:8px 12px; border-radius:12px; font-weight:900; font-size:clamp(12px, 3.5vw, 16px); color:var(--primary-dark); cursor:grab; box-shadow:0 4px 0 #cbd9e6; border:2px solid #eee; min-width:62px; text-align:center;">
+                         style="background:white; padding:8px 12px; border-radius:12px; font-weight:900; font-size:clamp(12px, 3.5vw, 16px); color:var(--primary-dark); cursor:grab; box-shadow:0 4px 0 #cbd9e6; border:2px solid #eee; min-width:65px; text-align:center;">
                         ${item}
                     </div>
                 `).join('')}
@@ -90,13 +90,13 @@ function renderRound() {
 function fillTarget(targetIdx, val, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
     if(!target) return;
-    target.innerHTML = `<div class="placed-card" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(10px, 3.2vw, 19px); text-align:center; width:92%; height:90%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; padding: 4px; overflow: hidden; word-break: break-word;">${val}</div>`;
+    target.innerHTML = `<div class="placed-card" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(10px, 3.2vw, 19px); text-align:center; width:94%; height:92%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; padding: 4px; overflow: hidden; word-break: break-word;">${val}</div>`;
     originalEl.style.visibility = 'hidden';
     placedItems[targetIdx] = { val: val, originalId: originalEl.id, locked: false };
     if (placedItems.every(x => x !== null)) setTimeout(checkOrder, 600);
 }
 
-// --- FUNÇÃO COM FEEDBACK VISUAL REATIVADO ---
+// --- FEEDBACK VISUAL: VERDE (CERTO) / VERMELHO (ERRADO) ---
 function checkOrder() {
     const userOrder = placedItems.map(x => x.val);
     const isRoundCorrect = userOrder.every((val, i) => val === correctOrder[i]);
@@ -106,10 +106,11 @@ function checkOrder() {
         score += (currentLevel === 1) ? JOGO_CONFIG.pontuacao.acertoNivel1 : JOGO_CONFIG.pontuacao.acertoNivel2;
         document.getElementById('score-val').innerText = score;
         
-        // Feedback Verde
+        // Tudo Verde
         document.querySelectorAll('.placed-card').forEach(card => {
             card.style.borderColor = "var(--highlight-green)";
             card.style.color = "var(--highlight-green)";
+            card.style.background = "#f0fff0";
         });
         
         setTimeout(nextRound, 1200);
@@ -123,27 +124,30 @@ function checkOrder() {
             const cardInner = target.querySelector('.placed-card');
             
             if (item.val === correctOrder[i]) {
-                // Feedback Positivo Individual
+                // Fica Verde e Bloqueia
                 cardInner.style.borderColor = "var(--highlight-green)";
                 cardInner.style.color = "var(--highlight-green)";
+                cardInner.style.background = "#f0fff0";
                 item.locked = true; 
             } else {
-                // Feedback Negativo Individual
+                // Fica Vermelho e Volta para baixo
                 cardInner.style.borderColor = "var(--error-red)";
                 cardInner.style.color = "var(--error-red)";
+                cardInner.style.background = "#fff5f5";
                 
                 setTimeout(() => {
-                    const originalEl = document.getElementById(item.originalId);
-                    target.innerHTML = "";
-                    if(originalEl) originalEl.style.visibility = 'visible';
-                    placedItems[i] = null;
+                    if(!item.locked) {
+                        const originalEl = document.getElementById(item.originalId);
+                        target.innerHTML = "";
+                        if(originalEl) originalEl.style.visibility = 'visible';
+                        placedItems[i] = null;
+                    }
                 }, 1000);
             }
         });
     }
 }
 
-// As restantes funções (removeItem, startDrag, startTimer, etc.) mantêm a lógica anterior
 window.removeItem = function(idx) {
     const item = placedItems[idx];
     if(!item || item.locked) return; 
