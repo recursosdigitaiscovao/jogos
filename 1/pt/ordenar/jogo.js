@@ -14,6 +14,14 @@ const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
 const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
+// --- COORDENADAS CALIBRADAS ---
+const BOX_CFG = {
+    top: 40,      // Subiu 5% (era 45)
+    height: 43,   // Diminuiu 1% (era 44)
+    width: 18.5,  // Diminuiu 1% para não tocar na madeira
+    lefts: [6.5, 29.5, 52.5, 75.5] // Ajustados para centralizar com a nova largura
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     if (window.initUI) window.initUI();
     
@@ -44,8 +52,8 @@ function renderTutorial(cat) {
             <i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; top:90px; left:150px; color:#f39c12; font-size:18px; z-index:11;"></i>
         </div>
         <style>
-            @keyframes tutoDrag { 0% { left: 135px; top: 80px; opacity: 1; } 40% { left: 38px; top: 52px; } 70% { left: 38px; top: 52px; opacity: 1; } 100% { left: 38px; top: 52px; opacity: 0; } }
-            @keyframes handDrag { 0% { left: 150px; top: 90px; opacity: 1; } 40% { left: 45px; top: 62px; } 70% { left: 45px; top: 62px; opacity: 1; } 100% { left: 45px; top: 62px; opacity: 0; } }
+            @keyframes tutoDrag { 0% { left: 135px; top: 80px; opacity: 1; } 40% { left: 46px; top: 46px; } 70% { left: 46px; top: 46px; opacity: 1; } 100% { left: 46px; top: 46px; opacity: 0; } }
+            @keyframes handDrag { 0% { left: 150px; top: 90px; opacity: 1; } 40% { left: 56px; top: 56px; } 70% { left: 56px; top: 56px; opacity: 1; } 100% { left: 56px; top: 56px; opacity: 0; } }
             #tuto-card { animation: tutoDrag 3s infinite ease-in-out; }
             #tuto-hand { animation: handDrag 3s infinite ease-in-out; }
         </style>
@@ -93,24 +101,24 @@ function renderRound() {
 
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; touch-action:none;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:15px; touch-action:none;">
             
             <div id="shelf-container" style="position:relative; width:100%; max-width:800px; aspect-ratio: 1014/380; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; user-select:none;">
                 
-                <!-- CALIBRAÇÃO EXATA DAS CAIXAS (PARA NÃO TOCAR NA MADEIRA) -->
-                <div class="target-box" data-idx="0" onclick="removeItem(0)" style="position:absolute; top:45%; left:5.5%; width:20%; height:44%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
-                <div class="target-box" data-idx="1" onclick="removeItem(1)" style="position:absolute; top:45%; left:28.5%; width:20%; height:44%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
-                <div class="target-box" data-idx="2" onclick="removeItem(2)" style="position:absolute; top:45%; left:51.5%; width:20%; height:44%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
-                <div class="target-box" data-idx="3" onclick="removeItem(3)" style="position:absolute; top:45%; left:74.5%; width:20%; height:44%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                ${BOX_CFG.lefts.map((l, i) => `
+                    <div class="target-box" data-idx="${i}" onclick="removeItem(${i})" 
+                         style="position:absolute; top:${BOX_CFG.top}%; left:${l}%; width:${BOX_CFG.width}%; height:${BOX_CFG.height}%; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                    </div>
+                `).join('')}
                 
             </div>
 
-            <div id="drag-options" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; padding:15px; background:rgba(255,255,255,0.4); border-radius:25px; width:100%; min-height:85px;">
+            <div id="drag-options" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; padding:15px; background:rgba(255,255,255,0.4); border-radius:25px; width:100%; min-height:85px;">
                 ${shuffled.map((item, i) => `
                     <div class="sort-card" 
                          onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
                          data-val="${item}" id="card-${currentIndex}-${i}"
-                         style="background:white; padding:12px 18px; border-radius:12px; font-weight:900; font-size:clamp(14px, 4vw, 20px); color:var(--primary-dark); cursor:grab; box-shadow:0 6px 0 #cbd9e6; border:2px solid #eee; min-width:75px; text-align:center; user-select:none; touch-action:none;">
+                         style="background:white; padding:10px 15px; border-radius:12px; font-weight:900; font-size:clamp(14px, 4vw, 18px); color:var(--primary-dark); cursor:grab; box-shadow:0 5px 0 #cbd9e6; border:2px solid #eee; min-width:70px; text-align:center; user-select:none; touch-action:none;">
                         ${item}
                     </div>
                 `).join('')}
@@ -128,10 +136,8 @@ function handleItemClick(el) {
 window.removeItem = function(idx) {
     const item = placedItems[idx];
     if(!item || item.locked) return; 
-    
     const originalEl = document.getElementById(item.originalId);
     if(originalEl) originalEl.style.visibility = 'visible';
-    
     const target = document.querySelector(`.target-box[data-idx="${idx}"]`);
     target.innerHTML = "";
     placedItems[idx] = null;
@@ -142,7 +148,7 @@ function fillTarget(targetIdx, val, originalEl) {
     if(!target) return;
 
     target.innerHTML = `
-        <div class="book-item" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(12px, 4vw, 26px); text-align:center; width:94%; height:92%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 3px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.05); animation: popIn 0.3s; word-break: break-all;">
+        <div class="book-item" style="color:var(--primary-dark); font-weight:900; font-size:clamp(14px, 4.5vw, 30px); text-align:center; width:100%; line-height:1; display:flex; align-items:center; justify-content:center; animation: popIn 0.3s; word-break: break-all;">
             ${val}
         </div>
     `;
@@ -150,9 +156,7 @@ function fillTarget(targetIdx, val, originalEl) {
     originalEl.style.visibility = 'hidden';
     placedItems[targetIdx] = { val: val, originalId: originalEl.id, locked: false };
 
-    if (placedItems.every(x => x !== null)) {
-        setTimeout(checkOrder, 600);
-    }
+    if (placedItems.every(x => x !== null)) setTimeout(checkOrder, 600);
 }
 
 function checkOrder() {
@@ -163,11 +167,7 @@ function checkOrder() {
         sndAcerto.play();
         score += (currentLevel === 1) ? JOGO_CONFIG.pontuacao.acertoNivel1 : JOGO_CONFIG.pontuacao.acertoNivel2;
         document.getElementById('score-val').innerText = score;
-        
-        document.querySelectorAll('.book-item').forEach(el => {
-            el.style.color = "var(--highlight-green)";
-            el.style.borderColor = "var(--highlight-green)";
-        });
+        document.querySelectorAll('.book-item').forEach(el => el.style.color = "var(--highlight-green)");
         setTimeout(nextRound, 1200);
     } else {
         sndErro.play();
@@ -179,15 +179,10 @@ function checkOrder() {
             const bookEl = target.querySelector('.book-item');
             
             if (item.val === correctOrder[i]) {
-                // CERTO: Fica verde e trancado
                 bookEl.style.color = "var(--highlight-green)";
-                bookEl.style.borderColor = "var(--highlight-green)";
                 item.locked = true; 
             } else {
-                // ERRADO: Fica vermelho e salta fora
                 bookEl.style.color = "var(--error-red)";
-                bookEl.style.borderColor = "var(--error-red)";
-                
                 setTimeout(() => {
                     const originalEl = document.getElementById(item.originalId);
                     target.innerHTML = "";
@@ -206,7 +201,6 @@ function startDrag(e) {
 
     draggedElement = el;
     isDraggingActive = false;
-    
     const startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
     const startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
     const rect = draggedElement.getBoundingClientRect();
@@ -217,7 +211,6 @@ function startDrag(e) {
         isDraggingActive = true;
         const x = (ev.type === 'touchmove' ? ev.touches[0].clientX : ev.clientX);
         const y = (ev.type === 'touchmove' ? ev.touches[0].clientY : ev.clientY);
-        
         draggedElement.style.position = 'fixed';
         draggedElement.style.zIndex = '3000';
         draggedElement.style.pointerEvents = 'none';
@@ -237,19 +230,12 @@ function startDrag(e) {
             const x = (ev.type === 'touchend' ? ev.changedTouches[0].clientX : ev.clientX);
             const y = (ev.type === 'touchend' ? ev.changedTouches[0].clientY : ev.clientY);
             const dropTarget = document.elementFromPoint(x, y)?.closest('.target-box');
-            
-            if (dropTarget && !placedItems[dropTarget.dataset.idx]) {
-                fillTarget(dropTarget.dataset.idx, draggedElement.dataset.val, draggedElement);
-            }
+            if (dropTarget && !placedItems[dropTarget.dataset.idx]) fillTarget(dropTarget.dataset.idx, draggedElement.dataset.val, draggedElement);
         }
 
-        draggedElement.style.position = '';
-        draggedElement.style.zIndex = '';
-        draggedElement.style.pointerEvents = 'auto';
-        draggedElement.style.left = '';
-        draggedElement.style.top = '';
+        draggedElement.style.position = ''; draggedElement.style.zIndex = '';
+        draggedElement.style.pointerEvents = 'auto'; draggedElement.style.left = ''; draggedElement.style.top = '';
     }
-
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
     document.addEventListener('touchmove', onMove, { passive: false });
@@ -259,12 +245,9 @@ function startDrag(e) {
 function nextRound() {
     currentIndex++; roundInLevel++;
     if (roundInLevel < 5) renderRound();
-    else {
-        if (currentLevel === 1) {
-            currentLevel = 2; roundInLevel = 0;
-            setupDots(); renderRound();
-        } else finishGame();
-    }
+    else if (currentLevel === 1) {
+        currentLevel = 2; roundInLevel = 0; setupDots(); renderRound();
+    } else finishGame();
 }
 
 function finishGame() {
