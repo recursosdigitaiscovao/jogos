@@ -14,12 +14,12 @@ const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
 const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// --- COORDENADAS RECALIBRADAS (Ajustes de 1%, 3% e 1% para a direita) ---
+// --- COORDENADAS RECALIBRADAS (Ajustes de -0,5% e -1% para a esquerda) ---
 const BOX_CFG = {
     top: 38,          
     height: 38,       
     width: 21.4,      
-    lefts: [3.8, 28.2, 51.6, 75.0] 
+    lefts: [3.3, 27.2, 51.6, 75.0] 
 };
 
 function startLogic() {
