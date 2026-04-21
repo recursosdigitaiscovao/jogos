@@ -32,7 +32,7 @@ const JOGO_CONFIG = {
     categorias: {
         cat1: {
             nome: "4 Letras Consecutivas", 
-            imgCapa: "orde01.png",
+            imgCapa: "ord01.png",
             rondas: [
                 { itens: ["A", "B", "C", "D"] }, { itens: ["E", "F", "G", "H"] },
                 { itens: ["I", "J", "K", "L"] }, { itens: ["M", "N", "O", "P"] },
