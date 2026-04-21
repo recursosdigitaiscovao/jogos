@@ -6,30 +6,53 @@ let score = 0;
 let timerSeconds = 0;
 let timerInterval;
 let shuffledItems = [];
-let activeCuts = []; // Índices onde o utilizador clicou
+let activeCuts = []; 
 
 const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
 const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
 function startLogic() {
+    reconstruirMenuCategorias();
+    // Seleciona a primeira categoria mas não inicia o jogo logo (espera pelo clique em JOGAR)
+    const primeiraCat = Object.keys(JOGO_CONFIG.categorias)[0];
+    currentCategory = primeiraCat;
+    renderTutorial();
+}
+
+function reconstruirMenuCategorias() {
     const rdList = document.getElementById('rd-list');
-    rdList.innerHTML = '';
+    if(!rdList) return;
+    rdList.innerHTML = ''; 
     Object.keys(JOGO_CONFIG.categorias).forEach(k => {
         const cat = JOGO_CONFIG.categorias[k];
         const card = document.createElement('div');
         card.style.cssText = "background:#fff; border-radius:20px; padding:12px; text-align:center; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.08); display:flex; flex-direction:column; align-items:center; justify-content:center;";
         card.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="width:50px; height:50px; object-fit:contain; margin-bottom:5px;"><span style="font-weight:900; font-size:10px; color:var(--primary-dark);">${cat.nome}</span>`;
-        card.onclick = () => { window.selectCategory(k); closeMenus(); };
+        
+        card.onclick = () => { 
+            window.selectCategory(k); 
+            closeMenus(); 
+        };
         rdList.appendChild(card);
     });
-    window.selectCategory(Object.keys(JOGO_CONFIG.categorias)[0]);
 }
 
+// FUNÇÃO CRUCIAL: Agora deteta em que ecrã estás
 window.selectCategory = function(key) {
     currentCategory = key;
     renderTutorial();
-    if(document.getElementById('scr-game').classList.contains('active')) window.initGame();
+    
+    const isResultScreen = document.getElementById('scr-result').classList.contains('active');
+    const isIntroScreen = document.getElementById('scr-intro').classList.contains('active');
+
+    if (isResultScreen || isIntroScreen) {
+        // Se estiver nos resultados ou intro, muda para o jogo e inicia
+        if(window.goToGame) window.goToGame(); 
+    } else {
+        // Se já estiver no jogo, apenas reinicia com a nova categoria
+        window.initGame();
+    }
 };
 
 function renderTutorial() {
@@ -45,8 +68,13 @@ function renderTutorial() {
 }
 
 window.initGame = function() {
-    currentIndex = 0; roundInLevel = 0; currentLevel = 1; score = 0; timerSeconds = 0;
+    currentIndex = 0; 
+    roundInLevel = 0; 
+    currentLevel = 1; 
+    score = 0; 
+    timerSeconds = 0;
     shuffledItems = [...JOGO_CONFIG.categorias[currentCategory].itens].sort(() => Math.random() - 0.5);
+    
     document.getElementById('score-val').innerText = score;
     setupDots();
     startTimer();
@@ -67,15 +95,11 @@ function renderRound() {
     dots.forEach((d, i) => { d.classList.remove('active', 'done'); if(i < roundInLevel) d.classList.add('done'); if(i === roundInLevel) d.classList.add('active'); });
 
     const container = document.getElementById('game-main-content');
-    
-    // Criar a estrutura da palavra letra por letra com botões de corte entre elas
-    let wordHTML = `<div id="word-cutter-container" style="display:flex; align-items:center; justify-content:center; background:white; padding:20px; border-radius:25px; box-shadow:0 10px 20px rgba(0,0,0,0.05);">`;
+    let wordHTML = `<div id="word-cutter-container" style="display:flex; align-items:center; justify-content:center; background:white; padding:20px; border-radius:25px; box-shadow:0 10px 20px rgba(0,0,0,0.05); border: 4px solid transparent; transition: 0.3s;">`;
     
     const letters = item.nome.split('');
     letters.forEach((char, index) => {
-        wordHTML += `<div style="font-size:clamp(40px, 10vw, 65px); font-weight:900; color:var(--text-grey);">${char}</div>`;
-        
-        // Se não for a última letra, coloca um espaço de corte
+        wordHTML += `<div style="font-size:clamp(35px, 9vw, 60px); font-weight:900; color:var(--text-grey);">${char}</div>`;
         if(index < letters.length - 1) {
             wordHTML += `
                 <div class="cut-zone" data-index="${index + 1}" onclick="toggleCut(this)"
@@ -87,12 +111,12 @@ function renderRound() {
     wordHTML += `</div>`;
 
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:30px;">
-            <div class="pop-animation" id="item-img-box" style="background: white; padding: 15px; border-radius: 35px; box-shadow: 0 15px 35px rgba(176,196,217,0.4); width: clamp(140px, 40vw, 190px); height: clamp(140px, 40vw, 190px); display: flex; align-items: center; justify-content: center; border: 5px solid #f0f7ff;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px;">
+            <div class="pop-animation" id="item-img-box" style="background: white; padding: 15px; border-radius: 35px; box-shadow: 0 15px 35px rgba(176,196,217,0.4); width: clamp(130px, 38vw, 180px); height: clamp(130px, 38vw, 180px); display: flex; align-items: center; justify-content: center; border: 5px solid #f0f7ff; transition: transform 0.4s;">
                 <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-width: 90%; max-height: 90%; object-fit: contain;">
             </div>
             ${wordHTML}
-            <button class="btn-jogar-stretch" onclick="validateCuts()" style="max-width:200px;">PRONTO!</button>
+            <button class="btn-jogar-stretch" onclick="validateCuts()" style="max-width:200px; padding: 12px;">PRONTO!</button>
         </div>
     `;
 }
@@ -100,7 +124,6 @@ function renderRound() {
 window.toggleCut = function(el) {
     const idx = parseInt(el.dataset.index);
     const line = el.querySelector('.cut-line');
-    
     if(activeCuts.includes(idx)) {
         activeCuts = activeCuts.filter(i => i !== idx);
         line.style.background = "#e0e8f0";
@@ -114,9 +137,6 @@ window.toggleCut = function(el) {
 
 function validateCuts() {
     const item = shuffledItems[currentIndex];
-    
-    // Calcular onde deveriam estar os cortes
-    // Se silabas = ["GA", "TO"], o corte é após a letra 2 (índice 2)
     let correctCuts = [];
     let currentPos = 0;
     for(let i=0; i < item.silabas.length - 1; i++) {
@@ -184,10 +204,9 @@ function startTimer() {
 
 const styleTag = document.createElement('style');
 styleTag.innerHTML = `
-    .pop-animation { transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); animation: popIn 0.5s; }
+    .pop-animation { animation: popIn 0.5s; }
     .shake-animation { animation: shake 0.4s; }
     @keyframes popIn { 0% { transform: scale(0.5); opacity:0; } 100% { transform: scale(1); opacity:1; } }
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
-    #word-cutter-container { border: 4px solid transparent; transition: 0.3s; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
 `;
 document.head.appendChild(styleTag);
