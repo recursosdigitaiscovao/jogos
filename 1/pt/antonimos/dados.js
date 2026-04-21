@@ -6,8 +6,8 @@ const JOGO_CONFIG = {
     caminhoIcons: "../../../icons/",
     
     pontuacao: {
-        acerto: 150, 
-        erro: 50            
+        acerto: 100, 
+        erro: 30            
     },
 
     textos: {
@@ -16,7 +16,7 @@ const JOGO_CONFIG = {
         tituloLinha2: "LEITORES",
         subtitulo: "Português | 1º Ano",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos",
-        instrucao: "Liga cada palavra ao seu antónimo (contrário)!"
+        instrucao: "Liga cada palavra ao seu antónimo!"
     },
 
     sons: {
@@ -30,44 +30,29 @@ const JOGO_CONFIG = {
 
     categorias: {
         cat1: {
-            nome: "Antónimos 1",
-            imgCapa: "cat_antonimos1.png", // Podes usar um ícone genérico
-            pares: [
-                { a: "ALTO", b: "BAIXO" },
-                { a: "GRANDE", b: "PEQUENO" },
-                { a: "QUENTE", b: "FRIO" },
-                { a: "NOITE", b: "DIA" },
-                { a: "BOM", b: "MAU" }
-            ]
-        },
-        cat2: {
-            nome: "Antónimos 2",
-            imgCapa: "cat_antonimos2.png",
-            pares: [
-                { a: "NOVO", b: "VELHO" },
-                { a: "ABERTO", b: "FECHADO" },
-                { a: "DENTRO", b: "FORA" },
-                { a: "DOCE", b: "AMARGO" },
-                { a: "RÁPIDO", b: "LENTO" }
-            ]
-        },
-        cat3: {
-            nome: "Antónimos 3",
-            imgCapa: "cat_antonimos3.png",
-            pares: [
-                { a: "ALEGRE", b: "TRISTE" },
-                { a: "SUJO", b: "LIMPO" },
-                { a: "CHEIO", b: "VAZIO" },
-                { a: "GORDINHO", b: "MAGRINHO" },
-                { a: "BONITO", b: "FEIO" }
+            nome: "Antónimos Comuns",
+            imgCapa: "cat_antonimos1.png",
+            // 10 rondas de 3 pares cada (Total 30 pares)
+            rondas: [
+                { pares: [{ a: "ALTO", b: "BAIXO" }, { a: "BOM", b: "MAU" }, { a: "DIA", b: "NOITE" }] },
+                { pares: [{ a: "GRANDE", b: "PEQUENO" }, { a: "QUENTE", b: "FRIO" }, { a: "NOVO", b: "VELHO" }] },
+                { pares: [{ a: "DENTRO", b: "FORA" }, { a: "ABERTO", b: "FECHADO" }, { a: "CHEIO", b: "VAZIO" }] },
+                { pares: [{ a: "DOCE", b: "AMARGO" }, { a: "SUJO", b: "LIMPO" }, { a: "RÁPIDO", b: "LENTO" }] },
+                { pares: [{ a: "ALEGRE", b: "TRISTE" }, { a: "FORTE", b: "FRACO" }, { a: "BONITO", b: "FEIO" }] },
+                // Nível 2
+                { pares: [{ a: "CLARO", b: "ESCURO" }, { a: "CURTO", b: "COMPRIDO" }, { a: "MACIO", b: "DURO" }] },
+                { pares: [{ a: "FINO", b: "GROSSO" }, { a: "POUCO", b: "MUITO" }, { a: "CEDO", b: "TARDE" }] },
+                { pares: [{ a: "PESADO", b: "LEVE" }, { a: "GORDO", b: "MAGRO" }, { a: "VIVO", b: "MORTO" }] },
+                { pares: [{ a: "FÁCIL", b: "DIFÍCIL" }, { a: "PRIMEIRO", b: "ÚLTIMO" }, { a: "LIGAR", b: "DESLIGAR" }] },
+                { pares: [{ a: "SUBIR", b: "DESCER" }, { a: "GANHAR", b: "PERDER" }, { a: "RIR", b: "CHORAR" }] }
             ]
         }
     },
 
     relatorios: [
-        { min: 1200, titulo: "BRILHANTE!", img: "taca_1.png" },
-        { min: 800, titulo: "MUITO BEM!", img: "taca_2.png" },
-        { min: 400, titulo: "BOM TRABALHO!", img: "taca_3.png" },
+        { min: 900, titulo: "BRILHANTE!", img: "taca_1.png" },
+        { min: 600, titulo: "MUITO BEM!", img: "taca_2.png" },
+        { min: 300, titulo: "BOM TRABALHO!", img: "taca_3.png" },
         { min: 0, titulo: "TENTA OUTRA VEZ!", img: "taca_4.png" }
     ]
 };
