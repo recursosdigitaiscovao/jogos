@@ -14,12 +14,12 @@ const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
 const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// --- COORDENADAS AJUSTADAS: Top 38% e Largura 21.4% (+20%) ---
+// --- COORDENADAS AJUSTADAS: Cartão 1 puxado 15% para a esquerda ---
 const BOX_CFG = {
-    top: 38,          // Desceu de 37 para 38 (1% para baixo)
+    top: 38,          
     height: 38,       
-    width: 21.4,      // Aumentado em 20% (de 17.8 para 21.4)
-    lefts: [4.8, 28.2, 51.6, 75.0] // Recalibrado para a nova largura larga
+    width: 21.4,      
+    lefts: [-10.2, 28.2, 51.6, 75.0] // O primeiro valor mudou de 4.8 para -10.2
 };
 
 function startLogic() {
@@ -96,7 +96,6 @@ function fillTarget(targetIdx, val, originalEl) {
     if (placedItems.every(x => x !== null)) setTimeout(checkOrder, 600);
 }
 
-// --- FEEDBACK VISUAL: VERDE (CERTO) / VERMELHO (ERRADO) ---
 function checkOrder() {
     const userOrder = placedItems.map(x => x.val);
     const isRoundCorrect = userOrder.every((val, i) => val === correctOrder[i]);
@@ -122,12 +121,12 @@ function checkOrder() {
             const target = document.querySelector(`.target-box[data-idx="${i}"]`);
             const cardInner = target.querySelector('.placed-card');
             
-            if (item.val === correctOrder[i]) {
+            if (item && item.val === correctOrder[i]) {
                 cardInner.style.borderColor = "var(--highlight-green)";
                 cardInner.style.color = "var(--highlight-green)";
                 cardInner.style.background = "#f0fff0";
                 item.locked = true; 
-            } else {
+            } else if (item) {
                 cardInner.style.borderColor = "var(--error-red)";
                 cardInner.style.color = "var(--error-red)";
                 cardInner.style.background = "#fff5f5";
