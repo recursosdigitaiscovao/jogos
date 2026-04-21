@@ -8,7 +8,6 @@ let timerInterval;
 let placedItems = [null, null, null, null];
 let correctOrder = [];
 let draggedElement = null;
-let isMoving = false;
 
 const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
@@ -37,25 +36,15 @@ function renderTutorial(cat) {
     const itemEx = cat.rondas[0].itens[0];
     
     container.innerHTML = `
-        <div style="position:relative; width:300px; height:112px; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; margin: 0 auto; overflow:hidden; border-radius:10px; border:1px solid #ddd;">
+        <div style="position:relative; width:300px; height:112px; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; margin: 0 auto; overflow:hidden; border-radius:10px; border:2px solid #ddd;">
             <div id="tuto-card" style="background:white; padding:2px 8px; border-radius:5px; font-weight:900; font-size:12px; position:absolute; left:135px; top:80px; z-index:10; box-shadow:0 3px 0 #cbd9e6; border:1px solid #eee;">
                 ${itemEx}
             </div>
             <i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; top:90px; left:150px; color:#f39c12; font-size:18px; z-index:11;"></i>
         </div>
         <style>
-            @keyframes tutoDrag { 
-                0% { left: 135px; top: 80px; opacity: 1; } 
-                40% { left: 42px; top: 52px; } 
-                70% { left: 42px; top: 52px; opacity: 1; } 
-                100% { left: 42px; top: 52px; opacity: 0; } 
-            }
-            @keyframes handDrag { 
-                0% { left: 150px; top: 90px; opacity: 1; } 
-                40% { left: 52px; top: 62px; } 
-                70% { left: 52px; top: 62px; opacity: 1; } 
-                100% { left: 52px; top: 62px; opacity: 0; } 
-            }
+            @keyframes tutoDrag { 0% { left: 135px; top: 80px; opacity: 1; } 40% { left: 42px; top: 52px; } 70% { left: 42px; top: 52px; opacity: 1; } 100% { left: 42px; top: 52px; opacity: 0; } }
+            @keyframes handDrag { 0% { left: 150px; top: 90px; opacity: 1; } 40% { left: 52px; top: 62px; } 70% { left: 52px; top: 62px; opacity: 1; } 100% { left: 52px; top: 62px; opacity: 0; } }
             #tuto-card { animation: tutoDrag 3s infinite ease-in-out; }
             #tuto-hand { animation: handDrag 3s infinite ease-in-out; }
         </style>
@@ -105,13 +94,13 @@ function renderRound() {
     container.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; touch-action:none;">
             
-            <div id="shelf-container" style="position:relative; width:100%; max-width:800px; aspect-ratio: 1014/380; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; user-select:none; touch-action:none;">
+            <div id="shelf-container" style="position:relative; width:100%; max-width:800px; aspect-ratio: 1014/380; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; user-select:none;">
                 
-                <!-- DROP ZONES AJUSTADAS INDIVIDUALMENTE -->
-                <div class="target-box" data-idx="0" onclick="removeItem(0)" style="position:absolute; top:44%; left:4.3%; width:21%; height:45%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
-                <div class="target-box" data-idx="1" onclick="removeItem(1)" style="position:absolute; top:44%; left:27.8%; width:21%; height:45%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
-                <div class="target-box" data-idx="2" onclick="removeItem(2)" style="position:absolute; top:44%; left:50.5%; width:21%; height:45%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
-                <div class="target-box" data-idx="3" onclick="removeItem(3)" style="position:absolute; top:44%; left:74.5%; width:21%; height:45%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                <!-- ZONAS DE DROP COM AJUSTE DE LIMITES -->
+                <div class="target-box" data-idx="0" onclick="removeItem(0)" style="position:absolute; top:42%; left:4.3%; width:21.5%; height:48%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                <div class="target-box" data-idx="1" onclick="removeItem(1)" style="position:absolute; top:42%; left:27.6%; width:21.5%; height:48%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                <div class="target-box" data-idx="2" onclick="removeItem(2)" style="position:absolute; top:42%; left:50.8%; width:21.5%; height:48%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                <div class="target-box" data-idx="3" onclick="removeItem(3)" style="position:absolute; top:42%; left:74.3%; width:21.5%; height:48%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
                 
             </div>
 
@@ -137,7 +126,7 @@ window.handleItemClick = function(el) {
 };
 
 window.removeItem = function(idx) {
-    if(!placedItems[idx]) return;
+    if(!placedItems[idx] || placedItems[idx].locked) return; // Não remove se estiver certo (verde)
     const originalEl = document.getElementById(placedItems[idx].originalId);
     if(originalEl) originalEl.style.visibility = 'visible';
     const target = document.querySelector(`.target-box[data-idx="${idx}"]`);
@@ -149,51 +138,60 @@ function fillTarget(targetIdx, val, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
     if(!target) return;
 
+    // Criar o visual de "Livro" que preenche o espaço
     target.innerHTML = `
-        <div style="color:var(--primary-dark); font-weight:900; font-size:clamp(12px, 4.5vw, 28px); text-align:center; width:100%; line-height:1; display:flex; align-items:center; justify-content:center; animation: popIn 0.3s; word-break: break-all; padding: 5px;">
+        <div class="book-item" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(12px, 4vw, 24px); text-align:center; width:92%; height:90%; display:flex; align-items:center; justify-content:center; border-radius:8px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); animation: popIn 0.3s; word-break: break-all; padding: 5px; border: 2px solid transparent;">
             ${val}
         </div>
     `;
     originalEl.style.visibility = 'hidden';
-    placedItems[targetIdx] = { val: val, originalId: originalEl.id };
+    placedItems[targetIdx] = { val: val, originalId: originalEl.id, locked: false };
 
+    // Verifica se completou os 4
     if (placedItems.every(x => x !== null)) setTimeout(checkOrder, 600);
 }
 
 function checkOrder() {
     const userOrder = placedItems.map(x => x.val);
-    const isCorrect = userOrder.every((val, i) => val === correctOrder[i]);
+    const isRoundCorrect = userOrder.every((val, i) => val === correctOrder[i]);
 
-    if (isCorrect) {
+    if (isRoundCorrect) {
         sndAcerto.play();
         score += (currentLevel === 1) ? JOGO_CONFIG.pontuacao.acertoNivel1 : JOGO_CONFIG.pontuacao.acertoNivel2;
         document.getElementById('score-val').innerText = score;
-        document.querySelectorAll('.target-box div').forEach(d => d.style.color = "var(--highlight-green)");
-        setTimeout(nextRound, 1000);
+        
+        // Todos ficam verdes e trancados
+        document.querySelectorAll('.book-item').forEach(el => {
+            el.style.color = "var(--highlight-green)";
+            el.style.borderColor = "var(--highlight-green)";
+        });
+        setTimeout(nextRound, 1200);
     } else {
         sndErro.play();
         score = Math.max(0, score - JOGO_CONFIG.pontuacao.erro);
         document.getElementById('score-val').innerText = score;
         
-        // CORREÇÃO SELETIVA: Só saltam as erradas
+        // Validação Seletiva
         placedItems.forEach((item, i) => {
-            if (item.val !== correctOrder[i]) {
-                const target = document.querySelector(`.target-box[data-idx="${i}"]`);
-                const originalEl = document.getElementById(item.originalId);
-                
-                const txtDiv = target.querySelector('div');
-                if(txtDiv) txtDiv.style.color = "var(--error-red)";
+            const bookEl = document.querySelectorAll('.target-box')[i].querySelector('.book-item');
+            
+            if (item.val === correctOrder[i]) {
+                // ESTÁ CERTO: Fica verde e trancado
+                bookEl.style.color = "var(--highlight-green)";
+                bookEl.style.borderColor = "var(--highlight-green)";
+                item.locked = true; 
+            } else {
+                // ESTÁ ERRADO: Fica vermelho e salta fora
+                bookEl.style.color = "var(--error-red)";
+                bookEl.style.borderColor = "var(--error-red)";
                 
                 setTimeout(() => {
+                    const target = document.querySelector(`.target-box[data-idx="${i}"]`);
+                    const originalEl = document.getElementById(item.originalId);
                     target.innerHTML = "";
                     if(originalEl) originalEl.style.visibility = 'visible';
                     placedItems[i] = null;
-                }, 800);
-            } else {
-                // Mantém as certas verdes por um momento
-                const txtDiv = target.querySelector('div');
-                if(txtDiv) txtDiv.style.color = "var(--highlight-green)";
-                setTimeout(() => { if(txtDiv) txtDiv.style.color = "var(--primary-dark)"; }, 1500);
+                }, 1000);
             }
         });
     }
@@ -205,7 +203,7 @@ function startDrag(e) {
     if(e.cancelable) e.preventDefault();
 
     draggedElement = el;
-    isMoving = false;
+    let isDragging = false;
     const startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
     const startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
     const rect = draggedElement.getBoundingClientRect();
@@ -213,7 +211,7 @@ function startDrag(e) {
     const offsetY = startY - rect.top;
 
     function onMove(ev) {
-        isMoving = true;
+        isDragging = true;
         const x = (ev.type === 'touchmove' ? ev.touches[0].clientX : ev.clientX);
         const y = (ev.type === 'touchmove' ? ev.touches[0].clientY : ev.clientY);
         
@@ -230,16 +228,16 @@ function startDrag(e) {
         document.removeEventListener('touchmove', onMove);
         document.removeEventListener('touchend', onUp);
 
-        if (isMoving) {
+        if (isDragging) {
             const x = (ev.type === 'touchend' ? ev.changedTouches[0].clientX : ev.clientX);
             const y = (ev.type === 'touchend' ? ev.changedTouches[0].clientY : ev.clientY);
             const dropTarget = document.elementFromPoint(x, y)?.closest('.target-box');
             
+            // Só aceita drop se a caixa estiver vazia
             if (dropTarget && !placedItems[dropTarget.dataset.idx]) {
                 fillTarget(dropTarget.dataset.idx, draggedElement.dataset.val, draggedElement);
             }
         }
-        
         if (draggedElement) {
             draggedElement.style.position = '';
             draggedElement.style.zIndex = '';
