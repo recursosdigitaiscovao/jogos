@@ -6,9 +6,8 @@ const JOGO_CONFIG = {
     caminhoIcons: "../../../icons/",
     
     pontuacao: {
-        acertoNivel1: 100, 
-        acertoNivel2: 200, 
-        erroLetra: 10
+        vitoria: 100, 
+        derrota: 50
     },
 
     textos: {
@@ -36,8 +35,7 @@ const JOGO_CONFIG = {
                 { letras: "CÃO" }, { letras: "GATO" }, { letras: "PATO" }, { letras: "PERU" },
                 { letras: "VACA" }, { letras: "COELHO" }, { letras: "CABRA" }, { letras: "PORCO" },
                 { letras: "OVELHA" }, { letras: "GALO" }, { letras: "GALINHA" }, { letras: "BURRO" },
-                { letras: "CAVALO" }, { letras: "RATO" }, { letras: "PEIXE" }, { letras: "POMBO" },
-                { letras: "CANÁRIO" }, { letras: "HAMSTER" }, { letras: "PÔNEI" }, { letras: "CÁGADO" }
+                { letras: "CAVALO" }, { letras: "RATO" }, { letras: "PEIXE" }, { letras: "POMBO" }
             ]
         },
         frutos: {
@@ -45,56 +43,14 @@ const JOGO_CONFIG = {
             itens: [
                 { letras: "MAÇÃ" }, { letras: "PÊRA" }, { letras: "UVA" }, { letras: "FIGO" },
                 { letras: "MELÃO" }, { letras: "BANANA" }, { letras: "LARANJA" }, { letras: "MORANGO" },
-                { letras: "CEREJA" }, { letras: "ANANÁS" }, { letras: "LIMÃO" }, { letras: "PÊSSEGO" },
-                { letras: "AMEIXA" }, { letras: "KIWI" }, { letras: "MANGA" }, { letras: "PAPAIA" },
-                { letras: "MELANCIA" }, { letras: "AMORA" }, { letras: "FRAMBOESA" }, { letras: "ROMÃ" }
-            ]
-        },
-        material: {
-            nome: "Material Escolar", imgCapa: "materialescolar/lapis.png",
-            itens: [
-                { letras: "AFIA" }, { letras: "LÁPIS" }, { letras: "RÉGUA" }, { letras: "COLA" },
-                { letras: "LIVRO" }, { letras: "CADERNO" }, { letras: "MOCHILA" }, { letras: "TESOURA" },
-                { letras: "BORRACHA" }, { letras: "ESTOJO" }, { letras: "CANETA" }, { letras: "MARCADOR" },
-                { letras: "QUADRO" }, { letras: "GIZ" }, { letras: "PINCEL" }, { letras: "PASTA" },
-                { letras: "TINTA" }, { letras: "MAPA" }, { letras: "AGRAFADOR" }, { letras: "COMPASSO" }
-            ]
-        },
-        selvagens: {
-            nome: "Animais Selvagens", imgCapa: "animaisselvagens/leao.png",
-            itens: [
-                { letras: "LEÃO" }, { letras: "TIGRE" }, { letras: "ZEBRA" }, { letras: "GIRAFA" },
-                { letras: "COBRA" }, { letras: "ELEFANTE" }, { letras: "MACACO" }, { letras: "URSO" },
-                { letras: "LOBO" }, { letras: "RAPOSA" }, { letras: "ÁGUIA" }, { letras: "BALEIA" },
-                { letras: "TUBARÃO" }, { letras: "JACARÉ" }, { letras: "ESQUILO" }, { letras: "VEADO" },
-                { letras: "CANGURU" }, { letras: "MORCEGO" }
-            ]
-        },
-        paises: {
-            nome: "Países", imgCapa: "outros/paises.png",
-            itens: [
-                { letras: "PORTUGAL" }, { letras: "ESPANHA" }, { letras: "FRANÇA" }, { letras: "ITÁLIA" },
-                { letras: "BRASIL" }, { letras: "ANGOLA" }, { letras: "ALEMANHA" }, { letras: "BÉLGICA" },
-                { letras: "GRÉCIA" }, { letras: "CHINA" }, { letras: "JAPÃO" }, { letras: "MÉXICO" },
-                { letras: "CANADÁ" }, { letras: "EGIPTO" }, { letras: "MARROCOS" }, { letras: "SUÍÇA" },
-                { letras: "TIMOR" }, { letras: "GUINÉ" }
-            ]
-        },
-        transportes: {
-            nome: "Transportes", imgCapa: "outros/transportes.png",
-            itens: [
-                { letras: "AVIÃO" }, { letras: "BARCO" }, { letras: "CARRO" }, { letras: "MOTA" },
-                { letras: "COMBOIO" }, { letras: "AUTOCARRO" }, { letras: "METRO" }, { letras: "ELÉTRICO" },
-                { letras: "BICICLETA" }, { letras: "CAMIÃO" }, { letras: "NAVIO" }, { letras: "FOGUETE" },
-                { letras: "TRATOR" }, { letras: "TÁXI" }, { letras: "CANOA" }, { letras: "BALÃO" },
-                { letras: "SUBMARINO" }
+                { letras: "CEREJA" }, { letras: "ANANÁS" }, { letras: "LIMÃO" }, { letras: "PÊSSEGO" }
             ]
         }
     },
 
     relatorios: [
-        { min: 1200, titulo: "BRILHANTE!", img: "taca_1.png" },
-        { min: 800, titulo: "MUITO BEM!", img: "taca_2.png" },
+        { min: 1000, titulo: "BRILHANTE!", img: "taca_1.png" },
+        { min: 750, titulo: "MUITO BEM!", img: "taca_2.png" },
         { min: 500, titulo: "BOM TRABALHO!", img: "taca_3.png" },
         { min: 0, titulo: "TENTA OUTRA VEZ!", img: "taca_4.png" }
     ]
