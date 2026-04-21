@@ -17,7 +17,7 @@ const JOGO_CONFIG = {
         tituloLinha2: "LEITORES",
         subtitulo: "Português | 1º Ano",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos",
-        instrucao: "Coloca os livros na estante por ordem alfabética!"
+        instrucao: "Ordena os cartões no armário por ordem alfabética!"
     },
 
     sons: {
@@ -26,15 +26,7 @@ const JOGO_CONFIG = {
         vitoria: "https://cdn.pixabay.com/audio/2024/02/07/audio_293963428f.mp3"
     },
 
-    iconesMenu: { 
-        home: "home.png",
-        pre: "iconpre.png", 
-        ano1: "icon1.png", 
-        ano2: "icon2.png", 
-        ano3: "icon3.png", 
-        ano4: "icon4.png" 
-    },
-
+    iconesMenu: { home: "home.png", pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png" },
     links: { home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4" },
 
     categorias: {
@@ -82,12 +74,5 @@ const JOGO_CONFIG = {
                 { itens: ["AZUL", "ROSA", "VERDE", "VERMELHO"] }
             ]
         }
-    },
-
-    relatorios: [
-        { min: 450, titulo: "BRILHANTE!", img: "taca_1.png" },
-        { min: 300, titulo: "MUITO BEM!", img: "taca_2.png" },
-        { min: 150, titulo: "BOM TRABALHO!", img: "taca_3.png" },
-        { min: 0, titulo: "TENTA OUTRA VEZ!", img: "taca_4.png" }
-    ]
+    }
 };
