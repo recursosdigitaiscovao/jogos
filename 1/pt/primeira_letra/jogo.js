@@ -8,6 +8,7 @@ let draggedElement = null;
 let isDraggingActive = false;
 let touchStartTime = 0;
 let startPos = { x: 0, y: 0 };
+let originalRect = null; // Para o efeito de voltar ao lugar
 let shuffledItems = [];
 
 const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
@@ -88,76 +89,158 @@ function renderRound() {
                 <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-width: 85%; max-height: 85%; object-fit: contain;">
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
-                <div id="target-letter" style="width: clamp(50px, 14vw, 65px); height: clamp(60px, 16vw, 75px); background: rgba(255,255,255,0.6); border: 3px dashed var(--primary-blue); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: clamp(28px, 8vw, 36px); font-weight: 900; color: var(--primary-blue);">_</div>
+                <div id="target-letter" style="width: clamp(55px, 14vw, 70px); height: clamp(65px, 16vw, 80px); background: rgba(255,255,255,0.6); border: 3px dashed var(--primary-blue); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: clamp(28px, 8vw, 36px); font-weight: 900; color: var(--primary-blue); transition: 0.2s;">_</div>
                 <div style="font-size: clamp(30px, 10vw, 45px); font-weight: 900; color: var(--text-grey); letter-spacing: 2px; text-transform: uppercase;">${restOfWord}</div>
             </div>
-            <div id="drag-options" style="display:flex; gap:8px; flex-wrap:nowrap; justify-content:center; padding:10px; background:rgba(255,255,255,0.4); border-radius:20px; width:100%; overflow:hidden;">
+            <div id="drag-options" style="display:flex; gap:8px; flex-wrap:nowrap; justify-content:center; padding:10px; background:rgba(255,255,255,0.4); border-radius:20px; width:100%; overflow:visible;">
                 ${options.map(letra => `
                     <div class="letter-card" onmousedown="startDrag(event)" ontouchstart="startDrag(event)" data-val="${letra}"
-                         style="background: #ffffff; flex: 1; max-width: 70px; height: clamp(55px, 18vw, 70px); border-radius:15px; font-weight:900; font-size: clamp(22px, 6vw, 32px); color:var(--primary-dark); cursor:pointer; box-shadow:0 4px 0 #cbd9e6; border:2px solid var(--primary-blue); display:flex; align-items:center; justify-content:center; user-select:none;">${letra}</div>
+                         style="background: #ffffff; flex: 1; max-width: 70px; height: clamp(55px, 18vw, 70px); border-radius:15px; font-weight:900; font-size: clamp(22px, 6vw, 32px); color:var(--primary-dark); cursor:pointer; box-shadow:0 4px 0 #cbd9e6; border:2px solid var(--primary-blue); display:flex; align-items:center; justify-content:center; user-select:none; position:relative; transition: background 0.2s, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);">${letra}</div>
                 `).join('')}
             </div>
         </div>
     `;
 }
 
+// --- NOVO SISTEMA DE DRAG AND DROP MELHORADO ---
 function startDrag(e) {
     const el = e.target.closest('.letter-card');
-    if (!el) return;
+    if (!el || el.classList.contains('locked')) return;
+    
     const touch = e.type === 'touchstart' ? e.touches[0] : e;
     startPos = { x: touch.clientX, y: touch.clientY };
     touchStartTime = Date.now();
+    
     draggedElement = el;
     isDraggingActive = false;
-    const rect = draggedElement.getBoundingClientRect();
-    const offsetX = startPos.x - rect.left;
-    const offsetY = startPos.y - rect.top;
+    
+    originalRect = el.getBoundingClientRect();
+    const offsetX = startPos.x - originalRect.left;
+    const offsetY = startPos.y - originalRect.top;
+
+    // Estilo de "pegar"
+    el.style.transition = 'none';
+    el.style.zIndex = '3000';
+
+    const targetBox = document.getElementById('target-letter');
 
     function onMove(ev) {
         const t = ev.type === 'touchmove' ? ev.touches[0] : ev;
         const dist = Math.sqrt(Math.pow(t.clientX - startPos.x, 2) + Math.pow(t.clientY - startPos.y, 2));
-        if (dist > 10) { isDraggingActive = true; if(ev.cancelable) ev.preventDefault(); }
+
+        if (dist > 10) {
+            isDraggingActive = true;
+            if(ev.cancelable) ev.preventDefault();
+        }
+
         if (isDraggingActive) {
-            draggedElement.style.position = 'fixed'; draggedElement.style.zIndex = '3000';
-            draggedElement.style.left = (t.clientX - offsetX) + 'px'; draggedElement.style.top = (t.clientY - offsetY) + 'px';
-            draggedElement.style.transform = 'scale(1.1)'; draggedElement.style.pointerEvents = 'none';
+            draggedElement.style.position = 'fixed';
+            draggedElement.style.left = (t.clientX - offsetX) + 'px';
+            draggedElement.style.top = (t.clientY - offsetY) + 'px';
+            draggedElement.style.transform = 'scale(1.15)';
+            draggedElement.style.boxShadow = '0 15px 30px rgba(0,0,0,0.2)';
+            draggedElement.style.pointerEvents = 'none'; // Importante para o elementFromPoint
+
+            // Verificar se está sobre o alvo para dar feedback visual
+            const currentOver = document.elementFromPoint(t.clientX, t.clientY)?.closest('#target-letter');
+            if (currentOver) {
+                targetBox.style.borderColor = "#f39c12"; // Destaque laranja
+                targetBox.style.background = "rgba(243, 156, 18, 0.1)";
+                targetBox.style.transform = "scale(1.1)";
+            } else {
+                targetBox.style.borderColor = "var(--primary-blue)";
+                targetBox.style.background = "rgba(255,255,255,0.6)";
+                targetBox.style.transform = "scale(1)";
+            }
         }
     }
 
     function onUp(ev) {
-        document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp);
-        document.removeEventListener('touchmove', onMove); document.removeEventListener('touchend', onUp);
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onUp);
+
         const t = ev.type === 'touchend' ? ev.changedTouches[0] : ev;
         const correctLetter = shuffledItems[currentIndex].nome[0];
         const duration = Date.now() - touchStartTime;
 
+        // Limpar feedback do alvo
+        targetBox.style.transform = "scale(1)";
+
         if (!isDraggingActive || duration < 250) {
+            // FOI UM CLIQUE
             checkLetter(draggedElement.dataset.val, correctLetter);
+            resetDraggedElement();
         } else {
+            // FOI UM ARRASTO - Verificar Drop
             const dropTarget = document.elementFromPoint(t.clientX, t.clientY)?.closest('#target-letter');
-            if (dropTarget) checkLetter(draggedElement.dataset.val, correctLetter);
+            
+            if (dropTarget) {
+                checkLetter(draggedElement.dataset.val, correctLetter);
+                resetDraggedElement();
+            } else {
+                // VOLTAR PARA O LUGAR (Animação de retorno)
+                draggedElement.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                draggedElement.style.position = 'fixed';
+                draggedElement.style.left = originalRect.left + 'px';
+                draggedElement.style.top = originalRect.top + 'px';
+                draggedElement.style.transform = 'scale(1)';
+                draggedElement.style.boxShadow = '0 4px 0 #cbd9e6';
+                
+                setTimeout(() => {
+                    resetDraggedElement();
+                }, 400);
+            }
         }
-        draggedElement.style.position = ''; draggedElement.style.transform = ''; draggedElement.style.zIndex = ''; draggedElement.style.pointerEvents = 'auto';
     }
-    document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onUp);
-    document.addEventListener('touchmove', onMove, { passive: false }); document.addEventListener('touchend', onUp);
+
+    function resetDraggedElement() {
+        if (!draggedElement) return;
+        draggedElement.style.position = '';
+        draggedElement.style.left = '';
+        draggedElement.style.top = '';
+        draggedElement.style.zIndex = '';
+        draggedElement.style.transform = '';
+        draggedElement.style.pointerEvents = 'auto';
+        draggedElement.style.boxShadow = '';
+        draggedElement.style.transition = '';
+        draggedElement = null;
+    }
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onUp);
 }
 
 function checkLetter(escolhida, correta) {
     const target = document.getElementById('target-letter');
     if(!target || target.innerText !== "_") return;
+    
     target.innerText = escolhida;
     if (escolhida === correta) {
         sndAcerto.play(); score += JOGO_CONFIG.pontuacao.acertoNivel1;
         document.getElementById('score-val').innerText = score;
-        target.style.background = "#f0fff0"; target.style.borderColor = "var(--highlight-green)"; target.style.color = "var(--highlight-green)";
+        target.style.background = "#f0fff0"; 
+        target.style.borderColor = "var(--highlight-green)"; 
+        target.style.color = "var(--highlight-green)";
         setTimeout(nextRound, 1200);
     } else {
         sndErro.play(); score = Math.max(0, score - JOGO_CONFIG.pontuacao.erro);
         document.getElementById('score-val').innerText = score;
-        target.style.background = "#fff5f5"; target.style.borderColor = "var(--error-red)"; target.style.color = "var(--error-red)";
+        target.style.background = "#fff5f5"; 
+        target.style.borderColor = "var(--error-red)"; 
+        target.style.color = "var(--error-red)";
         target.classList.add('shake-animation');
-        setTimeout(() => { target.innerText = "_"; target.classList.remove('shake-animation'); target.style.background = "rgba(255,255,255,0.6)"; target.style.borderColor = "var(--primary-blue)"; target.style.borderStyle = "dashed"; target.style.color = "var(--primary-blue)"; }, 1000);
+        setTimeout(() => { 
+            target.innerText = "_"; 
+            target.classList.remove('shake-animation'); 
+            target.style.background = "rgba(255,255,255,0.6)"; 
+            target.style.borderColor = "var(--primary-blue)"; 
+            target.style.borderStyle = "dashed"; 
+            target.style.color = "var(--primary-blue)"; 
+        }, 1000);
     }
 }
 
@@ -178,7 +261,7 @@ function startTimer() { if(timerInterval) clearInterval(timerInterval); timerSec
 
 const styleTag = document.createElement('style');
 styleTag.innerHTML = `
-    .letter-card:active { transform: scale(0.92); transition: 0.1s; background: #eee !important; }
+    .letter-card:active { transform: scale(1.1) !important; background: #fff !important; }
     .pop-animation { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .shake-animation { animation: shake 0.4s; }
     @keyframes popIn { 0% { transform: scale(0.5); opacity:0; } 100% { transform: scale(1); opacity:1; } }
