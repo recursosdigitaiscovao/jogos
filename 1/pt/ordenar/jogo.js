@@ -14,12 +14,12 @@ const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
 const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// --- COORDENADAS AJUSTADAS: Cartão 1 puxado 15% para a esquerda ---
+// --- COORDENADAS RECALIBRADAS ---
 const BOX_CFG = {
     top: 38,          
     height: 38,       
     width: 21.4,      
-    lefts: [-10.2, 28.2, 51.6, 75.0] // O primeiro valor mudou de 4.8 para -10.2
+    lefts: [-0.2, 25.2, 50.6, 75.0] 
 };
 
 function startLogic() {
