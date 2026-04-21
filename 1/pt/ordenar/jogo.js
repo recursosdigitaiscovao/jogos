@@ -35,16 +35,34 @@ function renderTutorial(cat) {
     if(!container) return;
     const itemEx = cat.rondas[0].itens[0];
     
+    // Proporção 1014/380 traduzida para um tamanho fixo de tutorial (300px largura)
     container.innerHTML = `
-        <div style="position:relative; width:300px; height:150px; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; border-radius:15px; overflow:hidden;">
-            <div id="tuto-card" style="background:white; padding:5px 10px; border-radius:8px; font-weight:900; font-size:12px; position:absolute; left:120px; bottom:10px; z-index:10; box-shadow:0 4px 0 #cbd9e6; border:1px solid #eee;">
+        <div style="position:relative; width:300px; height:112px; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; margin: 0 auto; overflow:hidden; border-radius:10px; border:2px solid #ddd;">
+            
+            <!-- Letra do Tutorial -->
+            <div id="tuto-card" style="background:white; padding:2px 8px; border-radius:5px; font-weight:900; font-size:14px; position:absolute; left:135px; bottom:5px; z-index:10; box-shadow:0 3px 0 #cbd9e6; border:1px solid #eee;">
                 ${itemEx}
             </div>
-            <i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; bottom:5px; left:140px; color:#f39c12; font-size:20px; z-index:11;"></i>
+
+            <!-- Mão do Tutorial -->
+            <i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; bottom:0px; left:150px; color:#f39c12; font-size:20px; z-index:11;"></i>
         </div>
         <style>
-            @keyframes tutoMove { 0% { transform: translate(0,0); opacity:1; } 40% { transform: translate(-102px, -78px); } 70% { transform: translate(-102px, -78px); opacity:1; } 100% { transform: translate(-102px, -78px); opacity:0; } }
-            #tuto-card, #tuto-hand { animation: tutoMove 3s infinite ease-in-out; }
+            /* Animação que leva do centro-baixo para o Quadrado 1 (aprox left:16% top:55% da imagem) */
+            @keyframes tutoDrag { 
+                0% { left: 135px; top: 80px; opacity: 1; } 
+                40% { left: 45px; top: 45px; } 
+                70% { left: 45px; top: 45px; opacity: 1; } 
+                100% { left: 45px; top: 45px; opacity: 0; } 
+            }
+            @keyframes handDrag { 
+                0% { left: 150px; top: 90px; opacity: 1; } 
+                40% { left: 60px; top: 55px; } 
+                70% { left: 60px; top: 55px; opacity: 1; } 
+                100% { left: 60px; top: 55px; opacity: 0; } 
+            }
+            #tuto-card { animation: tutoDrag 3s infinite ease-in-out; }
+            #tuto-hand { animation: handDrag 3s infinite ease-in-out; }
         </style>
     `;
 }
@@ -83,4 +101,180 @@ function renderRound() {
 
     const dots = document.querySelectorAll('.dot');
     dots.forEach((d, i) => {
-        d.classList.re
+        d.classList.remove('active', 'done');
+        if(i < roundInLevel) d.classList.add('done');
+        if(i === roundInLevel) d.classList.add('active');
+    });
+
+    const container = document.getElementById('game-main-content');
+    container.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; touch-action:none;">
+            
+            <div id="shelf-container" style="position:relative; width:100%; max-width:800px; aspect-ratio: 1014/380; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; user-select:none; touch-action:none;">
+                <!-- Zonas de drop marcadas temporariamente com borda para calibração -->
+                <div id="drop-zones" style="position:absolute; top:36.5%; left:5.2%; right:5.2%; height:37%; display:grid; grid-template-columns: repeat(4, 1fr); gap:1.8%;">
+                    ${[0,1,2,3].map(i => `
+                        <div class="target-box" data-idx="${i}" onclick="removeItem(${i})"
+                             style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; cursor:pointer; 
+                                    border: 1px dashed rgba(255,0,0,0.3); background: rgba(0,255,0,0.05);">
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div id="drag-options" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; padding:15px; background:rgba(255,255,255,0.4); border-radius:25px; width:100%; min-height:85px;">
+                ${shuffled.map((item, i) => `
+                    <div class="sort-card" 
+                         onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
+                         onclick="handleItemClick(this)"
+                         data-val="${item}" id="card-${currentIndex}-${i}"
+                         style="background:white; padding:12px 18px; border-radius:12px; font-weight:900; font-size:clamp(14px, 4vw, 20px); color:var(--primary-dark); cursor:grab; box-shadow:0 6px 0 #cbd9e6; border:2px solid #eee; min-width:75px; text-align:center; user-select:none; touch-action:none;">
+                        ${item}
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+window.handleItemClick = function(el) {
+    if(el.style.visibility === 'hidden') return;
+    const freeIdx = placedItems.findIndex(x => x === null);
+    if(freeIdx !== -1) fillTarget(freeIdx, el.dataset.val, el);
+};
+
+window.removeItem = function(idx) {
+    if(!placedItems[idx]) return;
+    const originalEl = document.getElementById(placedItems[idx].originalId);
+    if(originalEl) originalEl.style.visibility = 'visible';
+    const target = document.querySelector(`.target-box[data-idx="${idx}"]`);
+    target.innerHTML = "";
+    placedItems[idx] = null;
+};
+
+function fillTarget(targetIdx, val, originalEl) {
+    const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
+    if(!target) return;
+
+    // Remove o fundo verde de teste e coloca o texto centrado
+    target.style.background = "transparent";
+    target.innerHTML = `
+        <div style="color:var(--primary-dark); font-weight:900; font-size:clamp(14px, 4.5vw, 30px); text-align:center; width:100%; line-height:1; display:flex; align-items:center; justify-content:center; animation: popIn 0.3s; word-break: break-all;">
+            ${val}
+        </div>
+    `;
+    originalEl.style.visibility = 'hidden';
+    placedItems[targetIdx] = { val: val, originalId: originalEl.id };
+
+    if (placedItems.every(x => x !== null)) setTimeout(checkOrder, 600);
+}
+
+function checkOrder() {
+    const userOrder = placedItems.map(x => x.val);
+    const isCorrect = userOrder.every((val, i) => val === correctOrder[i]);
+
+    if (isCorrect) {
+        sndAcerto.play();
+        score += (currentLevel === 1) ? JOGO_CONFIG.pontuacao.acertoNivel1 : JOGO_CONFIG.pontuacao.acertoNivel2;
+        document.getElementById('score-val').innerText = score;
+        document.querySelectorAll('.target-box div').forEach(d => d.style.color = "var(--highlight-green)");
+        setTimeout(nextRound, 1000);
+    } else {
+        sndErro.play();
+        score = Math.max(0, score - JOGO_CONFIG.pontuacao.erro);
+        document.getElementById('score-val').innerText = score;
+        
+        // CORREÇÃO SELETIVA: Só saltam as erradas
+        placedItems.forEach((item, i) => {
+            if (item.val !== correctOrder[i]) {
+                const target = document.querySelector(`.target-box[data-idx="${i}"]`);
+                const originalEl = document.getElementById(item.originalId);
+                
+                // Feedback visual vermelho antes de sair
+                const txtDiv = target.querySelector('div');
+                if(txtDiv) txtDiv.style.color = "var(--error-red)";
+                
+                setTimeout(() => {
+                    target.innerHTML = "";
+                    if(originalEl) originalEl.style.visibility = 'visible';
+                    placedItems[i] = null;
+                }, 800);
+            } else {
+                // Mantém as certas verdes por um momento
+                const txtDiv = target.querySelector('div');
+                if(txtDiv) txtDiv.style.color = "var(--highlight-green)";
+                setTimeout(() => { if(txtDiv) txtDiv.style.color = "var(--primary-dark)"; }, 1500);
+            }
+        });
+    }
+}
+
+function startDrag(e) {
+    const el = e.target.closest('.sort-card');
+    if (!el || el.style.visibility === 'hidden') return;
+    if(e.cancelable) e.preventDefault();
+
+    draggedElement = el;
+    let isDragging = false;
+    const startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+    const startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+    const rect = draggedElement.getBoundingClientRect();
+    const offsetX = startX - rect.left;
+    const offsetY = startY - rect.top;
+
+    function onMove(ev) {
+        isDragging = true;
+        const x = (ev.type === 'touchmove' ? ev.touches[0].clientX : ev.clientX);
+        const y = (ev.type === 'touchmove' ? ev.touches[0].clientY : ev.clientY);
+        
+        draggedElement.style.position = 'fixed';
+        draggedElement.style.zIndex = '3000';
+        draggedElement.style.pointerEvents = 'none';
+        draggedElement.style.left = (x - offsetX) + 'px';
+        draggedElement.style.top = (y - offsetY) + 'px';
+    }
+
+    function onUp(ev) {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onUp);
+
+        if (isDragging) {
+            const x = (ev.type === 'touchend' ? ev.changedTouches[0].clientX : ev.clientX);
+            const y = (ev.type === 'touchend' ? ev.changedTouches[0].clientY : ev.clientY);
+            const dropTarget = document.elementFromPoint(x, y)?.closest('.target-box');
+            if (dropTarget && !placedItems[dropTarget.dataset.idx]) fillTarget(dropTarget.dataset.idx, draggedElement.dataset.val, draggedElement);
+        }
+        if (draggedElement) {
+            draggedElement.style.position = ''; draggedElement.style.zIndex = '';
+            draggedElement.style.pointerEvents = 'auto'; draggedElement.style.left = ''; draggedElement.style.top = '';
+        }
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onUp);
+}
+
+function nextRound() {
+    currentIndex++; roundInLevel++;
+    if (roundInLevel < 5) renderRound();
+    else {
+        if (currentLevel === 1) {
+            currentLevel = 2; roundInLevel = 0;
+            setupDots(); renderRound();
+        } else finishGame();
+    }
+}
+
+function finishGame() {
+    if(timerInterval) clearInterval(timerInterval);
+    sndVitoria.play();
+    document.getElementById('res-pts').innerText = score;
+    document.getElementById('res-tim').innerText = document.getElementById('timer').innerText.replace('⏳ ', '');
+    let rel = JOGO_CONFIG.relatorios.find(r => score >= r.min) || JOGO_CONFIG.relatorios[JOGO_CONFIG.relatorios.length-1];
+    document.getElementById('res-tit').innerText = rel.titulo;
+    document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rel.img;
+    if(window.goToResult) window.goToResult();
+}
