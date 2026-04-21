@@ -112,53 +112,61 @@
     <script src="dados.js"></script>
     <script src="jogo.js"></script>
     <script>
-        function initUI() {
-            const conf = JOGO_CONFIG;
-            document.getElementById('tit-l1').innerText = conf.textos.tituloLinha1;
-            document.getElementById('tit-l2').innerText = conf.textos.tituloLinha2;
-            document.getElementById('sub-tit').innerText = conf.textos.subtitulo;
-            document.getElementById('main-game-title').innerText = conf.nomeJogo;
-            document.getElementById('intro-instr').innerText = conf.textos.instrucao;
-            document.getElementById('mainFooter').innerHTML = conf.textos.rodape;
-            document.getElementById('mainFooter').style.display = 'flex';
-            document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu.ano1;
-            document.getElementById('header-back-icon').src = conf.caminhoIcons + "voltar.png";
-            document.getElementById('txt-voltar-header').innerText = conf.textoVoltar;
-            document.getElementById('link-voltar-header').href = conf.linkVoltar;
-            document.getElementById('btn-outro-jogo').href = conf.linkVoltar;
-            document.getElementById('rd-intro-btn').src = conf.caminhoImg + "rd.png";
-            document.getElementById('rd-game-btn').src = conf.caminhoImg + "rd.png";
-            const menuBox = document.getElementById('dropdownMenu');
-            menuBox.innerHTML = '';
-            ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
-                const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
-                a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}"><span>${k==='home'?'Início':k.replace('ano',' ')+'º Ano'}</span>`;
-                menuBox.appendChild(a);
-            });
-            const div = document.createElement('div'); div.className = 'menu-divider'; menuBox.appendChild(div);
-            const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = conf.linkVoltar;
-            btnV.innerHTML = `<img src="${conf.caminhoIcons}voltar.png"> <span>${conf.textoVoltar}</span>`;
-            menuBox.appendChild(btnV);
-            if(window.startLogic) window.startLogic();
-        }
-        function goToGame() {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('scr-game').classList.add('active');
-            document.getElementById('status-bar').style.display = 'flex';
-            document.getElementById('main-game-title').style.display = 'none';
-            document.getElementById('mainFooter').style.display = 'none';
-            if(window.initGame) window.initGame();
-        }
-        function goToResult() {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('scr-result').classList.add('active');
-            document.getElementById('status-bar').style.display = 'none';
-            document.getElementById('mainFooter').style.display = 'none';
-        }
-        function toggleHamburger(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; }
-        function openRDMenu(e) { e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
-        function closeMenus() { document.getElementById('rdMenu').classList.remove('active'); document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; }
-        window.onload = initUI;
-    </script>
+    function initUI() {
+        const conf = JOGO_CONFIG;
+        document.getElementById('tit-l1').innerText = conf.textos.tituloLinha1;
+        document.getElementById('tit-l2').innerText = conf.textos.tituloLinha2;
+        document.getElementById('sub-tit').innerText = conf.textos.subtitulo;
+        document.getElementById('main-game-title').innerText = conf.nomeJogo;
+        document.getElementById('intro-instr').innerText = conf.textos.instrucao;
+        document.getElementById('mainFooter').innerHTML = conf.textos.rodape;
+        document.getElementById('mainFooter').style.display = 'flex';
+        document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu.ano1;
+        document.getElementById('header-back-icon').src = conf.caminhoIcons + "voltar.png";
+        document.getElementById('txt-voltar-header').innerText = conf.textoVoltar;
+        document.getElementById('link-voltar-header').href = conf.linkVoltar;
+        document.getElementById('btn-outro-jogo').href = conf.linkVoltar;
+        document.getElementById('rd-intro-btn').src = conf.caminhoImg + "rd.png";
+        document.getElementById('rd-game-btn').src = conf.caminhoImg + "rd.png";
+        
+        const menuBox = document.getElementById('dropdownMenu');
+        menuBox.innerHTML = '';
+        ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
+            const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
+            a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}"><span>${k==='home'?'Início':k.replace('ano',' ')+'º Ano'}</span>`;
+            menuBox.appendChild(a);
+        });
+        const div = document.createElement('div'); div.className = 'menu-divider'; menuBox.appendChild(div);
+        const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = conf.linkVoltar;
+        btnV.innerHTML = `<img src="${conf.caminhoIcons}voltar.png"> <span>${conf.textoVoltar}</span>`;
+        menuBox.appendChild(btnV);
+        if(window.startLogic) window.startLogic();
+    }
+
+    function goToGame() {
+        // Esconde Resultados e Intro, mostra o Jogo
+        document.getElementById('scr-result').classList.remove('active');
+        document.getElementById('scr-intro').classList.remove('active');
+        document.getElementById('scr-game').classList.add('active');
+        
+        document.getElementById('status-bar').style.display = 'flex';
+        document.getElementById('main-game-title').style.display = 'none';
+        document.getElementById('mainFooter').style.display = 'none';
+        
+        if(window.initGame) window.initGame();
+    }
+
+    function goToResult() {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('scr-result').classList.add('active');
+        document.getElementById('status-bar').style.display = 'none';
+        document.getElementById('mainFooter').style.display = 'none';
+    }
+
+    function toggleHamburger(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; }
+    function openRDMenu(e) { e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
+    function closeMenus() { document.getElementById('rdMenu').classList.remove('active'); document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; }
+    window.onload = initUI;
+</script>
 </body>
 </html>
