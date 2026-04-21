@@ -14,12 +14,12 @@ const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
 const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// --- COORDENADAS RECALIBRADAS (Ajustes de -0,5% e -1% para a esquerda) ---
+// --- COORDENADAS RECALIBRADAS (Cartão 3 movido 0,5% para a esquerda) ---
 const BOX_CFG = {
     top: 38,          
     height: 38,       
     width: 21.4,      
-    lefts: [3.3, 27.2, 51.6, 75.0] 
+    lefts: [3.3, 27.2, 51.1, 75.0] 
 };
 
 function startLogic() {
@@ -78,7 +78,7 @@ function renderRound() {
                     <div class="sort-card" 
                          onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
                          data-val="${item}" id="card-${currentIndex}-${i}"
-                         style="background:white; padding:8px 12px; border-radius:12px; font-weight:900; font-size:clamp(12px, 3.5vw, 16px); color:var(--primary-dark); cursor:grab; box-shadow:0 4px 0 #cbd9e6; border:2px solid #eee; min-width:75px; text-align:center;">
+                         style="background:rgba(255,255,255,0.5); padding:8px 12px; border-radius:12px; font-weight:900; font-size:clamp(12px, 3.5vw, 16px); color:var(--primary-dark); cursor:grab; box-shadow:0 4px 0 #cbd9e6; border:2px solid #eee; min-width:75px; text-align:center;">
                         ${item}
                     </div>
                 `).join('')}
@@ -90,7 +90,8 @@ function renderRound() {
 function fillTarget(targetIdx, val, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
     if(!target) return;
-    target.innerHTML = `<div class="placed-card" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(10px, 3.2vw, 19px); text-align:center; width:96%; height:94%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; padding: 4px; overflow: hidden; word-break: break-word;">${val}</div>`;
+    // Fundo 50% transparente
+    target.innerHTML = `<div class="placed-card" style="background:rgba(255,255,255,0.5); color:var(--primary-dark); font-weight:900; font-size:clamp(10px, 3.2vw, 19px); text-align:center; width:96%; height:94%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; padding: 4px; overflow: hidden; word-break: break-word;">${val}</div>`;
     originalEl.style.visibility = 'hidden';
     placedItems[targetIdx] = { val: val, originalId: originalEl.id, locked: false };
     if (placedItems.every(x => x !== null)) setTimeout(checkOrder, 600);
@@ -105,10 +106,11 @@ function checkOrder() {
         score += (currentLevel === 1) ? JOGO_CONFIG.pontuacao.acertoNivel1 : JOGO_CONFIG.pontuacao.acertoNivel2;
         document.getElementById('score-val').innerText = score;
         
+        // Feedback Verde com transparência
         document.querySelectorAll('.placed-card').forEach(card => {
             card.style.borderColor = "var(--highlight-green)";
             card.style.color = "var(--highlight-green)";
-            card.style.background = "#f0fff0";
+            card.style.background = "rgba(240, 255, 240, 0.5)";
         });
         
         setTimeout(nextRound, 1200);
@@ -124,12 +126,12 @@ function checkOrder() {
             if (item && item.val === correctOrder[i]) {
                 cardInner.style.borderColor = "var(--highlight-green)";
                 cardInner.style.color = "var(--highlight-green)";
-                cardInner.style.background = "#f0fff0";
+                cardInner.style.background = "rgba(240, 255, 240, 0.5)";
                 item.locked = true; 
             } else if (item) {
                 cardInner.style.borderColor = "var(--error-red)";
                 cardInner.style.color = "var(--error-red)";
-                cardInner.style.background = "#fff5f5";
+                cardInner.style.background = "rgba(255, 245, 245, 0.5)";
                 
                 setTimeout(() => {
                     if(!item.locked) {
@@ -204,7 +206,8 @@ function renderTutorial(cat) {
     const container = document.getElementById('intro-animation-container');
     if(!container) return;
     const itemEx = cat.rondas[0].itens[0];
-    container.innerHTML = `<div style="position:relative; width:300px; height:112px; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; margin: 0 auto; overflow:hidden; border-radius:10px; border:2px solid #ddd;"><div id="tuto-card" style="background:white; padding:2px 8px; border-radius:5px; font-weight:900; font-size:12px; position:absolute; left:135px; top:80px; z-index:10; box-shadow:0 3px 0 #cbd9e6; border:1px solid #eee;">${itemEx}</div><i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; top:90px; left:150px; color:#f39c12; font-size:18px; z-index:11;"></i></div><style>@keyframes tutoMove { 0% { transform: translate(0,0); opacity:1; } 40% { transform: translate(-103px, -52px); } 70% { transform: translate(-103px, -52px); opacity:1; } 100% { transform: translate(-103px, -52px); opacity:0; } } #tuto-card, #tuto-hand { animation: tutoMove 3s infinite ease-in-out; }</style>`;
+    // Tutorial também com fundo transparente
+    container.innerHTML = `<div style="position:relative; width:300px; height:112px; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; margin: 0 auto; overflow:hidden; border-radius:10px; border:2px solid #ddd;"><div id="tuto-card" style="background:rgba(255,255,255,0.5); padding:2px 8px; border-radius:5px; font-weight:900; font-size:12px; position:absolute; left:135px; top:80px; z-index:10; box-shadow:0 3px 0 #cbd9e6; border:1px solid #eee;">${itemEx}</div><i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; top:90px; left:150px; color:#f39c12; font-size:18px; z-index:11;"></i></div><style>@keyframes tutoMove { 0% { transform: translate(0,0); opacity:1; } 40% { transform: translate(-103px, -52px); } 70% { transform: translate(-103px, -52px); opacity:1; } 100% { transform: translate(-103px, -52px); opacity:0; } } #tuto-card, #tuto-hand { animation: tutoMove 3s infinite ease-in-out; }</style>`;
 }
 
 window.initGame = function() {
