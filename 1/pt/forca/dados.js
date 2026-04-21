@@ -46,11 +46,11 @@ const JOGO_CONFIG = {
             itens: [{letras:"LEÃO"},{letras:"TIGRE"},{letras:"ZEBRA"},{letras:"GIRAFA"},{letras:"COBRA"},{letras:"ELEFANTE"},{letras:"MACACO"},{letras:"URSO"},{letras:"LOBO"},{letras:"RAPOSA"},{letras:"ÁGUIA"},{letras:"BALEIA"},{letras:"TUBARÃO"},{letras:"JACARÉ"},{letras:"ESQUILO"},{letras:"VEADO"},{letras:"CANGURU"},{letras:"MORCEGO"}]
         },
         paises: {
-            nome: "Países", imgCapa: "outros/paises.png",
+            nome: "Países", imgCapa: "paises/eu.png",
             itens: [{letras:"PORTUGAL"},{letras:"ESPANHA"},{letras:"FRANÇA"},{letras:"ITÁLIA"},{letras:"BRASIL"},{letras:"ANGOLA"},{letras:"ALEMANHA"},{letras:"BÉLGICA"},{letras:"GRÉCIA"},{letras:"CHINA"},{letras:"JAPÃO"},{letras:"MÉXICO"},{letras:"CANADÁ"},{letras:"EGIPTO"},{letras:"MARROCOS"},{letras:"SUÍÇA"},{letras:"TIMOR"},{letras:"GUINÉ"}]
         },
         transportes: {
-            nome: "Transportes", imgCapa: "outros/transportes.png",
+            nome: "Transportes", imgCapa: "transportes/caro.png",
             itens: [{letras:"AVIÃO"},{letras:"BARCO"},{letras:"CARRO"},{letras:"MOTA"},{letras:"COMBOIO"},{letras:"AUTOCARRO"},{letras:"METRO"},{letras:"ELÉTRICO"},{letras:"BICICLETA"},{letras:"CAMIÃO"},{letras:"NAVIO"},{letras:"FOGUETE"},{letras:"TRATOR"},{letras:"TÁXI"},{letras:"CANOA"},{letras:"BALÃO"},{letras:"SUBMARINO"}]
         }
     },
