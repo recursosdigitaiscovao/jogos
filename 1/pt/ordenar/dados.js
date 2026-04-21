@@ -20,7 +20,6 @@ const JOGO_CONFIG = {
         instrucao: "Ordena os cartões por ordem alfabética!"
     },
 
-    // Necessário para a função finishGame() do teu jogo.js
     relatorios: [
         { min: 1200, titulo: "BRILHANTE!", img: "taca_ouro.png" },
         { min: 800, titulo: "MUITO BEM!", img: "taca_prata.png" },
@@ -33,23 +32,8 @@ const JOGO_CONFIG = {
         vitoria: "https://cdn.pixabay.com/audio/2024/02/07/audio_293963428f.mp3"
     },
 
-    iconesMenu: { 
-        home: "home.png", 
-        pre: "iconpre.png", 
-        ano1: "icon1.png", 
-        ano2: "icon2.png", 
-        ano3: "icon3.png", 
-        ano4: "icon4.png" 
-    },
-
-    links: { 
-        home: "/jogos", 
-        pre: "/jogos/pre", 
-        ano1: "/jogos/1", 
-        ano2: "/jogos/2", 
-        ano3: "/jogos/3", 
-        ano4: "/jogos/4" 
-    },
+    iconesMenu: { home: "home.png", pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png" },
+    links: { home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4" },
 
     categorias: {
         cat1: {
