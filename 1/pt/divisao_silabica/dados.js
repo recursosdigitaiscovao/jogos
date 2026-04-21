@@ -41,7 +41,7 @@ const JOGO_CONFIG = {
                 { nome: "GIRAFA", silabas: ["GI", "RA", "FA"], img: "animaisselvagens/girafa.png" },
                 { nome: "COELHO", silabas: ["CO", "E", "LHO"], img: "animaisdomesticos/coelho.png" },
                 { nome: "GALINHA", silabas: ["GA", "LI", "NHA"], img: "animaisdomesticos/galinha.png" },
-                { nome: "BURRO", silabas: ["BU", "RRO"], img: "animaisdomesticos/burro.png" }, // Exemplo RR junto
+                { nome: "BURRO", silabas: ["BU", "RRO"], img: "animaisdomesticos/burro.png" },
                 { nome: "POMBO", silabas: ["POM", "BO"], img: "animaisselvagens/pombo.png" }
             ]
         },
@@ -58,8 +58,25 @@ const JOGO_CONFIG = {
                 { nome: "LARANJA", silabas: ["LA", "RAN", "JA"], img: "frutas/laranja.png" },
                 { nome: "CASTANHA", silabas: ["CAS", "TA", "NHA"], img: "frutas/castanha.png" },
                 { nome: "MELANCIA", silabas: ["ME", "LAN", "CI", "A"], img: "frutas/melancia.png" },
-                { nome: "ABACATE", silabas: ["A", "BA", "CA", "TE"], img: "frutas/abacate.png" },
+                { nome: "MARACUJÁ", silabas: ["MA", "RA", "CU", "JÁ"], img: "frutas/maracuja.png" },
                 { nome: "AMORA", silabas: ["A", "MO", "RA"], img: "frutas/amora.png" }
+            ]
+        },
+        objetos: {
+            nome: "Objetos",
+            imgCapa: "objetos/carrinho.png",
+            itens: [
+                { nome: "VASSOURA", silabas: ["VA", "SSOU", "RA"], img: "objetos/vassoura.png" },
+                { nome: "CHAVE", silabas: ["CHA", "VE"], img: "objetos/chave.png" },
+                { nome: "CARRINHO", silabas: ["CA", "RRI", "NHO"], img: "objetos/carrinho.png" },
+                { nome: "GARRAFA", silabas: ["GA", "RRA", "FA"], img: "objetos/garrafa.png" },
+                { nome: "CESTO", silabas: ["CES", "TO"], img: "objetos/cesto.png" },
+                { nome: "SAPATO", silabas: ["SA", "PA", "TO"], img: "objetos/sapato.png" },
+                { nome: "ESCOVA", silabas: ["ES", "CO", "VA"], img: "objetos/escova.png" },
+                { nome: "MOCHILA", silabas: ["MO", "CHI", "LA"], img: "objetos/mochila.png" },
+                { nome: "PANELA", silabas: ["PA", "NE", "LA"], img: "objetos/panela.png" },
+                { nome: "COPO", silabas: ["CO", "PO"], img: "objetos/copo.png" },
+                { nome: "COLHER", silabas: ["CO", "LHER"], img: "objetos/colher.png" }
             ]
         }
     },
