@@ -14,9 +14,9 @@ const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
 const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// --- COORDENADAS CALIBRADAS ---
+// --- COORDENADAS CALIBRADAS (Subida de +3%) ---
 const BOX_CFG = {
-    top: 40,      
+    top: 37,      // Era 40, subiu para 37%
     height: 43,   
     width: 18.5,  
     lefts: [6.5, 29.5, 52.5, 75.5] 
@@ -52,7 +52,8 @@ function renderTutorial(cat) {
             <i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; top:90px; left:150px; color:#f39c12; font-size:18px; z-index:11;"></i>
         </div>
         <style>
-            @keyframes tutoMove { 0% { transform: translate(0,0); opacity:1; } 40% { transform: translate(-102px, -46px); } 70% { transform: translate(-102px, -46px); opacity:1; } 100% { transform: translate(-102px, -46px); opacity:0; } }
+            /* Animação recalibrada para o novo top:37% */
+            @keyframes tutoMove { 0% { transform: translate(0,0); opacity:1; } 40% { transform: translate(-102px, -49px); } 70% { transform: translate(-102px, -49px); opacity:1; } 100% { transform: translate(-102px, -49px); opacity:0; } }
             #tuto-card, #tuto-hand { animation: tutoMove 3s infinite ease-in-out; }
         </style>
     `;
@@ -145,7 +146,6 @@ function fillTarget(targetIdx, val, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
     if(!target) return;
 
-    // CARTÃO BRANCO NO DROP
     target.innerHTML = `
         <div class="placed-card" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(12px, 4vw, 24px); text-align:center; width:92%; height:90%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; word-break: break-all; padding: 5px;">
             ${val}
@@ -182,12 +182,10 @@ function checkOrder() {
             const cardInner = target.querySelector('.placed-card');
             
             if (item.val === correctOrder[i]) {
-                // CERTO: Fica verde e trancado
                 cardInner.style.color = "var(--highlight-green)";
                 cardInner.style.borderColor = "var(--highlight-green)";
                 item.locked = true; 
             } else {
-                // ERRADO: Fica vermelho e salta fora
                 cardInner.style.color = "var(--error-red)";
                 cardInner.style.borderColor = "var(--error-red)";
                 
