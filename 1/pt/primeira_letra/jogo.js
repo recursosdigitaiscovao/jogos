@@ -1,4 +1,4 @@
-let currentCategory = 'cat1';
+let currentCategory = 'animais';
 let currentIndex = 0; 
 let roundInLevel = 0; 
 let score = 0;
@@ -25,7 +25,7 @@ function reconstruirMenuCategorias() {
         const card = document.createElement('div');
         card.style.cssText = "background:#fff; border-radius:20px; padding:15px; text-align:center; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.08); display:flex; flex-direction:column; align-items:center; justify-content:center;";
         card.innerHTML = `
-            <img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="width:65px; height:65px; object-fit:contain; margin-bottom:5px;" onerror="this.src='${JOGO_CONFIG.caminhoImg}cat_animais.png'">
+            <img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="width:65px; height:65px; object-fit:contain; margin-bottom:5px;">
             <span style="font-weight:900; font-size:11px; color:var(--primary-dark);">${cat.nome}</span>
         `;
         card.onclick = () => { window.selectCategory(k); closeMenus(); };
@@ -35,24 +35,20 @@ function reconstruirMenuCategorias() {
 
 window.selectCategory = function(key) {
     currentCategory = key;
-    renderTutorial(JOGO_CONFIG.categorias[key]);
+    renderTutorial();
     if(document.getElementById('scr-game').classList.contains('active')) window.initGame();
 };
 
-// --- ANIMAÇÃO DO TUTORIAL (Mão a interagir) ---
-function renderTutorial(cat) {
+function renderTutorial() {
     const container = document.getElementById('intro-animation-container');
     if(!container) return;
     container.innerHTML = `
         <div style="position:relative; width:200px; height:150px; margin:0 auto; background:rgba(255,255,255,0.3); border-radius:30px; border:3px dashed var(--primary-blue);">
-            <div style="position:absolute; top:20px; left:50%; transform:translateX(-50%); width:50px; height:50px; background:white; border:3px solid var(--primary-blue); border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue);">A</div>
-            <i class="fas fa-hand-pointer" style="position:absolute; top:80px; left:50%; font-size:40px; color:#f39c12; animation: tutoClick 2s infinite;"></i>
+            <div style="position:absolute; top:20px; left:50%; transform:translateX(-50%); width:60px; height:70px; background:rgba(255,255,255,0.5); border:3px solid var(--primary-blue); border-radius:15px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); font-size:30px;">V</div>
+            <i class="fas fa-hand-pointer" style="position:absolute; top:90px; left:50%; font-size:45px; color:#f39c12; animation: tutoTap 2s infinite;"></i>
         </div>
         <style>
-            @keyframes tutoClick { 
-                0%, 100% { transform: translate(0,0) scale(1); } 
-                50% { transform: translate(0, -50px) scale(0.8); opacity:0.5; } 
-            }
+            @keyframes tutoTap { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-40px) scale(0.8); opacity:0.7; } }
         </style>
     `;
 }
@@ -79,8 +75,8 @@ function setupDots() {
 
 function renderRound() {
     const cat = JOGO_CONFIG.categorias[currentCategory];
-    const ronda = cat.rondas[currentIndex];
-    if(!ronda) { finishGame(); return; }
+    const item = cat.itens[currentIndex];
+    if(!item) { finishGame(); return; }
 
     const dots = document.querySelectorAll('.dot');
     dots.forEach((d, i) => {
@@ -90,35 +86,41 @@ function renderRound() {
     });
 
     const container = document.getElementById('game-main-content');
-    const suffix = ronda.palavra.substring(1);
-    const correctLetter = ronda.palavra[0];
+    const correctLetter = item.nome[0];
+    const restOfWord = item.nome.substring(1);
+
+    // Gerar letras aleatórias para as opções
+    let options = [correctLetter];
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    while(options.length < 4) {
+        let randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
+        if(!options.includes(randomLetter)) options.push(randomLetter);
+    }
+    options.sort(() => Math.random() - 0.5);
 
     container.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; touch-action:none;">
             
-            <!-- IMAGEM CENTRAL COM ANIMAÇÃO -->
             <div class="pop-animation" style="background: white; padding: 10px; border-radius: 40px; box-shadow: 0 15px 35px rgba(176,196,217,0.5); width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; border: 5px solid #f0f7ff;">
-                <img src="${JOGO_CONFIG.caminhoImg}${ronda.img}" style="max-width: 85%; max-height: 85%; object-fit: contain;" onerror="this.src='${JOGO_CONFIG.caminhoImg}cat_animais.png'">
+                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-width: 90%; max-height: 90%; object-fit: contain;">
             </div>
 
-            <!-- PALAVRA COM ESPAÇO TÁTIL -->
             <div style="display: flex; align-items: center; gap: 15px;">
-                <div id="target-letter" style="width: 80px; height: 90px; background: #ffffff; border: 4px dashed var(--primary-blue); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 50px; font-weight: 900; color: var(--primary-blue);">
+                <div id="target-letter" style="width: 80px; height: 90px; background: rgba(255,255,255,0.5); border: 4px dashed var(--primary-blue); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 50px; font-weight: 900; color: var(--primary-blue);">
                     _
                 </div>
-                <div style="font-size: 60px; font-weight: 900; color: var(--text-grey); letter-spacing: 5px; text-transform: uppercase;">
-                    ${suffix}
+                <div style="font-size: 60px; font-weight: 900; color: var(--text-grey); letter-spacing: 5px;">
+                    ${restOfWord}
                 </div>
             </div>
 
-            <!-- LETRAS OPÇÕES: TOTALMENTE TÁTEIS -->
-            <div id="drag-options" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; padding:15px; background:rgba(255,255,255,0.5); border-radius:30px; width:100%;">
-                ${ronda.opcoes.sort(() => Math.random() - 0.5).map(letra => `
+            <div id="drag-options" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; padding:15px; background:rgba(255,255,255,0.4); border-radius:30px; width:100%;">
+                ${options.map(letra => `
                     <div class="letter-card" 
                          onclick="checkLetter('${letra}', '${correctLetter}')"
                          onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
                          data-val="${letra}"
-                         style="background: #ffffff; width: 75px; height: 75px; border-radius:22px; font-weight:900; font-size: 38px; color:var(--primary-dark); cursor:pointer; box-shadow:0 6px 0 #cbd9e6; border:3px solid var(--primary-blue); display:flex; align-items:center; justify-content:center; user-select:none;">
+                         style="background: rgba(255,255,255,0.5); width: 80px; height: 80px; border-radius:22px; font-weight:900; font-size: 40px; color:var(--primary-dark); cursor:pointer; box-shadow:0 6px 0 #cbd9e6; border:3px solid var(--primary-blue); display:flex; align-items:center; justify-content:center; user-select:none;">
                         ${letra}
                     </div>
                 `).join('')}
@@ -136,17 +138,16 @@ function checkLetter(escolhida, correta) {
         sndAcerto.play();
         score += JOGO_CONFIG.pontuacao.acertoNivel1;
         document.getElementById('score-val').innerText = score;
-        target.style.background = "#f0fff0";
+        target.style.background = "rgba(240, 255, 240, 0.5)";
         target.style.borderColor = "var(--highlight-green)";
         target.style.color = "var(--highlight-green)";
-        target.classList.add('correct-pulse');
         
         setTimeout(nextRound, 1200);
     } else {
         sndErro.play();
         score = Math.max(0, score - JOGO_CONFIG.pontuacao.erro);
         document.getElementById('score-val').innerText = score;
-        target.style.background = "#fff5f5";
+        target.style.background = "rgba(255, 245, 245, 0.5)";
         target.style.borderColor = "var(--error-red)";
         target.style.color = "var(--error-red)";
         target.classList.add('shake-animation');
@@ -154,7 +155,7 @@ function checkLetter(escolhida, correta) {
         setTimeout(() => {
             target.innerText = "_";
             target.classList.remove('shake-animation');
-            target.style.background = "#ffffff";
+            target.style.background = "rgba(255,255,255,0.5)";
             target.style.borderColor = "var(--primary-blue)";
             target.style.borderStyle = "dashed";
             target.style.color = "var(--primary-blue)";
@@ -162,7 +163,6 @@ function checkLetter(escolhida, correta) {
     }
 }
 
-// DRAG AND DROP COM FEEDBACK VISUAL
 function startDrag(e) {
     const el = e.target.closest('.letter-card');
     if (!el) return;
@@ -200,16 +200,14 @@ function startDrag(e) {
             const dropTarget = document.elementFromPoint(x, y)?.closest('#target-letter');
             
             if (dropTarget) {
-                const correta = JOGO_CONFIG.categorias[currentCategory].rondas[currentIndex].palavra[0];
+                const correta = JOGO_CONFIG.categorias[currentCategory].itens[currentIndex].nome[0];
                 checkLetter(draggedElement.dataset.val, correta);
             }
         }
-
         draggedElement.style.position = ''; 
         draggedElement.style.transform = '';
         draggedElement.style.pointerEvents = 'auto';
     }
-
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
     document.addEventListener('touchmove', onMove, { passive: false });
@@ -218,8 +216,11 @@ function startDrag(e) {
 
 function nextRound() {
     currentIndex++; roundInLevel++;
-    if (roundInLevel < 5) renderRound();
-    else finishGame();
+    if (roundInLevel < 5 && currentIndex < JOGO_CONFIG.categorias[currentCategory].itens.length) {
+        renderRound();
+    } else {
+        finishGame();
+    }
 }
 
 function finishGame() {
@@ -247,11 +248,8 @@ const styleTag = document.createElement('style');
 styleTag.innerHTML = `
     .letter-card:active { transform: scale(0.9); transition: 0.1s; }
     .pop-animation { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    .correct-pulse { animation: pulseGreen 0.6s; }
     .shake-animation { animation: shake 0.4s; }
-
     @keyframes popIn { 0% { transform: scale(0.5); opacity:0; } 100% { transform: scale(1); opacity:1; } }
-    @keyframes pulseGreen { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
 `;
 document.head.appendChild(styleTag);
