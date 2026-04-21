@@ -8,29 +8,26 @@ let timerSeconds = 0;
 let timerInterval;
 let selectedSyllables = []; 
 let draggedElement = null;
-let isMoving = false; // Para distinguir clique de arrasto
+let isMoving = false;
 
 const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
 const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// Carregamento inicial
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Chamar a função de UI que está no HTML para preencher o topo (Título, Menu, etc)
+    // Inicializa a UI do template (Menu, Título, Voltar)
     if (window.initUI) window.initUI();
 
-    // 2. Configurar ícones específicos do jogo
     const rd1 = document.getElementById('rd-intro-btn');
     const rd2 = document.getElementById('rd-game-btn');
     if(rd1) rd1.src = JOGO_CONFIG.caminhoImg + "rd.png";
     if(rd2) rd2.src = JOGO_CONFIG.caminhoImg + "rd.png";
 
-    // 3. Iniciar com a primeira categoria
+    // Inicia com a primeira categoria
     const primeiraCat = Object.keys(JOGO_CONFIG.categorias)[0];
     window.selectCategory(primeiraCat);
 });
 
-// Seleção de Categoria e Tutorial
 window.selectCategory = function(key) {
     currentCategory = key;
     const cat = JOGO_CONFIG.categorias[key];
@@ -105,6 +102,7 @@ function startTimer() {
 
 function renderRound() {
     const item = gameItems[currentIndex];
+    if(!item) return;
     const isLevel2 = (currentLevel === 2);
     selectedSyllables = new Array(item.silabas.length).fill(null);
 
@@ -117,17 +115,17 @@ function renderRound() {
 
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:10px;">
-            <div id="word-hint" style="font-size:28px; font-weight:900; color:var(--primary-blue); letter-spacing:4px; height:40px;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:15px;">
+            <div id="word-hint" style="font-size:30px; font-weight:900; color:var(--primary-blue); letter-spacing:4px; height:40px;">
                 ${isLevel2 ? '???' : item.nome}
             </div>
-            <div style="background:white; padding:10px; border-radius:25px; box-shadow:0 8px 20px rgba(0,0,0,0.05);">
-                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:120px; max-width:200px; object-fit:contain;" draggable="false">
+            <div style="background:white; padding:12px; border-radius:30px; box-shadow:0 8px 25px rgba(0,0,0,0.06);">
+                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:120px; max-width:210px; object-fit:contain;" draggable="false">
             </div>
-            <div id="drop-zones" style="display:flex; gap:12px; min-height:75px; justify-content:center; width:100%; margin: 10px 0;">
+            <div id="drop-zones" style="display:flex; gap:12px; min-height:80px; justify-content:center; width:100%;">
                 ${item.silabas.map((_, i) => `
                     <div class="target-box" data-idx="${i}" onclick="removeSyllable(${i})"
-                         style="width:70px; height:70px; border:3px dashed #cbd9e6; border-radius:15px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:24px; color:var(--primary-dark); background:rgba(255,255,255,0.5); cursor:pointer;">
+                         style="width:75px; height:75px; border:3px dashed #cbd9e6; border-radius:18px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:26px; color:var(--primary-dark); background:rgba(255,255,255,0.5); cursor:pointer;">
                     </div>
                 `).join('')}
             </div>
@@ -135,8 +133,8 @@ function renderRound() {
                 ${shuffleArray([...item.silabas]).map((sil, i) => `
                     <div class="silaba-card" 
                          onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
-                         data-silaba="${sil}" id="sil-orig-${i}"
-                         style="background:white; padding:15px 22px; border-radius:18px; font-weight:900; font-size:24px; color:var(--text-grey); cursor:grab; box-shadow:0 5px 0 #d0e0f0; border:1px solid #eee; touch-action:none; user-select:none;">
+                         data-silaba="${sil}" id="sil-orig-${currentIndex}-${i}"
+                         style="background:white; padding:15px 25px; border-radius:20px; font-weight:900; font-size:26px; color:var(--text-grey); cursor:grab; box-shadow:0 6px 0 #d0e0f0; border:1px solid #eee; touch-action:none; user-select:none;">
                         ${sil}
                     </div>
                 `).join('')}
@@ -145,7 +143,6 @@ function renderRound() {
     `;
 }
 
-// CORREÇÃO: Clicar na caixa para remover
 window.removeSyllable = function(idx) {
     const data = selectedSyllables[idx];
     if(!data) return;
@@ -158,12 +155,11 @@ window.removeSyllable = function(idx) {
     selectedSyllables[idx] = null;
 };
 
-// INTERAÇÃO HÍBRIDA (CLIQUE E ARRASTO)
 function startDrag(e) {
     draggedElement = e.target.closest('.silaba-card');
     if (!draggedElement || draggedElement.style.visibility === 'hidden') return;
 
-    isMoving = false; // Resetar estado de movimento
+    isMoving = false;
     const startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
     const startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
     const rect = draggedElement.getBoundingClientRect();
@@ -174,11 +170,10 @@ function startDrag(e) {
     const upEvent = e.type === 'touchstart' ? 'touchend' : 'mouseup';
 
     function onMove(ev) {
-        isMoving = true; // Se moveu, é um arrasto
+        isMoving = true;
         const x = (ev.type === 'touchmove' ? ev.touches[0].clientX : ev.clientX);
         const y = (ev.type === 'touchmove' ? ev.touches[0].clientY : ev.clientY);
-        
-        draggedElement.style.zIndex = '2000';
+        draggedElement.style.zIndex = '3000';
         draggedElement.style.pointerEvents = 'none';
         draggedElement.style.position = 'fixed';
         draggedElement.style.left = (x - offsetX) + 'px';
@@ -193,7 +188,6 @@ function startDrag(e) {
         const endY = (ev.type === 'touchend' ? ev.changedTouches[0].clientY : ev.clientY);
 
         if (!isMoving) {
-            // COMPORTAMENTO DE CLIQUE: Envia para a primeira caixa vazia
             const targets = document.querySelectorAll('.target-box');
             for (let i = 0; i < targets.length; i++) {
                 if (!selectedSyllables[i]) {
@@ -202,14 +196,12 @@ function startDrag(e) {
                 }
             }
         } else {
-            // COMPORTAMENTO DE ARRASTO: Verifica onde largou
             const dropTarget = document.elementFromPoint(endX, endY)?.closest('.target-box');
             if (dropTarget && !selectedSyllables[dropTarget.dataset.idx]) {
                 fillTarget(dropTarget.dataset.idx, draggedElement.dataset.silaba, draggedElement);
             }
         }
 
-        // Resetar estilos
         draggedElement.style.position = '';
         draggedElement.style.left = '';
         draggedElement.style.top = '';
@@ -218,7 +210,6 @@ function startDrag(e) {
         draggedElement.style.transition = '0.3s';
         setTimeout(() => draggedElement.style.transition = '', 300);
     }
-
     document.addEventListener(moveEvent, onMove);
     document.addEventListener(upEvent, onUp);
 }
