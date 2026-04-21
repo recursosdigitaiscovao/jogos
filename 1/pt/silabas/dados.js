@@ -100,7 +100,7 @@ const JOGO_CONFIG = {
                 { nome: "AFIA", silabas: ["A", "FI", "A"], img: "materialescolar/afia.png" },
                 { nome: "CANETA", silabas: ["CA", "NE", "TA"], img: "materialescolar/caneta.png" },
                 { nome: "RÉGUA", silabas: ["RÉ", "GUA"], img: "materialescolar/regua.png" },
-                { nome: "BORRACHA", silabas: ["BOR", "RA", "CHA"], img: "materialescolar/borracha.png" },
+                { nome: "BORRACHA", silabas: ["BO", "RRA", "CHA"], img: "materialescolar/borracha.png" },
                 { nome: "COLA", silabas: ["CO", "LA"], img: "materialescolar/cola.png" },
                 { nome: "ESTOJO", silabas: ["ES", "TO", "JO"], img: "materialescolar/estojo.png" }
             ]
