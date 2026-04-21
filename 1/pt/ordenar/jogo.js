@@ -8,6 +8,7 @@ let timerInterval;
 let placedItems = [null, null, null, null];
 let correctOrder = [];
 let draggedElement = null;
+let isMoving = false;
 
 const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
@@ -45,15 +46,15 @@ function renderTutorial(cat) {
         <style>
             @keyframes tutoDrag { 
                 0% { left: 135px; top: 80px; opacity: 1; } 
-                40% { left: 45px; top: 52px; } 
-                70% { left: 45px; top: 52px; opacity: 1; } 
-                100% { left: 45px; top: 52px; opacity: 0; } 
+                40% { left: 42px; top: 52px; } 
+                70% { left: 42px; top: 52px; opacity: 1; } 
+                100% { left: 42px; top: 52px; opacity: 0; } 
             }
             @keyframes handDrag { 
                 0% { left: 150px; top: 90px; opacity: 1; } 
-                40% { left: 55px; top: 62px; } 
-                70% { left: 55px; top: 62px; opacity: 1; } 
-                100% { left: 55px; top: 62px; opacity: 0; } 
+                40% { left: 52px; top: 62px; } 
+                70% { left: 52px; top: 62px; opacity: 1; } 
+                100% { left: 52px; top: 62px; opacity: 0; } 
             }
             #tuto-card { animation: tutoDrag 3s infinite ease-in-out; }
             #tuto-hand { animation: handDrag 3s infinite ease-in-out; }
@@ -102,18 +103,16 @@ function renderRound() {
 
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:15px; touch-action:none;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; touch-action:none;">
             
             <div id="shelf-container" style="position:relative; width:100%; max-width:800px; aspect-ratio: 1014/380; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; user-select:none; touch-action:none;">
                 
-                <!-- DROP ZONES CALIBRADAS (TOP 44%, HEIGHT 45%) -->
-                <div id="drop-zones" style="position:absolute; top:44%; left:5.2%; right:5.2%; height:45%; display:grid; grid-template-columns: repeat(4, 1fr); gap:2%;">
-                    ${[0,1,2,3].map(i => `
-                        <div class="target-box" data-idx="${i}" onclick="removeItem(${i})"
-                             style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; cursor:pointer;">
-                        </div>
-                    `).join('')}
-                </div>
+                <!-- DROP ZONES AJUSTADAS INDIVIDUALMENTE -->
+                <div class="target-box" data-idx="0" onclick="removeItem(0)" style="position:absolute; top:44%; left:4.3%; width:21%; height:45%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                <div class="target-box" data-idx="1" onclick="removeItem(1)" style="position:absolute; top:44%; left:27.8%; width:21%; height:45%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                <div class="target-box" data-idx="2" onclick="removeItem(2)" style="position:absolute; top:44%; left:50.5%; width:21%; height:45%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                <div class="target-box" data-idx="3" onclick="removeItem(3)" style="position:absolute; top:44%; left:74.5%; width:21%; height:45%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                
             </div>
 
             <div id="drag-options" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; padding:15px; background:rgba(255,255,255,0.4); border-radius:25px; width:100%; min-height:85px;">
@@ -122,7 +121,7 @@ function renderRound() {
                          onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
                          onclick="handleItemClick(this)"
                          data-val="${item}" id="card-${currentIndex}-${i}"
-                         style="background:white; padding:12px 18px; border-radius:12px; font-weight:900; font-size:clamp(14px, 4vw, 22px); color:var(--primary-dark); cursor:grab; box-shadow:0 6px 0 #cbd9e6; border:2px solid #eee; min-width:75px; text-align:center; user-select:none; touch-action:none;">
+                         style="background:white; padding:12px 18px; border-radius:12px; font-weight:900; font-size:clamp(14px, 4vw, 20px); color:var(--primary-dark); cursor:grab; box-shadow:0 6px 0 #cbd9e6; border:2px solid #eee; min-width:75px; text-align:center; user-select:none; touch-action:none;">
                         ${item}
                     </div>
                 `).join('')}
@@ -150,9 +149,8 @@ function fillTarget(targetIdx, val, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
     if(!target) return;
 
-    // Fica apenas o texto, centrado
     target.innerHTML = `
-        <div style="color:var(--primary-dark); font-weight:900; font-size:clamp(14px, 4.5vw, 32px); text-align:center; width:100%; line-height:1; display:flex; align-items:center; justify-content:center; animation: popIn 0.3s; word-break: break-all;">
+        <div style="color:var(--primary-dark); font-weight:900; font-size:clamp(12px, 4.5vw, 28px); text-align:center; width:100%; line-height:1; display:flex; align-items:center; justify-content:center; animation: popIn 0.3s; word-break: break-all; padding: 5px;">
             ${val}
         </div>
     `;
@@ -177,11 +175,12 @@ function checkOrder() {
         score = Math.max(0, score - JOGO_CONFIG.pontuacao.erro);
         document.getElementById('score-val').innerText = score;
         
-        // CORREÇÃO SELETIVA: Só saltam as que estão na posição errada
+        // CORREÇÃO SELETIVA: Só saltam as erradas
         placedItems.forEach((item, i) => {
             if (item.val !== correctOrder[i]) {
                 const target = document.querySelector(`.target-box[data-idx="${i}"]`);
                 const originalEl = document.getElementById(item.originalId);
+                
                 const txtDiv = target.querySelector('div');
                 if(txtDiv) txtDiv.style.color = "var(--error-red)";
                 
@@ -191,9 +190,10 @@ function checkOrder() {
                     placedItems[i] = null;
                 }, 800);
             } else {
-                // As certas ficam verdes temporariamente para indicar sucesso parcial
-                const txtDiv = target.querySelector(`div`);
+                // Mantém as certas verdes por um momento
+                const txtDiv = target.querySelector('div');
                 if(txtDiv) txtDiv.style.color = "var(--highlight-green)";
+                setTimeout(() => { if(txtDiv) txtDiv.style.color = "var(--primary-dark)"; }, 1500);
             }
         });
     }
@@ -205,7 +205,7 @@ function startDrag(e) {
     if(e.cancelable) e.preventDefault();
 
     draggedElement = el;
-    let isDragging = false;
+    isMoving = false;
     const startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
     const startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
     const rect = draggedElement.getBoundingClientRect();
@@ -213,7 +213,7 @@ function startDrag(e) {
     const offsetY = startY - rect.top;
 
     function onMove(ev) {
-        isDragging = true;
+        isMoving = true;
         const x = (ev.type === 'touchmove' ? ev.touches[0].clientX : ev.clientX);
         const y = (ev.type === 'touchmove' ? ev.touches[0].clientY : ev.clientY);
         
@@ -230,14 +230,16 @@ function startDrag(e) {
         document.removeEventListener('touchmove', onMove);
         document.removeEventListener('touchend', onUp);
 
-        if (isDragging) {
+        if (isMoving) {
             const x = (ev.type === 'touchend' ? ev.changedTouches[0].clientX : ev.clientX);
             const y = (ev.type === 'touchend' ? ev.changedTouches[0].clientY : ev.clientY);
             const dropTarget = document.elementFromPoint(x, y)?.closest('.target-box');
+            
             if (dropTarget && !placedItems[dropTarget.dataset.idx]) {
                 fillTarget(dropTarget.dataset.idx, draggedElement.dataset.val, draggedElement);
             }
         }
+        
         if (draggedElement) {
             draggedElement.style.position = '';
             draggedElement.style.zIndex = '';
