@@ -8,6 +8,7 @@ let timerInterval;
 let placedItems = [null, null, null, null];
 let correctOrder = [];
 let draggedElement = null;
+let isDraggingActive = false; // Diferenciar clique de arrasto
 
 const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
@@ -92,15 +93,15 @@ function renderRound() {
 
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; touch-action:none;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:15px; touch-action:none;">
             
             <div id="shelf-container" style="position:relative; width:100%; max-width:800px; aspect-ratio: 1014/380; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; user-select:none;">
                 
-                <!-- ZONAS DE DROP COM AJUSTE DE LIMITES -->
-                <div class="target-box" data-idx="0" onclick="removeItem(0)" style="position:absolute; top:42%; left:4.3%; width:21.5%; height:48%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
-                <div class="target-box" data-idx="1" onclick="removeItem(1)" style="position:absolute; top:42%; left:27.6%; width:21.5%; height:48%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
-                <div class="target-box" data-idx="2" onclick="removeItem(2)" style="position:absolute; top:42%; left:50.8%; width:21.5%; height:48%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
-                <div class="target-box" data-idx="3" onclick="removeItem(3)" style="position:absolute; top:42%; left:74.3%; width:21.5%; height:48%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                <!-- ZONAS DE DROP INDIVIDUAIS -->
+                <div class="target-box" data-idx="0" onclick="removeItem(0)" style="position:absolute; top:44%; left:4.3%; width:21%; height:45%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                <div class="target-box" data-idx="1" onclick="removeItem(1)" style="position:absolute; top:44%; left:27.8%; width:21%; height:45%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                <div class="target-box" data-idx="2" onclick="removeItem(2)" style="position:absolute; top:44%; left:50.5%; width:21%; height:45%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                <div class="target-box" data-idx="3" onclick="removeItem(3)" style="position:absolute; top:44%; left:74.5%; width:21%; height:45%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
                 
             </div>
 
@@ -108,7 +109,6 @@ function renderRound() {
                 ${shuffled.map((item, i) => `
                     <div class="sort-card" 
                          onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
-                         onclick="handleItemClick(this)"
                          data-val="${item}" id="card-${currentIndex}-${i}"
                          style="background:white; padding:12px 18px; border-radius:12px; font-weight:900; font-size:clamp(14px, 4vw, 20px); color:var(--primary-dark); cursor:grab; box-shadow:0 6px 0 #cbd9e6; border:2px solid #eee; min-width:75px; text-align:center; user-select:none; touch-action:none;">
                         ${item}
@@ -119,16 +119,22 @@ function renderRound() {
     `;
 }
 
-window.handleItemClick = function(el) {
+// LOGICA DE CLIQUE: Envia para o primeiro livre
+function handleItemClick(el) {
     if(el.style.visibility === 'hidden') return;
     const freeIdx = placedItems.findIndex(x => x === null);
-    if(freeIdx !== -1) fillTarget(freeIdx, el.dataset.val, el);
-};
+    if(freeIdx !== -1) {
+        fillTarget(freeIdx, el.dataset.val, el);
+    }
+}
 
 window.removeItem = function(idx) {
-    if(!placedItems[idx] || placedItems[idx].locked) return; // Não remove se estiver certo (verde)
-    const originalEl = document.getElementById(placedItems[idx].originalId);
+    const item = placedItems[idx];
+    if(!item || item.locked) return; // Não remove se estiver trancado (verde)
+    
+    const originalEl = document.getElementById(item.originalId);
     if(originalEl) originalEl.style.visibility = 'visible';
+    
     const target = document.querySelector(`.target-box[data-idx="${idx}"]`);
     target.innerHTML = "";
     placedItems[idx] = null;
@@ -138,17 +144,19 @@ function fillTarget(targetIdx, val, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
     if(!target) return;
 
-    // Criar o visual de "Livro" que preenche o espaço
+    // Efeito de Livro (Cartão branco dentro do compartimento)
     target.innerHTML = `
-        <div class="book-item" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(12px, 4vw, 24px); text-align:center; width:92%; height:90%; display:flex; align-items:center; justify-content:center; border-radius:8px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); animation: popIn 0.3s; word-break: break-all; padding: 5px; border: 2px solid transparent;">
+        <div class="book-item" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(12px, 4.5vw, 28px); text-align:center; width:92%; height:90%; display:flex; align-items:center; justify-content:center; border-radius:8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); animation: popIn 0.3s; word-break: break-all; border: 2px solid transparent;">
             ${val}
         </div>
     `;
+    
     originalEl.style.visibility = 'hidden';
     placedItems[targetIdx] = { val: val, originalId: originalEl.id, locked: false };
 
-    // Verifica se completou os 4
-    if (placedItems.every(x => x !== null)) setTimeout(checkOrder, 600);
+    if (placedItems.every(x => x !== null)) {
+        setTimeout(checkOrder, 600);
+    }
 }
 
 function checkOrder() {
@@ -160,7 +168,6 @@ function checkOrder() {
         score += (currentLevel === 1) ? JOGO_CONFIG.pontuacao.acertoNivel1 : JOGO_CONFIG.pontuacao.acertoNivel2;
         document.getElementById('score-val').innerText = score;
         
-        // Todos ficam verdes e trancados
         document.querySelectorAll('.book-item').forEach(el => {
             el.style.color = "var(--highlight-green)";
             el.style.borderColor = "var(--highlight-green)";
@@ -171,17 +178,15 @@ function checkOrder() {
         score = Math.max(0, score - JOGO_CONFIG.pontuacao.erro);
         document.getElementById('score-val').innerText = score;
         
-        // Validação Seletiva
+        // CORREÇÃO SELETIVA
         placedItems.forEach((item, i) => {
             const bookEl = document.querySelectorAll('.target-box')[i].querySelector('.book-item');
             
             if (item.val === correctOrder[i]) {
-                // ESTÁ CERTO: Fica verde e trancado
                 bookEl.style.color = "var(--highlight-green)";
                 bookEl.style.borderColor = "var(--highlight-green)";
                 item.locked = true; 
             } else {
-                // ESTÁ ERRADO: Fica vermelho e salta fora
                 bookEl.style.color = "var(--error-red)";
                 bookEl.style.borderColor = "var(--error-red)";
                 
@@ -197,13 +202,16 @@ function checkOrder() {
     }
 }
 
+// DRAG AND DROP COM SUPORTE A CLIQUE
 function startDrag(e) {
     const el = e.target.closest('.sort-card');
     if (!el || el.style.visibility === 'hidden') return;
+    
     if(e.cancelable) e.preventDefault();
 
     draggedElement = el;
-    let isDragging = false;
+    isDraggingActive = false; // Assume clique até que se mova
+    
     const startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
     const startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
     const rect = draggedElement.getBoundingClientRect();
@@ -211,7 +219,7 @@ function startDrag(e) {
     const offsetY = startY - rect.top;
 
     function onMove(ev) {
-        isDragging = true;
+        isDraggingActive = true; // Se moveu mais que 5px, é arrasto
         const x = (ev.type === 'touchmove' ? ev.touches[0].clientX : ev.clientX);
         const y = (ev.type === 'touchmove' ? ev.touches[0].clientY : ev.clientY);
         
@@ -228,24 +236,28 @@ function startDrag(e) {
         document.removeEventListener('touchmove', onMove);
         document.removeEventListener('touchend', onUp);
 
-        if (isDragging) {
+        if (!isDraggingActive) {
+            // COMPORTAMENTO DE CLIQUE
+            handleItemClick(draggedElement);
+        } else {
+            // COMPORTAMENTO DE ARRASTO
             const x = (ev.type === 'touchend' ? ev.changedTouches[0].clientX : ev.clientX);
             const y = (ev.type === 'touchend' ? ev.changedTouches[0].clientY : ev.clientY);
             const dropTarget = document.elementFromPoint(x, y)?.closest('.target-box');
             
-            // Só aceita drop se a caixa estiver vazia
             if (dropTarget && !placedItems[dropTarget.dataset.idx]) {
                 fillTarget(dropTarget.dataset.idx, draggedElement.dataset.val, draggedElement);
             }
         }
-        if (draggedElement) {
-            draggedElement.style.position = '';
-            draggedElement.style.zIndex = '';
-            draggedElement.style.pointerEvents = 'auto';
-            draggedElement.style.left = '';
-            draggedElement.style.top = '';
-        }
+
+        // Resetar estilos de arrasto
+        draggedElement.style.position = '';
+        draggedElement.style.zIndex = '';
+        draggedElement.style.pointerEvents = 'auto';
+        draggedElement.style.left = '';
+        draggedElement.style.top = '';
     }
+
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
     document.addEventListener('touchmove', onMove, { passive: false });
