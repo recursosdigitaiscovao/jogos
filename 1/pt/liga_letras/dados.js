@@ -7,8 +7,8 @@ const JOGO_CONFIG = {
     
     pontuacao: {
         acertoNivel1: 100, 
-        acertoNivel2: 150, 
-        erro: 20            
+        acertoNivel2: 100, 
+        erro: 50            
     },
 
     textos: {
@@ -17,7 +17,7 @@ const JOGO_CONFIG = {
         tituloLinha2: "LEITORES",
         subtitulo: "Português | 1º Ano",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos",
-        instrucao: "Clica nas letras pela ordem correta para formar a palavra!"
+        instrucao: "Liga as letras pela ordem correta!"
     },
 
     sons: {
@@ -30,32 +30,27 @@ const JOGO_CONFIG = {
     links: { home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4" },
 
     categorias: {
-        animais: {
-            nome: "Animais",
-            imgCapa: "animaisdomesticos/gato.png",
-            itens: [
-                { nome: "VACA", img: "animaisdomesticos/vaca.png" },
-                { nome: "RATO", img: "animaisselvagens/rato.png" },
-                { nome: "GATO", img: "animaisdomesticos/gato.png" },
-                { nome: "PATO", img: "animaisdomesticos/pato.png" },
-                { nome: "CÃO", img: "animaisdomesticos/cao.png" },
-                { nome: "LEÃO", img: "animaisselvagens/leao.png" },
-                { nome: "FOCA", img: "animaisselvagens/foca.png" },
-                { nome: "GALO", img: "animaisdomesticos/galo.png" }
-            ]
-        },
         frutos: {
             nome: "Frutos",
             imgCapa: "frutas/morango.png",
             itens: [
-                { nome: "BANANA", img: "frutas/banana.png" },
-                { nome: "MAÇÃ", img: "frutas/maca.png" },
-                { nome: "UVAS", img: "frutas/uvas.png" },
-                { nome: "PERA", img: "frutas/pera.png" },
-                { nome: "FIGO", img: "frutas/figo.png" },
-                { nome: "KIWI", img: "frutas/kiwi.png" },
+                { nome: "AMORA", img: "frutas/amora.png" },
+                { nome: "MELÃO", img: "frutas/melao.png" },
+                { nome: "MARACUJÁ", img: "frutas/maracuja.png" },
                 { nome: "LIMÃO", img: "frutas/limao.png" },
-                { nome: "MELÃO", img: "frutas/melao.png" }
+                { nome: "GOIABA", img: "frutas/goiaba.png" },
+                { nome: "FIGO", img: "frutas/figo.png" },
+                { nome: "DIÓSPIRO", img: "frutas/diospiro.png" },
+                { nome: "CASTANHA", img: "frutas/castanha.png" },
+                { nome: "ROMÃ", img: "frutas/roma.png" },
+                { nome: "BANANA", img: "frutas/banana.png" },
+                { nome: "CEREJA", img: "frutas/cereja.png" },
+                { nome: "UVAS", img: "frutas/uvas.png" },
+                { nome: "MORANGO", img: "frutas/morango.png" },
+                { nome: "MELANCIA", img: "frutas/melancia.png" },
+                { nome: "LARANJA", img: "frutas/laranja.png" },
+                { nome: "PAPAIA", img: "frutas/papaia.png" },
+                { nome: "MAÇÃ", img: "frutas/maca.png" }
             ]
         },
         numeros: {
@@ -69,15 +64,69 @@ const JOGO_CONFIG = {
                 { nome: "QUATRO", img: "numeros/quatro.png" },
                 { nome: "CINCO", img: "numeros/cinco.png" },
                 { nome: "SEIS", img: "numeros/seis.png" },
-                { nome: "SETE", img: "numeros/sete.png" }
+                { nome: "SETE", img: "numeros/sete.png" },
+                { nome: "OITO", img: "numeros/oito.png" },
+                { nome: "NOVE", img: "numeros/nove.png" },
+                { nome: "DEZ", img: "numeros/dez.png" }
+            ]
+        },
+        animais: {
+            nome: "Animais",
+            imgCapa: "animaisdomesticos/gato.png",
+            itens: [
+                { nome: "VACA", img: "animaisdomesticos/vaca.png" },
+                { nome: "RATO", img: "animaisselvagens/rato.png" },
+                { nome: "LEÃO", img: "animaisselvagens/leao.png" },
+                { nome: "GATO", img: "animaisdomesticos/gato.png" },
+                { nome: "POMBO", img: "animaisselvagens/pombo.png" },
+                { nome: "PATO", img: "animaisdomesticos/pato.png" },
+                { nome: "GALO", img: "animaisdomesticos/galo.png" },
+                { nome: "URSO", img: "animaisselvagens/urso.png" },
+                { nome: "FOCA", img: "animaisselvagens/foca.png" },
+                { nome: "MACACO", img: "animaisselvagens/macaco.png" },
+                { nome: "CAVALO", img: "animaisdomesticos/cavalo.png" },
+                { nome: "GALINHA", img: "animaisdomesticos/galinha.png" },
+                { nome: "COELHO", img: "animaisdomesticos/coelho.png" }
+            ]
+        },
+        objetos: {
+            nome: "Objetos",
+            imgCapa: "objetos/vassoura.png",
+            itens: [
+                { nome: "VASSOURA", img: "objetos/vassoura.png" },
+                { nome: "GARFO", img: "objetos/garfo.png" },
+                { nome: "PINCEL", img: "objetos/pincel.png" },
+                { nome: "ESCOVA", img: "objetos/escova.png" },
+                { nome: "GARRAFA", img: "objetos/garrafa.png" },
+                { nome: "COPO", img: "objetos/copo.png" },
+                { nome: "BALDE", img: "objetos/balde.png" },
+                { nome: "ÓCULOS", img: "objetos/oculos.png" },
+                { nome: "CESTO", img: "objetos/cesto.png" },
+                { nome: "COLHER", img: "objetos/colher.png" }
+            ]
+        },
+        material: {
+            nome: "Material Escolar",
+            imgCapa: "materialescolar/afia.png",
+            itens: [
+                { nome: "MOCHILA", img: "materialescolar/mochila.png" },
+                { nome: "TESOURA", img: "materialescolar/tesoura.png" },
+                { nome: "LÁPIS", img: "materialescolar/lapis.png" },
+                { nome: "LIVRO", img: "materialescolar/livro.png" },
+                { nome: "AFIA", img: "materialescolar/afia.png" },
+                { nome: "CANETA", img: "materialescolar/caneta.png" },
+                { nome: "RÉGUA", img: "materialescolar/regua.png" },
+                { nome: "BORRACHA", img: "materialescolar/borracha.png" },
+                { nome: "COLA", img: "materialescolar/cola.png" },
+                { nome: "ESTOJO", img: "materialescolar/estojo.png" }
             ]
         }
     },
 
     relatorios: [
         { min: 1000, titulo: "BRILHANTE!", img: "taca_1.png" },
-        { min: 700, titulo: "MUITO BEM!", img: "taca_2.png" },
-        { min: 400, titulo: "BOM TRABALHO!", img: "taca_3.png" },
+        { min: 750, titulo: "MUITO BEM!", img: "taca_2.png" },
+        { min: 500, titulo: "BOM TRABALHO!", img: "taca_3.png" },
         { min: 0, titulo: "TENTA OUTRA VEZ!", img: "taca_4.png" }
     ]
 };
