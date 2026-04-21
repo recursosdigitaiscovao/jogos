@@ -16,10 +16,10 @@ const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
 // --- COORDENADAS CALIBRADAS ---
 const BOX_CFG = {
-    top: 40,      // Subiu 5% (era 45)
-    height: 43,   // Diminuiu 1% (era 44)
-    width: 18.5,  // Diminuiu 1% para não tocar na madeira
-    lefts: [6.5, 29.5, 52.5, 75.5] // Ajustados para centralizar com a nova largura
+    top: 40,      
+    height: 43,   
+    width: 18.5,  
+    lefts: [6.5, 29.5, 52.5, 75.5] 
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -52,10 +52,8 @@ function renderTutorial(cat) {
             <i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; top:90px; left:150px; color:#f39c12; font-size:18px; z-index:11;"></i>
         </div>
         <style>
-            @keyframes tutoDrag { 0% { left: 135px; top: 80px; opacity: 1; } 40% { left: 46px; top: 46px; } 70% { left: 46px; top: 46px; opacity: 1; } 100% { left: 46px; top: 46px; opacity: 0; } }
-            @keyframes handDrag { 0% { left: 150px; top: 90px; opacity: 1; } 40% { left: 56px; top: 56px; } 70% { left: 56px; top: 56px; opacity: 1; } 100% { left: 56px; top: 56px; opacity: 0; } }
-            #tuto-card { animation: tutoDrag 3s infinite ease-in-out; }
-            #tuto-hand { animation: handDrag 3s infinite ease-in-out; }
+            @keyframes tutoMove { 0% { transform: translate(0,0); opacity:1; } 40% { transform: translate(-102px, -46px); } 70% { transform: translate(-102px, -46px); opacity:1; } 100% { transform: translate(-102px, -46px); opacity:0; } }
+            #tuto-card, #tuto-hand { animation: tutoMove 3s infinite ease-in-out; }
         </style>
     `;
 }
@@ -101,7 +99,7 @@ function renderRound() {
 
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:15px; touch-action:none;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; touch-action:none;">
             
             <div id="shelf-container" style="position:relative; width:100%; max-width:800px; aspect-ratio: 1014/380; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; user-select:none;">
                 
@@ -147,8 +145,9 @@ function fillTarget(targetIdx, val, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
     if(!target) return;
 
+    // CARTÃO BRANCO NO DROP
     target.innerHTML = `
-        <div class="book-item" style="color:var(--primary-dark); font-weight:900; font-size:clamp(14px, 4.5vw, 30px); text-align:center; width:100%; line-height:1; display:flex; align-items:center; justify-content:center; animation: popIn 0.3s; word-break: break-all;">
+        <div class="placed-card" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(12px, 4vw, 24px); text-align:center; width:92%; height:90%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; word-break: break-all; padding: 5px;">
             ${val}
         </div>
     `;
@@ -167,7 +166,11 @@ function checkOrder() {
         sndAcerto.play();
         score += (currentLevel === 1) ? JOGO_CONFIG.pontuacao.acertoNivel1 : JOGO_CONFIG.pontuacao.acertoNivel2;
         document.getElementById('score-val').innerText = score;
-        document.querySelectorAll('.book-item').forEach(el => el.style.color = "var(--highlight-green)");
+        
+        document.querySelectorAll('.placed-card').forEach(el => {
+            el.style.color = "var(--highlight-green)";
+            el.style.borderColor = "var(--highlight-green)";
+        });
         setTimeout(nextRound, 1200);
     } else {
         sndErro.play();
@@ -176,13 +179,18 @@ function checkOrder() {
         
         placedItems.forEach((item, i) => {
             const target = document.querySelector(`.target-box[data-idx="${i}"]`);
-            const bookEl = target.querySelector('.book-item');
+            const cardInner = target.querySelector('.placed-card');
             
             if (item.val === correctOrder[i]) {
-                bookEl.style.color = "var(--highlight-green)";
+                // CERTO: Fica verde e trancado
+                cardInner.style.color = "var(--highlight-green)";
+                cardInner.style.borderColor = "var(--highlight-green)";
                 item.locked = true; 
             } else {
-                bookEl.style.color = "var(--error-red)";
+                // ERRADO: Fica vermelho e salta fora
+                cardInner.style.color = "var(--error-red)";
+                cardInner.style.borderColor = "var(--error-red)";
+                
                 setTimeout(() => {
                     const originalEl = document.getElementById(item.originalId);
                     target.innerHTML = "";
@@ -211,6 +219,7 @@ function startDrag(e) {
         isDraggingActive = true;
         const x = (ev.type === 'touchmove' ? ev.touches[0].clientX : ev.clientX);
         const y = (ev.type === 'touchmove' ? ev.touches[0].clientY : ev.clientY);
+        
         draggedElement.style.position = 'fixed';
         draggedElement.style.zIndex = '3000';
         draggedElement.style.pointerEvents = 'none';
@@ -260,3 +269,9 @@ function finishGame() {
     document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rel.img;
     if(window.goToResult) window.goToResult();
 }
+
+const style = document.createElement('style');
+style.innerHTML = `
+    @keyframes popIn { 0% { transform: scale(0.8); opacity:0; } 100% { transform: scale(1); opacity:1; } }
+`;
+document.head.appendChild(style);
