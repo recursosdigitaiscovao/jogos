@@ -8,7 +8,7 @@ const JOGO_CONFIG = {
     pontuacao: {
         acertoNivel1: 100,
         acertoNivel2: 150,
-        erro: 25
+        erro: 20
     },
 
     textos: {
@@ -31,18 +31,18 @@ const JOGO_CONFIG = {
 
     categorias: {
         cat1: {
-            nome: "Letras Consecutivas", 
+            nome: "4 Letras Consecutivas", 
             imgCapa: "cat1.png",
             rondas: [
                 { itens: ["A", "B", "C", "D"] }, { itens: ["E", "F", "G", "H"] },
                 { itens: ["I", "J", "K", "L"] }, { itens: ["M", "N", "O", "P"] },
                 { itens: ["Q", "R", "S", "T"] }, { itens: ["U", "V", "W", "X"] },
-                { itens: ["G", "H", "I", "J"] }, { itens: ["O", "P", "Q", "R"] },
-                { itens: ["B", "C", "D", "E"] }, { itens: ["S", "T", "U", "V"] }
+                { itens: ["C", "D", "E", "F"] }, { itens: ["O", "P", "Q", "R"] },
+                { itens: ["G", "H", "I", "J"] }, { itens: ["K", "L", "M", "N"] }
             ]
         },
         cat2: {
-            nome: "Letras Alternadas", 
+            nome: "4 Letras Alternadas", 
             imgCapa: "cat2.png",
             rondas: [
                 { itens: ["A", "X", "M", "E"] }, { itens: ["B", "L", "O", "V"] },
@@ -58,9 +58,9 @@ const JOGO_CONFIG = {
             rondas: [
                 { itens: ["AMORA", "ANANÁS", "ANEL", "AVENTAL"] }, { itens: ["BOLA", "BOLO", "BONECA", "BOTA"] },
                 { itens: ["CASA", "CAVALO", "COELHO", "COPO"] }, { itens: ["DADO", "DEDO", "DENTE", "DOCE"] },
-                { itens: ["GATO", "GAVETA", "GELO", "GIRAFA"] }, { itens: ["MÃE", "MALA", "MAPA", "MEIA"] },
-                { itens: ["PAPA", "PATO", "PENA", "PIPA"] }, { itens: ["RATO", "REDE", "RISO", "RODA"] },
-                { itens: ["SAPA", "SELO", "SINO", "SOFA"] }, { itens: ["TATA", "TETO", "TINA", "TOCA"] }
+                { itens: ["GATO", "GAVETA", "GELO", "GIRAFA"] }, { itens: ["MALA", "MAPA", "MAÇÃ", "MEIA"] },
+                { itens: ["PATO", "PENA", "PIPA", "POVO"] }, { itens: ["RATO", "REDE", "RISO", "RODA"] },
+                { itens: ["SELO", "SINO", "SOFÁ", "SUCO"] }, { itens: ["TETO", "TINA", "TOCA", "TUDO"] }
             ]
         },
         cat4: {
@@ -70,7 +70,7 @@ const JOGO_CONFIG = {
                 { itens: ["CÃO", "GATO", "PATO", "RATO"] }, { itens: ["SOL", "LUA", "MAR", "CÉU"] },
                 { itens: ["UM", "DOIS", "TRÊS", "QUATRO"] }, { itens: ["MÃE", "PAI", "AVÓ", "AVÔ"] },
                 { itens: ["AZUL", "ROSA", "VERDE", "VERMELHO"] }, { itens: ["BOLA", "DADO", "PEÃO", "URSO"] },
-                { itens: ["MAÇÃ", "PERA", "UVA", "FIGO"] }, { itens: ["FARO", "BRAGA", "EVORA", "BEJA"] },
+                { itens: ["MAÇÃ", "PERA", "UVA", "FIGO"] }, { itens: ["FARO", "PORTO", "EVORA", "BEJA"] },
                 { itens: ["LÁPIS", "COLA", "AFIA", "LIVRO"] }, { itens: ["BOLO", "SUMO", "PÃO", "LEITE"] }
             ]
         }
