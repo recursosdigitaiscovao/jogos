@@ -41,7 +41,7 @@ const JOGO_CONFIG = {
                 { nome: "GIRAFA", silabas: ["GI", "RA", "FA"], img: "animaisselvagens/girafa.png" },
                 { nome: "COELHO", silabas: ["CO", "E", "LHO"], img: "animaisdomesticos/coelho.png" },
                 { nome: "GALINHA", silabas: ["GA", "LI", "NHA"], img: "animaisdomesticos/galinha.png" },
-                { nome: "CARRO", silabas: ["CA", "RRO"], img: "objetos/carro.png" }, // Exemplo RR junto
+                { nome: "BURRO", silabas: ["BU", "RRO"], img: "animaisdomesticos/burro.png" }, // Exemplo RR junto
                 { nome: "POMBO", silabas: ["POM", "BO"], img: "animaisselvagens/pombo.png" }
             ]
         },
