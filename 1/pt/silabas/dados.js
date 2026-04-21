@@ -54,7 +54,7 @@ const JOGO_CONFIG = {
             nome: "Objetos",
             imgCapa: "objetos/vassoura.png",
             itens: [
-                { nome: "VASSOURA", silabas: ["VAS", "SOU", "RA"], img: "objetos/vassoura.png" },
+                { nome: "VASSOURA", silabas: ["VA", "SSOU", "RA"], img: "objetos/vassoura.png" },
                 { nome: "GARFO", silabas: ["GAR", "FO"], img: "objetos/garfo.png" },
                 { nome: "PINCEL", silabas: ["PIN", "CEL"], img: "objetos/pincel.png" },
                 { nome: "ESCOVA", silabas: ["ES", "CO", "VA"], img: "objetos/escova.png" },
