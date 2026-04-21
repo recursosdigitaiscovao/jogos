@@ -14,16 +14,18 @@ const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
 const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// --- COORDENADAS CALIBRADAS (Subida de +3%) ---
 const BOX_CFG = {
-    top: 37,      // Era 40, subiu para 37%
+    top: 37,      
     height: 43,   
     width: 18.5,  
     lefts: [6.5, 29.5, 52.5, 75.5] 
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (window.initUI) window.initUI();
+    if (window.initUI) {
+        window.initUI();
+        ajustarImagensMenu(); // Aumenta as imagens das categorias
+    }
     
     const rd1 = document.getElementById('rd-intro-btn');
     const rd2 = document.getElementById('rd-game-btn');
@@ -32,6 +34,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.selectCategory(Object.keys(JOGO_CONFIG.categorias)[0]);
 });
+
+// Função para aumentar as imagens no menu de categorias (RD)
+function ajustarImagensMenu() {
+    const rdList = document.getElementById('rd-list');
+    if(rdList) {
+        const imgs = rdList.querySelectorAll('img');
+        imgs.forEach(img => {
+            img.style.width = "60px";  // Aumentado de 35px para 60px
+            img.style.height = "60px";
+        });
+        const cards = rdList.children;
+        for(let card of cards) {
+            card.style.padding = "15px";
+        }
+    }
+}
 
 window.selectCategory = function(key) {
     currentCategory = key;
@@ -52,7 +70,6 @@ function renderTutorial(cat) {
             <i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; top:90px; left:150px; color:#f39c12; font-size:18px; z-index:11;"></i>
         </div>
         <style>
-            /* Animação recalibrada para o novo top:37% */
             @keyframes tutoMove { 0% { transform: translate(0,0); opacity:1; } 40% { transform: translate(-102px, -49px); } 70% { transform: translate(-102px, -49px); opacity:1; } 100% { transform: translate(-102px, -49px); opacity:0; } }
             #tuto-card, #tuto-hand { animation: tutoMove 3s infinite ease-in-out; }
         </style>
@@ -116,8 +133,9 @@ function renderRound() {
                 ${shuffled.map((item, i) => `
                     <div class="sort-card" 
                          onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
+                         onclick="handleItemClick(this)"
                          data-val="${item}" id="card-${currentIndex}-${i}"
-                         style="background:white; padding:10px 15px; border-radius:12px; font-weight:900; font-size:clamp(14px, 4vw, 18px); color:var(--primary-dark); cursor:grab; box-shadow:0 5px 0 #cbd9e6; border:2px solid #eee; min-width:70px; text-align:center; user-select:none; touch-action:none;">
+                         style="background:white; padding:10px 15px; border-radius:12px; font-weight:900; font-size:clamp(14px, 4vw, 18px); color:var(--primary-dark); cursor:grab; box-shadow:0 6px 0 #cbd9e6; border:2px solid #eee; min-width:70px; text-align:center; user-select:none; touch-action:none;">
                         ${item}
                     </div>
                 `).join('')}
@@ -146,8 +164,9 @@ function fillTarget(targetIdx, val, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
     if(!target) return;
 
+    // CARTÃO DIMINUÍDO EM 3% (width: 89% height: 87%)
     target.innerHTML = `
-        <div class="placed-card" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(12px, 4vw, 24px); text-align:center; width:92%; height:90%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; word-break: break-all; padding: 5px;">
+        <div class="placed-card" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(12px, 3.8vw, 22px); text-align:center; width:89%; height:87%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; word-break: break-all; padding: 5px;">
             ${val}
         </div>
     `;
