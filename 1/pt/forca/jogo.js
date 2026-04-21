@@ -1,4 +1,4 @@
-let currentCategory = 'frutos';
+let currentCategory = 'animais';
 let gameItems = [];
 let currentIndex = 0; 
 let roundInLevel = 0; 
@@ -50,8 +50,12 @@ function renderTutorial() {
     if(!container) return;
     container.innerHTML = `
         <div style="text-align:center; padding: 20px;">
-            <i class="fas fa-keyboard" style="font-size:60px; color:var(--primary-blue); margin-bottom:15px;"></i>
-            <p style="font-weight:800; color:var(--text-grey); font-size:1.1rem;">Escolhe as letras certas para descobrir o nome da imagem!</p>
+             <svg width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="30" r="15" fill="#ff5e5e" />
+                <line x1="50" y1="45" x2="50" y2="70" stroke="#5d7082" stroke-width="2" />
+                <circle cx="50" cy="80" r="8" fill="#3d7db8" />
+             </svg>
+            <p style="font-weight:800; color:var(--text-grey); font-size:1.1rem; margin-top:10px;">Não deixes os balões rebentarem!</p>
         </div>
     `;
 }
@@ -91,7 +95,7 @@ function renderRound() {
     const item = gameItems[currentIndex];
     if(!item) { finishGame(); return; }
     
-    targetWord = item.nome.toUpperCase();
+    targetWord = item.letras.toUpperCase();
     guessedLetters = [];
     mistakes = 0;
 
@@ -104,42 +108,50 @@ function renderRound() {
 
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:15px;">
-            <div style="display:flex; align-items:center; gap:20px; justify-content:center; flex-wrap:wrap; width:100%;">
-                <!-- Forca SVG -->
-                <div style="width:120px; height:150px; background:#fff; border-radius:15px; padding:10px; box-shadow:0 5px 15px rgba(0,0,0,0.05);">
-                    <svg width="100" height="130" viewBox="0 0 100 130">
-                        <line x1="10" y1="120" x2="90" y2="120" stroke="#3d7db8" stroke-width="4" />
-                        <line x1="30" y1="120" x2="30" y2="10" stroke="#3d7db8" stroke-width="4" />
-                        <line x1="30" y1="10" x2="70" y2="10" stroke="#3d7db8" stroke-width="4" />
-                        <line x1="70" y1="10" x2="70" y2="25" stroke="#3d7db8" stroke-width="4" />
-                        <circle id="h-head" cx="70" cy="35" r="10" stroke="#5d7082" stroke-width="3" fill="none" style="display:none" />
-                        <line id="h-body" x1="70" y1="45" x2="70" y2="75" stroke="#5d7082" stroke-width="3" style="display:none" />
-                        <line id="h-larm" x1="70" y1="55" x2="55" y2="65" stroke="#5d7082" stroke-width="3" style="display:none" />
-                        <line id="h-rarm" x1="70" y1="55" x2="85" y2="65" stroke="#5d7082" stroke-width="3" style="display:none" />
-                        <line id="h-lleg" x1="70" y1="75" x2="55" y2="90" stroke="#5d7082" stroke-width="3" style="display:none" />
-                        <line id="h-rleg" x1="70" y1="75" x2="85" y2="90" stroke="#5d7082" stroke-width="3" style="display:none" />
-                    </svg>
-                </div>
-
-                <!-- Pista (Nível 1 mostra imagem, Nível 2 esconde) -->
-                <div style="width:130px; height:130px; background:white; border-radius:25px; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,0.05);">
-                    ${currentLevel === 1 ? 
-                        `<img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-width:100px; max-height:100px; object-fit:contain;">` : 
-                        `<i class="fas fa-question" style="font-size:60px; color:#cbd9e6;"></i>`}
-                </div>
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:10px;">
+            
+            <div style="display:flex; flex-direction:column; align-items:center; position:relative; height:180px; width:200px;">
+                <!-- Balões -->
+                <svg width="200" height="180" viewBox="0 0 200 180" id="balloon-svg">
+                    <!-- Cordas -->
+                    <g id="strings" stroke="#aaa" stroke-width="1">
+                        <line x1="100" y1="140" x2="50" y2="60" class="s-0" />
+                        <line x1="100" y1="140" x2="70" y2="40" class="s-1" />
+                        <line x1="100" y1="140" x2="100" y2="30" class="s-2" />
+                        <line x1="100" y1="140" x2="130" y2="40" class="s-3" />
+                        <line x1="100" y1="140" x2="150" y2="60" class="s-4" />
+                        <line x1="100" y1="140" x2="100" y2="60" class="s-5" />
+                    </g>
+                    <!-- Círculos dos Balões -->
+                    <circle cx="50" cy="60" r="15" fill="#ff5e5e" class="b-0" />
+                    <circle cx="70" cy="40" r="15" fill="#ffce54" class="b-1" />
+                    <circle cx="100" cy="30" r="15" fill="#4fc1e9" class="b-2" />
+                    <circle cx="130" cy="40" r="15" fill="#a0d468" class="b-3" />
+                    <circle cx="150" cy="60" r="15" fill="#ed5565" class="b-4" />
+                    <circle cx="100" cy="60" r="15" fill="#ac92ec" class="b-5" />
+                    
+                    <!-- Boneco -->
+                    <g id="character">
+                        <circle cx="100" cy="150" r="10" fill="#3d7db8" />
+                        <line x1="100" y1="160" x2="100" y2="175" stroke="#3d7db8" stroke-width="3" />
+                        <line x1="100" y1="165" x2="85" y2="160" stroke="#3d7db8" stroke-width="2" />
+                        <line x1="100" y1="165" x2="115" y2="160" stroke="#3d7db8" stroke-width="2" />
+                    </g>
+                </svg>
             </div>
 
-            <!-- Palavra -->
-            <div id="word-container" style="display:flex; gap:8px; margin:15px 0; flex-wrap:wrap; justify-content:center;">
+            <div style="font-size:14px; font-weight:800; color:var(--primary-blue); background:#fff; padding:2px 10px; border-radius:10px;">
+                TEMA: ${JOGO_CONFIG.categorias[currentCategory].nome.toUpperCase()}
+            </div>
+
+            <div id="word-container" style="display:flex; gap:6px; margin:10px 0; flex-wrap:wrap; justify-content:center;">
                 ${updateWordDisplay()}
             </div>
 
-            <!-- Teclado -->
-            <div id="keyboard" style="display:flex; flex-wrap:wrap; gap:6px; justify-content:center; width:100%; max-width:600px; padding:10px;">
+            <div id="keyboard" style="display:flex; flex-wrap:wrap; gap:5px; justify-content:center; width:100%; max-width:550px;">
                 ${"ABCDEFGHIJKLMNOPQRSTUVWXYZÇ".split('').map(l => `
                     <button class="key-btn" onclick="handleGuess(this, '${l}')" 
-                        style="width:40px; height:40px; border:none; background:white; color:var(--text-grey); border-radius:10px; font-weight:900; font-size:18px; cursor:pointer; box-shadow:0 4px 0 #cbd9e6; transition:0.1s;">
+                        style="width:38px; height:38px; border:none; background:white; color:var(--text-grey); border-radius:8px; font-weight:900; font-size:16px; cursor:pointer; box-shadow:0 3px 0 #cbd9e6; transition:0.1s;">
                         ${l}
                     </button>
                 `).join('')}
@@ -151,7 +163,7 @@ function renderRound() {
 function updateWordDisplay() {
     return targetWord.split('').map(letter => {
         const isRevealed = guessedLetters.includes(letter) || letter === " " || letter === "-";
-        return `<div style="width:35px; border-bottom:4px solid var(--primary-blue); text-align:center; font-size:26px; font-weight:900; color:var(--primary-dark); min-height:35px; margin: 0 2px;">
+        return `<div style="width:30px; border-bottom:3px solid var(--primary-blue); text-align:center; font-size:22px; font-weight:900; color:var(--primary-dark); min-height:30px; margin: 0 2px;">
                     ${isRevealed ? letter : ""}
                 </div>`;
     }).join('');
@@ -166,7 +178,7 @@ window.handleGuess = function(btn, letter) {
     if (targetWord.includes(letter)) {
         btn.style.background = "var(--highlight-green)";
         btn.style.color = "white";
-        btn.style.boxShadow = "0 4px 0 #66a318";
+        btn.style.boxShadow = "0 3px 0 #66a318";
         document.getElementById('word-container').innerHTML = updateWordDisplay();
         
         if (targetWord.split('').every(l => guessedLetters.includes(l) || l === " " || l === "-")) {
@@ -177,12 +189,12 @@ window.handleGuess = function(btn, letter) {
         btn.style.background = "#eee";
         btn.style.color = "#ccc";
         btn.style.boxShadow = "none";
-        btn.style.transform = "translateY(4px)";
+        btn.style.transform = "translateY(3px)";
         
         score = Math.max(0, score - JOGO_CONFIG.pontuacao.erroLetra);
         document.getElementById('score-val').innerText = score;
         
-        updateHangmanVisual();
+        updateBalloonsVisual();
         
         if (mistakes >= maxMistakes) {
             handleRoundFailure();
@@ -192,11 +204,19 @@ window.handleGuess = function(btn, letter) {
     }
 };
 
-function updateHangmanVisual() {
-    const parts = ["h-head", "h-body", "h-larm", "h-rarm", "h-lleg", "h-rleg"];
-    for (let i = 0; i < mistakes; i++) {
-        const part = document.getElementById(parts[i]);
-        if (part) part.style.display = "block";
+function updateBalloonsVisual() {
+    const idx = mistakes - 1;
+    const balloon = document.querySelector(`.b-${idx}`);
+    const string = document.querySelector(`.s-${idx}`);
+    if (balloon) balloon.style.display = "none";
+    if (string) string.style.display = "none";
+    
+    // Se for o último erro, faz o boneco cair
+    if (mistakes === maxMistakes) {
+        const char = document.getElementById('character');
+        char.style.transition = "transform 1s ease-in";
+        char.style.transform = "translateY(100px)";
+        char.style.opacity = "0";
     }
 }
 
