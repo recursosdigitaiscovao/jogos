@@ -21,21 +21,21 @@ const BOX_CFG = {
     lefts: [7, 30, 53, 76] 
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-    if (window.initUI) window.initUI();
+// Esta função será chamada pelo index.html após o initUI
+function startLogic() {
     reconstruirMenuCategorias();
     window.selectCategory(Object.keys(JOGO_CONFIG.categorias)[0]);
-});
+}
 
 function reconstruirMenuCategorias() {
     const rdList = document.getElementById('rd-list');
     if(!rdList) return;
-    rdList.innerHTML = '';
+    rdList.innerHTML = ''; 
     Object.keys(JOGO_CONFIG.categorias).forEach(k => {
         const cat = JOGO_CONFIG.categorias[k];
         const card = document.createElement('div');
         card.style.cssText = "background:#fff; border-radius:20px; padding:15px; text-align:center; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.08); display:flex; align-items:center; justify-content:center;";
-        card.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="width:80px; height:80px; object-fit:contain;" onerror="this.src='${JOGO_CONFIG.caminhoImg}ord01.png'">`;
+        card.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="width:80px; height:80px; object-fit:contain;">`;
         card.onclick = () => { window.selectCategory(k); closeMenus(); };
         rdList.appendChild(card);
     });
@@ -105,7 +105,7 @@ function renderRound() {
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; touch-action:none;">
-            <div id="shelf-container" style="position:relative; width:100%; max-width:800px; aspect-ratio: 1014/380; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; user-select:none;">
+            <div id="shelf-container" style="position:relative; width:100%; max-width:800px; aspect-ratio: 1014/380; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain;">
                 ${BOX_CFG.lefts.map((l, i) => `
                     <div class="target-box" data-idx="${i}" onclick="removeItem(${i})" 
                          style="position:absolute; top:${BOX_CFG.top}%; left:${l}%; width:${BOX_CFG.width}%; height:${BOX_CFG.height}%; display:flex; align-items:center; justify-content:center; cursor:pointer;">
@@ -117,19 +117,13 @@ function renderRound() {
                     <div class="sort-card" 
                          onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
                          data-val="${item}" id="card-${currentIndex}-${i}"
-                         style="background:white; padding:10px 15px; border-radius:12px; font-weight:900; font-size:clamp(14px, 4vw, 18px); color:var(--primary-dark); cursor:grab; box-shadow:0 6px 0 #cbd9e6; border:2px solid #eee; min-width:70px; text-align:center; user-select:none; touch-action:none;">
+                         style="background:white; padding:10px 15px; border-radius:12px; font-weight:900; font-size:clamp(14px, 4vw, 18px); color:var(--primary-dark); cursor:grab; box-shadow:0 6px 0 #cbd9e6; border:2px solid #eee; min-width:70px; text-align:center;">
                         ${item}
                     </div>
                 `).join('')}
             </div>
         </div>
     `;
-}
-
-function handleItemClick(el) {
-    if(el.style.visibility === 'hidden') return;
-    const freeIdx = placedItems.findIndex(x => x === null);
-    if(freeIdx !== -1) fillTarget(freeIdx, el.dataset.val, el);
 }
 
 window.removeItem = function(idx) {
@@ -144,52 +138,29 @@ window.removeItem = function(idx) {
 
 function fillTarget(targetIdx, val, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
-    if(!target || placedItems[targetIdx]?.locked) return;
-
-    target.innerHTML = `
-        <div class="placed-card" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(11px, 3.5vw, 20px); text-align:center; width:90%; height:88%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; word-break: break-all; padding: 5px;">
-            ${val}
-        </div>
-    `;
-    
+    if(!target) return;
+    target.innerHTML = `<div class="placed-card" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(12px, 3.8vw, 22px); text-align:center; width:90%; height:88%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; padding: 5px;">${val}</div>`;
     originalEl.style.visibility = 'hidden';
     placedItems[targetIdx] = { val: val, originalId: originalEl.id, locked: false };
-
     if (placedItems.every(x => x !== null)) setTimeout(checkOrder, 600);
 }
 
 function checkOrder() {
     const userOrder = placedItems.map(x => x.val);
     const isRoundCorrect = userOrder.every((val, i) => val === correctOrder[i]);
-
     if (isRoundCorrect) {
         sndAcerto.play();
         score += (currentLevel === 1) ? JOGO_CONFIG.pontuacao.acertoNivel1 : JOGO_CONFIG.pontuacao.acertoNivel2;
         document.getElementById('score-val').innerText = score;
-        document.querySelectorAll('.placed-card').forEach(el => {
-            el.style.color = "var(--highlight-green)";
-            el.style.borderColor = "var(--highlight-green)";
-        });
         setTimeout(nextRound, 1200);
     } else {
         sndErro.play();
         score = Math.max(0, score - JOGO_CONFIG.pontuacao.erro);
         document.getElementById('score-val').innerText = score;
-        
         placedItems.forEach((item, i) => {
-            if(!item) return;
             const target = document.querySelector(`.target-box[data-idx="${i}"]`);
-            const cardInner = target.querySelector('.placed-card');
-            
-            if (item.val === correctOrder[i]) {
-                cardInner.style.color = "var(--highlight-green)";
-                cardInner.style.borderColor = "var(--highlight-green)";
-                item.locked = true; 
-            } else {
-                cardInner.style.color = "var(--error-red)";
-                cardInner.style.borderColor = "var(--error-red)";
+            if (item.val !== correctOrder[i]) {
                 setTimeout(() => {
-                    if (item.locked) return;
                     const originalEl = document.getElementById(item.originalId);
                     target.innerHTML = "";
                     if(originalEl) originalEl.style.visibility = 'visible';
@@ -203,7 +174,7 @@ function checkOrder() {
 function startDrag(e) {
     const el = e.target.closest('.sort-card');
     if (!el || el.style.visibility === 'hidden') return;
-    
+    if(e.cancelable) e.preventDefault();
     draggedElement = el;
     isDraggingActive = false;
     const startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
@@ -228,16 +199,14 @@ function startDrag(e) {
         document.removeEventListener('mouseup', onUp);
         document.removeEventListener('touchmove', onMove);
         document.removeEventListener('touchend', onUp);
-
         if (!isDraggingActive) {
-            handleItemClick(draggedElement);
+            const freeIdx = placedItems.findIndex(x => x === null);
+            if(freeIdx !== -1) fillTarget(freeIdx, draggedElement.dataset.val, draggedElement);
         } else {
             const x = (ev.type === 'touchend' ? ev.changedTouches[0].clientX : ev.clientX);
             const y = (ev.type === 'touchend' ? ev.changedTouches[0].clientY : ev.clientY);
             const dropTarget = document.elementFromPoint(x, y)?.closest('.target-box');
-            if (dropTarget && !placedItems[dropTarget.dataset.idx]) {
-                fillTarget(dropTarget.dataset.idx, draggedElement.dataset.val, draggedElement);
-            }
+            if (dropTarget && !placedItems[dropTarget.dataset.idx]) fillTarget(dropTarget.dataset.idx, draggedElement.dataset.val, draggedElement);
         }
         draggedElement.style.position = ''; draggedElement.style.zIndex = '';
         draggedElement.style.pointerEvents = 'auto'; draggedElement.style.left = ''; draggedElement.style.top = '';
@@ -250,16 +219,10 @@ function startDrag(e) {
 
 function nextRound() {
     currentIndex++; roundInLevel++;
-    if (roundInLevel < 5) {
-        renderRound();
-    } else if (currentLevel === 1) {
-        currentLevel = 2; 
-        roundInLevel = 0; 
-        setupDots(); 
-        renderRound();
-    } else {
-        finishGame();
-    }
+    if (roundInLevel < 5) renderRound();
+    else if (currentLevel === 1) {
+        currentLevel = 2; roundInLevel = 0; setupDots(); renderRound();
+    } else finishGame();
 }
 
 function finishGame() {
@@ -267,19 +230,8 @@ function finishGame() {
     sndVitoria.play();
     document.getElementById('res-pts').innerText = score;
     document.getElementById('res-tim').innerText = document.getElementById('timer').innerText.replace('⏳ ', '');
-    
-    // Procura o relatório com base na pontuação
     const rel = JOGO_CONFIG.relatorios.find(r => score >= r.min) || JOGO_CONFIG.relatorios[JOGO_CONFIG.relatorios.length-1];
-    
     document.getElementById('res-tit').innerText = rel.titulo;
     document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rel.img;
-    
     if(window.goToResult) window.goToResult();
 }
-
-const styleTag = document.createElement('style');
-styleTag.innerHTML = `
-    @keyframes popIn { 0% { transform: scale(0.8); opacity:0; } 100% { transform: scale(1); opacity:1; } }
-    .sort-card:active { cursor: grabbing; transform: scale(1.05); }
-`;
-document.head.appendChild(styleTag);
