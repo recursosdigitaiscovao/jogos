@@ -7,7 +7,7 @@ const JOGO_CONFIG = {
     
     pontuacao: {
         acertoNivel1: 100, 
-        acertoNivel2: 150, 
+        acertoNivel2: 100, 
         erroFinal: 50           
     },
 
@@ -124,8 +124,8 @@ const JOGO_CONFIG = {
     },
 
     relatorios: [
-        { min: 1200, titulo: "BRILHANTE!", img: "taca_1.png" },
-        { min: 800, titulo: "MUITO BEM!", img: "taca_2.png" },
+        { min: 1000, titulo: "BRILHANTE!", img: "taca_1.png" },
+        { min: 750, titulo: "MUITO BEM!", img: "taca_2.png" },
         { min: 500, titulo: "BOM TRABALHO!", img: "taca_3.png" },
         { min: 0, titulo: "TENTA OUTRA VEZ!", img: "taca_4.png" }
     ]
