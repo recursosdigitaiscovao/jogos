@@ -19,10 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if(rd1) rd1.src = JOGO_CONFIG.caminhoImg + "rd.png";
     if(rd2) rd2.src = JOGO_CONFIG.caminhoImg + "rd.png";
 
-    // Carregar categoria padrão
-    window.selectCategory(Object.keys(JOGO_CONFIG.categorias)[0]);
+    // Carregar categoria inicial
+    const primeiraCat = Object.keys(JOGO_CONFIG.categorias)[0];
+    window.selectCategory(primeiraCat);
 });
 
+// ESTA FUNÇÃO AGORA REINICIA O ESTADO DOS ECRÃS
 window.selectCategory = function(key) {
     currentCategory = key;
     const cat = JOGO_CONFIG.categorias[key];
@@ -33,6 +35,17 @@ window.selectCategory = function(key) {
 
     renderTutorial(cat);
 
+    // SE ESTIVER NO RELATÓRIO: Volta para a Intro para ver o novo tutorial
+    if(document.getElementById('scr-result').classList.contains('active')) {
+        document.getElementById('scr-result').classList.remove('active');
+        document.getElementById('scr-intro').classList.add('active');
+        document.body.classList.add('with-footer');
+        document.body.classList.remove('no-footer');
+        document.getElementById('status-bar').style.display = 'none';
+        document.getElementById('main-game-title').style.display = 'block';
+    }
+
+    // SE ESTIVER NO MEIO DO JOGO: Reinicia o jogo com a nova categoria
     if(document.getElementById('scr-game').classList.contains('active')) {
         window.initGame();
     }
@@ -44,7 +57,7 @@ function renderTutorial(cat) {
     const item = cat.itens[0];
     
     container.innerHTML = `
-        <div style="position:relative; width:260px; height:180px; background:white; border-radius:25px; box-shadow:0 10px 30px rgba(0,0,0,0.1); display:flex; flex-direction:column; align-items:center; justify-content:center; border: 4px solid #f0f7ff;">
+        <div style="position:relative; width:260px; height:180px; background:white; border-radius:25px; box-shadow:0 10px 30px rgba(0,0,0,0.1); display:flex; flex-direction:column; align-items:center; justify-content:center; border: 4px solid #f0f7ff; margin-bottom:15px;">
             <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:65px; margin-bottom:10px;">
             <div style="font-weight:900; color:var(--primary-blue); font-size:16px; margin-bottom:10px; letter-spacing:2px;">${item.nome}</div>
             <div style="width:140px; height:35px; border:3px solid #eee; border-radius:10px; display:flex; align-items:center; padding-left:10px; background:#fafafa;">
@@ -59,7 +72,8 @@ function renderTutorial(cat) {
     const txt = item.nome;
     if(window.tutoInterval) clearInterval(window.tutoInterval);
     window.tutoInterval = setInterval(() => {
-        if(!document.getElementById('scr-intro').classList.contains('active')) { clearInterval(window.tutoInterval); return; }
+        const introActive = document.getElementById('scr-intro').classList.contains('active');
+        if(!introActive) { clearInterval(window.tutoInterval); return; }
         const el = document.getElementById('tuto-text');
         if(el) el.innerText = txt.substring(0, i);
         i = (i > txt.length) ? 0 : i + 1;
@@ -111,10 +125,10 @@ function renderRound() {
 
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; padding:10px;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:15px; padding:10px;">
             
             <div style="background:white; padding:15px; border-radius:30px; box-shadow:0 10px 25px rgba(0,0,0,0.05);">
-                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:140px; max-width:230px; object-fit:contain;">
+                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:130px; max-width:220px; object-fit:contain;">
             </div>
 
             <div id="word-to-copy" style="font-size:32px; font-weight:900; color:var(--primary-blue); letter-spacing:5px; height:40px;">
@@ -124,14 +138,14 @@ function renderRound() {
             <input type="text" id="game-input" autocomplete="off" spellcheck="false" 
                    oninput="validateInput(this)"
                    placeholder="ESCREVE AQUI..."
-                   style="width:100%; max-width:320px; padding:15px; font-size:28px; font-weight:900; text-align:center; border:4px solid #cbd9e6; border-radius:20px; color:var(--text-grey); outline:none; text-transform:uppercase; transition: 0.2s; box-shadow: 0 5px 0 #cbd9e6;">
+                   style="width:100%; max-width:320px; padding:15px; font-size:26px; font-weight:900; text-align:center; border:4px solid #cbd9e6; border-radius:20px; color:var(--text-grey); outline:none; text-transform:uppercase; transition: 0.2s; box-shadow: 0 5px 0 #cbd9e6;">
         </div>
     `;
 
-    const input = document.getElementById('game-input');
-    input.focus();
-    // Força o teclado em dispositivos móveis
-    input.click();
+    setTimeout(() => {
+        const input = document.getElementById('game-input');
+        if(input) { input.focus(); input.click(); }
+    }, 200);
 }
 
 window.validateInput = function(inputEl) {
@@ -139,18 +153,14 @@ window.validateInput = function(inputEl) {
     const val = inputEl.value.toUpperCase();
     const target = item.nome.toUpperCase();
 
-    // 1. Verificação em tempo real (Letra a Letra)
     if (target.startsWith(val)) {
-        // Correto até agora
         inputEl.style.borderColor = "var(--highlight-green)";
         inputEl.style.color = "var(--highlight-green)";
     } else {
-        // Errou alguma letra durante o processo
         inputEl.style.borderColor = "var(--error-red)";
         inputEl.style.color = "var(--error-red)";
     }
 
-    // 2. Verificação ao completar a palavra
     if (val.length === target.length) {
         if (val === target) {
             handleSuccess(inputEl);
@@ -165,7 +175,6 @@ function handleSuccess(inputEl) {
     sndAcerto.play();
     score += (currentLevel === 2) ? JOGO_CONFIG.pontuacao.acertoNivel2 : JOGO_CONFIG.pontuacao.acertoNivel1;
     document.getElementById('score-val').innerText = score;
-    
     setTimeout(nextRound, 800);
 }
 
@@ -203,13 +212,14 @@ function finishGame() {
     document.getElementById('res-pts').innerText = score;
     const t = document.getElementById('timer').innerText.replace('⏳ ', '');
     document.getElementById('res-tim').innerText = t;
+    
     let rel = JOGO_CONFIG.relatorios.find(r => score >= r.min) || JOGO_CONFIG.relatorios[JOGO_CONFIG.relatorios.length-1];
     document.getElementById('res-tit').innerText = rel.titulo;
     document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rel.img;
+    
     if(window.goToResult) window.goToResult();
 }
 
-// Estilos extras para animação
 const style = document.createElement('style');
 style.innerHTML = `
     @keyframes shake {
