@@ -27,13 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
 window.selectCategory = function(key) {
     currentCategory = key;
     const cat = JOGO_CONFIG.categorias[key];
-    
-    // Tutorial Animado Específico da Categoria
     renderTutorial(cat);
-
-    if(document.getElementById('scr-game').classList.contains('active')) {
-        window.initGame();
-    }
+    if(document.getElementById('scr-game').classList.contains('active')) window.initGame();
 };
 
 function renderTutorial(cat) {
@@ -42,19 +37,20 @@ function renderTutorial(cat) {
     const itemEx = cat.rondas[0].itens[0];
     
     container.innerHTML = `
-        <div style="position:relative; width:280px; height:180px; background:white; border-radius:25px; box-shadow:0 10px 30px rgba(0,0,0,0.1); display:flex; flex-direction:column; align-items:center; justify-content:center; border:4px solid #f0f7ff; overflow:hidden; touch-action:none;">
-            <div style="display:flex; gap:8px; margin-bottom:20px;">
-                <div style="width:45px; height:45px; border:2px dashed #ddd; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#eee;">1</div>
-                <div style="width:45px; height:45px; border:2px dashed #ddd; border-radius:8px;"></div>
-            </div>
-            <div id="tuto-card" style="background:var(--primary-blue); color:white; padding:8px 12px; border-radius:10px; font-weight:900; font-size:14px; position:absolute; left:160px; bottom:30px; z-index:10;">
+        <div style="position:relative; width:300px; height:160px; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; border-radius:15px; overflow:hidden;">
+            <div id="tuto-card" style="background:white; padding:5px 10px; border-radius:8px; font-weight:900; font-size:12px; position:absolute; left:120px; bottom:10px; z-index:10; box-shadow:0 4px 0 #cbd9e6; border:1px solid #eee;">
                 ${itemEx}
             </div>
-            <i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; bottom:20px; left:180px; color:#f39c12; font-size:24px; z-index:11;"></i>
+            <i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; bottom:5px; left:140px; color:#f39c12; font-size:20px; z-index:11;"></i>
         </div>
         <style>
-            @keyframes tutoMove { 0% { transform: translate(0,0); opacity:1; } 40% { transform: translate(-105px, -85px); } 70% { transform: translate(-105px, -85px); opacity:1; } 100% { transform: translate(-105px, -85px); opacity:0; } }
-            #tuto-card, #tuto-hand { animation: tutoMove 3s infinite ease-in-out; }
+            @keyframes tutoDrag { 
+                0% { transform: translate(0,0); opacity:1; } 
+                40% { transform: translate(-100px, -75px); } 
+                70% { transform: translate(-100px, -75px); opacity:1; } 
+                100% { transform: translate(-100px, -75px); opacity:0; } 
+            }
+            #tuto-card, #tuto-hand { animation: tutoDrag 3s infinite ease-in-out; }
         </style>
     `;
 }
@@ -85,8 +81,7 @@ function startTimer() {
         timerSeconds++;
         const min = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
         const sec = (timerSeconds % 60).toString().padStart(2, '0');
-        const t = document.getElementById('timer');
-        if(t) t.innerText = `⏳ ${min}:${sec}`;
+        document.getElementById('timer').innerText = `⏳ ${min}:${sec}`;
     }, 1000);
 }
 
@@ -108,26 +103,25 @@ function renderRound() {
 
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:15px; touch-action:none;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; touch-action:none;">
             
-            <div id="shelf-container" style="position:relative; width:100%; max-width:700px; aspect-ratio: 1014/380; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; user-select:none; touch-action:none;">
-                
+            <div id="shelf-container" style="position:relative; width:100%; max-width:750px; aspect-ratio: 1014/380; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; user-select:none; touch-action:none;">
                 <div id="drop-zones" style="position:absolute; top:36.5%; left:5.2%; right:5.2%; height:37%; display:grid; grid-template-columns: repeat(4, 1fr); gap:1.8%;">
                     ${[0,1,2,3].map(i => `
                         <div class="target-box" data-idx="${i}" onclick="removeItem(${i})"
-                             style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:5px; overflow:hidden;">
+                             style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden;">
                         </div>
                     `).join('')}
                 </div>
             </div>
 
-            <div id="drag-options" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; padding:12px; background:rgba(255,255,255,0.5); border-radius:20px; width:100%; min-height:85px;">
+            <div id="drag-options" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; padding:15px; background:rgba(255,255,255,0.5); border-radius:25px; width:100%; min-height:85px;">
                 ${shuffled.map((item, i) => `
                     <div class="sort-card" 
                          onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
                          onclick="handleItemClick(this)"
                          data-val="${item}" id="card-${currentIndex}-${i}"
-                         style="background:white; padding:10px 15px; border-radius:12px; font-weight:900; font-size:clamp(14px, 4vw, 18px); color:var(--primary-dark); cursor:grab; box-shadow:0 5px 0 #cbd9e6; border:2px solid #eee; min-width:70px; text-align:center; user-select:none; touch-action:none;">
+                         style="background:white; padding:12px 18px; border-radius:12px; font-weight:900; font-size:clamp(14px, 4vw, 18px); color:var(--primary-dark); cursor:grab; box-shadow:0 6px 0 #cbd9e6; border:2px solid #eee; min-width:75px; text-align:center; user-select:none; touch-action:none;">
                         ${item}
                     </div>
                 `).join('')}
@@ -155,17 +149,16 @@ function fillTarget(targetIdx, val, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
     if(!target) return;
 
+    // AQUI: Apenas o texto, sem o fundo branco do cartão
     target.innerHTML = `
-        <div style="background:var(--primary-blue); color:white; width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:clamp(11px, 3.5vw, 22px); text-align:center; animation: popIn 0.3s; word-break: break-all; padding: 4px;">
+        <div style="color:var(--primary-dark); font-weight:900; font-size:clamp(12px, 4.5vw, 26px); text-align:center; width:100%; word-break: break-all; animation: popIn 0.3s; padding: 5px;">
             ${val}
         </div>
     `;
     originalEl.style.visibility = 'hidden';
     placedItems[targetIdx] = { val: val, originalId: originalEl.id };
 
-    if (placedItems.every(x => x !== null)) {
-        setTimeout(checkOrder, 500);
-    }
+    if (placedItems.every(x => x !== null)) setTimeout(checkOrder, 500);
 }
 
 function checkOrder() {
@@ -176,13 +169,13 @@ function checkOrder() {
         sndAcerto.play();
         score += (currentLevel === 1) ? JOGO_CONFIG.pontuacao.acertoNivel1 : JOGO_CONFIG.pontuacao.acertoNivel2;
         document.getElementById('score-val').innerText = score;
-        document.querySelectorAll('.target-box div').forEach(d => d.style.background = "var(--highlight-green)");
+        document.querySelectorAll('.target-box div').forEach(d => d.style.color = "var(--highlight-green)");
         setTimeout(nextRound, 1000);
     } else {
         sndErro.play();
         score = Math.max(0, score - JOGO_CONFIG.pontuacao.erro);
         document.getElementById('score-val').innerText = score;
-        document.querySelectorAll('.target-box div').forEach(d => d.style.background = "var(--error-red)");
+        document.querySelectorAll('.target-box div').forEach(d => d.style.color = "var(--error-red)");
         setTimeout(renderRound, 800);
     }
 }
@@ -191,9 +184,7 @@ function startDrag(e) {
     const el = e.target.closest('.sort-card');
     if (!el || el.style.visibility === 'hidden') return;
     
-    // Bloquear scroll do browser no telemóvel
     if(e.cancelable) e.preventDefault();
-
     draggedElement = el;
     let moved = false;
     const startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
@@ -206,7 +197,6 @@ function startDrag(e) {
         moved = true;
         const x = (ev.type === 'touchmove' ? ev.touches[0].clientX : ev.clientX);
         const y = (ev.type === 'touchmove' ? ev.touches[0].clientY : ev.clientY);
-        
         draggedElement.style.position = 'fixed';
         draggedElement.style.zIndex = '3000';
         draggedElement.style.pointerEvents = 'none';
@@ -223,13 +213,11 @@ function startDrag(e) {
         if (moved) {
             const x = (ev.type === 'touchend' ? ev.changedTouches[0].clientX : ev.clientX);
             const y = (ev.type === 'touchend' ? ev.changedTouches[0].clientY : ev.clientY);
-
             const dropTarget = document.elementFromPoint(x, y)?.closest('.target-box');
             if (dropTarget && !placedItems[dropTarget.dataset.idx]) {
                 fillTarget(dropTarget.dataset.idx, draggedElement.dataset.val, draggedElement);
             }
         }
-
         if (draggedElement) {
             draggedElement.style.position = '';
             draggedElement.style.zIndex = '';
@@ -246,17 +234,13 @@ function startDrag(e) {
 
 function nextRound() {
     currentIndex++; roundInLevel++;
-    if (roundInLevel < 5) {
-        renderRound();
-    } else {
+    if (roundInLevel < 5) renderRound();
+    else {
         if (currentLevel === 1) {
-            currentLevel = 2; 
-            roundInLevel = 0;
+            currentLevel = 2; roundInLevel = 0;
             setupDots(); 
             renderRound();
-        } else {
-            finishGame();
-        }
+        } else finishGame();
     }
 }
 
@@ -273,6 +257,6 @@ function finishGame() {
 
 const style = document.createElement('style');
 style.innerHTML = `
-    @keyframes popIn { 0% { transform: scale(0.8); opacity:0; } 100% { transform: scale(1); opacity:1; } }
+    @keyframes popIn { 0% { transform: scale(0.7); opacity:0; } 100% { transform: scale(1); opacity:1; } }
 `;
 document.head.appendChild(style);
