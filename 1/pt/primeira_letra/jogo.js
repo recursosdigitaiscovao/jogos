@@ -23,8 +23,11 @@ function reconstruirMenuCategorias() {
     Object.keys(JOGO_CONFIG.categorias).forEach(k => {
         const cat = JOGO_CONFIG.categorias[k];
         const card = document.createElement('div');
-        card.style.cssText = "background:#fff; border-radius:20px; padding:15px; text-align:center; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.08);";
-        card.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="width:60px; height:60px; object-fit:contain;" onerror="this.src='${JOGO_CONFIG.caminhoImg}cat_animais.png'"><br><small>${cat.nome}</small>`;
+        card.style.cssText = "background:#fff; border-radius:20px; padding:15px; text-align:center; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.08); display:flex; flex-direction:column; align-items:center; justify-content:center;";
+        card.innerHTML = `
+            <img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="width:65px; height:65px; object-fit:contain; margin-bottom:5px;" onerror="this.src='${JOGO_CONFIG.caminhoImg}cat_animais.png'">
+            <span style="font-weight:900; font-size:11px; color:var(--primary-dark);">${cat.nome}</span>
+        `;
         card.onclick = () => { window.selectCategory(k); closeMenus(); };
         rdList.appendChild(card);
     });
@@ -36,16 +39,20 @@ window.selectCategory = function(key) {
     if(document.getElementById('scr-game').classList.contains('active')) window.initGame();
 };
 
+// --- ANIMAÇÃO DO TUTORIAL (Mão a interagir) ---
 function renderTutorial(cat) {
     const container = document.getElementById('intro-animation-container');
     if(!container) return;
     container.innerHTML = `
-        <div style="text-align:center;">
-            <i class="fas fa-hand-pointer" style="font-size:40px; color:var(--primary-blue); animation: fingerTap 1.5s infinite;"></i>
-            <p style="margin-top:10px; font-weight:900; color:var(--text-grey);">Clica na letra correta!</p>
+        <div style="position:relative; width:200px; height:150px; margin:0 auto; background:rgba(255,255,255,0.3); border-radius:30px; border:3px dashed var(--primary-blue);">
+            <div style="position:absolute; top:20px; left:50%; transform:translateX(-50%); width:50px; height:50px; background:white; border:3px solid var(--primary-blue); border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue);">A</div>
+            <i class="fas fa-hand-pointer" style="position:absolute; top:80px; left:50%; font-size:40px; color:#f39c12; animation: tutoClick 2s infinite;"></i>
         </div>
         <style>
-            @keyframes fingerTap { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.8); } }
+            @keyframes tutoClick { 
+                0%, 100% { transform: translate(0,0) scale(1); } 
+                50% { transform: translate(0, -50px) scale(0.8); opacity:0.5; } 
+            }
         </style>
     `;
 }
@@ -83,37 +90,35 @@ function renderRound() {
     });
 
     const container = document.getElementById('game-main-content');
-    
-    // Palavra sem a primeira letra
     const suffix = ronda.palavra.substring(1);
     const correctLetter = ronda.palavra[0];
 
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:15px; touch-action:none;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; touch-action:none;">
             
-            <!-- Imagem do Objeto -->
-            <div style="background: white; padding: 15px; border-radius: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); width: 180px; height: 180px; display: flex; align-items: center; justify-content: center;">
-                <img src="${JOGO_CONFIG.caminhoImg}${ronda.img}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            <!-- IMAGEM CENTRAL COM ANIMAÇÃO -->
+            <div class="pop-animation" style="background: white; padding: 10px; border-radius: 40px; box-shadow: 0 15px 35px rgba(176,196,217,0.5); width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; border: 5px solid #f0f7ff;">
+                <img src="${JOGO_CONFIG.caminhoImg}${ronda.img}" style="max-width: 85%; max-height: 85%; object-fit: contain;" onerror="this.src='${JOGO_CONFIG.caminhoImg}cat_animais.png'">
             </div>
 
-            <!-- Palavra com Espaço Vazio -->
-            <div style="display: flex; align-items: center; gap: 10px; margin: 10px 0;">
-                <div id="target-letter" style="width: 60px; height: 70px; background: #e0e8f0; border: 3px dashed var(--primary-blue); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 900; color: var(--primary-blue);">
+            <!-- PALAVRA COM ESPAÇO TÁTIL -->
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div id="target-letter" style="width: 80px; height: 90px; background: #ffffff; border: 4px dashed var(--primary-blue); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 50px; font-weight: 900; color: var(--primary-blue);">
                     _
                 </div>
-                <div style="font-size: 50px; font-weight: 900; color: var(--text-grey); letter-spacing: 5px;">
+                <div style="font-size: 60px; font-weight: 900; color: var(--text-grey); letter-spacing: 5px; text-transform: uppercase;">
                     ${suffix}
                 </div>
             </div>
 
-            <!-- Opções de Letras -->
-            <div id="drag-options" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; padding:15px; background:rgba(255,255,255,0.4); border-radius:25px; width:100%;">
+            <!-- LETRAS OPÇÕES: TOTALMENTE TÁTEIS -->
+            <div id="drag-options" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; padding:15px; background:rgba(255,255,255,0.5); border-radius:30px; width:100%;">
                 ${ronda.opcoes.sort(() => Math.random() - 0.5).map(letra => `
                     <div class="letter-card" 
                          onclick="checkLetter('${letra}', '${correctLetter}')"
                          onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
                          data-val="${letra}"
-                         style="background: #ffffff; width: 70px; height: 70px; border-radius:15px; font-weight:900; font-size: 30px; color:var(--primary-dark); cursor:pointer; box-shadow:0 5px 0 #cbd9e6; border:2px solid var(--primary-blue); display:flex; align-items:center; justify-content:center; user-select:none;">
+                         style="background: #ffffff; width: 75px; height: 75px; border-radius:22px; font-weight:900; font-size: 38px; color:var(--primary-dark); cursor:pointer; box-shadow:0 6px 0 #cbd9e6; border:3px solid var(--primary-blue); display:flex; align-items:center; justify-content:center; user-select:none;">
                         ${letra}
                     </div>
                 `).join('')}
@@ -134,6 +139,7 @@ function checkLetter(escolhida, correta) {
         target.style.background = "#f0fff0";
         target.style.borderColor = "var(--highlight-green)";
         target.style.color = "var(--highlight-green)";
+        target.classList.add('correct-pulse');
         
         setTimeout(nextRound, 1200);
     } else {
@@ -143,10 +149,12 @@ function checkLetter(escolhida, correta) {
         target.style.background = "#fff5f5";
         target.style.borderColor = "var(--error-red)";
         target.style.color = "var(--error-red)";
+        target.classList.add('shake-animation');
 
         setTimeout(() => {
             target.innerText = "_";
-            target.style.background = "#e0e8f0";
+            target.classList.remove('shake-animation');
+            target.style.background = "#ffffff";
             target.style.borderColor = "var(--primary-blue)";
             target.style.borderStyle = "dashed";
             target.style.color = "var(--primary-blue)";
@@ -154,7 +162,7 @@ function checkLetter(escolhida, correta) {
     }
 }
 
-// Lógica de Drag and Drop (opcional, mas mantida para fluidez)
+// DRAG AND DROP COM FEEDBACK VISUAL
 function startDrag(e) {
     const el = e.target.closest('.letter-card');
     if (!el) return;
@@ -177,6 +185,7 @@ function startDrag(e) {
         draggedElement.style.left = (x - offsetX) + 'px';
         draggedElement.style.top = (y - offsetY) + 'px';
         draggedElement.style.transform = 'scale(1.1)';
+        draggedElement.style.pointerEvents = 'none';
     }
 
     function onUp(ev) {
@@ -198,6 +207,7 @@ function startDrag(e) {
 
         draggedElement.style.position = ''; 
         draggedElement.style.transform = '';
+        draggedElement.style.pointerEvents = 'auto';
     }
 
     document.addEventListener('mousemove', onMove);
@@ -234,5 +244,14 @@ function startTimer() {
 }
 
 const styleTag = document.createElement('style');
-styleTag.innerHTML = `.letter-card:active { transform: scale(0.92); transition: 0.1s; }`;
+styleTag.innerHTML = `
+    .letter-card:active { transform: scale(0.9); transition: 0.1s; }
+    .pop-animation { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .correct-pulse { animation: pulseGreen 0.6s; }
+    .shake-animation { animation: shake 0.4s; }
+
+    @keyframes popIn { 0% { transform: scale(0.5); opacity:0; } 100% { transform: scale(1); opacity:1; } }
+    @keyframes pulseGreen { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+`;
 document.head.appendChild(styleTag);
