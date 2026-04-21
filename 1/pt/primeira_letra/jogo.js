@@ -6,7 +6,11 @@ let timerSeconds = 0;
 let timerInterval;
 let draggedElement = null;
 let isDraggingActive = false;
-let startPos = { x: 0, y: 0 }; // Para detetar se foi clique ou arrasto
+
+// Variáveis para controlo de toque/clique
+let touchStartTime = 0;
+let startPos = { x: 0, y: 0 };
+let shuffledItems = []; // Para não repetir a sequência de imagens
 
 const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
@@ -26,7 +30,7 @@ function reconstruirMenuCategorias() {
         const card = document.createElement('div');
         card.style.cssText = "background:#fff; border-radius:20px; padding:15px; text-align:center; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.08); display:flex; flex-direction:column; align-items:center; justify-content:center;";
         card.innerHTML = `
-            <img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="width:60px; height:60px; object-fit:contain; margin-bottom:5px;">
+            <img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="width:55px; height:55px; object-fit:contain; margin-bottom:5px;">
             <span style="font-weight:900; font-size:11px; color:var(--primary-dark);">${cat.nome}</span>
         `;
         card.onclick = () => { window.selectCategory(k); closeMenus(); };
@@ -47,21 +51,28 @@ function renderTutorial() {
     const letter = exampleItem.nome[0];
 
     container.innerHTML = `
-        <div style="position:relative; width:240px; height:150px; margin:0 auto; background:rgba(255,255,255,0.4); border-radius:30px; border:3px dashed var(--primary-blue); overflow:hidden;">
-            <img src="${JOGO_CONFIG.caminhoImg}${exampleItem.img}" style="position:absolute; top:10px; left:10px; width:50px; height:50px; object-fit:contain;">
-            <div style="position:absolute; top:20px; right:30px; width:50px; height:60px; background:white; border:3px dashed var(--primary-blue); border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); font-size:24px;">?</div>
-            <div id="tuto-card" style="position:absolute; bottom:20px; left:30px; width:50px; height:50px; background:white; border:3px solid var(--primary-blue); border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-dark); font-size:28px; z-index:10;">${letter}</div>
-            <i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; bottom:10px; left:70px; font-size:40px; color:#f39c12; z-index:11; text-shadow: 2px 2px 0 white;"></i>
+        <div style="position:relative; width:220px; height:140px; margin:0 auto; background:rgba(255,255,255,0.4); border-radius:25px; border:3px dashed var(--primary-blue); overflow:hidden;">
+            <img src="${JOGO_CONFIG.caminhoImg}${exampleItem.img}" style="position:absolute; top:10px; left:10px; width:45px; height:45px; object-fit:contain;">
+            <div style="position:absolute; top:20px; right:20px; width:45px; height:55px; background:white; border:3px dashed var(--primary-blue); border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); font-size:22px;">?</div>
+            <div id="tuto-card" style="position:absolute; bottom:15px; left:30px; width:45px; height:45px; background:white; border:3px solid var(--primary-blue); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-dark); font-size:24px; z-index:10;">${letter}</div>
+            <i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; bottom:5px; left:65px; font-size:35px; color:#f39c12; z-index:11; text-shadow: 2px 2px 0 white;"></i>
         </div>
         <style>
-            @keyframes tutoDragClick { 0% { transform: translate(0,0); opacity:0; } 10% { opacity:1; } 50% { transform: translate(110px, -75px); } 80% { transform: translate(110px, -75px); opacity:1; } 100% { transform: translate(110px, -75px); opacity:0; } }
+            @keyframes tutoDragClick { 0% { transform: translate(0,0); opacity:0; } 10% { opacity:1; } 50% { transform: translate(100px, -65px); } 80% { transform: translate(100px, -65px); opacity:1; } 100% { transform: translate(100px, -65px); opacity:0; } }
             #tuto-card, #tuto-hand { animation: tutoDragClick 3s infinite ease-in-out; }
         </style>
     `;
 }
 
 window.initGame = function() {
-    currentIndex = 0; roundInLevel = 0; score = 0; timerSeconds = 0;
+    currentIndex = 0; 
+    roundInLevel = 0; 
+    score = 0; 
+    timerSeconds = 0;
+    
+    // BARALHAR IMAGENS NO INÍCIO DO JOGO
+    shuffledItems = [...JOGO_CONFIG.categorias[currentCategory].itens].sort(() => Math.random() - 0.5);
+    
     document.getElementById('score-val').innerText = score;
     setupDots();
     startTimer();
@@ -79,8 +90,7 @@ function setupDots() {
 }
 
 function renderRound() {
-    const cat = JOGO_CONFIG.categorias[currentCategory];
-    const item = cat.itens[currentIndex];
+    const item = shuffledItems[currentIndex];
     if(!item) { finishGame(); return; }
 
     const dots = document.querySelectorAll('.dot');
@@ -93,6 +103,7 @@ function renderRound() {
     const correctLetter = item.nome[0];
     const restOfWord = item.nome.substring(1);
 
+    // Gerar distratores
     let options = [correctLetter];
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     while(options.length < 4) {
@@ -103,30 +114,28 @@ function renderRound() {
 
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:clamp(10px, 4vh, 20px); touch-action:none;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:clamp(10px, 3vh, 20px); touch-action:none;">
             
-            <!-- IMAGEM (TAMANHO ADAPTÁVEL) -->
-            <div class="pop-animation" style="background: white; padding: 10px; border-radius: clamp(20px, 5vw, 40px); box-shadow: 0 10px 25px rgba(176,196,217,0.4); width: clamp(140px, 45vw, 190px); height: clamp(140px, 45vw, 190px); display: flex; align-items: center; justify-content: center; border: 4px solid #f0f7ff;">
+            <div class="pop-animation" style="background: white; padding: 10px; border-radius: clamp(20px, 5vw, 40px); box-shadow: 0 10px 25px rgba(176,196,217,0.4); width: clamp(130px, 40vw, 180px); height: clamp(130px, 40vw, 180px); display: flex; align-items: center; justify-content: center; border: 4px solid #f0f7ff;">
                 <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-width: 85%; max-height: 85%; object-fit: contain;">
             </div>
 
-            <!-- PALAVRA (TEXTO RESPONSIVO) -->
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <div id="target-letter" style="width: clamp(55px, 15vw, 75px); height: clamp(65px, 18vw, 85px); background: rgba(255,255,255,0.6); border: 3px dashed var(--primary-blue); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: clamp(30px, 10vw, 45px); font-weight: 900; color: var(--primary-blue);">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div id="target-letter" style="width: clamp(50px, 14vw, 70px); height: clamp(60px, 16vw, 80px); background: rgba(255,255,255,0.6); border: 3px dashed var(--primary-blue); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: clamp(28px, 8vw, 40px); font-weight: 900; color: var(--primary-blue);">
                     _
                 </div>
-                <div style="font-size: clamp(35px, 12vw, 55px); font-weight: 900; color: var(--text-grey); letter-spacing: 3px; text-transform: uppercase;">
+                <div style="font-size: clamp(30px, 10vw, 50px); font-weight: 900; color: var(--text-grey); letter-spacing: 2px; text-transform: uppercase;">
                     ${restOfWord}
                 </div>
             </div>
 
-            <!-- OPÇÕES (ADAPTÁVEIS) -->
-            <div id="drag-options" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; padding:10px; background:rgba(255,255,255,0.4); border-radius:25px; width:100%;">
+            <!-- OPÇÕES EM UMA LINHA HORIZONTAL PARA TELEMÓVEL -->
+            <div id="drag-options" style="display:flex; gap:8px; flex-wrap:nowrap; justify-content:center; padding:10px; background:rgba(255,255,255,0.4); border-radius:20px; width:100%; overflow-x: auto;">
                 ${options.map(letra => `
                     <div class="letter-card" 
                          onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
                          data-val="${letra}"
-                         style="background: rgba(255,255,255,0.7); width: clamp(60px, 18vw, 75px); height: clamp(60px, 18vw, 75px); border-radius:18px; font-weight:900; font-size: clamp(28px, 8vw, 38px); color:var(--primary-dark); cursor:pointer; box-shadow:0 5px 0 #cbd9e6; border:3px solid var(--primary-blue); display:flex; align-items:center; justify-content:center; user-select:none;">
+                         style="background: #ffffff; flex: 0 0 clamp(55px, 20vw, 75px); height: clamp(55px, 20vw, 75px); border-radius:15px; font-weight:900; font-size: clamp(24px, 7vw, 36px); color:var(--primary-dark); cursor:pointer; box-shadow:0 4px 0 #cbd9e6; border:2px solid var(--primary-blue); display:flex; align-items:center; justify-content:center; user-select:none;">
                         ${letra}
                     </div>
                 `).join('')}
@@ -135,14 +144,13 @@ function renderRound() {
     `;
 }
 
-// --- SISTEMA UNIFICADO: CLIQUE OU ARRASTO ---
 function startDrag(e) {
     const el = e.target.closest('.letter-card');
     if (!el) return;
     
-    // Captura posição inicial
     const touch = e.type === 'touchstart' ? e.touches[0] : e;
     startPos = { x: touch.clientX, y: touch.clientY };
+    touchStartTime = Date.now();
     
     draggedElement = el;
     isDraggingActive = false;
@@ -153,9 +161,9 @@ function startDrag(e) {
 
     function onMove(ev) {
         const t = ev.type === 'touchmove' ? ev.touches[0] : ev;
-        
-        // Se moveu mais de 10px, ativa o modo "arrastar"
-        if (Math.abs(t.clientX - startPos.x) > 10 || Math.abs(t.clientY - startPos.y) > 10) {
+        const dist = Math.sqrt(Math.pow(t.clientX - startPos.x, 2) + Math.pow(t.clientY - startPos.y, 2));
+
+        if (dist > 10) { // Se moveu mais de 10px, é arrasto
             isDraggingActive = true;
             if(ev.cancelable) ev.preventDefault();
         }
@@ -177,20 +185,20 @@ function startDrag(e) {
         document.removeEventListener('touchend', onUp);
 
         const t = ev.type === 'touchend' ? ev.changedTouches[0] : ev;
-        const correctLetter = JOGO_CONFIG.categorias[currentCategory].itens[currentIndex].nome[0];
+        const correctLetter = shuffledItems[currentIndex].nome[0];
+        const duration = Date.now() - touchStartTime;
 
-        if (!isDraggingActive) {
-            // FOI UM CLIQUE/TOQUE
+        // SE NÃO MOVEU QUASE NADA OU FOI TOQUE RÁPIDO = CLIQUE
+        if (!isDraggingActive || duration < 200) {
             checkLetter(draggedElement.dataset.val, correctLetter);
         } else {
-            // FOI UM ARRASTO
+            // VERIFICAR DROP
             const dropTarget = document.elementFromPoint(t.clientX, t.clientY)?.closest('#target-letter');
             if (dropTarget) {
                 checkLetter(draggedElement.dataset.val, correctLetter);
             }
         }
 
-        // Reset visual do elemento
         draggedElement.style.position = ''; 
         draggedElement.style.transform = '';
         draggedElement.style.zIndex = '';
@@ -205,7 +213,7 @@ function startDrag(e) {
 
 function checkLetter(escolhida, correta) {
     const target = document.getElementById('target-letter');
-    if(!target) return;
+    if(!target || target.innerText !== "_") return; // Evita cliques múltiplos durante a animação
 
     target.innerText = escolhida;
     target.style.borderStyle = "solid";
@@ -214,7 +222,7 @@ function checkLetter(escolhida, correta) {
         sndAcerto.play();
         score += JOGO_CONFIG.pontuacao.acertoNivel1;
         document.getElementById('score-val').innerText = score;
-        target.style.background = "rgba(240, 255, 240, 0.8)";
+        target.style.background = "#f0fff0";
         target.style.borderColor = "var(--highlight-green)";
         target.style.color = "var(--highlight-green)";
         setTimeout(nextRound, 1200);
@@ -222,7 +230,7 @@ function checkLetter(escolhida, correta) {
         sndErro.play();
         score = Math.max(0, score - JOGO_CONFIG.pontuacao.erro);
         document.getElementById('score-val').innerText = score;
-        target.style.background = "rgba(255, 245, 245, 0.8)";
+        target.style.background = "#fff5f5";
         target.style.borderColor = "var(--error-red)";
         target.style.color = "var(--error-red)";
         target.classList.add('shake-animation');
@@ -240,7 +248,7 @@ function checkLetter(escolhida, correta) {
 
 function nextRound() {
     currentIndex++; roundInLevel++;
-    if (roundInLevel < 5 && currentIndex < JOGO_CONFIG.categorias[currentCategory].itens.length) {
+    if (roundInLevel < 5 && currentIndex < shuffledItems.length) {
         renderRound();
     } else {
         finishGame();
@@ -271,7 +279,7 @@ function startTimer() {
 
 const styleTag = document.createElement('style');
 styleTag.innerHTML = `
-    .letter-card:active { transform: scale(0.92); transition: 0.1s; }
+    .letter-card:active { transform: scale(0.92); transition: 0.1s; background: #eee !important; }
     .pop-animation { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .shake-animation { animation: shake 0.4s; }
     @keyframes popIn { 0% { transform: scale(0.5); opacity:0; } 100% { transform: scale(1); opacity:1; } }
