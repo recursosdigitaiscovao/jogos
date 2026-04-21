@@ -14,40 +14,29 @@ const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
 const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// --- COORDENADAS CALIBRADAS (Caixas -5%) ---
 const BOX_CFG = {
     top: 38,      
-    height: 41,   // Reduzido 5% de 43
-    width: 17.5,  // Reduzido 5% de 18.5
-    lefts: [7, 30, 53, 76] // Recalibrado para centralizar com a nova largura
+    height: 41,   
+    width: 17.5,  
+    lefts: [7, 30, 53, 76] 
 };
 
 document.addEventListener('DOMContentLoaded', () => {
     if (window.initUI) window.initUI();
-    
-    // Customizar Menu de Categorias (Roleta)
     reconstruirMenuCategorias();
-
-    const rd1 = document.getElementById('rd-intro-btn');
-    const rd2 = document.getElementById('rd-game-btn');
-    if(rd1) rd1.src = JOGO_CONFIG.caminhoImg + "rd.png";
-    if(rd2) rd2.src = JOGO_CONFIG.caminhoImg + "rd.png";
-
     window.selectCategory(Object.keys(JOGO_CONFIG.categorias)[0]);
 });
 
-// Aumenta imagens e remove texto do menu de temas
 function reconstruirMenuCategorias() {
     const rdList = document.getElementById('rd-list');
     if(!rdList) return;
-
-    rdList.innerHTML = ''; // Limpa o original do template
+    rdList.innerHTML = '';
     Object.keys(JOGO_CONFIG.categorias).forEach(k => {
         const cat = JOGO_CONFIG.categorias[k];
         const card = document.createElement('div');
         card.style.cssText = "background:#fff; border-radius:20px; padding:15px; text-align:center; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.08); display:flex; align-items:center; justify-content:center;";
-        card.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="width:80px; height:80px; object-fit:contain;">`;
-        card.onclick = () => { if(window.selectCategory) window.selectCategory(k); closeMenus(); };
+        card.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="width:80px; height:80px; object-fit:contain;" onerror="this.src='${JOGO_CONFIG.caminhoImg}ord01.png'">`;
+        card.onclick = () => { window.selectCategory(k); closeMenus(); };
         rdList.appendChild(card);
     });
 }
@@ -62,12 +51,9 @@ function renderTutorial(cat) {
     const container = document.getElementById('intro-animation-container');
     if(!container) return;
     const itemEx = cat.rondas[0].itens[0];
-    
     container.innerHTML = `
         <div style="position:relative; width:300px; height:112px; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; margin: 0 auto; overflow:hidden; border-radius:10px; border:2px solid #ddd;">
-            <div id="tuto-card" style="background:white; padding:2px 8px; border-radius:5px; font-weight:900; font-size:12px; position:absolute; left:135px; top:80px; z-index:10; box-shadow:0 3px 0 #cbd9e6; border:1px solid #eee;">
-                ${itemEx}
-            </div>
+            <div id="tuto-card" style="background:white; padding:2px 8px; border-radius:5px; font-weight:900; font-size:12px; position:absolute; left:135px; top:80px; z-index:10; box-shadow:0 3px 0 #cbd9e6; border:1px solid #eee;">${itemEx}</div>
             <i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; top:90px; left:150px; color:#f39c12; font-size:18px; z-index:11;"></i>
         </div>
         <style>
@@ -119,17 +105,13 @@ function renderRound() {
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; touch-action:none;">
-            
             <div id="shelf-container" style="position:relative; width:100%; max-width:800px; aspect-ratio: 1014/380; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; user-select:none;">
-                
                 ${BOX_CFG.lefts.map((l, i) => `
                     <div class="target-box" data-idx="${i}" onclick="removeItem(${i})" 
                          style="position:absolute; top:${BOX_CFG.top}%; left:${l}%; width:${BOX_CFG.width}%; height:${BOX_CFG.height}%; display:flex; align-items:center; justify-content:center; cursor:pointer;">
                     </div>
                 `).join('')}
-                
             </div>
-
             <div id="drag-options" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; padding:15px; background:rgba(255,255,255,0.4); border-radius:25px; width:100%; min-height:85px;">
                 ${shuffled.map((item, i) => `
                     <div class="sort-card" 
@@ -162,10 +144,10 @@ window.removeItem = function(idx) {
 
 function fillTarget(targetIdx, val, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
-    if(!target) return;
+    if(!target || placedItems[targetIdx]?.locked) return;
 
     target.innerHTML = `
-        <div class="placed-card" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(12px, 3.8vw, 22px); text-align:center; width:90%; height:88%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; word-break: break-all; padding: 5px;">
+        <div class="placed-card" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(11px, 3.5vw, 20px); text-align:center; width:90%; height:88%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; word-break: break-all; padding: 5px;">
             ${val}
         </div>
     `;
@@ -195,6 +177,7 @@ function checkOrder() {
         document.getElementById('score-val').innerText = score;
         
         placedItems.forEach((item, i) => {
+            if(!item) return;
             const target = document.querySelector(`.target-box[data-idx="${i}"]`);
             const cardInner = target.querySelector('.placed-card');
             
@@ -206,6 +189,7 @@ function checkOrder() {
                 cardInner.style.color = "var(--error-red)";
                 cardInner.style.borderColor = "var(--error-red)";
                 setTimeout(() => {
+                    if (item.locked) return;
                     const originalEl = document.getElementById(item.originalId);
                     target.innerHTML = "";
                     if(originalEl) originalEl.style.visibility = 'visible';
@@ -219,8 +203,7 @@ function checkOrder() {
 function startDrag(e) {
     const el = e.target.closest('.sort-card');
     if (!el || el.style.visibility === 'hidden') return;
-    if(e.cancelable) e.preventDefault();
-
+    
     draggedElement = el;
     isDraggingActive = false;
     const startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
@@ -252,9 +235,10 @@ function startDrag(e) {
             const x = (ev.type === 'touchend' ? ev.changedTouches[0].clientX : ev.clientX);
             const y = (ev.type === 'touchend' ? ev.changedTouches[0].clientY : ev.clientY);
             const dropTarget = document.elementFromPoint(x, y)?.closest('.target-box');
-            if (dropTarget && !placedItems[dropTarget.dataset.idx]) fillTarget(dropTarget.dataset.idx, draggedElement.dataset.val, draggedElement);
+            if (dropTarget && !placedItems[dropTarget.dataset.idx]) {
+                fillTarget(dropTarget.dataset.idx, draggedElement.dataset.val, draggedElement);
+            }
         }
-
         draggedElement.style.position = ''; draggedElement.style.zIndex = '';
         draggedElement.style.pointerEvents = 'auto'; draggedElement.style.left = ''; draggedElement.style.top = '';
     }
@@ -266,10 +250,16 @@ function startDrag(e) {
 
 function nextRound() {
     currentIndex++; roundInLevel++;
-    if (roundInLevel < 5) renderRound();
-    else if (currentLevel === 1) {
-        currentLevel = 2; roundInLevel = 0; setupDots(); renderRound();
-    } else finishGame();
+    if (roundInLevel < 5) {
+        renderRound();
+    } else if (currentLevel === 1) {
+        currentLevel = 2; 
+        roundInLevel = 0; 
+        setupDots(); 
+        renderRound();
+    } else {
+        finishGame();
+    }
 }
 
 function finishGame() {
@@ -277,14 +267,19 @@ function finishGame() {
     sndVitoria.play();
     document.getElementById('res-pts').innerText = score;
     document.getElementById('res-tim').innerText = document.getElementById('timer').innerText.replace('⏳ ', '');
-    let rel = JOGO_CONFIG.relatorios.find(r => score >= r.min) || JOGO_CONFIG.relatorios[JOGO_CONFIG.relatorios.length-1];
+    
+    // Procura o relatório com base na pontuação
+    const rel = JOGO_CONFIG.relatorios.find(r => score >= r.min) || JOGO_CONFIG.relatorios[JOGO_CONFIG.relatorios.length-1];
+    
     document.getElementById('res-tit').innerText = rel.titulo;
     document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rel.img;
+    
     if(window.goToResult) window.goToResult();
 }
 
-const style = document.createElement('style');
-style.innerHTML = `
+const styleTag = document.createElement('style');
+styleTag.innerHTML = `
     @keyframes popIn { 0% { transform: scale(0.8); opacity:0; } 100% { transform: scale(1); opacity:1; } }
+    .sort-card:active { cursor: grabbing; transform: scale(1.05); }
 `;
-document.head.appendChild(style);
+document.head.appendChild(styleTag);
