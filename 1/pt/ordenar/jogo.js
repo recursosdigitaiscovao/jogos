@@ -14,12 +14,12 @@ const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
 const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// --- COORDENADAS RECALIBRADAS (-5% no tamanho) ---
+// --- COORDENADAS RECALIBRADAS (Subida de 2% no Top) ---
 const BOX_CFG = {
-    top: 39,          // Ajustado levemente para alinhar com a nova altura
-    height: 39,       // Reduzido 5% (de 41 para 39)
-    width: 16.6,      // Reduzido 5% (de 17.5 para 16.6)
-    lefts: [7.5, 30.5, 53.5, 76.5] // Ajustado para manter a centralização com a nova largura
+    top: 37,          // Subiu de 39 para 37 (2% para cima)
+    height: 39,       // Mantido o tamanho reduzido de -5%
+    width: 16.6,      // Mantido o tamanho reduzido de -5%
+    lefts: [7.5, 30.5, 53.5, 76.5] 
 };
 
 function startLogic() {
@@ -112,7 +112,6 @@ function renderRound() {
                     </div>
                 `).join('')}
             </div>
-            <!-- OPÇÕES (Cartões de baixo) reduzidos em 5% no padding e min-width -->
             <div id="drag-options" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; padding:15px; background:rgba(255,255,255,0.4); border-radius:25px; width:100%; min-height:80px;">
                 ${shuffled.map((item, i) => `
                     <div class="sort-card" 
@@ -140,7 +139,6 @@ window.removeItem = function(idx) {
 function fillTarget(targetIdx, val, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
     if(!target) return;
-    // Cartão colocado reduzido em 5% no tamanho da fonte
     target.innerHTML = `<div class="placed-card" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(11px, 3.5vw, 20px); text-align:center; width:90%; height:88%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; padding: 5px;">${val}</div>`;
     originalEl.style.visibility = 'hidden';
     placedItems[targetIdx] = { val: val, originalId: originalEl.id, locked: false };
