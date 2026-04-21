@@ -17,7 +17,7 @@ const JOGO_CONFIG = {
         tituloLinha2: "LEITORES",
         subtitulo: "Português | 1º Ano",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos",
-        instrucao: "Ordena os cartões do menor para o maior (A-Z)!"
+        instrucao: "Ordena os cartões por ordem alfabética!"
     },
 
     sons: {
