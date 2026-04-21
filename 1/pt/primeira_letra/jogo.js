@@ -1,7 +1,7 @@
 let currentCategory = 'animais';
 let currentIndex = 0; 
 let roundInLevel = 0; 
-let currentLevel = 1; // Controla se estamos no Nível 1 ou 2
+let currentLevel = 1; 
 let score = 0;
 let timerSeconds = 0;
 let timerInterval;
@@ -38,7 +38,16 @@ function reconstruirMenuCategorias() {
 window.selectCategory = function(key) {
     currentCategory = key;
     renderTutorial();
-    if(document.getElementById('scr-game').classList.contains('active')) window.initGame();
+    
+    const isResult = document.getElementById('scr-result').classList.contains('active');
+    const isGame = document.getElementById('scr-game').classList.contains('active');
+
+    // Se estiver no relatório ou já no jogo, reinicia/inicia o jogo na nova categoria
+    if(isResult) {
+        if(typeof goToGame === 'function') goToGame();
+    } else if(isGame) {
+        window.initGame();
+    }
 };
 
 function renderTutorial() {
@@ -99,7 +108,7 @@ function renderRound() {
                 <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-width: 85%; max-height: 85%; object-fit: contain;">
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
-                <div id="target-letter" style="width: clamp(55px, 14vw, 65px); height: clamp(60px, 16vw, 75px); background: rgba(255,255,255,0.6); border: 3px dashed var(--primary-blue); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: clamp(28px, 8vw, 36px); font-weight: 900; color: var(--primary-blue);">_</div>
+                <div id="target-letter" style="width: clamp(50px, 14vw, 65px); height: clamp(60px, 16vw, 75px); background: rgba(255,255,255,0.6); border: 3px dashed var(--primary-blue); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: clamp(28px, 8vw, 36px); font-weight: 900; color: var(--primary-blue);">_</div>
                 <div style="font-size: clamp(30px, 10vw, 45px); font-weight: 900; color: var(--text-grey); letter-spacing: 2px; text-transform: uppercase;">${restOfWord}</div>
             </div>
             <div id="drag-options" style="display:flex; gap:8px; flex-wrap:nowrap; justify-content:center; padding:10px; background:rgba(255,255,255,0.4); border-radius:20px; width:100%;">
@@ -134,7 +143,7 @@ function startDrag(e) {
             draggedElement.style.left = (t.clientX - offsetX) + 'px'; draggedElement.style.top = (t.clientY - offsetY) + 'px';
             draggedElement.style.transform = 'scale(1.15)'; draggedElement.style.pointerEvents = 'none';
             const overAlvo = document.elementFromPoint(t.clientX, t.clientY)?.closest('#target-letter');
-            targetBox.style.borderColor = overAlvo ? "#f39c12" : "var(--primary-blue)";
+            if(targetBox) targetBox.style.borderColor = overAlvo ? "#f39c12" : "var(--primary-blue)";
         }
     }
 
@@ -166,7 +175,7 @@ function startDrag(e) {
         if(!draggedElement) return;
         draggedElement.style.position = ''; draggedElement.style.zIndex = ''; draggedElement.style.pointerEvents = 'auto'; 
         draggedElement.style.transform = ''; draggedElement.style.transition = ''; draggedElement = null; 
-        targetBox.style.borderColor = "var(--primary-blue)";
+        if(targetBox) targetBox.style.borderColor = "var(--primary-blue)";
     }
     document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onUp);
     document.addEventListener('touchmove', onMove, { passive: false }); document.addEventListener('touchend', onUp);
@@ -190,22 +199,18 @@ function checkLetter(l, c) {
     }
 }
 
-// GESTÃO DOS 2 NÍVEIS (5 RONDAS CADA)
 function nextRound() { 
     currentIndex++; 
     roundInLevel++; 
     
-    if (roundInLevel < 5) {
-        // Continua no nível atual
+    if (roundInLevel < 5 && currentIndex < shuffledItems.length) {
         renderRound(); 
     } else if (currentLevel === 1) {
-        // Passa para o Nível 2 automaticamente (sem popup)
         currentLevel = 2;
         roundInLevel = 0;
-        setupDots(); // Reset visual das bolinhas para o novo nível
+        setupDots(); 
         renderRound();
     } else {
-        // Fim do Nível 2 -> Resultados
         finishGame(); 
     }
 }
@@ -215,9 +220,12 @@ function finishGame() {
     sndVitoria.play();
     document.getElementById('res-pts').innerText = score;
     document.getElementById('res-tim').innerText = document.getElementById('timer').innerText.replace('⏳ ', '');
+    
+    // Procura taca conforme pontuação (taca_1, taca_2, etc)
     const rel = JOGO_CONFIG.relatorios.find(r => score >= r.min) || JOGO_CONFIG.relatorios[JOGO_CONFIG.relatorios.length-1];
     document.getElementById('res-tit').innerText = rel.titulo;
     document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rel.img;
+    
     if(window.goToResult) window.goToResult();
 }
 
@@ -225,7 +233,7 @@ function startTimer() { if(timerInterval) clearInterval(timerInterval); timerSec
 
 const styleTag = document.createElement('style');
 styleTag.innerHTML = `
-    .letter-card:active { transform: scale(0.92); transition: 0.1s; background: #eee !important; }
+    .letter-card:active { transform: scale(1.1) !important; background: #fff !important; }
     .pop-animation { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .shake-animation { animation: shake 0.4s; }
     @keyframes popIn { 0% { transform: scale(0.5); opacity:0; } 100% { transform: scale(1); opacity:1; } }
