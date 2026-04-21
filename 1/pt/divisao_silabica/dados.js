@@ -42,7 +42,7 @@ const JOGO_CONFIG = {
                 { nome: "COELHO", silabas: ["CO", "E", "LHO"], img: "animaisdomesticos/coelho.png" },
                 { nome: "GALINHA", silabas: ["GA", "LI", "NHA"], img: "animaisdomesticos/galinha.png" },
                 { nome: "CARRO", silabas: ["CA", "RRO"], img: "objetos/carro.png" }, // Exemplo RR junto
-                { nome: "PÁSSARO", silabas: ["PÁ", "SSARO"], img: "animaisselvagens/pombo.png" } // Exemplo SS junto
+                { nome: "POMBO", silabas: ["POM", "BO"], img: "animaisselvagens/pombo.png" }
             ]
         },
         frutos: {
@@ -56,17 +56,18 @@ const JOGO_CONFIG = {
                 { nome: "CEREJA", silabas: ["CE", "RE", "JA"], img: "frutas/cereja.png" },
                 { nome: "LIMÃO", silabas: ["LI", "MÃO"], img: "frutas/limao.png" },
                 { nome: "LARANJA", silabas: ["LA", "RAN", "JA"], img: "frutas/laranja.png" },
+                { nome: "CASTANHA", silabas: ["CAS", "TA", "NHA"], img: "frutas/castanha.png" },
                 { nome: "MELANCIA", silabas: ["ME", "LAN", "CI", "A"], img: "frutas/melancia.png" },
                 { nome: "ABACATE", silabas: ["A", "BA", "CA", "TE"], img: "frutas/abacate.png" },
-                { nome: "PÊSSEGO", silabas: ["PÊ", "SSEGO"], img: "frutas/pessego.png" } // SS junto
+                { nome: "AMORA", silabas: ["A", "MO", "RA"], img: "frutas/amora.png" }
             ]
         }
     },
 
     relatorios: [
         { min: 1000, titulo: "BRILHANTE!", img: "taca_1.png" },
-        { min: 700, titulo: "MUITO BEM!", img: "taca_2.png" },
-        { min: 400, titulo: "BOM TRABALHO!", img: "taca_3.png" },
+        { min: 750, titulo: "MUITO BEM!", img: "taca_2.png" },
+        { min: 500, titulo: "BOM TRABALHO!", img: "taca_3.png" },
         { min: 0, titulo: "TENTA OUTRA VEZ!", img: "taca_4.png" }
     ]
 };
