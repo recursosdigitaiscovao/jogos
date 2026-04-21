@@ -8,7 +8,7 @@ let timerInterval;
 let placedItems = [null, null, null, null];
 let correctOrder = [];
 let draggedElement = null;
-let isDraggingActive = false; // Diferenciar clique de arrasto
+let isDraggingActive = false;
 
 const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
@@ -44,8 +44,8 @@ function renderTutorial(cat) {
             <i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; top:90px; left:150px; color:#f39c12; font-size:18px; z-index:11;"></i>
         </div>
         <style>
-            @keyframes tutoDrag { 0% { left: 135px; top: 80px; opacity: 1; } 40% { left: 42px; top: 52px; } 70% { left: 42px; top: 52px; opacity: 1; } 100% { left: 42px; top: 52px; opacity: 0; } }
-            @keyframes handDrag { 0% { left: 150px; top: 90px; opacity: 1; } 40% { left: 52px; top: 62px; } 70% { left: 52px; top: 62px; opacity: 1; } 100% { left: 52px; top: 62px; opacity: 0; } }
+            @keyframes tutoDrag { 0% { left: 135px; top: 80px; opacity: 1; } 40% { left: 38px; top: 52px; } 70% { left: 38px; top: 52px; opacity: 1; } 100% { left: 38px; top: 52px; opacity: 0; } }
+            @keyframes handDrag { 0% { left: 150px; top: 90px; opacity: 1; } 40% { left: 45px; top: 62px; } 70% { left: 45px; top: 62px; opacity: 1; } 100% { left: 45px; top: 62px; opacity: 0; } }
             #tuto-card { animation: tutoDrag 3s infinite ease-in-out; }
             #tuto-hand { animation: handDrag 3s infinite ease-in-out; }
         </style>
@@ -93,15 +93,15 @@ function renderRound() {
 
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:15px; touch-action:none;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; touch-action:none;">
             
             <div id="shelf-container" style="position:relative; width:100%; max-width:800px; aspect-ratio: 1014/380; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; user-select:none;">
                 
-                <!-- ZONAS DE DROP INDIVIDUAIS -->
-                <div class="target-box" data-idx="0" onclick="removeItem(0)" style="position:absolute; top:44%; left:4.3%; width:21%; height:45%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
-                <div class="target-box" data-idx="1" onclick="removeItem(1)" style="position:absolute; top:44%; left:27.8%; width:21%; height:45%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
-                <div class="target-box" data-idx="2" onclick="removeItem(2)" style="position:absolute; top:44%; left:50.5%; width:21%; height:45%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
-                <div class="target-box" data-idx="3" onclick="removeItem(3)" style="position:absolute; top:44%; left:74.5%; width:21%; height:45%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                <!-- CALIBRAÇÃO EXATA DAS CAIXAS (PARA NÃO TOCAR NA MADEIRA) -->
+                <div class="target-box" data-idx="0" onclick="removeItem(0)" style="position:absolute; top:45%; left:5.5%; width:20%; height:44%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                <div class="target-box" data-idx="1" onclick="removeItem(1)" style="position:absolute; top:45%; left:28.5%; width:20%; height:44%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                <div class="target-box" data-idx="2" onclick="removeItem(2)" style="position:absolute; top:45%; left:51.5%; width:20%; height:44%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
+                <div class="target-box" data-idx="3" onclick="removeItem(3)" style="position:absolute; top:45%; left:74.5%; width:20%; height:44%; display:flex; align-items:center; justify-content:center; cursor:pointer;"></div>
                 
             </div>
 
@@ -119,18 +119,15 @@ function renderRound() {
     `;
 }
 
-// LOGICA DE CLIQUE: Envia para o primeiro livre
 function handleItemClick(el) {
     if(el.style.visibility === 'hidden') return;
     const freeIdx = placedItems.findIndex(x => x === null);
-    if(freeIdx !== -1) {
-        fillTarget(freeIdx, el.dataset.val, el);
-    }
+    if(freeIdx !== -1) fillTarget(freeIdx, el.dataset.val, el);
 }
 
 window.removeItem = function(idx) {
     const item = placedItems[idx];
-    if(!item || item.locked) return; // Não remove se estiver trancado (verde)
+    if(!item || item.locked) return; 
     
     const originalEl = document.getElementById(item.originalId);
     if(originalEl) originalEl.style.visibility = 'visible';
@@ -144,9 +141,8 @@ function fillTarget(targetIdx, val, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
     if(!target) return;
 
-    // Efeito de Livro (Cartão branco dentro do compartimento)
     target.innerHTML = `
-        <div class="book-item" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(12px, 4.5vw, 28px); text-align:center; width:92%; height:90%; display:flex; align-items:center; justify-content:center; border-radius:8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); animation: popIn 0.3s; word-break: break-all; border: 2px solid transparent;">
+        <div class="book-item" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(12px, 4vw, 26px); text-align:center; width:94%; height:92%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 3px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.05); animation: popIn 0.3s; word-break: break-all;">
             ${val}
         </div>
     `;
@@ -178,20 +174,21 @@ function checkOrder() {
         score = Math.max(0, score - JOGO_CONFIG.pontuacao.erro);
         document.getElementById('score-val').innerText = score;
         
-        // CORREÇÃO SELETIVA
         placedItems.forEach((item, i) => {
-            const bookEl = document.querySelectorAll('.target-box')[i].querySelector('.book-item');
+            const target = document.querySelector(`.target-box[data-idx="${i}"]`);
+            const bookEl = target.querySelector('.book-item');
             
             if (item.val === correctOrder[i]) {
+                // CERTO: Fica verde e trancado
                 bookEl.style.color = "var(--highlight-green)";
                 bookEl.style.borderColor = "var(--highlight-green)";
                 item.locked = true; 
             } else {
+                // ERRADO: Fica vermelho e salta fora
                 bookEl.style.color = "var(--error-red)";
                 bookEl.style.borderColor = "var(--error-red)";
                 
                 setTimeout(() => {
-                    const target = document.querySelector(`.target-box[data-idx="${i}"]`);
                     const originalEl = document.getElementById(item.originalId);
                     target.innerHTML = "";
                     if(originalEl) originalEl.style.visibility = 'visible';
@@ -202,15 +199,13 @@ function checkOrder() {
     }
 }
 
-// DRAG AND DROP COM SUPORTE A CLIQUE
 function startDrag(e) {
     const el = e.target.closest('.sort-card');
     if (!el || el.style.visibility === 'hidden') return;
-    
     if(e.cancelable) e.preventDefault();
 
     draggedElement = el;
-    isDraggingActive = false; // Assume clique até que se mova
+    isDraggingActive = false;
     
     const startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
     const startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
@@ -219,7 +214,7 @@ function startDrag(e) {
     const offsetY = startY - rect.top;
 
     function onMove(ev) {
-        isDraggingActive = true; // Se moveu mais que 5px, é arrasto
+        isDraggingActive = true;
         const x = (ev.type === 'touchmove' ? ev.touches[0].clientX : ev.clientX);
         const y = (ev.type === 'touchmove' ? ev.touches[0].clientY : ev.clientY);
         
@@ -237,10 +232,8 @@ function startDrag(e) {
         document.removeEventListener('touchend', onUp);
 
         if (!isDraggingActive) {
-            // COMPORTAMENTO DE CLIQUE
             handleItemClick(draggedElement);
         } else {
-            // COMPORTAMENTO DE ARRASTO
             const x = (ev.type === 'touchend' ? ev.changedTouches[0].clientX : ev.clientX);
             const y = (ev.type === 'touchend' ? ev.changedTouches[0].clientY : ev.clientY);
             const dropTarget = document.elementFromPoint(x, y)?.closest('.target-box');
@@ -250,7 +243,6 @@ function startDrag(e) {
             }
         }
 
-        // Resetar estilos de arrasto
         draggedElement.style.position = '';
         draggedElement.style.zIndex = '';
         draggedElement.style.pointerEvents = 'auto';
