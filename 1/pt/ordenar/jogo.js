@@ -35,31 +35,25 @@ function renderTutorial(cat) {
     if(!container) return;
     const itemEx = cat.rondas[0].itens[0];
     
-    // Proporção 1014/380 traduzida para um tamanho fixo de tutorial (300px largura)
     container.innerHTML = `
-        <div style="position:relative; width:300px; height:112px; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; margin: 0 auto; overflow:hidden; border-radius:10px; border:2px solid #ddd;">
-            
-            <!-- Letra do Tutorial -->
-            <div id="tuto-card" style="background:white; padding:2px 8px; border-radius:5px; font-weight:900; font-size:14px; position:absolute; left:135px; bottom:5px; z-index:10; box-shadow:0 3px 0 #cbd9e6; border:1px solid #eee;">
+        <div style="position:relative; width:300px; height:112px; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; margin: 0 auto; overflow:hidden; border-radius:10px; border:1px solid #ddd;">
+            <div id="tuto-card" style="background:white; padding:2px 8px; border-radius:5px; font-weight:900; font-size:12px; position:absolute; left:135px; top:80px; z-index:10; box-shadow:0 3px 0 #cbd9e6; border:1px solid #eee;">
                 ${itemEx}
             </div>
-
-            <!-- Mão do Tutorial -->
-            <i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; bottom:0px; left:150px; color:#f39c12; font-size:20px; z-index:11;"></i>
+            <i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; top:90px; left:150px; color:#f39c12; font-size:18px; z-index:11;"></i>
         </div>
         <style>
-            /* Animação que leva do centro-baixo para o Quadrado 1 (aprox left:16% top:55% da imagem) */
             @keyframes tutoDrag { 
                 0% { left: 135px; top: 80px; opacity: 1; } 
-                40% { left: 45px; top: 45px; } 
-                70% { left: 45px; top: 45px; opacity: 1; } 
-                100% { left: 45px; top: 45px; opacity: 0; } 
+                40% { left: 45px; top: 52px; } 
+                70% { left: 45px; top: 52px; opacity: 1; } 
+                100% { left: 45px; top: 52px; opacity: 0; } 
             }
             @keyframes handDrag { 
                 0% { left: 150px; top: 90px; opacity: 1; } 
-                40% { left: 60px; top: 55px; } 
-                70% { left: 60px; top: 55px; opacity: 1; } 
-                100% { left: 60px; top: 55px; opacity: 0; } 
+                40% { left: 55px; top: 62px; } 
+                70% { left: 55px; top: 62px; opacity: 1; } 
+                100% { left: 55px; top: 62px; opacity: 0; } 
             }
             #tuto-card { animation: tutoDrag 3s infinite ease-in-out; }
             #tuto-hand { animation: handDrag 3s infinite ease-in-out; }
@@ -108,15 +102,15 @@ function renderRound() {
 
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; touch-action:none;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:15px; touch-action:none;">
             
             <div id="shelf-container" style="position:relative; width:100%; max-width:800px; aspect-ratio: 1014/380; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; user-select:none; touch-action:none;">
-                <!-- Zonas de drop marcadas temporariamente com borda para calibração -->
-                <div id="drop-zones" style="position:absolute; top:36.5%; left:5.2%; right:5.2%; height:37%; display:grid; grid-template-columns: repeat(4, 1fr); gap:1.8%;">
+                
+                <!-- DROP ZONES CALIBRADAS (TOP 44%, HEIGHT 45%) -->
+                <div id="drop-zones" style="position:absolute; top:44%; left:5.2%; right:5.2%; height:45%; display:grid; grid-template-columns: repeat(4, 1fr); gap:2%;">
                     ${[0,1,2,3].map(i => `
                         <div class="target-box" data-idx="${i}" onclick="removeItem(${i})"
-                             style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; cursor:pointer; 
-                                    border: 1px dashed rgba(255,0,0,0.3); background: rgba(0,255,0,0.05);">
+                             style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; cursor:pointer;">
                         </div>
                     `).join('')}
                 </div>
@@ -128,7 +122,7 @@ function renderRound() {
                          onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
                          onclick="handleItemClick(this)"
                          data-val="${item}" id="card-${currentIndex}-${i}"
-                         style="background:white; padding:12px 18px; border-radius:12px; font-weight:900; font-size:clamp(14px, 4vw, 20px); color:var(--primary-dark); cursor:grab; box-shadow:0 6px 0 #cbd9e6; border:2px solid #eee; min-width:75px; text-align:center; user-select:none; touch-action:none;">
+                         style="background:white; padding:12px 18px; border-radius:12px; font-weight:900; font-size:clamp(14px, 4vw, 22px); color:var(--primary-dark); cursor:grab; box-shadow:0 6px 0 #cbd9e6; border:2px solid #eee; min-width:75px; text-align:center; user-select:none; touch-action:none;">
                         ${item}
                     </div>
                 `).join('')}
@@ -156,10 +150,9 @@ function fillTarget(targetIdx, val, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
     if(!target) return;
 
-    // Remove o fundo verde de teste e coloca o texto centrado
-    target.style.background = "transparent";
+    // Fica apenas o texto, centrado
     target.innerHTML = `
-        <div style="color:var(--primary-dark); font-weight:900; font-size:clamp(14px, 4.5vw, 30px); text-align:center; width:100%; line-height:1; display:flex; align-items:center; justify-content:center; animation: popIn 0.3s; word-break: break-all;">
+        <div style="color:var(--primary-dark); font-weight:900; font-size:clamp(14px, 4.5vw, 32px); text-align:center; width:100%; line-height:1; display:flex; align-items:center; justify-content:center; animation: popIn 0.3s; word-break: break-all;">
             ${val}
         </div>
     `;
@@ -184,13 +177,11 @@ function checkOrder() {
         score = Math.max(0, score - JOGO_CONFIG.pontuacao.erro);
         document.getElementById('score-val').innerText = score;
         
-        // CORREÇÃO SELETIVA: Só saltam as erradas
+        // CORREÇÃO SELETIVA: Só saltam as que estão na posição errada
         placedItems.forEach((item, i) => {
             if (item.val !== correctOrder[i]) {
                 const target = document.querySelector(`.target-box[data-idx="${i}"]`);
                 const originalEl = document.getElementById(item.originalId);
-                
-                // Feedback visual vermelho antes de sair
                 const txtDiv = target.querySelector('div');
                 if(txtDiv) txtDiv.style.color = "var(--error-red)";
                 
@@ -200,10 +191,9 @@ function checkOrder() {
                     placedItems[i] = null;
                 }, 800);
             } else {
-                // Mantém as certas verdes por um momento
-                const txtDiv = target.querySelector('div');
+                // As certas ficam verdes temporariamente para indicar sucesso parcial
+                const txtDiv = target.querySelector(`div`);
                 if(txtDiv) txtDiv.style.color = "var(--highlight-green)";
-                setTimeout(() => { if(txtDiv) txtDiv.style.color = "var(--primary-dark)"; }, 1500);
             }
         });
     }
@@ -244,11 +234,16 @@ function startDrag(e) {
             const x = (ev.type === 'touchend' ? ev.changedTouches[0].clientX : ev.clientX);
             const y = (ev.type === 'touchend' ? ev.changedTouches[0].clientY : ev.clientY);
             const dropTarget = document.elementFromPoint(x, y)?.closest('.target-box');
-            if (dropTarget && !placedItems[dropTarget.dataset.idx]) fillTarget(dropTarget.dataset.idx, draggedElement.dataset.val, draggedElement);
+            if (dropTarget && !placedItems[dropTarget.dataset.idx]) {
+                fillTarget(dropTarget.dataset.idx, draggedElement.dataset.val, draggedElement);
+            }
         }
         if (draggedElement) {
-            draggedElement.style.position = ''; draggedElement.style.zIndex = '';
-            draggedElement.style.pointerEvents = 'auto'; draggedElement.style.left = ''; draggedElement.style.top = '';
+            draggedElement.style.position = '';
+            draggedElement.style.zIndex = '';
+            draggedElement.style.pointerEvents = 'auto';
+            draggedElement.style.left = '';
+            draggedElement.style.top = '';
         }
     }
     document.addEventListener('mousemove', onMove);
