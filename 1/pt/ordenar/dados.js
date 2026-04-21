@@ -32,7 +32,7 @@ const JOGO_CONFIG = {
     categorias: {
         cat1: {
             nome: "4 Letras Consecutivas", 
-            imgCapa: "cat1.png",
+            imgCapa: "ord01.png",
             rondas: [
                 { itens: ["A", "B", "C", "D"] }, { itens: ["E", "F", "G", "H"] },
                 { itens: ["I", "J", "K", "L"] }, { itens: ["M", "N", "O", "P"] },
@@ -43,7 +43,7 @@ const JOGO_CONFIG = {
         },
         cat2: {
             nome: "4 Letras Alternadas", 
-            imgCapa: "cat2.png",
+            imgCapa: "ord02.png",
             rondas: [
                 { itens: ["A", "X", "M", "E"] }, { itens: ["B", "L", "O", "V"] },
                 { itens: ["C", "G", "Z", "Q"] }, { itens: ["D", "H", "K", "W"] },
@@ -54,7 +54,7 @@ const JOGO_CONFIG = {
         },
         cat3: {
             nome: "Mesma Letra Inicial", 
-            imgCapa: "cat3.png",
+            imgCapa: "ord03.png",
             rondas: [
                 { itens: ["AMORA", "ANANÁS", "ANEL", "AVENTAL"] }, { itens: ["BOLA", "BOLO", "BONECA", "BOTA"] },
                 { itens: ["CASA", "CAVALO", "COELHO", "COPO"] }, { itens: ["DADO", "DEDO", "DENTE", "DOCE"] },
@@ -65,7 +65,7 @@ const JOGO_CONFIG = {
         },
         cat4: {
             nome: "Palavras Mistas", 
-            imgCapa: "cat4.png",
+            imgCapa: "ord04.png",
             rondas: [
                 { itens: ["CÃO", "GATO", "PATO", "RATO"] }, { itens: ["SOL", "LUA", "MAR", "CÉU"] },
                 { itens: ["UM", "DOIS", "TRÊS", "QUATRO"] }, { itens: ["MÃE", "PAI", "AVÓ", "AVÔ"] },
