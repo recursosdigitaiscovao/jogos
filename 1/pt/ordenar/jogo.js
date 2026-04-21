@@ -47,32 +47,25 @@ window.selectCategory = function(key) {
     if(document.getElementById('scr-game').classList.contains('active')) window.initGame();
 };
 
-// --- TUTORIAL MELHORADO (Mão mais visível e movimento realista) ---
 function renderTutorial(cat) {
     const container = document.getElementById('intro-animation-container');
     if(!container) return;
     const itemEx = cat.rondas[0].itens[0];
-    
     container.innerHTML = `
         <div style="position:relative; width:320px; height:180px; background: rgba(255,255,255,0.2); border-radius:20px; overflow:hidden; border:2px dashed var(--primary-blue);">
-            <!-- Prancha (Alvo) -->
             <div style="position:absolute; top:10px; left:50%; transform:translateX(-50%); width:200px; height:75px; background: url('${JOGO_CONFIG.caminhoImg}letras_magicas.png') no-repeat center; background-size: contain; opacity:0.8;">
                 <div style="position:absolute; top:38%; left:3.3%; width:21.4%; height:38%; border:1px solid rgba(91,164,229,0.5); border-radius:5px;"></div>
             </div>
-            
-            <!-- Cartão que vai ser movido -->
             <div id="tuto-card" style="position:absolute; bottom:20px; left:50%; transform:translateX(-50%); background:white; padding:8px 15px; border-radius:10px; font-weight:900; font-size:14px; box-shadow:0 4px 0 #cbd9e6; z-index:10; border:1px solid #eee;">
                 ${itemEx}
             </div>
-
-            <!-- Mão Animada -->
             <i id="tuto-hand" class="fas fa-hand-pointer" style="position:absolute; bottom:15px; left:55%; color:#f39c12; font-size:28px; z-index:11; text-shadow: 2px 2px 0px #fff;"></i>
         </div>
         <style>
             @keyframes tutoMoveFull {
                 0% { transform: translate(0, 0); opacity: 0; }
                 10% { transform: translate(0, 0); opacity: 1; }
-                40% { transform: translate(-35px, -85px); } /* Sobe para a prancha */
+                40% { transform: translate(-35px, -85px); }
                 70% { transform: translate(-35px, -85px); opacity: 1; }
                 100% { transform: translate(-35px, -85px); opacity: 0; }
             }
@@ -107,12 +100,13 @@ function renderRound() {
                     </div>
                 `).join('')}
             </div>
-            <div id="drag-options" style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center; padding:12px; background:rgba(255,255,255,0.4); border-radius:25px; width:100%; min-height:75px;">
+            <!-- BOTÕES DAS LETRAS: Agora com fundo branco sólido e área tátil total -->
+            <div id="drag-options" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; padding:15px; background:rgba(255,255,255,0.4); border-radius:25px; width:100%; min-height:85px;">
                 ${shuffled.map((item, i) => `
                     <div class="sort-card" 
                          onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
                          data-val="${item}" id="card-${currentIndex}-${i}"
-                         style="background:rgba(255,255,255,0.5); padding:8px 12px; border-radius:12px; font-weight:900; font-size:clamp(12px, 3.5vw, 16px); color:var(--primary-dark); cursor:grab; box-shadow:0 4px 0 #cbd9e6; border:2px solid #eee; min-width:75px; text-align:center; transition: transform 0.1s;">
+                         style="background: #ffffff; padding:12px 18px; border-radius:15px; font-weight:900; font-size:clamp(14px, 4vw, 18px); color:var(--primary-dark); cursor:pointer; box-shadow:0 5px 0 #cbd9e6; border:2px solid var(--primary-blue); min-width:85px; text-align:center; display:flex; align-items:center; justify-content:center; user-select:none;">
                         ${item}
                     </div>
                 `).join('')}
@@ -124,18 +118,16 @@ function renderRound() {
 function fillTarget(targetIdx, val, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
     if(!target) return;
-    target.innerHTML = `<div class="placed-card" style="background:rgba(255,255,255,0.5); color:var(--primary-dark); font-weight:900; font-size:clamp(10px, 3.2vw, 19px); text-align:center; width:96%; height:94%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; padding: 4px; overflow: hidden; word-break: break-word;">${val}</div>`;
+    // Cartão na estante com fundo sólido para ser legível
+    target.innerHTML = `<div class="placed-card" style="background:#ffffff; color:var(--primary-dark); font-weight:900; font-size:clamp(10px, 3.2vw, 19px); text-align:center; width:96%; height:94%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; padding: 4px; overflow: hidden; word-break: break-word;">${val}</div>`;
     originalEl.style.visibility = 'hidden';
     placedItems[targetIdx] = { val: val, originalId: originalEl.id, locked: false };
     if (placedItems.every(x => x !== null)) setTimeout(checkOrder, 600);
 }
 
-// --- DRAG AND DROP MELHORADO (Feedback visual ao arrastar) ---
 function startDrag(e) {
     const el = e.target.closest('.sort-card');
     if (!el || el.style.visibility === 'hidden') return;
-    
-    // Prevenir scroll indesejado
     if(e.cancelable) e.preventDefault();
 
     draggedElement = el;
@@ -157,8 +149,8 @@ function startDrag(e) {
         draggedElement.style.pointerEvents = 'none';
         draggedElement.style.left = (x - offsetX) + 'px';
         draggedElement.style.top = (y - offsetY) + 'px';
-        draggedElement.style.transform = 'scale(1.1) rotate(2deg)'; // Feedback visual
-        draggedElement.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
+        draggedElement.style.transform = 'scale(1.1)'; 
+        draggedElement.style.boxShadow = '0 15px 30px rgba(0,0,0,0.3)';
     }
 
     function onUp(ev) {
@@ -171,11 +163,9 @@ function startDrag(e) {
         draggedElement.style.boxShadow = '';
 
         if (!isDraggingActive) {
-            // Se foi apenas um clique rápido
             const freeIdx = placedItems.findIndex(x => x === null);
             if(freeIdx !== -1) fillTarget(freeIdx, draggedElement.dataset.val, draggedElement);
         } else {
-            // Se foi um arrasto
             const x = (ev.type === 'touchend' ? ev.changedTouches[0].clientX : ev.clientX);
             const y = (ev.type === 'touchend' ? ev.changedTouches[0].clientY : ev.clientY);
             const dropTarget = document.elementFromPoint(x, y)?.closest('.target-box');
@@ -210,7 +200,7 @@ function checkOrder() {
         document.querySelectorAll('.placed-card').forEach(card => {
             card.style.borderColor = "var(--highlight-green)";
             card.style.color = "var(--highlight-green)";
-            card.style.background = "rgba(240, 255, 240, 0.5)";
+            card.style.background = "#f0fff0"; // Verde sólido claro
         });
         
         setTimeout(nextRound, 1200);
@@ -226,12 +216,12 @@ function checkOrder() {
             if (item && item.val === correctOrder[i]) {
                 cardInner.style.borderColor = "var(--highlight-green)";
                 cardInner.style.color = "var(--highlight-green)";
-                cardInner.style.background = "rgba(240, 255, 240, 0.5)";
+                cardInner.style.background = "#f0fff0";
                 item.locked = true; 
             } else if (item) {
                 cardInner.style.borderColor = "var(--error-red)";
                 cardInner.style.color = "var(--error-red)";
-                cardInner.style.background = "rgba(255, 245, 245, 0.5)";
+                cardInner.style.background = "#fff5f5"; // Vermelho sólido claro
                 
                 setTimeout(() => {
                     if(!item.locked) {
@@ -299,5 +289,8 @@ function finishGame() {
 }
 
 const styleTag = document.createElement('style');
-styleTag.innerHTML = `@keyframes popIn { 0% { transform: scale(0.8); opacity:0; } 100% { transform: scale(1); opacity:1; } }`;
+styleTag.innerHTML = `
+    @keyframes popIn { 0% { transform: scale(0.8); opacity:0; } 100% { transform: scale(1); opacity:1; } }
+    .sort-card:active { transform: scale(0.92); transition: 0.1s; }
+`;
 document.head.appendChild(styleTag);
