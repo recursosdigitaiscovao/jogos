@@ -14,14 +14,14 @@ const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const sndErro = new Audio(JOGO_CONFIG.sons.erro);
 const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
+// --- COORDENADAS RECALIBRADAS (-5% no tamanho) ---
 const BOX_CFG = {
-    top: 38,      
-    height: 41,   
-    width: 17.5,  
-    lefts: [7, 30, 53, 76] 
+    top: 39,          // Ajustado levemente para alinhar com a nova altura
+    height: 39,       // Reduzido 5% (de 41 para 39)
+    width: 16.6,      // Reduzido 5% (de 17.5 para 16.6)
+    lefts: [7.5, 30.5, 53.5, 76.5] // Ajustado para manter a centralização com a nova largura
 };
 
-// Esta função será chamada pelo index.html após o initUI
 function startLogic() {
     reconstruirMenuCategorias();
     window.selectCategory(Object.keys(JOGO_CONFIG.categorias)[0]);
@@ -112,12 +112,13 @@ function renderRound() {
                     </div>
                 `).join('')}
             </div>
-            <div id="drag-options" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; padding:15px; background:rgba(255,255,255,0.4); border-radius:25px; width:100%; min-height:85px;">
+            <!-- OPÇÕES (Cartões de baixo) reduzidos em 5% no padding e min-width -->
+            <div id="drag-options" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; padding:15px; background:rgba(255,255,255,0.4); border-radius:25px; width:100%; min-height:80px;">
                 ${shuffled.map((item, i) => `
                     <div class="sort-card" 
                          onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
                          data-val="${item}" id="card-${currentIndex}-${i}"
-                         style="background:white; padding:10px 15px; border-radius:12px; font-weight:900; font-size:clamp(14px, 4vw, 18px); color:var(--primary-dark); cursor:grab; box-shadow:0 6px 0 #cbd9e6; border:2px solid #eee; min-width:70px; text-align:center;">
+                         style="background:white; padding:9px 14px; border-radius:12px; font-weight:900; font-size:clamp(13px, 3.8vw, 17px); color:var(--primary-dark); cursor:grab; box-shadow:0 5px 0 #cbd9e6; border:2px solid #eee; min-width:66px; text-align:center;">
                         ${item}
                     </div>
                 `).join('')}
@@ -139,7 +140,8 @@ window.removeItem = function(idx) {
 function fillTarget(targetIdx, val, originalEl) {
     const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
     if(!target) return;
-    target.innerHTML = `<div class="placed-card" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(12px, 3.8vw, 22px); text-align:center; width:90%; height:88%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; padding: 5px;">${val}</div>`;
+    // Cartão colocado reduzido em 5% no tamanho da fonte
+    target.innerHTML = `<div class="placed-card" style="background:white; color:var(--primary-dark); font-weight:900; font-size:clamp(11px, 3.5vw, 20px); text-align:center; width:90%; height:88%; display:flex; align-items:center; justify-content:center; border-radius:10px; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); animation: popIn 0.3s; padding: 5px;">${val}</div>`;
     originalEl.style.visibility = 'hidden';
     placedItems[targetIdx] = { val: val, originalId: originalEl.id, locked: false };
     if (placedItems.every(x => x !== null)) setTimeout(checkOrder, 600);
@@ -159,7 +161,7 @@ function checkOrder() {
         document.getElementById('score-val').innerText = score;
         placedItems.forEach((item, i) => {
             const target = document.querySelector(`.target-box[data-idx="${i}"]`);
-            if (item.val !== correctOrder[i]) {
+            if (item && item.val !== correctOrder[i]) {
                 setTimeout(() => {
                     const originalEl = document.getElementById(item.originalId);
                     target.innerHTML = "";
@@ -235,3 +237,7 @@ function finishGame() {
     document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rel.img;
     if(window.goToResult) window.goToResult();
 }
+
+const styleTag = document.createElement('style');
+styleTag.innerHTML = `@keyframes popIn { 0% { transform: scale(0.8); opacity:0; } 100% { transform: scale(1); opacity:1; } }`;
+document.head.appendChild(styleTag);
