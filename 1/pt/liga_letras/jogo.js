@@ -8,7 +8,7 @@ let timerSeconds = 0;
 let timerInterval;
 
 let isDrawing = false;
-let currentPath = []; 
+let currentPathNodes = []; 
 let lettersOrder = []; 
 
 const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
@@ -41,10 +41,7 @@ window.selectCategory = function(key) {
         document.getElementById('status-bar').style.display = 'none';
         document.getElementById('main-game-title').style.display = 'block';
     }
-
-    if(document.getElementById('scr-game').classList.contains('active')) {
-        window.initGame();
-    }
+    if(document.getElementById('scr-game').classList.contains('active')) window.initGame();
 };
 
 function renderTutorial(cat) {
@@ -53,12 +50,31 @@ function renderTutorial(cat) {
     const item = cat.itens[0];
     
     container.innerHTML = `
-        <div style="position:relative; width:260px; height:180px; background:white; border-radius:25px; box-shadow:0 10px 30px rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; border: 4px solid #f0f7ff;">
+        <div style="position:relative; width:260px; height:200px; background:white; border-radius:25px; box-shadow:0 10px 30px rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; border: 4px solid #f0f7ff; overflow:hidden;">
             <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:70px; z-index:2;">
-            <div style="position:absolute; width:40px; height:40px; background:var(--primary-blue); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; top:20px; left:110px; z-index:3;">${item.nome[0]}</div>
-            <i class="fas fa-hand-pointer" id="tuto-hand" style="position:absolute; top:45px; left:130px; color:#f39c12; font-size:24px; z-index:4; animation: tapLetter 1.5s infinite;"></i>
+            <!-- Letras fixas para o tutorial -->
+            <div class="tuto-node" style="position:absolute; top:30px; left:110px; width:35px; height:35px; background:var(--primary-blue); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; z-index:3;">${item.nome[0]}</div>
+            <div class="tuto-node" style="position:absolute; top:130px; left:160px; width:35px; height:35px; background:var(--primary-blue); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; z-index:3;">${item.nome[1]}</div>
+            
+            <svg style="position:absolute; width:100%; height:100%; pointer-events:none; z-index:2;">
+                <line id="tuto-line" x1="127" y1="47" x2="127" y2="47" stroke="#7ed321" stroke-width="4" stroke-linecap="round" />
+            </svg>
+
+            <i class="fas fa-hand-pointer" id="tuto-hand" style="position:absolute; top:50px; left:120px; color:#f39c12; font-size:24px; z-index:10;"></i>
         </div>
-        <style> @keyframes tapLetter { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.8); } } </style>
+        <style>
+            @keyframes tutoPlay {
+                0% { top: 50px; left: 120px; }
+                50% { top: 150px; left: 170px; }
+                100% { top: 150px; left: 170px; opacity:0; }
+            }
+            @keyframes linePlay {
+                0% { x2: 127; y2: 47; }
+                50%, 100% { x2: 177; y2: 147; }
+            }
+            #tuto-hand { animation: tutoPlay 2.5s infinite ease-in-out; }
+            #tuto-line { animation: linePlay 2.5s infinite ease-in-out; }
+        </style>
     `;
 }
 
@@ -97,7 +113,7 @@ function renderRound() {
     const item = gameItems[currentIndex];
     if(!item) { finishGame(); return; }
     
-    currentPath = [];
+    currentPathNodes = [];
     lettersOrder = item.nome.toUpperCase().split('');
     const isLevel2 = (currentLevel === 2);
 
@@ -139,35 +155,44 @@ function setupInteractions() {
     const canvas = document.getElementById('line-canvas');
     const ctx = canvas.getContext('2d');
 
-    const handleInput = (e) => {
-        const x = (e.touches ? e.touches[0].clientX : e.clientX);
-        const y = (e.touches ? e.touches[0].clientY : e.clientY);
-        const node = document.elementFromPoint(x, y)?.closest('.letter-node');
+    const getTargetNode = (x, y) => document.elementFromPoint(x, y)?.closest('.letter-node');
 
-        if (e.type === 'mousedown' || e.type === 'touchstart') {
+    const handleStart = (e) => {
+        const x = e.touches ? e.touches[0].clientX : e.clientX;
+        const y = e.touches ? e.touches[0].clientY : e.clientY;
+        const node = getTargetNode(x, y);
+        if (node) {
             isDrawing = true;
-            if (node) checkNode(node);
-        } else if (isDrawing && node) {
             checkNode(node);
         }
-        
-        if (isDrawing) drawLines(x, y);
     };
 
-    const stopInput = () => {
+    const handleMove = (e) => {
+        if (!isDrawing) return;
+        const x = e.touches ? e.touches[0].clientX : e.clientX;
+        const y = e.touches ? e.touches[0].clientY : e.clientY;
+        const node = getTargetNode(x, y);
+        if (node) checkNode(node);
+        drawLines(x, y);
+    };
+
+    const handleEnd = () => {
         if (!isDrawing) return;
         isDrawing = false;
-        if (currentPath.length < lettersOrder.length) resetRoundUI();
+        // Se a palavra não estiver completa, as linhas ficam mas o arrasto para
+        if (currentPathNodes.length < lettersOrder.length) {
+             drawLines(); // Desenha apenas as conexões fixas
+        }
     };
 
     const checkNode = (node) => {
-        if (currentPath.includes(node)) return;
-        const nextIdx = currentPath.length;
+        if (currentPathNodes.includes(node)) return;
+        const nextIdx = currentPathNodes.length;
         if (node.dataset.letter === lettersOrder[nextIdx]) {
-            currentPath.push(node);
+            currentPathNodes.push(node);
             node.style.background = "var(--highlight-green)";
             node.style.boxShadow = "0 4px 0 #66a318";
-            if (currentPath.length === lettersOrder.length) {
+            if (currentPathNodes.length === lettersOrder.length) {
                 isDrawing = false;
                 drawLines();
                 setTimeout(handleSuccess, 500);
@@ -180,11 +205,11 @@ function setupInteractions() {
 
     const drawLines = (curX, curY) => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (currentPath.length === 0) return;
+        if (currentPathNodes.length === 0) return;
         ctx.beginPath();
-        ctx.strokeStyle = "#7ed321"; ctx.lineWidth = 6; ctx.lineCap = ctx.lineJoin = "round";
+        ctx.strokeStyle = "#7ed321"; ctx.lineWidth = 8; ctx.lineCap = ctx.lineJoin = "round";
         const rect = wheel.getBoundingClientRect();
-        currentPath.forEach((node, i) => {
+        currentPathNodes.forEach((node, i) => {
             const r = node.getBoundingClientRect();
             const x = (r.left + r.width/2) - rect.left;
             const y = (r.top + r.height/2) - rect.top;
@@ -194,12 +219,12 @@ function setupInteractions() {
         ctx.stroke();
     };
 
-    wheel.addEventListener('mousedown', handleInput);
-    window.addEventListener('mousemove', handleInput);
-    window.addEventListener('mouseup', stopInput);
-    wheel.addEventListener('touchstart', handleInput);
-    window.addEventListener('touchmove', handleInput);
-    window.addEventListener('touchend', stopInput);
+    wheel.addEventListener('mousedown', handleStart);
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleEnd);
+    wheel.addEventListener('touchstart', handleStart);
+    window.addEventListener('touchmove', handleMove);
+    window.addEventListener('touchend', handleEnd);
 }
 
 function triggerError(node) {
@@ -207,17 +232,15 @@ function triggerError(node) {
     score = Math.max(0, score - JOGO_CONFIG.pontuacao.erro);
     document.getElementById('score-val').innerText = score;
     node.style.background = "var(--error-red)";
-    setTimeout(resetRoundUI, 400);
-}
-
-function resetRoundUI() {
-    const ctx = document.getElementById('line-canvas')?.getContext('2d');
-    if(ctx) ctx.clearRect(0, 0, 260, 260);
-    currentPath = [];
-    document.querySelectorAll('.letter-node').forEach(n => {
-        n.style.background = "var(--primary-blue)";
-        n.style.boxShadow = "0 4px 0 var(--primary-dark)";
-    });
+    setTimeout(() => {
+        const ctx = document.getElementById('line-canvas').getContext('2d');
+        ctx.clearRect(0, 0, 260, 260);
+        currentPathNodes = [];
+        document.querySelectorAll('.letter-node').forEach(n => {
+            n.style.background = "var(--primary-blue)";
+            n.style.boxShadow = "0 4px 0 var(--primary-dark)";
+        });
+    }, 400);
 }
 
 function handleSuccess() {
