@@ -72,9 +72,9 @@ const JOGO_CONFIG = {
                 { nome: "TESOURA", silabas: 3, img: "materialescolar/tesoura.png" },
                 { nome: "LÁPIS", silabas: 2, img: "materialescolar/lapis.png" },
                 { nome: "LIVRO", silabas: 2, img: "materialescolar/livro.png" },
-                { nome: "AFIA", silabas: 2, img: "materialescolar/afia.png" },
+                { nome: "AFIA", silabas: 3, img: "materialescolar/afia.png" },
                 { nome: "CANETA", silabas: 3, img: "materialescolar/caneta.png" },
-                { nome: "RÉGUA", silabas: 3, img: "materialescolar/regua.png" },
+                { nome: "RÉGUA", silabas: 2, img: "materialescolar/regua.png" },
                 { nome: "BORRACHA", silabas: 3, img: "materialescolar/borracha.png" },
                 { nome: "COLA", silabas: 2, img: "materialescolar/cola.png" },
                 { nome: "ESTOJO", silabas: 3, img: "materialescolar/estojo.png" }
