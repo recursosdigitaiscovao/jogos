@@ -2,8 +2,8 @@ const JOGO_CONFIG = {
     nomeJogo: "CONTAR SÍLABAS", 
     linkVoltar: "../", 
     textoVoltar: "VOLTAR",
-    caminhoImg: "../../../img/",
-    caminhoIcons: "../../../icons/",
+    caminhoImg: "../../../img/",    // Onde está o rd.png e fotos das categorias
+    caminhoIcons: "../../../icons/", // Onde estão as taças e ícones de navegação
     caminhoSom: "", 
     sons: {
         acerto: "https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3",
