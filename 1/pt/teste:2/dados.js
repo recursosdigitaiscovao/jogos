@@ -58,7 +58,7 @@ const JOGO_CONFIG = {
                 { nome: "PAPAIA", silabas: 3, img: "frutas/papaia.png" },
                 { nome: "MAÇÃ", silabas: 2, img: "frutas/maca.png" },
                 { nome: "PERA", silabas: 2, img: "frutas/pera.png" },
-                { nome: "ABACAXI", silabas: 4, img: "frutas/abacaxi.png" }
+                { nome: "MARACUJÁ", silabas: 4, img: "frutas/maracuja.png" }
             ]
         },
         material: {
