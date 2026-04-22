@@ -41,27 +41,18 @@
         .logo-text h1 { font-size: 17px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 9px; color: #88a; font-weight: 700; }
 
-        /* Botões do Header */
         .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; padding: 5px; position: relative; z-index: 2601; }
         
-        /* Voltar Desktop */
+        /* Botão Voltar Desktop (voltar.png) */
         .btn-voltar-header { 
             background: var(--primary-blue); color: white; padding: 7px 15px; border-radius: 12px; 
             text-decoration: none; font-weight: 900; font-size: 13px; display: flex; align-items: center; gap: 8px;
             box-shadow: 0 4px 0 var(--primary-dark);
         }
 
-        /* Voltar Mobile (volta_az.png) - PORTRAIT */
+        /* Botão Voltar Mobile Portrait (volta_az.png) */
         .btn-voltar-mobile { display: none; text-decoration: none; padding: 5px; position: relative; z-index: 2601; }
         .btn-voltar-mobile img { height: 32px; width: auto; display: block; }
-
-        /* Botão Flutuante (voltar.png) - LANDSCAPE */
-        .btn-floating-back {
-            display: none; position: fixed; top: 10px; right: 10px; z-index: 4000;
-            background: var(--primary-blue); color: white; padding: 8px 12px; border-radius: 10px;
-            text-decoration: none; font-weight: 900; font-size: 12px; align-items: center; gap: 6px;
-            box-shadow: 0 4px 0 var(--primary-dark);
-        }
 
         /* --- MENU HAMBURGUER --- */
         .menu-dropdown { 
@@ -104,7 +95,7 @@
         .dots-container { display: flex; gap: 6px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; background: #d0e0f0; }
 
-        /* --- SCREENS --- */
+        /* --- TELAS --- */
         .screen { flex: 1; display: none; width: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
         #scr-intro { justify-content: center; }
@@ -129,31 +120,34 @@
         .rd-panel.active { bottom: 0; }
         #rd-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 
-        /* --- RESPONSIVIDADE MOBILE PORTRAIT --- */
+        /* --- RESPONSIVIDADE MOBILE PORTRAIT (VERTICAL) --- */
         @media (max-width: 650px) {
             .btn-voltar-header { display: none !important; }
             .btn-voltar-mobile { display: flex; align-items: center; }
+            .logo-text p { display: none; }
         }
 
-        /* --- RESPONSIVIDADE MOBILE LANDSCAPE (DEITADO) --- */
+        /* --- RESPONSIVIDADE MOBILE LANDSCAPE (HORIZONTAL / DEITADO) --- */
         @media (max-height: 500px) and (orientation: landscape) {
-            header { display: none !important; } 
-            .btn-floating-back { display: flex; } 
+            header { display: none !important; } /* Esconde o header completamente */
+            
             .game-container { padding: 5px; } 
             .game-card { 
                 border-radius: 15px; 
-                padding: 10px; 
+                padding: 8px; 
                 max-width: none; 
-                height: 94dvh; /* Altura ajustada para não ficar "grande demais" ou esticada */
+                height: 98dvh; /* Usa quase toda a altura disponível do ecrã */
             }
+            
             #game-main-content { 
                 border-radius: 10px; 
-                padding: 5px; 
+                padding: 10px; 
                 border-width: 2px;
             }
+
             #main-game-title { display: none; }
             .status-bar { margin-bottom: 5px; }
-            #intro-instr { margin-bottom: 8px; font-size: 14px; }
+            #intro-instr { margin-bottom: 8px; font-size: 14px; max-width: 400px; }
             .btn-jogar-stretch { padding: 8px; font-size: 16px; }
             #rd-intro-btn { height: 45px; }
         }
@@ -162,11 +156,6 @@
 <body>
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
     
-    <!-- Botão Flutuante Landscape (voltar.png) -->
-    <a href="#" id="link-voltar-floating" class="btn-floating-back">
-        <img id="floating-back-icon" src="" width="16"> <span id="txt-voltar-floating">voltar</span>
-    </a>
-
     <header>
         <div class="header-left">
             <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
@@ -203,6 +192,7 @@
 
             <h2 id="main-game-title" style="text-align:center; color:var(--primary-blue); font-weight:900; font-size:24px; margin-bottom: 10px;">---</h2>
 
+            <!-- INTRO -->
             <section class="screen active" id="scr-intro">
                 <div id="intro-animation-container"></div>
                 <p id="intro-instr"></p>
@@ -212,10 +202,12 @@
                 </div>
             </section>
 
+            <!-- ÁREA DE JOGO -->
             <section class="screen" id="scr-game">
                 <div id="game-main-content"></div>
             </section>
 
+            <!-- RESULTADOS -->
             <section class="screen" id="scr-result">
                 <img id="res-taca" style="width:100px; margin-bottom:10px;">
                 <h2 id="res-tit" style="font-size:26px; color: var(--primary-blue); font-weight:900; margin-bottom:15px;"></h2>
@@ -253,21 +245,18 @@
         document.getElementById('mainFooter').innerHTML = conf.textos.rodape;
         document.getElementById('mainFooter').style.display = 'flex';
         
-        // Caminhos das Imagens
         const pathIcons = conf.caminhoIcons;
         document.getElementById('head-logo').src = pathIcons + conf.iconesMenu.ano1;
         
-        // Botão Desktop e Flutuante (voltar.png)
+        // Botão Desktop (voltar.png)
         document.getElementById('header-back-icon').src = pathIcons + "voltar.png";
-        document.getElementById('floating-back-icon').src = pathIcons + "voltar.png";
         
         // Botão Mobile Portrait (volta_az.png)
-        document.getElementById('header-back-mobile').src = pathIcons + "voltar_az.png";
+        document.getElementById('header-back-mobile').src = pathIcons + "volta_az.png";
         
-        // Configuração de Links
+        // Links
         document.getElementById('link-voltar-header').href = conf.linkVoltar;
         document.getElementById('link-voltar-mobile').href = conf.linkVoltar;
-        document.getElementById('link-voltar-floating').href = conf.linkVoltar;
         document.getElementById('btn-outro-jogo').href = conf.linkVoltar;
         document.getElementById('txt-voltar-header').innerText = conf.textoVoltar;
         
