@@ -43,6 +43,7 @@
 
         .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
 
+        /* MENU DROPDOWN */
         .menu-dropdown { 
             position: absolute; top: 65px; left: 15px; display: none; 
             flex-direction: column; gap: 6px; z-index: 2000; 
@@ -51,12 +52,31 @@
             display: flex; align-items: center; gap: 12px; padding: 10px 16px; 
             background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); 
             text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 0.85rem; 
-            min-width: 180px; transition: background 0.2s;
+            min-width: 180px; transition: all 0.2s ease;
+            border: 2px solid transparent;
         }
-        .menu-item:hover { background: #f8f9fa; }
-        .menu-item img { height: 20px; width: 20px; object-fit: contain; }
+
+        /* HOVER MENU: Fica azul (cor do botão jogar) */
+        .menu-item:not(.menu-item-voltar):hover { 
+            background: var(--primary-blue); 
+            color: white;
+        }
+        /* Garante que o ícone fica visível/claro no hover azul */
+        .menu-item:hover img { filter: brightness(0) invert(1); }
+
+        .menu-item img { height: 20px; width: 20px; object-fit: contain; transition: 0.2s; }
+
+        /* Estilo base do Voltar (já é azul) */
         .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
         .menu-item-voltar img { filter: brightness(0) invert(1); }
+        
+        /* HOVER VOLTAR: Fica branco (igual ao comportamento do jogar) */
+        .menu-item-voltar:hover {
+            background: white !important;
+            color: var(--primary-blue) !important;
+            border-color: var(--primary-blue);
+        }
+        .menu-item-voltar:hover img { filter: none; }
 
         .btn-voltar-header { 
             background: var(--primary-blue); color: white; padding: 7px 15px; border-radius: 12px; 
@@ -88,17 +108,26 @@
         #intro-animation-container { width: 100%; display: flex; justify-content: center; }
         #intro-instr { font-weight: 800; color: var(--text-grey); text-align: center; max-width: 300px; margin-bottom: 20px; }
 
-        /* BOTÕES PRINCIPAIS */
+        /* BOTÃO JOGAR */
         .action-container { 
             width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; 
             margin-top: auto; padding-bottom: 5px;
         }
         .btn-jogar-stretch { 
-            flex: 1; max-width: 350px; background: var(--primary-blue); color: white; border: none; 
+            flex: 1; max-width: 350px; background: var(--primary-blue); color: white; border: 2px solid transparent; 
             border-radius: 18px; padding: 14px; font-size: 18px; font-weight: 900; 
-            cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); transition: 0.1s; 
+            cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); transition: all 0.2s ease; 
             text-align: center; text-decoration: none; 
         }
+
+        /* HOVER JOGAR: Fica branco com texto azul */
+        .btn-jogar-stretch:hover {
+            background: white;
+            color: var(--primary-blue);
+            border-color: var(--primary-blue);
+            box-shadow: 0 5px 0 #cbd9e6;
+        }
+
         .btn-jogar-stretch:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--primary-dark); }
 
         /* TEMA SELECTION (RD) */
@@ -114,19 +143,8 @@
 
         footer { height: 45px; display: none; align-items: center; justify-content: center; color: #89a; font-size: 11px; font-weight: 700; }
 
-        /* RESPONSIVIDADE */
         @media (max-width: 650px) {
             .btn-voltar-header { display: none !important; }
-            .logo-center img { height: 38px; }
-            .logo-text h1 { font-size: 14px; }
-        }
-
-        @media (max-height: 550px) and (orientation: landscape) {
-            header { height: 50px; }
-            .logo-center img { height: 30px; }
-            .game-card { padding: 8px; border-radius: 20px; }
-            #intro-instr { margin-bottom: 5px; font-size: 14px; }
-            .btn-jogar-stretch { padding: 8px; font-size: 16px; }
         }
     </style>
 </head>
@@ -166,7 +184,6 @@
 
             <h2 id="main-game-title" style="text-align:center; color:var(--primary-blue); font-weight:900; font-size:24px; margin-bottom: 10px;">---</h2>
 
-            <!-- INTRO -->
             <section class="screen active" id="scr-intro">
                 <div id="intro-animation-container"></div>
                 <p id="intro-instr"></p>
@@ -176,22 +193,16 @@
                 </div>
             </section>
 
-            <!-- GAME -->
             <section class="screen" id="scr-game">
                 <div id="game-main-content" style="width:100%; flex:1; display:flex; align-items:center; justify-content:center;"></div>
             </section>
 
-            <!-- RESULT -->
-            <section class="screen" id="scr-result" style="justify-content:center;">
+            <section class="screen" id="scr-result">
                 <img id="res-taca" style="width:110px; margin-bottom:10px;">
                 <h2 id="res-tit" style="font-size:26px; color: var(--primary-blue); font-weight:900; margin-bottom:15px;"></h2>
                 <div style="display:flex; gap:12px; margin-bottom:20px;">
-                    <div style="background:white; padding:10px 20px; border-radius:15px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
-                        <span id="res-pts" style="font-size:20px; font-weight:900; color:var(--primary-blue);">0</span><br><small>PONTOS</small>
-                    </div>
-                    <div style="background:white; padding:10px 20px; border-radius:15px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
-                        <span id="res-tim" style="font-size:20px; font-weight:900; color:var(--primary-blue);">00:00</span><br><small>TEMPO</small>
-                    </div>
+                    <div style="background:white; padding:10px 20px; border-radius:15px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05);"><span id="res-pts" style="font-size:20px; font-weight:900; color:var(--primary-blue);">0</span><br><small>PONTOS</small></div>
+                    <div style="background:white; padding:10px 20px; border-radius:15px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05);"><span id="res-tim" style="font-size:20px; font-weight:900; color:var(--primary-blue);">00:00</span><br><small>TEMPO</small></div>
                 </div>
                 <div style="display:flex; flex-direction:column; gap:10px; width:100%; max-width:300px;">
                     <button class="btn-jogar-stretch" onclick="location.reload()">JOGAR DE NOVO</button>
@@ -204,7 +215,6 @@
 
     <footer id="mainFooter"></footer>
 
-    <!-- MENU RD -->
     <div id="rdMenu" class="rd-panel">
         <div style="width:40px; height:4px; background:#eee; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div>
         <h3 style="text-align:center; color:var(--primary-blue); margin-bottom:15px;">Escolher Tema</h3>
