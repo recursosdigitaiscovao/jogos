@@ -41,7 +41,12 @@
         .logo-text h1 { font-size: 17px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 9px; color: #88a; font-weight: 700; }
 
+        /* BOTÕES LATERAIS HEADER */
         .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; padding: 5px; position: relative; z-index: 2001; }
+        
+        /* Botão Voltar Mobile (Escondido por padrão) */
+        .btn-voltar-mobile { display: none; text-decoration: none; padding: 5px; position: relative; z-index: 2001; }
+        .btn-voltar-mobile img { height: 32px; width: auto; display: block; }
 
         /* MENU DROPDOWN */
         .menu-dropdown { 
@@ -56,16 +61,13 @@
             border: 2px solid transparent;
         }
 
-        /* HOVER MENU: Fundo azul, mas IMAGEM e TEXTO mantêm a cor original */
-        .menu-item:not(.menu-item-voltar):hover { 
-            background: var(--primary-blue); 
-        }
+        .menu-item:not(.menu-item-voltar):hover { background: var(--primary-blue); }
         .menu-item img { height: 20px; width: 20px; object-fit: contain; }
 
-        /* Item Voltar (já é azul por padrão) */
         .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
         .menu-item-voltar img { filter: brightness(0) invert(1); }
         
+        /* BOTÃO VOLTAR DESKTOP */
         .btn-voltar-header { 
             background: var(--primary-blue); color: white; padding: 7px 15px; border-radius: 12px; 
             text-decoration: none; font-weight: 900; font-size: 13px; display: flex; align-items: center; gap: 8px;
@@ -73,10 +75,7 @@
         }
 
         /* GAME CONTAINER */
-        .game-container { 
-            flex: 1; display: flex; justify-content: center; align-items: center; 
-            padding: 10px; overflow: hidden; 
-        }
+        .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden; }
         .game-card { 
             background: #f0f7ff; width: 100%; max-width: 1000px; height: 100%; 
             border-radius: 40px; box-shadow: 0 15px 35px rgba(176,196,217,0.5); 
@@ -91,34 +90,21 @@
         /* SCREENS */
         .screen { flex: 1; display: none; width: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
-
         #scr-intro { justify-content: center; }
-        #intro-animation-container { width: 100%; display: flex; justify-content: center; }
         #intro-instr { font-weight: 800; color: var(--text-grey); text-align: center; max-width: 300px; margin-bottom: 20px; }
 
-        /* BOTÃO JOGAR */
-        .action-container { 
-            width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; 
-            margin-top: auto; padding-bottom: 5px;
-        }
+        /* BOTOES JOGO */
+        .action-container { width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: auto; padding-bottom: 5px; }
         .btn-jogar-stretch { 
             flex: 1; max-width: 350px; background: var(--primary-blue); color: white; border: 2px solid transparent; 
             border-radius: 18px; padding: 14px; font-size: 18px; font-weight: 900; 
             cursor: pointer; box-shadow: 0 5px 0 var(--primary-dark); transition: all 0.2s ease; 
             text-align: center; text-decoration: none; 
         }
-
-        /* HOVER JOGAR: Fundo branco, Texto Azul */
-        .btn-jogar-stretch:hover {
-            background: white;
-            color: var(--primary-blue);
-            border-color: var(--primary-blue);
-            box-shadow: 0 5px 0 #cbd9e6;
-        }
-
+        .btn-jogar-stretch:hover { background: white; color: var(--primary-blue); border-color: var(--primary-blue); box-shadow: 0 5px 0 #cbd9e6; }
         .btn-jogar-stretch:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--primary-dark); }
 
-        /* TEMA SELECTION (RD) */
+        /* RD PANEL */
         .rd-panel { 
             position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 2100; 
             padding: 20px; border-radius: 30px 30px 0 0; transition: 0.4s; 
@@ -128,16 +114,19 @@
         #rd-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
-
         footer { height: 45px; display: none; align-items: center; justify-content: center; color: #89a; font-size: 11px; font-weight: 700; }
 
+        /* RESPONSIVIDADE MOBILE */
         @media (max-width: 650px) {
             .btn-voltar-header { display: none !important; }
+            .btn-voltar-mobile { display: flex; align-items: center; }
+            .logo-center img { height: 38px; }
+            .logo-text h1 { font-size: 14px; }
+            .logo-text p { font-size: 8px; }
         }
     </style>
 </head>
 <body>
-    <!-- Overlay agora serve para o RD Menu e para o Hamburger Menu -->
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
     
     <header>
@@ -154,8 +143,13 @@
             </div>
         </div>
         <div class="header-right">
+            <!-- Botão Desktop -->
             <a href="#" id="link-voltar-header" class="btn-voltar-header">
                 <img id="header-back-icon" src="" width="16"> <span id="txt-voltar-header"></span>
+            </a>
+            <!-- Botão Mobile -->
+            <a href="#" id="link-voltar-mobile" class="btn-voltar-mobile">
+                <img id="header-back-mobile" src="" alt="Voltar">
             </a>
         </div>
     </header>
@@ -222,11 +216,20 @@
         document.getElementById('intro-instr').innerText = conf.textos.instrucao;
         document.getElementById('mainFooter').innerHTML = conf.textos.rodape;
         document.getElementById('mainFooter').style.display = 'flex';
+        
+        // Logos e Icons
         document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu.ano1;
         document.getElementById('header-back-icon').src = conf.caminhoIcons + "voltar.png";
+        
+        // Botão Voltar Mobile específico
+        document.getElementById('header-back-mobile').src = conf.caminhoIcons + "volta_az.png";
+        
+        // Links
         document.getElementById('txt-voltar-header').innerText = conf.textoVoltar;
         document.getElementById('link-voltar-header').href = conf.linkVoltar;
+        document.getElementById('link-voltar-mobile').href = conf.linkVoltar;
         document.getElementById('btn-outro-jogo').href = conf.linkVoltar;
+        
         document.getElementById('rd-intro-btn').src = conf.caminhoImg + "rd.png";
         document.getElementById('rd-game-btn').src = conf.caminhoImg + "rd.png";
         
@@ -253,18 +256,16 @@
         if(window.initGame) window.initGame();
     }
 
-    // MODIFICADO: Agora ativa o overlay para permitir fechar ao clicar fora
     function toggleHamburger(e) { 
         e.stopPropagation(); 
         const m = document.getElementById('dropdownMenu'); 
         const ov = document.getElementById('overlay');
-        
         if(m.style.display === 'flex') {
             m.style.display = 'none';
             ov.style.display = 'none';
         } else {
             m.style.display = 'flex';
-            ov.style.display = 'block'; // Mostra o overlay para capturar o clique fora
+            ov.style.display = 'block';
         }
     }
 
@@ -274,7 +275,6 @@
         document.getElementById('overlay').style.display = 'block'; 
     }
 
-    // Corrigido e centralizado: fecha TUDO e esconde o overlay
     function closeMenus() { 
         document.getElementById('rdMenu').classList.remove('active'); 
         document.getElementById('dropdownMenu').style.display = 'none'; 
