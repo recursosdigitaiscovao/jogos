@@ -1,5 +1,5 @@
 const JOGO_CONFIG = {
-    nomeJogo: "CONTAR SÍLABAS", // Nome que aparece no topo e na aba do browser
+    nomeJogo: "CONTAR SÍLABAS", 
     linkVoltar: "../", 
     textoVoltar: "VOLTAR",
     caminhoImg: "../../../img/",
@@ -14,7 +14,7 @@ const JOGO_CONFIG = {
         tituloLinha1: "PEQUENOS",
         tituloLinha2: "LEITORES",
         subtitulo: "Português | 1º Ano",
-        instrucao: "Clica no local exato da palavra para a separar em sílabas corretamente!",
+        instrucao: "Clica no número que corresponde à quantidade de sílabas da palavra!",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos"
     },
     iconesMenu: {
