@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Contar Sílabas</title>
+    <title>Jogo</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -14,17 +14,12 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
-
-        body { 
-            background-color: var(--bg-page); height: 100dvh; width: 100vw; 
-            overflow: hidden; display: flex; flex-direction: column; 
-        }
+        body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
 
         /* --- HEADER --- */
         header { 
-            height: var(--header-h); background: #f0f7ff; display: flex; align-items: center; 
-            justify-content: space-between; padding: 0 20px; z-index: 2500; flex-shrink: 0;
-            box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4); position: relative;
+            height: var(--header-h); background: #f0f7ff; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; z-index: 2500; flex-shrink: 0; box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4); position: relative;
         }
         .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; pointer-events: none; white-space: nowrap; }
         .logo-center img { height: 48px; width: auto; }
@@ -36,7 +31,6 @@
         .btn-voltar-mobile { display: none; text-decoration: none; padding: 5px; position: relative; z-index: 2601; }
         .btn-voltar-mobile img { height: 32px; width: auto; display: block; }
 
-        /* --- MENUS --- */
         .menu-dropdown { position: absolute; top: 65px; left: 15px; display: none; flex-direction: column; gap: 6px; z-index: 2600; }
         .menu-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 0.85rem; min-width: 180px; transition: background 0.2s; border: 2px solid transparent; }
         .menu-item:not(.menu-item-voltar):hover { background: var(--primary-blue); }
@@ -46,11 +40,11 @@
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
 
-        /* --- GAME CONTAINER --- */
+        /* --- GAME CARD --- */
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden; z-index: 1; }
         .game-card { background: #f0f7ff; width: 100%; max-width: 1000px; height: 100%; border-radius: 40px; box-shadow: 0 15px 35px rgba(176,196,217,0.5); display: flex; flex-direction: column; padding: 15px; position: relative; overflow: hidden; }
 
-        /* --- STATUS BAR --- */
+        /* --- BARRA DE STATUS --- */
         .status-bar { display: none; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-shrink: 0; gap: 10px; }
         .status-group { display: flex; align-items: center; gap: 8px; }
         .badge { display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 12px; font-weight: 900; font-size: 13px; color: white; min-width: 65px; justify-content: center; }
@@ -63,7 +57,17 @@
         .dot { width: 8px; height: 8px; border-radius: 50%; background: #d0e0f0; transition: 0.3s; }
         .dot.active { background: var(--primary-blue); transform: scale(1.3); }
 
-        /* --- ÁREA DE JOGO --- */
+        /* --- AREA DE ANIMAÇÃO (ECRÃ 1) --- */
+        #intro-animation-container {
+            width: 100%; max-width: 320px; height: 180px;
+            background: rgba(255, 255, 255, 0.4);
+            border: 2px dashed rgba(91, 164, 229, 0.3);
+            border-radius: 25px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        /* --- ÁREA DE JOGO (ECRÃ 2) --- */
         #game-main-content {
             flex: 1; width: 100%; background: var(--white);
             border: 3px dashed rgba(91, 164, 229, 0.4);
@@ -76,7 +80,7 @@
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; flex: 1; }
         .screen.active { display: flex !important; }
         #scr-intro { justify-content: center; }
-        #intro-instr { font-weight: 800; color: var(--text-grey); text-align: center; max-width: 400px; margin-bottom: 20px; padding: 0 10px; }
+        #intro-instr { font-weight: 800; color: var(--text-grey); text-align: center; max-width: 400px; margin-bottom: 20px; padding: 0 10px; font-size: 15px; }
 
         /* --- BOTÕES --- */
         .action-container { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: auto; padding-bottom: 5px; flex-shrink: 0; }
@@ -97,14 +101,12 @@
         .rd-item { background: #f8f9fa; border: 2px solid #eef5ff; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; }
         .rd-item img { width: 60px; height: 60px; object-fit: contain; }
 
-        /* --- RESPONSIVIDADE --- */
         @media (max-width: 650px) { .btn-voltar-header { display: none !important; } .btn-voltar-mobile { display: flex; align-items: center; } .logo-text p, .dots-container { display: none; } .badge { min-width: 55px; padding: 4px 8px; font-size: 11px; } }
         @media (max-height: 500px) and (orientation: landscape) { header { display: none !important; } .game-card { border-radius: 15px; height: 98dvh; padding: 8px; } #game-main-content { border-radius: 10px; padding: 5px; } #main-game-title { display: none; } }
     </style>
 </head>
 <body>
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
-    
     <header>
         <div class="header-left">
             <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
@@ -136,9 +138,8 @@
             <div class="dots-container" id="dots-container"></div>
             <h2 id="main-game-title" style="text-align:center; color:var(--primary-blue); font-weight:900; font-size:24px; margin: 10px 0;">---</h2>
 
-            <!-- ECRÃ 1: INTRO -->
             <section class="screen active" id="scr-intro">
-                <div id="intro-animation-container" style="width:100%; display:flex; justify-content:center;"></div>
+                <div id="intro-animation-container"></div>
                 <p id="intro-instr"></p>
                 <div class="action-container">
                     <button class="btn-jogar-stretch" onclick="goToGame()">JOGAR</button>
@@ -146,12 +147,10 @@
                 </div>
             </section>
 
-            <!-- ECRÃ 2: JOGO -->
             <section class="screen" id="scr-game">
                 <div id="game-main-content"></div>
             </section>
 
-            <!-- ECRÃ 3: RESULTADOS -->
             <section class="screen" id="scr-result">
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%;">
                     <img id="res-taca" style="width:110px; margin-bottom:10px;" src="">
@@ -162,10 +161,7 @@
                     </div>
                     <div class="action-container" style="flex-direction: column; width: 100%; max-width: 400px; gap: 10px; padding:0;">
                         <button class="btn-jogar-stretch" onclick="location.reload()" style="width: 100%;">JOGAR DE NOVO</button>
-                        
-                        <!-- BOTÃO UNIFICADO TEMA / NÍVEL -->
                         <button class="btn-jogar-stretch" style="background:white; color:var(--primary-blue); border:2px solid var(--primary-blue); box-shadow:none; width: 100%; font-size:15px;" onclick="openRDMenu(event)">OUTRO TEMA / NÍVEL</button>
-                        
                         <a href="#" id="btn-outro-jogo" class="btn-jogar-stretch" style="background:#cbd9e6; color:#445; box-shadow:none; border:none; width: 100%; font-size:14px;">ESCOLHER OUTRO JOGO</a>
                     </div>
                 </div>
@@ -197,6 +193,7 @@
         document.getElementById('head-logo').src = pathIcons + conf.iconesMenu.ano1;
         document.getElementById('header-back-icon').src = pathIcons + "voltar.png";
         document.getElementById('header-back-mobile').src = pathIcons + "voltar_az.png";
+        
         document.getElementById('rd-intro-btn').src = pathImg + "rd.png";
         document.getElementById('rd-game-btn').src = pathImg + "rd.png";
         
@@ -244,13 +241,10 @@
     window.mostrarResultados = function(acertos, tempo) {
         const conf = JOGO_CONFIG;
         let feedback = conf.relatorios.find(p => acertos >= p.min && acertos <= (p.max || 10));
-        
-        // Taças lidas da pasta Icons
         document.getElementById('res-taca').src = conf.caminhoIcons + feedback.img;
         document.getElementById('res-tit').innerText = feedback.titulo;
         document.getElementById('res-pts').innerText = acertos;
         document.getElementById('res-tim').innerText = tempo;
-        
         switchScreen('scr-result');
         document.getElementById('status-bar').style.display = 'none';
     }
