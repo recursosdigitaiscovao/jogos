@@ -41,7 +41,7 @@
         .logo-text h1 { font-size: 17px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 9px; color: #88a; font-weight: 700; }
 
-        .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
+        .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; padding: 5px; position: relative; z-index: 2001; }
 
         /* MENU DROPDOWN */
         .menu-dropdown { 
@@ -60,7 +60,6 @@
         .menu-item:not(.menu-item-voltar):hover { 
             background: var(--primary-blue); 
         }
-
         .menu-item img { height: 20px; width: 20px; object-fit: contain; }
 
         /* Item Voltar (já é azul por padrão) */
@@ -109,7 +108,7 @@
             text-align: center; text-decoration: none; 
         }
 
-        /* HOVER JOGAR: Fundo branco, Texto Azul para não desaparecer */
+        /* HOVER JOGAR: Fundo branco, Texto Azul */
         .btn-jogar-stretch:hover {
             background: white;
             color: var(--primary-blue);
@@ -138,6 +137,7 @@
     </style>
 </head>
 <body>
+    <!-- Overlay agora serve para o RD Menu e para o Hamburger Menu -->
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
     
     <header>
@@ -253,10 +253,19 @@
         if(window.initGame) window.initGame();
     }
 
+    // MODIFICADO: Agora ativa o overlay para permitir fechar ao clicar fora
     function toggleHamburger(e) { 
         e.stopPropagation(); 
         const m = document.getElementById('dropdownMenu'); 
-        m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; 
+        const ov = document.getElementById('overlay');
+        
+        if(m.style.display === 'flex') {
+            m.style.display = 'none';
+            ov.style.display = 'none';
+        } else {
+            m.style.display = 'flex';
+            ov.style.display = 'block'; // Mostra o overlay para capturar o clique fora
+        }
     }
 
     function openRDMenu(e) { 
@@ -265,10 +274,10 @@
         document.getElementById('overlay').style.display = 'block'; 
     }
 
+    // Corrigido e centralizado: fecha TUDO e esconde o overlay
     function closeMenus() { 
         document.getElementById('rdMenu').classList.remove('active'); 
         document.getElementById('dropdownMenu').style.display = 'none'; 
-        document.getElementById('overlay').style.none = 'none'; 
         document.getElementById('overlay').style.display = 'none'; 
     }
 
