@@ -2,8 +2,8 @@ const JOGO_CONFIG = {
     nomeJogo: "CONTAR SÍLABAS", 
     linkVoltar: "../", 
     textoVoltar: "VOLTAR",
-    caminhoImg: "../../../img/",    // Onde está o rd.png e fotos das categorias
-    caminhoIcons: "../../../icons/", // Onde estão as taças e ícones de navegação
+    caminhoImg: "../../../img/",
+    caminhoIcons: "../../../icons/",
     caminhoSom: "", 
     sons: {
         acerto: "https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3",
@@ -18,20 +18,10 @@ const JOGO_CONFIG = {
         rodape: "&copy; Pequenos Leitores - Recursos Educativos"
     },
     iconesMenu: {
-        home: "home.png", 
-        pre: "iconpre.png", 
-        ano1: "icon1.png", 
-        ano2: "icon2.png", 
-        ano3: "icon3.png", 
-        ano4: "icon4.png"
+        home: "home.png", pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png"
     },
     links: {
-        home: "/jogos", 
-        pre: "/jogos/pre", 
-        ano1: "/jogos/1", 
-        ano2: "/jogos/2", 
-        ano3: "/jogos/3", 
-        ano4: "/jogos/4"
+        home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4"
     },
     categorias: {
         animais: {
@@ -46,7 +36,8 @@ const JOGO_CONFIG = {
                 { nome: "CAVALO", silabas: 3, img: "animaisdomesticos/cavalo.png" },
                 { nome: "BURRO", silabas: 2, img: "animaisdomesticos/burro.png" },
                 { nome: "GALINHA", silabas: 3, img: "animaisdomesticos/galinha.png" },
-                { nome: "COELHO", silabas: 3, img: "animaisdomesticos/coelho.png" }
+                { nome: "COELHO", silabas: 3, img: "animaisdomesticos/coelho.png" },
+                { nome: "PORCO", silabas: 2, img: "animaisdomesticos/porco.png" } // Adicionado para fazer 10
             ]
         },
         frutos: {
@@ -60,7 +51,9 @@ const JOGO_CONFIG = {
                 { nome: "MELANCIA", silabas: 4, img: "frutas/melancia.png" },
                 { nome: "LARANJA", silabas: 3, img: "frutas/laranja.png" },
                 { nome: "PAPAIA", silabas: 3, img: "frutas/papaia.png" },
-                { nome: "MAÇÃ", silabas: 2, img: "frutas/maca.png" }
+                { nome: "MAÇÃ", silabas: 2, img: "frutas/maca.png" },
+                { nome: "PERA", silabas: 2, img: "frutas/pera.png" },
+                { nome: "ABACAXI", silabas: 4, img: "frutas/abacaxi.png" }
             ]
         },
         material: {
