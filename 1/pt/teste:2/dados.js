@@ -13,6 +13,7 @@ const JOGO_CONFIG = {
         tituloLinha1: "PEQUENOS",
         tituloLinha2: "LEITORES",
         subtitulo: "Português | 1º Ano",
+        instrucao: "Clica no local exato da palavra para a separar em sílabas corretamente!",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos"
     },
     iconesMenu: {
@@ -72,16 +73,17 @@ const JOGO_CONFIG = {
                 { nome: "AFIA", silabas: 2, img: "materialescolar/afia.png" },
                 { nome: "CANETA", silabas: 3, img: "materialescolar/caneta.png" },
                 { nome: "RÉGUA", silabas: 3, img: "materialescolar/regua.png" },
-                { nome: "BORACHA", silabas: 3, img: "materialescolar/borracha.png" },
+                { nome: "BORRACHA", silabas: 3, img: "materialescolar/borracha.png" },
                 { nome: "COLA", silabas: 2, img: "materialescolar/cola.png" },
                 { nome: "ESTOJO", silabas: 3, img: "materialescolar/estojo.png" }
             ]
         }
     },
+    // ATUALIZADO: Regra de 10 questões conforme solicitado
     relatorios: [
-        { min: 1200, titulo: "BRILHANTE!", img: "taca_1.png" },
-        { min: 800, titulo: "MUITO BEM!", img: "taca_2.png" },
-        { min: 500, titulo: "BOM TRABALHO!", img: "taca_3.png" },
-        { min: 0, titulo: "TENTA OUTRA VEZ!", img: "taca_4.png" }
+        { min: 9, max: 10, titulo: "És um craque!", img: "taca_1.png" },
+        { min: 7, max: 8, titulo: "Muito bem!", img: "taca_2.png" },
+        { min: 5, max: 6, titulo: "Estás quase lá!", img: "taca_2.png" },
+        { min: 0, max: 4, titulo: "Continua a tentar!", img: "taca_4.png" }
     ]
 };
