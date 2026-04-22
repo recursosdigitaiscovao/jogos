@@ -2,9 +2,8 @@ const JOGO_CONFIG = {
     nomeJogo: "CONTAR SÍLABAS", 
     linkVoltar: "../", 
     textoVoltar: "VOLTAR",
-    caminhoImg: "../../../img/",
-    caminhoIcons: "../../../icons/",
-    caminhoSom: "", 
+    caminhoImg: "../../../img/",    // Pasta do rd.png e fotos
+    caminhoIcons: "../../../icons/", // Pasta das taças e voltar_az.png
     sons: {
         acerto: "https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3",
         erro: "https://cdn.pixabay.com/audio/2022/03/10/audio_c330c67761.mp3",
@@ -26,6 +25,8 @@ const JOGO_CONFIG = {
     categorias: {
         animais: {
             nome: "Animais",
+            exemplo: "CA-VA-LO", // Para a animação
+            total: 3,
             imgCapa: "animaisdomesticos/gato.png",
             itens: [
                 { nome: "VACA", silabas: 2, img: "animaisdomesticos/vaca.png" },
@@ -37,11 +38,13 @@ const JOGO_CONFIG = {
                 { nome: "BURRO", silabas: 2, img: "animaisdomesticos/burro.png" },
                 { nome: "GALINHA", silabas: 3, img: "animaisdomesticos/galinha.png" },
                 { nome: "COELHO", silabas: 3, img: "animaisdomesticos/coelho.png" },
-                { nome: "PORCO", silabas: 2, img: "animaisdomesticos/porco.png" } // Adicionado para fazer 10
+                { nome: "PORCO", silabas: 2, img: "animaisdomesticos/porco.png" }
             ]
         },
         frutos: {
             nome: "Frutos",
+            exemplo: "MO-RAN-GO",
+            total: 3,
             imgCapa: "frutas/morango.png",
             itens: [
                 { nome: "BANANA", silabas: 3, img: "frutas/banana.png" },
@@ -57,7 +60,9 @@ const JOGO_CONFIG = {
             ]
         },
         material: {
-            nome: "Material Escolar",
+            nome: "Material",
+            exemplo: "LÁ-PIS",
+            total: 2,
             imgCapa: "materialescolar/afia.png",
             itens: [
                 { nome: "MOCHILA", silabas: 3, img: "materialescolar/mochila.png" },
