@@ -41,34 +41,29 @@
         .logo-text h1 { font-size: 17px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 9px; color: #88a; font-weight: 700; }
 
+        /* Botões do Header */
         .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; padding: 5px; position: relative; z-index: 2601; }
         
+        /* Voltar Desktop */
         .btn-voltar-header { 
             background: var(--primary-blue); color: white; padding: 7px 15px; border-radius: 12px; 
             text-decoration: none; font-weight: 900; font-size: 13px; display: flex; align-items: center; gap: 8px;
             box-shadow: 0 4px 0 var(--primary-dark);
         }
 
-        /* --- BOTÃO FLUTUANTE (Aparece apenas em Landscape Mobile) --- */
+        /* Voltar Mobile (volta_az.png) - PORTRAIT */
+        .btn-voltar-mobile { display: none; text-decoration: none; padding: 5px; position: relative; z-index: 2601; }
+        .btn-voltar-mobile img { height: 32px; width: auto; display: block; }
+
+        /* Botão Flutuante (voltar.png) - LANDSCAPE */
         .btn-floating-back {
-            display: none;
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 4000;
-            background: var(--primary-blue);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 900;
-            font-size: 12px;
-            align-items: center;
-            gap: 6px;
+            display: none; position: fixed; top: 10px; right: 10px; z-index: 4000;
+            background: var(--primary-blue); color: white; padding: 8px 12px; border-radius: 10px;
+            text-decoration: none; font-weight: 900; font-size: 12px; align-items: center; gap: 6px;
             box-shadow: 0 4px 0 var(--primary-dark);
         }
 
-        /* --- MENU DROPDOWN --- */
+        /* --- MENU HAMBURGUER --- */
         .menu-dropdown { 
             position: absolute; top: 65px; left: 15px; display: none; 
             flex-direction: column; gap: 6px; z-index: 2600; 
@@ -87,7 +82,7 @@
         /* --- OVERLAY --- */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 1500; }
 
-        /* --- CONTENTOR DO JOGO --- */
+        /* --- CONTAINER DO JOGO --- */
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden; z-index: 1; }
         .game-card { 
             background: #f0f7ff; width: 100%; max-width: 1000px; height: 100%; 
@@ -109,7 +104,7 @@
         .dots-container { display: flex; gap: 6px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; background: #d0e0f0; }
 
-        /* --- TELAS --- */
+        /* --- SCREENS --- */
         .screen { flex: 1; display: none; width: 100%; flex-direction: column; align-items: center; }
         .screen.active { display: flex; }
         #scr-intro { justify-content: center; }
@@ -134,44 +129,40 @@
         .rd-panel.active { bottom: 0; }
         #rd-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 
-        footer { height: 45px; display: none; align-items: center; justify-content: center; color: #89a; font-size: 11px; font-weight: 700; }
-
-        /* --- RESPONSIVIDADE MOBILE --- */
+        /* --- RESPONSIVIDADE MOBILE PORTRAIT --- */
         @media (max-width: 650px) {
             .btn-voltar-header { display: none !important; }
+            .btn-voltar-mobile { display: flex; align-items: center; }
         }
 
-        /* --- CONFIGURAÇÃO ESPECIAL: TELEMÓVEL DEITADO (LANDSCAPE) --- */
+        /* --- RESPONSIVIDADE MOBILE LANDSCAPE (DEITADO) --- */
         @media (max-height: 500px) and (orientation: landscape) {
-            header { display: none !important; } /* Esconde todo o cabeçalho */
-            
-            .btn-floating-back { display: flex; } /* Mostra o botão flutuante de voltar */
-            
-            .game-container { padding: 0; } /* Remove margens para ocupar tudo */
-            
+            header { display: none !important; } 
+            .btn-floating-back { display: flex; } 
+            .game-container { padding: 5px; } 
             .game-card { 
-                border-radius: 0; /* Remove cantos arredondados do cartão */
-                padding: 5px; 
+                border-radius: 15px; 
+                padding: 10px; 
                 max-width: none; 
-                height: 100vh;
+                height: 94dvh; /* Altura ajustada para não ficar "grande demais" ou esticada */
             }
-            
             #game-main-content { 
-                border-radius: 10px; /* Mantém apenas um pequeno arredondamento na área de jogo */
+                border-radius: 10px; 
                 padding: 5px; 
+                border-width: 2px;
             }
-
-            #main-game-title { display: none; } /* Esconde o título para dar espaço total */
+            #main-game-title { display: none; }
             .status-bar { margin-bottom: 5px; }
             #intro-instr { margin-bottom: 8px; font-size: 14px; }
-            .btn-jogar-stretch { padding: 10px; font-size: 16px; }
+            .btn-jogar-stretch { padding: 8px; font-size: 16px; }
+            #rd-intro-btn { height: 45px; }
         }
     </style>
 </head>
 <body>
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
     
-    <!-- Botão Flutuante (Aparece apenas em Landscape Mobile) -->
+    <!-- Botão Flutuante Landscape (voltar.png) -->
     <a href="#" id="link-voltar-floating" class="btn-floating-back">
         <img id="floating-back-icon" src="" width="16"> <span id="txt-voltar-floating">voltar</span>
     </a>
@@ -188,8 +179,13 @@
             </div>
         </div>
         <div class="header-right">
+            <!-- Desktop -->
             <a href="#" id="link-voltar-header" class="btn-voltar-header">
                 <img id="header-back-icon" src="" width="16"> <span id="txt-voltar-header"></span>
+            </a>
+            <!-- Mobile Portrait (volta_az.png) -->
+            <a href="#" id="link-voltar-mobile" class="btn-voltar-mobile">
+                <img id="header-back-mobile" src="" alt="Voltar">
             </a>
         </div>
     </header>
@@ -207,7 +203,6 @@
 
             <h2 id="main-game-title" style="text-align:center; color:var(--primary-blue); font-weight:900; font-size:24px; margin-bottom: 10px;">---</h2>
 
-            <!-- INTRO -->
             <section class="screen active" id="scr-intro">
                 <div id="intro-animation-container"></div>
                 <p id="intro-instr"></p>
@@ -217,12 +212,10 @@
                 </div>
             </section>
 
-            <!-- ÁREA DE JOGO -->
             <section class="screen" id="scr-game">
                 <div id="game-main-content"></div>
             </section>
 
-            <!-- RESULTADOS -->
             <section class="screen" id="scr-result">
                 <img id="res-taca" style="width:100px; margin-bottom:10px;">
                 <h2 id="res-tit" style="font-size:26px; color: var(--primary-blue); font-weight:900; margin-bottom:15px;"></h2>
@@ -239,7 +232,7 @@
         </div>
     </main>
 
-    <footer id="mainFooter"></footer>
+    <footer id="mainFooter" style="height: 45px; display: none; align-items: center; justify-content: center; color: #89a; font-size: 11px; font-weight: 700;"></footer>
 
     <div id="rdMenu" class="rd-panel">
         <div style="width:40px; height:4px; background:#eee; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div>
@@ -260,14 +253,20 @@
         document.getElementById('mainFooter').innerHTML = conf.textos.rodape;
         document.getElementById('mainFooter').style.display = 'flex';
         
-        // Configuração de Imagens (voltar.png)
-        const backPath = conf.caminhoIcons + "voltar.png";
-        document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu.ano1;
-        document.getElementById('header-back-icon').src = backPath;
-        document.getElementById('floating-back-icon').src = backPath;
+        // Caminhos das Imagens
+        const pathIcons = conf.caminhoIcons;
+        document.getElementById('head-logo').src = pathIcons + conf.iconesMenu.ano1;
         
-        // Links
+        // Botão Desktop e Flutuante (voltar.png)
+        document.getElementById('header-back-icon').src = pathIcons + "voltar.png";
+        document.getElementById('floating-back-icon').src = pathIcons + "voltar.png";
+        
+        // Botão Mobile Portrait (volta_az.png)
+        document.getElementById('header-back-mobile').src = pathIcons + "volta_az.png";
+        
+        // Configuração de Links
         document.getElementById('link-voltar-header').href = conf.linkVoltar;
+        document.getElementById('link-voltar-mobile').href = conf.linkVoltar;
         document.getElementById('link-voltar-floating').href = conf.linkVoltar;
         document.getElementById('btn-outro-jogo').href = conf.linkVoltar;
         document.getElementById('txt-voltar-header').innerText = conf.textoVoltar;
@@ -279,11 +278,11 @@
         menuBox.innerHTML = '';
         ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
             const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
-            a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}"><span>${k==='home'?'Início':k.replace('ano',' ')+'º Ano'}</span>`;
+            a.innerHTML = `<img src="${pathIcons}${conf.iconesMenu[k]}"><span>${k==='home'?'Início':k.replace('ano',' ')+'º Ano'}</span>`;
             menuBox.appendChild(a);
         });
         const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = conf.linkVoltar;
-        btnV.innerHTML = `<img src="${backPath}"> <span>${conf.textoVoltar}</span>`;
+        btnV.innerHTML = `<img src="${pathIcons}voltar.png"> <span>${conf.textoVoltar}</span>`;
         menuBox.appendChild(btnV);
         if(window.startLogic) window.startLogic();
     }
