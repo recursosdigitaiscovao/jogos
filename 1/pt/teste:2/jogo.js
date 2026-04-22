@@ -11,12 +11,12 @@ let segundos = 0;
 let categoriaAtiva = 'animais';
 let intervalAnim = null;
 
-// 1. Inicia a animação da categoria inicial mal carrega
+// 1. Inicia a animação da categoria inicial mal o site carrega
 window.startLogic = function() {
     window.atualizarAnimacao(categoriaAtiva);
 };
 
-// 2. Muda a animação e prepara itens mal se clica no menu RD
+// 2. Muda a animação e prepara itens quando escolhes no menu
 window.selecionarCategoria = function(chave) {
     categoriaAtiva = chave;
     const cat = JOGO_CONFIG.categorias[chave];
@@ -24,7 +24,7 @@ window.selecionarCategoria = function(chave) {
     window.atualizarAnimacao(chave);
 };
 
-// 3. ANIMAÇÃO DINÂMICA COM IMAGEM
+// 3. ANIMAÇÃO DINÂMICA
 window.atualizarAnimacao = function(chave) {
     const container = document.getElementById('intro-animation-container');
     const cat = JOGO_CONFIG.categorias[chave];
@@ -42,7 +42,7 @@ window.atualizarAnimacao = function(chave) {
             </div>
             <div style="display:flex; gap:8px; justify-content:center; position:relative; margin-top:5px;">
                 ${[1, 2, 3, 4].map(n => `
-                    <div id="anim-btn-${n}" style="width:35px; height:35px; background:#eee; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:16px; transition:0.3s;">${n}</div>
+                    <div id="anim-btn-${n}" style="width:35px; height:35px; background:#eee; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:16px;">${n}</div>
                 `).join('')}
                 <i id="anim-hand" class="fas fa-mouse-pointer" style="position:absolute; color:var(--error-red); font-size:25px; bottom:-15px; right:0; transition:0.8s ease-in-out; opacity:0; z-index:10;"></i>
             </div>
@@ -61,7 +61,6 @@ window.atualizarAnimacao = function(chave) {
 
         setTimeout(() => {
             hand.style.opacity = "1";
-            // Posicionamento relativo simples
             hand.style.transform = "translate(-120px, -20px)";
             
             setTimeout(() => {
