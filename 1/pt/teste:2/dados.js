@@ -62,7 +62,7 @@ const JOGO_CONFIG = {
             ]
         },
         material: {
-            nome: "Material",
+            nome: "Material Escolar",
             exemplo: "LÁ-PIS",
             exemploImg: "materialescolar/lapis.png",
             total: 2,
