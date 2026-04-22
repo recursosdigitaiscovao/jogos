@@ -112,35 +112,45 @@
         #scr-intro { justify-content: center; }
         #intro-instr { font-weight: 800; color: var(--text-grey); text-align: center; max-width: 300px; margin-bottom: 20px; }
 
-        /* --- BOTÃO JOGAR (EXPANSÍVEL E COM EFEITO PRECIONADO) --- */
-        .action-container { width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: auto; padding-bottom: 5px; }
+        /* --- BOTÃO JOGAR (EXPANSÍVEL TOTAL) --- */
+        .action-container { 
+            width: 100%; 
+            max-width: 600px; /* Limite para não ficar feio em ecrãs gigantes */
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 15px; 
+            margin: auto auto 5px auto; 
+        }
         
         .btn-jogar-stretch { 
-            flex: 1; /* Torna o botão expansível no container */
-            max-width: 350px; 
+            flex: 1; /* Faz o botão expandir e ocupar todo o espaço lateral disponível */
             background: var(--primary-blue); 
             color: white; 
             border: none; 
             border-radius: 18px; 
-            padding: 16px; 
+            padding: 16px 20px; 
             font-size: 18px; 
             font-weight: 900; 
             cursor: pointer; 
-            box-shadow: 0 6px 0 var(--primary-dark); /* Sombra que cria o efeito 3D */
-            transition: all 0.1s ease; /* Transição rápida para o clique */
+            box-shadow: 0 6px 0 var(--primary-dark);
+            transition: all 0.1s ease;
             text-align: center; 
             text-decoration: none; 
-            display: inline-block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             user-select: none;
+            min-width: 120px;
         }
 
-        /* Sem efeito de hover conforme solicitado (apenas cursor se mantém) */
-
-        /* Efeito de Botão Pressionado */
+        /* Efeito de Clique (sem hover de cor) */
         .btn-jogar-stretch:active { 
-            transform: translateY(4px); /* Desce o botão */
-            box-shadow: 0 2px 0 var(--primary-dark); /* Encurta a sombra */
+            transform: translateY(4px); 
+            box-shadow: 0 2px 0 var(--primary-dark);
         }
+
+        #rd-intro-btn { flex-shrink: 0; height: 55px; cursor: pointer; }
 
         /* --- RD PANEL --- */
         .rd-panel { 
@@ -156,7 +166,7 @@
             .btn-voltar-header { display: none !important; }
             .btn-voltar-mobile { display: flex; align-items: center; }
             .logo-text p { display: none; }
-            .badge { min-width: 55px; padding: 4px 8px; font-size: 12px; }
+            .badge { min-width: 55px; padding: 4px 8px; font-size: 11px; }
         }
 
         @media (max-height: 500px) and (orientation: landscape) {
@@ -167,6 +177,7 @@
             #main-game-title { display: none; }
             .status-bar { margin-bottom: 5px; }
             .dots-container { display: none; }
+            .btn-jogar-stretch { padding: 10px; font-size: 16px; }
         }
     </style>
 </head>
@@ -212,19 +223,22 @@
 
             <h2 id="main-game-title" style="text-align:center; color:var(--primary-blue); font-weight:900; font-size:24px; margin: 10px 0;">---</h2>
 
+            <!-- INTRO -->
             <section class="screen active" id="scr-intro">
                 <div id="intro-animation-container"></div>
                 <p id="intro-instr"></p>
                 <div class="action-container">
                     <button class="btn-jogar-stretch" onclick="goToGame()">JOGAR</button>
-                    <img id="rd-intro-btn" src="" style="height:55px; cursor:pointer;" onclick="openRDMenu(event)">
+                    <img id="rd-intro-btn" src="" onclick="openRDMenu(event)">
                 </div>
             </section>
 
+            <!-- ÁREA DE JOGO -->
             <section class="screen" id="scr-game">
                 <div id="game-main-content"></div>
             </section>
 
+            <!-- RESULTADOS -->
             <section class="screen" id="scr-result">
                 <img id="res-taca" style="width:100px; margin-bottom:10px;">
                 <h2 id="res-tit" style="font-size:26px; color: var(--primary-blue); font-weight:900; margin-bottom:15px;"></h2>
@@ -232,10 +246,10 @@
                     <div style="background:white; padding:10px 20px; border-radius:15px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05);"><span id="res-pts" style="font-size:20px; font-weight:900; color:var(--primary-blue);">0</span><br><small>ACERTOS</small></div>
                     <div style="background:white; padding:10px 20px; border-radius:15px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05);"><span id="res-tim" style="font-size:20px; font-weight:900; color:var(--primary-blue);">00:00</span><br><small>TEMPO</small></div>
                 </div>
-                <div style="display:flex; flex-direction:column; gap:10px; width:100%; max-width:300px;">
-                    <button class="btn-jogar-stretch" onclick="location.reload()">JOGAR DE NOVO</button>
-                    <button class="btn-jogar-stretch" style="background:white; color:var(--primary-blue); border:2px solid var(--primary-blue); box-shadow:none;" onclick="openRDMenu(event)">OUTRA CATEGORIA</button>
-                    <a href="#" id="btn-outro-jogo" class="btn-jogar-stretch" style="background:#cbd9e6; color:#445; box-shadow:none; border:none; box-shadow:none;">OUTRO JOGO</a>
+                <div class="action-container" style="flex-direction: column;">
+                    <button class="btn-jogar-stretch" onclick="location.reload()" style="width: 100%;">JOGAR DE NOVO</button>
+                    <button class="btn-jogar-stretch" style="background:white; color:var(--primary-blue); border:2px solid var(--primary-blue); box-shadow:none; width: 100%;" onclick="openRDMenu(event)">OUTRA CATEGORIA</button>
+                    <a href="#" id="btn-outro-jogo" class="btn-jogar-stretch" style="background:#cbd9e6; color:#445; box-shadow:none; border:none; width: 100%;">OUTRO JOGO</a>
                 </div>
             </section>
         </div>
