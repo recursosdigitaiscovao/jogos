@@ -32,6 +32,14 @@ const JOGO_CONFIG = {
         ano3: "/jogos/3", 
         ano4: "/jogos/4"
     },
+
+    /* =========================================================================
+       COMO ADICIONAR CONTEÚDO:
+       1. PARA ADICIONAR UMA PALAVRA: Vá à categoria desejada e adicione um item
+          no formato: { nome: "PALAVRA", silabas: X, img: "pasta/imagem.png" },
+       2. PARA ADICIONAR UMA CATEGORIA: Crie um novo bloco (como o 'brinquedos' 
+          abaixo) dentro de 'categorias'. O menu RD irá ler automaticamente.
+       ========================================================================= */
     categorias: {
         animais: {
             nome: "Animais",
@@ -46,6 +54,7 @@ const JOGO_CONFIG = {
                 { nome: "BURRO", silabas: 2, img: "animaisdomesticos/burro.png" },
                 { nome: "GALINHA", silabas: 3, img: "animaisdomesticos/galinha.png" },
                 { nome: "COELHO", silabas: 3, img: "animaisdomesticos/coelho.png" }
+                // <-- Adicione novas palavras aqui
             ]
         },
         frutos: {
@@ -78,8 +87,18 @@ const JOGO_CONFIG = {
                 { nome: "ESTOJO", silabas: 3, img: "materialescolar/estojo.png" }
             ]
         }
+        /* Exemplo de nova categoria (basta descomentar para ativar):
+        ,brinquedos: {
+            nome: "Brinquedos",
+            imgCapa: "brinquedos/capa.png",
+            itens: [
+                { nome: "BOLA", silabas: 2, img: "brinquedos/bola.png" },
+                { nome: "BONECA", silabas: 3, img: "brinquedos/boneca.png" }
+            ]
+        } 
+        */
     },
-    // ATUALIZADO: Regra de 10 questões conforme solicitado
+
     relatorios: [
         { min: 9, max: 10, titulo: "És um craque!", img: "taca_1.png" },
         { min: 7, max: 8, titulo: "Muito bem!", img: "taca_2.png" },
