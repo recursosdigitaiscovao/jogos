@@ -1,6 +1,6 @@
 const JOGO_CONFIG = {
-    areaAtiva: "portugues", // Escolhe: "portugues", "matematica" ou "estudo"
-    anoAtivo: "ano1",      // Escolhe: "pre", "ano1", "ano2", "ano3", "ano4"
+    areaAtiva: "portugues", 
+    anoAtivo: "ano1",      
     
     textos: {
         tituloLinha1: "Pequenos",
@@ -8,9 +8,11 @@ const JOGO_CONFIG = {
         rodape: "&copy; Pequenos Leitores - Recursos Educativos"
     },
     
-    // Caminho para a pasta onde guardas os icons globais (ajusta se necessário)
-    caminhoIconsMenu: "../../icons/", 
-    caminhoIconsJogos: "iconjogos/",
+    // Caminho: De /jogos/1/pt/experi/ para /jogos/icons/ (Sobe 3 níveis)
+    caminhoIconsMenu: "../../../icons/", 
+    
+    // Caminho: De /jogos/1/pt/experi/ para /jogos/1/pt/iconjogos/ (Sobe 1 nível)
+    caminhoIconsJogos: "../iconjogos/",
     
     iconesMenu: {
         home: "home.png", 
@@ -23,8 +25,12 @@ const JOGO_CONFIG = {
     },
     
     links: {
-        home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", 
-        ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4"
+        home: "../../../", // Volta para a raiz /jogos/
+        pre: "../../pre/", 
+        ano1: "../../1/", 
+        ano2: "../../2/", 
+        ano3: "../../3/", 
+        ano4: "../../4/"
     },
     
     listaJogos: [
