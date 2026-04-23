@@ -1,5 +1,4 @@
 const JOGO_CONFIG = {
-    // Títulos e Textos da Página
     textos: {
         tituloLinha1: "Pequenos",
         tituloLinha2: "Leitores",
@@ -7,34 +6,17 @@ const JOGO_CONFIG = {
         intro: "Explora as letras, as palavras e diverte-te a ler!",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos"
     },
-
-    // Caminhos de Pastas
     caminhoIconsMenu: "../../icons/",
     caminhoIconsJogos: "iconjogos/",
-
-    // Ícones do Menu Lateral
     iconesMenu: {
-        home: "home.png",
-        pre: "iconpre.png",
-        ano1: "icon1.png",
-        ano2: "icon2.png",
-        ano3: "icon3.png",
-        ano4: "icon4.png",
-        voltar: "voltar.png"
+        home: "home.png", pre: "iconpre.png", ano1: "icon1.png", 
+        ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png", voltar: "voltar.png"
     },
-
-    // Links de Navegação do Menu
     links: {
-        home: "/jogos", 
-        pre: "/jogos/pre",
-        ano1: "/jogos/1",
-        ano2: "/jogos/2",
-        ano3: "/jogos/3",
-        ano4: "/jogos/4",
-        voltar: "../index.html"
+        home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", 
+        ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4",
+        voltar: "../" // Retrocede apenas um nível
     },
-    
-    // Lista de Jogos que aparecem na Grelha (9 cards)
     listaJogos: [
         { nome: "Primeira Letra", icon: "primeira_letra.png", link: "primeira_letra/" },
         { nome: "Conta as Sílabas", icon: "conta_silabas.png", link: "conta_silabas/" },
