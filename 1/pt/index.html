@@ -50,7 +50,7 @@
         .intro-container h2 { color: var(--primary-blue); font-weight: 900; font-size: 26px; margin-bottom: 5px; }
         .intro-container p { color: var(--text-grey); font-weight: 700; font-size: 16px; }
 
-        /* GRELHA DE JOGOS (9 cards) */
+        /* GRELHA DE JOGOS */
         .game-wrapper { 
             width: 100%; max-width: 1100px; display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
@@ -71,18 +71,21 @@
 
         footer { padding: 15px; text-align: center; color: var(--text-grey); font-weight: 700; font-size: 0.8rem; border-top: 1px solid rgba(176,196,217,0.3); }
 
-        /* RESPONSIVIDADE TELEMÓVEL */
+        /* RESPONSIVIDADE TELEMÓVEL (Retrato) */
         @media (max-width: 650px) { 
             header { padding: 0 15px; }
             .btn-voltar-header { display: none !important; } 
             .btn-voltar-mobile { display: flex; align-items: center; } 
-            
-            /* CORREÇÃO: Subtítulo visível no telemóvel */
             .logo-text p { display: block; font-size: 8px; margin-top: 2px; }
-            
             .logo-text h1 { font-size: 18px; }
             .logo-center img { height: 50px; }
             .game-wrapper { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+        }
+
+        /* CORREÇÃO: OCULTAR HEADER EM LANDSCAPE (Sideways) */
+        @media (max-height: 500px) and (orientation: landscape) {
+            header { display: none !important; }
+            main { padding-top: 10px; } /* Ajusta o espaço superior já que não há header */
         }
     </style>
 </head>
@@ -131,7 +134,6 @@
             if (typeof JOGO_CONFIG === 'undefined') return;
             const conf = JOGO_CONFIG;
             
-            // Textos
             document.getElementById('tit-l1').innerText = conf.textos.tituloLinha1;
             document.getElementById('tit-l2').innerText = conf.textos.tituloLinha2;
             document.getElementById('sub-tit').innerText = conf.textos.subtitulo;
@@ -139,14 +141,12 @@
             document.getElementById('hub-intro-sub').innerText = conf.textos.intro;
             document.getElementById('txt-rodape').innerHTML = conf.textos.rodape;
             
-            // Ícones e Caminhos
             const pIcons = conf.caminhoIconsMenu;
             document.getElementById('head-logo').src = pIcons + conf.iconesMenu.ano1;
             document.getElementById('header-back-icon').src = pIcons + conf.iconesMenu.voltar;
             document.getElementById('header-back-mobile').src = pIcons + "voltar_az.png";
             document.getElementById('txt-voltar-header').innerText = "VOLTAR";
 
-            // Menu lateral
             const menuBox = document.getElementById('dropdownMenu');
             const menuLabels = { home: 'Início', pre: 'Pré-Escolar', ano1: '1º Ano', ano2: '2º Ano', ano3: '3º Ano', ano4: '4º Ano' };
             ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
@@ -164,7 +164,6 @@
             btnV.innerHTML = `<img src="${pIcons}${conf.iconesMenu.voltar}"> <span>VOLTAR</span>`;
             menuBox.appendChild(btnV);
 
-            // Grelha de Jogos
             const grid = document.getElementById('gamesGrid');
             conf.listaJogos.forEach(jogo => {
                 const card = document.createElement('a');
