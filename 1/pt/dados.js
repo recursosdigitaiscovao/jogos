@@ -1,6 +1,6 @@
 const JOGO_CONFIG = {
-    areaAtiva: "matematica", 
-    anoAtivo: "ano3",      
+    areaAtiva: "portugues", 
+    anoAtivo: "ano1",      
     
     textos: {
         tituloLinha1: "Pequenos",
