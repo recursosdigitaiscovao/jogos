@@ -1,5 +1,4 @@
 const JOGO_CONFIG = {
-    // Títulos e Textos da Página
     textos: {
         tituloLinha1: "Pequenos",
         tituloLinha2: "Exploradores",
@@ -7,33 +6,17 @@ const JOGO_CONFIG = {
         intro: "Explora o mundo à tua volta, o teu corpo e a natureza!!",
         rodape: "&copy; Pequenos Exploradores - Recursos Educativos"
     },
-
-    // Caminhos
     caminhoIconsMenu: "../../icons/",
     caminhoIconsJogos: "iconjogos/",
-
-    // Ícones
     iconesMenu: {
-        home: "home.png",
-        pre: "iconpre.png",
-        ano1: "icon1.png",
-        ano2: "icon2.png",
-        ano3: "icon3.png",
-        ano4: "icon4.png",
-        voltar: "voltar.png"
+        home: "home.png", pre: "iconpre.png", ano1: "icon1.png", 
+        ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png", voltar: "voltar.png"
     },
-
-    // Links do Menu
     links: {
-        home: "/jogos", 
-        pre: "/jogos/pre",
-        ano1: "/jogos/1",
-        ano2: "/jogos/2",
-        ano3: "/jogos/3",
-        ano4: "/jogos/4"
+        home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", 
+        ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4",
+        voltar: "../" // Retrocede apenas um nível
     },
-    
-    // Lista de Jogos
     listaJogos: [
         { nome: "jogo2", icon: "2.png", link: "nome2/" },
         { nome: "jogo3", icon: "3.png", link: "nome3/" },
