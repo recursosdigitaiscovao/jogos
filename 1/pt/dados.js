@@ -8,11 +8,11 @@ const JOGO_CONFIG = {
         rodape: "&copy; Pequenos Leitores - Recursos Educativos"
     },
 
-    // Caminhos
+    // Caminhos de Pastas
     caminhoIconsMenu: "../../icons/",
     caminhoIconsJogos: "iconjogos/",
 
-    // Ícones
+    // Ícones do Menu Lateral
     iconesMenu: {
         home: "home.png",
         pre: "iconpre.png",
@@ -23,17 +23,18 @@ const JOGO_CONFIG = {
         voltar: "voltar.png"
     },
 
-    // Links do Menu
+    // Links de Navegação do Menu
     links: {
         home: "/jogos", 
         pre: "/jogos/pre",
         ano1: "/jogos/1",
         ano2: "/jogos/2",
         ano3: "/jogos/3",
-        ano4: "/jogos/4"
+        ano4: "/jogos/4",
+        voltar: "../index.html"
     },
     
-    // Lista de Jogos
+    // Lista de Jogos que aparecem na Grelha (9 cards)
     listaJogos: [
         { nome: "Primeira Letra", icon: "primeira_letra.png", link: "primeira_letra/" },
         { nome: "Conta as Sílabas", icon: "conta_silabas.png", link: "conta_silabas/" },
