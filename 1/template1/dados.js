@@ -1,40 +1,194 @@
-const JOGO_CONFIG = {
-    areaAtiva: "portugues", // "portugues", "matematica" ou "estudo"
-    anoAtivo: "ano1",      // Deve ser: "pre", "ano1", "ano2", "ano3" ou "ano4"
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Carregando...</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            /* Variáveis dinâmicas preenchidas pelo JS */
+            --bg-page: #ffffff; --primary-blue: #5ba4e5; --primary-dark: #3d7db8; 
+            --white: #ffffff; --text-grey: #5d7082; 
+            --header-h: 100px; 
+            --outer-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
+
+        header { 
+            height: var(--header-h); background: #f0f7ff; display: flex; align-items: center; 
+            justify-content: space-between; padding: 0 25px; z-index: 2500; flex-shrink: 0;
+            box-shadow: var(--outer-shadow); position: relative;
+        }
+        .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; pointer-events: none; white-space: nowrap; }
+        .logo-center img { height: 65px; width: auto; } 
+        .logo-text h1 { font-size: 22px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
+        .logo-text p { font-size: 10px; color: #88a; font-weight: 700; text-transform: uppercase; }
+
+        .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; z-index: 3001; }
+        
+        .btn-voltar-header { background: var(--primary-blue); color: white; padding: 10px 20px; border-radius: 14px; text-decoration: none; font-weight: 900; font-size: 14px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 0 var(--primary-dark); transition: 0.1s; }
+        .btn-voltar-header:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--primary-dark); }
+        .btn-voltar-mobile { display: none; text-decoration: none; padding: 5px; z-index: 3001; }
+
+        .menu-dropdown { position: absolute; top: 85px; left: 15px; display: none; flex-direction: column; gap: 6px; z-index: 3000; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 0.9rem; min-width: 200px; transition: 0.2s; }
+        .menu-item:hover { background: var(--primary-blue); color: white; }
+        .menu-item img { height: 22px; width: 22px; object-fit: contain; }
+        .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
+        .menu-item-voltar img { filter: brightness(0) invert(1); }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.1); display: none; z-index: 2000; }
+
+        main { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; align-items: center; }
+        .intro-container { text-align: center; margin-bottom: 30px; }
+        .intro-container h2 { color: var(--primary-blue); font-weight: 900; font-size: 26px; margin-bottom: 5px; }
+        .intro-container p { color: var(--text-grey); font-weight: 700; font-size: 16px; }
+
+        .game-wrapper { 
+            width: 100%; max-width: 1100px; display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+            gap: 25px; justify-items: center; padding-bottom: 40px;
+        }
+
+        .game-card { 
+            background: #f0f7ff; width: 100%; max-width: 170px; min-height: 160px;
+            border-radius: 30px; box-shadow: 0 8px 20px rgba(176,196,217,0.4);
+            display: flex; flex-direction: column; align-items: center;
+            text-decoration: none; padding: 18px; text-align: center;
+            transition: all 0.2s ease; border: 2px solid white;
+        }
+        .game-card:hover { transform: translateY(-5px); background: white; border-color: var(--primary-blue); }
+        .card-img-container { width: 100%; height: 90px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+        .card-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .game-card h2 { color: var(--primary-blue); font-size: 0.85rem; font-weight: 900; margin-top: auto; text-transform: uppercase; }
+
+        footer { padding: 15px; text-align: center; color: var(--text-grey); font-weight: 700; font-size: 0.8rem; border-top: 1px solid rgba(176,196,217,0.3); }
+
+        @media (max-width: 650px) { 
+            header { padding: 0 15px; }
+            .btn-voltar-header { display: none !important; } 
+            .btn-voltar-mobile { display: flex; align-items: center; } 
+            .logo-text p { display: block; font-size: 8px; margin-top: 2px; } /* Subtítulo visível */
+            .logo-text h1 { font-size: 18px; }
+            .logo-center img { height: 50px; }
+            .game-wrapper { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+        }
+
+        @media (max-height: 500px) and (orientation: landscape) {
+            header { display: none !important; }
+            main { padding-top: 10px; } 
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+    <header>
+        <div class="header-left"><i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i><div id="dropdownMenu" class="menu-dropdown"></div></div>
+        <div class="logo-center"><img id="head-logo" src="" alt="Logo"><div class="logo-text"><h1 id="tit-l1"></h1><h1 id="tit-l2"></h1><p id="sub-tit"></p></div></div>
+        <div class="header-right"><a href="../" id="link-voltar-header" class="btn-voltar-header"><img id="header-back-icon" src="" width="18"> <span id="txt-voltar-header">VOLTAR</span></a><a href="../" id="link-voltar-mobile" class="btn-voltar-mobile"><img id="header-back-mobile" src="" alt="Voltar" style="height:35px;"></a></div>
+    </header>
+
+    <main>
+        <div class="intro-container"><h2 id="hub-intro-title">Jogos Disponíveis</h2><p id="hub-intro-sub"></p></div>
+        <div class="game-wrapper" id="gamesGrid"></div>
+    </main>
+
+    <footer id="txt-rodape"></footer>
+
+    <!-- ORDEM DE CARREGAMENTO É FUNDAMENTAL -->
+    <script src="../../global/biblioteca.js"></script>
+    <script src="dados.js"></script>
     
-    textos: {
-        tituloLinha1: "Pequenos",
-        intro: "Explora as letras, as palavras e diverte-te a ler!",
-        rodape: "&copy; Pequenos Leitores - Recursos Educativos"
-    },
-    
-    caminhoIconsMenu: "../../icons/",
-    caminhoIconsJogos: "iconjogos/",
-    
-    iconesMenu: {
-        home: "home.png", 
-        pre: "iconpre.png", 
-        ano1: "icon1.png", 
-        ano2: "icon2.png", 
-        ano3: "icon3.png", 
-        ano4: "icon4.png", 
-        voltar: "voltar.png"
-    },
-    
-    links: {
-        home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", 
-        ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4"
-    },
-    
-    listaJogos: [
-        { nome: "Primeira Letra", icon: "primeira_letra.png", link: "primeira_letra/" },
-        { nome: "Conta as Sílabas", icon: "conta_silabas.png", link: "conta_silabas/" },
-        { nome: "Ordena Sílabas", icon: "silabas.png", link: "silabas/" },
-        { nome: "Forma Palavras", icon: "liga_letras.png", link: "liga_letras/" },
-        { nome: "Corta Sílabas", icon: "divisao_silabica.png", link: "divisao_silabica/" },
-        { nome: "Ordem Alfabética", icon: "ordenar.png", link: "ordenar/" },
-        { nome: "Descobre a Palavra", icon: "forca.png", link: "forca/" },
-        { nome: "Sopa de Letras", icon: "sopa_letras.png", link: "sopa_letras/" },
-        { nome: "Copia Palavras", icon: "copia_palavras.png", link: "copia_palavras/" }
-    ]
-};
+    <script>
+        function initUI() {
+            if (typeof JOGO_CONFIG === 'undefined' || typeof BIBLIOTECA_TEMAS === 'undefined') return;
+            
+            const conf = JOGO_CONFIG;
+            const tema = BIBLIOTECA_TEMAS[conf.areaAtiva];
+            const pIcons = conf.caminhoIconsMenu;
+            const root = document.documentElement;
+
+            // 1. APLICAR TEMA (Cores Dinâmicas)
+            root.style.setProperty('--bg-page', tema.corPagina);
+            root.style.setProperty('--primary-blue', tema.corPrimaria);
+            root.style.setProperty('--primary-dark', tema.corEscura);
+            root.style.setProperty('--text-grey', tema.corTexto);
+
+            // 2. TEXTOS E TÍTULOS
+            const tituloL2 = tema.tituloL2;
+            document.title = conf.textos.tituloLinha1 + " " + tituloL2;
+            document.getElementById('tit-l1').innerText = conf.textos.tituloLinha1;
+            document.getElementById('tit-l2').innerText = tituloL2;
+            
+            // Subtítulo Automático (Ex: Português | 1º Ano)
+            const nomesAnos = { "pre": "Pré-Escolar", "ano1": "1º Ano", "ano2": "2º Ano", "ano3": "3º Ano", "ano4": "4º Ano" };
+            const areaFormatada = conf.areaAtiva.charAt(0).toUpperCase() + conf.areaAtiva.slice(1);
+            document.getElementById('sub-tit').innerText = areaFormatada + " | " + nomesAnos[conf.anoAtivo];
+            
+            document.getElementById('hub-intro-sub').innerText = conf.textos.intro;
+            document.getElementById('txt-rodape').innerHTML = conf.textos.rodape;
+            
+            // 3. ÍCONES DINÂMICOS (O ícone do header é o mesmo do ano ativo)
+            const iconPrincipal = conf.iconesMenu[conf.anoAtivo];
+            document.getElementById('head-logo').src = pIcons + iconPrincipal;
+            document.getElementById('header-back-icon').src = pIcons + conf.iconesMenu.voltar;
+            document.getElementById('header-back-mobile').src = pIcons + tema.voltarMobile;
+
+            // 4. MENU HAMBÚRGUER
+            const menuBox = document.getElementById('dropdownMenu');
+            const menuLabels = { home: 'Início', pre: 'Pré', ano1: '1º Ano', ano2: '2º Ano', ano3: '3º Ano', ano4: '4º Ano' };
+            ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
+                if(conf.links[k]) {
+                    const a = document.createElement('a');
+                    a.className = 'menu-item';
+                    a.href = conf.links[k];
+                    a.innerHTML = `<img src="${pIcons}${conf.iconesMenu[k]}"><span>${menuLabels[k]}</span>`;
+                    menuBox.appendChild(a);
+                }
+            });
+            const btnV = document.createElement('a');
+            btnV.className = 'menu-item menu-item-voltar';
+            btnV.href = "../"; 
+            btnV.innerHTML = `<img src="${pIcons}${conf.iconesMenu.voltar}"> <span>VOLTAR</span>`;
+            menuBox.appendChild(btnV);
+
+            // 5. GRELHA DE JOGOS
+            const grid = document.getElementById('gamesGrid');
+            conf.listaJogos.forEach(jogo => {
+                const card = document.createElement('a');
+                card.className = 'game-card';
+                card.href = jogo.link;
+                card.innerHTML = `
+                    <div class="card-img-container">
+                        <img src="${conf.caminhoIconsJogos}${jogo.icon}" alt="${jogo.nome}">
+                    </div>
+                    <h2>${jogo.nome}</h2>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleHamburger(e) {
+            e.stopPropagation();
+            const m = document.getElementById('dropdownMenu');
+            const ov = document.getElementById('overlay');
+            if(m.style.display === 'flex') {
+                closeMenus();
+            } else {
+                m.style.display = 'flex';
+                ov.style.display = 'block';
+            }
+        }
+
+        function closeMenus() {
+            document.getElementById('dropdownMenu').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        window.onload = initUI;
+    </script>
+</body>
+</html>
