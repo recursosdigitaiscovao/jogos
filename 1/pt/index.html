@@ -5,175 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Carregando...</title>
     
-    <!-- Ícones e Fontes -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
         :root { 
-            /* Cores base que serão substituídas pelo JavaScript */
-            --bg-page: #ffffff; 
-            --primary-blue: #5ba4e5; 
-            --primary-dark: #3d7db8; 
-            --white: #ffffff; 
-            --text-grey: #5d7082; 
+            --bg-page: #ffffff; --primary-blue: #5ba4e5; --primary-dark: #3d7db8; 
+            --white: #ffffff; --text-grey: #5d7082; 
             --header-h: 100px; 
             --outer-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4);
         }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; transition: background 0.3s; }
 
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'Nunito', sans-serif; 
-            -webkit-tap-highlight-color: transparent; 
-        }
-
-        body { 
-            background-color: var(--bg-page); 
-            height: 100dvh; 
-            width: 100vw; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
-            transition: background 0.3s; 
-        }
-
-        /* --- CABEÇALHO --- */
         header { 
-            height: var(--header-h); 
-            background: #fbfdff; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            padding: 0 25px; 
-            z-index: 2500; 
-            flex-shrink: 0;
-            box-shadow: var(--outer-shadow); 
-            position: relative;
+            height: var(--header-h); background: #fbfdff; display: flex; align-items: center; 
+            justify-content: space-between; padding: 0 25px; z-index: 2500; flex-shrink: 0;
+            box-shadow: var(--outer-shadow); position: relative;
         }
-
-        .logo-center { 
-            position: absolute; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-            pointer-events: none; 
-            white-space: nowrap; 
-        }
+        .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; pointer-events: none; white-space: nowrap; }
         .logo-center img { height: 65px; width: auto; } 
         .logo-text h1 { font-size: 22px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 11px; color: var(--text-grey); font-weight: 700; text-transform: uppercase; }
 
         .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; z-index: 3001; }
         
-        .btn-voltar-header { 
-            background: var(--primary-blue); 
-            color: white; 
-            padding: 10px 20px; 
-            border-radius: 14px; 
-            text-decoration: none; 
-            font-weight: 900; 
-            font-size: 14px; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            box-shadow: 0 4px 0 var(--primary-dark); 
-            transition: 0.1s; 
-        }
+        .btn-voltar-header { background: var(--primary-blue); color: white; padding: 10px 20px; border-radius: 14px; text-decoration: none; font-weight: 900; font-size: 14px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 0 var(--primary-dark); transition: 0.1s; }
         .btn-voltar-header:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--primary-dark); }
         .btn-voltar-mobile { display: none; text-decoration: none; padding: 5px; z-index: 3001; }
 
-        /* --- MENU DROPDOWN --- */
-        .menu-dropdown { 
-            position: absolute; 
-            top: 85px; 
-            left: 15px; 
-            display: none; 
-            flex-direction: column; 
-            gap: 6px; 
-            z-index: 3000; 
-        }
-        .menu-item { 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-            padding: 12px 18px; 
-            background: white; 
-            border-radius: 12px; 
-            box-shadow: 2px 4px 10px rgba(0,0,0,0.1); 
-            text-decoration: none; 
-            color: #5d7082; 
-            font-weight: 700; 
-            font-size: 0.9rem; 
-            min-width: 200px; 
-            transition: 0.2s; 
-        }
+        .menu-dropdown { position: absolute; top: 85px; left: 15px; display: none; flex-direction: column; gap: 6px; z-index: 3000; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: #5d7082; font-weight: 700; font-size: 0.9rem; min-width: 200px; transition: 0.2s; }
         .menu-item:hover { background: var(--primary-blue); color: white; }
         .menu-item img { height: 22px; width: 22px; object-fit: contain; }
         .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
         .menu-item-voltar img { filter: brightness(0) invert(1); }
 
-        .overlay { 
-            position: fixed; 
-            top: 0; left: 0; 
-            width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.1); 
-            display: none; 
-            z-index: 2000; 
-        }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.1); display: none; z-index: 2000; }
 
-        /* --- ÁREA DE CONTEÚDO --- */
         main { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; align-items: center; }
         .intro-container { text-align: center; margin-bottom: 30px; }
-        .intro-container h2 { color: var(--primary-blue); font-weight: 900; font-size: 26px; margin-bottom: 5px; }
-        .intro-container p { color: var(--text-grey); font-weight: 700; font-size: 16px; }
+        /* Ajustamos o p para ganhar destaque já que o h2 saiu */
+        .intro-container p { color: var(--text-grey); font-weight: 700; font-size: 18px; } 
 
-        .game-wrapper { 
-            width: 100%; 
-            max-width: 1100px; 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
-            gap: 25px; 
-            justify-items: center; 
-            padding-bottom: 40px;
-        }
-
-        .game-card { 
-            background: #ffffff; 
-            width: 100%; 
-            max-width: 170px; 
-            min-height: 160px;
-            border-radius: 30px; 
-            box-shadow: 0 8px 20px rgba(176,196,217,0.3);
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
-            text-decoration: none; 
-            padding: 18px; 
-            text-align: center;
-            transition: all 0.2s ease; 
-            border: 2px solid white;
-        }
+        .game-wrapper { width: 100%; max-width: 1100px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 25px; justify-items: center; padding-bottom: 40px; }
+        .game-card { background: #ffffff; width: 100%; max-width: 170px; min-height: 160px; border-radius: 30px; box-shadow: 0 8px 20px rgba(176,196,217,0.3); display: flex; flex-direction: column; align-items: center; text-decoration: none; padding: 18px; text-align: center; transition: all 0.2s ease; border: 2px solid white; }
         .game-card:hover { transform: translateY(-5px); border-color: var(--primary-blue); }
-        
         .card-img-container { width: 100%; height: 90px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
         .card-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        
         .game-card h2 { color: var(--primary-blue); font-size: 0.85rem; font-weight: 900; margin-top: auto; text-transform: uppercase; }
 
-        footer { 
-            padding: 15px; 
-            text-align: center; 
-            color: var(--text-grey); 
-            font-weight: 700; 
-            font-size: 0.8rem; 
-            border-top: 1px solid rgba(176,196,217,0.3); 
-        }
+        footer { padding: 15px; text-align: center; color: var(--text-grey); font-weight: 700; font-size: 0.8rem; border-top: 1px solid rgba(176,196,217,0.3); }
 
-        /* --- RESPONSIVIDADE --- */
         @media (max-width: 650px) { 
             header { padding: 0 15px; }
             .btn-voltar-header { display: none !important; } 
@@ -190,34 +73,14 @@
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
 
     <header>
-        <div class="header-left">
-            <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
-            <div id="dropdownMenu" class="menu-dropdown"></div>
-        </div>
-
-        <div class="logo-center">
-            <img id="head-logo" src="" alt="Logo">
-            <div class="logo-text">
-                <h1 id="tit-l1"></h1>
-                <h1 id="tit-l2"></h1>
-                <p id="sub-tit"></p>
-            </div>
-        </div>
-
-        <div class="header-right">
-            <a href="../" id="link-voltar-header" class="btn-voltar-header">
-                <img id="header-back-icon" src="" width="18"> 
-                <span id="txt-voltar-header">VOLTAR</span>
-            </a>
-            <a href="../" id="link-voltar-mobile" class="btn-voltar-mobile">
-                <img id="header-back-mobile" src="" alt="Voltar" style="height:35px;">
-            </a>
-        </div>
+        <div class="header-left"><i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i><div id="dropdownMenu" class="menu-dropdown"></div></div>
+        <div class="logo-center"><img id="head-logo" src="" alt="Logo"><div class="logo-text"><h1 id="tit-l1"></h1><h1 id="tit-l2"></h1><p id="sub-tit"></p></div></div>
+        <div class="header-right"><a href="../" id="link-voltar-header" class="btn-voltar-header"><img id="header-back-icon" src="" width="18"> <span id="txt-voltar-header">VOLTAR</span></a><a href="../" id="link-voltar-mobile" class="btn-voltar-mobile"><img id="header-back-mobile" src="" alt="Voltar" style="height:35px;"></a></div>
     </header>
 
     <main>
         <div class="intro-container">
-            <h2 id="hub-intro-title">Jogos Disponíveis</h2>
+            <!-- Texto "Jogos Disponíveis" removido daqui -->
             <p id="hub-intro-sub"></p>
         </div>
         <div class="game-wrapper" id="gamesGrid"></div>
@@ -225,35 +88,25 @@
 
     <footer id="txt-rodape"></footer>
 
-    <!-- Importação dos Ficheiros de Configuração -->
     <script src="biblioteca.js"></script>
     <script src="dados.js"></script>
     
     <script>
         function initUI() {
-            // Verifica se os ficheiros externos foram carregados corretamente
-            if (typeof JOGO_CONFIG === 'undefined' || typeof BIBLIOTECA_TEMAS === 'undefined' || typeof BIBLIOTECA_CONTEUDO === 'undefined') {
-                console.error("Erro: Verifica se biblioteca.js e dados.js estão na mesma pasta.");
-                return;
-            }
+            if (typeof JOGO_CONFIG === 'undefined' || typeof BIBLIOTECA_TEMAS === 'undefined' || typeof BIBLIOTECA_CONTEUDO === 'undefined') return;
             
             const conf = JOGO_CONFIG;
             const tema = BIBLIOTECA_TEMAS[conf.areaAtiva];
-            
-            // Vai buscar o conteúdo específico (títulos e intro) com base no Ano e na Disciplina
             const info = BIBLIOTECA_CONTEUDO[conf.anoAtivo][conf.areaAtiva];
-            
             const pIconsMenu = conf.caminhoIconsMenu;
             const pIconsJogos = conf.caminhoIconsJogos;
             const root = document.documentElement;
 
-            // 1. APLICAR CORES (CSS Variables)
             root.style.setProperty('--bg-page', tema.corPagina);
             root.style.setProperty('--primary-blue', tema.corPrimaria);
             root.style.setProperty('--primary-dark', tema.corEscura);
             root.style.setProperty('--text-grey', tema.corTexto);
 
-            // 2. DEFINIR TEXTOS DINÂMICOS
             document.title = info.t1 + " " + info.t2;
             document.getElementById('tit-l1').innerText = info.t1;
             document.getElementById('tit-l2').innerText = info.t2;
@@ -261,61 +114,39 @@
             document.getElementById('hub-intro-sub').innerText = info.intro;
             document.getElementById('txt-rodape').innerHTML = info.rodape;
             
-            // 3. DEFINIR ÍCONES DO CABEÇALHO
             document.getElementById('head-logo').src = pIconsMenu + conf.iconesMenu[conf.anoAtivo];
             document.getElementById('header-back-icon').src = pIconsMenu + conf.iconesMenu.voltar;
             document.getElementById('header-back-mobile').src = pIconsMenu + tema.voltarMobile;
 
-            // 4. GERAR MENU DROPDOWN
             const menuBox = document.getElementById('dropdownMenu');
             menuBox.innerHTML = ''; 
             const menuLabels = { home: 'Início', pre: 'Pré', ano1: '1º Ano', ano2: '2º Ano', ano3: '3º Ano', ano4: '4º Ano' };
-            
             ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
                 if(conf.links[k]) {
-                    const a = document.createElement('a');
-                    a.className = 'menu-item';
-                    a.href = conf.links[k];
+                    const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
                     a.innerHTML = `<img src="${pIconsMenu}${conf.iconesMenu[k]}"><span>${menuLabels[k]}</span>`;
                     menuBox.appendChild(a);
                 }
             });
-            
-            // Botão Voltar (Final do Menu)
-            const btnV = document.createElement('a');
-            btnV.className = 'menu-item menu-item-voltar';
-            btnV.href = "../"; 
+            const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = "../"; 
             btnV.innerHTML = `<img src="${pIconsMenu}${conf.iconesMenu.voltar}"> <span>VOLTAR</span>`;
             menuBox.appendChild(btnV);
 
-            // 5. GERAR GRELHA DE JOGOS
             const grid = document.getElementById('gamesGrid');
             grid.innerHTML = ''; 
             conf.listaJogos.forEach(jogo => {
-                const card = document.createElement('a');
-                card.className = 'game-card';
-                card.href = jogo.link;
-                card.innerHTML = `
-                    <div class="card-img-container">
-                        <img src="${pIconsJogos}${jogo.icon}" alt="${jogo.nome}">
-                    </div>
-                    <h2>${jogo.nome}</h2>
-                `;
+                const card = document.createElement('a'); card.className = 'game-card'; card.href = jogo.link;
+                card.innerHTML = `<div class="card-img-container"><img src="${pIconsJogos}${jogo.icon}"></div><h2>${jogo.nome}</h2>`;
                 grid.appendChild(card);
             });
         }
 
-        // LÓGICA DE INTERAÇÃO (ABRIR/FECHAR MENU)
         function toggleHamburger(e) {
             e.stopPropagation();
             const m = document.getElementById('dropdownMenu');
             const ov = document.getElementById('overlay');
-            if(m.style.display === 'flex') {
-                closeMenus();
-            } else {
-                m.style.display = 'flex';
-                ov.style.display = 'block';
-            }
+            if(m.style.display === 'flex') { closeMenus(); } 
+            else { m.style.display = 'flex'; ov.style.display = 'block'; }
         }
 
         function closeMenus() {
@@ -323,7 +154,6 @@
             document.getElementById('overlay').style.display = 'none';
         }
 
-        // DISPARAR AO CARREGAR A PÁGINA
         window.onload = initUI;
     </script>
 </body>
