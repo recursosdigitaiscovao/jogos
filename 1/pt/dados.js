@@ -1,34 +1,18 @@
 const JOGO_CONFIG = {
-    areaAtiva: "portugues", 
-    anoAtivo: "ano1",      
+    areaAtiva: "portugues", // Escolha: "portugues", "matematica", "estudo" ou "pre"
+    anoAtivo: "ano1",      // Escolha: "pre", "ano1", "ano2", "ano3", "ano4"
     
-    textos: {
-        tituloLinha1: "Pequenos",
-        intro: "Explora as letras, as palavras e diverte-te a ler!",
-        rodape: "&copy; Pequenos Leitores - Recursos Educativos"
-    },
-    
-    // Ajusta os caminhos se necessário (subir pastas)
     caminhoIconsMenu: "../../icons/", 
     caminhoIconsJogos: "iconjogos/",
     
     iconesMenu: {
-        home: "home.png", 
-        pre: "iconpre.png", 
-        ano1: "icon1.png", 
-        ano2: "icon2.png", 
-        ano3: "icon3.png", 
-        ano4: "icon4.png", 
-        voltar: "voltar.png"
+        home: "home.png", pre: "iconpre.png", ano1: "icon1.png", 
+        ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png", voltar: "voltar.png"
     },
-
+    
     links: {
-        home: "/jogos", 
-        pre: "/jogos/pre", 
-        ano1: "/jogos/1", 
-        ano2: "/jogos/2", 
-        ano3: "/jogos/3", 
-        ano4: "/jogos/4"
+        home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", 
+        ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4"
     },
     
     listaJogos: [
@@ -41,5 +25,6 @@ const JOGO_CONFIG = {
         { nome: "Descobre a Palavra", icon: "forca.png", link: "forca/" },
         { nome: "Sopa de Letras", icon: "sopa_letras.png", link: "sopa_letras/" },
         { nome: "Copia Palavras", icon: "copia_palavras.png", link: "copia_palavras/" }
+        // ... adicione os restantes
     ]
 };
