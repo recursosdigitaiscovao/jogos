@@ -1,5 +1,5 @@
 const JOGO_CONFIG = {
-    areaAtiva: "portugues", 
+    areaAtiva: "matematica", 
     anoAtivo: "ano1",      
     
     textos: {
@@ -9,10 +9,10 @@ const JOGO_CONFIG = {
     },
     
     // Caminho: De /jogos/1/pt/experi/ para /jogos/icons/ (Sobe 3 níveis)
-    caminhoIconsMenu: "../../../icons/", 
+    caminhoIconsMenu: "../../icons/", 
     
     // Caminho: De /jogos/1/pt/experi/ para /jogos/1/pt/iconjogos/ (Sobe 1 nível)
-    caminhoIconsJogos: "../iconjogos/",
+    caminhoIconsJogos: "iconjogos/",
     
     iconesMenu: {
         home: "home.png", 
