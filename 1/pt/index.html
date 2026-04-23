@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pequenos Leitores</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
@@ -13,16 +13,18 @@
             --primary-dark: #3d7db8;
             --white: #ffffff;
             --text-grey: #5d7082;
-            --outer-shadow: 0px 8px 20px rgba(176, 196, 217, 0.5);
+            --outer-shadow: 0px 0px 20px #b0c4d9, 0px 0px 20px #ffffff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
         
         body { 
             background-color: var(--bg-page); 
-            min-height: 100vh; min-height: 100dvh;
-            width: 100%; display: flex; flex-direction: column; 
-            overflow-x: hidden; 
+            height: 100vh; height: 100dvh;
+            width: 100vw; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
         }
 
         /* HEADER */
@@ -31,125 +33,128 @@
             width: 100%; 
             box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4);
             display: grid;
-            grid-template-columns: 70px 1fr 70px; /* Espaços fixos para os botões laterais */
+            grid-template-columns: 80px 1fr 80px;
             align-items: center; 
-            position: sticky; top: 0; z-index: 1000;
-            min-height: 80px;
-            padding: 0 10px;
+            flex-shrink: 0; 
+            z-index: 1000;
+            min-height: 100px;
         }
 
-        .header-left, .header-right { 
-            display: flex; justify-content: center; align-items: center; 
-        }
+        .header-left { padding: 15px; display: flex; justify-content: center; }
+        .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; transition: transform 0.2s; }
+        .hamburger-btn:hover { transform: scale(1.1); color: var(--primary-dark); }
 
-        .hamburger-btn { 
-            font-size: 1.8rem; 
-            color: var(--primary-blue); 
-            cursor: pointer; 
-            min-width: 48px; min-height: 48px;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        /* Novo Botão Voltar no Header */
-        .header-back-btn {
-            display: flex; align-items: center; justify-content: center;
-            min-width: 48px; min-height: 48px;
-            text-decoration: none;
-            transition: transform 0.2s;
-        }
-        .header-back-btn img {
-            width: 40px; height: 40px; object-fit: contain;
-        }
-        .header-back-btn:hover { transform: scale(1.1); }
-
-        .header-center-content { 
-            display: flex; align-items: center; justify-content: center; gap: 8px; 
-            text-align: center;
-        }
-
-        #header-icon { height: 50px; width: auto; filter: drop-shadow(2px 3px 4px rgba(0,0,0,0.1)); }
+        .header-center-content { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        #header-icon { height: 70px; width: auto; filter: drop-shadow(2px 3px 4px rgba(0,0,0,0.1)); }
         
-        .header-titles { display: flex; flex-direction: column; line-height: 1.1; }
-        .title-main { color: var(--primary-blue); font-weight: 900; font-size: 0.9rem; text-transform: uppercase; }
-        .title-sub { color: var(--text-grey); font-weight: 400; font-size: 0.7rem; }
+        .header-titles { display: flex; flex-direction: column; line-height: 1; }
+        .title-main { color: var(--primary-blue); font-weight: 900; font-size: 1.2rem; text-transform: uppercase; }
+        .title-sub { color: var(--text-grey); font-weight: 400; font-size: 0.75rem; margin-top: 2px; }
+
+        .header-right { width: 80px; }
 
         /* ÁREA CENTRAL */
         main {
-            flex: 1; width: 100%; max-width: 1200px; margin: 0 auto;
-            padding: 1.5rem 1rem; display: flex; flex-direction: column; align-items: center;
-        }
-
-        .intro-text {
-            text-align: center; color: var(--text-grey);
-            font-size: 0.85rem; margin-bottom: 1.5rem;
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            -webkit-overflow-scrolling: touch;
         }
 
         .game-wrapper { 
             width: 100%;
+            max-width: 1200px; 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); 
-            gap: 1.5rem; justify-items: center;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+            gap: 20px; 
+            justify-items: center; 
+            padding: 10px 10px 30px 10px;
         }
 
-        /* CARDS */
+        .intro-text {
+            grid-column: 1 / -1; 
+            text-align: center; 
+            color: var(--text-grey);
+            font-size: 0.8rem; 
+            margin-bottom: 5px;
+        }
+
+        /* CARD DOS JOGOS */
         .game-card { 
-            background: var(--bg-page); width: 100%; border-radius: 18px; 
-            box-shadow: var(--outer-shadow); display: flex; flex-direction: column; 
-            align-items: center; text-decoration: none; padding: 1.2rem; text-align: center;
-            transition: transform 0.3s ease;
+            background: var(--bg-page); width: 100%; max-width: 160px; min-height: 150px;
+            border-radius: 18px; 
+            box-shadow: var(--outer-shadow); 
+            display: flex; flex-direction: column; align-items: center;
+            text-decoration: none; padding: 12px; text-align: center;
+            transition: all 0.2s ease;
         }
-        .game-card:active { transform: scale(0.95); }
-        .card-img-container { width: 100%; height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+        .game-card:hover { transform: translateY(-5px); }
+
+        .card-img-container { width: 100%; height: 70px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
         .card-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .game-card h2 { color: var(--primary-blue); font-size: 0.85rem; font-weight: 900; margin-top: auto; }
-
-        /* MENU DROPDOWN */
-        .menu-dropdown { 
-            position: absolute; top: 75px; left: 15px; 
-            display: none; flex-direction: column; gap: 8px; z-index: 2000; 
-        }
-        .menu-item { 
-            display: flex; align-items: center; gap: 12px; padding: 12px 18px; 
-            background: white; border-radius: 15px; box-shadow: 4px 4px 10px rgba(176, 196, 217, 0.4);
-            cursor: pointer; text-decoration: none; color: var(--text-grey); 
-            font-weight: 700; font-size: 0.95rem; min-width: 210px; min-height: 48px;
-            transition: background 0.2s;
-        }
-        
-        /* HOVER: Altera apenas o fundo, mantém ícone e texto originais */
-        .menu-item:hover { 
-            background: #f0f7ff; /* Um azul bem claro para indicar seleção sem ofuscar */
-        }
-        .menu-item img { height: 24px; width: 24px; object-fit: contain; }
-
-        .menu-item-voltar { background: var(--primary-blue); color: white; }
-        .menu-item-voltar img { filter: brightness(0) invert(1); }
-        /* No botão voltar do menu, o hover também não altera cores do conteúdo */
-        .menu-item-voltar:hover { background: var(--primary-dark); }
-
-        .menu-divider { height: 1px; background-color: rgba(176, 196, 217, 0.4); margin: 4px 10px; }
+        .game-card h2 { color: var(--primary-blue); font-size: 0.75rem; font-weight: 900; margin-top: auto; }
 
         /* FOOTER */
         footer {
-            background: var(--bg-page); width: 100%; padding: 1.2rem;
-            text-align: center; border-top: 1px solid rgba(176, 196, 217, 0.3);
-            color: var(--text-grey); font-weight: 700; font-size: 0.75rem;
+            background: var(--bg-page);
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+            flex-shrink: 0; 
+            border-top: 1px solid rgba(176, 196, 217, 0.3);
+            color: var(--text-grey);
+            font-weight: 700;
+            font-size: 0.7rem;
+            z-index: 1000;
         }
 
-        /* MEDIA QUERIES */
-        @media (min-width: 481px) {
-            header { grid-template-columns: 80px 1fr 80px; min-height: 100px; }
-            #header-icon { height: 75px; }
-            .title-main { font-size: 1.2rem; }
-            .game-wrapper { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
-            .header-back-btn img { width: 45px; height: 45px; }
+        /* MENU HAMBURGUER / DROPDOWN */
+        .menu-dropdown { 
+            position: absolute; top: 60px; left: 15px; 
+            display: none; flex-direction: column; gap: 8px; z-index: 2000; 
         }
 
-        @media (min-width: 1025px) {
+        /* ITENS NORMAIS */
+        .menu-item { 
+            display: flex; align-items: center; gap: 10px; padding: 10px 18px; 
+            background: white; border-radius: 15px; box-shadow: 4px 4px 10px rgba(176, 196, 217, 0.4);
+            cursor: pointer; min-width: 190px; text-decoration: none; 
+            color: var(--text-grey); font-weight: 700; font-size: 0.9rem;
+            transition: background 0.2s ease;
+        }
+        .menu-item:hover { 
+            background: var(--primary-blue); 
+            /* O texto e icon não mudam para branco aqui, mantêm a cor original */
+        }
+        .menu-item img { height: 20px; width: 20px; object-fit: contain; }
+
+        /* ITEM VOLTAR ESPECIAL */
+        .menu-item-voltar { 
+            background: var(--primary-blue) !important; 
+            color: white !important; 
+        }
+        .menu-item-voltar img { filter: brightness(0) invert(1); } /* Icon branco inicial */
+
+        .menu-item-voltar:hover { 
+            background: white !important; 
+            color: var(--primary-blue) !important; 
+        }
+        .menu-item-voltar:hover img { filter: none; } /* Icon volta à cor original no hover */
+
+        .menu-divider { height: 1px; background-color: rgba(176, 196, 217, 0.4); margin: 2px 10px; }
+
+        /* DESKTOP AJUSTES */
+        @media (min-width: 768px) {
             header { grid-template-columns: 110px 1fr 110px; min-height: 120px; }
             #header-icon { height: 90px; }
-            .title-main { font-size: 1.5rem; }
-            .game-card:hover { transform: translateY(-8px); }
+            .title-main { font-size: 1.4rem; }
+            .game-wrapper { gap: 30px; padding: 20px; }
+            .game-card { max-width: 180px; min-height: 160px; }
+            .card-img-container { height: 90px; }
+            .game-card h2 { font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -157,12 +162,9 @@
 
     <header>
         <div class="header-left">
-            <div class="hamburger-btn" onclick="toggleMenu(event)">
-                <i class="fas fa-bars"></i>
-            </div>
+            <i class="fas fa-bars hamburger-btn" onclick="toggleMenu(event)"></i>
             <div id="dropdownMenu" class="menu-dropdown"></div>
         </div>
-
         <div class="header-center-content">
             <img id="header-icon" src="" alt="Ícone">
             <div class="header-titles">
@@ -171,17 +173,13 @@
                 <div id="txt-subtitulo" class="title-sub"></div>
             </div>
         </div>
-
-        <div class="header-right">
-            <a href="../index.html" class="header-back-btn">
-                <img id="img-voltar-header" src="" alt="Voltar">
-            </a>
-        </div>
+        <div class="header-right"></div>
     </header>
 
     <main>
-        <div id="txt-intro" class="intro-text"></div>
-        <div class="game-wrapper" id="gamesGrid"></div>
+        <div class="game-wrapper" id="gamesGrid">
+            <div id="txt-intro" class="intro-text"></div>
+        </div>
     </main>
 
     <footer id="txt-rodape"></footer>
@@ -199,37 +197,21 @@
             if(menu) menu.style.display = 'none'; 
         };
 
-        // Função para atualizar o ícone do header com base no tamanho do ecrã
-        function updateHeaderBackIcon() {
-            const img = document.getElementById('img-voltar-header');
-            if(!img || typeof JOGO_CONFIG === 'undefined') return;
-            
-            const path = JOGO_CONFIG.caminhoIconsMenu;
-            if (window.innerWidth <= 480) {
-                img.src = path + 'voltar_az.png';
-            } else {
-                img.src = path + 'voltar.png';
-            }
-        }
-
-        window.onresize = updateHeaderBackIcon;
-
         window.onload = () => {
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const config = JOGO_CONFIG;
                 
-                // 1. CARREGAR TEXTOS E ICONES HEADER
+                // 1. CARREGAR TEXTOS
                 document.getElementById('txt-titulo1').innerText = config.textos.tituloLinha1;
                 document.getElementById('txt-titulo2').innerText = config.textos.tituloLinha2;
                 document.getElementById('txt-subtitulo').innerText = config.textos.subtitulo;
                 document.getElementById('txt-intro').innerText = config.textos.intro;
                 document.getElementById('txt-rodape').innerHTML = config.textos.rodape;
+
+                // Ícone do Header
                 document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.ano1;
 
-                // Inicializar ícone voltar do header
-                updateHeaderBackIcon();
-
-                // 2. GERAR MENU DROPDOWN
+                // 2. GERAR MENU
                 const menuBox = document.getElementById('dropdownMenu');
                 const niveis = [
                     { label: 'Início', key: 'home' },
@@ -245,7 +227,8 @@
                         const a = document.createElement('a');
                         a.className = 'menu-item';
                         a.href = config.links[n.key];
-                        a.innerHTML = `<img src="${config.caminhoIconsMenu}${config.iconesMenu[n.key]}"><span>${n.label}</span>`;
+                        const iconFile = config.iconesMenu[n.key]; 
+                        a.innerHTML = `<img src="${config.caminhoIconsMenu}${iconFile}"><span>${n.label}</span>`;
                         menuBox.appendChild(a);
                     }
                 });
@@ -254,12 +237,11 @@
                 divider.className = 'menu-divider';
                 menuBox.appendChild(divider);
 
-                // Botão Voltar dentro do Menu
-                const btnVoltarMenu = document.createElement('a');
-                btnVoltarMenu.className = 'menu-item menu-item-voltar'; 
-                btnVoltarMenu.href = '../index.html'; 
-                btnVoltarMenu.innerHTML = `<img src="${config.caminhoIconsMenu}${config.iconesMenu.voltar}"><span>VOLTAR</span>`;
-                menuBox.appendChild(btnVoltarMenu);
+                const btnVoltar = document.createElement('a');
+                btnVoltar.className = 'menu-item menu-item-voltar'; 
+                btnVoltar.href = '../index.html'; 
+                btnVoltar.innerHTML = `<img src="${config.caminhoIconsMenu}${config.iconesMenu.voltar}"><span>VOLTAR</span>`;
+                menuBox.appendChild(btnVoltar);
 
                 // 3. GERAR JOGOS
                 const grid = document.getElementById('gamesGrid');
@@ -269,7 +251,7 @@
                     card.href = jogo.link;
                     card.innerHTML = `
                         <div class="card-img-container">
-                            <img src="${config.caminhoIconsJogos}${jogo.icon}" alt="${jogo.nome}" loading="lazy">
+                            <img src="${config.caminhoIconsJogos}${jogo.icon}" alt="${jogo.nome}">
                         </div>
                         <h2>${jogo.nome}</h2>
                     `;
