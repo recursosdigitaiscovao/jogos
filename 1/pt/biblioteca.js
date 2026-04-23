@@ -5,7 +5,7 @@ const BIBLIOTECA_TEMAS = {
         corPrimaria: "#5ba4e5",
         corEscura: "#3d7db8",
         corTexto: "#5d7082",
-        voltarMobile: "voltar_az.png" // Certifica-te que este ficheiro está em /jogos/icons/
+        voltarMobile: "voltar_az.png"
     },
     "matematica": {
         tituloL2: "Matemáticos",
@@ -21,6 +21,14 @@ const BIBLIOTECA_TEMAS = {
         corPrimaria: "#994D4D",
         corEscura: "#6C3737",
         corTexto: "#994D4D",
+        voltarMobile: "voltar_cs.png"
+    },
+    "pre": { 
+        tituloL2: "Curiosos",
+        corPagina: "#FFF5F7",
+        corPrimaria: "#E691A7",
+        corEscura: "#D54267",
+        corTexto: "#E691A7",
         voltarMobile: "voltar_rs.png"
     }
 };
