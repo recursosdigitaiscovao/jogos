@@ -7,150 +7,112 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-page: #e9f0f8;
-            --primary-blue: #5ba4e5;
-            --primary-dark: #3d7db8;
-            --white: #ffffff;
-            --text-grey: #5d7082;
-            --outer-shadow: 0px 0px 20px #b0c4d9, 0px 0px 20px #ffffff;
+        :root { 
+            --bg-page: #e9f0f8; --primary-blue: #5ba4e5; --primary-dark: #3d7db8; 
+            --white: #ffffff; --text-grey: #5d7082; --header-h: 70px;
+            --outer-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4);
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            background-color: var(--bg-page); 
-            height: 100dvh; width: 100vw; 
-            display: flex; flex-direction: column; 
-            overflow: hidden; 
-        }
+        body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* HEADER */
+        /* HEADER (IGUAL AO 1º INDEX) */
         header { 
-            background: var(--bg-page);
-            width: 100%; 
-            box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4);
-            display: grid;
-            grid-template-columns: 80px 1fr 80px;
-            align-items: center; 
-            flex-shrink: 0; 
-            z-index: 1000;
-            min-height: 100px;
+            height: var(--header-h); background: #f0f7ff; display: flex; align-items: center; 
+            justify-content: space-between; padding: 0 20px; z-index: 2500; flex-shrink: 0;
+            box-shadow: var(--outer-shadow); position: relative;
         }
+        .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; pointer-events: none; white-space: nowrap; }
+        .logo-center img { height: 48px; width: auto; }
+        .logo-text h1 { font-size: 17px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
+        .logo-text p { font-size: 8px; color: #88a; font-weight: 700; text-transform: uppercase; }
 
-        .header-left { padding: 15px; display: flex; justify-content: center; position: relative; }
-        .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; transition: transform 0.2s; }
-
-        .header-center-content { display: flex; align-items: center; justify-content: center; gap: 10px; }
-        #header-icon { height: 70px; width: auto; filter: drop-shadow(2px 3px 4px rgba(0,0,0,0.1)); }
+        .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; padding: 5px; z-index: 3001; }
         
-        .header-titles { display: flex; flex-direction: column; line-height: 1; }
-        .title-main { color: var(--primary-blue); font-weight: 900; font-size: 1.2rem; text-transform: uppercase; }
-        .title-sub { color: var(--text-grey); font-weight: 400; font-size: 0.75rem; margin-top: 2px; }
+        /* BOTÃO VOLTAR (IGUAL AO 1º INDEX) */
+        .btn-voltar-header { background: var(--primary-blue); color: white; padding: 7px 15px; border-radius: 12px; text-decoration: none; font-weight: 900; font-size: 13px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 0 var(--primary-dark); transition: 0.1s; }
+        .btn-voltar-header:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--primary-dark); }
+        .btn-voltar-mobile { display: none; text-decoration: none; padding: 5px; z-index: 3001; }
 
-        .header-right { width: 80px; }
+        /* MENU DROPDOWN (IGUAL AO 1º INDEX) */
+        .menu-dropdown { position: absolute; top: 65px; left: 15px; display: none; flex-direction: column; gap: 6px; z-index: 3000; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 0.85rem; min-width: 180px; transition: 0.2s; }
+        .menu-item:hover { background: var(--primary-blue); color: white; }
+        .menu-item img { height: 20px; width: 20px; object-fit: contain; }
+        .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
+        .menu-item-voltar img { filter: brightness(0) invert(1); }
 
-        /* ÁREA CENTRAL (GRELHA) */
-        main {
-            flex: 1; 
-            overflow-y: auto; 
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            -webkit-overflow-scrolling: touch;
-        }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.1); display: none; z-index: 2000; }
+
+        /* CONTEÚDO - GRELHA DE JOGOS */
+        main { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        .intro-container { text-align: center; margin-bottom: 25px; }
+        .intro-container h2 { color: var(--primary-blue); font-weight: 900; font-size: 22px; margin-bottom: 5px; }
+        .intro-container p { color: var(--text-grey); font-weight: 700; font-size: 14px; }
 
         .game-wrapper { 
-            width: 100%;
-            max-width: 1200px; 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
-            gap: 20px; 
-            justify-items: center; 
-            padding: 10px 10px 30px 10px;
+            width: 100%; max-width: 1100px; display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+            gap: 20px; justify-items: center; padding-bottom: 40px;
         }
 
-        .intro-text {
-            grid-column: 1 / -1; 
-            text-align: center; 
-            color: var(--text-grey);
-            font-weight: 800;
-            font-size: 0.9rem; 
-            margin: 15px 0;
-        }
-
-        /* CARD DOS JOGOS */
         .game-card { 
-            background: var(--bg-page); width: 100%; max-width: 160px; min-height: 150px;
-            border-radius: 25px; 
-            box-shadow: var(--outer-shadow); 
+            background: #f0f7ff; width: 100%; max-width: 160px; min-height: 150px;
+            border-radius: 25px; box-shadow: 0 8px 20px rgba(176,196,217,0.4);
             display: flex; flex-direction: column; align-items: center;
             text-decoration: none; padding: 15px; text-align: center;
-            transition: all 0.2s ease;
+            transition: all 0.2s ease; border: 2px solid white;
         }
-        .game-card:hover { transform: translateY(-5px); background: #f8fbff; }
-
+        .game-card:hover { transform: translateY(-5px); background: white; border-color: var(--primary-blue); }
         .card-img-container { width: 100%; height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
         .card-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
         .game-card h2 { color: var(--primary-blue); font-size: 0.8rem; font-weight: 900; margin-top: auto; text-transform: uppercase; }
 
-        /* MENU HAMBURGUER */
-        .menu-dropdown { 
-            position: absolute; top: 70px; left: 15px; 
-            display: none; flex-direction: column; gap: 8px; z-index: 2000; 
-        }
-        .menu-item { 
-            display: flex; align-items: center; gap: 10px; padding: 12px 18px; 
-            background: white; border-radius: 15px; box-shadow: 4px 4px 10px rgba(176, 196, 217, 0.4);
-            cursor: pointer; min-width: 200px; text-decoration: none; 
-            color: var(--text-grey); font-weight: 700; font-size: 0.9rem;
-        }
-        .menu-item:hover { background: var(--primary-blue); color: white; }
-        .menu-item img { height: 22px; width: 22px; object-fit: contain; }
+        footer { padding: 15px; text-align: center; color: var(--text-grey); font-weight: 700; font-size: 0.7rem; border-top: 1px solid rgba(176,196,217,0.3); }
 
-        .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
-        .menu-item-voltar img { filter: brightness(0) invert(1); }
-        .menu-item-voltar:hover { background: white !important; color: var(--primary-blue) !important; }
-        .menu-item-voltar:hover img { filter: none; }
-
-        .menu-divider { height: 1px; background-color: rgba(176, 196, 217, 0.4); margin: 2px 10px; }
-
-        /* FOOTER */
-        footer { padding: 15px; text-align: center; color: var(--text-grey); font-weight: 700; font-size: 0.75rem; border-top: 1px solid rgba(176, 196, 217, 0.2); }
-
-        .overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:transparent; display:none; z-index:1500; }
-
-        @media (min-width: 768px) {
-            header { grid-template-columns: 110px 1fr 110px; min-height: 120px; }
-            #header-icon { height: 90px; }
-            .title-main { font-size: 1.4rem; }
-            .game-wrapper { gap: 30px; }
+        /* RESPONSIVIDADE (DO 1º INDEX) */
+        @media (max-width: 650px) { 
+            .btn-voltar-header { display: none !important; } 
+            .btn-voltar-mobile { display: flex; align-items: center; } 
+            .logo-text p { display: none; }
+            .game-wrapper { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; }
         }
     </style>
 </head>
 <body>
-
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+    
     <header>
         <div class="header-left">
-            <i class="fas fa-bars hamburger-btn" onclick="toggleMenu(event)"></i>
+            <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
             <div id="dropdownMenu" class="menu-dropdown"></div>
         </div>
-        <div class="header-center-content">
-            <img id="header-icon" src="" alt="Ícone">
-            <div class="header-titles">
-                <div id="txt-titulo1" class="title-main"></div>
-                <div id="txt-titulo2" class="title-main"></div>
-                <div id="txt-subtitulo" class="title-sub"></div>
+        
+        <div class="logo-center">
+            <img id="head-logo" src="" alt="Logo">
+            <div class="logo-text">
+                <h1 id="tit-l1"></h1>
+                <h1 id="tit-l2"></h1>
+                <p id="sub-tit"></p>
             </div>
         </div>
-        <div class="header-right"></div>
+
+        <div class="header-right">
+            <a href="#" id="link-voltar-header" class="btn-voltar-header">
+                <img id="header-back-icon" src="" width="16"> 
+                <span id="txt-voltar-header"></span>
+            </a>
+            <a href="#" id="link-voltar-mobile" class="btn-voltar-mobile">
+                <img id="header-back-mobile" src="" alt="Voltar" style="height:32px;">
+            </a>
+        </div>
     </header>
 
     <main>
-        <div id="txt-intro" class="intro-text"></div>
+        <div class="intro-container">
+            <h2 id="hub-intro-title"></h2>
+            <p id="hub-intro-sub"></p>
+        </div>
         <div class="game-wrapper" id="gamesGrid"></div>
     </main>
 
@@ -158,66 +120,55 @@
 
     <script src="dados.js"></script>
     <script>
-        function toggleMenu(e) {
-            if(e) e.stopPropagation();
-            const menu = document.getElementById('dropdownMenu');
-            const overlay = document.getElementById('overlay');
-            const isVisible = menu.style.display === 'flex';
-            menu.style.display = isVisible ? 'none' : 'flex';
-            overlay.style.display = isVisible ? 'none' : 'block';
-        }
-
-        function initHub() {
-            const config = JOGO_CONFIG;
+        function initUI() {
+            const conf = JOGO_CONFIG;
             
-            // 1. Preencher Textos
-            document.getElementById('txt-titulo1').innerText = config.textos.tituloLinha1;
-            document.getElementById('txt-titulo2').innerText = config.textos.tituloLinha2;
-            document.getElementById('txt-subtitulo').innerText = config.textos.subtitulo;
-            document.getElementById('txt-intro').innerText = config.textos.intro;
-            document.getElementById('txt-rodape').innerHTML = config.textos.rodape;
-            document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.ano1;
+            // Textos do Cabeçalho e Intro
+            document.getElementById('tit-l1').innerText = conf.textos.tituloLinha1;
+            document.getElementById('tit-l2').innerText = conf.textos.tituloLinha2;
+            document.getElementById('sub-tit').innerText = conf.textos.subtitulo;
+            document.getElementById('hub-intro-title').innerText = "Jogos de Português"; // Título da secção
+            document.getElementById('hub-intro-sub').innerText = conf.textos.intro;
+            document.getElementById('txt-rodape').innerHTML = conf.textos.rodape;
+            
+            // Ícones do Cabeçalho
+            const pIcons = conf.caminhoIconsMenu;
+            document.getElementById('head-logo').src = pIcons + conf.iconesMenu.ano1;
+            document.getElementById('header-back-icon').src = pIcons + conf.iconesMenu.voltar;
+            document.getElementById('header-back-mobile').src = pIcons + "voltar_az.png";
+            
+            // Links Voltar
+            document.getElementById('link-voltar-header').href = conf.links.voltar;
+            document.getElementById('link-voltar-mobile').href = conf.links.voltar;
+            document.getElementById('txt-voltar-header').innerText = "VOLTAR";
 
-            // 2. Gerar Menu Lateral
+            // Gerar Menu Dropdown (Igual ao 1º Index)
             const menuBox = document.getElementById('dropdownMenu');
-            const niveis = [
-                { label: 'Início', key: 'home' },
-                { label: 'Pré-Escolar', key: 'pre' },
-                { label: '1º Ano', key: 'ano1' },
-                { label: '2º Ano', key: 'ano2' },
-                { label: '3º Ano', key: 'ano3' },
-                { label: '4º Ano', key: 'ano4' }
-            ];
-
-            niveis.forEach(n => {
-                if(config.links[n.key]) {
+            const menuLabels = { home: 'Início', pre: 'Pré-Escolar', ano1: '1º Ano', ano2: '2º Ano', ano3: '3º Ano', ano4: '4º Ano' };
+            ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
+                if(conf.links[k]) {
                     const a = document.createElement('a');
                     a.className = 'menu-item';
-                    a.href = config.links[n.key];
-                    a.innerHTML = `<img src="${config.caminhoIconsMenu}${config.iconesMenu[n.key]}"><span>${n.label}</span>`;
+                    a.href = conf.links[k];
+                    a.innerHTML = `<img src="${pIcons}${conf.iconesMenu[k]}"><span>${menuLabels[k]}</span>`;
                     menuBox.appendChild(a);
                 }
             });
+            const btnV = document.createElement('a');
+            btnV.className = 'menu-item menu-item-voltar';
+            btnV.href = conf.links.voltar;
+            btnV.innerHTML = `<img src="${pIcons}${conf.iconesMenu.voltar}"> <span>VOLTAR</span>`;
+            menuBox.appendChild(btnV);
 
-            const divider = document.createElement('div');
-            divider.className = 'menu-divider';
-            menuBox.appendChild(divider);
-
-            const btnVoltar = document.createElement('a');
-            btnVoltar.className = 'menu-item menu-item-voltar'; 
-            btnVoltar.href = config.links.voltar; 
-            btnVoltar.innerHTML = `<img src="${config.caminhoIconsMenu}${config.iconesMenu.voltar}"><span>VOLTAR</span>`;
-            menuBox.appendChild(btnVoltar);
-
-            // 3. Gerar Grelha de Jogos
+            // Gerar Grelha de Jogos (9 jogos)
             const grid = document.getElementById('gamesGrid');
-            config.listaJogos.forEach(jogo => {
+            conf.listaJogos.forEach(jogo => {
                 const card = document.createElement('a');
                 card.className = 'game-card';
                 card.href = jogo.link;
                 card.innerHTML = `
                     <div class="card-img-container">
-                        <img src="${config.caminhoIconsJogos}${jogo.icon}" alt="${jogo.nome}">
+                        <img src="${conf.caminhoIconsJogos}${jogo.icon}" alt="${jogo.nome}">
                     </div>
                     <h2>${jogo.nome}</h2>
                 `;
@@ -225,7 +176,24 @@
             });
         }
 
-        window.onload = initHub;
+        function toggleHamburger(e) {
+            e.stopPropagation();
+            const m = document.getElementById('dropdownMenu');
+            const ov = document.getElementById('overlay');
+            if(m.style.display === 'flex') {
+                closeMenus();
+            } else {
+                m.style.display = 'flex';
+                ov.style.display = 'block';
+            }
+        }
+
+        function closeMenus() {
+            document.getElementById('dropdownMenu').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        window.onload = initUI;
     </script>
 </body>
 </html>
