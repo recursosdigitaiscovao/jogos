@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pequenos Leitores - Jogos</title>
+    <!-- O título será definido dinamicamente pelo JavaScript -->
+    <title>Carregando...</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { 
             --bg-page: #FFF5F7; --primary-blue: #E691A7; --primary-dark: #D54267; 
             --white: #ffffff; --text-grey: #E691A7; 
-            --header-h: 100px; /* Aumentado em 30px como pedido */
+            --header-h: 100px; 
             --outer-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -23,7 +24,7 @@
             box-shadow: var(--outer-shadow); position: relative;
         }
         .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; pointer-events: none; white-space: nowrap; }
-        .logo-center img { height: 65px; width: auto; } /* Aumentado para acompanhar o header */
+        .logo-center img { height: 65px; width: auto; } 
         .logo-text h1 { font-size: 22px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 10px; color: #88a; font-weight: 700; text-transform: uppercase; }
 
@@ -70,14 +71,21 @@
 
         footer { padding: 15px; text-align: center; color: var(--text-grey); font-weight: 700; font-size: 0.8rem; border-top: 1px solid rgba(176,196,217,0.3); }
 
+        /* RESPONSIVIDADE TELEMÓVEL (Retrato) */
         @media (max-width: 650px) { 
             header { padding: 0 15px; }
             .btn-voltar-header { display: none !important; } 
             .btn-voltar-mobile { display: flex; align-items: center; } 
-            .logo-text p { display: none; }
+            .logo-text p { display: block; font-size: 8px; margin-top: 2px; } /* Ajustado para visibilidade */
             .logo-text h1 { font-size: 18px; }
             .logo-center img { height: 50px; }
             .game-wrapper { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+        }
+
+        /* OCULTAR HEADER EM LANDSCAPE */
+        @media (max-height: 500px) and (orientation: landscape) {
+            header { display: none !important; }
+            main { padding-top: 10px; }
         }
     </style>
 </head>
@@ -100,7 +108,6 @@
         </div>
 
         <div class="header-right">
-            <!-- Link Voltar configurado para ../ -->
             <a href="../" id="link-voltar-header" class="btn-voltar-header">
                 <img id="header-back-icon" src="" width="18"> 
                 <span id="txt-voltar-header"></span>
@@ -124,12 +131,16 @@
     <script src="dados.js"></script>
     <script>
         function initUI() {
+            if (typeof JOGO_CONFIG === 'undefined') return;
             const conf = JOGO_CONFIG;
+            
+            // JUNÇÃO DO TÍTULO NA ABA DO NAVEGADOR (Pequenos Curiosos)
+            document.title = conf.textos.tituloLinha1 + " " + conf.textos.tituloLinha2;
             
             document.getElementById('tit-l1').innerText = conf.textos.tituloLinha1;
             document.getElementById('tit-l2').innerText = conf.textos.tituloLinha2;
             document.getElementById('sub-tit').innerText = conf.textos.subtitulo;
-            document.getElementById('hub-intro-title').innerText = "Jogos do Pré-Escolar";
+            document.getElementById('hub-intro-title').innerText = "Jogos Disponíveis";
             document.getElementById('hub-intro-sub').innerText = conf.textos.intro;
             document.getElementById('txt-rodape').innerHTML = conf.textos.rodape;
             
@@ -139,7 +150,6 @@
             document.getElementById('header-back-mobile').src = pIcons + "voltar_rs.png";
             document.getElementById('txt-voltar-header').innerText = "VOLTAR";
 
-            // Menu Dropdown
             const menuBox = document.getElementById('dropdownMenu');
             const menuLabels = { home: 'Início', pre: 'Pré-Escolar', ano1: '1º Ano', ano2: '2º Ano', ano3: '3º Ano', ano4: '4º Ano' };
             ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
@@ -151,14 +161,12 @@
                     menuBox.appendChild(a);
                 }
             });
-            // Item Voltar no Menu
             const btnV = document.createElement('a');
             btnV.className = 'menu-item menu-item-voltar';
-            btnV.href = "../"; // Retrocede um nível
+            btnV.href = "../"; 
             btnV.innerHTML = `<img src="${pIcons}${conf.iconesMenu.voltar}"> <span>VOLTAR</span>`;
             menuBox.appendChild(btnV);
 
-            // Gerar Grelha
             const grid = document.getElementById('gamesGrid');
             conf.listaJogos.forEach(jogo => {
                 const card = document.createElement('a');
