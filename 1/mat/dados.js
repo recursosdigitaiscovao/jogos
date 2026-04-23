@@ -1,22 +1,20 @@
 const JOGO_CONFIG = {
-    textos: {
-        tituloLinha1: "Pequenos",
-        tituloLinha2: "Matemáticos",
-        subtitulo: "Matemática | 1º Ano",
-        intro: "Explora os números e diverte-te a contar!",
-        rodape: "&copy; Pequenos Matemáticos - Recursos Educativos"
-    },
-    caminhoIconsMenu: "../../icons/",
+    areaAtiva: "matematica", // Escolha: "portugues", "matematica", "estudo" ou "pre"
+    anoAtivo: "ano1",      // Escolha: "pre", "ano1", "ano2", "ano3", "ano4"
+    
+    caminhoIconsMenu: "../../icons/", 
     caminhoIconsJogos: "iconjogos/",
+    
     iconesMenu: {
         home: "home.png", pre: "iconpre.png", ano1: "icon1.png", 
         ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png", voltar: "voltar.png"
     },
+    
     links: {
         home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", 
-        ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4",
-        voltar: "../" // Retrocede apenas um nível
+        ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4"
     },
+    
     listaJogos: [
         { nome: "Contar os Números", icon: "conta.png", link: "conta/index.html" },
         { nome: "Formas Geométricas", icon: "formas.png", link: "formas/index.html" },
@@ -27,5 +25,6 @@ const JOGO_CONFIG = {
         { nome: "Sequências", icon: "sequencias.png", link: "sequencias/index.html" },
         { nome: "Par ou Ímpar", icon: "parouimpar.png", link: "parouimpar/index.html" },
         { nome: "As Dezenas", icon: "dezenas.png", link: "dezenas/index.html" }
+        // ... adicione os restantes
     ]
 };
