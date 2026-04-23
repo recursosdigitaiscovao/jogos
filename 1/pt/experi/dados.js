@@ -23,14 +23,14 @@ const JOGO_CONFIG = {
         ano4: "icon4.png", 
         voltar: "voltar.png"
     },
-    
+
     links: {
-        home: "../../../", // Volta para a raiz /jogos/
-        pre: "../../pre/", 
-        ano1: "../../1/", 
-        ano2: "../../2/", 
-        ano3: "../../3/", 
-        ano4: "../../4/"
+        home: "/jogos", // Volta para a raiz /jogos/
+        pre: "/jogos/pre", 
+        ano1: "/jogos/1", 
+        ano2: "/jogos/2", 
+        ano3: "/jogos/3", 
+        ano4: "/jogos/4"
     },
     
     listaJogos: [
