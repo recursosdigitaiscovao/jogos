@@ -75,11 +75,6 @@
             .logo-center img { height: 50px; }
             .game-wrapper { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
         }
-
-        @media (max-height: 500px) and (orientation: landscape) {
-            header { display: none !important; }
-            main { padding-top: 10px; } 
-        }
     </style>
 </head>
 <body>
@@ -97,7 +92,6 @@
 
     <footer id="txt-rodape"></footer>
 
-    <!-- Estão na mesma pasta, por isso não precisam de caminhos de pasta -->
     <script src="biblioteca.js"></script>
     <script src="dados.js"></script>
     
@@ -107,16 +101,15 @@
             
             const conf = JOGO_CONFIG;
             const tema = BIBLIOTECA_TEMAS[conf.areaAtiva];
-            const pIcons = conf.caminhoIconsMenu;
+            const pIconsMenu = conf.caminhoIconsMenu;
+            const pIconsJogos = conf.caminhoIconsJogos;
             const root = document.documentElement;
 
-            // 1. APLICAR CORES
             root.style.setProperty('--bg-page', tema.corPagina);
             root.style.setProperty('--primary-blue', tema.corPrimaria);
             root.style.setProperty('--primary-dark', tema.corEscura);
             root.style.setProperty('--text-grey', tema.corTexto);
 
-            // 2. TEXTOS DINÂMICOS
             const tituloL2 = tema.tituloL2;
             document.title = conf.textos.tituloLinha1 + " " + tituloL2;
             document.getElementById('tit-l1').innerText = conf.textos.tituloLinha1;
@@ -125,17 +118,14 @@
             const nomesAnos = { "pre": "Pré-Escolar", "ano1": "1º Ano", "ano2": "2º Ano", "ano3": "3º Ano", "ano4": "4º Ano" };
             const areaFormatada = conf.areaAtiva.charAt(0).toUpperCase() + conf.areaAtiva.slice(1);
             document.getElementById('sub-tit').innerText = areaFormatada + " | " + nomesAnos[conf.anoAtivo];
-            
             document.getElementById('hub-intro-sub').innerText = conf.textos.intro;
             document.getElementById('txt-rodape').innerHTML = conf.textos.rodape;
             
-            // 3. ÍCONES (Logo central = ícone do ano)
-            const iconPrincipal = conf.iconesMenu[conf.anoAtivo];
-            document.getElementById('head-logo').src = pIcons + iconPrincipal;
-            document.getElementById('header-back-icon').src = pIcons + conf.iconesMenu.voltar;
-            document.getElementById('header-back-mobile').src = pIcons + tema.voltarMobile;
+            // Ícones (Logo central = ícone do ano da pasta icons)
+            document.getElementById('head-logo').src = pIconsMenu + conf.iconesMenu[conf.anoAtivo];
+            document.getElementById('header-back-icon').src = pIconsMenu + conf.iconesMenu.voltar;
+            document.getElementById('header-back-mobile').src = pIconsMenu + tema.voltarMobile;
 
-            // 4. MENU
             const menuBox = document.getElementById('dropdownMenu');
             const menuLabels = { home: 'Início', pre: 'Pré', ano1: '1º Ano', ano2: '2º Ano', ano3: '3º Ano', ano4: '4º Ano' };
             ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
@@ -143,17 +133,16 @@
                     const a = document.createElement('a');
                     a.className = 'menu-item';
                     a.href = conf.links[k];
-                    a.innerHTML = `<img src="${pIcons}${conf.iconesMenu[k]}"><span>${menuLabels[k]}</span>`;
+                    a.innerHTML = `<img src="${pIconsMenu}${conf.iconesMenu[k]}"><span>${menuLabels[k]}</span>`;
                     menuBox.appendChild(a);
                 }
             });
             const btnV = document.createElement('a');
             btnV.className = 'menu-item menu-item-voltar';
             btnV.href = "../"; 
-            btnV.innerHTML = `<img src="${pIcons}${conf.iconesMenu.voltar}"> <span>VOLTAR</span>`;
+            btnV.innerHTML = `<img src="${pIconsMenu}${conf.iconesMenu.voltar}"> <span>VOLTAR</span>`;
             menuBox.appendChild(btnV);
 
-            // 5. GRELHA
             const grid = document.getElementById('gamesGrid');
             conf.listaJogos.forEach(jogo => {
                 const card = document.createElement('a');
@@ -161,7 +150,7 @@
                 card.href = jogo.link;
                 card.innerHTML = `
                     <div class="card-img-container">
-                        <img src="${conf.caminhoIconsJogos}${jogo.icon}" alt="${jogo.nome}">
+                        <img src="${pIconsJogos}${jogo.icon}" alt="${jogo.nome}">
                     </div>
                     <h2>${jogo.nome}</h2>
                 `;
