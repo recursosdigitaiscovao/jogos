@@ -10,7 +10,7 @@
         :root { 
             --bg-page: #e9f0f8; --primary-blue: #5ba4e5; --primary-dark: #3d7db8; 
             --white: #ffffff; --text-grey: #5d7082; 
-            --header-h: 100px; /* Aumentado em 30px como pedido */
+            --header-h: 100px; 
             --outer-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -23,7 +23,7 @@
             box-shadow: var(--outer-shadow); position: relative;
         }
         .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; pointer-events: none; white-space: nowrap; }
-        .logo-center img { height: 65px; width: auto; } /* Aumentado para acompanhar o header */
+        .logo-center img { height: 65px; width: auto; } 
         .logo-text h1 { font-size: 22px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 10px; color: #88a; font-weight: 700; text-transform: uppercase; }
 
@@ -44,12 +44,13 @@
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.1); display: none; z-index: 2000; }
 
-        /* GRELHA DE JOGOS */
+        /* CONTEÚDO CENTRAL */
         main { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; align-items: center; }
         .intro-container { text-align: center; margin-bottom: 30px; }
         .intro-container h2 { color: var(--primary-blue); font-weight: 900; font-size: 26px; margin-bottom: 5px; }
         .intro-container p { color: var(--text-grey); font-weight: 700; font-size: 16px; }
 
+        /* GRELHA DE JOGOS (9 cards) */
         .game-wrapper { 
             width: 100%; max-width: 1100px; display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
@@ -70,11 +71,15 @@
 
         footer { padding: 15px; text-align: center; color: var(--text-grey); font-weight: 700; font-size: 0.8rem; border-top: 1px solid rgba(176,196,217,0.3); }
 
+        /* RESPONSIVIDADE TELEMÓVEL */
         @media (max-width: 650px) { 
             header { padding: 0 15px; }
             .btn-voltar-header { display: none !important; } 
             .btn-voltar-mobile { display: flex; align-items: center; } 
-            .logo-text p { display: none; }
+            
+            /* CORREÇÃO: Subtítulo visível no telemóvel */
+            .logo-text p { display: block; font-size: 8px; margin-top: 2px; }
+            
             .logo-text h1 { font-size: 18px; }
             .logo-center img { height: 50px; }
             .game-wrapper { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
@@ -100,7 +105,6 @@
         </div>
 
         <div class="header-right">
-            <!-- Link Voltar configurado para ../ -->
             <a href="../" id="link-voltar-header" class="btn-voltar-header">
                 <img id="header-back-icon" src="" width="18"> 
                 <span id="txt-voltar-header"></span>
@@ -124,22 +128,25 @@
     <script src="dados.js"></script>
     <script>
         function initUI() {
+            if (typeof JOGO_CONFIG === 'undefined') return;
             const conf = JOGO_CONFIG;
             
+            // Textos
             document.getElementById('tit-l1').innerText = conf.textos.tituloLinha1;
             document.getElementById('tit-l2').innerText = conf.textos.tituloLinha2;
             document.getElementById('sub-tit').innerText = conf.textos.subtitulo;
-            document.getElementById('hub-intro-title').innerText = "Jogos de Português";
+            document.getElementById('hub-intro-title').innerText = "Jogos Disponíveis";
             document.getElementById('hub-intro-sub').innerText = conf.textos.intro;
             document.getElementById('txt-rodape').innerHTML = conf.textos.rodape;
             
+            // Ícones e Caminhos
             const pIcons = conf.caminhoIconsMenu;
             document.getElementById('head-logo').src = pIcons + conf.iconesMenu.ano1;
             document.getElementById('header-back-icon').src = pIcons + conf.iconesMenu.voltar;
             document.getElementById('header-back-mobile').src = pIcons + "voltar_az.png";
             document.getElementById('txt-voltar-header').innerText = "VOLTAR";
 
-            // Menu Dropdown
+            // Menu lateral
             const menuBox = document.getElementById('dropdownMenu');
             const menuLabels = { home: 'Início', pre: 'Pré-Escolar', ano1: '1º Ano', ano2: '2º Ano', ano3: '3º Ano', ano4: '4º Ano' };
             ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
@@ -151,14 +158,13 @@
                     menuBox.appendChild(a);
                 }
             });
-            // Item Voltar no Menu
             const btnV = document.createElement('a');
             btnV.className = 'menu-item menu-item-voltar';
-            btnV.href = "../"; // Retrocede um nível
+            btnV.href = "../"; 
             btnV.innerHTML = `<img src="${pIcons}${conf.iconesMenu.voltar}"> <span>VOLTAR</span>`;
             menuBox.appendChild(btnV);
 
-            // Gerar Grelha
+            // Grelha de Jogos
             const grid = document.getElementById('gamesGrid');
             conf.listaJogos.forEach(jogo => {
                 const card = document.createElement('a');
