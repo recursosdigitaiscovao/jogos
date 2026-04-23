@@ -6,7 +6,7 @@ const JOGO_CONFIG = {
         intro: "Brinca com os números, as cores e as formas!",
         rodape:  "&copy; Pequenos Curiosos - Recursos Educativos"
     },
-    caminhoIconsMenu: "../../icons/",
+    caminhoIconsMenu: "../icons/",
     caminhoIconsJogos: "iconjogos/",
     iconesMenu: {
         home: "home.png", pre: "iconpre.png", ano1: "icon1.png", 
