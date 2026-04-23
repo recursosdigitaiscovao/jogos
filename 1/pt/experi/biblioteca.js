@@ -5,7 +5,7 @@ const BIBLIOTECA_TEMAS = {
         corPrimaria: "#5ba4e5",
         corEscura: "#3d7db8",
         corTexto: "#5d7082",
-        voltarMobile: "voltar_az.png"
+        voltarMobile: "voltar_az.png" // Certifica-te que este ficheiro está em /jogos/icons/
     },
     "matematica": {
         tituloL2: "Matemáticos",
