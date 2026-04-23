@@ -1,22 +1,38 @@
 const JOGO_CONFIG = {
+    areaAtiva: "portugues", 
+    anoAtivo: "ano1",      
+    
     textos: {
         tituloLinha1: "Pequenos",
-        tituloLinha2: "Leitores",
-        subtitulo: "Português | 1º Ano",
         intro: "Explora as letras, as palavras e diverte-te a ler!",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos"
     },
-    caminhoIconsMenu: "../../icons/",
-    caminhoIconsJogos: "iconjogos/",
+    
+    // Caminho: De /jogos/1/pt/experi/ para /jogos/icons/ (Sobe 3 níveis)
+    caminhoIconsMenu: "../../../icons/", 
+    
+    // Caminho: De /jogos/1/pt/experi/ para /jogos/1/pt/iconjogos/ (Sobe 1 nível)
+    caminhoIconsJogos: "../iconjogos/",
+    
     iconesMenu: {
-        home: "home.png", pre: "iconpre.png", ano1: "icon1.png", 
-        ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png", voltar: "voltar.png"
+        home: "home.png", 
+        pre: "iconpre.png", 
+        ano1: "icon1.png", 
+        ano2: "icon2.png", 
+        ano3: "icon3.png", 
+        ano4: "icon4.png", 
+        voltar: "voltar.png"
     },
+
     links: {
-        home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", 
-        ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4",
-        voltar: "../" // Retrocede apenas um nível
+        home: "/jogos", // Volta para a raiz /jogos/
+        pre: "/jogos/pre", 
+        ano1: "/jogos/1", 
+        ano2: "/jogos/2", 
+        ano3: "/jogos/3", 
+        ano4: "/jogos/4"
     },
+    
     listaJogos: [
         { nome: "Primeira Letra", icon: "primeira_letra.png", link: "primeira_letra/" },
         { nome: "Conta as Sílabas", icon: "conta_silabas.png", link: "conta_silabas/" },
