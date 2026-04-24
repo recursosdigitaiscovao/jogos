@@ -71,6 +71,12 @@ function montarQuestao() {
     const item = itensAtuais[indiceQuestao];
     if (!item) return;
     document.getElementById('round-val').innerText = `${indiceQuestao + 1} / ${itensAtuais.length}`;
+    
+    let botoesHTML = "";
+    for(let n=1; n<=4; n++) {
+        botoesHTML += `<button class="btn-jogar-stretch" onclick="validarResposta(this, ${n})">${n}</button>`;
+    }
+
     area.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; width:100%; animation: fadeIn 0.4s;">
             <div style="background:white; padding:15px; border-radius:20px; box-shadow:0 8px 20px rgba(0,0,0,0.06); margin-bottom:15px;">
@@ -78,7 +84,7 @@ function montarQuestao() {
             </div>
             <h2 style="font-size:32px; color:var(--primary-blue); font-weight:900; margin-bottom:20px; text-transform:uppercase;">${item.nome}</h2>
             <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; width:100%; max-width:320px;">
-                ${[1, 2, 3, 4].map(n => `<button class="btn-jogar-stretch" onclick="validarResposta(this, ${n})">${n}</button>`).join('')}
+                ${botoesHTML}
             </div>
         </div>
     `;
@@ -119,9 +125,7 @@ function tocarSom(tipo) {
     if (url) { const a = new Audio(url); a.play().catch(e => {}); }
 }
 
-if (!document.getElementById('game-animations')) {
-    const style = document.createElement('style');
-    style.id = 'game-animations';
-    style.innerHTML = `@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`;
-    document.head.appendChild(style);
-}
+const style = document.createElement('style');
+style.id = 'game-animations';
+style.innerHTML = `@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`;
+document.head.appendChild(style);
