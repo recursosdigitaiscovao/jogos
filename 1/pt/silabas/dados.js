@@ -20,9 +20,7 @@ const BIBLIOTECA_CONTEUDO = {
         "estudo": { t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano", intro: "Explora o mundo e ordena os elementos!", rodape: "&copy; Pequenos Exploradores" }
     },
     "ano2": {
-        "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano", intro: "Ordena as sílabas para formar as palavras!", rodape: "&copy; Jovens Leitores" },
-        "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano", intro: "Desafios de ordenação matemática!", rodape: "&copy; Jovens Matemáticos" },
-        "estudo": { t1: "JOVENS", t2: "INVESTIGADORES", sub: "Estudo do Meio | 2º Ano", intro: "Investiga e ordena os factos!", rodape: "&copy; Jovens Investigadores" }
+        "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano", intro: "Ordena as sílabas para formar as palavras!", rodape: "&copy; Jovens Leitores" }
     }
 };
 
