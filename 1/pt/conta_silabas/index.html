@@ -15,11 +15,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
 
-        header { 
-            height: var(--header-h); background: #fff; display: flex; align-items: center; 
-            justify-content: space-between; padding: 0 20px; z-index: 2500; flex-shrink: 0;
-            box-shadow: 0px 4px 15px rgba(0,0,0,0.05); position: relative;
-        }
+        header { height: var(--header-h); background: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 2500; flex-shrink: 0; box-shadow: 0px 4px 15px rgba(0,0,0,0.05); position: relative; }
         .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; pointer-events: none; white-space: nowrap; }
         .logo-center img { height: 48px; width: auto; }
         .logo-text h1 { font-size: 17px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
@@ -46,23 +42,17 @@
 
         #game-main-content { flex: 1; width: 100%; background: var(--white); border: 3px dashed rgba(91, 164, 229, 0.4); border-radius: 30px; display: flex; align-items: center; justify-content: center; padding: 15px; position: relative; }
 
-        .btn-jogar-stretch { background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 16px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); transition: 0.1s; display: flex; align-items: center; justify-content: center; width: 100%; }
+        .btn-jogar-stretch { background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 16px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); transition: 0.1s; display: flex; align-items: center; justify-content: center; width: 100%; text-decoration: none; user-select: none; }
         .btn-jogar-stretch:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--primary-dark); }
         
-        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 4000; padding: 25px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); }
+        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 4000; padding: 25px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); max-height: 80vh; overflow-y: auto; }
         .rd-panel.active { bottom: 0; }
         #rd-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .rd-item { background: #f8f9fa; border: 2px solid #eef5ff; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+        .rd-item { background: #f8f9fa; border: 2px solid #eef5ff; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; }
         .rd-item img { width: 60px; height: 60px; object-fit: contain; }
 
-        @media (max-width: 650px) { 
-            .btn-voltar-header { display: none !important; } 
-            .btn-voltar-mobile { display: flex; align-items: center; } 
-        }
-        @media (max-height: 500px) and (orientation: landscape) { 
-            header { display: none !important; } 
-            .game-card { border-radius: 15px; height: 98dvh; } 
-        }
+        @media (max-width: 650px) { .btn-voltar-header { display: none !important; } .btn-voltar-mobile { display: flex; align-items: center; } }
+        @media (max-height: 500px) and (orientation: landscape) { header { display: none !important; } .game-card { border-radius: 15px; height: 98dvh; } }
     </style>
 </head>
 <body>
@@ -70,14 +60,21 @@
     <header>
         <div class="header-left"><i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i><div id="dropdownMenu" class="menu-dropdown"></div></div>
         <div class="logo-center"><img id="head-logo" src=""><div class="logo-text"><h1 id="tit-l1"></h1><h1 id="tit-l2"></h1><p id="sub-tit"></p></div></div>
-        <div class="header-right"><a href="#" id="link-voltar-header" class="btn-voltar-header"><img id="header-back-icon" src="" width="16"> <span id="txt-voltar-header"></span></a><a href="#" id="link-voltar-mobile" class="btn-voltar-mobile"><img id="header-back-mobile" src="" alt="Voltar" style="height:32px;"></a></div>
+        <div class="header-right">
+            <a href="#" id="link-voltar-header" class="btn-voltar-header"><img id="header-back-icon" src="" width="16"> <span id="txt-voltar-header"></span></a>
+            <a href="#" id="link-voltar-mobile" class="btn-voltar-mobile"><img id="header-back-mobile" src="" alt="Voltar" style="height:32px;"></a>
+        </div>
     </header>
 
     <main class="game-container">
         <div class="game-card">
             <div class="status-bar" id="status-bar">
                 <div style="display:flex; gap:10px;"><div class="badge badge-timer">⏳ <span id="timer-val">00:00</span></div><div class="badge badge-round"><span id="round-val">1 / 10</span></div></div>
-                <div style="display:flex; gap:10px;"><div class="badge" style="background:var(--highlight-green);"><i class="fas fa-check"></i> <span id="hits-val">0</span></div><div class="badge" style="background:var(--error-red);"><i class="fas fa-times"></i> <span id="miss-val">0</span></div><img id="rd-game-btn" src="" style="height:28px; cursor:pointer;" onclick="openRDMenu(event)"></div>
+                <div style="display:flex; gap:10px;">
+                    <div class="badge" style="background:var(--highlight-green);"><i class="fas fa-check"></i> <span id="hits-val">0</span></div>
+                    <div class="badge" style="background:var(--error-red);"><i class="fas fa-times"></i> <span id="miss-val">0</span></div>
+                    <img id="rd-game-btn" src="" style="height:28px; cursor:pointer;" onclick="openRDMenu(event)">
+                </div>
             </div>
 
             <section class="screen active" id="scr-intro">
@@ -92,14 +89,27 @@
             <section class="screen" id="scr-game"><div id="game-main-content"></div></section>
             
             <section class="screen" id="scr-result">
-                <img id="res-taca" style="width:120px; margin-bottom:20px;">
-                <h2 id="res-tit" style="font-size:28px; color: var(--primary-blue); font-weight:900; margin-bottom:10px; text-align:center;"></h2>
-                <div style="display:flex; gap:10px; margin-bottom:20px;">
-                    <div style="background:white; padding:10px 20px; border-radius:15px; text-align:center;">
-                        <span id="res-pts" style="font-size:24px; font-weight:900; color:var(--primary-blue);">0</span><br><small>ACERTOS</small>
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%;">
+                    <img id="res-taca" style="width:120px; margin-bottom:10px;">
+                    <h2 id="res-tit" style="font-size:28px; color: var(--primary-blue); font-weight:900; margin-bottom:15px; text-align:center;"></h2>
+                    
+                    <div style="display:flex; gap:12px; margin-bottom:20px;">
+                        <div class="res-badge" style="background:white; padding:10px 20px; border-radius:15px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); min-width:110px;">
+                            <span id="res-pts" style="font-size:24px; font-weight:900; color:var(--primary-blue);">0</span><br>
+                            <small style="font-weight:900; color:#88a;">ACERTOS</small>
+                        </div>
+                        <div class="res-badge" style="background:white; padding:10px 20px; border-radius:15px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); min-width:110px;">
+                            <span id="res-tim" style="font-size:24px; font-weight:900; color:var(--primary-blue);">00:00</span><br>
+                            <small style="font-weight:900; color:#88a;">TEMPO</small>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; flex-direction: column; width: 100%; max-width: 400px; gap: 10px;">
+                        <button class="btn-jogar-stretch" onclick="location.reload()">JOGAR DE NOVO</button>
+                        <button class="btn-jogar-stretch" style="background:white; color:var(--primary-blue); border:2px solid var(--primary-blue); box-shadow:none; font-size:15px;" onclick="openRDMenu(event)">OUTRO TEMA / NÍVEL</button>
+                        <a href="#" id="btn-outro-jogo" class="btn-jogar-stretch" style="background:#cbd9e6; color:#445; box-shadow:none; border:none; font-size:14px;">ESCOLHER OUTRO JOGO</a>
                     </div>
                 </div>
-                <button class="btn-jogar-stretch" onclick="location.reload()">JOGAR DE NOVO</button>
             </section>
         </div>
     </main>
@@ -126,14 +136,12 @@
 
         document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu[setup.ano];
         document.getElementById('header-back-icon').src = conf.caminhoIcons + "voltar.png";
-        
-        // Ícone de voltar mobile DINÂMICO
         document.getElementById('header-back-mobile').src = conf.caminhoIcons + tema.voltarMobile;
-
         document.getElementById('rd-intro-btn').src = conf.caminhoImg + "rd.png";
         document.getElementById('rd-game-btn').src = conf.caminhoImg + "rd.png";
         document.getElementById('link-voltar-header').href = conf.linkVoltar;
         document.getElementById('link-voltar-mobile').href = conf.linkVoltar;
+        document.getElementById('btn-outro-jogo').href = conf.linkVoltar;
         document.getElementById('txt-voltar-header').innerText = conf.textoVoltar;
 
         const menuBox = document.getElementById('dropdownMenu');
@@ -151,8 +159,18 @@
             div.onclick = () => { selecionarCategoria(key); closeMenus(); goToGame(); };
             rdBox.appendChild(div);
         });
-
         if(window.startLogic) window.startLogic();
+    }
+    window.mostrarResultados = function(acertos, tempo) { 
+        const conf = JOGO_CONFIG; 
+        let feedback = conf.relatorios.find(p => acertos >= p.min && acertos <= (p.max || 10));
+        document.getElementById('res-taca').src = conf.caminhoIcons + feedback.img;
+        document.getElementById('res-tit').innerText = feedback.titulo;
+        document.getElementById('res-pts').innerText = acertos;
+        document.getElementById('res-tim').innerText = tempo;
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('scr-result').classList.add('active');
+        document.getElementById('status-bar').style.display = 'none';
     }
     function goToGame() { 
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -161,7 +179,7 @@
         if(window.initGame) window.initGame();
     }
     function toggleHamburger(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); const ov = document.getElementById('overlay'); if(m.style.display === 'flex') { closeMenus(); } else { m.style.display = 'flex'; ov.style.display = 'block'; } }
-    function openRDMenu(e) { e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
+    function openRDMenu(e) { if(e) e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
     function closeMenus() { document.getElementById('rdMenu').classList.remove('active'); document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; }
     window.onload = initUI;
     </script>
