@@ -5,31 +5,25 @@ let erros = 0;
 let segundos = 0;
 let cronometro = null;
 let intervalAnim = null;
-let categoriaAtiva = 'animais'; // Categoria inicial padrão
+let categoriaAtiva = Object.keys(JOGO_CONFIG.categorias)[0];
 
-// Inicia a lógica assim que os dados carregam
+// Inicia mal o script carrega
 window.startLogic = function() {
     window.selecionarCategoria(categoriaAtiva);
 };
 
-// Escolhe o tema e gera a lista de 10 perguntas
+// Muda tema e atualiza animação específica
 window.selecionarCategoria = function(chave) {
     if (!JOGO_CONFIG.categorias[chave]) return;
     categoriaAtiva = chave;
     const cat = JOGO_CONFIG.categorias[chave];
-    
-    // Reset da lista de itens
     itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
-    
-    // Atualiza a animação específica deste tema
     window.atualizarAnimacao(cat);
 };
 
-// Gera a animação da mãozinha com base no EXEMPLO de cada categoria
+// Animação da mãozinha baseada no tema
 window.atualizarAnimacao = function(cat) {
     const container = document.getElementById('intro-animation-container');
-    if (!container) return;
-    
     if (intervalAnim) clearInterval(intervalAnim);
 
     container.innerHTML = `
@@ -37,18 +31,16 @@ window.atualizarAnimacao = function(cat) {
             <div style="background:white; padding:10px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
                 <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:80px; object-fit:contain;">
             </div>
-            <div style="font-size:22px; font-weight:900; color:var(--primary-blue); background:white; padding:5px 15px; border-radius:10px;">
-                ${cat.exemplo}
-            </div>
-            <div style="display:flex; gap:8px; position:relative; margin-top:5px;">
-                ${[1, 2, 3, 4].map(n => `<div id="anim-btn-${n}" style="width:35px; height:35px; background:#eee; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:16px;">${n}</div>`).join('')}
+            <div style="font-size:22px; font-weight:900; color:var(--primary-blue); background:white; padding:5px 15px; border-radius:10px;">${cat.exemplo}</div>
+            <div style="display:flex; gap:8px; position:relative;">
+                ${[1, 2, 3, 4].map(n => `<div id="anim-btn-${n}" style="width:35px; height:35px; background:#eee; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900;">${n}</div>`).join('')}
                 <i id="anim-hand" class="fas fa-mouse-pointer" style="position:absolute; color:var(--error-red); font-size:25px; bottom:-15px; right:0; transition:0.8s ease-in-out; opacity:0; z-index:10;"></i>
             </div>
         </div>
     `;
 
     const hand = document.getElementById('anim-hand');
-    const targetBtn = document.getElementById(`anim-btn-${cat.total}`); // Usa o total de sílabas do exemplo
+    const targetBtn = document.getElementById(`anim-btn-${cat.total}`);
 
     function rodarCiclo() {
         if (!hand || !targetBtn) return;
@@ -68,18 +60,15 @@ window.atualizarAnimacao = function(cat) {
     intervalAnim = setInterval(rodarCiclo, 3000);
 };
 
-// Inicia o Jogo do Zero (Limpa tudo)
+// REINÍCIO SEGURO DO JOGO
 window.initGame = function() {
-    // 1. Limpar estados anteriores
     if (cronometro) clearInterval(cronometro);
     indiceQuestao = 0; acertos = 0; erros = 0; segundos = 0;
     
-    // 2. Reset UI
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
     document.getElementById('timer-val').innerText = "00:00";
     
-    // 3. Garantir que temos itens
     if (itensAtuais.length === 0) window.selecionarCategoria(categoriaAtiva);
     
     iniciarCronometro();
@@ -124,10 +113,9 @@ window.validarResposta = function(btn, num) {
 
     setTimeout(() => {
         if (indiceQuestao < 9) {
-            indiceQuestao++; 
-            montarQuestao();
+            indiceQuestao++; montarQuestao();
         } else {
-            clearInterval(cronometro);
+            if (cronometro) clearInterval(cronometro);
             new Audio(JOGO_CONFIG.sons.vitoria).play().catch(()=>{});
             if(window.mostrarResultados) {
                 window.mostrarResultados(acertos, document.getElementById('timer-val').innerText);
@@ -144,3 +132,7 @@ function iniciarCronometro() {
         document.getElementById('timer-val').innerText = `${m}:${s}`;
     }, 1000);
 }
+
+const style = document.createElement('style');
+style.innerHTML = `@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`;
+document.head.appendChild(style);
