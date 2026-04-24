@@ -1,4 +1,3 @@
-// VARIÁVEIS GLOBAIS DO ESTADO DO JOGO
 let itensAtuais = [];
 let indiceAtual = 0;
 let acertos = 0;
@@ -6,39 +5,53 @@ let erros = 0;
 let tempoInicio;
 let intervaloTimer;
 let categoriaAtiva = 'animais';
-let silabasUsuario = []; // Armazena a ordem que o usuário colocou
 
-// SONS
+// Sons
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// INICIALIZAÇÃO
+// Inicialização
 window.startLogic = function() {
-    selecionarCategoria('animais'); // Categoria inicial padrão
+    selecionarCategoria('animais'); 
 };
 
-function selecionarCategoria(key) {
+// Selecionar Categoria e Gerar Exemplo na Intro
+window.selecionarCategoria = function(key) {
     categoriaAtiva = key;
-    const todosItens = [...JOGO_CONFIG.categorias[key].itens];
-    // Embaralha e pega apenas 10 para a rodada
+    const cat = JOGO_CONFIG.categorias[key];
+    const todosItens = [...cat.itens];
     itensAtuais = todosItens.sort(() => Math.random() - 0.5).slice(0, 10);
-    resetarPontuacao();
-}
+    
+    // Criar animação de exemplo na intro
+    const containerIntro = document.getElementById('intro-animation-container');
+    const silabasEx = cat.exemplo.split('-');
+    
+    containerIntro.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px; transform: scale(0.9);">
+            <div style="background:white; padding:8px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:80px; width:auto; border-radius:10px;">
+            </div>
+            <div style="display:flex; gap:5px;">
+                ${silabasEx.map(s => `
+                    <div style="width:45px; height:40px; background:white; border:2px solid var(--primary-blue); color:var(--primary-blue); border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:14px; box-shadow:0 3px 0 var(--primary-dark); animation: bounce 2s infinite ease-in-out;">
+                        ${s}
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        <style>
+            @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        </style>
+    `;
+};
 
-function resetarPontuacao() {
-    indiceAtual = 0;
-    acertos = 0;
-    erros = 0;
+window.initGame = function() {
+    indiceAtual = 0; acertos = 0; erros = 0;
     document.getElementById('hits-val').innerText = acertos;
     document.getElementById('miss-val').innerText = erros;
-}
-
-// INICIAR O JOGO (Chamado pelo botão JOGAR no HTML)
-window.initGame = function() {
-    resetarPontuacao();
-    proximaRodada();
     iniciarTimer();
+    proximaRodada();
 };
 
 function iniciarTimer() {
@@ -52,188 +65,126 @@ function iniciarTimer() {
     }, 1000);
 }
 
-// LÓGICA DA RODADA
 function proximaRodada() {
     if (indiceAtual >= itensAtuais.length) {
         finalizarJogo();
         return;
     }
-
-    silabasUsuario = [];
-    const item = itensAtuais[indiceAtual];
     document.getElementById('round-val').innerText = `${indiceAtual + 1} / ${itensAtuais.length}`;
-    
-    montarInterfaceJogo(item);
+    montarInterface(itensAtuais[indiceAtual]);
 }
 
-function montarInterfaceJogo(item) {
+function montarInterface(item) {
     const container = document.getElementById('game-main-content');
-    
-    // HTML Estrutural
+    const isMobile = window.innerHeight < 600 || window.innerWidth < 600;
+    const imgH = isMobile ? '100px' : '140px';
+    const silSize = isMobile ? '50px' : '65px';
+    const fontSize = isMobile ? '16px' : '22px';
+
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px;">
-            <h2 style="color:var(--primary-blue); font-weight:900; font-size:24px; text-transform:uppercase; letter-spacing:2px;">${item.nome}</h2>
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content: space-around; padding: 5px;">
+            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.2rem; text-transform:uppercase;">${item.nome}</h2>
             
-            <div style="background:white; padding:10px; border-radius:20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-height:180px; width:auto; border-radius:15px;">
+            <div style="background:white; padding:10px; border-radius:20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:${imgH}; width:auto; border-radius:15px; object-fit:contain;">
             </div>
 
-            <!-- Espaços para as sílabas (ZONA DE DEPÓSITO) -->
-            <div id="target-slots" style="display:flex; gap:10px; min-height:60px; justify-content:center; align-items:center; flex-wrap:wrap; padding:10px; width:100%;">
-                ${item.silabas.map((_, i) => `<div class="slot" data-index="${i}" ondrop="drop(event)" ondragover="allowDrop(event)" style="width:70px; height:60px; border:3px dashed #cbd9e6; border-radius:12px; display:flex; align-items:center; justify-content:center;"></div>`).join('')}
+            <div id="target-slots" style="display:flex; gap:8px; min-height:60px; justify-content:center; align-items:center; flex-wrap:wrap;">
+                ${item.silabas.map((_, i) => `<div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)" style="width:${silSize}; height:${silSize}; border:2px dashed #cbd9e6; border-radius:12px; display:flex; align-items:center; justify-content:center;"></div>`).join('')}
             </div>
 
-            <!-- Sílabas desordenadas (ZONA DE ORIGEM) -->
-            <div id="source-pool" style="display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap; min-height:80px; padding:10px; background:rgba(255,255,255,0.4); border-radius:20px; width:100%;">
-                <!-- As sílabas entram aqui -->
+            <div id="source-pool" style="display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:wrap; min-height:70px; width:100%;">
+                <!-- Sílabas entram aqui -->
             </div>
         </div>
     `;
 
-    // Embaralhar as sílabas para o usuário
-    const silabasEmbaralhadas = [...item.silabas].sort(() => Math.random() - 0.5);
+    const silabasBaralhadas = [...item.silabas].sort(() => Math.random() - 0.5);
     const pool = document.getElementById('source-pool');
 
-    silabasEmbaralhadas.forEach((sil, i) => {
-        const el = criarSilabaElemento(sil, i);
-        pool.appendChild(el);
-    });
-}
+    silabasBaralhadas.forEach((sil, i) => {
+        const div = document.createElement('div');
+        div.className = 'silaba-btn';
+        div.innerText = sil;
+        div.id = 'sil-' + i;
+        div.draggable = true;
+        
+        Object.assign(div.style, {
+            width: silSize, height: silSize, background: 'white', color: 'var(--primary-blue)',
+            border: '3px solid var(--primary-blue)', borderRadius: '12px', display: 'flex',
+            alignItems: 'center', justifyContent: 'center', fontSize: fontSize, fontWeight: '900',
+            cursor: 'pointer', boxShadow: '0 4px 0 var(--primary-dark)', userSelect: 'none'
+        });
 
-function criarSilabaElemento(texto, id) {
-    const div = document.createElement('div');
-    div.className = 'silaba-btn';
-    div.innerText = texto;
-    div.draggable = true;
-    div.id = "sil-" + id + "-" + Math.random().toString(36).substr(2, 5);
-    
-    // Estilo da Sílaba
-    Object.assign(div.style, {
-        background: 'var(--white)',
-        color: 'var(--primary-blue)',
-        border: '3px solid var(--primary-blue)',
-        borderRadius: '12px',
-        width: '70px',
-        height: '60px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        fontWeight: '900',
-        cursor: 'pointer',
-        boxShadow: '0 4px 0 var(--primary-dark)',
-        userSelect: 'none',
-        transition: 'transform 0.1s'
-    });
-
-    // Eventos de clique (Touch e Mouse)
-    div.onclick = () => clicarSilaba(div);
-    
-    // Eventos de Arrastar
-    div.ondragstart = (e) => {
-        e.dataTransfer.setData("text", e.target.id);
-        div.style.opacity = "0.5";
-    };
-    div.ondragend = () => div.style.opacity = "1";
-
-    return div;
-}
-
-// LÓGICA DE MOVIMENTAÇÃO
-function clicarSilaba(el) {
-    const parent = el.parentElement;
-    
-    if (parent.id === 'source-pool') {
-        // Mover para o primeiro slot vazio
-        const slots = document.querySelectorAll('.slot');
-        for (let slot of slots) {
-            if (slot.children.length === 0) {
-                moverParaSlot(el, slot);
-                break;
+        // Eventos para PC (Drag & Drop)
+        div.ondragstart = (e) => { e.dataTransfer.setData("text/plain", e.target.id); };
+        
+        // Evento para Clique/Touch
+        div.onclick = () => {
+            if (div.parentElement.id === 'source-pool') {
+                const slots = document.querySelectorAll('.slot');
+                for (let s of slots) if (s.children.length === 0) { s.appendChild(div); break; }
+            } else {
+                document.getElementById('source-pool').appendChild(div);
             }
-        }
-    } else {
-        // Estava num slot, volta para o pool
-        document.getElementById('source-pool').appendChild(el);
-        validarCompletude();
-    }
+            validar();
+        };
+        pool.appendChild(div);
+    });
 }
 
-function moverParaSlot(el, slot) {
-    slot.appendChild(el);
-    validarCompletude();
-}
-
-// ARRASTAR E SOLTAR (DRAG & DROP)
+// Funções de Arrastar para PC
 window.allowDrop = function(e) { e.preventDefault(); };
-
 window.drop = function(e) {
     e.preventDefault();
-    const data = e.dataTransfer.getData("text");
-    const el = document.getElementById(data);
-    const target = e.target.closest('.slot');
-    
-    if (target && target.children.length === 0) {
-        moverParaSlot(el, target);
+    const id = e.dataTransfer.getData("text/plain");
+    const el = document.getElementById(id);
+    const slot = e.target.closest('.slot');
+    if (slot && slot.children.length === 0) {
+        slot.appendChild(el);
+        validar();
     }
 };
 
-function validarCompletude() {
+function validar() {
     const slots = document.querySelectorAll('.slot');
-    const totalSlots = slots.length;
-    let preenchidos = 0;
-    let palavraMontada = [];
-
-    slots.forEach(slot => {
-        if (slot.children.length > 0) {
-            preenchidos++;
-            palavraMontada.push(slot.children[0].innerText);
-        }
-    });
-
-    if (preenchidos === totalSlots) {
-        verificarResposta(palavraMontada.join(''));
-    }
-}
-
-function verificarResposta(resposta) {
-    const itemCorreto = itensAtuais[indiceAtual];
-    const palavraCorreta = itemCorreto.silabas.join('');
+    const preenchidos = Array.from(slots).filter(s => s.children.length > 0);
     
-    // Bloqueia cliques para evitar erros durante a transição
-    document.getElementById('game-main-content').style.pointerEvents = 'none';
+    if (preenchidos.length === slots.length) {
+        const resposta = preenchidos.map(s => s.children[0].innerText).join('');
+        const correta = itensAtuais[indiceAtual].silabas.join('');
+        
+        document.getElementById('game-main-content').style.pointerEvents = 'none';
 
-    if (resposta === palavraCorreta) {
-        acertos++;
-        somAcerto.play();
-        document.getElementById('hits-val').innerText = acertos;
-        destacarSlots('acerto');
-    } else {
-        erros++;
-        somErro.play();
-        document.getElementById('miss-val').innerText = erros;
-        destacarSlots('erro');
+        if (resposta === correta) {
+            acertos++; somAcerto.play();
+            document.getElementById('hits-val').innerText = acertos;
+            pintarSilabas('#7ed321');
+        } else {
+            erros++; somErro.play();
+            document.getElementById('miss-val').innerText = erros;
+            pintarSilabas('#ff5e5e');
+        }
+
+        setTimeout(() => {
+            document.getElementById('game-main-content').style.pointerEvents = 'all';
+            indiceAtual++;
+            proximaRodada();
+        }, 1200);
     }
-
-    setTimeout(() => {
-        document.getElementById('game-main-content').style.pointerEvents = 'all';
-        indiceAtual++;
-        proximaRodada();
-    }, 1500);
 }
 
-function destacarSlots(tipo) {
-    const slots = document.querySelectorAll('.slot');
-    slots.forEach(s => {
-        s.style.transition = '0.3s';
-        s.style.background = tipo === 'acerto' ? '#d4edda' : '#f8d7da';
-        s.style.borderColor = tipo === 'acerto' ? '#28a745' : '#dc3545';
+function pintarSilabas(cor) {
+    document.querySelectorAll('.slot .silaba-btn').forEach(s => {
+        s.style.backgroundColor = cor;
+        s.style.borderColor = cor;
+        s.style.color = 'white';
+        s.style.boxShadow = 'none';
     });
 }
 
 function finalizarJogo() {
     clearInterval(intervaloTimer);
     somVitoria.play();
-    const tempoFinal = document.getElementById('timer-val').innerText;
-    window.mostrarResultados(acertos, tempoFinal);
+    window.mostrarResultados(acertos, document.getElementById('timer-val').innerText);
 }
