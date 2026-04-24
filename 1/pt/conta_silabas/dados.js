@@ -1,7 +1,6 @@
-// === CONFIGURAÇÃO MESTRE ===
 const CONFIG_MESTRE = {
     ano: "ano1",        
-    area: "portugues",  // Opções: "portugues", "matematica", "estudo", "pre"
+    area: "portugues",  
     nomeJogo: "CONTAR SÍLABAS"
 };
 
