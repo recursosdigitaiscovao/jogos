@@ -4,7 +4,7 @@ let acertos = 0;
 let erros = 0;
 let segundos = 0;
 let cronometro = null;
-let categoriaAtiva = 'animais';
+let categoriaAtiva = Object.keys(JOGO_CONFIG.categorias)[0];
 let intervalAnim = null;
 
 window.startLogic = function() {
@@ -26,14 +26,14 @@ window.atualizarAnimacao = function(chave) {
     container.innerHTML = `
         <div style="text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px;">
             <div style="background:white; padding:10px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
-                <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:80px;">
+                <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:80px; object-fit:contain;">
             </div>
             <div style="font-size:22px; font-weight:900; letter-spacing:4px; color:var(--primary-blue); background:white; padding:5px 15px; border-radius:10px;">
                 ${cat.exemplo}
             </div>
-            <div style="display:flex; gap:8px; position:relative;">
+            <div style="display:flex; gap:8px; position:relative; margin-top:5px;">
                 ${[1, 2, 3, 4].map(n => `<div id="anim-btn-${n}" style="width:35px; height:35px; background:#eee; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900;">${n}</div>`).join('')}
-                <i id="anim-hand" class="fas fa-mouse-pointer" style="position:absolute; color:var(--error-red); font-size:25px; bottom:-15px; right:0; transition:0.8s ease-in-out; opacity:0;"></i>
+                <i id="anim-hand" class="fas fa-mouse-pointer" style="position:absolute; color:var(--error-red); font-size:25px; bottom:-15px; right:0; transition:0.8s ease-in-out; opacity:0; z-index:10;"></i>
             </div>
         </div>
     `;
@@ -70,11 +70,11 @@ function montarQuestao() {
     document.getElementById('round-val').innerText = `${indiceQuestao + 1} / 10`;
 
     area.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; animation: fadeIn 0.4s;">
             <div style="background:white; padding:15px; border-radius:20px; box-shadow:0 8px 20px rgba(0,0,0,0.06); margin-bottom:15px;">
-                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:130px;">
+                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:140px; object-fit:contain;">
             </div>
-            <h2 style="font-size:32px; color:var(--primary-blue); font-weight:900; margin-bottom:20px;">${item.nome}</h2>
+            <h2 style="font-size:32px; color:var(--primary-blue); font-weight:900; margin-bottom:20px; text-transform:uppercase;">${item.nome}</h2>
             <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; width:100%; max-width:320px;">
                 ${[1, 2, 3, 4].map(n => `<button class="btn-jogar-stretch" onclick="validarResposta(this, ${n})">${n}</button>`).join('')}
             </div>
@@ -99,17 +99,14 @@ window.validarResposta = function(btn, num) {
     }
 
     setTimeout(() => {
-        if (indiceQuestao < 9) { indiceQuestao++; montarQuestao(); } 
-        else {
+        if (indiceQuestao < 9) { 
+            indiceQuestao++; montarQuestao(); 
+        } else {
             clearInterval(cronometro);
-            const feedback = JOGO_CONFIG.relatorios.find(p => acertos >= p.min && acertos <= p.max);
-            document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + feedback.img;
-            document.getElementById('res-tit').innerText = feedback.titulo;
-            document.getElementById('res-pts').innerText = acertos;
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('scr-result').classList.add('active');
-            document.getElementById('status-bar').style.display = 'none';
             new Audio(JOGO_CONFIG.sons.vitoria).play();
+            if(window.mostrarResultados) {
+                window.mostrarResultados(acertos, document.getElementById('timer-val').innerText);
+            }
         }
     }, 700);
 };
@@ -123,3 +120,7 @@ function iniciarCronometro() {
         document.getElementById('timer-val').innerText = `${m}:${s}`;
     }, 1000);
 }
+
+const style = document.createElement('style');
+style.innerHTML = `@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`;
+document.head.appendChild(style);
