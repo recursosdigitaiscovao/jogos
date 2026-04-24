@@ -1,6 +1,6 @@
 /**
  * LÓGICA DO JOGO: CONTAR SÍLABAS
- * VERSÃO CORRIGIDA: LIMPEZA TOTAL DE MEMÓRIA
+ * VERSÃO DINÂMICA: Adapta-se ao número de itens existentes
  */
 
 let itensAtuais = [];
@@ -12,37 +12,36 @@ let cronometro = null;
 let intervalAnim = null;
 let categoriaAtiva = "";
 
-// 1. INICIALIZAÇÃO (Chamada apenas uma vez no load)
+// 1. INICIALIZAÇÃO
 window.startLogic = function() {
-    // Define categoria inicial a partir do primeiro tema do dados.js
+    if (!JOGO_CONFIG || !JOGO_CONFIG.categorias) return;
     categoriaAtiva = Object.keys(JOGO_CONFIG.categorias)[0];
     window.selecionarCategoria(categoriaAtiva);
 };
 
-// 2. ESCOLHA DE CATEGORIA (Limpa animações anteriores)
+// 2. SELEÇÃO DE CATEGORIA (Agora aceita qualquer número de itens)
 window.selecionarCategoria = function(chave) {
-    // Parar animação anterior se existir
-    if (intervalAnim) {
-        clearInterval(intervalAnim);
-        intervalAnim = null;
-    }
+    if (intervalAnim) clearInterval(intervalAnim);
 
     if (!JOGO_CONFIG.categorias[chave]) return;
     
     categoriaAtiva = chave;
     const cat = JOGO_CONFIG.categorias[chave];
     
-    // Gerar nova lista de 10 itens aleatórios
-    itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
+    // MUDANÇA: Embaralha tudo, mas não corta em 10. Usa o que existir.
+    itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5);
     
-    // Iniciar animação da intro específica desta categoria
+    // Se quiseres limitar a um máximo de 10 mesmo que tenhas 50 itens:
+    // itensAtuais = itensAtuais.slice(0, 10); 
+
     window.atualizarAnimacao(cat);
 };
 
-// 3. ANIMAÇÃO DA INTRODUÇÃO (Mãozinha clicando no exemplo)
+// 3. ANIMAÇÃO DA INTRODUÇÃO
 window.atualizarAnimacao = function(cat) {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
+    if (intervalAnim) clearInterval(intervalAnim);
 
     container.innerHTML = `
         <div style="text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px;">
@@ -64,21 +63,14 @@ window.atualizarAnimacao = function(cat) {
 
     function rodarCiclo() {
         if (!hand || !targetBtn) return;
-        // Reset visual
-        hand.style.opacity = "0";
-        hand.style.transform = "translate(0, 0)";
-        targetBtn.style.background = "#eee";
-        targetBtn.style.color = "black";
-
+        hand.style.opacity = "0"; hand.style.transform = "translate(0, 0)";
+        targetBtn.style.background = "#eee"; targetBtn.style.color = "black";
         setTimeout(() => {
             if (!hand) return;
-            hand.style.opacity = "1";
-            hand.style.transform = "translate(-120px, -20px)";
-            
+            hand.style.opacity = "1"; hand.style.transform = "translate(-120px, -20px)";
             setTimeout(() => {
                 if (!targetBtn) return;
-                targetBtn.style.background = "var(--primary-blue)";
-                targetBtn.style.color = "white";
+                targetBtn.style.background = "var(--primary-blue)"; targetBtn.style.color = "white";
                 targetBtn.style.transform = "scale(1.1)";
                 setTimeout(() => { if(targetBtn) targetBtn.style.transform = "scale(1)"; }, 200);
             }, 800);
@@ -89,24 +81,20 @@ window.atualizarAnimacao = function(cat) {
     intervalAnim = setInterval(rodarCiclo, 3000);
 };
 
-// 4. INÍCIO DO JOGO (Reset absoluto de variáveis e cronómetro)
+// 4. INÍCIO DO JOGO
 window.initGame = function() {
-    // Parar TUDO o que possa estar a correr
     if (cronometro) clearInterval(cronometro);
     if (intervalAnim) clearInterval(intervalAnim);
     
-    // Reset de variáveis lógicas
-    indiceQuestao = 0;
-    acertos = 0;
-    erros = 0;
-    segundos = 0;
+    indiceQuestao = 0; acertos = 0; erros = 0; segundos = 0;
     
-    // Reset da Interface
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
     document.getElementById('timer-val').innerText = "00:00";
     
-    // Iniciar Cronómetro e Questões
+    // Garantia de que há itens carregados
+    if (itensAtuais.length === 0) window.selecionarCategoria(categoriaAtiva);
+    
     iniciarCronometro();
     montarQuestao();
 };
@@ -115,12 +103,10 @@ function montarQuestao() {
     const area = document.getElementById('game-main-content');
     const item = itensAtuais[indiceQuestao];
     
-    if (!item) {
-        console.error("Erro: Item não encontrado na posição", indiceQuestao);
-        return;
-    }
+    if (!item) return;
 
-    document.getElementById('round-val').innerText = `${indiceQuestao + 1} / 10`;
+    // MUDANÇA: O contador agora mostra o total real da lista (ex: 1 / 6)
+    document.getElementById('round-val').innerText = `${indiceQuestao + 1} / ${itensAtuais.length}`;
 
     area.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; width:100%; animation: fadeIn 0.4s;">
@@ -138,29 +124,22 @@ function montarQuestao() {
 window.validarResposta = function(btn, numEscolhido) {
     const correta = itensAtuais[indiceQuestao].silabas;
     const botoes = document.querySelectorAll('#game-main-content button');
-    
-    // Bloquear cliques extras para evitar erros de transição
     botoes.forEach(b => b.style.pointerEvents = 'none');
 
     if (numEscolhido === correta) {
-        acertos++;
-        document.getElementById('hits-val').innerText = acertos;
+        acertos++; document.getElementById('hits-val').innerText = acertos;
         btn.style.background = "var(--highlight-green)";
         tocarSom('acerto');
     } else {
-        erros++;
-        document.getElementById('miss-val').innerText = erros;
+        erros++; document.getElementById('miss-val').innerText = erros;
         btn.style.background = "var(--error-red)";
         tocarSom('erro');
-        // Mostrar a correta com borda
-        if (botoes[correta - 1]) {
-            botoes[correta - 1].style.border = "4px solid var(--highlight-green)";
-        }
+        if (botoes[correta - 1]) botoes[correta - 1].style.border = "4px solid var(--highlight-green)";
     }
 
-    // Esperar um pouco e passar para a próxima ou fim
     setTimeout(() => {
-        if (indiceQuestao < 9) {
+        // MUDANÇA: Compara com o tamanho real da lista, não com o número 9
+        if (indiceQuestao < itensAtuais.length - 1) {
             indiceQuestao++;
             montarQuestao();
         } else {
@@ -172,16 +151,13 @@ window.validarResposta = function(btn, numEscolhido) {
 function finalizarJogo() {
     if (cronometro) clearInterval(cronometro);
     tocarSom('vitoria');
-    
     if (window.mostrarResultados) {
         window.mostrarResultados(acertos, document.getElementById('timer-val').innerText);
     }
 }
 
 function iniciarCronometro() {
-    // Garantia dupla de limpeza
     if (cronometro) clearInterval(cronometro);
-    
     cronometro = setInterval(() => {
         segundos++;
         let m = Math.floor(segundos / 60).toString().padStart(2, '0');
@@ -192,13 +168,9 @@ function iniciarCronometro() {
 
 function tocarSom(tipo) {
     const url = JOGO_CONFIG.sons[tipo];
-    if (url) {
-        const audio = new Audio(url);
-        audio.play().catch(e => console.warn("Som bloqueado pelo browser"));
-    }
+    if (url) { const a = new Audio(url); a.play().catch(e => {}); }
 }
 
-// Injetar animação CSS global se não existir
 if (!document.getElementById('game-animations')) {
     const style = document.createElement('style');
     style.id = 'game-animations';
