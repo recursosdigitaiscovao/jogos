@@ -1,6 +1,6 @@
 /**
  * MOTOR DE JOGO: ORDENAR SÍLABAS 
- * VERSÃO FINAL: ARRASTAR + CLICAR + DESFAZER (PC/MOBILE)
+ * VERSÃO DEFINITIVA: ARRASTAR + CLICAR + DESFAZER
  */
 
 let itensAtuais = [];
@@ -15,6 +15,7 @@ let categoriaAtiva = "";
 // Variáveis de Interação
 let draggingEl = null;
 let offset = { x: 0, y: 0 };
+let isMoved = false;
 let isValidating = false;
 
 // 1. INICIALIZAÇÃO
@@ -28,18 +29,15 @@ window.selecionarCategoria = function(chave) {
     if (!JOGO_CONFIG.categorias[chave]) return;
     categoriaAtiva = chave;
     const cat = JOGO_CONFIG.categorias[chave];
-    // Sorteia 10 e garante que reinicia a animação
     itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
     window.atualizarAnimacao(cat);
 };
 
-// 2. ANIMAÇÃO DE INTRODUÇÃO (REFEITA PARA SER REALISTA)
+// ANIMAÇÃO REALISTA SEQUENCIAL
 window.atualizarAnimacao = function(cat) {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
-    if (intervalAnim) clearInterval(intervalAnim);
-
-    const partes = cat.exemplo.split('-');
+    const partes = Array.isArray(cat.silabas) ? cat.silabas : cat.exemplo.split('-');
     
     container.innerHTML = `
         <div style="text-align:center; display:flex; flex-direction:column; align-items:center; gap:12px; position:relative; width:100%; padding:10px;">
@@ -50,7 +48,7 @@ window.atualizarAnimacao = function(cat) {
             <div id="anim-cards" style="display:flex; gap:8px;">
                 ${partes.map((s, i) => `<div id="acard-${i}" class="syll-card" style="padding:5px 12px; font-size:0.9rem; cursor:default;">${s}</div>`).join('')}
             </div>
-            <i id="anim-hand" class="fas fa-mouse-pointer" style="position:absolute; color:var(--error-red); font-size:22px; bottom:10px; right:20%; transition:0.6s ease-in-out; opacity:0; z-index:100; pointer-events:none;"></i>
+            <i id="anim-hand" class="fas fa-mouse-pointer" style="position:absolute; color:var(--error-red); font-size:22px; bottom:10px; right:20%; transition:0.6s; opacity:0; z-index:50;"></i>
         </div>
     `;
 
@@ -88,14 +86,12 @@ window.atualizarAnimacao = function(cat) {
     rodarSequencia();
 };
 
-// 3. LÓGICA DO JOGO
 window.initGame = function() {
     if (cronometro) clearInterval(cronometro);
     indiceQuestao = 0; acertos = 0; erros = 0; segundos = 0; isValidating = false;
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
     document.getElementById('timer-val').innerText = "00:00";
-    // Sorteia 10 novos ao iniciar
     window.selecionarCategoria(categoriaAtiva);
     iniciarCronometro();
     montarQuestao();
@@ -108,82 +104,68 @@ function montarQuestao() {
 
     isValidating = false;
     document.getElementById('round-val').innerText = `${indiceQuestao + 1} / ${itensAtuais.length}`;
-    
     let baralhadas = [...item.silabas].sort(() => Math.random() - 0.5);
 
     area.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; animation: fadeIn 0.4s;">
             <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:150px; object-fit:contain; pointer-events:none;">
-
             <div id="slots-container" style="display:flex; gap:12px; justify-content:center; width:100%;">
                 ${item.silabas.map(() => `<div class="slot" onpointerdown="removerSyll(this)"></div>`).join('')}
             </div>
-
             <div id="pool" style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center; min-height:80px; width:100%;">
-                ${baralhadas.map(s => `
-                    <div class="syll-card" onpointerdown="iniciarInteracao(event)">${s}</div>
-                `).join('')}
+                ${baralhadas.map(s => `<div class="syll-card" onpointerdown="iniciarPonteiro(event)">${s}</div>`).join('')}
             </div>
         </div>
     `;
 }
 
-// 4. INTERAÇÃO HÍBRIDA (CLIQUE E ARRASTO)
-function iniciarInteracao(e) {
+function iniciarPonteiro(e) {
     if (isValidating) return;
     const card = e.target.closest('.syll-card');
     if (!card || card.style.opacity === "0.3") return;
 
     draggingEl = card;
-    draggingEl.isMoved = false;
+    isMoved = false;
     draggingEl.style.zIndex = "1000";
     draggingEl.style.transition = "none";
 
     const rect = draggingEl.getBoundingClientRect();
-    offset = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-    };
+    offset = { x: e.clientX - rect.left, y: e.clientY - rect.top };
 
-    document.addEventListener('pointermove', moverInteracao);
-    document.addEventListener('pointerup', pararInteracao);
+    document.addEventListener('pointermove', moverPonteiro);
+    document.addEventListener('pointerup', pararPonteiro);
     draggingEl.setPointerCapture(e.pointerId);
 }
 
-function moverInteracao(e) {
+function moverPonteiro(e) {
     if (!draggingEl) return;
-    draggingEl.isMoved = true;
-    
-    // Calcula posição relativa ao container do jogo
     const container = document.getElementById('game-main-content');
     const cRect = container.getBoundingClientRect();
     
-    const x = e.clientX - cRect.left - offset.x;
-    const y = e.clientY - cRect.top - offset.y;
-    
+    // Detetar se houve movimento real (>10px)
+    if (Math.abs(e.clientX - (draggingEl.getBoundingClientRect().left + offset.x)) > 10) isMoved = true;
+
     draggingEl.style.position = "absolute";
-    draggingEl.style.left = x + "px";
-    draggingEl.style.top = y + "px";
+    draggingEl.style.left = (e.clientX - cRect.left - offset.x) + "px";
+    draggingEl.style.top = (e.clientY - cRect.top - offset.y) + "px";
 }
 
-function pararInteracao(e) {
+function pararPonteiro(e) {
     if (!draggingEl) return;
-    document.removeEventListener('pointermove', moverInteracao);
-    document.removeEventListener('pointerup', pararInteracao);
+    document.removeEventListener('pointermove', moverPonteiro);
+    document.removeEventListener('pointerup', pararPonteiro);
 
-    if (!draggingEl.isMoved) {
-        // FOI UM CLIQUE
-        draggingEl.style.position = "static";
+    // Se não moveu quase nada, tratar como CLIQUE
+    if (!isMoved && draggingEl.style.position !== "absolute") {
         autoMoverParaSlot(draggingEl);
     } else {
-        // FOI UM ARRASTO
+        // Tratar como ARRASTO
         const target = document.elementFromPoint(e.clientX, e.clientY);
         const slot = target ? target.closest('.slot') : null;
 
         if (slot && slot.innerText === "") {
             colocarNoSlot(draggingEl, slot);
         } else {
-            // Volta para a piscina
             draggingEl.style.position = "static";
             draggingEl.style.transform = "none";
         }
@@ -196,10 +178,7 @@ function pararInteracao(e) {
 function autoMoverParaSlot(card) {
     const slots = document.querySelectorAll('.slot');
     for (let slot of slots) {
-        if (slot.innerText === "") {
-            colocarNoSlot(card, slot);
-            break;
-        }
+        if (slot.innerText === "") { colocarNoSlot(card, slot); break; }
     }
 }
 
@@ -213,29 +192,25 @@ function colocarNoSlot(card, slot) {
     verificarFim();
 }
 
-// 5. FUNÇÃO DESFAZER (CLICAR NO SLOT)
 window.removerSyll = function(slot) {
     if (isValidating || slot.innerText === "") return;
     const texto = slot.innerText;
     slot.innerText = "";
     slot.classList.remove('filled');
-    
     const cards = document.querySelectorAll('.syll-card');
     for (let c of cards) {
         if (c.innerText === texto && c.style.opacity === "0.3") {
-            c.style.opacity = "1";
-            c.style.pointerEvents = "auto";
-            break;
+            c.style.opacity = "1"; c.style.pointerEvents = "auto"; break;
         }
     }
 };
 
 function verificarFim() {
     const slots = document.querySelectorAll('.slot');
-    const preenchidos = Array.from(slots).filter(s => s.innerText !== "");
-    if (preenchidos.length === itensAtuais[indiceQuestao].silabas.length) {
+    const full = Array.from(slots).filter(s => s.innerText !== "");
+    if (full.length === itensAtuais[indiceQuestao].silabas.length) {
         isValidating = true;
-        validarResposta(preenchidos.map(s => s.innerText));
+        validarResposta(full.map(s => s.innerText));
     }
 }
 
@@ -243,11 +218,7 @@ function validarResposta(tentativa) {
     const correta = itensAtuais[indiceQuestao].silabas;
     const slots = document.querySelectorAll('.slot');
     
-    // Comparação de Strings (Evita erros de objeto/array)
-    const stringTentativa = tentativa.join('').toUpperCase();
-    const stringCorreta = correta.join('').toUpperCase();
-
-    if (stringTentativa === stringCorreta) {
+    if (tentativa.join('') === correta.join('')) {
         acertos++; document.getElementById('hits-val').innerText = acertos;
         slots.forEach(s => { s.style.background = "var(--highlight-green)"; s.style.color = "white"; s.style.borderColor = "transparent"; });
         tocarSom('acerto');
@@ -255,24 +226,9 @@ function validarResposta(tentativa) {
         erros++; document.getElementById('miss-val').innerText = erros;
         slots.forEach(s => { s.style.background = "var(--error-red)"; s.style.color = "white"; });
         tocarSom('erro');
-        // Mostrar correção
-        setTimeout(() => {
-            slots.forEach((s, i) => {
-                if(correta[i]) {
-                    s.innerText = correta[i];
-                    s.style.background = "var(--highlight-green)";
-                }
-            });
-        }, 600);
+        setTimeout(() => { slots.forEach((s, i) => { if(correta[i]) { s.innerText = correta[i]; s.style.background = "var(--highlight-green)"; } }); }, 600);
     }
-
-    setTimeout(() => {
-        if (indiceQuestao < itensAtuais.length - 1) {
-            indiceQuestao++; montarQuestao();
-        } else {
-            finalizarJogo();
-        }
-    }, 2000);
+    setTimeout(() => { if (indiceQuestao < itensAtuais.length - 1) { indiceQuestao++; montarQuestao(); } else finalizarJogo(); }, 2000);
 }
 
 function finalizarJogo() {
@@ -291,3 +247,6 @@ function iniciarCronometro() {
 }
 
 function tocarSom(t) { if (JOGO_CONFIG.sons[t]) new Audio(JOGO_CONFIG.sons[t]).play().catch(()=>{}); }
+const style = document.createElement('style');
+style.innerHTML = `@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`;
+document.head.appendChild(style);
