@@ -1,7 +1,7 @@
 // === CONFIGURAÇÃO MESTRE ===
 const CONFIG_MESTRE = {
     ano: "ano1",        
-    area: "portugues",  
+    area: "portugues",  // Opções: "portugues", "matematica", "estudo", "pre"
     nomeJogo: "CONTAR SÍLABAS"
 };
 
@@ -23,16 +23,6 @@ const BIBLIOTECA_CONTEUDO = {
         "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano", intro: "Explora as palavras e a leitura!", rodape: "&copy; Jovens Leitores" },
         "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano", intro: "Diverte-te com os cálculos!", rodape: "&copy; Jovens Matemáticos" },
         "estudo": { t1: "JOVENS", t2: "INVESTIGADORES", sub: "Estudo do Meio | 2º Ano", intro: "Investiga o mundo!", rodape: "&copy; Jovens Investigadores" }
-    },
-    "ano3": {
-        "portugues": { t1: "SUPER", t2: "LEITORES", sub: "Português | 3º Ano", intro: "Explora os textos!", rodape: "&copy; Super Leitores" },
-        "matematica": { t1: "SUPER", t2: "MATEMÁTICOS", sub: "Matemática | 3º Ano", intro: "Resolve os cálculos!", rodape: "&copy; Super Matemáticos" },
-        "estudo": { t1: "SUPER", t2: "CIENTISTAS", sub: "Estudo do Meio | 3º Ano", intro: "Explora a natureza!", rodape: "&copy; Super Cientistas" }
-    },
-    "ano4": {
-        "portugues": { t1: "MESTRES DA", t2: "LEITURA", sub: "Português | 4º Ano", intro: "Lê e diverte-te!", rodape: "&copy; Mestres da Leitura" },
-        "matematica": { t1: "MESTRES DOS", t2: "NÚMEROS", sub: "Matemática | 4º Ano", intro: "Desafios matemáticos!", rodape: "&copy; Mestres dos Números" },
-        "estudo": { t1: "MESTRES", t2: "DO MUNDO", sub: "Estudo do Meio | 4º Ano", intro: "Explora o país!", rodape: "&copy; Mestres do Mundo" }
     }
 };
 
@@ -85,7 +75,7 @@ const JOGO_CONFIG = {
                 { nome: "LÁPIS", silabas: 2, img: "materialescolar/lapis.png" },
                 { nome: "LIVRO", silabas: 2, img: "materialescolar/livro.png" },
                 { nome: "AFIA", silabas: 3, img: "materialescolar/afia.png" },
-                { nome: "ESTOJO", silabas: 3, img: "materialescolar/estojo.png" }
+                { nome: "CANETA", silabas: 3, img: "materialescolar/caneta.png" }
             ]
         }
     },
