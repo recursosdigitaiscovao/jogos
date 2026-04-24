@@ -15,9 +15,18 @@ window.startLogic = function() {
 window.selecionarCategoria = function(chave) {
     if (intervalAnim) clearInterval(intervalAnim);
     if (!JOGO_CONFIG.categorias[chave]) return;
+    
     categoriaAtiva = chave;
     const cat = JOGO_CONFIG.categorias[chave];
-    itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5);
+    
+    // ALTERAÇÃO AQUI: 
+    // 1. Espalha os itens originais [...cat.itens]
+    // 2. Embaralha de forma aleatória .sort(...)
+    // 3. Corta a lista para ter no máximo 10 itens .slice(0, 10)
+    itensAtuais = [...cat.itens]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 10);
+        
     window.atualizarAnimacao(cat);
 };
 
@@ -61,7 +70,10 @@ window.initGame = function() {
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
     document.getElementById('timer-val').innerText = "00:00";
-    if (itensAtuais.length === 0) window.selecionarCategoria(categoriaAtiva);
+    
+    // Sempre que iniciar o jogo, sorteamos novamente para garantir variedade
+    window.selecionarCategoria(categoriaAtiva);
+    
     iniciarCronometro();
     montarQuestao();
 };
