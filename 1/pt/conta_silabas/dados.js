@@ -1,6 +1,7 @@
+// === CONFIGURAÇÃO MESTRE ===
 const CONFIG_MESTRE = {
     ano: "ano1",        
-    area: "portugues",  
+    area: "portugues",  // Opções: "portugues", "matematica", "estudo", "pre"
     nomeJogo: "CONTAR SÍLABAS"
 };
 
@@ -60,28 +61,14 @@ const JOGO_CONFIG = {
                 { nome: "CEREJA", silabas: 3, img: "frutas/cereja.png" },
                 { nome: "UVAS", silabas: 2, img: "frutas/uvas.png" },
                 { nome: "MORANGO", silabas: 3, img: "frutas/morango.png" },
-                { nome: "MELANCIA", silabas: 4, img: "frutas/melancia.png" },
-                { nome: "LARANJA", silabas: 3, img: "frutas/laranja.png" },
-                { nome: "MAÇÃ", silabas: 2, img: "frutas/maca.png" },
-                { nome: "PERA", silabas: 2, img: "frutas/pera.png" }
-            ]
-        },
-        material: {
-            nome: "Material Escolar", exemplo: "LÁ-PIS", exemploImg: "materialescolar/lapis.png", total: 2, imgCapa: "materialescolar/afia.png",
-            itens: [
-                { nome: "MOCHILA", silabas: 3, img: "materialescolar/mochila.png" },
-                { nome: "TESOURA", silabas: 3, img: "materialescolar/tesoura.png" },
-                { nome: "LÁPIS", silabas: 2, img: "materialescolar/lapis.png" },
-                { nome: "LIVRO", silabas: 2, img: "materialescolar/livro.png" },
-                { nome: "AFIA", silabas: 3, img: "materialescolar/afia.png" },
-                { nome: "ESTOJO", silabas: 3, img: "materialescolar/estojo.png" }
+                { nome: "MELANCIA", silabas: 4, img: "frutas/melancia.png" }
             ]
         }
     },
     relatorios: [
-        { min: 9, max: 10, titulo: "És um craque!", img: "taca_1.png" },
-        { min: 7, max: 8, titulo: "Muito bem!", img: "taca_2.png" },
-        { min: 5, max: 6, titulo: "Estás quase lá!", img: "taca_2.png" },
-        { min: 0, max: 4, titulo: "Continua a tentar!", img: "taca_4.png" }
+        { min: 90, max: 100, titulo: "És um craque!", img: "taca_1.png" },
+        { min: 70, max: 89, titulo: "Muito bem!", img: "taca_2.png" },
+        { min: 50, max: 69, titulo: "Estás quase lá!", img: "taca_2.png" },
+        { min: 0, max: 49, titulo: "Continua a tentar!", img: "taca_4.png" }
     ]
 };
