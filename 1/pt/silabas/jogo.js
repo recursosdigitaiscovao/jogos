@@ -1,6 +1,6 @@
 /**
  * MOTOR DE JOGO: ORDENAR SÍLABAS
- * Versão: Arrastar e Soltar (Mobile/PC) + Clique + Desfazer + Animação
+ * Versão: Cartões Proporcionais + Animação Real Sequencial
  */
 
 let itensAtuais = [];
@@ -11,19 +11,16 @@ let segundos = 0;
 let cronometro = null;
 let intervalAnim = null;
 let categoriaAtiva = "";
-
-// Variáveis para Arrastar Manual (Pointer Events)
 let activeDrag = null;
-let startX, startY, initialX, initialY;
+let startX, startY;
 
-// 1. INICIALIZAÇÃO
 window.startLogic = function() {
     categoriaAtiva = Object.keys(JOGO_CONFIG.categorias)[0];
     window.selecionarCategoria(categoriaAtiva);
 };
 
 window.selecionarCategoria = function(chave) {
-    if (intervalAnim) clearInterval(intervalAnim);
+    if (intervalAnim) { clearInterval(intervalAnim); intervalAnim = null; }
     if (!JOGO_CONFIG.categorias[chave]) return;
     categoriaAtiva = chave;
     const cat = JOGO_CONFIG.categorias[chave];
@@ -31,7 +28,7 @@ window.selecionarCategoria = function(chave) {
     window.atualizarAnimacao(cat);
 };
 
-// 2. ANIMAÇÃO DA INTRODUÇÃO (Mãozinha a arrastar para o sítio certo)
+// --- ANIMAÇÃO REALISTA (Move todas as sílabas uma a uma) ---
 window.atualizarAnimacao = function(cat) {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
@@ -40,52 +37,81 @@ window.atualizarAnimacao = function(cat) {
     const partes = cat.exemplo.split('-');
     
     container.innerHTML = `
-        <div style="text-align:center; display:flex; flex-direction:column; align-items:center; gap:15px; position:relative; width:100%;">
-            <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:100px; object-fit:contain;">
+        <div style="text-align:center; display:flex; flex-direction:column; align-items:center; gap:12px; position:relative; width:100%; padding:10px;">
+            <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:90px; object-fit:contain;">
             
-            <!-- Slots exemplo -->
-            <div style="display:flex; gap:8px;">
-                ${partes.map((_, i) => `<div id="anim-slot-${i}" style="width:50px; height:40px; border:2px dashed #ccc; border-radius:8px; background:white;"></div>`).join('')}
+            <div id="anim-slots-row" style="display:flex; gap:8px;">
+                ${partes.map((_, i) => `<div id="aslot-${i}" class="slot" style="width:45px; height:35px; border-width:1px; cursor:default;"></div>`).join('')}
             </div>
 
-            <!-- Sílaba exemplo que se vai mover -->
-            <div id="anim-card" style="padding:10px 18px; background:white; border-radius:12px; font-weight:900; box-shadow:0 4px 0 #ddd; border:1px solid #eee; position:relative; z-index:5; color:var(--text-grey);">${partes[0]}</div>
+            <div id="anim-pool" style="display:flex; gap:8px;">
+                ${partes.map((s, i) => `<div id="acard-${i}" class="syll-card" style="padding:5px 12px; font-size:0.9rem; cursor:default;">${s}</div>`).join('')}
+            </div>
             
-            <i id="anim-hand" class="fas fa-mouse-pointer" style="position:absolute; color:var(--error-red); font-size:25px; bottom:20px; right:30%; transition:0.8s ease-in-out; opacity:0; z-index:10;"></i>
+            <i id="anim-hand" class="fas fa-mouse-pointer" style="position:absolute; color:var(--error-red); font-size:22px; bottom:10px; right:20%; transition:0.6s ease-in-out; opacity:0; z-index:10; pointer-events:none;"></i>
         </div>
     `;
 
     const hand = document.getElementById('anim-hand');
-    const card = document.getElementById('anim-card');
-    const target = document.getElementById('anim-slot-0');
 
-    function rodarCiclo() {
-        if (!hand || !card || !target) return;
-        hand.style.opacity = "0"; hand.style.transform = "translate(0, 0)";
-        card.style.opacity = "1"; card.style.transform = "translate(0, 0)";
-        target.innerHTML = "";
+    async function rodarSequencia() {
+        if (!hand) return;
+        
+        // Reset Total
+        for(let i=0; i<partes.length; i++) {
+            const c = document.getElementById(`acard-${i}`);
+            const s = document.getElementById(`aslot-${i}`);
+            if(c) { c.style.opacity = "1"; c.style.transform = "translate(0,0)"; }
+            if(s) { s.innerHTML = ""; s.style.background = "white"; }
+        }
+        hand.style.opacity = "0";
+        hand.style.transform = "translate(0, 0)";
 
-        setTimeout(() => {
+        await new Promise(r => setTimeout(r, 800));
+
+        // Mover cada sílaba
+        for(let i=0; i<partes.length; i++) {
+            const card = document.getElementById(`acard-${i}`);
+            const slot = document.getElementById(`aslot-${i}`);
+            if(!card || !slot) break;
+
+            const cRect = card.getBoundingClientRect();
+            const sRect = slot.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+
+            // Mão vai até à carta
             hand.style.opacity = "1";
-            hand.style.transform = "translate(-20px, -40px)"; // Sobe até à carta
+            hand.style.left = (cRect.left - containerRect.left + 20) + "px";
+            hand.style.top = (cRect.top - containerRect.top + 10) + "px";
+
+            await new Promise(r => setTimeout(r, 600));
+
+            // Move carta e mão para o slot
+            const moveX = sRect.left - cRect.left;
+            const moveY = sRect.top - cRect.top;
+
+            card.style.transition = "0.6s ease-in-out";
+            card.style.transform = `translate(${moveX}px, ${moveY}px)`;
             
-            setTimeout(() => {
-                hand.style.transform = "translate(-20px, -110px)"; // Arrastam juntos
-                card.style.transform = "translate(0, -70px)";
-                
-                setTimeout(() => {
-                    card.style.opacity = "0";
-                    target.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue);">${partes[0]}</div>`;
-                    hand.style.opacity = "0";
-                }, 800);
-            }, 800);
-        }, 500);
+            hand.style.left = (sRect.left - containerRect.left + 20) + "px";
+            hand.style.top = (sRect.top - containerRect.top + 10) + "px";
+
+            await new Promise(r => setTimeout(r, 700));
+
+            // Fixa no slot e esconde card original
+            card.style.opacity = "0";
+            slot.innerHTML = `<span style="font-size:0.9rem;">${partes[i]}</span>`;
+            slot.style.background = "#f0f7ff";
+        }
+
+        await new Promise(r => setTimeout(r, 1500));
+        rodarSequencia(); // Reinicia
     }
-    rodarCiclo();
-    intervalAnim = setInterval(rodarCiclo, 3500);
+
+    rodarSequencia();
 };
 
-// 3. LÓGICA DO JOGO
+// --- LÓGICA DO JOGO ---
 window.initGame = function() {
     if (cronometro) clearInterval(cronometro);
     indiceQuestao = 0; acertos = 0; erros = 0; segundos = 0;
@@ -102,20 +128,17 @@ function montarQuestao() {
     if (!item) return;
 
     document.getElementById('round-val').innerText = `${indiceQuestao + 1} / ${itensAtuais.length}`;
-    
     let baralhadas = [...item.silabas].sort(() => Math.random() - 0.5);
 
     area.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; animation: fadeIn 0.4s; position:relative;">
-            <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:150px; object-fit:contain;">
+            <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:140px; object-fit:contain;">
 
-            <!-- Slots vazios -->
-            <div id="slots-container" style="display:flex; gap:12px; justify-content:center; width:100%;">
-                ${item.silabas.map((_, i) => `<div class="slot" data-slot-index="${i}" style="pointer-events: auto;"></div>`).join('')}
+            <div id="slots-container" style="display:flex; gap:10px; justify-content:center; width:100%;">
+                ${item.silabas.map((_, i) => `<div class="slot" data-slot-index="${i}"></div>`).join('')}
             </div>
 
-            <!-- Sílabas para interagir -->
-            <div id="syllables-pool" style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center; min-height:80px; width:100%;">
+            <div id="syllables-pool" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; min-height:60px; width:100%;">
                 ${baralhadas.map((s, i) => `
                     <div class="syll-card" 
                          onpointerdown="startDrag(event)" 
@@ -127,16 +150,15 @@ function montarQuestao() {
     `;
 }
 
-// 4. SISTEMA DE ARRASTAR (COMPATÍVEL COM DEDO E RATO)
+// SISTEMA DE ARRASTAR
 window.startDrag = function(e) {
     const el = e.target.closest('.syll-card');
-    if (!el) return;
+    if (!el || el.style.opacity === "0.3") return;
     
     activeDrag = el;
     el.style.zIndex = "1000";
-    el.style.position = "relative";
+    el.style.transition = "none";
     
-    const rect = el.getBoundingClientRect();
     startX = e.clientX || e.touches[0].clientX;
     startY = e.clientY || e.touches[0].clientY;
     
@@ -146,8 +168,10 @@ window.startDrag = function(e) {
 
 function doDrag(e) {
     if (!activeDrag) return;
-    const x = (e.clientX || e.touches[0].clientX) - startX;
-    const y = (e.clientY || e.touches[0].clientY) - startY;
+    const currentX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+    const currentY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+    const x = currentX - startX;
+    const y = currentY - startY;
     activeDrag.style.transform = `translate(${x}px, ${y}px)`;
 }
 
@@ -158,7 +182,6 @@ function stopDrag(e) {
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     
-    // Detetar se soltou em cima de algum slot
     let dropped = false;
     const slots = document.querySelectorAll('.slot');
     
@@ -173,16 +196,16 @@ function stopDrag(e) {
     });
 
     if (!dropped) {
+        activeDrag.style.transition = "0.3s";
         activeDrag.style.transform = "translate(0, 0)";
-        activeDrag.style.zIndex = "1";
     }
     
+    activeDrag.style.zIndex = "1";
     activeDrag = null;
     document.onpointermove = null;
     document.onpointerup = null;
 }
 
-// Caso o utilizador apenas clique (sem arrastar)
 window.handleFastClick = function(el) {
     if (el.style.opacity === "0.3") return;
     const slots = document.querySelectorAll('.slot');
@@ -203,13 +226,7 @@ function moverParaSlot(card, slot) {
     checkFim();
 }
 
-// FUNÇÃO PARA CLICAR NO SLOT E RETIRAR (DESFAZER)
-window.removerSilabaDoSlot = function(slot) {
-    // Esta função deve ser chamada pelo index.html via onclick na classe .slot
-    // Mas para garantir a funcionalidade, vamos delegar no montarQuestao
-};
-
-// Adicionar listener de clique aos slots dinamicamente
+// REMOVER DO SLOT (UNDO)
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('slot') && e.target.innerText !== "") {
         const texto = e.target.innerText;
@@ -217,7 +234,6 @@ document.addEventListener('click', function(e) {
         e.target.classList.remove('filled');
         e.target.style.background = "white";
 
-        // Reativar o card na piscina
         const cards = document.querySelectorAll('.syll-card');
         for (let c of cards) {
             if (c.innerText === texto && c.style.opacity === "0.3") {
@@ -244,11 +260,11 @@ function validarSequencia(tentativa) {
 
     if (isCorrect) {
         acertos++; document.getElementById('hits-val').innerText = acertos;
-        slots.forEach(s => { s.style.background = "var(--highlight-green)"; s.style.color = "white"; });
+        slots.forEach(s => { s.style.background = "var(--highlight-green)"; s.style.color = "white"; s.style.borderColor = "transparent"; });
         tocarSom('acerto');
     } else {
         erros++; document.getElementById('miss-val').innerText = erros;
-        slots.forEach(s => { s.style.background = "var(--error-red)"; s.style.color = "white"; });
+        slots.forEach(s => { s.style.background = "var(--error-red)"; s.style.color = "white"; s.style.borderColor = "transparent"; });
         tocarSom('erro');
         setTimeout(() => {
             slots.forEach((s, i) => {
