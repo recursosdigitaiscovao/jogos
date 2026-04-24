@@ -48,7 +48,7 @@
         .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 4000; padding: 25px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); max-height: 80vh; overflow-y: auto; }
         .rd-panel.active { bottom: 0; }
         #rd-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .rd-item { background: #f8f9fa; border: 2px solid #eef5ff; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .rd-item { background: #f8f9fa; border: 2px solid #eef5ff; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; font-weight: 700; }
         .rd-item img { width: 60px; height: 60px; object-fit: contain; }
 
         @media (max-width: 650px) { .btn-voltar-header { display: none !important; } .btn-voltar-mobile { display: flex; align-items: center; } }
@@ -92,18 +92,14 @@
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%;">
                     <img id="res-taca" style="width:120px; margin-bottom:10px;">
                     <h2 id="res-tit" style="font-size:28px; color: var(--primary-blue); font-weight:900; margin-bottom:15px; text-align:center;"></h2>
-                    
                     <div style="display:flex; gap:12px; margin-bottom:20px;">
-                        <div class="res-badge" style="background:white; padding:10px 20px; border-radius:15px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); min-width:110px;">
-                            <span id="res-pts" style="font-size:24px; font-weight:900; color:var(--primary-blue);">0</span><br>
-                            <small style="font-weight:900; color:#88a;">ACERTOS</small>
+                        <div style="background:white; padding:10px 20px; border-radius:15px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); min-width:110px;">
+                            <span id="res-pts" style="font-size:24px; font-weight:900; color:var(--primary-blue);">0</span><br><small style="font-weight:900; color:#88a;">ACERTOS</small>
                         </div>
-                        <div class="res-badge" style="background:white; padding:10px 20px; border-radius:15px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); min-width:110px;">
-                            <span id="res-tim" style="font-size:24px; font-weight:900; color:var(--primary-blue);">00:00</span><br>
-                            <small style="font-weight:900; color:#88a;">TEMPO</small>
+                        <div style="background:white; padding:10px 20px; border-radius:15px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); min-width:110px;">
+                            <span id="res-tim" style="font-size:24px; font-weight:900; color:var(--primary-blue);">00:00</span><br><small style="font-weight:900; color:#88a;">TEMPO</small>
                         </div>
                     </div>
-
                     <div style="display:flex; flex-direction: column; width: 100%; max-width: 400px; gap: 10px;">
                         <button class="btn-jogar-stretch" onclick="location.reload()">JOGAR DE NOVO</button>
                         <button class="btn-jogar-stretch" style="background:white; color:var(--primary-blue); border:2px solid var(--primary-blue); box-shadow:none; font-size:15px;" onclick="openRDMenu(event)">OUTRO TEMA / NÍVEL</button>
@@ -120,6 +116,7 @@
     <script src="jogo.js"></script>
     <script>
     function initUI() {
+        if (!window.JOGO_CONFIG) return;
         const setup = CONFIG_MESTRE;
         const tema = BIBLIOTECA_TEMAS[setup.area];
         const cont = BIBLIOTECA_CONTEUDO[setup.ano][setup.area];
@@ -145,6 +142,7 @@
         document.getElementById('txt-voltar-header').innerText = conf.textoVoltar;
 
         const menuBox = document.getElementById('dropdownMenu');
+        menuBox.innerHTML = '';
         Object.keys(conf.links).forEach(k => {
             const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
             a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}" width="20"> <span>${k.toUpperCase()}</span>`;
@@ -152,6 +150,7 @@
         });
 
         const rdBox = document.getElementById('rd-list');
+        rdBox.innerHTML = '';
         Object.keys(conf.categorias).forEach(key => {
             const c = conf.categorias[key];
             const div = document.createElement('div'); div.className = 'rd-item';
@@ -161,6 +160,7 @@
         });
         if(window.startLogic) window.startLogic();
     }
+
     window.mostrarResultados = function(acertos, tempo) { 
         const conf = JOGO_CONFIG; 
         let feedback = conf.relatorios.find(p => acertos >= p.min && acertos <= (p.max || 10));
@@ -172,15 +172,18 @@
         document.getElementById('scr-result').classList.add('active');
         document.getElementById('status-bar').style.display = 'none';
     }
+
     function goToGame() { 
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('scr-game').classList.add('active');
         document.getElementById('status-bar').style.display = 'flex';
         if(window.initGame) window.initGame();
     }
+
     function toggleHamburger(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); const ov = document.getElementById('overlay'); if(m.style.display === 'flex') { closeMenus(); } else { m.style.display = 'flex'; ov.style.display = 'block'; } }
     function openRDMenu(e) { if(e) e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
     function closeMenus() { document.getElementById('rdMenu').classList.remove('active'); document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; }
+    
     window.onload = initUI;
     </script>
 </body>
