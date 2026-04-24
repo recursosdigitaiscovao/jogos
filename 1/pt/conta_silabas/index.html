@@ -11,19 +11,26 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
         
-        /* HEADER */
-        header { height: var(--header-h); background: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 2500; flex-shrink: 0; box-shadow: 0px 4px 15px rgba(0,0,0,0.05); position: relative; }
+        /* HEADER REPOSTO */
+        header { 
+            height: var(--header-h); background: #fff; display: flex; align-items: center; 
+            justify-content: space-between; padding: 0 20px; z-index: 2500; flex-shrink: 0;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.05); position: relative;
+        }
         .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; pointer-events: none; white-space: nowrap; }
         .logo-center img { height: 48px; width: auto; }
         .logo-text h1 { font-size: 17px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 8px; color: #88a; font-weight: 700; text-transform: uppercase; }
-        .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
 
-        /* MENU HAMBURGER (ESTILO BOLHA IGUAL À IMAGEM) */
+        .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
+        .btn-voltar-header { background: var(--primary-blue); color: white; padding: 7px 15px; border-radius: 12px; text-decoration: none; font-weight: 900; font-size: 13px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 0 var(--primary-dark); }
+        .btn-voltar-mobile { display: none; text-decoration: none; padding: 5px; z-index: 3001; }
+
+        /* MENU HAMBURGER (BOLHA) */
         .menu-dropdown { position: absolute; top: 75px; left: 15px; display: none; flex-direction: column; gap: 10px; z-index: 3000; }
-        .menu-item { display: flex; align-items: center; gap: 15px; padding: 12px 20px; background: white; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-decoration: none; color: #4a5a6a; font-weight: 700; font-size: 1rem; min-width: 220px; }
+        .menu-item { display: flex; align-items: center; gap: 15px; padding: 12px 20px; background: white; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-decoration: none; color: #4a5a6a; font-weight: 700; font-size: 1.1rem; min-width: 220px; }
         .menu-item img { height: 32px; width: 32px; object-fit: contain; }
-        .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; justify-content: center; text-transform: uppercase; margin-top: 5px; box-shadow: 0 4px 0 var(--primary-dark); font-size: 1.1rem; letter-spacing: 1px; }
+        .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; justify-content: center; text-transform: uppercase; box-shadow: 0 4px 0 var(--primary-dark); }
         .menu-item-voltar img { filter: brightness(0) invert(1); height: 22px; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 2000; }
@@ -32,7 +39,7 @@
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 15px; overflow: hidden; }
         .game-card { background: #f0f7ff; width: 100%; max-width: 1000px; height: 100%; border-radius: 40px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); display: flex; flex-direction: column; padding: 20px; position: relative; overflow: hidden; }
 
-        /* BARRA DE STATUS ORGANIZADA */
+        /* STATUS BAR */
         .status-bar { display: none; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-shrink: 0; gap: 5px; }
         .status-group { display: flex; align-items: center; gap: 8px; }
         .badge { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 10px; border-radius: 12px; font-weight: 900; font-size: 12px; color: white; white-space: nowrap; }
@@ -55,7 +62,7 @@
         .rd-item { background: #f8f9fa; border: 2px solid #eef5ff; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; font-weight: 700; color: var(--text-grey); }
         .rd-item img { width: 60px; height: 60px; object-fit: contain; }
 
-        @media (max-width: 650px) { .header-right { display: flex; } .btn-voltar-header { display: none; } }
+        @media (max-width: 650px) { .btn-voltar-header { display: none !important; } .btn-voltar-mobile { display: flex; align-items: center; } }
         @media (max-width: 400px) { .badge { padding: 5px 8px; font-size: 11px; } }
         @media (max-height: 500px) and (orientation: landscape) { header { display: none !important; } .game-card { border-radius: 15px; height: 98dvh; } }
     </style>
@@ -65,21 +72,14 @@
     <header>
         <div class="header-left"><i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i><div id="dropdownMenu" class="menu-dropdown"></div></div>
         <div class="logo-center"><img id="head-logo" src=""><div class="logo-text"><h1 id="tit-l1"></h1><h1 id="tit-l2"></h1><p id="sub-tit"></p></div></div>
-        <div class="header-right"><a href="#" id="link-voltar-header" class="btn-voltar-header"><img id="header-back-icon" src="" width="16"> <span id="txt-voltar-header"></span></a></div>
+        <div class="header-right"><a href="#" id="link-voltar-header" class="btn-voltar-header"><img id="header-back-icon" src="" width="16"> <span id="txt-voltar-header"></span></a><a href="#" id="link-voltar-mobile" class="btn-voltar-mobile"><img id="header-back-mobile" src="" alt="Voltar" style="height:32px;"></a></div>
     </header>
 
     <main class="game-container">
         <div class="game-card">
             <div class="status-bar" id="status-bar">
-                <div class="status-group">
-                    <div class="badge badge-timer">⏳ <span id="timer-val">00:00</span></div>
-                    <div class="badge badge-round"><span id="round-val">1 / 10</span></div>
-                </div>
-                <div class="status-group">
-                    <div class="badge badge-hit"><i class="fas fa-check"></i> <span id="hits-val">0</span></div>
-                    <div class="badge badge-miss"><i class="fas fa-times"></i> <span id="miss-val">0</span></div>
-                    <img id="rd-game-btn" src="" style="height:32px; width:32px; cursor:pointer;" onclick="openRDMenu(event)">
-                </div>
+                <div class="status-group"><div class="badge badge-timer">⏳ <span id="timer-val">00:00</span></div><div class="badge badge-round"><span id="round-val">1 / 10</span></div></div>
+                <div class="status-group"><div class="badge badge-hit"><i class="fas fa-check"></i> <span id="hits-val">0</span></div><div class="badge badge-miss"><i class="fas fa-times"></i> <span id="miss-val">0</span></div><img id="rd-game-btn" src="" style="height:32px; width:32px; cursor:pointer;" onclick="openRDMenu(event)"></div>
             </div>
 
             <section class="screen active" id="scr-intro">
@@ -112,11 +112,12 @@
         document.documentElement.style.setProperty('--primary-blue', tema.corPrimaria); document.documentElement.style.setProperty('--primary-dark', tema.corEscura); document.documentElement.style.setProperty('--bg-page', tema.corPagina);
         document.getElementById('tit-l1').innerText = cont.t1; document.getElementById('tit-l2').innerText = cont.t2; document.getElementById('sub-tit').innerText = cont.sub; document.getElementById('intro-instr').innerText = cont.intro;
         document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu[setup.ano];
-        document.getElementById('header-back-icon').src = conf.caminhoIcons + "voltar.png";
+        document.getElementById('header-back-icon').src = conf.caminhoIcons + "voltar.png"; document.getElementById('header-back-mobile').src = conf.caminhoIcons + tema.voltarMobile;
         document.getElementById('rd-intro-btn').src = conf.caminhoImg + "rd.png"; document.getElementById('rd-game-btn').src = conf.caminhoImg + "rd.png";
-        document.getElementById('link-voltar-header').href = conf.linkVoltar; document.getElementById('btn-outro-jogo').href = conf.linkVoltar; document.getElementById('txt-voltar-header').innerText = conf.textoVoltar;
+        document.getElementById('link-voltar-header').href = conf.linkVoltar; document.getElementById('link-voltar-mobile').href = conf.linkVoltar;
+        document.getElementById('btn-outro-jogo').href = conf.linkVoltar; document.getElementById('txt-voltar-header').innerText = conf.textoVoltar;
         
-        // CONSTRUÇÃO DO MENU HAMBURGER IGUAL À IMAGEM
+        // CONSTRUÇÃO DO MENU HAMBURGER (Labels conforme pedido)
         const menuBox = document.getElementById('dropdownMenu'); menuBox.innerHTML = '';
         const labels = { home: "Início", pre: "preº Ano", ano1: "1º Ano", ano2: "2º Ano", ano3: "3º Ano", ano4: "4º Ano" };
         Object.keys(conf.links).forEach(k => {
@@ -132,8 +133,7 @@
         Object.keys(conf.categorias).forEach(key => {
             const c = conf.categorias[key]; const div = document.createElement('div'); div.className = 'rd-item';
             div.innerHTML = `<img src="${conf.caminhoImg}${c.imgCapa}"><span>${c.nome}</span>`;
-            div.onclick = () => { selecionarCategoria(key); closeMenus(); goToIntro(); };
-            rdBox.appendChild(div);
+            div.onclick = () => { selecionarCategoria(key); closeMenus(); goToIntro(); }; rdBox.appendChild(div);
         });
         if(window.startLogic) window.startLogic();
     }
