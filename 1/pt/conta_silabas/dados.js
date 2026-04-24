@@ -1,6 +1,43 @@
+// === CONFIGURAÇÃO DO JOGO ATUAL ===
+const CONFIG_MESTRE = {
+    ano: "ano1",      // Opções: "pre", "ano1", "ano2", "ano3", "ano4"
+    area: "portugues", // Opções: "pre", "portugues", "matematica", "estudo"
+    nomeJogo: "CONTAR SÍLABAS"
+};
+
+const BIBLIOTECA_TEMAS = {
+    "portugues": { corPagina: "#e9f0f8", corPrimaria: "#5ba4e5", corEscura: "#3d7db8", corTexto: "#5d7082", voltarMobile: "voltar_az.png" },
+    "matematica": { corPagina: "#e8f9f4", corPrimaria: "#45cfa8", corEscura: "#2BA886", corTexto: "#45cfa8", voltarMobile: "voltar_vr.png" },
+    "estudo": { corPagina: "#EAE2E5", corPrimaria: "#994D4D", corEscura: "#6C3737", corTexto: "#994D4D", voltarMobile: "voltar_cs.png" },
+    "pre": { corPagina: "#FFF5F7", corPrimaria: "#E691A7", corEscura: "#D54267", corTexto: "#E691A7", voltarMobile: "voltar_rs.png" }
+};
+
+const BIBLIOTECA_CONTEUDO = {
+    "pre": { "pre": { t1: "Pequenos", t2: "Curiosos", sub: "Atividades | Pré-Escolar", intro: "Brinca com os números, as cores e as formas!", rodape: "&copy; Pequenos Curiosos" } },
+    "ano1": {
+        "portugues": { t1: "Pequenos", t2: "Leitores", sub: "Português | 1º Ano", intro: "Clica no número que corresponde à quantidade de sílabas!", rodape: "&copy; Pequenos Leitores" },
+        "matematica": { t1: "Pequenos", t2: "Matemáticos", sub: "Matemática | 1º Ano", intro: "Explora os números e diverte-te a contar!", rodape: "&copy; Pequenos Matemáticos" },
+        "estudo": { t1: "Pequenos", t2: "Exploradores", sub: "Estudo do Meio | 1º Ano", intro: "Explora o mundo à tua volta!", rodape: "&copy; Pequenos Exploradores" }
+    },
+    "ano2": {
+        "portugues": { t1: "Jovens", t2: "Leitores", sub: "Português | 2º Ano", intro: "Explora as palavras e diverte-te a ler!", rodape: "&copy; Jovens Leitores" },
+        "matematica": { t1: "Jovens", t2: "Matemáticos", sub: "Matemática | 2º Ano", intro: "Explora as operações e diverte-te!", rodape: "&copy; Jovens Matemáticos" },
+        "estudo": { t1: "Jovens", t2: "Investigadores", sub: "Estudo do Meio | 2º Ano", intro: "Investiga o mundo e a natureza!", rodape: "&copy; Jovens Investigadores" }
+    },
+    "ano3": {
+        "portugues": { t1: "Super", t2: "Leitores", sub: "Português | 3º Ano", intro: "Explora os textos e diverte-te!", rodape: "&copy; Super Leitores" },
+        "matematica": { t1: "Super", t2: "Matemáticos", sub: "Matemática | 3º Ano", intro: "Explora as operações e calcula!", rodape: "&copy; Super Matemáticos" },
+        "estudo": { t1: "Super", t2: "Cientistas", sub: "Estudo do Meio | 3º Ano", intro: "Explora o passado e a natureza!", rodape: "&copy; Super Cientistas" }
+    },
+    "ano4": {
+        "portugues": { t1: "Mestres da", t2: "Leitura", sub: "Português | 4º Ano", intro: "Explora os livros e diverte-te!", rodape: "&copy; Mestres da Leitura" },
+        "matematica": { t1: "Mestre dos", t2: "Números", sub: "Matemática | 4º Ano", intro: "Resolve os desafios matemáticos!", rodape: "&copy; Mestre dos Números" },
+        "estudo": { t1: "Mestres", t2: "do Mundo", sub: "Estudo do Meio | 4º Ano", intro: "Explora a história e a geografia!", rodape: "&copy; Mestres do Mundo" }
+    }
+};
+
 const JOGO_CONFIG = {
-    nomeJogo: "CONTAR SÍLABAS", 
-    linkVoltar: "../", 
+    linkVoltar: "../",
     textoVoltar: "VOLTAR",
     caminhoImg: "../../../img/",    
     caminhoIcons: "../../../icons/", 
@@ -9,26 +46,11 @@ const JOGO_CONFIG = {
         erro: "https://cdn.pixabay.com/audio/2022/03/10/audio_c330c67761.mp3",
         vitoria: "https://cdn.pixabay.com/audio/2024/02/07/audio_293963428f.mp3"
     },
-    textos: {
-        tituloLinha1: "PEQUENOS",
-        tituloLinha2: "LEITORES",
-        subtitulo: "Português | 1º Ano",
-        instrucao: "Clica no número que corresponde à quantidade de sílabas da palavra!",
-        rodape: "&copy; Pequenos Leitores - Recursos Educativos"
-    },
-    iconesMenu: {
-        home: "home.png", pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png"
-    },
-    links: {
-        home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4"
-    },
+    iconesMenu: { home: "home.png", pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png" },
+    links: { home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4" },
     categorias: {
         animais: {
-            nome: "Animais",
-            exemplo: "CA-VA-LO",
-            exemploImg: "animaisdomesticos/cavalo.png",
-            total: 3,
-            imgCapa: "animaisdomesticos/gato.png",
+            nome: "Animais", exemplo: "CA-VA-LO", exemploImg: "animaisdomesticos/cavalo.png", total: 3, imgCapa: "animaisdomesticos/gato.png",
             itens: [
                 { nome: "VACA", silabas: 2, img: "animaisdomesticos/vaca.png" },
                 { nome: "GATO", silabas: 2, img: "animaisdomesticos/gato.png" },
@@ -43,11 +65,7 @@ const JOGO_CONFIG = {
             ]
         },
         frutos: {
-            nome: "Frutos",
-            exemplo: "MA-ÇÃ",
-            exemploImg: "frutas/maca.png",
-            total: 2,
-            imgCapa: "frutas/morango.png",
+            nome: "Frutos", exemplo: "MA-ÇÃ", exemploImg: "frutas/maca.png", total: 2, imgCapa: "frutas/morango.png",
             itens: [
                 { nome: "BANANA", silabas: 3, img: "frutas/banana.png" },
                 { nome: "CEREJA", silabas: 3, img: "frutas/cereja.png" },
@@ -59,25 +77,6 @@ const JOGO_CONFIG = {
                 { nome: "MAÇÃ", silabas: 2, img: "frutas/maca.png" },
                 { nome: "PERA", silabas: 2, img: "frutas/pera.png" },
                 { nome: "MARACUJÁ", silabas: 4, img: "frutas/maracuja.png" }
-            ]
-        },
-        material: {
-            nome: "Material Escolar",
-            exemplo: "LÁ-PIS",
-            exemploImg: "materialescolar/lapis.png",
-            total: 2,
-            imgCapa: "materialescolar/afia.png",
-            itens: [
-                { nome: "MOCHILA", silabas: 3, img: "materialescolar/mochila.png" },
-                { nome: "TESOURA", silabas: 3, img: "materialescolar/tesoura.png" },
-                { nome: "LÁPIS", silabas: 2, img: "materialescolar/lapis.png" },
-                { nome: "LIVRO", silabas: 2, img: "materialescolar/livro.png" },
-                { nome: "AFIA", silabas: 3, img: "materialescolar/afia.png" },
-                { nome: "CANETA", silabas: 3, img: "materialescolar/caneta.png" },
-                { nome: "RÉGUA", silabas: 2, img: "materialescolar/regua.png" },
-                { nome: "BORRACHA", silabas: 3, img: "materialescolar/borracha.png" },
-                { nome: "COLA", silabas: 2, img: "materialescolar/cola.png" },
-                { nome: "ESTOJO", silabas: 3, img: "materialescolar/estojo.png" }
             ]
         }
     },
