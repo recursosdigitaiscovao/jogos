@@ -1,4 +1,3 @@
-// === CONFIGURAÇÃO MESTRE ===
 const CONFIG_MESTRE = {
     ano: "ano1",        
     area: "portugues",  
@@ -15,12 +14,7 @@ const BIBLIOTECA_TEMAS = {
 const BIBLIOTECA_CONTEUDO = {
     "pre": { "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar", intro: "Ordena as partes das palavras!", rodape: "&copy; Pequenos Curiosos" } },
     "ano1": {
-        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", intro: "Arrasta ou clica nas sílabas para formar a palavra corretamente!", rodape: "&copy; Pequenos Leitores" },
-        "matematica": { t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano", intro: "Explora os números e ordena as quantidades!", rodape: "&copy; Pequenos Matemáticos" },
-        "estudo": { t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano", intro: "Explora o mundo e ordena os elementos!", rodape: "&copy; Pequenos Exploradores" }
-    },
-    "ano2": {
-        "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano", intro: "Ordena as sílabas para formar as palavras!", rodape: "&copy; Jovens Leitores" }
+        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", intro: "Arrasta ou clica nas sílabas para formar a palavra corretamente!", rodape: "&copy; Pequenos Leitores" }
     }
 };
 
