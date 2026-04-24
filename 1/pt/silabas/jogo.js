@@ -1,279 +1,226 @@
-let currentCategory = 'animais';
-let gameItems = [];
-let currentIndex = 0; 
-let roundInLevel = 0; 
-let currentLevel = 1;
-let score = 0;
-let timerSeconds = 0;
-let timerInterval;
-let selectedSyllables = []; 
-let draggedElement = null;
-let isMoving = false;
+/**
+ * MOTOR DE JOGO: ORDENAR SÍLABAS
+ * Suporte Híbrido: Clique ou Arraste
+ */
 
-const sndAcerto = new Audio(JOGO_CONFIG.sons.acerto);
-const sndErro = new Audio(JOGO_CONFIG.sons.erro);
-const sndVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
+let itensAtuais = [];
+let indiceQuestao = 0;
+let acertos = 0;
+let erros = 0;
+let segundos = 0;
+let cronometro = null;
+let intervalAnim = null;
+let categoriaAtiva = "";
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Inicializa a UI do template (Menu, Título, Voltar)
-    if (window.initUI) window.initUI();
+let respostaSyllables = []; // Armazena a ordem atual do aluno
 
-    const rd1 = document.getElementById('rd-intro-btn');
-    const rd2 = document.getElementById('rd-game-btn');
-    if(rd1) rd1.src = JOGO_CONFIG.caminhoImg + "rd.png";
-    if(rd2) rd2.src = JOGO_CONFIG.caminhoImg + "rd.png";
-
-    // Inicia com a primeira categoria
-    const primeiraCat = Object.keys(JOGO_CONFIG.categorias)[0];
-    window.selectCategory(primeiraCat);
-});
-
-window.selectCategory = function(key) {
-    currentCategory = key;
-    const cat = JOGO_CONFIG.categorias[key];
-    if(!cat) return;
-
-    let all = [...cat.itens].sort(() => Math.random() - 0.5);
-    gameItems = all.slice(0, 10);
-
-    renderTutorial(cat);
-
-    if(document.getElementById('scr-game').classList.contains('active')) {
-        window.initGame();
-    }
+// 1. INICIALIZAÇÃO
+window.startLogic = function() {
+    categoriaAtiva = Object.keys(JOGO_CONFIG.categorias)[0];
+    window.selecionarCategoria(categoriaAtiva);
 };
 
-function renderTutorial(cat) {
-    const container = document.getElementById('intro-animation-container');
-    if(!container) return;
-    const item = cat.itens[0];
-    const silShuffled = item.silabas.length > 1 ? [...item.silabas].reverse() : [...item.silabas];
+window.selecionarCategoria = function(chave) {
+    if (intervalAnim) clearInterval(intervalAnim);
+    if (!JOGO_CONFIG.categorias[chave]) return;
+    categoriaAtiva = chave;
+    const cat = JOGO_CONFIG.categorias[chave];
+    itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
+    window.atualizarAnimacao(cat);
+};
 
+// 2. ANIMAÇÃO DA INTRODUÇÃO (Efeito visual de juntar partes)
+window.atualizarAnimacao = function(cat) {
+    const container = document.getElementById('intro-animation-container');
+    if (intervalAnim) clearInterval(intervalAnim);
+    
     container.innerHTML = `
-        <div style="position:relative; width:260px; height:180px; background:white; border-radius:25px; box-shadow:0 10px 30px rgba(0,0,0,0.1); display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden; border: 4px solid #f0f7ff;">
-            <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:60px; margin-bottom:10px;">
-            <div style="display:flex; gap:8px; margin-bottom:20px;">
-                <div style="width:35px; height:35px; border:2px dashed #ddd; border-radius:8px;"></div>
-                <div style="width:35px; height:35px; border:2px dashed #ddd; border-radius:8px;"></div>
+        <div style="text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px;">
+            <div style="background:white; padding:10px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+                <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:80px; object-fit:contain;">
             </div>
-            <div style="display:flex; gap:10px;">
-                <div style="background:#eee; padding:5px 10px; border-radius:8px; font-weight:900; font-size:14px; color:#999;">${silShuffled[0]}</div>
-                <div id="tuto-sil-drag" style="background:var(--primary-blue); color:white; padding:5px 10px; border-radius:8px; font-weight:900; font-size:14px; position:absolute; z-index:10; left:140px; bottom:25px;">${item.silabas[0]}</div>
+            <div id="anim-word-box" style="display:flex; gap:5px; min-height:40px;">
+                ${cat.exemplo.split('-').map(s => `<span class="anim-syll" style="background:var(--primary-blue); color:white; padding:5px 10px; border-radius:8px; font-weight:900; opacity:0; transform:translateY(10px); transition:0.4s;">${s}</span>`).join('')}
             </div>
-            <i class="fas fa-hand-pointer" id="tuto-hand" style="position:absolute; bottom:15px; left:155px; color:#f39c12; font-size:24px; z-index:11;"></i>
         </div>
-        <style>
-            @keyframes tutoMove { 0% { transform: translate(0,0); } 40% { transform: translate(-60px, -85px); } 70% { transform: translate(-60px, -85px); opacity:1; } 100% { transform: translate(-60px, -85px); opacity:0; } }
-            #tuto-hand, #tuto-sil-drag { animation: tutoMove 3s infinite ease-in-out; }
-        </style>
+    `;
+
+    const elements = document.querySelectorAll('.anim-syll');
+    let step = 0;
+    function rodarCiclo() {
+        elements.forEach(el => { el.style.opacity = "0"; el.style.transform = "translateY(10px)"; });
+        step = 0;
+        let animTimer = setInterval(() => {
+            if(step < elements.length) {
+                elements[step].style.opacity = "1";
+                elements[step].style.transform = "translateY(0)";
+                step++;
+            } else { clearInterval(animTimer); }
+        }, 400);
+    }
+    rodarCiclo();
+    intervalAnim = setInterval(rodarCiclo, 3000);
+};
+
+// 3. LÓGICA DO JOGO
+window.initGame = function() {
+    if (cronometro) clearInterval(cronometro);
+    indiceQuestao = 0; acertos = 0; erros = 0; segundos = 0;
+    document.getElementById('hits-val').innerText = "0";
+    document.getElementById('miss-val').innerText = "0";
+    document.getElementById('timer-val').innerText = "00:00";
+    if (itensAtuais.length === 0) window.selecionarCategoria(categoriaAtiva);
+    iniciarCronometro();
+    montarQuestao();
+};
+
+function montarQuestao() {
+    const area = document.getElementById('game-main-content');
+    const item = itensAtuais[indiceQuestao];
+    if (!item) return;
+
+    document.getElementById('round-val').innerText = `${indiceQuestao + 1} / ${itensAtuais.length}`;
+    
+    // Preparar Sílabas Baralhadas
+    respostaSyllables = [];
+    let baralhadas = [...item.silabas].sort(() => Math.random() - 0.5);
+
+    area.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:15px; animation: fadeIn 0.4s;">
+            <h2 style="font-size:24px; color:var(--primary-blue); font-weight:900; text-transform:uppercase;">${item.nome}</h2>
+            
+            <div style="background:white; padding:15px; border-radius:20px; box-shadow:0 8px 20px rgba(0,0,0,0.06);">
+                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:120px; object-fit:contain;">
+            </div>
+
+            <!-- Zona de Depósito (Slots vazios) -->
+            <div id="drop-zone" style="display:flex; gap:10px; min-height:55px; padding:10px; background:#f8f9fa; border:2px dashed #cbd9e6; border-radius:15px; width:100%; justify-content:center;">
+                ${item.silabas.map((_, i) => `<div class="slot" data-index="${i}" ondrop="drop(event)" ondragover="allowDrop(event)" style="width:60px; height:45px; background:#fff; border-radius:10px; border:2px solid #eee; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); font-size:18px;"></div>`).join('')}
+            </div>
+
+            <!-- Sílabas para clicar/arrastar -->
+            <div id="syllables-pool" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+                ${baralhadas.map((s, i) => `
+                    <div id="syll-${i}" draggable="true" ondragstart="drag(event)" onclick="handleSyllableClick(this)" data-val="${s}" 
+                         style="background:white; padding:12px 20px; border-radius:12px; font-weight:900; color:var(--text-grey); cursor:pointer; box-shadow:0 4px 0 #ddd; border:1px solid #eee; font-size:18px; user-select:none;">
+                         ${s}
+                    </div>
+                `).join('')}
+            </div>
+        </div>
     `;
 }
 
-window.initGame = function() {
-    currentIndex = 0; roundInLevel = 0; currentLevel = 1; score = 0; timerSeconds = 0;
-    document.getElementById('score-val').innerText = score;
-    setupDots();
-    startTimer();
-    renderRound();
+// 4. FUNÇÕES HÍBRIDAS (DRAG & CLICK)
+window.allowDrop = function(ev) { ev.preventDefault(); };
+
+window.drag = function(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
 };
 
-function setupDots() {
-    const dotsContainer = document.getElementById('dots-container');
-    if(dotsContainer) {
-        dotsContainer.innerHTML = '';
-        for(let i=0; i<5; i++) {
-            const dot = document.createElement('div');
-            dot.className = 'dot';
-            dotsContainer.appendChild(dot);
+window.drop = function(ev) {
+    ev.preventDefault();
+    let data = ev.dataTransfer.getData("text");
+    let dragEl = document.getElementById(data);
+    let targetSlot = ev.target.closest('.slot');
+
+    if (targetSlot && targetSlot.innerText === "") {
+        targetSlot.innerText = dragEl.innerText;
+        dragEl.style.visibility = "hidden";
+        checkCompleto();
+    }
+};
+
+window.handleSyllableClick = function(el) {
+    // Encontra o primeiro slot vazio
+    const slots = document.querySelectorAll('.slot');
+    for (let slot of slots) {
+        if (slot.innerText === "") {
+            slot.innerText = el.innerText;
+            el.style.visibility = "hidden";
+            checkCompleto();
+            break;
         }
+    }
+};
+
+function checkCompleto() {
+    const slots = document.querySelectorAll('.slot');
+    let preenchidos = 0;
+    let tentativa = [];
+
+    slots.forEach(s => {
+        if(s.innerText !== "") {
+            preenchidos++;
+            tentativa.push(s.innerText);
+        }
+    });
+
+    if (preenchidos === itensAtuais[indiceQuestao].silabas.length) {
+        validarSequencia(tentativa);
     }
 }
 
-function startTimer() {
-    if(timerInterval) clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
-        timerSeconds++;
-        const min = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
-        const sec = (timerSeconds % 60).toString().padStart(2, '0');
-        const t = document.getElementById('timer');
-        if(t) t.innerText = `⏳ ${min}:${sec}`;
+function validarSequencia(tentativa) {
+    const correta = itensAtuais[indiceQuestao].silabas;
+    const isCorrect = tentativa.join('') === correta.join('');
+    
+    // Bloquear novas interações
+    document.querySelectorAll('#syllables-pool div').forEach(d => d.onclick = null);
+
+    if (isCorrect) {
+        acertos++; document.getElementById('hits-val').innerText = acertos;
+        document.querySelectorAll('.slot').forEach(s => s.style.background = "var(--highlight-green)");
+        document.querySelectorAll('.slot').forEach(s => s.style.color = "white");
+        tocarSom('acerto');
+    } else {
+        erros++; document.getElementById('miss-val').innerText = erros;
+        document.querySelectorAll('.slot').forEach(s => s.style.background = "var(--error-red)");
+        document.querySelectorAll('.slot').forEach(s => s.style.color = "white");
+        tocarSom('erro');
+        // Mostrar a correção nos slots após um brevíssimo tempo
+        setTimeout(() => {
+            document.querySelectorAll('.slot').forEach((s, i) => {
+                s.innerText = correta[i];
+                s.style.background = "var(--highlight-green)";
+            });
+        }, 400);
+    }
+
+    setTimeout(() => {
+        if (indiceQuestao < itensAtuais.length - 1) {
+            indiceQuestao++; montarQuestao();
+        } else {
+            finalizarJogo();
+        }
+    }, 1200);
+}
+
+// 5. FUNÇÕES DE SUPORTE
+function finalizarJogo() {
+    if (cronometro) clearInterval(cronometro);
+    tocarSom('vitoria');
+    if (window.mostrarResultados) {
+        window.mostrarResultados(acertos, document.getElementById('timer-val').innerText);
+    }
+}
+
+function iniciarCronometro() {
+    cronometro = setInterval(() => {
+        segundos++;
+        let m = Math.floor(segundos / 60).toString().padStart(2, '0');
+        let s = (segundos % 60).toString().padStart(2, '0');
+        document.getElementById('timer-val').innerText = `${m}:${s}`;
     }, 1000);
 }
 
-function renderRound() {
-    const item = gameItems[currentIndex];
-    if(!item) return;
-    const isLevel2 = (currentLevel === 2);
-    selectedSyllables = new Array(item.silabas.length).fill(null);
-
-    const dots = document.querySelectorAll('.dot');
-    dots.forEach((d, i) => {
-        d.classList.remove('active', 'done');
-        if(i < roundInLevel) d.classList.add('done');
-        if(i === roundInLevel) d.classList.add('active');
-    });
-
-    const container = document.getElementById('game-main-content');
-    container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:15px;">
-            <div id="word-hint" style="font-size:30px; font-weight:900; color:var(--primary-blue); letter-spacing:4px; height:40px;">
-                ${isLevel2 ? '???' : item.nome}
-            </div>
-            <div style="background:white; padding:12px; border-radius:30px; box-shadow:0 8px 25px rgba(0,0,0,0.06);">
-                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:120px; max-width:210px; object-fit:contain;" draggable="false">
-            </div>
-            <div id="drop-zones" style="display:flex; gap:12px; min-height:80px; justify-content:center; width:100%;">
-                ${item.silabas.map((_, i) => `
-                    <div class="target-box" data-idx="${i}" onclick="removeSyllable(${i})"
-                         style="width:75px; height:75px; border:3px dashed #cbd9e6; border-radius:18px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:26px; color:var(--primary-dark); background:rgba(255,255,255,0.5); cursor:pointer;">
-                    </div>
-                `).join('')}
-            </div>
-            <div id="drag-options" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; padding:10px;">
-                ${shuffleArray([...item.silabas]).map((sil, i) => `
-                    <div class="silaba-card" 
-                         onmousedown="startDrag(event)" ontouchstart="startDrag(event)"
-                         data-silaba="${sil}" id="sil-orig-${currentIndex}-${i}"
-                         style="background:white; padding:15px 25px; border-radius:20px; font-weight:900; font-size:26px; color:var(--text-grey); cursor:grab; box-shadow:0 6px 0 #d0e0f0; border:1px solid #eee; touch-action:none; user-select:none;">
-                        ${sil}
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    `;
+function tocarSom(tipo) {
+    const url = JOGO_CONFIG.sons[tipo];
+    if (url) { new Audio(url).play().catch(e => {}); }
 }
 
-window.removeSyllable = function(idx) {
-    const data = selectedSyllables[idx];
-    if(!data) return;
-    const originalEl = document.getElementById(data.originalId);
-    if(originalEl) originalEl.style.visibility = 'visible';
-    const target = document.querySelector(`.target-box[data-idx="${idx}"]`);
-    target.innerText = "";
-    target.style.background = "rgba(255,255,255,0.5)";
-    target.style.border = "3px dashed #cbd9e6";
-    selectedSyllables[idx] = null;
-};
-
-function startDrag(e) {
-    draggedElement = e.target.closest('.silaba-card');
-    if (!draggedElement || draggedElement.style.visibility === 'hidden') return;
-
-    isMoving = false;
-    const startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
-    const startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-    const rect = draggedElement.getBoundingClientRect();
-    const offsetX = startX - rect.left;
-    const offsetY = startY - rect.top;
-
-    const moveEvent = e.type === 'touchstart' ? 'touchmove' : 'mousemove';
-    const upEvent = e.type === 'touchstart' ? 'touchend' : 'mouseup';
-
-    function onMove(ev) {
-        isMoving = true;
-        const x = (ev.type === 'touchmove' ? ev.touches[0].clientX : ev.clientX);
-        const y = (ev.type === 'touchmove' ? ev.touches[0].clientY : ev.clientY);
-        draggedElement.style.zIndex = '3000';
-        draggedElement.style.pointerEvents = 'none';
-        draggedElement.style.position = 'fixed';
-        draggedElement.style.left = (x - offsetX) + 'px';
-        draggedElement.style.top = (y - offsetY) + 'px';
-    }
-
-    function onUp(ev) {
-        document.removeEventListener(moveEvent, onMove);
-        document.removeEventListener(upEvent, onUp);
-
-        const endX = (ev.type === 'touchend' ? ev.changedTouches[0].clientX : ev.clientX);
-        const endY = (ev.type === 'touchend' ? ev.changedTouches[0].clientY : ev.clientY);
-
-        if (!isMoving) {
-            const targets = document.querySelectorAll('.target-box');
-            for (let i = 0; i < targets.length; i++) {
-                if (!selectedSyllables[i]) {
-                    fillTarget(i, draggedElement.dataset.silaba, draggedElement);
-                    break;
-                }
-            }
-        } else {
-            const dropTarget = document.elementFromPoint(endX, endY)?.closest('.target-box');
-            if (dropTarget && !selectedSyllables[dropTarget.dataset.idx]) {
-                fillTarget(dropTarget.dataset.idx, draggedElement.dataset.silaba, draggedElement);
-            }
-        }
-
-        draggedElement.style.position = '';
-        draggedElement.style.left = '';
-        draggedElement.style.top = '';
-        draggedElement.style.zIndex = '';
-        draggedElement.style.pointerEvents = 'auto';
-        draggedElement.style.transition = '0.3s';
-        setTimeout(() => draggedElement.style.transition = '', 300);
-    }
-    document.addEventListener(moveEvent, onMove);
-    document.addEventListener(upEvent, onUp);
-}
-
-function fillTarget(targetIdx, silaba, originalEl) {
-    const target = document.querySelector(`.target-box[data-idx="${targetIdx}"]`);
-    if(!target) return;
-    target.innerText = silaba;
-    target.style.background = "white";
-    target.style.border = "2px solid var(--primary-blue)";
-    originalEl.style.visibility = 'hidden';
-    selectedSyllables[targetIdx] = { silaba: silaba, originalId: originalEl.id };
-
-    if (selectedSyllables.filter(s => s !== null).length === gameItems[currentIndex].silabas.length) {
-        setTimeout(checkWord, 400);
-    }
-}
-
-function checkWord() {
-    const item = gameItems[currentIndex];
-    const userWord = selectedSyllables.map(s => s ? s.silaba : "").join('');
-    const correctWord = item.silabas.join('');
-
-    if (userWord === correctWord) {
-        sndAcerto.play();
-        score += (currentLevel === 2) ? JOGO_CONFIG.pontuacao.acertoNivel2 : JOGO_CONFIG.pontuacao.acertoNivel1;
-        document.getElementById('score-val').innerText = score;
-        document.querySelectorAll('.target-box').forEach(b => b.style.color = "var(--highlight-green)");
-        setTimeout(nextRound, 800);
-    } else {
-        sndErro.play();
-        score = Math.max(0, score - JOGO_CONFIG.pontuacao.erro);
-        document.getElementById('score-val').innerText = score;
-        document.querySelectorAll('.target-box').forEach(b => b.style.borderColor = "var(--error-red)");
-    }
-}
-
-function nextRound() {
-    currentIndex++; roundInLevel++;
-    if (roundInLevel < 5) renderRound();
-    else {
-        if (currentLevel === 1) {
-            currentLevel = 2; roundInLevel = 0;
-            setupDots(); renderRound();
-        } else finishGame();
-    }
-}
-
-function finishGame() {
-    if(timerInterval) clearInterval(timerInterval);
-    sndVitoria.play();
-    document.getElementById('res-pts').innerText = score;
-    const t = document.getElementById('timer').innerText.replace('⏳ ', '');
-    document.getElementById('res-tim').innerText = t;
-    let rel = JOGO_CONFIG.relatorios.find(r => score >= r.min) || JOGO_CONFIG.relatorios[JOGO_CONFIG.relatorios.length-1];
-    document.getElementById('res-tit').innerText = rel.titulo;
-    document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rel.img;
-    if(window.goToResult) window.goToResult();
-}
-
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
+const style = document.createElement('style');
+style.id = 'game-animations';
+style.innerHTML = `@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.slot { transition: background 0.3s, color 0.3s; }`;
+document.head.appendChild(style);
