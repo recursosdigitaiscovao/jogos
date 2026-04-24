@@ -6,7 +6,6 @@ let tempoInicio;
 let intervaloTimer;
 let categoriaAtiva = 'animais';
 
-// Sons
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
@@ -15,39 +14,37 @@ window.startLogic = function() {
     selecionarCategoria('animais'); 
 };
 
-// 1. ANIMAÇÃO DE INTRO COMPLETA (Simula o jogo)
+// 1. ANIMAÇÃO DE INTRO COMPLETA (Mostra todas as sílabas a encaixar)
 window.selecionarCategoria = function(key) {
     categoriaAtiva = key;
     const cat = JOGO_CONFIG.categorias[key];
-    const todosItens = [...cat.itens];
-    itensAtuais = todosItens.sort(() => Math.random() - 0.5).slice(0, 10);
+    itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
     
     const containerIntro = document.getElementById('intro-animation-container');
-    const silEx = cat.exemplo.split('-')[0]; // Pega a primeira sílaba para o exemplo
+    const silabasEx = cat.exemplo.split('-'); 
 
     containerIntro.innerHTML = `
-        <div class="demo-box" style="display:flex; flex-direction:column; align-items:center; gap:15px; position:relative; width:200px;">
-            <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:70px; width:auto; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));">
-            
-            <!-- Espaço alvo -->
-            <div style="width:60px; height:55px; border:2px dashed #5ba4e5; border-radius:10px;" id="demo-target"></div>
-            
-            <!-- Sílaba que se move -->
-            <div class="demo-silaba" style="
-                width:60px; height:55px; background:white; border:3px solid #5ba4e5; 
-                color:#5ba4e5; border-radius:10px; display:flex; align-items:center; 
-                justify-content:center; font-weight:900; font-size:18px; 
-                position:absolute; bottom:-10px; animation: demoMove 3s infinite;
-            ">${silEx}</div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px; width:100%;">
+            <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:70px; margin-bottom:5px;">
+            <div style="display:flex; gap:5px; position:relative; min-height:100px;">
+                ${silabasEx.map((s, i) => `
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:40px;">
+                        <div style="width:45px; height:45px; border:2px dashed #5ba4e5; border-radius:8px;"></div>
+                        <div class="demo-sil" style="
+                            width:45px; height:45px; background:white; border:2px solid #5ba4e5; 
+                            color:#5ba4e5; border-radius:8px; display:flex; align-items:center; 
+                            justify-content:center; font-weight:900; font-size:14px;
+                            animation: demoMoveAll 3s infinite ${i * 0.3}s;
+                        ">${s}</div>
+                    </div>
+                `).join('')}
+            </div>
         </div>
         <style>
-            @keyframes demoMove {
-                0% { transform: translateY(0); opacity: 1; }
-                20% { transform: translateY(0); }
-                50% { transform: translateY(-75px); }
-                80% { transform: translateY(-75px); opacity: 1; }
-                90% { transform: translateY(-75px); opacity: 0; }
-                100% { transform: translateY(0); opacity: 0; }
+            @keyframes demoMoveAll {
+                0%, 20% { transform: translateY(0); opacity: 1; }
+                50%, 80% { transform: translateY(-89px); opacity: 1; }
+                90%, 100% { transform: translateY(-89px); opacity: 0; }
             }
         </style>
     `;
@@ -84,25 +81,19 @@ function proximaRodada() {
 function montarInterface(item) {
     const container = document.getElementById('game-main-content');
     const isMobile = window.innerWidth < 600;
-    
-    // Tamanhos Otimizados
-    const silSize = isMobile ? '62px' : '75px'; 
-    const imgH = isMobile ? '90px' : '150px';
+    const silSize = isMobile ? '65px' : '75px'; 
+    const imgH = isMobile ? '100px' : '150px';
 
     container.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content: space-between; padding: 10px 0;">
-            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.1rem; text-transform:uppercase;">${item.nome}</h2>
-            
+            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.2rem; text-transform:uppercase;">${item.nome}</h2>
             <div style="background:white; padding:8px; border-radius:20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
                 <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:${imgH}; max-width:80vw; object-fit:contain;">
             </div>
-
-            <div id="target-slots" style="display:flex; gap:8px; min-height:${silSize}; justify-content:center; align-items:center; flex-wrap:wrap; width:100%;">
-                ${item.silabas.map(() => `<div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)" style="width:${silSize}; height:${silSize}; border:3px dashed #cbd9e6; border-radius:15px;"></div>`).join('')}
+            <div id="target-slots" style="display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:wrap; width:100%;">
+                ${item.silabas.map(() => `<div class="slot" ondrop="drop(event)" ondragover="allowDrop(event)" style="width:${silSize}; height:${silSize}; border:3px dashed #cbd9e6; border-radius:15px; display:flex;"></div>`).join('')}
             </div>
-
-            <div id="source-pool" style="display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:wrap; min-height:${silSize}; width:100%;">
-                <!-- Peças entram aqui -->
+            <div id="source-pool" style="display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:wrap; width:100%; min-height:${silSize};">
             </div>
         </div>
     `;
@@ -114,40 +105,72 @@ function montarInterface(item) {
     });
 }
 
-function criarPeca(texto, id, size) {
+function criarPeca(texto, i, size) {
     const div = document.createElement('div');
     div.className = 'silaba-btn';
     div.innerText = texto;
-    div.id = 'sil-' + id + Date.now();
+    div.id = `sil-${i}-${Math.random().toString(36).substr(2, 4)}`; // ID único robusto
     div.draggable = true;
     
     Object.assign(div.style, {
         width: size, height: size, background: 'white', color: 'var(--primary-blue)',
         border: '3px solid var(--primary-blue)', borderRadius: '15px', display: 'flex',
-        alignItems: 'center', justifyContent: 'center', fontSize: '22px', fontWeight: '900',
+        alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: '900',
         cursor: 'grab', boxShadow: '0 5px 0 var(--primary-dark)', userSelect: 'none',
         touchAction: 'none', position: 'relative', zIndex: '10'
     });
 
-    // EVENTOS PC (Mouse)
+    // MOUSE EVENTS
     div.ondragstart = (e) => { 
         e.dataTransfer.setData("text/plain", e.target.id);
-        div.style.opacity = "0.4";
+        setTimeout(() => div.style.opacity = "0.4", 0);
     };
     div.ondragend = () => div.style.opacity = "1";
 
-    // EVENTOS TELEMÓVEL (Touch)
-    div.ontouchstart = handleTouchStart;
-    div.ontouchmove = handleTouchMove;
-    div.ontouchend = handleTouchEnd;
+    // TOUCH EVENTS (TELEMÓVEL)
+    div.ontouchstart = function(e) {
+        const touch = e.touches[0];
+        const rect = this.getBoundingClientRect();
+        this.dataset.offsetX = touch.clientX - rect.left;
+        this.dataset.offsetY = touch.clientY - rect.top;
+        this.style.zIndex = "1000";
+        this.style.pointerEvents = "none"; // Essencial para o drop no touch funcionar
+    };
 
-    // EVENTO CLIQUE (Alternativa rápida)
-    div.onclick = () => {
-        if (div.parentElement.id === 'source-pool') {
-            const slots = document.querySelectorAll('.slot');
-            for (let s of slots) if (s.children.length === 0) { s.appendChild(div); break; }
+    div.ontouchmove = function(e) {
+        const touch = e.touches[0];
+        this.style.position = 'fixed';
+        this.style.left = (touch.clientX - this.dataset.offsetX) + 'px';
+        this.style.top = (touch.clientY - this.dataset.offsetY) + 'px';
+    };
+
+    div.ontouchend = function(e) {
+        this.style.pointerEvents = "auto";
+        const touch = e.changedTouches[0];
+        const elemAbaixo = document.elementFromPoint(touch.clientX, touch.clientY);
+        const slot = elemAbaixo ? elemAbaixo.closest('.slot') : null;
+
+        this.style.position = 'relative';
+        this.style.left = '0';
+        this.style.top = '0';
+        this.style.zIndex = '10';
+
+        if (slot && slot.children.length === 0) {
+            slot.appendChild(this);
         } else {
-            document.getElementById('source-pool').appendChild(div);
+            document.getElementById('source-pool').appendChild(this);
+        }
+        validar();
+    };
+
+    // CLIQUE PARA QUEM NÃO QUER ARRASTAR
+    div.onclick = function() {
+        if (this.style.position === 'fixed') return; // Evita conflito com touch
+        if (this.parentElement.id === 'source-pool') {
+            const slots = document.querySelectorAll('.slot');
+            for (let s of slots) if (s.children.length === 0) { s.appendChild(this); break; }
+        } else {
+            document.getElementById('source-pool').appendChild(this);
         }
         validar();
     };
@@ -155,53 +178,14 @@ function criarPeca(texto, id, size) {
     return div;
 }
 
-// LÓGICA DE ARRASTAR NO TOUCH (TELEMÓVEL)
-let touchOffsetX = 0;
-let touchOffsetY = 0;
-
-function handleTouchStart(e) {
-    const touch = e.touches[0];
-    const rect = this.getBoundingClientRect();
-    touchOffsetX = touch.clientX - rect.left;
-    touchOffsetY = touch.clientY - rect.top;
-    this.style.zIndex = "1000";
-}
-
-function handleTouchMove(e) {
-    e.preventDefault();
-    const touch = e.touches[0];
-    this.style.position = 'fixed';
-    this.style.left = (touch.clientX - touchOffsetX) + 'px';
-    this.style.top = (touch.clientY - touchOffsetY) + 'px';
-}
-
-function handleTouchEnd(e) {
-    this.style.display = 'none'; // Esconde temporariamente para achar o que está por baixo
-    const touch = e.changedTouches[0];
-    const elemAbaixo = document.elementFromPoint(touch.clientX, touch.clientY);
-    const slot = elemAbaixo ? elemAbaixo.closest('.slot') : null;
-    this.style.display = 'flex';
-    this.style.position = 'relative';
-    this.style.left = '0';
-    this.style.top = '0';
-    this.style.zIndex = '10';
-
-    if (slot && slot.children.length === 0) {
-        slot.appendChild(this);
-    } else {
-        document.getElementById('source-pool').appendChild(this);
-    }
-    validar();
-}
-
-// LÓGICA DE ARRASTAR NO PC
+// DRAG AND DROP PC
 window.allowDrop = (e) => e.preventDefault();
 window.drop = function(e) {
     e.preventDefault();
     const id = e.dataTransfer.getData("text/plain");
     const el = document.getElementById(id);
     const slot = e.target.closest('.slot');
-    if (slot && slot.children.length === 0) {
+    if (slot && el && slot.children.length === 0) {
         slot.appendChild(el);
         validar();
     }
