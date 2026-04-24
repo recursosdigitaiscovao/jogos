@@ -1,6 +1,6 @@
 const CONFIG_MESTRE = {
     ano: "ano1",        
-    area: "matematica",  
+    area: "portugues",  
     nomeJogo: "CONTAR SÍLABAS"
 };
 
