@@ -4,16 +4,23 @@ let acertos = 0;
 let erros = 0;
 let segundos = 0;
 let cronometro = null;
-let categoriaAtiva = Object.keys(JOGO_CONFIG.categorias)[0];
+let categoriaAtiva = 'animais';
 let intervalAnim = null;
 
+// Garante que a categoria existe mal o script carrega
+if (window.JOGO_CONFIG) {
+    categoriaAtiva = Object.keys(JOGO_CONFIG.categorias)[0];
+}
+
 window.startLogic = function() {
-    window.atualizarAnimacao(categoriaAtiva);
+    window.selecionarCategoria(categoriaAtiva);
 };
 
 window.selecionarCategoria = function(chave) {
+    if (!JOGO_CONFIG.categorias[chave]) return;
     categoriaAtiva = chave;
     const cat = JOGO_CONFIG.categorias[chave];
+    // Embaralha e pega 10
     itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
     window.atualizarAnimacao(chave);
 };
@@ -21,6 +28,7 @@ window.selecionarCategoria = function(chave) {
 window.atualizarAnimacao = function(chave) {
     const container = document.getElementById('intro-animation-container');
     const cat = JOGO_CONFIG.categorias[chave];
+    if (!container || !cat) return;
     if (intervalAnim) clearInterval(intervalAnim);
 
     container.innerHTML = `
@@ -46,8 +54,10 @@ window.atualizarAnimacao = function(chave) {
         hand.style.opacity = "0"; hand.style.transform = "translate(0, 0)";
         targetBtn.style.background = "#eee"; targetBtn.style.color = "black";
         setTimeout(() => {
+            if (!hand) return;
             hand.style.opacity = "1"; hand.style.transform = "translate(-120px, -20px)";
             setTimeout(() => {
+                if (!targetBtn) return;
                 targetBtn.style.background = "var(--primary-blue)"; targetBtn.style.color = "white";
                 targetBtn.style.transform = "scale(1.1)"; setTimeout(() => targetBtn.style.transform = "scale(1)", 200);
             }, 800);
@@ -57,9 +67,13 @@ window.atualizarAnimacao = function(chave) {
 };
 
 window.initGame = function() {
+    // Se por algum motivo a lista estiver vazia, recarrega
+    if (itensAtuais.length === 0) window.selecionarCategoria(categoriaAtiva);
+    
     indiceQuestao = 0; acertos = 0; erros = 0; segundos = 0;
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
+    document.getElementById('timer-val').innerText = "00:00";
     iniciarCronometro();
     montarQuestao();
 };
@@ -67,6 +81,8 @@ window.initGame = function() {
 function montarQuestao() {
     const area = document.getElementById('game-main-content');
     const item = itensAtuais[indiceQuestao];
+    if (!item) return;
+    
     document.getElementById('round-val').innerText = `${indiceQuestao + 1} / 10`;
 
     area.innerHTML = `
@@ -90,12 +106,12 @@ window.validarResposta = function(btn, num) {
     if (num === correta) {
         acertos++; document.getElementById('hits-val').innerText = acertos;
         btn.style.background = "var(--highlight-green)";
-        new Audio(JOGO_CONFIG.sons.acerto).play();
+        new Audio(JOGO_CONFIG.sons.acerto).play().catch(() => {});
     } else {
         erros++; document.getElementById('miss-val').innerText = erros;
         btn.style.background = "var(--error-red)";
-        new Audio(JOGO_CONFIG.sons.erro).play();
-        botoes[correta - 1].style.border = "4px solid var(--highlight-green)";
+        new Audio(JOGO_CONFIG.sons.erro).play().catch(() => {});
+        if (botoes[correta - 1]) botoes[correta - 1].style.border = "4px solid var(--highlight-green)";
     }
 
     setTimeout(() => {
@@ -103,7 +119,7 @@ window.validarResposta = function(btn, num) {
             indiceQuestao++; montarQuestao(); 
         } else {
             clearInterval(cronometro);
-            new Audio(JOGO_CONFIG.sons.vitoria).play();
+            new Audio(JOGO_CONFIG.sons.vitoria).play().catch(() => {});
             if(window.mostrarResultados) {
                 window.mostrarResultados(acertos, document.getElementById('timer-val').innerText);
             }
