@@ -1,9 +1,9 @@
 const JOGO_CONFIG = {
+    nomeJogo: "CONTAR SÍLABAS", 
     linkVoltar: "../", 
     textoVoltar: "VOLTAR",
-    caminhoImg: "../../../img/",
-    caminhoIcons: "../../../icons/",
-    caminhoSom: "", 
+    caminhoImg: "../../../img/",    
+    caminhoIcons: "../../../icons/", 
     sons: {
         acerto: "https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3",
         erro: "https://cdn.pixabay.com/audio/2022/03/10/audio_c330c67761.mp3",
@@ -13,6 +13,7 @@ const JOGO_CONFIG = {
         tituloLinha1: "PEQUENOS",
         tituloLinha2: "LEITORES",
         subtitulo: "Português | 1º Ano",
+        instrucao: "Clica no número que corresponde à quantidade de sílabas da palavra!",
         rodape: "&copy; Pequenos Leitores - Recursos Educativos"
     },
     iconesMenu: {
@@ -24,6 +25,9 @@ const JOGO_CONFIG = {
     categorias: {
         animais: {
             nome: "Animais",
+            exemplo: "CA-VA-LO",
+            exemploImg: "animaisdomesticos/cavalo.png",
+            total: 3,
             imgCapa: "animaisdomesticos/gato.png",
             itens: [
                 { nome: "VACA", silabas: 2, img: "animaisdomesticos/vaca.png" },
@@ -34,11 +38,15 @@ const JOGO_CONFIG = {
                 { nome: "CAVALO", silabas: 3, img: "animaisdomesticos/cavalo.png" },
                 { nome: "BURRO", silabas: 2, img: "animaisdomesticos/burro.png" },
                 { nome: "GALINHA", silabas: 3, img: "animaisdomesticos/galinha.png" },
-                { nome: "COELHO", silabas: 3, img: "animaisdomesticos/coelho.png" }
+                { nome: "COELHO", silabas: 3, img: "animaisdomesticos/coelho.png" },
+                { nome: "PORCO", silabas: 2, img: "animaisdomesticos/porco.png" }
             ]
         },
         frutos: {
             nome: "Frutos",
+            exemplo: "MA-ÇÃ",
+            exemploImg: "frutas/maca.png",
+            total: 2,
             imgCapa: "frutas/morango.png",
             itens: [
                 { nome: "BANANA", silabas: 3, img: "frutas/banana.png" },
@@ -48,30 +56,35 @@ const JOGO_CONFIG = {
                 { nome: "MELANCIA", silabas: 4, img: "frutas/melancia.png" },
                 { nome: "LARANJA", silabas: 3, img: "frutas/laranja.png" },
                 { nome: "PAPAIA", silabas: 3, img: "frutas/papaia.png" },
-                { nome: "MAÇÃ", silabas: 2, img: "frutas/maca.png" }
+                { nome: "MAÇÃ", silabas: 2, img: "frutas/maca.png" },
+                { nome: "PERA", silabas: 2, img: "frutas/pera.png" },
+                { nome: "MARACUJÁ", silabas: 4, img: "frutas/maracuja.png" }
             ]
         },
         material: {
             nome: "Material Escolar",
+            exemplo: "LÁ-PIS",
+            exemploImg: "materialescolar/lapis.png",
+            total: 2,
             imgCapa: "materialescolar/afia.png",
             itens: [
                 { nome: "MOCHILA", silabas: 3, img: "materialescolar/mochila.png" },
                 { nome: "TESOURA", silabas: 3, img: "materialescolar/tesoura.png" },
                 { nome: "LÁPIS", silabas: 2, img: "materialescolar/lapis.png" },
                 { nome: "LIVRO", silabas: 2, img: "materialescolar/livro.png" },
-                { nome: "AFIA", silabas: 2, img: "materialescolar/afia.png" },
+                { nome: "AFIA", silabas: 3, img: "materialescolar/afia.png" },
                 { nome: "CANETA", silabas: 3, img: "materialescolar/caneta.png" },
-                { nome: "RÉGUA", silabas: 3, img: "materialescolar/regua.png" },
-                { nome: "BORACHA", silabas: 3, img: "materialescolar/borracha.png" },
+                { nome: "RÉGUA", silabas: 2, img: "materialescolar/regua.png" },
+                { nome: "BORRACHA", silabas: 3, img: "materialescolar/borracha.png" },
                 { nome: "COLA", silabas: 2, img: "materialescolar/cola.png" },
                 { nome: "ESTOJO", silabas: 3, img: "materialescolar/estojo.png" }
             ]
         }
     },
     relatorios: [
-        { min: 1200, titulo: "BRILHANTE!", img: "taca_1.png" },
-        { min: 800, titulo: "MUITO BEM!", img: "taca_2.png" },
-        { min: 500, titulo: "BOM TRABALHO!", img: "taca_3.png" },
-        { min: 0, titulo: "TENTA OUTRA VEZ!", img: "taca_4.png" }
+        { min: 9, max: 10, titulo: "És um craque!", img: "taca_1.png" },
+        { min: 7, max: 8, titulo: "Muito bem!", img: "taca_2.png" },
+        { min: 5, max: 6, titulo: "Estás quase lá!", img: "taca_2.png" },
+        { min: 0, max: 4, titulo: "Continua a tentar!", img: "taca_4.png" }
     ]
 };
