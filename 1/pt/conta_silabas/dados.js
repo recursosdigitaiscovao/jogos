@@ -1,7 +1,6 @@
-// === CONFIGURAÇÃO MESTRE ===
 const CONFIG_MESTRE = {
     ano: "ano1",        
-    area: "portugues",  // Opções: "portugues", "matematica", "estudo", "pre"
+    area: "portugues",  
     nomeJogo: "CONTAR SÍLABAS"
 };
 
@@ -75,7 +74,7 @@ const JOGO_CONFIG = {
                 { nome: "LÁPIS", silabas: 2, img: "materialescolar/lapis.png" },
                 { nome: "LIVRO", silabas: 2, img: "materialescolar/livro.png" },
                 { nome: "AFIA", silabas: 3, img: "materialescolar/afia.png" },
-                { nome: "CANETA", silabas: 3, img: "materialescolar/caneta.png" }
+                { nome: "ESTOJO", silabas: 3, img: "materialescolar/estojo.png" }
             ]
         }
     },
