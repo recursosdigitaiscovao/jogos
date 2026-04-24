@@ -1,236 +1,152 @@
 /**
- * MOTOR DO JOGO: CONTAR SÍLABAS 
- * Lógica: 10 Itens Únicos (5 Nível 1 + 5 Nível 2)
- * Animação Tutorial: Mão clica no número certo.
+ * LÓGICA DO JOGO: CONTAR SÍLABAS
  */
 
-let category = 'animais';
-let roundGlobal = 0; 
-let currentLevel = 1; 
-let score = 0;
-let timer = 0;
-let timerInt;
-let itemsGame = [];
-let currentItem = null;
+let itensAtuais = [];
+let indiceQuestao = 0;
+let acertos = 0;
+let erros = 0;
+let cronometro = null;
+let segundos = 0;
+let categoriaAtiva = 'animais';
+let intervalAnim = null;
 
-function init() {
-    const pI = JOGO_CONFIG.caminhoIcons;
-    const pImg = JOGO_CONFIG.caminhoImg;
+// 1. Inicia a animação da categoria inicial mal o site carrega
+window.startLogic = function() {
+    window.atualizarAnimacao(categoriaAtiva);
+};
 
-    // Configuração de Títulos Dinâmicos
-    document.getElementById('head-logo').src = pI + JOGO_CONFIG.iconesMenu.ano1;
-    document.getElementById('header-back-icon').src = pI + "voltar.png";
-    document.getElementById('tit-l1').innerText = JOGO_CONFIG.textos.tituloLinha1;
-    document.getElementById('tit-l2').innerText = JOGO_CONFIG.textos.tituloLinha2;
-    document.getElementById('sub-tit').innerText = JOGO_CONFIG.textos.subtitulo;
-    document.getElementById('mainFooter').innerHTML = JOGO_CONFIG.textos.rodape;
+// 2. Muda a animação e prepara itens quando escolhes no menu
+window.selecionarCategoria = function(chave) {
+    categoriaAtiva = chave;
+    const cat = JOGO_CONFIG.categorias[chave];
+    itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
+    window.atualizarAnimacao(chave);
+};
 
-    // Botão Voltar Dinâmico
-    const btnVoltarH = document.getElementById('link-voltar');
-    btnVoltarH.href = JOGO_CONFIG.linkVoltar;
-    btnVoltarH.innerHTML = `<img src="${pI}voltar.png"> ${JOGO_CONFIG.textoVoltar}`;
+// 3. ANIMAÇÃO DINÂMICA
+window.atualizarAnimacao = function(chave) {
+    const container = document.getElementById('intro-animation-container');
+    const cat = JOGO_CONFIG.categorias[chave];
+    if (!container || !cat) return;
 
-    document.getElementById('rd-game-btn').src = pImg + "rd.png";
-    document.getElementById('rd-intro-btn').src = pImg + "rd.png";
-    document.getElementById('btn-back-link').onclick = () => window.location.href = JOGO_CONFIG.linkVoltar;
+    if (intervalAnim) clearInterval(intervalAnim);
 
-    // Menu Hambúrguer Dinâmico
-    const menuBox = document.getElementById('dropdownMenu');
-    menuBox.innerHTML = '';
-    ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
-        const a = document.createElement('a'); a.className = 'menu-item'; a.href = JOGO_CONFIG.links[k];
-        a.innerHTML = `<img src="${pI}${JOGO_CONFIG.iconesMenu[k]}"><span>${k==='home'?'Início':k.replace('ano',' ')+'º Ano'}</span>`;
-        menuBox.appendChild(a);
-    });
-    const div = document.createElement('div'); div.className = 'menu-divider'; menuBox.appendChild(div);
-    const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = JOGO_CONFIG.linkVoltar;
-    btnV.innerHTML = `<img src="${pI}voltar.png"><span>${JOGO_CONFIG.textoVoltar}</span>`;
-    menuBox.appendChild(btnV);
+    container.innerHTML = `
+        <div style="text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px; animation: fadeIn 0.5s;">
+            <div style="background:white; padding:10px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+                <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:80px; object-fit:contain;">
+            </div>
+            <div style="font-size:22px; font-weight:900; letter-spacing:4px; color:var(--primary-blue); background:white; padding:5px 15px; border-radius:10px;">
+                ${cat.exemplo}
+            </div>
+            <div style="display:flex; gap:8px; justify-content:center; position:relative; margin-top:5px;">
+                ${[1, 2, 3, 4].map(n => `
+                    <div id="anim-btn-${n}" style="width:35px; height:35px; background:#eee; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:16px;">${n}</div>
+                `).join('')}
+                <i id="anim-hand" class="fas fa-mouse-pointer" style="position:absolute; color:var(--error-red); font-size:25px; bottom:-15px; right:0; transition:0.8s ease-in-out; opacity:0; z-index:10;"></i>
+            </div>
+        </div>
+    `;
 
-    // Menu de Temas RD
-    const rdList = document.getElementById('rd-list');
-    rdList.innerHTML = '';
-    Object.keys(JOGO_CONFIG.categorias).forEach(k => {
-        const c = JOGO_CONFIG.categorias[k];
-        const card = document.createElement('div'); card.className = 'category-card';
-        card.innerHTML = `<img src="${pImg}${c.imgCapa}"><span>${c.nome}</span>`;
-        card.onclick = (e) => { e.stopPropagation(); selectCat(k); };
-        rdList.appendChild(card);
-    });
+    const hand = document.getElementById('anim-hand');
+    const targetBtn = document.getElementById(`anim-btn-${cat.total}`);
 
-    updateIntroTutorial();
-}
-
-function updateIntroTutorial() {
-    const cat = JOGO_CONFIG.categorias[category];
-    const item = cat.itens[0]; 
-    
-    document.getElementById('intro-img').src = JOGO_CONFIG.caminhoImg + item.img;
-    document.getElementById('intro-name-label').innerText = item.nome;
-    
-    const slotsArea = document.getElementById('intro-slots');
-    slotsArea.innerHTML = ''; 
-    
-    // Gerar números de exemplo 1-4
-    for(let i=1; i<=4; i++) {
-        const b = document.createElement('div');
-        b.className = 'cell';
-        b.style.width = "65px"; b.style.height = "65px";
-        b.innerText = i;
-        if(i === item.silabas) b.id = "target-btn"; 
-        slotsArea.appendChild(b);
-    }
-
-    // Gerar Mão Tutorial
-    const hand = document.createElement('i');
-    hand.className = "fas fa-hand-pointer hand-tutorial";
-    hand.style.position = "absolute";
-    hand.style.top = "50px"; 
-    hand.id = "hand-moving";
-    slotsArea.appendChild(hand);
-
-    setTimeout(() => {
-        const target = document.getElementById('target-btn');
-        const handEl = document.getElementById('hand-moving');
-        if(target && handEl) {
-            const pos = target.offsetLeft + (target.offsetWidth / 2) - 10;
-            handEl.style.left = pos + "px";
-            
-            // Ciclo de animação: Mão clica no botão
-            setInterval(() => {
-                handEl.style.transform = "translateY(15px) scale(0.9)";
-                target.style.backgroundColor = "#bbdefb";
-                setTimeout(() => {
-                    handEl.style.transform = "translateY(0) scale(1.1)";
-                    target.style.backgroundColor = "white";
-                }, 500);
-            }, 1600);
-        }
-    }, 400);
-}
-
-function startGame() {
-    show('scr-game');
-    document.getElementById('status-bar').style.display = 'flex';
-    document.getElementById('main-title').style.display = 'none';
-    
-    // Sorteia 10 ITENS ÚNICOS (Baralha e tira 10)
-    const all = [...JOGO_CONFIG.categorias[category].itens].sort(() => 0.5 - Math.random());
-    itemsGame = all.slice(0, 10);
-    
-    // Caso a categoria tenha menos de 10, preenche para não falhar
-    if(itemsGame.length < 10) {
-        while(itemsGame.length < 10) itemsGame.push(all[Math.floor(Math.random()*all.length)]);
-    }
-
-    roundGlobal = 0; currentLevel = 1; score = 0; timer = 0;
-    timerInt = setInterval(() => {
-        timer++;
-        let m = Math.floor(timer/60).toString().padStart(2,'0');
-        let s = (timer%60).toString().padStart(2,'0');
-        document.getElementById('timer').innerText = `⏳ ${m}:${s}`;
-    }, 1000);
-
-    loadTask();
-}
-
-function loadTask() {
-    // Level 1: 0 a 4 | Level 2: 5 a 9 (Imagens Diferentes)
-    const idx = (currentLevel === 1) ? roundGlobal : (roundGlobal + 5);
-    currentItem = itemsGame[idx];
-
-    updateDots(5, roundGlobal);
-    
-    const banner = document.getElementById('game-banner');
-    banner.classList.remove('feedback-correct', 'feedback-wrong');
-    
-    document.getElementById('game-img').src = JOGO_CONFIG.caminhoImg + currentItem.img;
-    const nameLabel = document.getElementById('game-name');
-    nameLabel.innerText = currentItem.nome;
-    nameLabel.style.visibility = (currentLevel === 1) ? 'visible' : 'hidden';
-
-    renderButtons();
-}
-
-function renderButtons() {
-    const grid = document.getElementById('game-grid');
-    grid.innerHTML = '';
-    for (let i = 1; i <= 4; i++) {
-        const btn = document.createElement('div');
-        btn.className = 'cell';
-        btn.style.width = "70px"; btn.style.height = "70px"; btn.style.fontSize = "32px";
-        btn.innerText = i;
-        btn.onclick = () => checkAnswer(i);
-        grid.appendChild(btn);
-    }
-}
-
-function checkAnswer(num) {
-    const banner = document.getElementById('game-banner');
-    if (num === currentItem.silabas) {
-        banner.classList.add('feedback-correct');
-        score += (currentLevel === 1) ? 100 : 200;
-        document.getElementById('score-val').innerText = score;
-        playSound('acerto');
+    function rodarCiclo() {
+        if (!hand || !targetBtn) return;
+        hand.style.opacity = "0";
+        hand.style.transform = "translate(0, 0)";
+        targetBtn.style.background = "#eee";
+        targetBtn.style.color = "black";
 
         setTimeout(() => {
-            roundGlobal++;
-            if (roundGlobal >= 5) {
-                if (currentLevel === 1) {
-                    currentLevel = 2; // Passa para o segundo grupo de 5 imagens
-                    roundGlobal = 0;
-                    loadTask();
-                } else {
-                    finish();
-                }
-            } else {
-                loadTask();
-            }
-        }, 800);
+            hand.style.opacity = "1";
+            hand.style.transform = "translate(-120px, -20px)";
+            
+            setTimeout(() => {
+                targetBtn.style.background = "var(--primary-blue)";
+                targetBtn.style.color = "white";
+                targetBtn.style.transform = "scale(1.1)";
+                setTimeout(() => targetBtn.style.transform = "scale(1)", 200);
+            }, 800);
+        }, 500);
+    }
+
+    rodarCiclo();
+    intervalAnim = setInterval(rodarCiclo, 3000);
+};
+
+window.initGame = function() {
+    if (itensAtuais.length === 0) window.selecionarCategoria(categoriaAtiva);
+    indiceQuestao = 0; acertos = 0; erros = 0; segundos = 0;
+    document.getElementById('hits-val').innerText = "0";
+    document.getElementById('miss-val').innerText = "0";
+    iniciarCronometro();
+    montarQuestao();
+};
+
+function montarQuestao() {
+    const area = document.getElementById('game-main-content');
+    const item = itensAtuais[indiceQuestao];
+    document.getElementById('round-val').innerText = `${indiceQuestao + 1} / 10`;
+
+    area.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; animation: fadeIn 0.4s;">
+            <div style="background:white; padding:15px; border-radius:20px; box-shadow:0 8px 20px rgba(0,0,0,0.06); margin-bottom:15px;">
+                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:140px; object-fit:contain;">
+            </div>
+            <h2 style="font-size:32px; color:var(--primary-blue); font-weight:900; margin-bottom:20px; text-transform:uppercase; letter-spacing:2px;">${item.nome}</h2>
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; width:100%; max-width:320px;">
+                ${[1, 2, 3, 4].map(num => `
+                    <button class="btn-jogar-stretch" onclick="validarResposta(this, ${num})">${num}</button>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+window.validarResposta = function(btn, numEscolhido) {
+    const correta = itensAtuais[indiceQuestao].silabas;
+    const botoes = document.querySelectorAll('#game-main-content button');
+    botoes.forEach(b => b.style.pointerEvents = 'none');
+
+    if (numEscolhido === correta) {
+        acertos++; document.getElementById('hits-val').innerText = acertos;
+        btn.style.background = "var(--highlight-green)";
+        tocarSom('acerto');
     } else {
-        banner.classList.add('feedback-wrong');
-        playSound('erro');
-        score = Math.max(0, score - 20);
-        document.getElementById('score-val').innerText = score;
-        setTimeout(() => banner.classList.remove('feedback-wrong'), 800);
+        erros++; document.getElementById('miss-val').innerText = erros;
+        btn.style.background = "var(--error-red)";
+        tocarSom('erro');
+        botoes[correta - 1].style.border = "4px solid var(--highlight-green)";
     }
+
+    setTimeout(() => {
+        if (indiceQuestao < 9) {
+            indiceQuestao++; montarQuestao();
+        } else {
+            clearInterval(cronometro);
+            tocarSom('vitoria');
+            window.mostrarResultados(acertos, document.getElementById('timer-val').innerText);
+        }
+    }, 700);
 }
 
-function finish() {
-    clearInterval(timerInt);
-    playSound('vitoria');
-    show('scr-result');
-    document.getElementById('status-bar').style.display = 'none';
-    const rep = JOGO_CONFIG.relatorios.find(r => score >= r.min) || JOGO_CONFIG.relatorios[3];
-    document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rep.img;
-    document.getElementById('res-tit').innerText = rep.titulo;
-    document.getElementById('res-pts').innerText = score;
-    document.getElementById('res-tim').innerText = document.getElementById('timer').innerText.replace('⏳ ','');
+function iniciarCronometro() {
+    if (cronometro) clearInterval(cronometro);
+    cronometro = setInterval(() => {
+        segundos++;
+        let m = Math.floor(segundos / 60).toString().padStart(2, '0');
+        let s = (segundos % 60).toString().padStart(2, '0');
+        document.getElementById('timer-val').innerText = `${m}:${s}`;
+    }, 1000);
 }
 
-function updateDots(total, current) {
-    const c = document.getElementById('dots'); c.innerHTML = '';
-    for(let i=0; i<total; i++) {
-        const d = document.createElement('div');
-        d.className = 'dot' + (i < current ? ' done' : (i === current ? ' active' : ''));
-        c.appendChild(d);
-    }
+function tocarSom(tipo) {
+    const url = JOGO_CONFIG.sons[tipo];
+    if (url) { const a = new Audio(url); a.play().catch(e => {}); }
 }
 
-function selectCat(k) {
-    category = k; roundGlobal = 0; currentLevel = 1; score = 0;
-    if(timerInt) clearInterval(timerInt);
-    closeMenus(); show('scr-intro'); updateIntroTutorial();
-}
-
-function show(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-}
-
-function toggleHamburger(e) { e.stopPropagation(); document.getElementById('dropdownMenu').style.display = (document.getElementById('dropdownMenu').style.display === 'flex') ? 'none' : 'flex'; }
-function openRDMenu(e) { if(e) e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
-function closeMenus() { document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('rdMenu').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; }
-function playSound(t) { if(JOGO_CONFIG.sons[t]) new Audio(JOGO_CONFIG.sons[t]).play().catch(()=>{}); }
-
-window.onload = init;
+const style = document.createElement('style');
+style.innerHTML = `@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`;
+document.head.appendChild(style);
