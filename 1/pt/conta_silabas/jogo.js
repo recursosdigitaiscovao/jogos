@@ -7,12 +7,12 @@ let cronometro = null;
 let intervalAnim = null;
 let categoriaAtiva = Object.keys(JOGO_CONFIG.categorias)[0];
 
-// Inicia mal o script carrega
+// Inicia a lógica básica
 window.startLogic = function() {
     window.selecionarCategoria(categoriaAtiva);
 };
 
-// Muda tema e atualiza animação específica
+// Seleciona categoria e REINICIA ANIMAÇÃO
 window.selecionarCategoria = function(chave) {
     if (!JOGO_CONFIG.categorias[chave]) return;
     categoriaAtiva = chave;
@@ -21,7 +21,7 @@ window.selecionarCategoria = function(chave) {
     window.atualizarAnimacao(cat);
 };
 
-// Animação da mãozinha baseada no tema
+// Animação da mãozinha dinâmica por categoria
 window.atualizarAnimacao = function(cat) {
     const container = document.getElementById('intro-animation-container');
     if (intervalAnim) clearInterval(intervalAnim);
@@ -60,7 +60,7 @@ window.atualizarAnimacao = function(cat) {
     intervalAnim = setInterval(rodarCiclo, 3000);
 };
 
-// REINÍCIO SEGURO DO JOGO
+// INÍCIO DO JOGO - Limpeza Total de Variáveis
 window.initGame = function() {
     if (cronometro) clearInterval(cronometro);
     indiceQuestao = 0; acertos = 0; erros = 0; segundos = 0;
