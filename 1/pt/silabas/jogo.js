@@ -1,6 +1,5 @@
 /**
- * MOTOR DE JOGO: ORDENAR SÍLABAS
- * Suporte Híbrido: Clique ou Arraste
+ * MOTOR DE JOGO: ORDENAR SÍLABAS (VERSÃO MOBILE OK + REMOVER SÍLABA)
  */
 
 let itensAtuais = [];
@@ -9,10 +8,7 @@ let acertos = 0;
 let erros = 0;
 let segundos = 0;
 let cronometro = null;
-let intervalAnim = null;
 let categoriaAtiva = "";
-
-let respostaSyllables = []; // Armazena a ordem atual do aluno
 
 // 1. INICIALIZAÇÃO
 window.startLogic = function() {
@@ -21,55 +17,32 @@ window.startLogic = function() {
 };
 
 window.selecionarCategoria = function(chave) {
-    if (intervalAnim) clearInterval(intervalAnim);
     if (!JOGO_CONFIG.categorias[chave]) return;
     categoriaAtiva = chave;
     const cat = JOGO_CONFIG.categorias[chave];
+    // Sorteia 10 imagens da categoria
     itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
     window.atualizarAnimacao(cat);
 };
 
-// 2. ANIMAÇÃO DA INTRODUÇÃO (Efeito visual de juntar partes)
 window.atualizarAnimacao = function(cat) {
     const container = document.getElementById('intro-animation-container');
-    if (intervalAnim) clearInterval(intervalAnim);
-    
+    if (!container) return;
     container.innerHTML = `
         <div style="text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px;">
-            <div style="background:white; padding:10px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
-                <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:80px; object-fit:contain;">
-            </div>
-            <div id="anim-word-box" style="display:flex; gap:5px; min-height:40px;">
-                ${cat.exemplo.split('-').map(s => `<span class="anim-syll" style="background:var(--primary-blue); color:white; padding:5px 10px; border-radius:8px; font-weight:900; opacity:0; transform:translateY(10px); transition:0.4s;">${s}</span>`).join('')}
-            </div>
+            <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:100px; object-fit:contain;">
+            <div style="font-size:24px; font-weight:900; color:var(--primary-blue); letter-spacing:2px;">${cat.exemplo}</div>
         </div>
     `;
-
-    const elements = document.querySelectorAll('.anim-syll');
-    let step = 0;
-    function rodarCiclo() {
-        elements.forEach(el => { el.style.opacity = "0"; el.style.transform = "translateY(10px)"; });
-        step = 0;
-        let animTimer = setInterval(() => {
-            if(step < elements.length) {
-                elements[step].style.opacity = "1";
-                elements[step].style.transform = "translateY(0)";
-                step++;
-            } else { clearInterval(animTimer); }
-        }, 400);
-    }
-    rodarCiclo();
-    intervalAnim = setInterval(rodarCiclo, 3000);
 };
 
-// 3. LÓGICA DO JOGO
+// 2. INÍCIO DO JOGO
 window.initGame = function() {
     if (cronometro) clearInterval(cronometro);
     indiceQuestao = 0; acertos = 0; erros = 0; segundos = 0;
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
     document.getElementById('timer-val').innerText = "00:00";
-    if (itensAtuais.length === 0) window.selecionarCategoria(categoriaAtiva);
     iniciarCronometro();
     montarQuestao();
 };
@@ -81,70 +54,68 @@ function montarQuestao() {
 
     document.getElementById('round-val').innerText = `${indiceQuestao + 1} / ${itensAtuais.length}`;
     
-    // Preparar Sílabas Baralhadas
-    respostaSyllables = [];
+    // Baralhar sílabas
     let baralhadas = [...item.silabas].sort(() => Math.random() - 0.5);
 
     area.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:15px; animation: fadeIn 0.4s;">
-            <h2 style="font-size:24px; color:var(--primary-blue); font-weight:900; text-transform:uppercase;">${item.nome}</h2>
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap:20px; animation: fadeIn 0.4s;">
             
-            <div style="background:white; padding:15px; border-radius:20px; box-shadow:0 8px 20px rgba(0,0,0,0.06);">
-                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:120px; object-fit:contain;">
+            <!-- Imagem limpa sem molduras extras -->
+            <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:150px; object-fit:contain; margin-bottom:10px;">
+
+            <!-- Slots de Destino -->
+            <div id="drop-zone" style="display:flex; gap:12px; justify-content:center; width:100%;">
+                ${item.silabas.map((_, i) => `
+                    <div class="slot" onclick="removerSilabaDoSlot(this)" data-correct="${item.silabas[i]}"></div>
+                `).join('')}
             </div>
 
-            <!-- Zona de Depósito (Slots vazios) -->
-            <div id="drop-zone" style="display:flex; gap:10px; min-height:55px; padding:10px; background:#f8f9fa; border:2px dashed #cbd9e6; border-radius:15px; width:100%; justify-content:center;">
-                ${item.silabas.map((_, i) => `<div class="slot" data-index="${i}" ondrop="drop(event)" ondragover="allowDrop(event)" style="width:60px; height:45px; background:#fff; border-radius:10px; border:2px solid #eee; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); font-size:18px;"></div>`).join('')}
-            </div>
-
-            <!-- Sílabas para clicar/arrastar -->
-            <div id="syllables-pool" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+            <!-- Piscina de Sílabas -->
+            <div id="syllables-pool" style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center; padding:10px;">
                 ${baralhadas.map((s, i) => `
-                    <div id="syll-${i}" draggable="true" ondragstart="drag(event)" onclick="handleSyllableClick(this)" data-val="${s}" 
-                         style="background:white; padding:12px 20px; border-radius:12px; font-weight:900; color:var(--text-grey); cursor:pointer; box-shadow:0 4px 0 #ddd; border:1px solid #eee; font-size:18px; user-select:none;">
-                         ${s}
-                    </div>
+                    <div class="syll-card" onclick="colocarNoSlot(this)" data-val="${s}">${s}</div>
                 `).join('')}
             </div>
         </div>
     `;
 }
 
-// 4. FUNÇÕES HÍBRIDAS (DRAG & CLICK)
-window.allowDrop = function(ev) { ev.preventDefault(); };
-
-window.drag = function(ev) {
-    ev.dataTransfer.setData("text", ev.target.id);
-};
-
-window.drop = function(ev) {
-    ev.preventDefault();
-    let data = ev.dataTransfer.getData("text");
-    let dragEl = document.getElementById(data);
-    let targetSlot = ev.target.closest('.slot');
-
-    if (targetSlot && targetSlot.innerText === "") {
-        targetSlot.innerText = dragEl.innerText;
-        dragEl.style.visibility = "hidden";
-        checkCompleto();
-    }
-};
-
-window.handleSyllableClick = function(el) {
-    // Encontra o primeiro slot vazio
+// 3. MOVIMENTAÇÃO (CLICK/TAP)
+window.colocarNoSlot = function(el) {
     const slots = document.querySelectorAll('.slot');
+    // Encontra o primeiro slot vazio
     for (let slot of slots) {
         if (slot.innerText === "") {
             slot.innerText = el.innerText;
-            el.style.visibility = "hidden";
-            checkCompleto();
+            slot.classList.add('filled');
+            el.style.opacity = "0.3";
+            el.style.pointerEvents = "none";
+            el.setAttribute('data-target-slot', Array.from(slots).indexOf(slot));
+            checkFimDaPalavra();
             break;
         }
     }
 };
 
-function checkCompleto() {
+window.removerSilabaDoSlot = function(slot) {
+    if (slot.innerText === "") return;
+
+    const textoARemover = slot.innerText;
+    slot.innerText = "";
+    slot.classList.remove('filled');
+
+    // Reativar a sílaba correspondente na "piscina"
+    const cards = document.querySelectorAll('.syll-card');
+    for (let card of cards) {
+        if (card.innerText === textoARemover && card.style.opacity === "0.3") {
+            card.style.opacity = "1";
+            card.style.pointerEvents = "auto";
+            break;
+        }
+    }
+};
+
+function checkFimDaPalavra() {
     const slots = document.querySelectorAll('.slot');
     let preenchidos = 0;
     let tentativa = [];
@@ -157,34 +128,39 @@ function checkCompleto() {
     });
 
     if (preenchidos === itensAtuais[indiceQuestao].silabas.length) {
-        validarSequencia(tentativa);
+        validarResposta(tentativa);
     }
 }
 
-function validarSequencia(tentativa) {
+function validarResposta(tentativa) {
     const correta = itensAtuais[indiceQuestao].silabas;
-    const isCorrect = tentativa.join('') === correta.join('');
+    const slots = document.querySelectorAll('.slot');
+    const cards = document.querySelectorAll('.syll-card');
     
-    // Bloquear novas interações
-    document.querySelectorAll('#syllables-pool div').forEach(d => d.onclick = null);
+    // Bloquear cliques durante a correção
+    slots.forEach(s => s.style.pointerEvents = 'none');
+    cards.forEach(c => c.style.pointerEvents = 'none');
+
+    const isCorrect = tentativa.join('') === correta.join('');
 
     if (isCorrect) {
         acertos++; document.getElementById('hits-val').innerText = acertos;
-        document.querySelectorAll('.slot').forEach(s => s.style.background = "var(--highlight-green)");
-        document.querySelectorAll('.slot').forEach(s => s.style.color = "white");
+        slots.forEach(s => s.style.background = "var(--highlight-green)");
+        slots.forEach(s => s.style.color = "white");
         tocarSom('acerto');
     } else {
         erros++; document.getElementById('miss-val').innerText = erros;
-        document.querySelectorAll('.slot').forEach(s => s.style.background = "var(--error-red)");
-        document.querySelectorAll('.slot').forEach(s => s.style.color = "white");
+        slots.forEach(s => s.style.background = "var(--error-red)");
+        slots.forEach(s => s.style.color = "white");
         tocarSom('erro');
-        // Mostrar a correção nos slots após um brevíssimo tempo
+        
+        // Mostrar correção após meio segundo
         setTimeout(() => {
-            document.querySelectorAll('.slot').forEach((s, i) => {
+            slots.forEach((s, i) => {
                 s.innerText = correta[i];
                 s.style.background = "var(--highlight-green)";
             });
-        }, 400);
+        }, 600);
     }
 
     setTimeout(() => {
@@ -193,10 +169,10 @@ function validarSequencia(tentativa) {
         } else {
             finalizarJogo();
         }
-    }, 1200);
+    }, 1500);
 }
 
-// 5. FUNÇÕES DE SUPORTE
+// 4. AUXILIARES
 function finalizarJogo() {
     if (cronometro) clearInterval(cronometro);
     tocarSom('vitoria');
@@ -219,8 +195,9 @@ function tocarSom(tipo) {
     if (url) { new Audio(url).play().catch(e => {}); }
 }
 
-const style = document.createElement('style');
-style.id = 'game-animations';
-style.innerHTML = `@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.slot { transition: background 0.3s, color 0.3s; }`;
-document.head.appendChild(style);
+if (!document.getElementById('game-animations')) {
+    const style = document.createElement('style');
+    style.id = 'game-animations';
+    style.innerHTML = `@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`;
+    document.head.appendChild(style);
+}
