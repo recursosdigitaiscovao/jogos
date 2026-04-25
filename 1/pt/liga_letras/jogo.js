@@ -103,7 +103,9 @@ function montarInterface(item) {
                 <div style="width:${isMobile?'95px':'130px'}; height:${isMobile?'95px':'130px'}; background:white; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 25px rgba(0,0,0,0.1); z-index:5;">
                     <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-width:80%; max-height:80%; object-fit:contain;">
                 </div>
-                <svg id="conn-svg" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:3;"></svg>
+                <!-- SVG PARA LINHA DISCRETA -->
+                <svg id="conn-svg" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:3; overflow:visible;"></svg>
+                
                 ${letrasWheel.map((letra, i) => {
                     const angle = (i * (360 / letrasWheel.length)) * (Math.PI / 180);
                     const radius = isMobile ? 100 : 125;
@@ -159,8 +161,9 @@ function handleSelection(el) {
     const id = el.getAttribute('data-id');
     const letra = el.getAttribute('data-letra');
 
-    if (selecaoAtual.length > 0 && selecaoAtual[selecaoAtual.length - 1].id === id && !pointerMoved) {
-        selecaoAtual.pop();
+    // DESFAZER (UNDO) ao clicar na última selecionada (apenas modo clique)
+    if (selecaoAtual.length > 0 && selecaoAtual[selecaoAtual.length - 1].id === id && !pointerMoved && !isDragging) {
+        const last = selecaoAtual.pop();
         el.style.background = "white";
         el.style.color = "var(--primary-blue)";
         atualizarUI();
@@ -169,35 +172,44 @@ function handleSelection(el) {
 
     if (selecaoAtual.find(s => s.id === id)) return;
 
+    // Obter coordenadas centrais relativas ao container da roda
+    const rect = el.getBoundingClientRect();
+    const parentRect = document.getElementById('wheel-container').getBoundingClientRect();
+    
     selecaoAtual.push({ 
         letra, id, 
-        x: el.offsetLeft + el.offsetWidth/2, 
-        y: el.offsetTop + el.offsetHeight/2 
+        x: (rect.left + rect.width / 2) - parentRect.left,
+        y: (rect.top + rect.height / 2) - parentRect.top
     });
     
     el.style.background = "var(--primary-blue)";
     el.style.color = "white";
     atualizarUI();
 
+    // Validação automática por clique
     const correta = itensAtuais[indiceAtual].nome;
-    if (!pointerMoved && selecaoAtual.length === correta.length) {
+    if (!pointerMoved && !isDragging && selecaoAtual.length === correta.length) {
         validarFinal();
     }
 }
 
 function atualizarUI() {
+    // Atualiza traços no topo
     document.querySelectorAll('.char-box').forEach((box, i) => {
         box.innerText = selecaoAtual[i] ? selecaoAtual[i].letra : "";
     });
 
+    // Atualiza Linhas SVG
     const svg = document.getElementById('conn-svg');
-    svg.innerHTML = "";
+    if (!svg) return;
+    
+    let lineHTML = "";
     for (let i = 0; i < selecaoAtual.length - 1; i++) {
         const p1 = selecaoAtual[i];
         const p2 = selecaoAtual[i+1];
-        // LINHA DISCRETA: espessura 3 e opacidade 0.5
-        svg.innerHTML += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="var(--primary-blue)" stroke-width="3" stroke-opacity="0.5" stroke-linecap="round" />`;
+        lineHTML += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="var(--primary-blue)" stroke-width="3" stroke-opacity="0.4" stroke-linecap="round" />`;
     }
+    svg.innerHTML = lineHTML;
 }
 
 function validarFinal() {
@@ -222,11 +234,14 @@ function acertoFeedback() {
     const cor = '#7ed321';
     
     document.querySelectorAll('.char-box').forEach(b => { if(b.innerText !== "") { b.style.color = cor; b.style.borderColor = cor; } });
-    document.querySelectorAll('line').forEach(l => {
+    
+    // Deixa a linha forte no acerto
+    document.querySelectorAll('#conn-svg line').forEach(l => {
         l.setAttribute("stroke", cor);
         l.setAttribute("stroke-opacity", "1");
         l.setAttribute("stroke-width", "5");
     });
+
     selecaoAtual.forEach(s => {
         const el = document.querySelector(`[data-id="${s.id}"]`);
         if(el) { el.style.background = cor; el.style.borderColor = cor; }
@@ -247,7 +262,8 @@ function resetRodada() {
     selecaoAtual = [];
     document.querySelectorAll('.char-box').forEach(b => { b.innerText = ""; b.style.color = "var(--primary-blue)"; b.style.borderColor = "#cbd9e6"; });
     document.querySelectorAll('.wheel-letter').forEach(l => { l.style.background = "white"; l.style.color = "var(--primary-blue)"; });
-    document.getElementById('conn-svg').innerHTML = "";
+    const svg = document.getElementById('conn-svg');
+    if(svg) svg.innerHTML = "";
 }
 
 function finalizarJogo() {
