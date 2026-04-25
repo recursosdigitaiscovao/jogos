@@ -35,22 +35,41 @@ const JOGO_CONFIG = {
             nome: "Letras Consecutivas", exemplo: "A-B-C-D", exemploImg: "letras/letra_a.png", imgCapa: "letras/letra_a.png",
             itens: [
                 { nome: "A", img: "letras/letra_a.png" }, { nome: "B", img: "letras/letra_b.png" }, { nome: "C", img: "letras/letra_c.png" }, { nome: "D", img: "letras/letra_d.png" },
-                { nome: "E", img: "letras/letra_e.png" }, { nome: "F", img: "letras/letra_f.png" }, { nome: "G", img: "letras/letra_g.png" }, { nome: "H", img: "letras/letra_h.png" }
+                { nome: "E", img: "letras/letra_e.png" }, { nome: "F", img: "letras/letra_f.png" }, { nome: "G", img: "letras/letra_g.png" }, { nome: "H", img: "letras/letra_h.png" },
+                { nome: "I", img: "letras/letra_i.png" }, { nome: "J", img: "letras/letra_j.png" }, { nome: "K", img: "letras/letra_k.png" }, { nome: "L", img: "letras/letra_l.png" },
+                { nome: "M", img: "letras/letra_m.png" }, { nome: "N", img: "letras/letra_n.png" }, { nome: "O", img: "letras/letra_o.png" }, { nome: "P", img: "letras/letra_p.png" },
+                { nome: "Q", img: "letras/letra_q.png" }, { nome: "R", img: "letras/letra_r.png" }, { nome: "S", img: "letras/letra_s.png" }, { nome: "T", img: "letras/letra_t.png" },
+                { nome: "U", img: "letras/letra_u.png" }, { nome: "V", img: "letras/letra_v.png" }, { nome: "W", img: "letras/letra_w.png" }, { nome: "X", img: "letras/letra_x.png" },
+                { nome: "Y", img: "letras/letra_y.png" }, { nome: "Z", img: "letras/letra_z.png" }
             ]
         },
         letras_mistas: {
             nome: "Letras Mistas", exemplo: "A-G-M-Z", exemploImg: "letras/letra_m.png", imgCapa: "letras/letra_m.png",
             itens: [
-                { nome: "A", img: "letras/letra_a.png" }, { nome: "G", img: "letras/letra_g.png" }, { nome: "L", img: "letras/letra_l.png" }, { nome: "M", img: "letras/letra_m.png" },
-                { nome: "P", img: "letras/letra_p.png" }, { nome: "S", img: "letras/letra_s.png" }, { nome: "V", img: "letras/letra_v.png" }, { nome: "Z", img: "letras/letra_z.png" }
+                { nome: "A", img: "letras/letra_a.png" }, { nome: "C", img: "letras/letra_c.png" }, { nome: "E", img: "letras/letra_e.png" }, { nome: "G", img: "letras/letra_g.png" },
+                { nome: "I", img: "letras/letra_i.png" }, { nome: "L", img: "letras/letra_l.png" }, { nome: "M", img: "letras/letra_m.png" }, { nome: "O", img: "letras/letra_o.png" },
+                { nome: "P", img: "letras/letra_p.png" }, { nome: "R", img: "letras/letra_r.png" }, { nome: "S", img: "letras/letra_s.png" }, { nome: "U", img: "letras/letra_u.png" },
+                { nome: "V", img: "letras/letra_v.png" }, { nome: "X", img: "letras/letra_x.png" }, { nome: "Z", img: "letras/letra_z.png" }, { nome: "B", img: "letras/letra_b.png" },
+                { nome: "D", img: "letras/letra_d.png" }, { nome: "F", img: "letras/letra_f.png" }, { nome: "H", img: "letras/letra_h.png" }, { nome: "J", img: "letras/letra_j.png" },
+                { nome: "N", img: "letras/letra_n.png" }, { nome: "T", img: "letras/letra_t.png" }
             ]
         },
         mesma_inicial: {
             nome: "Mesma Inicial", exemplo: "Abelha-Águia", exemploImg: "animaisselvagens/abelha.png", imgCapa: "animaisselvagens/abelha.png",
             itens: [
+                // Iniciais em A
                 { nome: "ABELHA", img: "animaisselvagens/abelha.png" }, { nome: "ÁGUIA", img: "animaisselvagens/aguia.png" }, { nome: "ARANHA", img: "animaisselvagens/aranha.png" },
                 { nome: "AFIA", img: "materialescolar/afia.png" }, { nome: "ANEL", img: "objetos/anel.png" }, { nome: "AMORA", img: "frutas/amora.png" },
-                { nome: "ANANÁS", img: "frutas/ananas.png" }, { nome: "AVESTRUZ", img: "animaisselvagens/avestruz.png" }
+                { nome: "ANANÁS", img: "frutas/ananas.png" }, { nome: "AVESTRUZ", img: "animaisselvagens/avestruz.png" },
+                // Iniciais em B
+                { nome: "BANANA", img: "frutas/banana.png" }, { nome: "BALEIA", img: "animaisselvagens/baleia.png" }, { nome: "BURRO", img: "animaisdomesticos/burro.png" },
+                { nome: "BALDE", img: "objetos/balde.png" }, { nome: "BOLA", img: "objetos/bola.png" }, { nome: "BONECA", img: "objetos/boneca.png" },
+                { nome: "BORRACHA", img: "materialescolar/borracha.png" },
+                // Iniciais em C
+                { nome: "CÃO", img: "animaisdomesticos/cao.png" }, { nome: "CAVALO", img: "animaisdomesticos/cavalo.png" }, { nome: "COELHO", img: "animaisdomesticos/coelho.png" },
+                { nome: "CADERNO", img: "materialescolar/caderno.png" }, { nome: "CANETA", img: "materialescolar/caneta.png" }, { nome: "CAPA", img: "materialescolar/capa.png" },
+                { nome: "CEREJA", img: "frutas/cereja.png" }, { nome: "CESTO", img: "objetos/cesto.png" }, { nome: "COLHER", img: "objetos/colher.png" },
+                { nome: "COPO", img: "objetos/copo.png" }
             ]
         },
         palavras_mistas: {
@@ -63,7 +82,8 @@ const JOGO_CONFIG = {
                 { nome: "LEÃO", img: "animaisselvagens/leao.png" }, { nome: "MAÇÃ", img: "frutas/maca.png" }, { nome: "NOVE", img: "numeros/nove.png" },
                 { nome: "OVELHA", img: "animaisdomesticos/ovelha.png" }, { nome: "PANDA", img: "animaisselvagens/panda.png" }, { nome: "RÉGUA", img: "materialescolar/regua.png" },
                 { nome: "SAPA", img: "objetos/pa.png" }, { nome: "TIGRE", img: "animaisselvagens/tigre.png" }, { nome: "UVA", img: "frutas/uva.png" },
-                { nome: "VELA", img: "objetos/vela.png" }, { nome: "ZEBRA", img: "animaisselvagens/zebra.png" }
+                { nome: "VELA", img: "objetos/vela.png" }, { nome: "ZEBRA", img: "animaisselvagens/zebra.png" }, { nome: "GALO", img: "animaisdomesticos/galo.png" },
+                { nome: "PATO", img: "animaisdomesticos/pato.png" }, { nome: "PERU", img: "animaisdomesticos/peru.png" }, { nome: "PORCO", img: "animaisdomesticos/porco.png" }
             ]
         }
     },
