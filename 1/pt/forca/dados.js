@@ -38,7 +38,8 @@ const JOGO_CONFIG = {
                 { nome: "BURRO" }, { nome: "CABRA" }, { nome: "CÃO" }, { nome: "CAVALO" }, { nome: "COELHO" }, 
                 { nome: "GALINHA" }, { nome: "GALO" }, { nome: "GATO" }, { nome: "OVELHA" }, { nome: "PATO" }, 
                 { nome: "PERU" }, { nome: "PORCO" }, { nome: "LEÃO" }, { nome: "ZEBRA" }, { nome: "MACACO" }, 
-                { nome: "PANDA" }, { nome: "TIGRE" }, { nome: "ELEFANTE" }
+                { nome: "PANDA" }, { nome: "TIGRE" }, { nome: "ELEFANTE" }, { nome: "ABELHA" }, { nome: "ÁGUIA" },
+                { nome: "ARANHA" }, { nome: "BALEIA" }, { nome: "CANGURU" }, { nome: "COALA" }, { nome: "CROCODILO" }
             ]
         },
         frutos: {
@@ -50,26 +51,26 @@ const JOGO_CONFIG = {
             ]
         },
         objetos: {
-            nome: "Objetos", exemplo: "BONECA", exemploImg: "objetos/boneca.png", imgCapa: "objetos/bola.png",
+            nome: "Objetos", exemplo: "BOLA", exemploImg: "objetos/bola.png", imgCapa: "objetos/bola.png",
             itens: [
                 { nome: "ANEL" }, { nome: "BALDE" }, { nome: "BOLA" }, { nome: "BONECA" }, { nome: "CARRINHO" }, 
                 { nome: "CESTO" }, { nome: "COLHER" }, { nome: "COPO" }, { nome: "DADO" }, { nome: "ÓCULOS" }, 
-                { nome: "PANELA" }, { nome: "VELA" }
+                { nome: "PANELA" }, { nome: "VELA" }, { nome: "VASSOURA" }, { nome: "ESCOVA" }, { nome: "GARRAFA" }
             ]
         },
         material: {
-            nome: "Material Escolar", exemplo: "MOCHILA", exemploImg: "materialescolar/mochila.png", imgCapa: "materialescolar/estojo.png",
+            nome: "Material Escolar", exemplo: "LÁPIS", exemploImg: "materialescolar/lapis.png", imgCapa: "materialescolar/estojo.png",
             itens: [
                 { nome: "AFIA" }, { nome: "BORRACHA" }, { nome: "CADERNO" }, { nome: "CANETA" }, { nome: "COLA" }, 
                 { nome: "ESTOJO" }, { nome: "FOLHA" }, { nome: "LÁPIS" }, { nome: "LIVRO" }, { nome: "MOCHILA" }, 
-                { nome: "RÉGUA" }, { nome: "TESOURA" }
+                { nome: "RÉGUA" }, { nome: "TESOURA" }, { nome: "PINCEL" }, { nome: "ESQUADRO" }
             ]
         }
     },
     relatorios: [
         { min: 90, max: 100, titulo: "És um craque!", img: "taca_1.png" },
         { min: 70, max: 89, titulo: "Muito bem!", img: "taca_2.png" },
-        { min: 50, max: 69, titulo: "Estás quase lá!", img: "taca_2.png" },
+        { min: 50, max: 69, titulo: "Estás quase lá!", img: "taca_3.png" },
         { min: 0, max: 49, titulo: "Continua a tentar!", img: "taca_4.png" }
     ]
 };
