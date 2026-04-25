@@ -44,7 +44,7 @@ const JOGO_CONFIG = {
                 { nome: "POLVO", img: "animaisselvagens/polvo.png" },
                 { nome: "MACACO", img: "animaisselvagens/macaco.png" },
                 { nome: "PANDA", img: "animaisselvagens/panda.png" },
-                { nome: "PORCO", img: "animaisDOMESTICOS/PORCO.png" },
+                { nome: "PORCO", img: "animaisdomesticos/porco.png" },
                 { nome: "TIGRE", img: "animaisselvagens/tigre.png" }
             ]
         },
