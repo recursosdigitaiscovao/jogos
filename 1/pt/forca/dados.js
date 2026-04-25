@@ -35,43 +35,34 @@ const JOGO_CONFIG = {
         animais: {
             nome: "Animais", exemplo: "GATO", exemploImg: "animaisdomesticos/gato.png", imgCapa: "animaisselvagens/leao.png",
             itens: [
-                { nome: "BURRO" }, { nome: "CABRA" }, { nome: "CÃO" }, { nome: "CAVALO" },
-                { nome: "COELHO" }, { nome: "GALINHA" }, { nome: "GALO" }, { nome: "GATO" },
-                { nome: "OVELHA" }, { nome: "PATO" }, { nome: "PERU" }, { nome: "PORCO" },
-                { nome: "LEÃO" }, { nome: "ZEBRA" }, { nome: "MACACO" }, { nome: "PANDA" },
-                { nome: "TIGRE" }, { nome: "ELEFANTE" }, { nome: "ABELHA" }, { nome: "ÁGUIA" },
-                { nome: "ARANHA" }, { nome: "BALEIA" }, { nome: "CANGURU" }, { nome: "COALA" },
-                { nome: "CROCODILO" }, { nome: "FOCA" }, { nome: "GORILA" }, { nome: "PAPAGAIO" }
+                { nome: "BURRO" }, { nome: "CABRA" }, { nome: "CÃO" }, { nome: "CAVALO" }, { nome: "COELHO" }, 
+                { nome: "GALINHA" }, { nome: "GALO" }, { nome: "GATO" }, { nome: "OVELHA" }, { nome: "PATO" }, 
+                { nome: "PERU" }, { nome: "PORCO" }, { nome: "LEÃO" }, { nome: "ZEBRA" }, { nome: "MACACO" }, 
+                { nome: "PANDA" }, { nome: "TIGRE" }, { nome: "ELEFANTE" }
             ]
         },
         frutos: {
             nome: "Frutos", exemplo: "BANANA", exemploImg: "frutas/banana.png", imgCapa: "frutas/maca.png",
             itens: [
-                { nome: "AMORA" }, { nome: "ANANÁS" }, { nome: "BANANA" }, { nome: "CASTANHA" },
-                { nome: "CEREJA" }, { nome: "DIÓSPIRO" }, { nome: "FIGO" }, { nome: "GOIABA" },
-                { nome: "KIWI" }, { nome: "LARANJA" }, { nome: "LIMÃO" }, { nome: "MAÇÃ" },
-                { nome: "MARACUJÁ" }, { nome: "MELANCIA" }, { nome: "MELÃO" }, { nome: "MORANGO" },
-                { nome: "PAPAIA" }, { nome: "PERA" }, { nome: "ROMÃ" }, { nome: "UVAS" }
+                { nome: "AMORA" }, { nome: "ANANÁS" }, { nome: "BANANA" }, { nome: "CEREJA" }, { nome: "FIGO" }, 
+                { nome: "GOIABA" }, { nome: "KIWI" }, { nome: "LARANJA" }, { nome: "LIMÃO" }, { nome: "MAÇÃ" }, 
+                { nome: "MORANGO" }, { nome: "PAPAIA" }, { nome: "PERA" }, { nome: "ROMÃ" }, { nome: "UVAS" }
             ]
         },
         objetos: {
             nome: "Objetos", exemplo: "BONECA", exemploImg: "objetos/boneca.png", imgCapa: "objetos/bola.png",
             itens: [
-                { nome: "ANEL" }, { nome: "BALDE" }, { nome: "BOLA" }, { nome: "BONECA" },
-                { nome: "CARRINHO" }, { nome: "CESTO" }, { nome: "COLHER" }, { nome: "COPO" },
-                { nome: "DADO" }, { nome: "DEDAL" }, { nome: "DRAGÃO" }, { nome: "ESCOVA" },
-                { nome: "GARFO" }, { nome: "GARRAFA" }, { nome: "ISQUEIRO" }, { nome: "ÓCULOS" },
-                { nome: "PÁ" }, { nome: "PANELA" }, { nome: "PINCEL" }, { nome: "VASSOURA" },
-                { nome: "VELA" }
+                { nome: "ANEL" }, { nome: "BALDE" }, { nome: "BOLA" }, { nome: "BONECA" }, { nome: "CARRINHO" }, 
+                { nome: "CESTO" }, { nome: "COLHER" }, { nome: "COPO" }, { nome: "DADO" }, { nome: "ÓCULOS" }, 
+                { nome: "PANELA" }, { nome: "VELA" }
             ]
         },
         material: {
             nome: "Material Escolar", exemplo: "MOCHILA", exemploImg: "materialescolar/mochila.png", imgCapa: "materialescolar/estojo.png",
             itens: [
-                { nome: "AFIA" }, { nome: "BORRACHA" }, { nome: "CADERNO" }, { nome: "CANETA" },
-                { nome: "CAPA" }, { nome: "COLA" }, { nome: "ESQUADRO" }, { nome: "ESTOJO" },
-                { nome: "FOLHA" }, { nome: "LÁPIS" }, { nome: "LIVRO" }, { nome: "MOCHILA" },
-                { nome: "PINCEL" }, { nome: "RÉGUA" }, { nome: "TESOURA" }
+                { nome: "AFIA" }, { nome: "BORRACHA" }, { nome: "CADERNO" }, { nome: "CANETA" }, { nome: "COLA" }, 
+                { nome: "ESTOJO" }, { nome: "FOLHA" }, { nome: "LÁPIS" }, { nome: "LIVRO" }, { nome: "MOCHILA" }, 
+                { nome: "RÉGUA" }, { nome: "TESOURA" }
             ]
         }
     },
