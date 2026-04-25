@@ -12,23 +12,9 @@ const BIBLIOTECA_TEMAS = {
 };
 
 const BIBLIOTECA_CONTEUDO = {
-    "pre": { 
-        "pre": { 
-            t1: "PEQUENOS", 
-            t2: "CURIOSOS", 
-            sub: "Atividades | Pré-Escolar", 
-            intro: "Liga as letras por ordem para formar a palavra!", 
-            rodape: "&copy; Pequenos Curiosos" 
-        } 
-    },
+    "pre": { "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar", intro: "Liga as letras por ordem para formar a palavra!", rodape: "&copy; Pequenos Curiosos" } },
     "ano1": {
-        "portugues": { 
-            t1: "PEQUENOS", 
-            t2: "LEITORES", 
-            sub: "Português | 1º Ano", 
-            intro: "Clica ou arrasta para ligar as letras por ordem!", 
-            rodape: "&copy; Pequenos Leitores" 
-        }
+        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", intro: "Clica ou arrasta para ligar as letras da imagem!", rodape: "&copy; Pequenos Leitores" }
     }
 };
 
@@ -50,29 +36,23 @@ const JOGO_CONFIG = {
             itens: [
                 { nome: "ABELHA", img: "animaisselvagens/abelha.png" },
                 { nome: "ÁGUIA", img: "animaisselvagens/aguia.png" },
-                { nome: "ARANHA", img: "animaisselvagens/aranha.png" },
                 { nome: "BALEIA", img: "animaisselvagens/baleia.png" },
-                { nome: "CANGURU", img: "animaisselvagens/canguru.png" },
                 { nome: "COALA", img: "animaisselvagens/coala.png" },
                 { nome: "FOCA", img: "animaisselvagens/foca.png" },
-                { nome: "GORILA", img: "animaisselvagens/gorila.png" },
                 { nome: "LEÃO", img: "animaisselvagens/leao.png" },
                 { nome: "MACACO", img: "animaisselvagens/macaco.png" },
-                { nome: "TIGRE", img: "animaisselvagens/tigre.png" },
-                { nome: "ZIBRA", img: "animaisselvagens/zebra.png" },
                 { nome: "PANDA", img: "animaisselvagens/panda.png" },
-                { nome: "GATO", img: "animaisselvagens/gato.png" }
+                { nome: "GATO", img: "animaisselvagens/gato.png" },
+                { nome: "TIGRE", img: "animaisselvagens/tigre.png" }
             ]
         },
         frutos: {
             nome: "Frutos", exemplo: "BANANA", exemploImg: "frutas/banana.png", imgCapa: "frutas/maca.png",
             itens: [
                 { nome: "AMORA", img: "frutas/amora.png" },
-                { nome: "ANANÁS", img: "frutas/ananas.png" },
                 { nome: "BANANA", img: "frutas/banana.png" },
                 { nome: "CEREJA", img: "frutas/cereja.png" },
                 { nome: "FIGO", img: "frutas/figo.png" },
-                { nome: "GOIABA", img: "frutas/goiaba.png" },
                 { nome: "KIWI", img: "frutas/kiwi.png" },
                 { nome: "LARANJA", img: "frutas/laranja.png" },
                 { nome: "LIMÃO", img: "frutas/limao.png" },
@@ -93,12 +73,8 @@ const JOGO_CONFIG = {
                 { nome: "COLHER", img: "objetos/colher.png" },
                 { nome: "COPO", img: "objetos/copo.png" },
                 { nome: "DADO", img: "objetos/dado.png" },
-                { nome: "DEDAL", img: "objetos/dedal.png" },
-                { nome: "DRAGÃO", img: "objetos/dragao.png" },
                 { nome: "ESCOVA", img: "objetos/escova.png" },
-                { nome: "GARFO", img: "objetos/garfo.png" },
                 { nome: "GARRAFA", img: "objetos/garrafa.png" },
-                { nome: "ÓCULOS", img: "objetos/oculos.png" },
                 { nome: "VELA", img: "objetos/vela.png" }
             ]
         },
@@ -116,7 +92,6 @@ const JOGO_CONFIG = {
                 { nome: "LÁPIS", img: "materialescolar/lapis.png" },
                 { nome: "LIVRO", img: "materialescolar/livro.png" },
                 { nome: "MOCHILA", img: "materialescolar/mochila.png" },
-                { nome: "PINCEL", img: "materialescolar/pincel.png" },
                 { nome: "RÉGUA", img: "materialescolar/regua.png" },
                 { nome: "TESOURA", img: "materialescolar/tesoura.png" }
             ]
