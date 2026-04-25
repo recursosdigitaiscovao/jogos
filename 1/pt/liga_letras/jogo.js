@@ -4,9 +4,8 @@ let acertos = 0;
 let erros = 0;
 let tempoInicio;
 let intervaloTimer;
-let selecaoAtual = []; // Guarda as letras selecionadas na sequência
+let selecaoAtual = []; 
 let isDragging = false;
-let ultimaLetraSelecionada = null;
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
@@ -14,18 +13,17 @@ const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
 window.startLogic = function() { selecionarCategoria('animais'); };
 
-// ANIMAÇÃO DA INTRO
 window.selecionarCategoria = function(key) {
     const cat = JOGO_CONFIG.categorias[key];
     itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
     const containerIntro = document.getElementById('intro-animation-container');
     containerIntro.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; gap:20px;">
-            <div style="position:relative; width:150px; height:150px; display:flex; align-items:center; justify-content:center;">
-                <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:60px; z-index:2;">
-                <div class="demo-ring" style="position:absolute; width:120px; height:120px; border:4px dashed var(--primary-blue); border-radius:50%; animation: spin 10s linear infinite;"></div>
+            <div style="position:relative; width:160px; height:160px; display:flex; align-items:center; justify-content:center;">
+                <div style="position:absolute; width:100%; height:100%; border:4px dashed var(--primary-blue); border-radius:50%; animation: spin 15s linear infinite;"></div>
+                <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:70px; z-index:2; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));">
             </div>
-            <p style="font-weight:900; color:var(--primary-blue);">LIGA AS LETRAS POR ORDEM!</p>
+            <p style="font-weight:900; color:var(--primary-blue); text-align:center;">LIGA AS LETRAS POR ORDEM!</p>
         </div>
         <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>`;
 };
@@ -50,7 +48,6 @@ function iniciarTimer() {
 function proximaRodada() {
     if (indiceAtual >= itensAtuais.length) { finalizarJogo(); return; }
     selecaoAtual = [];
-    ultimaLetraSelecionada = null;
     document.getElementById('round-val').innerText = `${indiceAtual + 1} / ${itensAtuais.length}`;
     montarInterface(itensAtuais[indiceAtual]);
 }
@@ -58,114 +55,110 @@ function proximaRodada() {
 function montarInterface(item) {
     const container = document.getElementById('game-main-content');
     const isMobile = window.innerWidth < 600;
-    const letras = item.nome.split('');
-    const letrasEmbaralhadas = [...letras].sort(() => Math.random() - 0.5);
+    const letrasOriginais = item.nome.split('');
+    const letrasWheel = [...letrasOriginais].sort(() => Math.random() - 0.5);
 
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content: space-between; user-select:none;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content: space-between; user-select:none; touch-action:none;">
             
-            <!-- Palavra sendo formada -->
-            <div id="word-display" style="display:flex; gap:8px; margin-top:10px; min-height:50px;">
-                ${letras.map((_, i) => `
-                    <div class="char-box" id="char-${i}" style="width:35px; height:45px; border-bottom:4px solid #cbd9e6; display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:900; color:var(--primary-blue);"></div>
-                `).join('')}
+            <div id="word-display" style="display:flex; gap:10px; margin-top:10px; min-height:60px; align-items:center;">
+                ${letrasOriginais.map((_, i) => `<div class="char-box" id="char-${i}" style="width:35px; height:50px; border-bottom:5px solid #cbd9e6; display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:900; color:var(--primary-blue); transition: 0.2s;"></div>`).join('')}
             </div>
 
-            <!-- Roda de Letras -->
-            <div id="letter-wheel" style="position:relative; width:${isMobile?'260px':'320px'}; height:${isMobile?'260px':'320px'}; display:flex; align-items:center; justify-content:center;">
+            <div id="wheel-container" style="position:relative; width:${isMobile?'270px':'340px'}; height:${isMobile?'270px':'340px'}; display:flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.3); border-radius: 50%;">
                 
-                <!-- Imagem no Centro -->
-                <div style="width:${isMobile?'100px':'130px'}; height:${isMobile?'100px':'130px'}; background:white; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,0.1); z-index:5;">
+                <div style="width:${isMobile?'100px':'140px'}; height:${isMobile?'100px':'140px'}; background:white; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 25px rgba(0,0,0,0.1); z-index:5;">
                     <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-width:80%; max-height:80%; object-fit:contain;">
                 </div>
 
-                <!-- SVG para as linhas de ligação -->
                 <svg id="conn-svg" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:3;"></svg>
 
-                <!-- Letras ao Redor -->
-                ${letrasEmbaralhadas.map((letra, i) => {
-                    const angle = (i * (360 / letrasEmbaralhadas.length)) * (Math.PI / 180);
-                    const radius = isMobile ? 100 : 125;
+                ${letrasWheel.map((letra, i) => {
+                    const angle = (i * (360 / letrasWheel.length)) * (Math.PI / 180);
+                    const radius = isMobile ? 105 : 130;
                     const x = Math.cos(angle) * radius;
                     const y = Math.sin(angle) * radius;
                     return `
                         <div class="wheel-letter" 
                              data-letra="${letra}"
                              data-id="${i}"
-                             style="position:absolute; transform:translate(${x}px, ${y}px); width:50px; height:50px; background:white; border:3px solid var(--primary-blue); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:900; color:var(--primary-blue); cursor:pointer; box-shadow:0 4px 0 var(--primary-dark); z-index:10; transition:0.2s;">
+                             style="position:absolute; transform:translate(${x}px, ${y}px); width:55px; height:55px; background:white; border:3px solid var(--primary-blue); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:900; color:var(--primary-blue); cursor:pointer; box-shadow:0 5px 0 var(--primary-dark); z-index:10; transition:0.2s;">
                             ${letra}
                         </div>
                     `;
                 }).join('')}
             </div>
-
-            <div style="height:20px;"></div>
+            <div style="height:10px;"></div>
         </div>`;
 
-    // Eventos de interação
-    const wheel = document.getElementById('letter-wheel');
-    const lettersElements = document.querySelectorAll('.wheel-letter');
+    setupInteractions();
+}
 
-    lettersElements.forEach(el => {
-        // Mouse
-        el.onmousedown = (e) => startSelection(el);
-        el.onmouseenter = (e) => { if(isDragging) continueSelection(el); };
-        
-        // Touch
+function setupInteractions() {
+    const letters = document.querySelectorAll('.wheel-letter');
+    const container = document.getElementById('wheel-container');
+
+    letters.forEach(el => {
+        el.onmousedown = (e) => { e.preventDefault(); startSelection(el); };
+        el.onmouseenter = () => { if(isDragging) addLetter(el); };
         el.ontouchstart = (e) => { e.preventDefault(); startSelection(el); };
     });
 
+    window.onmousemove = (e) => { if(isDragging) handleTouchMove(e.clientX, e.clientY); };
     window.onmouseup = () => endSelection();
-    window.ontouchend = () => endSelection();
-    
-    // Para Touchmove (precisa de verificação por ponto)
-    wheel.ontouchmove = (e) => {
+
+    container.ontouchmove = (e) => {
         if(!isDragging) return;
-        const touch = e.touches[0];
-        const target = document.elementFromPoint(touch.clientX, touch.clientY);
-        if(target && target.classList.contains('wheel-letter')) {
-            continueSelection(target);
-        }
+        const t = e.touches[0];
+        handleTouchMove(t.clientX, t.clientY);
     };
+    window.ontouchend = () => endSelection();
+}
+
+function handleTouchMove(x, y) {
+    const target = document.elementFromPoint(x, y);
+    if(target && target.classList.contains('wheel-letter')) {
+        addLetter(target);
+    }
 }
 
 function startSelection(el) {
     isDragging = true;
     selecaoAtual = [];
-    document.querySelectorAll('.wheel-letter').forEach(l => {
-        l.style.background = "white";
-        l.style.color = "var(--primary-blue)";
-    });
-    clearLines();
-    continueSelection(el);
+    addLetter(el);
 }
 
-function continueSelection(el) {
+function addLetter(el) {
     const letra = el.getAttribute('data-letra');
     const id = el.getAttribute('data-id');
 
-    // Se já selecionou esta letra nesta sequência, ignora (exceto se for a última para permitir voltar)
     if (selecaoAtual.find(s => s.id === id)) return;
 
-    selecaoAtual.push({ letra, id, x: el.offsetLeft + 25, y: el.offsetTop + 25 });
+    selecaoAtual.push({ 
+        letra, 
+        id, 
+        x: el.offsetLeft + el.offsetWidth/2, 
+        y: el.offsetTop + el.offsetHeight/2 
+    });
     
-    // Feedback Visual
     el.style.background = "var(--primary-blue)";
     el.style.color = "white";
+    el.style.transform = el.style.transform + " scale(1.1)";
     
-    atualizarPalavraTopo();
-    desenharLinhas();
-    ultimaLetraSelecionada = el;
+    atualizarUI();
+    
+    // Validação automática se clicar letra a letra e atingir o tamanho
+    if (!isDragging && selecaoAtual.length === itensAtuais[indiceAtual].nome.length) {
+        endSelection();
+    }
 }
 
-function atualizarPalavraTopo() {
+function atualizarUI() {
     const boxes = document.querySelectorAll('.char-box');
     boxes.forEach((box, i) => {
         box.innerText = selecaoAtual[i] ? selecaoAtual[i].letra : "";
     });
-}
 
-function desenharLinhas() {
     const svg = document.getElementById('conn-svg');
     if(!svg) return;
     svg.innerHTML = "";
@@ -182,67 +175,68 @@ function desenharLinhas() {
     }
 }
 
-function clearLines() {
-    const svg = document.getElementById('conn-svg');
-    if(svg) svg.innerHTML = "";
-}
-
 function endSelection() {
-    if (!isDragging) return;
+    if (!isDragging || selecaoAtual.length === 0) return;
     isDragging = false;
 
-    const palavraFormada = selecaoAtual.map(s => s.letra).join('');
-    const palavraCorreta = itensAtuais[indiceAtual].nome;
+    const formada = selecaoAtual.map(s => s.letra).join('');
+    const correta = itensAtuais[indiceAtual].nome;
 
-    if (palavraFormada.length === palavraCorreta.length) {
-        verificarResposta(palavraFormada, palavraCorreta);
+    if (formada === correta) {
+        feedback(true);
+    } else if (formada.length >= correta.length) {
+        feedback(false);
     } else {
-        // Se soltou e não acabou a palavra, reseta com erro visual se houver algo
-        if(palavraFormada.length > 0) resetRodadaErro();
+        // Se soltar e a palavra estiver incompleta, limpamos tudo para tentar de novo
+        resetRodada();
     }
 }
 
-function verificarResposta(formada, correta) {
+function feedback(acerto) {
     document.getElementById('game-main-content').style.pointerEvents = 'none';
-    const boxes = document.querySelectorAll('.char-box');
-    const letters = document.querySelectorAll('.wheel-letter');
-    const acerto = formada === correta;
-
     const cor = acerto ? '#7ed321' : '#ff5e5e';
     
-    // Pinta tudo (letras e caixas)
-    boxes.forEach(b => { if(b.innerText !== "") b.style.color = cor; b.style.borderColor = cor; });
+    document.querySelectorAll('.char-box').forEach(b => { if(b.innerText !== "") { b.style.color = cor; b.style.borderColor = cor; } });
     document.querySelectorAll('line').forEach(l => l.setAttribute("stroke", cor));
     selecaoAtual.forEach(s => {
         const el = document.querySelector(`[data-id="${s.id}"]`);
         if(el) { el.style.background = cor; el.style.borderColor = cor; }
     });
 
-    if (acerto) {
-        acertos++; somAcerto.play();
-    } else {
-        erros++; somErro.play();
-    }
+    if (acerto) { acertos++; somAcerto.play(); } 
+    else { erros++; somErro.play(); }
 
     document.getElementById('hits-val').innerText = acertos;
     document.getElementById('miss-val').innerText = erros;
 
     setTimeout(() => {
         document.getElementById('game-main-content').style.pointerEvents = 'all';
-        indiceAtual++;
-        proximaRodada();
+        if (acerto) {
+            indiceAtual++;
+            proximaRodada();
+        } else {
+            resetRodada();
+        }
     }, 1200);
 }
 
-function resetRodadaErro() {
-    // Pequena animação de erro e limpa
-    document.querySelectorAll('.char-box').forEach(b => b.innerText = "");
+function resetRodada() {
+    selecaoAtual = [];
+    document.querySelectorAll('.char-box').forEach(b => {
+        b.innerText = "";
+        b.style.color = "var(--primary-blue)";
+        b.style.borderColor = "#cbd9e6";
+    });
     document.querySelectorAll('.wheel-letter').forEach(l => {
         l.style.background = "white";
         l.style.color = "var(--primary-blue)";
+        l.style.borderColor = "var(--primary-blue)";
+        // Mantém a posição original mas remove a escala
+        const currentTransform = l.style.transform;
+        l.style.transform = currentTransform.replace(" scale(1.1)", "");
     });
-    clearLines();
-    selecaoAtual = [];
+    const svg = document.getElementById('conn-svg');
+    if(svg) svg.innerHTML = "";
 }
 
 function finalizarJogo() {
