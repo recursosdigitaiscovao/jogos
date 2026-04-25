@@ -14,7 +14,7 @@ const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
 window.startLogic = function() { selecionarCategoria('animais'); };
 
-// ANIMAÇÃO DE INTRODUÇÃO REALISTA
+// ANIMAÇÃO DE INTRODUÇÃO DINÂMICA
 window.selecionarCategoria = function(key) {
     const cat = JOGO_CONFIG.categorias[key];
     itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
@@ -37,7 +37,6 @@ window.selecionarCategoria = function(key) {
         </div>
     `;
 
-    // Lógica da linha na intro
     const cursor = document.getElementById('intro-cursor');
     const svg = document.getElementById('intro-svg');
     let points = [];
@@ -53,11 +52,10 @@ window.selecionarCategoria = function(key) {
         cursor.style.transition = "0.6s ease-in-out";
         cursor.style.left = (p.x - 6) + "px";
         cursor.style.top = (p.y - 6) + "px";
-        
         if (step % points.length === 0) svg.innerHTML = "";
         if (step % points.length > 0) {
             const prev = points[(step % points.length) - 1];
-            svg.innerHTML += `<line x1="${prev.x}" y1="${prev.y}" x2="${p.x}" y2="${p.y}" stroke="var(--primary-blue)" stroke-width="3" />`;
+            svg.innerHTML += `<line x1="${prev.x}" y1="${prev.y}" x2="${p.x}" y2="${p.y}" stroke="var(--primary-blue)" stroke-width="2" stroke-opacity="0.4" />`;
         }
         step++;
         setTimeout(animateIntro, 800);
@@ -147,7 +145,6 @@ function setupInteractions() {
     const endAction = () => {
         if(!isDragging) return;
         const correta = itensAtuais[indiceAtual].nome;
-        // Se arrastou, valida logo. Se só clicou, espera completar o tamanho da palavra.
         if (pointerMoved || selecaoAtual.length === correta.length) {
             validarFinal();
         }
@@ -162,8 +159,6 @@ function handleSelection(el) {
     const id = el.getAttribute('data-id');
     const letra = el.getAttribute('data-letra');
 
-    // LÓGICA DE DESFAZER (UNDO)
-    // Se clicar na ÚLTIMA letra selecionada, remove-a
     if (selecaoAtual.length > 0 && selecaoAtual[selecaoAtual.length - 1].id === id && !pointerMoved) {
         selecaoAtual.pop();
         el.style.background = "white";
@@ -172,10 +167,8 @@ function handleSelection(el) {
         return;
     }
 
-    // Se a letra já está na lista (mas não é a última), ignora
     if (selecaoAtual.find(s => s.id === id)) return;
 
-    // Adiciona letra
     selecaoAtual.push({ 
         letra, id, 
         x: el.offsetLeft + el.offsetWidth/2, 
@@ -186,7 +179,6 @@ function handleSelection(el) {
     el.style.color = "white";
     atualizarUI();
 
-    // No modo clique (sem arrasto), valida ao atingir o tamanho
     const correta = itensAtuais[indiceAtual].nome;
     if (!pointerMoved && selecaoAtual.length === correta.length) {
         validarFinal();
@@ -203,7 +195,8 @@ function atualizarUI() {
     for (let i = 0; i < selecaoAtual.length - 1; i++) {
         const p1 = selecaoAtual[i];
         const p2 = selecaoAtual[i+1];
-        svg.innerHTML += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="var(--primary-blue)" stroke-width="6" stroke-linecap="round" />`;
+        // LINHA DISCRETA: espessura 3 e opacidade 0.5
+        svg.innerHTML += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="var(--primary-blue)" stroke-width="3" stroke-opacity="0.5" stroke-linecap="round" />`;
     }
 }
 
@@ -213,31 +206,40 @@ function validarFinal() {
     const correta = itensAtuais[indiceAtual].nome;
 
     if (formada === correta) {
-        feedback(true);
+        acertoFeedback();
     } else {
-        if (formada.length >= correta.length || pointerMoved) feedback(false);
+        if (formada.length >= correta.length || pointerMoved) {
+            erros++;
+            somErro.play();
+            document.getElementById('miss-val').innerText = erros;
+            resetRodada();
+        }
     }
 }
 
-function feedback(acerto) {
+function acertoFeedback() {
     document.getElementById('game-main-content').style.pointerEvents = 'none';
-    const cor = acerto ? '#7ed321' : '#ff5e5e';
+    const cor = '#7ed321';
     
     document.querySelectorAll('.char-box').forEach(b => { if(b.innerText !== "") { b.style.color = cor; b.style.borderColor = cor; } });
-    document.querySelectorAll('line').forEach(l => l.setAttribute("stroke", cor));
+    document.querySelectorAll('line').forEach(l => {
+        l.setAttribute("stroke", cor);
+        l.setAttribute("stroke-opacity", "1");
+        l.setAttribute("stroke-width", "5");
+    });
     selecaoAtual.forEach(s => {
         const el = document.querySelector(`[data-id="${s.id}"]`);
         if(el) { el.style.background = cor; el.style.borderColor = cor; }
     });
 
-    if (acerto) { acertos++; somAcerto.play(); } else { erros++; somErro.play(); }
+    acertos++;
+    somAcerto.play();
     document.getElementById('hits-val').innerText = acertos;
-    document.getElementById('miss-val').innerText = erros;
 
     setTimeout(() => {
         document.getElementById('game-main-content').style.pointerEvents = 'all';
-        if (acerto) { indiceAtual++; proximaRodada(); } 
-        else { resetRodada(); }
+        indiceAtual++;
+        proximaRodada();
     }, 1200);
 }
 
