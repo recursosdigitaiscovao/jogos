@@ -13,9 +13,11 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-window.startLogic = function() { selecionarCategoria('consecutivas'); };
+window.startLogic = function() { 
+    selecionarCategoria('consecutivas'); 
+};
 
-// 1. ANIMAÇÃO DE INTRODUÇÃO (Simula o encaixe de uma carta)
+// 1. ANIMAÇÃO DE INTRODUÇÃO (IDÊNTICA AO JOGO)
 window.selecionarCategoria = function(key) {
     const cat = JOGO_CONFIG.categorias[key];
     if (!cat) return;
@@ -23,43 +25,53 @@ window.selecionarCategoria = function(key) {
 
     const containerIntro = document.getElementById('intro-animation-container');
     containerIntro.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:20px; width:100%; position:relative; height:200px; justify-content:center; overflow:hidden;">
-            <!-- Slot de cima -->
-            <div style="width:60px; height:80px; border:2px dashed var(--primary-blue); border-radius:10px; background:rgba(255,255,255,0.3); position:absolute; top:10px;"></div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px; width:100%; position:relative; height:180px; justify-content:center; transform:scale(0.85);">
+            <!-- Slots de cima (Simulação) -->
+            <div style="display:flex; gap:5px; margin-bottom:40px;">
+                <div style="width:40px; height:55px; border:2px dashed var(--primary-blue); border-radius:8px; background:rgba(255,255,255,0.3);"></div>
+                <div style="width:40px; height:55px; border:2px dashed var(--primary-blue); border-radius:8px; background:rgba(255,255,255,0.3);"></div>
+            </div>
             
-            <!-- Carta de baixo -->
-            <div id="demo-card" style="width:60px; height:80px; background:white; border:3px solid var(--primary-blue); border-radius:10px; position:absolute; bottom:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); font-size:24px; z-index:5;">A</div>
+            <!-- Cartas de baixo (Simulação) -->
+            <div style="display:flex; gap:5px;">
+                <div id="demo-card-1" style="width:40px; height:55px; background:white; border:2px solid var(--primary-blue); border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); font-size:16px; z-index:5;">A</div>
+                <div style="width:40px; height:55px; background:white; border:2px solid var(--primary-blue); border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); font-size:16px; opacity:0.5;">B</div>
+            </div>
             
-            <!-- Mão -->
-            <div id="demo-hand" style="position:absolute; bottom:5px; right:30%; font-size:35px; transition: 1.5s cubic-bezier(0.45, 0.05, 0.55, 0.95); z-index:10;">👆</div>
+            <!-- Mão/Cursor -->
+            <div id="demo-hand" style="position:absolute; bottom:20px; right:20%; font-size:30px; transition: 1.5s ease-in-out; z-index:10;">👆</div>
             
-            <p style="position:absolute; bottom:0; font-weight:900; color:var(--primary-blue); font-size:12px;">${cat.nome.toUpperCase()}</p>
+            <p style="font-weight:900; color:var(--primary-blue); font-size:14px; text-transform:uppercase; margin-top:10px;">${cat.nome}</p>
         </div>
     `;
 
     const hand = document.getElementById('demo-hand');
-    const card = document.getElementById('demo-card');
+    const card = document.getElementById('demo-card-1');
 
     function runIntro() {
-        if(!hand) return;
-        hand.style.transform = "translate(0, 0)";
-        card.style.transform = "translate(0, 0)";
-        card.style.opacity = "1";
+        if(!hand || !card) return;
+        card.style.transition = "none"; hand.style.transition = "none";
+        card.style.transform = "translate(0, 0)"; hand.style.transform = "translate(0, 0)";
+        card.style.opacity = "1"; card.style.borderColor = "var(--primary-blue)";
 
         setTimeout(() => {
             if(!hand) return;
-            // Mover mão e carta para cima
-            hand.style.transform = "translate(-20px, -90px)";
-            card.style.transform = "translate(0, -100px)";
+            hand.style.transition = "1.5s ease-in-out";
+            card.style.transition = "1.5s ease-in-out";
+            // Mover mão e carta para o primeiro slot
+            hand.style.transform = "translate(-70px, -70px)";
+            card.style.transform = "translate(-45px, -95px)";
             setTimeout(() => {
+                if(!card) return;
                 card.style.borderColor = "#7ed321";
-                setTimeout(runIntro, 1000); // Repetir
-            }, 1500);
-        }, 800);
+                setTimeout(runIntro, 1000);
+            }, 1600);
+        }, 500);
     }
     runIntro();
 };
 
+// 2. INICIAR O JOGO (BOTÃO JOGAR)
 window.initGame = function() { 
     indiceAtual = 0; acertos = 0; erros = 0; 
     document.getElementById('hits-val').innerText = "0";
@@ -73,18 +85,24 @@ function iniciarTimer() {
     tempoInicio = Date.now();
     intervaloTimer = setInterval(() => {
         const decorrido = Math.floor((Date.now() - tempoInicio) / 1000);
-        document.getElementById('timer-val').innerText = `${Math.floor(decorrido/60).toString().padStart(2,'0')}:${(decorrido%60).toString().padStart(2,'0')}`;
+        const m = Math.floor(decorrido / 60).toString().padStart(2, '0');
+        const s = (decorrido % 60).toString().padStart(2, '0');
+        document.getElementById('timer-val').innerText = `${m}:${s}`;
     }, 1000);
 }
 
 function proximaRodada() {
-    if (indiceAtual >= 10) { finalizarJogo(); return; }
+    if (indiceAtual >= 10) { 
+        finalizarJogo(); 
+        return; 
+    }
     slotsEstado = [null, null, null, null];
     document.getElementById('round-val').innerText = `${indiceAtual + 1} / 10`;
 
     const catAtiva = CONFIG_MESTRE.area;
     const pool = [...JOGO_CONFIG.categorias[catAtiva].itens];
 
+    // Lógica para 1ª categoria (Consecutivas)
     if (catAtiva === 'consecutivas') {
         let start = Math.floor(Math.random() * (pool.length - 3));
         cartasDaRodada = pool.slice(start, start + 4);
@@ -126,10 +144,12 @@ function montarInterface() {
     `;
 }
 
+// DRAG AND DROP
 window.allowDrop = (e) => e.preventDefault();
 window.drag = (e, nome) => { e.dataTransfer.setData("text", nome); };
 window.drop = (e, slotIdx) => { e.preventDefault(); moverParaSlot(e.dataTransfer.getData("text"), slotIdx); };
 
+// CLIQUE
 window.clicarNaCarta = (nome) => {
     const firstEmpty = slotsEstado.indexOf(null);
     if (firstEmpty !== -1) moverParaSlot(nome, firstEmpty);
@@ -152,6 +172,9 @@ function moverParaSlot(nome, slotIdx) {
     const cardEl = document.getElementById(`card-${nome}`);
     const slotEl = document.getElementById(`slot-${slotIdx}`);
     const dados = cartasDaRodada.find(c => c.nome === nome);
+    
+    if(!cardEl || !dados) return;
+
     cardEl.style.opacity = "0"; cardEl.style.pointerEvents = "none"; cardEl.style.transform = "scale(0.5)";
     slotsEstado[slotIdx] = dados;
     slotEl.style.background = "white"; slotEl.style.border = "3px solid var(--primary-blue)";
@@ -160,6 +183,7 @@ function moverParaSlot(nome, slotIdx) {
             <img src="${JOGO_CONFIG.caminhoImg}${dados.img}" style="width:85%; max-height:75%; object-fit:contain;">
             <span style="font-size:10px; font-weight:900; color:var(--primary-blue); text-transform:uppercase;">${dados.nome}</span>
         </div>`;
+    
     if (!slotsEstado.includes(null)) setTimeout(validarSequencia, 500);
 }
 
@@ -167,13 +191,22 @@ function validarSequencia() {
     let errosRonda = 0;
     slotsEstado.forEach((carta, i) => {
         const slotEl = document.getElementById(`slot-${i}`);
-        if (carta.nome === ordemCorreta[i].nome) slotEl.style.borderColor = "#7ed321";
-        else { errosRonda++; devolverComErro(i, carta.nome); }
+        if (carta.nome === ordemCorreta[i].nome) {
+            slotEl.style.borderColor = "#7ed321";
+        } else {
+            errosRonda++;
+            devolverComErro(i, carta.nome);
+        }
     });
+
     if (errosRonda === 0) {
-        somAcerto.play(); acertos++; document.getElementById('hits-val').innerText = acertos;
+        somAcerto.play(); acertos++; 
+        document.getElementById('hits-val').innerText = acertos;
         setTimeout(() => { indiceAtual++; proximaRodada(); }, 1200);
-    } else { somErro.play(); erros++; document.getElementById('miss-val').innerText = erros; }
+    } else {
+        somErro.play(); erros++; 
+        document.getElementById('miss-val').innerText = erros;
+    }
 }
 
 function devolverComErro(slotIdx, nome) {
@@ -192,5 +225,10 @@ function devolverComErro(slotIdx, nome) {
 function finalizarJogo() {
     clearInterval(intervaloTimer);
     somVitoria.play();
-    window.mostrarResultados(acertos, document.getElementById('timer-val').innerText);
+    const tempoFinal = document.getElementById('timer-val').innerText;
+    
+    // CHAMADA AO RELATÓRIO DO TEMPLATE (scr-result)
+    if (window.mostrarResultados) {
+        window.mostrarResultados(acertos, tempoFinal);
+    }
 }
