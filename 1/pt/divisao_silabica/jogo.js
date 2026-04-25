@@ -18,7 +18,7 @@ window.selecionarCategoria = function(key) {
     itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
     const containerIntro = document.getElementById('intro-animation-container');
     containerIntro.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:20px; width:100%;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:15px; width:100%;">
             <div style="background:white; padding:15px; border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.05);">
                 <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:80px;">
             </div>
@@ -58,40 +58,38 @@ function montarInterface(item) {
     const container = document.getElementById('game-main-content');
     const letras = item.nome.split('');
     const numLetras = letras.length;
-    
-    // --- CÁLCULO DINÂMICO DE TAMANHO ---
-    // Pegamos na largura disponível (com margem de segurança)
-    const larguraDisponivel = container.offsetWidth * 0.85; 
-    // Cada letra + zona de corte ocupa aproximadamente 1.4 "unidades" de largura
-    let fontSize = larguraDisponivel / (numLetras + (numLetras - 1) * 0.5);
-    
-    // Limites de tamanho para não ficar nem gigante nem minúsculo
-    fontSize = Math.min(Math.max(fontSize, 22), 65); 
-    
     const isMobile = window.innerWidth < 600;
-    const imgHeight = isMobile ? '120px' : '180px';
+
+    // --- LÓGICA DE TAMANHO EQUILIBRADO ---
+    // Em vez de variar muito, usamos degraus de tamanho
+    let fontSize = isMobile ? 42 : 55;
+    if (numLetras > 8) fontSize = isMobile ? 32 : 45;
+    if (numLetras > 10) fontSize = isMobile ? 26 : 38;
+
+    // Largura da zona de toque entre letras (mínimo de 20px para ser clicável)
+    const gapWidth = Math.max(isMobile ? 18 : 25, fontSize * 0.4);
 
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content: space-between; padding: 10px 0;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content: space-between; padding: 5px 0;">
             
-            <!-- Imagem -->
-            <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center; width: 100%;">
+            <!-- Imagem: Reduzida no mobile para sobrar espaço -->
+            <div style="flex: 1; display: flex; align-items: center; justify-content: center; min-height: 100px;">
                 <div style="background:white; padding:10px; border-radius:25px; box-shadow:0 6px 20px rgba(0,0,0,0.05); display:flex; align-items:center; justify-content:center;">
-                    <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-height:${imgHeight}; max-width:80vw; object-fit:contain;">
+                    <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-height:${isMobile ? '110px' : '180px'}; max-width:75vw; object-fit:contain;">
                 </div>
             </div>
 
-            <!-- Palavra (Flexbox que nunca quebra linha) -->
-            <div style="background:white; padding:15px; border-radius:25px; box-shadow:0 10px 30px rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:center; width: 95%; max-width: 900px; margin: 15px 0;">
+            <!-- Contentor da Palavra: Ocupa quase toda a largura para evitar quebras -->
+            <div style="background:white; padding:${isMobile ? '12px 8px' : '20px 30px'}; border-radius:25px; box-shadow:0 10px 30px rgba(0,0,0,0.06); width: 98%; max-width: 900px; margin: 10px 0; display:flex; justify-content:center;">
                 <div style="display:flex; align-items:center; justify-content:center; flex-wrap: nowrap;">
                     ${letras.map((letra, i) => {
-                        let html = `<div style="font-size:${fontSize}px; font-weight:900; color:#3d4a59; min-width:${fontSize * 0.8}px; text-align:center; user-select:none;">${letra}</div>`;
+                        let html = `<div style="font-size:${fontSize}px; font-weight:900; color:#3d4a59; min-width:${fontSize * 0.7}px; text-align:center; user-select:none;">${letra}</div>`;
                         
                         if (i < numLetras - 1) {
                             html += `
                                 <div class="cut-zone" onclick="toggleCorte(${i+1})" 
-                                     style="width:${fontSize * 0.5}px; height:${fontSize * 1.2}px; cursor:pointer; display:flex; align-items:center; justify-content:center; position:relative; z-index:10;">
-                                    <div class="cut-line" id="line-${i+1}" style="width:4px; height:70%; background:#e9f0f8; border-radius:2px; transition:0.2s;"></div>
+                                     style="width:${gapWidth}px; height:${fontSize * 1.3}px; cursor:pointer; display:flex; align-items:center; justify-content:center; position:relative; z-index:10;">
+                                    <div class="cut-line" id="line-${i+1}" style="width:4px; height:80%; background:#f0f4f8; border-radius:2px; transition:0.2s;"></div>
                                 </div>
                             `;
                         }
@@ -101,10 +99,12 @@ function montarInterface(item) {
             </div>
 
             <!-- Botão Pronto -->
-            <button class="btn-jogar-stretch" onclick="validarFinal()" 
-                    style="max-width:220px; height:55px; background:var(--primary-blue); box-shadow: 0 5px 0 var(--primary-dark); font-size:18px; border-radius:20px;">
-                PRONTO!
-            </button>
+            <div style="padding-bottom: 5px; width: 100%; display: flex; justify-content: center;">
+                <button class="btn-jogar-stretch" onclick="validarFinal()" 
+                        style="max-width:200px; height:50px; background:var(--primary-blue); box-shadow: 0 5px 0 var(--primary-dark); font-size:17px; border-radius:18px;">
+                    PRONTO!
+                </button>
+            </div>
         </div>`;
 }
 
@@ -121,8 +121,8 @@ function toggleCorte(index) {
         line.style.width = "6px";
     } else {
         cortesAtivos.splice(pos, 1);
-        line.style.background = "#e9f0f8";
-        line.style.height = "70%";
+        line.style.background = "#f0f4f8";
+        line.style.height = "80%";
         line.style.width = "4px";
     }
 }
@@ -173,7 +173,6 @@ function feedbackVisual(cor) {
         const line = document.getElementById(`line-${idx}`);
         if(line) {
             line.style.background = cor;
-            line.style.boxShadow = `0 0 10px ${cor}`;
         }
     });
 }
@@ -181,10 +180,9 @@ function feedbackVisual(cor) {
 function resetTentativa() {
     cortesAtivos = [];
     document.querySelectorAll('.cut-line').forEach(line => {
-        line.style.background = "#e9f0f8";
-        line.style.height = "70%";
+        line.style.background = "#f0f4f8";
+        line.style.height = "80%";
         line.style.width = "4px";
-        line.style.boxShadow = "none";
     });
 }
 
