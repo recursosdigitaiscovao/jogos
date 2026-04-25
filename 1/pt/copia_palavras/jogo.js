@@ -4,6 +4,7 @@ let acertos = 0;
 let erros = 0;
 let tempoInicio;
 let intervaloTimer;
+let erroContabilizadoNestaPalavra = false; // Garante que conta apenas 1 erro por palavra
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
@@ -13,7 +14,7 @@ window.startLogic = function() {
     selecionarCategoria('letrasenumeros'); 
 };
 
-// ANIMAÇÃO DE INTRODUÇÃO DINÂMICA
+// ANIMAÇÃO DE INTRODUÇÃO
 window.selecionarCategoria = function(key) {
     const cat = JOGO_CONFIG.categorias[key];
     if (!cat) return;
@@ -30,7 +31,7 @@ window.selecionarCategoria = function(key) {
             <div style="font-weight:900; color:var(--primary-blue); font-size:${fontSizeIntro}; text-transform:uppercase; letter-spacing:2px;">
                 ${cat.exemplo}
             </div>
-            <div style="width:170px; height:42px; border:3px solid #cbd9e6; border-radius:12px; background:white; display:flex; align-items:center; justify-content:center; position:relative;">
+            <div style="width:170px; height:42px; border:3px solid #cbd9e6; border-radius:12px; background:white; display:flex; align-items:center; justify-content:center;">
                 <span style="font-size:12px; color:#abbcd1; font-weight:800; animation: blinkIntro 1.5s infinite;">ESCREVE AQUI...</span>
             </div>
         </div>
@@ -53,14 +54,13 @@ function iniciarTimer() {
     tempoInicio = Date.now();
     intervaloTimer = setInterval(() => {
         const decorrido = Math.floor((Date.now() - tempoInicio) / 1000);
-        const mins = Math.floor(decorrido/60).toString().padStart(2,'0');
-        const secs = (decorrido%60).toString().padStart(2,'0');
-        document.getElementById('timer-val').innerText = `${mins}:${secs}`;
+        document.getElementById('timer-val').innerText = `${Math.floor(decorrido/60).toString().padStart(2,'0')}:${(decorrido%60).toString().padStart(2,'0')}`;
     }, 1000);
 }
 
 function proximaRodada() {
     if (indiceAtual >= itensAtuais.length) { finalizarJogo(); return; }
+    erroContabilizadoNestaPalavra = false;
     document.getElementById('round-val').innerText = `${indiceAtual + 1} / ${itensAtuais.length}`;
     montarInterface(itensAtuais[indiceAtual]);
 }
@@ -95,29 +95,33 @@ function montarInterface(item) {
     const input = document.getElementById('input-copy');
     setTimeout(() => input.focus(), 400);
 
-    // VALIDAÇÃO EM TEMPO REAL
     input.addEventListener('input', (e) => {
         const digitado = e.target.value.toUpperCase();
-        
-        // Verifica se o que foi escrito até agora bate com o início do modelo
         const parteModelo = modelo.substring(0, digitado.length);
 
         if (digitado === "") {
-            // Neutro
             input.style.borderColor = "#cbd9e6";
-            input.style.color = "#5d7082";
             input.style.background = "white";
         } else if (digitado === modelo) {
-            // ACERTO TOTAL
-            validarRespostaFinal(true);
+            // ACERTO AUTOMÁTICO
+            processarResultado(true);
         } else if (digitado !== parteModelo) {
-            // ERRO NO CARACTERE ATUAL
+            // ERRO VISUAL IMEDIATO
             input.style.borderColor = "#ff5e5e";
-            input.style.color = "#ff5e5e";
             input.style.background = "#fffafa";
-            // Tocar som de erro apenas uma vez se quiser (opcional)
+            input.style.color = "#ff5e5e";
+
+            // Se atingiu o número de letras e está errado, conta erro no placar
+            if (digitado.length === modelo.length && !erroContabilizadoNestaPalavra) {
+                erros++;
+                erroContabilizadoNestaPalavra = true;
+                somErro.play();
+                document.getElementById('miss-val').innerText = erros;
+                input.style.animation = "shake 0.4s ease-in-out";
+                setTimeout(() => input.style.animation = "none", 400);
+            }
         } else {
-            // Está a escrever corretamente mas ainda não terminou
+            // Está no caminho certo
             input.style.borderColor = "var(--primary-blue)";
             input.style.color = "#5d7082";
             input.style.background = "white";
@@ -125,13 +129,12 @@ function montarInterface(item) {
     });
 }
 
-function validarRespostaFinal(acerto) {
+function processarResultado(isAcerto) {
     const input = document.getElementById('input-copy');
     const container = document.getElementById('game-main-content');
     
-    container.style.pointerEvents = 'none';
-
-    if (acerto) {
+    if (isAcerto) {
+        container.style.pointerEvents = 'none';
         acertos++;
         somAcerto.play();
         input.style.borderColor = "#7ed321";
@@ -143,7 +146,7 @@ function validarRespostaFinal(acerto) {
             container.style.pointerEvents = 'all';
             indiceAtual++;
             proximaRodada();
-        }, 1200);
+        }, 1000);
     }
 }
 
