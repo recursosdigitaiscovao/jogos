@@ -1,7 +1,7 @@
 const CONFIG_MESTRE = {
     ano: "ano1",        
     area: "portugues",  
-    nomeJogo: "JOGO DOS BALÕES"
+    nomeJogo: "JOGO DA FORCA"
 };
 
 const BIBLIOTECA_TEMAS = {
@@ -12,9 +12,9 @@ const BIBLIOTECA_TEMAS = {
 };
 
 const BIBLIOTECA_CONTEUDO = {
-    "pre": { "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar", intro: "Descobre a palavra antes que os balões acabem!", rodape: "&copy; Pequenos Curiosos" } },
+    "pre": { "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar", intro: "Adivinha a palavra antes que os balões rebentem!", rodape: "&copy; Pequenos Curiosos" } },
     "ano1": {
-        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", intro: "Clica nas letras para adivinhar a palavra!", rodape: "&copy; Pequenos Leitores" }
+        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", intro: "Escolhe as letras para salvar os balões!", rodape: "&copy; Pequenos Leitores" }
     }
 };
 
@@ -42,36 +42,52 @@ const JOGO_CONFIG = {
                 { nome: "OVELHA", img: "animaisdomesticos/ovelha.png" }, { nome: "PATO", img: "animaisdomesticos/pato.png" },
                 { nome: "PERU", img: "animaisdomesticos/peru.png" }, { nome: "PORCO", img: "animaisdomesticos/porco.png" },
                 { nome: "LEÃO", img: "animaisselvagens/leao.png" }, { nome: "ZEBRA", img: "animaisselvagens/zebra.png" },
-                { nome: "MACACO", img: "animaisselvagens/macaco.png" }, { nome: "PANDA", img: "animaisselvagens/panda.png" }
+                { nome: "MACACO", img: "animaisselvagens/macaco.png" }, { nome: "PANDA", img: "animaisselvagens/panda.png" },
+                { nome: "TIGRE", img: "animaisselvagens/tigre.png" }, { nome: "ELEFANTE", img: "animaisselvagens/elefante.png" }
             ]
         },
         frutos: {
             nome: "Frutos", exemplo: "BANANA", exemploImg: "frutas/banana.png", imgCapa: "frutas/maca.png",
             itens: [
-                { nome: "AMORA", img: "frutas/amora.png" }, { nome: "BANANA", img: "frutas/banana.png" },
-                { nome: "CEREJA", img: "frutas/cereja.png" }, { nome: "FIGO", img: "frutas/figo.png" },
+                { nome: "AMORA", img: "frutas/amora.png" }, { nome: "ANANÁS", img: "frutas/ananas.png" },
+                { nome: "BANANA", img: "frutas/banana.png" }, { nome: "CASTANHA", img: "frutas/castanha.png" },
+                { nome: "CEREJA", img: "frutas/cereja.png" }, { nome: "DIÓSPIRO", img: "frutas/diospiro.png" },
+                { nome: "FIGO", img: "frutas/figo.png" }, { nome: "GOIABA", img: "frutas/goiaba.png" },
                 { nome: "KIWI", img: "frutas/kiwi.png" }, { nome: "LARANJA", img: "frutas/laranja.png" },
                 { nome: "LIMÃO", img: "frutas/limao.png" }, { nome: "MAÇÃ", img: "frutas/maca.png" },
-                { nome: "MELÃO", img: "frutas/melao.png" }, { nome: "MORANGO", img: "frutas/morango.png" }
+                { nome: "MARACUJÁ", img: "frutas/maracuja.png" }, { nome: "MELANCIA", img: "frutas/melancia.png" },
+                { nome: "MELÃO", img: "frutas/melao.png" }, { nome: "MORANGO", img: "frutas/morango.png" },
+                { nome: "PAPAIA", img: "frutas/papaia.png" }, { nome: "PERA", img: "frutas/pera.png" },
+                { nome: "ROMÃ", img: "frutas/roma.png" }, { nome: "UVAS", img: "frutas/uvas.png" }
             ]
         },
         objetos: {
-            nome: "Objetos", exemplo: "BOLA", exemploImg: "objetos/bola.png", imgCapa: "objetos/bola.png",
+            nome: "Objetos", exemplo: "BONECA", exemploImg: "objetos/boneca.png", imgCapa: "objetos/bola.png",
             itens: [
                 { nome: "ANEL", img: "objetos/anel.png" }, { nome: "BALDE", img: "objetos/balde.png" },
                 { nome: "BOLA", img: "objetos/bola.png" }, { nome: "BONECA", img: "objetos/boneca.png" },
-                { nome: "CESTO", img: "objetos/cesto.png" }, { nome: "COPO", img: "objetos/copo.png" },
-                { nome: "DADO", img: "objetos/dado.png" }, { nome: "ÓCULOS", img: "objetos/oculos.png" },
+                { nome: "CARRINHO", img: "objetos/carrinho.png" }, { nome: "CESTO", img: "objetos/cesto.png" },
+                { nome: "COLHER", img: "objetos/colher.png" }, { nome: "COPO", img: "objetos/copo.png" },
+                { nome: "DADO", img: "objetos/dado.png" }, { nome: "DEDAL", img: "objetos/dedal.png" },
+                { nome: "DRAGÃO", img: "objetos/dragao.png" }, { nome: "ESCOVA", img: "objetos/escova.png" },
+                { nome: "GARFO", img: "objetos/garfo.png" }, { nome: "GARRAFA", img: "objetos/garrafa.png" },
+                { nome: "ISQUEIRO", img: "objetos/isqueiro.png" }, { nome: "ÓCULOS", img: "objetos/oculos.png" },
+                { nome: "PÁ", img: "objetos/pa.png" }, { nome: "PANELA", img: "objetos/panela.png" },
+                { nome: "PINCEL", img: "objetos/pincel.png" }, { nome: "VASSOURA", img: "objetos/vassoura.png" },
                 { nome: "VELA", img: "objetos/vela.png" }
             ]
         },
         material: {
-            nome: "Material Escolar", exemplo: "LÁPIS", exemploImg: "materialescolar/lapis.png", imgCapa: "materialescolar/estojo.png",
+            nome: "Material Escolar", exemplo: "MOCHILA", exemploImg: "materialescolar/mochila.png", imgCapa: "materialescolar/estojo.png",
             itens: [
-                { nome: "AFIA", img: "materialescolar/afia.png" }, { nome: "COLA", img: "materialescolar/cola.png" },
-                { nome: "ESTOJO", img: "materialescolar/estojo.png" }, { nome: "FOLHA", img: "materialescolar/folha.png" },
-                { nome: "LÁPIS", img: "materialescolar/lapis.png" }, { nome: "LIVRO", img: "materialescolar/livro.png" },
-                { nome: "MOCHILA", img: "materialescolar/mochila.png" }, { nome: "RÉGUA", img: "materialescolar/regua.png" }
+                { nome: "AFIA", img: "materialescolar/afia.png" }, { nome: "BORRACHA", img: "materialescolar/borracha.png" },
+                { nome: "CADERNO", img: "materialescolar/caderno.png" }, { nome: "CANETA", img: "materialescolar/caneta.png" },
+                { nome: "CAPA", img: "materialescolar/capa.png" }, { nome: "COLA", img: "materialescolar/cola.png" },
+                { nome: "ESQUADRO", img: "materialescolar/esquadro.png" }, { nome: "ESTOJO", img: "materialescolar/estojo.png" },
+                { nome: "FOLHA", img: "materialescolar/folha.png" }, { nome: "LÁPIS", img: "materialescolar/lapis.png" },
+                { nome: "LIVRO", img: "materialescolar/livro.png" }, { nome: "MOCHILA", img: "materialescolar/mochila.png" },
+                { nome: "PINCEL", img: "materialescolar/pincel.png" }, { nome: "RÉGUA", img: "materialescolar/regua.png" },
+                { nome: "TESOURA", img: "materialescolar/tesoura.png" }
             ]
         }
     },
