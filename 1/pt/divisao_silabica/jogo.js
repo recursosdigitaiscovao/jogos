@@ -4,7 +4,7 @@ let acertos = 0;
 let erros = 0;
 let tempoInicio;
 let intervaloTimer;
-let cortesAtivos = []; 
+let cortesAtivos = [];
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
@@ -12,13 +12,12 @@ const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
 window.startLogic = function() { selecionarCategoria('animais'); };
 
-// ANIMAÇÃO DE INTRODUÇÃO
 window.selecionarCategoria = function(key) {
     const cat = JOGO_CONFIG.categorias[key];
     itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
     const containerIntro = document.getElementById('intro-animation-container');
     containerIntro.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:10px; width:100%;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:15px; width:100%;">
             <div style="background:white; padding:10px; border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.05);">
                 <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:60px;">
             </div>
@@ -58,49 +57,53 @@ function montarInterface(item) {
     const container = document.getElementById('game-main-content');
     const letras = item.nome.split('');
     const numL = letras.length;
-    const isMobile = window.innerWidth < 600;
+    
+    // Medir a largura real disponível
+    const larguraDisponivel = container.clientWidth;
+    const isMobile = larguraDisponivel < 600;
 
-    // --- AJUSTE DINÂMICO DE TAMANHO ---
-    // Usamos 'vw' para que o tamanho dependa da largura do ecrã
-    let fontSize = isMobile ? Math.min(10, 85 / numL) + "vw" : "50px";
-    let gapWidth = isMobile ? Math.min(5, 40 / numL) + "vw" : "25px";
+    // Cálculo matemático para a letra caber (90% da largura máxima)
+    // Cada letra tem 1 unidade de largura, cada zona de corte tem 0.4 unidades.
+    const totalUnidades = numL + (numL - 1) * 0.4;
+    let fontSize = (larguraDisponivel * 0.9) / totalUnidades;
+    
+    // Limites de segurança para não ficar gigante em palavras de 2 letras ou minúscula em 12
+    fontSize = Math.min(Math.max(fontSize, 20), isMobile ? 45 : 60);
+
+    const gapWidth = fontSize * 0.4;
 
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content: space-between; padding: 10px 0;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content: space-evenly; padding: 0;">
             
-            <!-- GRUPO SUPERIOR: Imagem e Palavra (Puxados para cima) -->
-            <div style="display:flex; flex-direction:column; align-items:center; width:100%; gap: 10px; margin-top: 5px;">
-                
-                <!-- Imagem: Compacta no Mobile -->
-                <div style="background:white; padding:8px; border-radius:20px; box-shadow:0 5px 15px rgba(0,0,0,0.05); display:flex; align-items:center; justify-content:center;">
-                    <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-height:${isMobile ? '90px' : '160px'}; max-width:70vw; object-fit:contain;">
+            <!-- BLOCO 1: Imagem -->
+            <div style="display:flex; justify-content:center; align-items:center; width:100%;">
+                <div style="background:white; padding:8px; border-radius:25px; box-shadow:0 6px 15px rgba(0,0,0,0.05); display:flex;">
+                    <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-height:${isMobile ? '25vh' : '180px'}; max-width:75vw; object-fit:contain;">
                 </div>
-
-                <!-- Contentor da Palavra -->
-                <div style="background:white; padding:${isMobile ? '10px 5px' : '20px 30px'}; border-radius:20px; box-shadow:0 8px 25px rgba(0,0,0,0.06); width: 96%; display:flex; justify-content:center; align-items:center;">
-                    <div style="display:flex; align-items:center; justify-content:center; flex-wrap: nowrap;">
-                        ${letras.map((letra, i) => {
-                            let html = `<div style="font-size:${fontSize}; font-weight:900; color:#3d4a59; min-width:1.2em; text-align:center; user-select:none;">${letra}</div>`;
-                            
-                            if (i < numL - 1) {
-                                html += `
-                                    <div class="cut-zone" onclick="toggleCorte(${i+1})" 
-                                         style="width:${gapWidth}; height:2em; cursor:pointer; display:flex; align-items:center; justify-content:center; position:relative; z-index:10;">
-                                        <div class="cut-line" id="line-${i+1}" style="width:3px; height:80%; background:#f0f4f8; border-radius:2px; transition:0.2s;"></div>
-                                    </div>
-                                `;
-                            }
-                            return html;
-                        }).join('')}
-                    </div>
-                </div>
-
             </div>
 
-            <!-- GRUPO INFERIOR: Botão (Puxado para baixo) -->
-            <div style="width: 100%; display: flex; justify-content: center; padding-bottom: 10px;">
+            <!-- BLOCO 2: Palavra (Ajustada dinamicamente) -->
+            <div style="background:white; padding:15px 10px; border-radius:25px; box-shadow:0 10px 30px rgba(0,0,0,0.05); width: 95%; max-width: 95%; display:flex; justify-content:center; align-items:center; overflow:hidden;">
+                <div style="display:flex; align-items:center; justify-content:center; flex-wrap: nowrap;">
+                    ${letras.map((letra, i) => {
+                        let html = `<div style="font-size:${fontSize}px; font-weight:900; color:#3d4a59; min-width:1em; text-align:center; user-select:none;">${letra}</div>`;
+                        if (i < numL - 1) {
+                            html += `
+                                <div class="cut-zone" onclick="toggleCorte(${i+1})" 
+                                     style="width:${gapWidth}px; height:${fontSize * 1.3}px; cursor:pointer; display:flex; align-items:center; justify-content:center; position:relative; z-index:10;">
+                                    <div class="cut-line" id="line-${i+1}" style="width:4px; height:80%; background:#f0f4f8; border-radius:2px; transition:0.2s;"></div>
+                                </div>
+                            `;
+                        }
+                        return html;
+                    }).join('')}
+                </div>
+            </div>
+
+            <!-- BLOCO 3: Botão -->
+            <div style="width: 100%; display: flex; justify-content: center;">
                 <button class="btn-jogar-stretch" onclick="validarFinal()" 
-                        style="max-width:180px; height:48px; background:var(--primary-blue); box-shadow: 0 5px 0 var(--primary-dark); font-size:16px; border-radius:15px; font-weight:900;">
+                        style="max-width:200px; height:52px; background:var(--primary-blue); box-shadow: 0 5px 0 var(--primary-dark); font-size:18px; border-radius:18px; font-weight:900;">
                     PRONTO!
                 </button>
             </div>
@@ -116,12 +119,12 @@ function toggleCorte(index) {
         cortesAtivos.push(index);
         line.style.background = "var(--primary-blue)";
         line.style.height = "100%";
-        line.style.width = "5px";
+        line.style.width = "6px";
     } else {
         cortesAtivos.splice(pos, 1);
         line.style.background = "#f0f4f8";
         line.style.height = "80%";
-        line.style.width = "3px";
+        line.style.width = "4px";
     }
 }
 
@@ -168,7 +171,7 @@ function resetTentativa() {
     document.querySelectorAll('.cut-line').forEach(line => {
         line.style.background = "#f0f4f8";
         line.style.height = "80%";
-        line.style.width = "3px";
+        line.style.width = "4px";
     });
 }
 
