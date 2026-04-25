@@ -9,24 +9,46 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-window.startLogic = function() { selecionarCategoria('letrasenumeros'); };
+window.startLogic = function() { 
+    // Inicia com a categoria de letras e números por defeito
+    selecionarCategoria('letrasenumeros'); 
+};
 
-// ANIMAÇÃO DE INTRODUÇÃO
+// ANIMAÇÃO DE INTRODUÇÃO DINÂMICA POR CATEGORIA
 window.selecionarCategoria = function(key) {
     const cat = JOGO_CONFIG.categorias[key];
+    if (!cat) return;
+
+    // Seleciona 10 itens aleatórios da categoria escolhida
     itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
+    
     const containerIntro = document.getElementById('intro-animation-container');
+    
+    // Ajusta o tamanho da fonte da intro se o exemplo for muito comprido
+    const fontSizeIntro = cat.exemplo.length > 8 ? '18px' : '24px';
+
     containerIntro.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:15px; width:100%;">
-            <div style="background:white; padding:10px; border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.05);">
-                <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:70px;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:12px; width:100%;">
+            <!-- Imagem de Exemplo da Categoria -->
+            <div style="background:white; padding:10px; border-radius:20px; box-shadow:0 8px 15px rgba(0,0,0,0.05); display:flex; align-items:center; justify-content:center;">
+                <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:85px; max-width:120px; object-fit:contain;">
             </div>
-            <div style="font-weight:900; color:var(--primary-blue); font-size:24px;">NOVE</div>
-            <div style="width:140px; height:35px; border:3px solid #cbd9e6; border-radius:10px; background:white; position:relative; display:flex; align-items:center; justify-content:center;">
-                <span style="font-size:12px; color:#aaa; animation: typeAnim 2s infinite;">ESCREVE AQUI...</span>
+            
+            <!-- Palavra de Exemplo da Categoria -->
+            <div style="font-weight:900; color:var(--primary-blue); font-size:${fontSizeIntro}; text-transform:uppercase; letter-spacing:2px;">
+                ${cat.exemplo}
+            </div>
+
+            <!-- Simulação do Campo de Escrita -->
+            <div style="width:170px; height:42px; border:3px solid #cbd9e6; border-radius:12px; background:white; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+                <span style="font-size:12px; color:#abbcd1; font-weight:800; animation: blinkIntro 1.5s infinite;">ESCREVE AQUI...</span>
+                <div style="position:absolute; bottom:5px; width:60%; height:2px; background:var(--primary-blue); opacity:0.3;"></div>
             </div>
         </div>
-        <style>@keyframes typeAnim { 0% { opacity:0; } 50% { opacity:1; } 100% { opacity:0; } }</style>`;
+        <style>
+            @keyframes blinkIntro { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+            @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+        </style>`;
 };
 
 window.initGame = function() { 
@@ -42,7 +64,9 @@ function iniciarTimer() {
     tempoInicio = Date.now();
     intervaloTimer = setInterval(() => {
         const decorrido = Math.floor((Date.now() - tempoInicio) / 1000);
-        document.getElementById('timer-val').innerText = `${Math.floor(decorrido/60).toString().padStart(2,'0')}:${(decorrido%60).toString().padStart(2,'0')}`;
+        const mins = Math.floor(decorrido/60).toString().padStart(2,'0');
+        const secs = (decorrido%60).toString().padStart(2,'0');
+        document.getElementById('timer-val').innerText = `${mins}:${secs}`;
     }, 1000);
 }
 
@@ -56,71 +80,84 @@ function montarInterface(item) {
     const container = document.getElementById('game-main-content');
     const isMobile = window.innerWidth < 600;
 
+    // Ajuste dinâmico de fonte para palavras muito grandes (ex: carangueijo)
+    let fontSizeModelo = isMobile ? '40px' : '55px';
+    if (item.nome.length > 8) fontSizeModelo = isMobile ? '30px' : '45px';
+    if (item.nome.length > 11) fontSizeModelo = isMobile ? '24px' : '35px';
+
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content: space-evenly; padding: 10px 0;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content: space-evenly; padding: 5px 0;">
             
-            <!-- Imagem Central -->
-            <div style="background:white; padding:15px; border-radius:25px; box-shadow:0 8px 25px rgba(0,0,0,0.05); display:flex; align-items:center; justify-content:center;">
-                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-height:${isMobile ? '120px' : '180px'}; max-width:80vw; object-fit:contain;">
+            <!-- IMAGEM PARA COPIAR -->
+            <div style="background:white; padding:12px; border-radius:25px; box-shadow:0 6px 15px rgba(0,0,0,0.05); display:flex; align-items:center; justify-content:center;">
+                <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-height:${isMobile ? '120px' : '190px'}; max-width:80vw; object-fit:contain;">
             </div>
 
-            <!-- Modelo da Palavra -->
-            <div id="word-model" style="font-size:45px; font-weight:900; color:var(--primary-blue); text-transform:uppercase; letter-spacing:4px; text-shadow: 2px 2px 0px rgba(0,0,0,0.05);">
+            <!-- MODELO VISUAL -->
+            <div id="word-model" style="font-size:${fontSizeModelo}; font-weight:900; color:var(--primary-blue); text-transform:uppercase; letter-spacing:4px; text-align:center; width:95%; user-select:none;">
                 ${item.nome}
             </div>
 
-            <!-- Campo de Escrita -->
-            <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px;">
-                <input type="text" id="input-escreve" placeholder="ESCREVE AQUI..." 
+            <!-- CAMPO DE INPUT -->
+            <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                <input type="text" id="input-copy" placeholder="ESCREVE AQUI..." 
                     autocomplete="off" autocapitalize="characters" spellcheck="false"
-                    style="width:85%; max-width:400px; height:65px; border:4px solid #cbd9e6; border-radius:20px; background:white; text-align:center; font-size:28px; font-weight:900; color:#5d7082; outline:none; transition:0.3s; box-shadow: inset 0 4px 8px rgba(0,0,0,0.02);">
+                    style="width:85%; max-width:400px; height:60px; border:4px solid #cbd9e6; border-radius:20px; background:white; text-align:center; font-size:26px; font-weight:900; color:#5d7082; outline:none; transition:0.3s; box-shadow: inset 0 3px 6px rgba(0,0,0,0.02);">
+                <p style="font-size:10px; color:#bbcada; font-weight:800; text-transform:uppercase;">Copia a palavra acima</p>
             </div>
         </div>`;
 
-    const input = document.getElementById('input-escreve');
+    const input = document.getElementById('input-copy');
     
-    // Focar automaticamente
-    setTimeout(() => input.focus(), 100);
+    // Pequeno delay para garantir o foco em dispositivos móveis
+    setTimeout(() => input.focus(), 400);
 
-    // Validar enquanto escreve
+    // Validação em tempo real (Letra a letra)
     input.addEventListener('input', (e) => {
-        const valor = e.target.value.toUpperCase();
-        if (valor === item.nome.toUpperCase()) {
+        const digitado = e.target.value.trim().toUpperCase();
+        const original = item.nome.toUpperCase();
+        
+        if (digitado === original) {
             validarResposta(true);
         }
     });
 
-    // Se pressionar Enter (opcional para feedback manual)
+    // Tecla Enter para feedback se estiver incompleto/errado
     input.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            const valor = e.target.value.toUpperCase();
-            validarResposta(valor === item.nome.toUpperCase());
+            const digitado = e.target.value.trim().toUpperCase();
+            const original = item.nome.toUpperCase();
+            if (digitado !== original) {
+                validarResposta(false);
+            }
         }
     });
 }
 
 function validarResposta(acerto) {
-    const input = document.getElementById('input-escreve');
-    document.getElementById('game-main-content').style.pointerEvents = 'none';
+    const input = document.getElementById('input-copy');
+    const container = document.getElementById('game-main-content');
+    
+    container.style.pointerEvents = 'none';
 
     if (acerto) {
         acertos++;
         somAcerto.play();
         input.style.borderColor = "#7ed321";
         input.style.color = "#7ed321";
-        input.style.background = "#f2faf0";
+        input.style.background = "#f4fcf2";
+        document.getElementById('hits-val').innerText = acertos;
     } else {
         erros++;
         somErro.play();
         input.style.borderColor = "#ff5e5e";
-        input.style.animation = "shake 0.4s";
+        input.style.color = "#ff5e5e";
+        input.style.animation = "shake 0.4s ease-in-out";
+        document.getElementById('miss-val').innerText = erros;
     }
 
-    document.getElementById('hits-val').innerText = acertos;
-    document.getElementById('miss-val').innerText = erros;
-
     setTimeout(() => {
-        document.getElementById('game-main-content').style.pointerEvents = 'all';
+        container.style.pointerEvents = 'all';
         if (acerto) {
             indiceAtual++;
             proximaRodada();
@@ -129,6 +166,7 @@ function validarResposta(acerto) {
             input.style.borderColor = "#cbd9e6";
             input.style.color = "#5d7082";
             input.style.background = "white";
+            input.style.animation = "none";
             input.focus();
         }
     }, 1200);
@@ -137,5 +175,6 @@ function validarResposta(acerto) {
 function finalizarJogo() {
     clearInterval(intervaloTimer);
     somVitoria.play();
-    window.mostrarResultados(acertos, document.getElementById('timer-val').innerText);
+    const tempoFinal = document.getElementById('timer-val').innerText;
+    window.mostrarResultados(acertos, tempoFinal);
 }
