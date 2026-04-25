@@ -1,5 +1,5 @@
-let itensAtuais = [];
-let indiceAtual = 0;
+let itensAtuais = []; // Itens da categoria selecionada
+let indiceAtual = 0;   // Ronda atual (0 a 9)
 let acertos = 0;
 let erros = 0;
 let tempoInicio;
@@ -13,31 +13,45 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-window.startLogic = function() { selecionarCategoria('animais'); };
+// 1. INICIALIZAÇÃO (Chamado pelo template ao carregar)
+window.startLogic = function() {
+    selecionarCategoria('animais'); 
+};
 
-// ANIMAÇÃO DE INTRODUÇÃO
+// 2. SELEÇÃO DE CATEGORIA E ANIMAÇÃO DA INTRO
 window.selecionarCategoria = function(key) {
     const cat = JOGO_CONFIG.categorias[key];
-    itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5);
+    if (!cat) return;
+    
+    CONFIG_MESTRE.area = key; // Atualiza a área ativa no config mestre
+    itensAtuais = [...cat.itens];
+    
     const containerIntro = document.getElementById('intro-animation-container');
     containerIntro.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; gap:15px; width:100%;">
             <div style="display:flex; gap:10px;">
-                <div style="width:40px; height:50px; background:white; border:2px solid #5ba4e5; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#5ba4e5; animation: bounce 2s infinite;">A</div>
-                <div style="width:40px; height:50px; background:white; border:2px solid #5ba4e5; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#5ba4e5; animation: bounce 2s infinite 0.2s;">B</div>
-                <div style="width:40px; height:50px; background:white; border:2px solid #5ba4e5; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#5ba4e5; animation: bounce 2s infinite 0.4s;">C</div>
+                <div class="demo-card" style="width:45px; height:55px; background:white; border:3px solid var(--primary-blue); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); animation: bounce 2s infinite;">A</div>
+                <div class="demo-card" style="width:45px; height:55px; background:white; border:3px solid var(--primary-blue); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); animation: bounce 2s infinite 0.2s;">B</div>
+                <div class="demo-card" style="width:45px; height:55px; background:white; border:3px solid var(--primary-blue); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); animation: bounce 2s infinite 0.4s;">C</div>
             </div>
-            <p style="font-weight:900; color:var(--primary-blue); text-align:center;">ORDENA OS CARTÕES!</p>
+            <p style="font-weight:900; color:var(--primary-blue); text-transform:uppercase; letter-spacing:1px;">Ordena por ordem Alfabética!</p>
         </div>
-        <style>@keyframes bounce { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }</style>`;
+        <style>
+            @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+            @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+            @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        </style>`;
 };
 
-window.initGame = function() { 
-    indiceAtual = 0; acertos = 0; erros = 0; 
-    document.getElementById('hits-val').innerText = acertos;
-    document.getElementById('miss-val').innerText = erros;
-    iniciarTimer(); 
-    proximaRodada(); 
+// 3. INICIAR O JOGO (Chamado ao clicar em JOGAR)
+window.initGame = function() {
+    indiceAtual = 0;
+    acertos = 0;
+    erros = 0;
+    document.getElementById('hits-val').innerText = "0";
+    document.getElementById('miss-val').innerText = "0";
+    iniciarTimer();
+    proximaRodada();
 };
 
 function iniciarTimer() {
@@ -45,28 +59,34 @@ function iniciarTimer() {
     tempoInicio = Date.now();
     intervaloTimer = setInterval(() => {
         const decorrido = Math.floor((Date.now() - tempoInicio) / 1000);
-        document.getElementById('timer-val').innerText = `${Math.floor(decorrido/60).toString().padStart(2,'0')}:${(decorrido%60).toString().padStart(2,'0')}`;
+        const m = Math.floor(decorrido / 60).toString().padStart(2, '0');
+        const s = (decorrido % 60).toString().padStart(2, '0');
+        document.getElementById('timer-val').innerText = `${m}:${s}`;
     }, 1000);
 }
 
+// 4. LÓGICA DA RODADA E NÍVEIS
 function proximaRodada() {
-    if (indiceAtual >= 10) { finalizarJogo(); return; }
-    
-    proximoIndiceAlvo = 0;
-    
-    // DEFINIÇÃO DOS NÍVEIS (Quantidade de cartas)
-    let qtdCartas = 3; // Nível 1
-    if (indiceAtual >= 3) qtdCartas = 4; // Nível 2
-    if (indiceAtual >= 7) qtdCartas = 5; // Nível 3
+    if (indiceAtual >= 10) {
+        finalizarJogo();
+        return;
+    }
 
-    // Pegar cartas aleatórias
-    let disponiveis = [...JOGO_CONFIG.categorias[CONFIG_MESTRE.area].itens].sort(() => Math.random() - 0.5);
-    cartasDaRodada = disponiveis.slice(0, qtdCartas);
-    
-    // Definir a ordem correta alfabética
+    proximoIndiceAlvo = 0;
+    document.getElementById('round-val').innerText = `${indiceAtual + 1} / 10`;
+
+    // Determinar dificuldade (Quantidade de cartas)
+    let qtd = 3; 
+    if (indiceAtual >= 3) qtd = 4;
+    if (indiceAtual >= 7) qtd = 5;
+
+    // Selecionar itens aleatórios da categoria
+    let embaralhados = [...JOGO_CONFIG.categorias[CONFIG_MESTRE.area].itens].sort(() => Math.random() - 0.5);
+    cartasDaRodada = embaralhados.slice(0, qtd);
+
+    // Definir a ordem correta (Alfabeto Português)
     ordemCorreta = [...cartasDaRodada].sort((a, b) => a.nome.localeCompare(b.nome, 'pt'));
 
-    document.getElementById('round-val').innerText = `${indiceAtual + 1} / 10`;
     montarInterface();
 }
 
@@ -75,95 +95,98 @@ function montarInterface() {
     const isMobile = window.innerWidth < 650;
 
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content: space-between; padding: 10px 0;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content: space-evenly; padding: 10px 0;">
             
-            <!-- PRATELEIRA DE DESTINO -->
-            <div id="target-slots" style="display:flex; gap:8px; justify-content:center; width:100%; flex-wrap:nowrap;">
+            <!-- ESPAÇOS VAZIOS (PRATELEIRA) -->
+            <div id="shelf" style="display:flex; gap:8px; justify-content:center; width:100%; flex-wrap:nowrap;">
                 ${ordemCorreta.map((_, i) => `
-                    <div class="slot" id="slot-${i}" style="
-                        width:${isMobile ? '60px' : '90px'}; 
-                        height:${isMobile ? '80px' : '110px'}; 
+                    <div class="target-slot" id="slot-${i}" style="
+                        width:${isMobile ? '62px' : '90px'}; 
+                        height:${isMobile ? '85px' : '120px'}; 
                         border:3px dashed #cbd9e6; border-radius:15px; 
+                        background: rgba(255,255,255,0.3);
                         display:flex; flex-direction:column; align-items:center; justify-content:center;
                         position:relative;
                     ">
-                        <span style="position:absolute; bottom:5px; font-size:10px; color:#cbd9e6; font-weight:900;">${i+1}º</span>
+                        <span style="position:absolute; top:2px; font-size:10px; color:#cbd9e6; font-weight:900;">${i+1}º</span>
                     </div>
                 `).join('')}
             </div>
 
-            <!-- CARTÕES PARA ORGANIZAR -->
-            <div id="source-pool" style="display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap; width:100%; min-height:120px;">
-                ${cartasDaRodada.sort(() => Math.random() - 0.5).map((item, i) => `
-                    <div class="word-card" onclick="clicarCarta(this, '${item.nome}')" id="card-${i}" style="
+            <!-- CARTÕES DISPONÍVEIS (BARALHADOS) -->
+            <div id="card-pile" style="display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap; width:100%; min-height:130px;">
+                ${[...cartasDaRodada].sort(() => Math.random() - 0.5).map((item, i) => `
+                    <div class="game-card-item" onclick="verificarEscolha(this, '${item.nome}')" style="
                         width:${isMobile ? '65px' : '95px'}; 
                         background:white; border:3px solid var(--primary-blue); 
-                        border-radius:15px; padding:5px; cursor:pointer;
+                        border-radius:15px; padding:6px; cursor:pointer;
                         box-shadow:0 5px 0 var(--primary-dark);
-                        transition: 0.3s; display:flex; flex-direction:column; align-items:center;
+                        transition: 0.2s; display:flex; flex-direction:column; align-items:center;
                     ">
-                        <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:80%; height:auto; pointer-events:none;">
-                        <span style="font-size:${isMobile ? '10px' : '12px'}; font-weight:900; color:var(--primary-blue); text-align:center;">${item.nome}</span>
+                        <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:100%; height:${isMobile ? '45px' : '65px'}; object-fit:contain; pointer-events:none;">
+                        <span style="font-size:${isMobile ? '10px' : '13px'}; font-weight:900; color:var(--primary-blue); text-align:center; margin-top:4px;">${item.nome}</span>
                     </div>
                 `).join('')}
             </div>
-        </div>`;
+        </div>
+    `;
 }
 
-function clicarCarta(el, nome) {
-    const alvo = ordemCorreta[proximoIndiceAlvo];
+// 5. LÓGICA DE INTERAÇÃO
+window.verificarEscolha = function(el, nomeEscolhido) {
+    const cartaAlvo = ordemCorreta[proximoIndiceAlvo];
 
-    if (nome === alvo.nome) {
-        // ACERTO
+    if (nomeEscolhido === cartaAlvo.nome) {
+        // ACERTOU
         somAcerto.play();
         const slot = document.getElementById(`slot-${proximoIndiceAlvo}`);
         
-        // Mover visualmente
+        // Efeito de sumir da pilha
         el.style.pointerEvents = "none";
         el.style.opacity = "0";
-        el.style.transform = "scale(0.5)";
+        el.style.transform = "scale(0.5) translateY(-50px)";
         
-        // Criar cópia no slot
+        // Aparecer no slot
+        slot.style.border = "3px solid #7ed321";
+        slot.style.background = "white";
         slot.innerHTML = `
-            <div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; animation: popIn 0.3s forwards;">
-                <img src="${JOGO_CONFIG.caminhoImg}${alvo.img}" style="width:70%;">
-                <span style="font-size:9px; font-weight:900; color:var(--primary-blue);">${alvo.nome}</span>
+            <div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                <img src="${JOGO_CONFIG.caminhoImg}${cartaAlvo.img}" style="width:80%; max-height:60%; object-fit:contain;">
+                <span style="font-size:10px; font-weight:900; color:var(--primary-blue);">${cartaAlvo.nome}</span>
             </div>
         `;
-        slot.style.border = "3px solid #7ed321";
-        slot.style.background = "#f2faf0";
 
         proximoIndiceAlvo++;
 
-        // Verificar se terminou a ronda
+        // Verificar se completou a rodada
         if (proximoIndiceAlvo === ordemCorreta.length) {
             acertos++;
             document.getElementById('hits-val').innerText = acertos;
+            document.getElementById('shelf').style.pointerEvents = "none";
+            
             setTimeout(() => {
                 indiceAtual++;
                 proximaRodada();
             }, 1000);
         }
     } else {
-        // ERRO
+        // ERROU
         erros++;
         somErro.play();
         document.getElementById('miss-val').innerText = erros;
-        el.style.animation = "shake 0.4s";
-        setTimeout(() => el.style.animation = "", 400);
+        
+        // Efeito visual de erro
+        el.style.animation = "shake 0.4s ease-in-out";
+        el.style.borderColor = "#ff5e5e";
+        setTimeout(() => {
+            el.style.animation = "";
+            el.style.borderColor = "var(--primary-blue)";
+        }, 400);
     }
-}
+};
 
 function finalizarJogo() {
     clearInterval(intervaloTimer);
     somVitoria.play();
     window.mostrarResultados(acertos, document.getElementById('timer-val').innerText);
 }
-
-// Estilos extras para animação
-const style = document.createElement('style');
-style.innerHTML = `
-    @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
-`;
-document.head.appendChild(style);
