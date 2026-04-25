@@ -9,6 +9,8 @@ let grid = [];
 let gridCols, gridRows;
 let selectedCells = [];
 let isSelecting = false;
+let palavrasDestaRonda = [];
+let palavrasEncontradas = [];
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
@@ -16,23 +18,36 @@ const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
 window.startLogic = function() { selecionarCategoria('animais'); };
 
-// ANIMAÇÃO DE INTRODUÇÃO
+// ANIMAÇÃO DE INTRODUÇÃO (Mostra a palavra toda sendo selecionada)
 window.selecionarCategoria = function(key) {
     const cat = JOGO_CONFIG.categorias[key];
-    itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
+    const totalPalavras = [...cat.itens].sort(() => Math.random() - 0.5);
+    // Agrupar de 3 em 3 para o jogo
+    itensAtuais = [];
+    for (let i = 0; i < totalPalavras.length; i += 3) {
+        if (totalPalavras[i+2]) itensAtuais.push([totalPalavras[i], totalPalavras[i+1], totalPalavras[i+2]]);
+    }
+    
     const containerIntro = document.getElementById('intro-animation-container');
     containerIntro.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
-            <div style="background:white; padding:8px; border-radius:15px; box-shadow:0 10px 20px rgba(0,0,0,0.05);">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px; width:100%;">
+            <div style="background:white; padding:8px; border-radius:15px; box-shadow:0 8px 15px rgba(0,0,0,0.05);">
                 <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:60px;">
             </div>
-            <div style="display:grid; grid-template-columns: repeat(3, 30px); gap:4px; background:#cbd9e6; padding:5px; border-radius:8px;">
-                ${['G','X','O','A','A','Z','T','L','P'].map((l, i) => `
-                    <div style="width:30px; height:30px; background:${[0,3,6].includes(i)?'var(--highlight-green)':'white'}; color:${[0,3,6].includes(i)?'white':'#445'}; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:14px; border-radius:3px;">${l}</div>
+            <div id="intro-grid-anim" style="display:grid; grid-template-columns: repeat(4, 28px); gap:4px; background:#cbd9e6; padding:5px; border-radius:8px; position:relative;">
+                ${['G','A','T','O','X','Y','Z','W','L','M','N','P','R','S','T','U'].map(l => `
+                    <div style="width:28px; height:28px; background:white; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:14px; border-radius:3px;">${l}</div>
                 `).join('')}
+                <div id="intro-line" style="position:absolute; top:18px; left:18px; height:6px; width:0; background:var(--highlight-green); opacity:0.6; border-radius:10px; transition: width 2s ease-in-out; pointer-events:none;"></div>
             </div>
-            <p style="font-weight:900; color:var(--primary-blue);">ENCONTRA A PALAVRA!</p>
-        </div>`;
+            <p style="font-weight:900; color:var(--primary-blue); font-size:14px;">ENCONTRA AS 3 PALAVRAS!</p>
+        </div>
+    `;
+
+    setTimeout(() => {
+        const line = document.getElementById('intro-line');
+        if(line) line.style.width = "90px";
+    }, 500);
 };
 
 window.initGame = function() { 
@@ -54,42 +69,50 @@ function iniciarTimer() {
 
 function proximaRodada() {
     if (indiceAtual >= itensAtuais.length) { finalizarJogo(); return; }
+    palavrasEncontradas = [];
+    palavrasDestaRonda = itensAtuais[indiceAtual].map(it => it.nome.toUpperCase());
     document.getElementById('round-val').innerText = `${indiceAtual + 1} / ${itensAtuais.length}`;
     montarInterface(itensAtuais[indiceAtual]);
 }
 
-function montarInterface(item) {
+function montarInterface(itens) {
     const container = document.getElementById('game-main-content');
-    const isMobile = window.innerWidth < 768;
-    const palavra = item.nome.toUpperCase();
+    const isMobile = window.innerWidth < 1024;
+    
+    // Dimensões base
+    gridCols = isMobile ? 7 : 10;
+    gridRows = isMobile ? 10 : 7;
 
-    // Dimensões solicitadas
-    gridCols = isMobile ? 7 : 9;
-    gridRows = isMobile ? 9 : 7;
+    // Ajuste se alguma palavra for maior que a grelha
+    const maxL = Math.max(...palavrasDestaRonda.map(p => p.length));
+    if (maxL > gridCols) gridCols = maxL + 1;
+    if (maxL > gridRows && !isMobile) gridRows = maxL;
 
-    // Ajuste se a palavra for maior que os limites
-    if (palavra.length > gridCols && isMobile) gridCols = palavra.length;
-    if (palavra.length > gridRows && !isMobile) gridRows = palavra.length;
-
-    generateGrid(palavra, isMobile);
+    generateGrid(palavrasDestaRonda, isMobile);
 
     container.style.flexDirection = isMobile ? "column" : "row";
-    container.style.padding = isMobile ? "10px 5px" : "20px";
-    container.style.gap = "15px";
+    container.style.alignItems = "center";
+    container.style.padding = "10px";
+    container.style.gap = "10px";
 
     container.innerHTML = `
-        <div id="image-area" style="
-            flex: ${isMobile ? '0' : '1'}; 
-            background:white; padding:15px; border-radius:25px; 
-            box-shadow:0 8px 20px rgba(0,0,0,0.05); 
-            display:flex; align-items:center; justify-content:center;
-            min-width: ${isMobile ? 'auto' : '200px'};
+        <div id="side-images" style="
+            display: flex; 
+            flex-direction: ${isMobile ? 'row' : 'column'}; 
+            gap: 10px; 
+            justify-content: center;
+            width: ${isMobile ? '100%' : '180px'};
         ">
-            <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-height:${isMobile ? '80px' : '250px'}; max-width:${isMobile ? '100px' : '100%'}; object-fit:contain;">
+            ${itens.map((item, i) => `
+                <div id="img-card-${i}" style="background:white; padding:8px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.05); display:flex; align-items:center; justify-content:center; position:relative; border: 3px solid transparent; transition:0.3s;">
+                    <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:${isMobile ? '50px' : '90px'}; width:auto; object-fit:contain;">
+                    <div class="check-mark" style="display:none; position:absolute; color:#7ed321; font-size:24px; font-weight:900;">✓</div>
+                </div>
+            `).join('')}
         </div>
 
         <div id="sopa-grid" style="
-            flex: ${isMobile ? '1' : '3'};
+            flex: 1;
             display: grid; 
             grid-template-columns: repeat(${gridCols}, 1fr); 
             gap: 4px; 
@@ -99,62 +122,53 @@ function montarInterface(item) {
             user-select: none; 
             touch-action: none;
             width: 100%;
-            height: 100%;
-            max-height: ${isMobile ? '65vh' : '90vh'};
+            max-width: ${isMobile ? '400px' : '700px'};
+            max-height: ${isMobile ? '60vh' : '90%'};
             aspect-ratio: ${gridCols}/${gridRows};
         ">
             ${grid.flat().map((char, idx) => `
-                <div class="grid-cell" 
-                     data-idx="${idx}" 
-                     style="
-                        background: white; 
-                        border-radius: 6px; 
-                        display: flex; 
-                        align-items: center; 
-                        justify-content: center; 
-                        font-weight: 900; 
-                        font-size: ${isMobile ? 'min(6vw, 24px)' : 'min(3vw, 40px)'}; 
-                        color: #3d4a59; 
-                        cursor: pointer;
-                        box-shadow: inset 0 -2px 0 rgba(0,0,0,0.05);
-                        transition: 0.1s;
-                     ">
-                    ${char}
-                </div>
+                <div class="grid-cell" data-idx="${idx}" style="
+                    background: white; border-radius: 5px; display: flex; 
+                    align-items: center; justify-content: center; font-weight: 900; 
+                    font-size: ${isMobile ? 'min(5vw, 18px)' : 'min(2.2vw, 32px)'}; 
+                    color: #3d4a59; cursor: pointer; transition: 0.1s;
+                ">${char}</div>
             `).join('')}
         </div>
     `;
 
-    setupInteractions(palavra);
+    setupInteractions();
 }
 
-function generateGrid(palavra, isMobile) {
+function generateGrid(palavras, isMobile) {
     grid = Array(gridRows).fill().map(() => Array(gridCols).fill(''));
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     
-    // Lógica para forçar vertical no mobile se a palavra for grande
-    let direction; // 0 H, 1 V
-    if (isMobile && palavra.length > 5) {
-        direction = 1; // Força vertical para caber na largura de 7 colunas
-    } else {
-        const canH = palavra.length <= gridCols;
-        const canV = palavra.length <= gridRows;
-        if (canH && canV) direction = Math.random() > 0.5 ? 0 : 1;
-        else direction = canH ? 0 : 1;
-    }
+    palavras.forEach(palavra => {
+        let placed = false;
+        let attempts = 0;
+        while (!placed && attempts < 100) {
+            const direction = Math.random() > 0.5 ? 0 : 1; // 0 H, 1 V
+            const row = Math.floor(Math.random() * (gridRows - (direction === 1 ? palavra.length : 0)));
+            const col = Math.floor(Math.random() * (gridCols - (direction === 0 ? palavra.length : 0)));
+            
+            let canPlace = true;
+            for (let i = 0; i < palavra.length; i++) {
+                const r = row + (direction === 1 ? i : 0);
+                const c = col + (direction === 0 ? i : 0);
+                if (grid[r][c] !== '' && grid[r][c] !== palavra[i]) { canPlace = false; break; }
+            }
 
-    let row, col;
-    if (direction === 0) { 
-        row = Math.floor(Math.random() * gridRows);
-        col = Math.floor(Math.random() * (gridCols - palavra.length + 1));
-        for (let i = 0; i < palavra.length; i++) grid[row][col + i] = palavra[i];
-    } else { 
-        row = Math.floor(Math.random() * (gridRows - palavra.length + 1));
-        col = Math.floor(Math.random() * gridCols);
-        for (let i = 0; i < palavra.length; i++) grid[row + i][col] = palavra[i];
-    }
+            if (canPlace) {
+                for (let i = 0; i < palavra.length; i++) {
+                    grid[row + (direction === 1 ? i : 0)][col + (direction === 0 ? i : 0)] = palavra[i];
+                }
+                placed = true;
+            }
+            attempts++;
+        }
+    });
 
-    // Preencher espaços vazios com letras aleatórias
     for (let r = 0; r < gridRows; r++) {
         for (let c = 0; c < gridCols; c++) {
             if (grid[r][c] === '') grid[r][c] = chars[Math.floor(Math.random() * chars.length)];
@@ -162,32 +176,25 @@ function generateGrid(palavra, isMobile) {
     }
 }
 
-function setupInteractions(palavraCorreta) {
+function setupInteractions() {
     const cells = document.querySelectorAll('.grid-cell');
-    
     const startSelect = (e) => {
         isSelecting = true;
         selectedCells = [];
-        clearHighlight();
-        handleCell(e.target || e.touches[0].target);
+        const target = e.target || e.touches[0].target;
+        if(target.classList.contains('grid-cell')) handleCell(target);
     };
 
     const moveSelect = (e) => {
         if (!isSelecting) return;
-        let target;
-        if (e.type.includes('touch')) {
-            const touch = e.touches[0];
-            target = document.elementFromPoint(touch.clientX, touch.clientY);
-        } else {
-            target = e.target;
-        }
+        let target = e.type.includes('touch') ? document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY) : e.target;
         if (target && target.classList.contains('grid-cell')) handleCell(target);
     };
 
     const endSelect = () => {
         if (!isSelecting) return;
         isSelecting = false;
-        checkWord(palavraCorreta);
+        checkWord();
     };
 
     cells.forEach(cell => {
@@ -207,48 +214,50 @@ function handleCell(cell) {
         selectedCells.push(idx);
         cell.style.background = "var(--primary-blue)";
         cell.style.color = "white";
-        cell.style.transform = "scale(0.95)";
     }
 }
 
-function clearHighlight() {
-    document.querySelectorAll('.grid-cell').forEach(c => {
-        c.style.background = "white";
-        c.style.color = "#3d4a59";
-        c.style.transform = "scale(1)";
-    });
-}
-
-function checkWord(correta) {
-    const palavraSelecionada = selectedCells.map(idx => {
+function checkWord() {
+    const selectedText = selectedCells.map(idx => {
         const r = Math.floor(idx / gridCols);
         const c = idx % gridCols;
         return grid[r][c];
     }).join('');
+    const reversed = selectedText.split('').reverse().join('');
 
-    const invertida = palavraSelecionada.split('').reverse().join('');
+    let foundIdx = palavrasDestaRonda.findIndex(p => (p === selectedText || p === reversed) && !palavrasEncontradas.includes(p));
 
-    if (palavraSelecionada === correta || invertida === correta) {
-        acertos++;
+    if (foundIdx !== -1) {
+        const palavra = palavrasDestaRonda[foundIdx];
+        palavrasEncontradas.push(palavra);
         somAcerto.play();
+        
+        // Marcar imagem como concluída
+        const imgCard = document.getElementById(`img-card-${foundIdx}`);
+        imgCard.style.borderColor = "#7ed321";
+        imgCard.querySelector('.check-mark').style.display = "block";
+
         selectedCells.forEach(idx => {
             const cell = document.querySelector(`[data-idx="${idx}"]`);
             cell.style.background = "#7ed321";
-            cell.style.color = "white";
+            cell.classList.add('permanente');
         });
-        document.getElementById('hits-val').innerText = acertos;
-        setTimeout(() => {
-            indiceAtual++;
-            proximaRodada();
-        }, 800);
-    } else {
-        if (palavraSelecionada.length >= correta.length) {
-            erros++;
-            somErro.play();
-            document.getElementById('miss-val').innerText = erros;
+
+        if (palavrasEncontradas.length === 3) {
+            acertos += 3;
+            document.getElementById('hits-val').innerText = acertos;
+            setTimeout(() => { indiceAtual++; proximaRodada(); }, 1000);
         }
-        clearHighlight();
+    } else {
+        selectedCells.forEach(idx => {
+            const cell = document.querySelector(`[data-idx="${idx}"]`);
+            if(!cell.classList.contains('permanente')) {
+                cell.style.background = "white";
+                cell.style.color = "#3d4a59";
+            }
+        });
     }
+    selectedCells = [];
 }
 
 function finalizarJogo() {
