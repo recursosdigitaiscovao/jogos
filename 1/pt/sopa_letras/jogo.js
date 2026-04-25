@@ -16,33 +16,23 @@ const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
 window.startLogic = function() { selecionarCategoria('animais'); };
 
-// ANIMAÇÃO DE INTRODUÇÃO (Simula o jogo real)
+// ANIMAÇÃO DE INTRODUÇÃO
 window.selecionarCategoria = function(key) {
     const cat = JOGO_CONFIG.categorias[key];
     itensAtuais = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
     const containerIntro = document.getElementById('intro-animation-container');
-    
     containerIntro.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:15px; width:100%;">
-            <div style="background:white; padding:10px; border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.05);">
-                <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:70px;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+            <div style="background:white; padding:8px; border-radius:15px; box-shadow:0 10px 20px rgba(0,0,0,0.05);">
+                <img src="${JOGO_CONFIG.caminhoImg}${cat.exemploImg}" style="height:60px;">
             </div>
-            <div id="mini-grid-intro" style="display:grid; grid-template-columns: repeat(4, 30px); gap:4px; background:#cbd9e6; padding:6px; border-radius:10px; position:relative;">
-                ${['G','X','O','L','A','A','Z','U','T','V','P','M','O','R','S','I'].map((l, i) => `
-                    <div class="mini-cell" style="width:30px; height:30px; background:white; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:14px; border-radius:4px;">${l}</div>
+            <div style="display:grid; grid-template-columns: repeat(3, 30px); gap:4px; background:#cbd9e6; padding:5px; border-radius:8px;">
+                ${['G','X','O','A','A','Z','T','L','P'].map((l, i) => `
+                    <div style="width:30px; height:30px; background:${[0,3,6].includes(i)?'var(--highlight-green)':'white'}; color:${[0,3,6].includes(i)?'white':'#445'}; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:14px; border-radius:3px;">${l}</div>
                 `).join('')}
-                <div id="intro-line" style="position:absolute; background:var(--highlight-green); height:6px; border-radius:10px; opacity:0.6; transform-origin: left center; transition: 0.5s; pointer-events:none;"></div>
             </div>
-            <p style="font-weight:900; color:var(--primary-blue); font-size:15px;">ENCONTRA A PALAVRA!</p>
-        </div>
-    `;
-
-    // Animação da linha na intro (simulando encontrar "GATO")
-    const line = document.getElementById('intro-line');
-    if(line) {
-        line.style.width = "0px"; line.style.top = "20px"; line.style.left = "20px"; line.style.transform = "rotate(90deg)";
-        setTimeout(() => { line.style.width = "100px"; }, 500);
-    }
+            <p style="font-weight:900; color:var(--primary-blue);">ENCONTRA A PALAVRA!</p>
+        </div>`;
 };
 
 window.initGame = function() { 
@@ -70,70 +60,64 @@ function proximaRodada() {
 
 function montarInterface(item) {
     const container = document.getElementById('game-main-content');
-    const isLargeScreen = window.innerWidth > 1000;
-    const isMobile = window.innerWidth < 650;
+    const isMobile = window.innerWidth < 768;
     const palavra = item.nome.toUpperCase();
 
-    // Dimensões baseadas no dispositivo
-    gridCols = isLargeScreen ? 9 : 7;
-    gridRows = isLargeScreen ? 7 : 9;
+    // Dimensões solicitadas
+    gridCols = isMobile ? 7 : 9;
+    gridRows = isMobile ? 9 : 7;
 
-    // Ajuste se a palavra for maior que a grelha padrão
-    if (palavra.length > gridCols && palavra.length > gridRows) {
-        gridCols = palavra.length; gridRows = palavra.length;
-    } else if (palavra.length > gridCols) {
-        gridCols = palavra.length;
-    } else if (palavra.length > gridRows) {
-        gridRows = palavra.length;
-    }
+    // Ajuste se a palavra for maior que os limites
+    if (palavra.length > gridCols && isMobile) gridCols = palavra.length;
+    if (palavra.length > gridRows && !isMobile) gridRows = palavra.length;
 
-    generateGrid(palavra);
+    generateGrid(palavra, isMobile);
 
-    // Estilos de Responsividade
-    container.style.flexDirection = isLargeScreen ? "row" : "column";
-    container.style.alignItems = "center";
-    container.style.justifyContent = "center";
-    container.style.gap = isLargeScreen ? "40px" : "15px";
-    container.style.padding = "20px";
-
-    // Tamanho das células para ecrãs grandes
-    const cellSize = isLargeScreen ? "min(75px, 10vh)" : "min(45px, 8vw)";
+    container.style.flexDirection = isMobile ? "column" : "row";
+    container.style.padding = isMobile ? "10px 5px" : "20px";
+    container.style.gap = "15px";
 
     container.innerHTML = `
-        <!-- Área da Imagem -->
-        <div id="image-area" style="background:white; padding:20px; border-radius:30px; box-shadow:0 12px 30px rgba(0,0,0,0.08); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-            <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="height:${isLargeScreen ? '300px' : '120px'}; width:${isLargeScreen ? '300px' : '120px'}; object-fit:contain;">
+        <div id="image-area" style="
+            flex: ${isMobile ? '0' : '1'}; 
+            background:white; padding:15px; border-radius:25px; 
+            box-shadow:0 8px 20px rgba(0,0,0,0.05); 
+            display:flex; align-items:center; justify-content:center;
+            min-width: ${isMobile ? 'auto' : '200px'};
+        ">
+            <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="max-height:${isMobile ? '80px' : '250px'}; max-width:${isMobile ? '100px' : '100%'}; object-fit:contain;">
         </div>
 
-        <!-- Área da Grelha -->
         <div id="sopa-grid" style="
+            flex: ${isMobile ? '1' : '3'};
             display: grid; 
             grid-template-columns: repeat(${gridCols}, 1fr); 
-            gap: 6px; 
+            gap: 4px; 
             background: #cbd9e6; 
-            padding: 10px; 
-            border-radius: 20px; 
+            padding: 6px; 
+            border-radius: 12px; 
             user-select: none; 
             touch-action: none;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 100%;
+            height: 100%;
+            max-height: ${isMobile ? '65vh' : '90vh'};
+            aspect-ratio: ${gridCols}/${gridRows};
         ">
             ${grid.flat().map((char, idx) => `
                 <div class="grid-cell" 
                      data-idx="${idx}" 
                      style="
-                        width: ${cellSize}; 
-                        height: ${cellSize}; 
                         background: white; 
-                        border-radius: 12px; 
+                        border-radius: 6px; 
                         display: flex; 
                         align-items: center; 
                         justify-content: center; 
                         font-weight: 900; 
-                        font-size: calc(${cellSize} * 0.5); 
+                        font-size: ${isMobile ? 'min(6vw, 24px)' : 'min(3vw, 40px)'}; 
                         color: #3d4a59; 
                         cursor: pointer;
-                        transition: background 0.1s;
-                        box-shadow: 0 3px 0 #e0e7ee;
+                        box-shadow: inset 0 -2px 0 rgba(0,0,0,0.05);
+                        transition: 0.1s;
                      ">
                     ${char}
                 </div>
@@ -144,14 +128,20 @@ function montarInterface(item) {
     setupInteractions(palavra);
 }
 
-function generateGrid(palavra) {
+function generateGrid(palavra, isMobile) {
     grid = Array(gridRows).fill().map(() => Array(gridCols).fill(''));
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     
-    // Decidir direção aleatória
-    const canHorizontal = palavra.length <= gridCols;
-    const canVertical = palavra.length <= gridRows;
-    let direction = (canHorizontal && canVertical) ? (Math.random() > 0.5 ? 0 : 1) : (canHorizontal ? 0 : 1);
+    // Lógica para forçar vertical no mobile se a palavra for grande
+    let direction; // 0 H, 1 V
+    if (isMobile && palavra.length > 5) {
+        direction = 1; // Força vertical para caber na largura de 7 colunas
+    } else {
+        const canH = palavra.length <= gridCols;
+        const canV = palavra.length <= gridRows;
+        if (canH && canV) direction = Math.random() > 0.5 ? 0 : 1;
+        else direction = canH ? 0 : 1;
+    }
 
     let row, col;
     if (direction === 0) { 
@@ -164,6 +154,7 @@ function generateGrid(palavra) {
         for (let i = 0; i < palavra.length; i++) grid[row + i][col] = palavra[i];
     }
 
+    // Preencher espaços vazios com letras aleatórias
     for (let r = 0; r < gridRows; r++) {
         for (let c = 0; c < gridCols; c++) {
             if (grid[r][c] === '') grid[r][c] = chars[Math.floor(Math.random() * chars.length)];
@@ -178,13 +169,13 @@ function setupInteractions(palavraCorreta) {
         isSelecting = true;
         selectedCells = [];
         clearHighlight();
-        handleCell(e.target || e.currentTarget);
+        handleCell(e.target || e.touches[0].target);
     };
 
     const moveSelect = (e) => {
         if (!isSelecting) return;
         let target;
-        if (e.type === 'touchmove') {
+        if (e.type.includes('touch')) {
             const touch = e.touches[0];
             target = document.elementFromPoint(touch.clientX, touch.clientY);
         } else {
@@ -212,12 +203,11 @@ function setupInteractions(palavraCorreta) {
 
 function handleCell(cell) {
     const idx = cell.getAttribute('data-idx');
-    if (idx && !selectedCells.includes(idx)) {
+    if (!selectedCells.includes(idx)) {
         selectedCells.push(idx);
         cell.style.background = "var(--primary-blue)";
         cell.style.color = "white";
-        cell.style.boxShadow = "none";
-        cell.style.transform = "translateY(2px)";
+        cell.style.transform = "scale(0.95)";
     }
 }
 
@@ -225,8 +215,7 @@ function clearHighlight() {
     document.querySelectorAll('.grid-cell').forEach(c => {
         c.style.background = "white";
         c.style.color = "#3d4a59";
-        c.style.boxShadow = "0 3px 0 #e0e7ee";
-        c.style.transform = "none";
+        c.style.transform = "scale(1)";
     });
 }
 
@@ -237,7 +226,9 @@ function checkWord(correta) {
         return grid[r][c];
     }).join('');
 
-    if (palavraSelecionada === correta || palavraSelecionada === correta.split('').reverse().join('')) {
+    const invertida = palavraSelecionada.split('').reverse().join('');
+
+    if (palavraSelecionada === correta || invertida === correta) {
         acertos++;
         somAcerto.play();
         selectedCells.forEach(idx => {
