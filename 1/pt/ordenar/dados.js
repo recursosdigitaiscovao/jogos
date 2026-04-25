@@ -1,96 +1,58 @@
+const CONFIG_MESTRE = {
+    ano: "ano1",        
+    area: "portugues",  
+    nomeJogo: "ORDEM ALFABÉTICA"
+};
+
+const BIBLIOTECA_TEMAS = {
+    "portugues": { corPagina: "#e9f0f8", corPrimaria: "#5ba4e5", corEscura: "#3d7db8", corTexto: "#5d7082", voltarMobile: "voltar_az.png" },
+    "matematica": { corPagina: "#e8f9f4", corPrimaria: "#45cfa8", corEscura: "#2BA886", corTexto: "#45cfa8", voltarMobile: "voltar_vr.png" },
+    "estudo": { corPagina: "#EAE2E5", corPrimaria: "#994D4D", corEscura: "#6C3737", corTexto: "#994D4D", voltarMobile: "voltar_cs.png" },
+    "pre": { corPagina: "#FFF5F7", corPrimaria: "#E691A7", corEscura: "#D54267", corTexto: "#E691A7", voltarMobile: "voltar_rs.png" }
+};
+
+const BIBLIOTECA_CONTEUDO = {
+    "pre": { "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar", intro: "Coloca as palavras por ordem alfabética!", rodape: "&copy; Pequenos Curiosos" } },
+    "ano1": {
+        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", intro: "Organiza os cartões seguindo a ordem do alfabeto!", rodape: "&copy; Pequenos Leitores" }
+    }
+};
+
 const JOGO_CONFIG = {
-    nomeJogo: "ORDEM ALFABÉTICA",
-    linkVoltar: "../", 
+    linkVoltar: "../",
     textoVoltar: "VOLTAR",
-    caminhoImg: "../../../img/",
-    caminhoIcons: "../../../icons/",
-    
-    pontuacao: {
-        acertoNivel1: 100,
-        acertoNivel2: 150,
-        erro: 20
-    },
-
-    textos: {
-        tituloPagina: "Pequenos Leitores - Ordem Alfabética",
-        tituloLinha1: "PEQUENOS",
-        tituloLinha2: "LEITORES",
-        subtitulo: "Português | 1º Ano",
-        rodape: "&copy; Pequenos Leitores - Recursos Educativos",
-        instrucao: "Ordena os cartões por ordem alfabética!"
-    },
-
-    relatorios: [
-        { min: 1200, titulo: "BRILHANTE!", img: "taca_ouro.png" },
-        { min: 800, titulo: "MUITO BEM!", img: "taca_prata.png" },
-        { min: 0, titulo: "BOM TRABALHO!", img: "taca_bronze.png" }
-    ],
-
+    caminhoImg: "../../../img/",    
+    caminhoIcons: "../../../icons/", 
     sons: {
         acerto: "https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3",
         erro: "https://cdn.pixabay.com/audio/2022/03/10/audio_c330c67761.mp3",
         vitoria: "https://cdn.pixabay.com/audio/2024/02/07/audio_293963428f.mp3"
     },
-
     iconesMenu: { home: "home.png", pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png" },
     links: { home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4" },
-
     categorias: {
-        cat1: {
-            nome: "4 Letras Consecutivas", 
-            imgCapa: "ord01.png",
-            rondas: [
-                { itens: ["A", "B", "C", "D"] }, { itens: ["E", "F", "G", "H"] },
-                { itens: ["I", "J", "K", "L"] }, { itens: ["M", "N", "O", "P"] },
-                { itens: ["Q", "R", "S", "T"] }, { itens: ["U", "V", "W", "X"] },
-                { itens: ["C", "D", "E", "F"] }, { itens: ["O", "P", "Q", "R"] },
-                { itens: ["G", "H", "I", "J"] }, { itens: ["K", "L", "M", "N"] },
-                { itens: ["R", "S", "T", "U"] }, { itens: ["B", "C", "D", "E"] },
-                { itens: ["P", "Q", "R", "S"] }, { itens: ["F", "G", "H", "I"] },
-                { itens: ["L", "M", "N", "O"] }
+        animais: {
+            nome: "Animais", exemplo: "A-B-C", exemploImg: "animaisdomesticos/gato.png", imgCapa: "animaisselvagens/leao.png",
+            itens: [
+                { nome: "ABELHA", img: "animaisselvagens/abelha.png" }, { nome: "ÁGUIA", img: "animaisselvagens/aguia.png" }, { nome: "ARANHA", img: "animaisselvagens/aranha.png" }, { nome: "BALEIA", img: "animaisselvagens/baleia.png" }, { nome: "BURRO", img: "animaisdomesticos/burro.png" }, { nome: "CABRA", img: "animaisdomesticos/cabra.png" }, { nome: "CÃO", img: "animaisdomesticos/cao.png" }, { nome: "CAVALO", img: "animaisdomesticos/cavalo.png" }, { nome: "COELHO", img: "animaisdomesticos/coelho.png" }, { nome: "FOCA", img: "animaisselvagens/foca.png" }, { nome: "GATO", img: "animaisdomesticos/gato.png" }, { nome: "LEÃO", img: "animaisselvagens/leao.png" }, { nome: "MACACO", img: "animaisselvagens/macaco.png" }, { nome: "PANDA", img: "animaisselvagens/panda.png" }, { nome: "TIGRE", img: "animaisselvagens/tigre.png" }, { nome: "ZEBRA", img: "animaisselvagens/zebra.png" }
             ]
         },
-        cat2: {
-            nome: "4 Letras Alternadas", 
-            imgCapa: "ord02.png",
-            rondas: [
-                { itens: ["A", "X", "M", "E"] }, { itens: ["B", "L", "O", "V"] },
-                { itens: ["C", "G", "Z", "Q"] }, { itens: ["D", "H", "K", "W"] },
-                { itens: ["P", "Y", "U", "S"] }, { itens: ["F", "R", "T", "J"] },
-                { itens: ["N", "I", "K", "A"] }, { itens: ["E", "Z", "W", "M"] },
-                { itens: ["H", "C", "L", "P"] }, { itens: ["V", "D", "R", "G"] },
-                { itens: ["S", "B", "F", "Y"] }, { itens: ["T", "A", "J", "L"] },
-                { itens: ["U", "C", "I", "P"] }, { itens: ["W", "G", "K", "O"] },
-                { itens: ["R", "D", "E", "Z"] }
+        frutos: {
+            nome: "Frutos", exemplo: "A-B-C", exemploImg: "frutas/banana.png", imgCapa: "frutas/maca.png",
+            itens: [
+                { nome: "AMORA", img: "frutas/amora.png" }, { nome: "ANANÁS", img: "frutas/ananas.png" }, { nome: "BANANA", img: "frutas/banana.png" }, { nome: "CEREJA", img: "frutas/cereja.png" }, { nome: "FIGO", img: "frutas/figo.png" }, { nome: "KIWI", img: "frutas/kiwi.png" }, { nome: "LARANJA", img: "frutas/laranja.png" }, { nome: "LIMÃO", img: "frutas/limao.png" }, { nome: "MAÇÃ", img: "frutas/maca.png" }, { nome: "MORANGO", img: "frutas/morango.png" }, { nome: "PAPAIA", img: "frutas/papaia.png" }, { nome: "PERA", img: "frutas/pera.png" }, { nome: "ROMÃ", img: "frutas/roma.png" }, { nome: "UVAS", img: "frutas/uvas.png" }
             ]
         },
-        cat3: {
-            nome: "Mesma Letra Inicial", 
-            imgCapa: "ord03.png",
-            rondas: [
-                { itens: ["AMORA", "ANANÁS", "ANEL", "AVENTAL"] }, { itens: ["BOLA", "BOLO", "BONECA", "BOTA"] },
-                { itens: ["CASA", "CAVALO", "COELHO", "COPO"] }, { itens: ["DADO", "DEDO", "DENTE", "DOCE"] },
-                { itens: ["GATO", "GAVETA", "GELO", "GIRAFA"] }, { itens: ["MALA", "MAPA", "MAÇÃ", "MEIA"] },
-                { itens: ["PATO", "PENA", "PIPA", "POVO"] }, { itens: ["RATO", "REDE", "RISO", "RODA"] },
-                { itens: ["SELO", "SINO", "SOFÁ", "SUCO"] }, { itens: ["TETO", "TINA", "TOCA", "TUDO"] },
-                { itens: ["FACA", "FADA", "FALA", "FAMA"] }, { itens: ["LADO", "LAMA", "LATA", "LAVA"] },
-                { itens: ["MOLA", "MONTE", "MORANGO", "MOSCA"] }, { itens: ["BALEIA", "BALÃO", "BANANA", "BARCO"] },
-                { itens: ["COLA", "COPO", "CORAÇÃO", "COUVES"] }
-            ]
-        },
-        cat4: {
-            nome: "Palavras Mistas", 
-            imgCapa: "ord04.png",
-            rondas: [
-                { itens: ["CÃO", "GATO", "PATO", "RATO"] }, { itens: ["SOL", "LUA", "MAR", "CÉU"] },
-                { itens: ["UM", "DOIS", "TRÊS", "QUATRO"] }, { itens: ["MÃE", "PAI", "AVÓ", "AVÔ"] },
-                { itens: ["AZUL", "ROSA", "VERDE", "VERMELHO"] }, { itens: ["BOLA", "DADO", "PEÃO", "URSO"] },
-                { itens: ["MAÇÃ", "PERA", "UVA", "FIGO"] }, { itens: ["FARO", "PORTO", "EVORA", "BEJA"] },
-                { itens: ["LÁPIS", "COLA", "AFIA", "LIVRO"] }, { itens: ["BOLO", "SUMO", "PÃO", "LEITE"] },
-                { itens: ["ARROZ", "MASSA", "PEIXE", "SOPA"] }, { itens: ["CAMA", "MESA", "PORTA", "SOFÁ"] },
-                { itens: ["BOCA", "MÃO", "OLHO", "PÉ"] }, { itens: ["BONÉ", "CALÇAS", "MEIAS", "SAPATOS"] },
-                { itens: ["CHUVA", "NUVEM", "SOL", "VENTO"] }
+        objetos: {
+            nome: "Objetos", exemplo: "A-B-C", exemploImg: "objetos/bola.png", imgCapa: "objetos/bola.png",
+            itens: [
+                { nome: "ANEL", img: "objetos/anel.png" }, { nome: "BALDE", img: "objetos/balde.png" }, { nome: "BOLA", img: "objetos/bola.png" }, { nome: "BONECA", img: "objetos/boneca.png" }, { nome: "CARRINHO", img: "objetos/carrinho.png" }, { nome: "CESTO", img: "objetos/cesto.png" }, { nome: "COPO", img: "objetos/copo.png" }, { nome: "DADO", img: "objetos/dado.png" }, { nome: "ESCOVA", img: "objetos/escova.png" }, { nome: "GARRAFA", img: "objetos/garrafa.png" }, { nome: "ÓCULOS", img: "objetos/oculos.png" }, { nome: "VELA", img: "objetos/vela.png" }
             ]
         }
-    }
+    },
+    relatorios: [
+        { min: 90, max: 100, titulo: "És um craque do alfabeto!", img: "taca_1.png" },
+        { min: 70, max: 89, titulo: "Muito bem!", img: "taca_2.png" },
+        { min: 0, max: 69, titulo: "Continua a praticar!", img: "taca_4.png" }
+    ]
 };
