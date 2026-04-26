@@ -2,7 +2,7 @@ const CONFIG_MESTRE = {
     ano: "ano1",        
     area: "portugues",  
     nivel: "nivel1",
-    nomeJogo: "ORDEM ALFABÉTICA"
+    nomeJogo: "MEMÓRIA"
 };
 
 const BIBLIOTECA_TEMAS = {
