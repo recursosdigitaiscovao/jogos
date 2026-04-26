@@ -30,7 +30,7 @@ const BIBLIOTECA_TEMAS = {
 
 const BIBLIOTECA_CONTEUDO = {
     "pre": { 
-        "pre": { t1: "SOMBRAS", t2: "MÁGICAS", sub: "Perceção Visual | Pré-Escolar", intro: "Consegues encontrar a sombra correta? Arrasta as 6 imagens para os seus pares!" } 
+        "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Pré-Escolar", intro: "Consegues encontrar a sombra correta? Arrasta as 6 imagens para os seus pares!" } 
     },
     "ano1": {
         "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", intro: "Treina a tua atenção com as sombras das palavras!" },
