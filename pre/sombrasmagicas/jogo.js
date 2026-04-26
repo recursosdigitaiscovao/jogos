@@ -21,7 +21,7 @@ gameStyle.innerHTML = `
     .acertou .img-sombra { filter: none !important; opacity: 1 !important; transform: scale(1.1); transition: 0.4s; }
     .target-hover { border-color: var(--primary-blue) !important; transform: scale(1.05); }
 
-    .tutorial-box { position: relative; width: 200px; height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; margin-top: 15px; }
+    .tutorial-box { position: relative; width: 220px; height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
     .hand-icon { position: absolute; font-size: 35px; color: #ffcc00; z-index: 100; animation: demoMove 3s infinite ease-in-out; pointer-events: none; }
     .demo-piece { animation: pieceMove 3s infinite ease-in-out; }
     .demo-shadow { animation: shadowMatch 3s infinite ease-in-out; }
@@ -38,12 +38,9 @@ function selecionarCategoria(key) { categoriaAtual = key; rondaAtual = 1; acerto
 function renderIntroAnimation() {
     const container = document.getElementById('intro-animation-container');
     const cat = JOGO_CONFIG.categorias[categoriaAtual];
-    
     container.innerHTML = `
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 90%;">
-            <p style="font-weight: 800; color: var(--text-grey); text-align: center; font-size: 1.1rem; line-height: 1.3;">
-                ${cat.intro || ""}
-            </p>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <p style="font-weight: 800; color: var(--text-grey); text-align: center; max-width: 250px;">${cat.intro || ""}</p>
             <div class="tutorial-box">
                 <i class="fas fa-hand-pointer hand-icon"></i>
                 <div class="slot-sombra demo-shadow" style="width:75px; height:75px;"><img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" class="img-sombra"></div>
