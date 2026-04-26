@@ -1,4 +1,4 @@
-let categoriaAtual = "consecutivas";
+let categoriaAtual = "animais";
 let nivelAtual = 1;
 let cartasViradas = [];
 let paresEncontrados = 0;
@@ -28,7 +28,7 @@ function renderMenuRD() {
         const div = document.createElement('div');
         div.className = `rd-item cat-${key}`;
         div.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${c.imgCapa}"><span>${c.nome}</span>`;
-        div.onclick = () => selecionarCategoria(key);
+        div.onclick = () => { selecionarCategoria(key); closeMenus(); goToIntro(); };
         boxTemas.appendChild(div);
     });
 
@@ -37,8 +37,8 @@ function renderMenuRD() {
         const n = JOGO_CONFIG.niveis[num];
         const div = document.createElement('div');
         div.className = `rd-item niv-${num}`;
-        div.innerHTML = `<span>${n.nome}</span><small>${n.cartas} Cartas</small>`;
-        div.onclick = () => selecionarNivel(num);
+        div.innerHTML = `<span>${n.nome}</span><small style="font-size:9px">${n.cartas} Cartas</small>`;
+        div.onclick = () => { selecionarNivel(num); closeMenus(); goToIntro(); };
         boxNiveis.appendChild(div);
     });
 }
@@ -46,14 +46,15 @@ function renderMenuRD() {
 function selecionarCategoria(key) {
     categoriaAtual = key;
     document.querySelectorAll('#lista-temas .rd-item').forEach(el => el.classList.remove('selected'));
-    document.querySelector(`.cat-${key}`).classList.add('selected');
-    document.getElementById('img-capa-intro').src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.categorias[key].imgCapa;
+    const target = document.querySelector(`.cat-${key}`);
+    if(target) target.classList.add('selected');
 }
 
 function selecionarNivel(num) {
     nivelAtual = num;
     document.querySelectorAll('#lista-niveis .rd-item').forEach(el => el.classList.remove('selected'));
-    document.querySelector(`.niv-${num}`).classList.add('selected');
+    const target = document.querySelector(`.niv-${num}`);
+    if(target) target.classList.add('selected');
 }
 
 function initGame() {
@@ -72,7 +73,6 @@ function initGame() {
     const configNivel = JOGO_CONFIG.niveis[nivelAtual];
     document.getElementById('round-label').innerText = configNivel.nome;
 
-    // Preparar Cartas
     let itensPool = [...JOGO_CONFIG.categorias[categoriaAtual].itens];
     itensPool.sort(() => Math.random() - 0.5);
     let selecionados = itensPool.slice(0, configNivel.cartas / 2);
@@ -81,8 +81,6 @@ function initGame() {
     const grid = document.createElement('div');
     grid.className = 'memory-grid';
     grid.style.gridTemplateColumns = `repeat(${configNivel.colunas}, 1fr)`;
-    grid.style.width = "100%";
-    grid.style.height = "100%";
 
     deck.forEach(item => {
         const card = document.createElement('div');
@@ -104,7 +102,7 @@ function initGame() {
 }
 
 function virarCarta(card) {
-    if (jogoBloqueado || card.classList.contains('flipped')) return;
+    if (jogoBloqueado || card.classList.contains('flipped') || card.classList.contains('matched')) return;
     card.classList.add('flipped');
     cartasViradas.push(card);
 
@@ -118,6 +116,8 @@ function verificarPar() {
     const [c1, c2] = cartasViradas;
     if (c1.dataset.name === c2.dataset.name) {
         paresEncontrados++;
+        c1.classList.add('matched');
+        c2.classList.add('matched');
         somAcerto.play();
         cartasViradas = [];
         jogoBloqueado = false;
@@ -148,7 +148,7 @@ function finalizarJogo() {
     somVitoria.play();
     setTimeout(() => {
         const perc = (paresEncontrados / (paresEncontrados + erros)) * 100;
-        const feedback = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max) || JOGO_CONFIG.relatorios[2];
+        const feedback = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max) || JOGO_CONFIG.relatorios[0];
         document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + feedback.img;
         document.getElementById('res-tit').innerText = feedback.titulo;
         document.getElementById('res-pts').innerText = erros;
