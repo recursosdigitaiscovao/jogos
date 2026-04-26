@@ -1,3 +1,4 @@
+let itensAtuais = Array(10).fill({}); 
 let indiceAtual = 0; 
 let acertos = 0; 
 let erros = 0;
@@ -15,16 +16,15 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-window.startLogic = function() { selecionarCategoria(CONFIG_MESTRE.area); };
-
-window.selecionarCategoria = function(key) {
-    const cat = JOGO_CONFIG.categorias[key];
+window.startLogic = function() { 
+    // Atualiza a animação de intro com base no tema escolhido
+    const cat = JOGO_CONFIG.categorias[CONFIG_MESTRE.tema_jogo];
     const containerIntro = document.getElementById('intro-animation-container');
     containerIntro.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; gap:20px; width:100%;">
             <div style="perspective: 1000px; display:flex; gap:15px;">
                 <div id="demo-flip" style="width:70px; height:90px; position:relative; transform-style: preserve-3d; transition: transform 1s; animation: autoFlip 3s infinite;">
-                    <div style="position:absolute; width:100%; height:100%; backface-visibility: hidden; background: linear-gradient(135deg, var(--primary-blue), #8dc4ff); border-radius:12px; border:3px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:25px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);"><i class="fas fa-lightbulb"></i></div>
+                    <div style="position:absolute; width:100%; height:100%; backface-visibility: hidden; background: linear-gradient(135deg, var(--primary-blue), #8dc4ff); border-radius:12px; border:3px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:30px;"><i class="fas fa-lightbulb"></i></div>
                     <div style="position:absolute; width:100%; height:100%; backface-visibility: hidden; transform: rotateY(180deg); background: white; border-radius:12px; border:3px solid var(--primary-blue); display:flex; align-items:center; justify-content:center; color:var(--primary-blue); font-size:12px; font-weight:900; text-align:center; padding:5px; text-transform:uppercase;">${cat.exemplo}</div>
                 </div>
             </div>
@@ -37,8 +37,11 @@ window.initGame = function() {
     indiceAtual = 0; acertos = 0; erros = 0; 
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
+    
+    // Pega o número de pares do nível configurado
     const nivelData = JOGO_CONFIG.niveis_disponiveis.find(n => n.id === CONFIG_MESTRE.nivel);
     totalParesNecessarios = nivelData.pares;
+
     iniciarTimer(); 
     proximaRodada(); 
 };
@@ -57,7 +60,7 @@ function proximaRodada() {
     document.getElementById('round-val').innerText = `${indiceAtual + 1} / 10`;
     paresEncontradosNestaRonda = 0;
     
-    const categoria = JOGO_CONFIG.categorias[CONFIG_MESTRE.area];
+    const categoria = JOGO_CONFIG.categorias[CONFIG_MESTRE.tema_jogo];
     const itensSorteados = [...categoria.itens].sort(() => Math.random() - 0.5).slice(0, totalParesNecessarios);
     
     cartasNoGrid = [];
@@ -77,9 +80,9 @@ function montarGrid() {
     
     let cols = 3;
     if (!isLandscape) {
-        if (lvl === "nivel1") cols = 3; // 3x2
-        if (lvl === "nivel2") cols = 3; // 3+3+2
-        if (lvl === "nivel3") cols = 3; // 3x4
+        if (lvl === "nivel1") cols = 3; // 3x2 (6 cartas)
+        if (lvl === "nivel2") cols = 3; // 3+3+2 (8 cartas)
+        if (lvl === "nivel3") cols = 3; // 3x4 (12 cartas)
     } else {
         if (lvl === "nivel1") cols = 3; // 3x2
         if (lvl === "nivel2") cols = 4; // 4x2
@@ -90,11 +93,11 @@ function montarGrid() {
         <div id="memory-board" style="
             display: grid; grid-template-columns: repeat(${cols}, 1fr); 
             gap: 10px; width: 100%; height: 100%; max-width: 600px;
-            padding: 10px; align-content: center; justify-items: center; margin: auto;
+            padding: 5px; align-content: center; justify-items: center; margin: auto;
         ">
             ${cartasNoGrid.map((carta, i) => `
                 <div class="card-box" id="card-${i}" onclick="virarCarta(this, ${i})" style="
-                    width: 100%; max-width: 100px; aspect-ratio: 3 / 4; position: relative;
+                    width: 100%; max-width: 110px; aspect-ratio: 3 / 4; position: relative;
                     transform-style: preserve-3d; transition: transform 0.5s; cursor: pointer; user-select: none;
                 ">
                     <div style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: linear-gradient(135deg, var(--primary-blue), #8dc4ff); border-radius: 12px; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; font-size: 25px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);"><i class="fas fa-lightbulb"></i></div>
@@ -128,6 +131,7 @@ function verificarPar() {
     if (primeiraCarta.id === segundaCarta.id && primeiraCarta.idx !== segundaCarta.idx) {
         somAcerto.play(); acertos++; paresEncontradosNestaRonda++;
         document.getElementById('hits-val').innerText = acertos;
+        
         primeiraCarta.el.querySelector('div:nth-child(2)').style.borderColor = "#7ed321";
         segundaCarta.el.querySelector('div:nth-child(2)').style.borderColor = "#7ed321";
 
