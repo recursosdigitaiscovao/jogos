@@ -21,25 +21,14 @@ gameStyle.innerHTML = `
     .acertou .img-sombra { filter: none !important; opacity: 1 !important; transform: scale(1.1); transition: 0.4s; }
     .target-hover { border-color: var(--primary-blue) !important; transform: scale(1.05); }
 
-    .tutorial-box { position: relative; width: 200px; height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+    .tutorial-box { position: relative; width: 200px; height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
     .hand-icon { position: absolute; font-size: 35px; color: #ffcc00; z-index: 100; animation: demoMove 3s infinite ease-in-out; pointer-events: none; }
     .demo-piece { animation: pieceMove 3s infinite ease-in-out; }
     .demo-shadow { animation: shadowMatch 3s infinite ease-in-out; }
 
-    @keyframes demoMove { 
-        0%, 10% { top: 120px; left: 80px; opacity: 0; } 
-        20% { opacity: 1; }
-        70% { top: 10px; left: 80px; opacity: 1; } 
-        85%, 100% { opacity: 0; } 
-    }
-    @keyframes pieceMove { 
-        0%, 20% { transform: translateY(0); opacity: 1; } 
-        70%, 100% { transform: translateY(-110px); opacity: 0; } 
-    }
-    @keyframes shadowMatch { 
-        0%, 69% { filter: brightness(0); opacity: 0.15; background: rgba(255,255,255,0.4); } 
-        70%, 90% { filter: none; opacity: 1; background: #f0fff0; } 
-    }
+    @keyframes demoMove { 0%, 10% { top: 110px; left: 80px; opacity: 0; } 20% { opacity: 1; } 70% { top: 10px; left: 80px; opacity: 1; } 85%, 100% { opacity: 0; } }
+    @keyframes pieceMove { 0%, 20% { transform: translateY(0); opacity: 1; } 70%, 100% { transform: translateY(-100px); opacity: 0; } }
+    @keyframes shadowMatch { 0%, 69% { filter: brightness(0); opacity: 0.15; background: rgba(255,255,255,0.4); } 70%, 90% { filter: none; opacity: 1; background: #f0fff0; } }
 `;
 document.head.appendChild(gameStyle);
 
@@ -52,8 +41,8 @@ function renderIntroAnimation() {
     container.innerHTML = `
         <div class="tutorial-box">
             <i class="fas fa-hand-pointer hand-icon"></i>
-            <div class="slot-sombra demo-shadow" style="width:80px; height:80px;"><img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" class="img-sombra"></div>
-            <div class="peça-cor demo-piece" style="width:80px; height:80px;"><img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}"></div>
+            <div class="slot-sombra demo-shadow" style="width:75px; height:75px;"><img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" class="img-sombra"></div>
+            <div class="peça-cor demo-piece" style="width:75px; height:75px;"><img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}"></div>
         </div>
     `;
 }
