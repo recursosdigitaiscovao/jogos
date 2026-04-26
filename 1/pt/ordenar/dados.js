@@ -1,20 +1,24 @@
 const CONFIG_MESTRE = {
     ano: "ano1",        
-    area: "portugues",  
+    area: "consecutivas", // Categoria inicial
     nomeJogo: "ORDEM ALFABÉTICA"
 };
 
 const BIBLIOTECA_TEMAS = {
-    "portugues": { corPagina: "#e9f0f8", corPrimaria: "#5ba4e5", corEscura: "#3d7db8", corTexto: "#5d7082", voltarMobile: "voltar_az.png" }
+    "portugues": { corPagina: "#e9f0f8", corPrimaria: "#5ba4e5", corEscura: "#3d7db8", corTexto: "#5d7082", voltarMobile: "voltar_az.png" },
+    "consecutivas": { corPagina: "#e9f0f8", corPrimaria: "#5ba4e5", corEscura: "#3d7db8", corTexto: "#5d7082", voltarMobile: "voltar_az.png" },
+    "letras_mistas": { corPagina: "#e9f0f8", corPrimaria: "#5ba4e5", corEscura: "#3d7db8", corTexto: "#5d7082", voltarMobile: "voltar_az.png" },
+    "mesma_inicial": { corPagina: "#e9f0f8", corPrimaria: "#5ba4e5", corEscura: "#3d7db8", corTexto: "#5d7082", voltarMobile: "voltar_az.png" },
+    "palavras_mistas": { corPagina: "#e9f0f8", corPrimaria: "#5ba4e5", corEscura: "#3d7db8", corTexto: "#5d7082", voltarMobile: "voltar_az.png" }
 };
 
 const BIBLIOTECA_CONTEUDO = {
     "ano1": {
-        "portugues": { 
-            t1: "ORDEM", t2: "ALFABÉTICA", sub: "Português | 1º Ano", 
-            intro: "Clica ou arrasta os cartões seguindo a ordem do alfabeto!", 
-            rodape: "&copy; Pequenos Leitores" 
-        }
+        "consecutivas": { t1: "LETRAS", t2: "SEGUIDAS", sub: "1º Ano", intro: "Coloca as letras na ordem do alfabeto!" },
+        "letras_mistas": { t1: "LETRAS", t2: "MISTURADAS", sub: "1º Ano", intro: "Ordena as letras do alfabeto!" },
+        "mesma_inicial": { t1: "MESMA", t2: "INICIAL", sub: "1º Ano", intro: "Atenção à segunda letra para ordenar!" },
+        "palavras_mistas": { t1: "PALAVRAS", t2: "MISTAS", sub: "1º Ano", intro: "Organiza os cartões pelo alfabeto!" },
+        "portugues": { t1: "ORDEM", t2: "ALFABÉTICA", sub: "1º Ano", intro: "Ordena os cartões!" }
     }
 };
 
@@ -40,34 +44,17 @@ const JOGO_CONFIG = {
             itens: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').map(l => ({ nome: l, img: `letras/letra_${l.toLowerCase()}.png` }))
         },
         mesma_inicial: {
-            nome: "Mesma Inicial", exemplo: "Amo-Ana-Ane-Ave", exemploImg: "frutas/amora.png",
+            nome: "Mesma Inicial", exemplo: "Amora-Anel", exemploImg: "frutas/amora.png",
             itens: [
-                { nome: "ABELHA", img: "animaisselvagens/abelha.png" }, { nome: "ÁGUIA", img: "animaisselvagens/aguia.png" }, { nome: "ARANHA", img: "animaisselvagens/aranha.png" },
-                { nome: "AFIA", img: "materialescolar/afia.png" }, { nome: "ANEL", img: "objetos/anel.png" }, { nome: "AMORA", img: "frutas/amora.png" },
-                { nome: "ANANÁS", img: "frutas/ananas.png" }, { nome: "AVESTRUZ", img: "animaisselvagens/avestruz.png" },
-                { nome: "BANANA", img: "frutas/banana.png" }, { nome: "BALEIA", img: "animaisselvagens/baleia.png" }, { nome: "BURRO", img: "animaisdomesticos/burro.png" },
-                { nome: "BALDE", img: "objetos/balde.png" }, { nome: "BOLA", img: "objetos/bola.png" }, { nome: "BONECA", img: "objetos/boneca.png" },
-                { nome: "BORRACHA", img: "materialescolar/borracha.png" }, { nome: "CABRA", img: "animaisdomesticos/cabra.png" },
-                { nome: "CAVALO", img: "animaisdomesticos/cavalo.png" }, { nome: "CADERNO", img: "materialescolar/caderno.png" },
-                { nome: "CANETA", img: "materialescolar/caneta.png" }, { nome: "CEREJA", img: "frutas/cereja.png" },
-                { nome: "CESTO", img: "objetos/cesto.png" }, { nome: "GALO", img: "animaisdomesticos/galo.png" },
-                { nome: "GATO", img: "animaisdomesticos/gato.png" }, { nome: "GORILA", img: "animaisselvagens/gorila.png" },
-                { nome: "GOIABA", img: "frutas/goiaba.png" }, { nome: "GARFO", img: "objetos/garfo.png" },
-                { nome: "PANDA", img: "animaisselvagens/panda.png" }, { nome: "PATO", img: "animaisdomesticos/pato.png" },
-                { nome: "PERA", img: "frutas/pera.png" }, { nome: "PINCEL", img: "materialescolar/pincel.png" }
+                { nome: "ABELHA", img: "animaisselvagens/abelha.png" }, { nome: "ÁGUIA", img: "animaisselvagens/aguia.png" }, { nome: "ARANHA", img: "animaisselvagens/aranha.png" }, { nome: "AFIA", img: "materialescolar/afia.png" }, { nome: "ANEL", img: "objetos/anel.png" }, { nome: "AMORA", img: "frutas/amora.png" }, { nome: "ANANÁS", img: "frutas/ananas.png" }, { nome: "AVESTRUZ", img: "animaisselvagens/avestruz.png" },
+                { nome: "BANANA", img: "frutas/banana.png" }, { nome: "BALEIA", img: "animaisselvagens/baleia.png" }, { nome: "BURRO", img: "animaisdomesticos/burro.png" }, { nome: "BALDE", img: "objetos/balde.png" }, { nome: "BOLA", img: "objetos/bola.png" }, { nome: "BONECA", img: "objetos/boneca.png" }, { nome: "BORRACHA", img: "materialescolar/borracha.png" }, { nome: "BALEIA", img: "animaisselvagens/baleia.png" },
+                { nome: "CÃO", img: "animaisdomesticos/cao.png" }, { nome: "CAVALO", img: "animaisdomesticos/cavalo.png" }, { nome: "COELHO", img: "animaisdomesticos/coelho.png" }, { nome: "CADERNO", img: "materialescolar/caderno.png" }, { nome: "CANETA", img: "materialescolar/caneta.png" }, { nome: "CAPA", img: "materialescolar/capa.png" }, { nome: "CEREJA", img: "frutas/cereja.png" }, { nome: "COLHER", img: "objetos/colher.png" }
             ]
         },
         palavras_mistas: {
             nome: "Palavras Mistas", exemplo: "Cão-Gato-Leão", exemploImg: "animaisdomesticos/gato.png",
             itens: [
-                { nome: "BURRO", img: "animaisdomesticos/burro.png" }, { nome: "CABRA", img: "animaisdomesticos/cabra.png" }, { nome: "CÃO", img: "animaisdomesticos/cao.png" },
-                { nome: "COELHO", img: "animaisdomesticos/coelho.png" }, { nome: "DADO", img: "objetos/dado.png" }, { nome: "ESCOVA", img: "objetos/escova.png" },
-                { nome: "FOCA", img: "animaisdomesticos/foca.png" }, { nome: "GATO", img: "animaisdomesticos/gato.png" }, { nome: "HIENA", img: "animaisselvagens/hiena.png" },
-                { nome: "ISQUEIRO", img: "objetos/isqueiro.png" }, { nome: "JANELA", img: "objetos/janela.png" }, { nome: "KIWI", img: "frutas/kiwi.png" },
-                { nome: "LEÃO", img: "animaisselvagens/leao.png" }, { nome: "MAÇÃ", img: "frutas/maca.png" }, { nome: "NOVE", img: "numeros/nove.png" },
-                { nome: "OVELHA", img: "animaisdomesticos/ovelha.png" }, { nome: "PANDA", img: "animaisselvagens/panda.png" }, { nome: "RÉGUA", img: "materialescolar/regua.png" },
-                { nome: "SAPA", img: "objetos/pa.png" }, { nome: "TIGRE", img: "animaisselvagens/tigre.png" }, { nome: "UVA", img: "frutas/uva.png" },
-                { nome: "VELA", img: "objetos/vela.png" }, { nome: "ZEBRA", img: "animaisselvagens/zebra.png" }
+                { nome: "BURRO", img: "animaisdomesticos/burro.png" }, { nome: "CABRA", img: "animaisdomesticos/cabra.png" }, { nome: "CÃO", img: "animaisdomesticos/cao.png" }, { nome: "DADO", img: "objetos/dado.png" }, { nome: "FOCA", img: "animaisdomesticos/foca.png" }, { nome: "GATO", img: "animaisdomesticos/gato.png" }, { nome: "HIENA", img: "animaisselvagens/hiena.png" }, { nome: "KIWI", img: "frutas/kiwi.png" }, { nome: "LEÃO", img: "animaisselvagens/leao.png" }, { nome: "MAÇÃ", img: "frutas/maca.png" }, { nome: "OVELHA", img: "animaisdomesticos/ovelha.png" }, { nome: "PANDA", img: "animaisselvagens/panda.png" }, { nome: "TIGRE", img: "animaisselvagens/tigre.png" }, { nome: "UVA", img: "frutas/uva.png" }, { nome: "ZEBRA", img: "animaisselvagens/zebra.png" }, { nome: "GALO", img: "animaisdomesticos/galo.png" }, { nome: "PATO", img: "animaisdomesticos/pato.png" }, { nome: "PERU", img: "animaisdomesticos/peru.png" }, { nome: "PORCO", img: "animaisdomesticos/porco.png" }, { nome: "NOVE", img: "numeros/nove.png" }, { nome: "CINCO", img: "numeros/cinco.png" }, { nome: "BORRACHA", img: "materialescolar/borracha.png" }
             ]
         }
     },
@@ -77,5 +64,4 @@ const JOGO_CONFIG = {
         { min: 50, max: 69, titulo: "Estás quase lá!", img: "taca_2.png" },
         { min: 0, max: 49, titulo: "Continua a praticar!", img: "taca_4.png" }
     ]
-};
 };
