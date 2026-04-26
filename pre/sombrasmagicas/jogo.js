@@ -1,4 +1,4 @@
-let categoriaAtiva, itensAtuais, itemCorreto, rodadaAtual, acertos, erros, tempoInicio, cronometroInterval;
+let categoriaAtiva, itensAtuais, itemCorreto, rodadaAtual, acertos, tempoInicio, cronometroInterval;
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
@@ -6,95 +6,134 @@ const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 window.selecionarCategoria = (key) => {
     categoriaAtiva = JOGO_CONFIG.categorias[key];
     itensAtuais = [...categoriaAtiva.itens].sort(() => Math.random() - 0.5);
+    rodadaAtual = 1;
 };
 
 window.initGame = () => {
-    rodadaAtual = 1; acertos = 0; erros = 0; tempoInicio = new Date();
-    iniciarCronometro(); proximaRodada();
+    acertos = 0; rodadaAtual = 1; tempoInicio = new Date();
+    iniciarCronometro();
+    proximaRodada();
 };
 
 function proximaRodada() {
     const totalRodadas = 10;
     if (rodadaAtual > totalRodadas) { finalizarJogo(); return; }
     
-    atualizarStatusBar(totalRodadas);
+    document.getElementById('round-val').innerText = `${rodadaAtual} / ${totalRodadas}`;
+    document.getElementById('hits-val').innerText = acertos;
+    
     const container = document.getElementById('game-main-content');
     container.innerHTML = '';
     itemCorreto = itensAtuais[rodadaAtual - 1];
 
-    let opcoes = [itemCorreto];
-    let outros = categoriaAtiva.itens.filter(i => i.nome !== itemCorreto.nome).sort(() => Math.random() - 0.5);
-    opcoes.push(outros[0], outros[1]);
-    opcoes.sort(() => Math.random() - 0.5);
-
-    // Layout Centrado Vertical e Horizontal
+    // Criar Wrapper que se ajusta ao tamanho do card
     const wrapper = document.createElement('div');
-    wrapper.style.cssText = "display:flex; flex-direction:column; align-items:center; justify-content:center; gap:25px; width:100%; height:100%; text-align:center;";
+    wrapper.style.cssText = "display:flex; flex-direction:column; align-items:center; justify-content:space-evenly; width:100%; height:100%; padding:10px;";
 
-    const p = document.createElement('p');
-    p.innerText = "QUAL É A IMAGEM QUE CORRESPONDE À SOMBRA?";
-    p.style.cssText = "font-weight:900; color:var(--primary-blue); font-size:1rem; margin:0; text-transform:uppercase;";
+    // 1. Título do Jogo (Ocupa pouco espaço)
+    const title = document.createElement('h3');
+    title.innerText = "COLOQUE A IMAGEM NA SOMBRA";
+    title.style.cssText = "color:var(--primary-blue); font-size:clamp(14px, 3vh, 18px); font-weight:900;";
 
-    // Sombra (Altura Fixa: 120px)
-    const sombraDiv = document.createElement('div');
-    sombraDiv.style.cssText = "background:rgba(255,255,255,0.7); padding:30px; border-radius:40px; border:4px dashed var(--primary-blue); display:flex; align-items:center; justify-content:center; width:200px; height:200px;";
-    const imgSombra = document.createElement('img');
-    imgSombra.src = JOGO_CONFIG.caminhoImg + itemCorreto.img;
-    imgSombra.style.cssText = "height:120px; width:auto; filter:brightness(0); object-fit:contain;";
-    sombraDiv.appendChild(imgSombra);
+    // 2. Alvo da Sombra (Escala conforme a altura disponível)
+    const shadowBox = document.createElement('div');
+    shadowBox.id = "drop-zone";
+    shadowBox.className = "drop-target";
+    shadowBox.style.cssText = "background:#f9f9f9; border:3px dashed var(--primary-blue); border-radius:25px; width:clamp(140px, 25vh, 200px); height:clamp(140px, 25vh, 200px); display:flex; align-items:center; justify-content:center; transition:0.3s; position:relative;";
 
-    // Opções (Altura Fixa: 70px)
-    const opcoesDiv = document.createElement('div');
-    opcoesDiv.style.cssText = "display:flex; gap:15px; justify-content:center; width:100%; flex-wrap:nowrap;";
+    const shadowImg = document.createElement('img');
+    shadowImg.src = JOGO_CONFIG.caminhoImg + itemCorreto.img;
+    shadowImg.style.cssText = "max-height:80%; max-width:80%; filter:brightness(0); pointer-events:none; transition:0.3s;";
+    shadowBox.appendChild(shadowImg);
 
-    opcoes.forEach(item => {
-        const btn = document.createElement('div');
-        btn.style.cssText = "background:white; border:3px solid #eee; border-radius:20px; padding:12px; cursor:pointer; width:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:0.2s; box-shadow:0 4px 10px rgba(0,0,0,0.05);";
+    // 3. Opções de Resposta
+    const optionsBox = document.createElement('div');
+    optionsBox.style.cssText = "display:flex; gap:10px; justify-content:center; width:100%; flex-wrap:wrap;";
+
+    // Gerar 3 opções (Correta + 2 aleatórias)
+    let pool = categoriaAtiva.itens.filter(i => i.nome !== itemCorreto.nome).sort(() => Math.random() - 0.5);
+    let choices = [itemCorreto, pool[0], pool[1]].sort(() => Math.random() - 0.5);
+
+    choices.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "choice-card";
+        card.draggable = true;
+        card.style.cssText = "background:white; border:2px solid #eee; border-radius:15px; width:clamp(100px, 15vw, 130px); padding:10px; cursor:grab; display:flex; flex-direction:column; align-items:center; box-shadow:0 4px 8px rgba(0,0,0,0.05); transition:0.2s;";
         
         const img = document.createElement('img');
         img.src = JOGO_CONFIG.caminhoImg + item.img;
-        img.style.cssText = "height:70px; width:auto; object-fit:contain; margin-bottom:8px;";
+        img.style.cssText = "max-height:60px; max-width:80%; pointer-events:none; margin-bottom:5px;";
         
-        const span = document.createElement('span');
-        span.innerText = item.nome;
-        span.style.cssText = "font-weight:900; font-size:10px; color:var(--text-grey);";
+        const name = document.createElement('span');
+        name.innerText = item.nome;
+        name.style.cssText = "font-size:10px; font-weight:900; color:var(--text-grey);";
 
-        btn.append(img, span);
-        btn.onclick = () => {
-            const all = opcoesDiv.querySelectorAll('div');
-            all.forEach(b => b.style.pointerEvents = 'none');
-            if(item.nome === itemCorreto.nome) {
-                acertos++; somAcerto.play(); btn.style.borderColor = "var(--highlight-green)"; btn.style.background = "#f0fff0";
-            } else {
-                erros++; somErro.play(); btn.style.borderColor = "var(--error-red)"; btn.style.background = "#fff0f0";
-                all.forEach(b => { if(b.innerText.includes(itemCorreto.nome)) b.style.borderColor = "var(--highlight-green)"; });
-            }
-            setTimeout(() => { rodadaAtual++; proximaRodada(); }, 1500);
+        card.append(img, name);
+
+        // --- Eventos de Drag & Clique ---
+        card.ondragstart = (e) => {
+            e.dataTransfer.setData("text", item.nome);
+            card.classList.add('dragging');
         };
-        opcoesDiv.appendChild(btn);
+        card.ondragend = () => card.classList.remove('dragging');
+        card.onclick = () => checkMatch(item.nome, card);
+
+        optionsBox.appendChild(card);
     });
 
-    wrapper.append(p, sombraDiv, opcoesDiv);
+    // --- Eventos de Drop ---
+    shadowBox.ondragover = (e) => { e.preventDefault(); shadowBox.classList.add('hover'); };
+    shadowBox.ondragleave = () => shadowBox.classList.remove('hover');
+    shadowBox.ondrop = (e) => {
+        e.preventDefault();
+        shadowBox.classList.remove('hover');
+        checkMatch(e.dataTransfer.getData("text"));
+    };
+
+    wrapper.append(title, shadowBox, optionsBox);
     container.appendChild(wrapper);
 }
 
-function atualizarStatusBar(tot) {
-    document.getElementById('round-val').innerText = `${rodadaAtual} / ${tot}`;
-    document.getElementById('hits-val').innerText = acertos;
-    document.getElementById('miss-val').innerText = erros;
+function checkMatch(selectedName, element) {
+    const isCorrect = (selectedName === itemCorreto.nome);
+    const dropZone = document.getElementById('drop-zone');
+    const allCards = document.querySelectorAll('.choice-card');
+
+    // Desativar interações
+    allCards.forEach(c => c.style.pointerEvents = 'none');
+
+    if (isCorrect) {
+        acertos++;
+        somAcerto.play();
+        dropZone.style.background = "#e7f9e7";
+        dropZone.style.borderColor = "var(--highlight-green)";
+        dropZone.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${itemCorreto.img}" style="max-height:80%; animation: bounceIn 0.5s;">`;
+    } else {
+        somErro.play();
+        if(element) element.style.borderColor = "var(--error-red)";
+        dropZone.style.borderColor = "var(--error-red)";
+        // Mostrar o correto
+        allCards.forEach(c => {
+            if(c.innerText.includes(itemCorreto.nome)) c.style.borderColor = "var(--highlight-green)";
+        });
+    }
+
+    setTimeout(() => {
+        rodadaAtual++;
+        proximaRodada();
+    }, 1500);
 }
 
 function iniciarCronometro() {
     if(cronometroInterval) clearInterval(cronometroInterval);
     cronometroInterval = setInterval(() => {
         let diff = Math.floor((new Date() - tempoInicio)/1000);
-        let m = Math.floor(diff/60).toString().padStart(2,'0');
-        let s = (diff%60).toString().padStart(2,'0');
-        document.getElementById('timer-val').innerText = `${m}:${s}`;
+        document.getElementById('timer-val').innerText = `${Math.floor(diff/60).toString().padStart(2,'0')}:${(diff%60).toString().padStart(2,'0')}`;
     }, 1000);
 }
 
 function finalizarJogo() {
-    clearInterval(cronometroInterval); somVitoria.play();
+    clearInterval(cronometroInterval);
+    somVitoria.play();
     window.mostrarResultados(acertos, document.getElementById('timer-val').innerText);
 }
