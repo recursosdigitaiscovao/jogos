@@ -37,7 +37,9 @@ function selecionarCategoria(key) { categoriaAtual = key; rondaAtual = 1; acerto
 
 function renderIntroAnimation() {
     const container = document.getElementById('intro-animation-container');
+    const instrText = document.getElementById('intro-instr');
     const cat = JOGO_CONFIG.categorias[categoriaAtual];
+    instrText.innerText = cat.intro || "Arrasta as imagens para as sombras!";
     container.innerHTML = `
         <div class="tutorial-box">
             <i class="fas fa-hand-pointer hand-icon"></i>
