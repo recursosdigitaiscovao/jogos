@@ -1,6 +1,6 @@
-let itensAtuais = Array(10).fill({}); // Para o template calcular o total
-let indiceAtual = 0; // Total de pares encontrados
-let acertos = 0;
+let itensAtuais = Array(10).fill({}); // Necessário para o template calcular o total
+let indiceAtual = 0; // Controla a ronda (tabuleiro) de 0 a 9
+let acertos = 0; // Total de pares encontrados (para o badge)
 let erros = 0;
 let tempoInicio;
 let intervaloTimer;
@@ -9,6 +9,8 @@ let cartasNoGrid = [];
 let primeiraCarta = null;
 let segundaCarta = null;
 let bloqueado = false;
+let paresEncontradosNestaRonda = 0;
+let totalParesNecessarios = 0;
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
@@ -29,7 +31,7 @@ window.selecionarCategoria = function(key) {
                 <div class="demo-card" style="width:50px; height:70px; background:var(--primary-blue); border-radius:10px; border:3px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:24px; font-weight:900; animation: flipDemo 3s infinite;">?</div>
                 <div class="demo-card" style="width:50px; height:70px; background:white; border:3px solid var(--primary-blue); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--primary-blue); font-size:10px; font-weight:900; animation: flipDemo 3s infinite reverse;">${cat.exemplo}</div>
             </div>
-            <p style="font-weight:900; color:var(--primary-blue);">ENCONTRA OS PARES!</p>
+            <p style="font-weight:900; color:var(--primary-blue); text-align:center;">MEMÓRIA: IMAGEM + PALAVRA</p>
         </div>
         <style>
             @keyframes flipDemo { 0%, 40% { transform: rotateY(0deg); background: var(--primary-blue); color:white; } 50%, 100% { transform: rotateY(180deg); background: white; color:var(--primary-blue); } }
@@ -41,7 +43,7 @@ window.initGame = function() {
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
     iniciarTimer(); 
-    carregarNovoTabuleiro(); 
+    proximaRodada(); 
 };
 
 function iniciarTimer() {
@@ -55,13 +57,21 @@ function iniciarTimer() {
     }, 1000);
 }
 
-function carregarNovoTabuleiro() {
+function proximaRodada() {
     if (indiceAtual >= 10) { finalizarJogo(); return; }
     
-    // Sorteia 4 pares (8 cartas) para mobile ficar bem visível, ou 6 pares (12 cartas) para PC
-    const isMobile = window.innerWidth < 600;
-    const numPares = isMobile ? 4 : 6;
+    document.getElementById('round-val').innerText = `${indiceAtual + 1} / 10`;
+    paresEncontradosNestaRonda = 0;
     
+    // DEFINIÇÃO DOS NÍVEIS
+    if (indiceAtual < 3) totalParesNecessarios = 3;      // Nível 1: 6 cartas (Rondas 1, 2, 3)
+    else if (indiceAtual < 6) totalParesNecessarios = 4; // Nível 2: 8 cartas (Rondas 4, 5, 6)
+    else totalParesNecessarios = 6;                      // Nível 3: 12 cartas (Rondas 7, 8, 9, 10)
+
+    gerarTabuleiro(totalParesNecessarios);
+}
+
+function gerarTabuleiro(numPares) {
     const categoria = JOGO_CONFIG.categorias[CONFIG_MESTRE.area];
     const itensSorteados = [...categoria.itens].sort(() => Math.random() - 0.5).slice(0, numPares);
     
@@ -79,24 +89,26 @@ function montarGrid() {
     const container = document.getElementById('game-main-content');
     const isMobile = window.innerWidth < 650;
     
-    // Grid adaptativo: 3 colunas no mobile, 4 no tablet/PC
-    const cols = isMobile ? 3 : 4;
+    // Ajuste de colunas conforme o nível e orientação
+    let cols = 3;
+    if (totalParesNecessarios === 4) cols = isMobile ? 2 : 4;
+    if (totalParesNecessarios === 6) cols = isMobile ? 3 : 4;
     
     container.innerHTML = `
         <div id="memory-board" style="
             display: grid; 
             grid-template-columns: repeat(${cols}, 1fr); 
-            gap: 10px; 
+            gap: 8px; 
             width: 100%; 
             height: 100%; 
             max-width: 600px;
-            padding: 10px; 
+            padding: 5px; 
             align-content: center;
             margin: auto;
         ">
             ${cartasNoGrid.map((carta, i) => `
-                <div class="card-box" id="box-${i}" onclick="virarCarta(this, ${i})" style="
-                    aspect-ratio: 1 / 1.3;
+                <div class="card-box" id="card-${i}" onclick="virarCarta(this, ${i})" style="
+                    aspect-ratio: 1 / 1.2;
                     background: var(--primary-blue);
                     border-radius: 12px;
                     border: 3px solid white;
@@ -106,10 +118,11 @@ function montarGrid() {
                     justify-content: center;
                     font-weight: 900;
                     color: white;
-                    font-size: min(8vw, 35px);
+                    font-size: min(8vw, 30px);
                     transition: transform 0.4s, opacity 0.3s;
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
                     transform-style: preserve-3d;
+                    user-select: none;
                 ">?</div>
             `).join('')}
         </div>
@@ -117,7 +130,7 @@ function montarGrid() {
 }
 
 window.virarCarta = function(el, idx) {
-    if (bloqueado || el.classList.contains('flipped')) return;
+    if (bloqueado || el.classList.contains('flipped') || el.style.visibility === "hidden") return;
 
     const info = cartasNoGrid[idx];
     el.classList.add('flipped');
@@ -125,9 +138,9 @@ window.virarCarta = function(el, idx) {
     el.style.background = "white";
     
     if (info.tipo === 'img') {
-        el.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${info.conteudo}" style="width:80%; transform: rotateY(180deg); pointer-events:none;">`;
+        el.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${info.conteudo}" style="width:85%; transform: rotateY(180deg); pointer-events:none;">`;
     } else {
-        el.innerHTML = `<span style="font-size: min(3vw, 12px); color: var(--primary-blue); transform: rotateY(180deg); text-transform:uppercase; text-align:center;">${info.conteudo}</span>`;
+        el.innerHTML = `<span style="font-size: min(3.5vw, 13px); color: var(--primary-blue); transform: rotateY(180deg); text-transform:uppercase; text-align:center; padding:2px; line-height:1;">${info.conteudo}</span>`;
     }
 
     if (!primeiraCarta) {
@@ -135,33 +148,28 @@ window.virarCarta = function(el, idx) {
     } else {
         segundaCarta = { el, idx, id: info.id };
         bloqueado = true;
-        checkMatch();
+        verificarPar();
     }
 };
 
-function checkMatch() {
+function verificarPar() {
     if (primeiraCarta.id === segundaCarta.id && primeiraCarta.idx !== segundaCarta.idx) {
         // ACERTO
         somAcerto.play();
         acertos++;
-        indiceAtual++;
+        paresEncontradosNestaRonda++;
         document.getElementById('hits-val').innerText = acertos;
-        document.getElementById('round-val').innerText = `${indiceAtual} / 10`;
 
         setTimeout(() => {
             // DESAPARECER
             primeiraCarta.el.style.visibility = "hidden";
             segundaCarta.el.style.visibility = "hidden";
-            resetTurno();
+            resetVariaveisTurno();
 
-            // Verificar se todas as cartas do tabuleiro atual sumiram
-            const totalVisiveis = document.querySelectorAll('.card-box[style*="visibility: visible"], .card-box:not([style*="visibility"])').length;
-            
-            if (totalVisiveis === 0) {
-                if (indiceAtual < 10) carregarNovoTabuleiro();
-                else finalizarJogo();
-            } else if (indiceAtual >= 10) {
-                finalizarJogo();
+            // Se todos os pares do tabuleiro foram encontrados, passa de ronda
+            if (paresEncontradosNestaRonda === totalParesNecessarios) {
+                indiceAtual++;
+                setTimeout(proximaRodada, 500);
             }
         }, 600);
     } else {
@@ -177,12 +185,12 @@ function checkMatch() {
                 card.innerHTML = "?";
                 card.classList.remove('flipped');
             });
-            resetTurno();
+            resetVariaveisTurno();
         }, 1000);
     }
 }
 
-function resetTurno() {
+function resetVariaveisTurno() {
     primeiraCarta = null;
     segundaCarta = null;
     bloqueado = false;
