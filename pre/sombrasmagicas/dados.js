@@ -1,29 +1,36 @@
+// === CONFIGURAÇÃO MESTRE ===
 const CONFIG_MESTRE = {
-    ano: "pre",        
-    area: "pre",       
-    nomeJogo: "SOMBRAS MÁGICAS"
+    ano: "ano1",        
+    area: "portugues",  
+    nomeJogo: "CONTAR SÍLABAS"
 };
 
 const BIBLIOTECA_TEMAS = {
-    "portugues": { corPagina: "#e9f0f8", corPrimaria: "#5ba4e5", corEscura: "#3d7db8", corHeader: "#f0f7ff", corCard: "#f0f7ff", corInner: "#ffffff", corTexto: "#5d7082", voltarMobile: "voltar_az.png" },
-    "matematica": { corPagina: "#e8f9f4", corPrimaria: "#45cfa8", corEscura: "#2BA886", corHeader: "#f0fdfa", corCard: "#f0fdfa", corInner: "#ffffff", corTexto: "#45cfa8", voltarMobile: "voltar_vr.png" },
-    "estudo": { corPagina: "#EAE2E5", corPrimaria: "#994D4D", corEscura: "#6C3737", corHeader: "#f7f1f3", corCard: "#f7f1f3", corInner: "#ffffff", corTexto: "#994D4D", voltarMobile: "voltar_cs.png" },
-    "pre": { corPagina: "#FFEAEA", corPrimaria: "#E691A7", corEscura: "#D54267", corHeader: "#FFF5F5", corCard: "#FFF5F5", corInner: "#ffffff", corTexto: "#E691A7", voltarMobile: "voltar_rs.png" }
+    "portugues": { corPagina: "#e9f0f8", corPrimaria: "#5ba4e5", corEscura: "#3d7db8", corTexto: "#5d7082", voltarMobile: "voltar_az.png" },
+    "matematica": { corPagina: "#e8f9f4", corPrimaria: "#45cfa8", corEscura: "#2BA886", corTexto: "#45cfa8", voltarMobile: "voltar_vr.png" },
+    "estudo": { corPagina: "#EAE2E5", corPrimaria: "#994D4D", corEscura: "#6C3737", corTexto: "#994D4D", voltarMobile: "voltar_cs.png" },
+    "pre": { corPagina: "#FFF5F7", corPrimaria: "#E691A7", corEscura: "#D54267", corTexto: "#E691A7", voltarMobile: "voltar_rs.png" }
 };
 
 const BIBLIOTECA_CONTEUDO = {
-    "pre": { "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar" } },
-    "ano1": { "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano" }, "matematica": { t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano" }, "estudo": { t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano" } },
-    "ano2": { "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano" }, "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano" }, "estudo": { t1: "JOVENS", t2: "EXPLORADORES", sub: "Estudo do Meio | 2º Ano" } },
-    "ano3": { "portugues": { t1: "JOVENS", t2: "ESCRITORES", sub: "Português | 3º Ano" }, "matematica": { t1: "JOVENS", t2: "CIENTISTAS", sub: "Matemática | 3º Ano" }, "estudo": { t1: "JOVENS", t2: "INVESTIGADORES", sub: "Estudo do Meio | 3º Ano" } },
-    "ano4": { "portugues": { t1: "MESTRES", t2: "LEITORES", sub: "Português | 4º Ano" }, "matematica": { t1: "MESTRES", t2: "MATEMÁTICOS", sub: "Matemática | 4º Ano" }, "estudo": { t1: "MESTRES", t2: "EXPLORADORES", sub: "Estudo do Meio | 4º Ano" } }
+    "pre": { "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar", intro: "Brinca com os números e as cores!", rodape: "&copy; Pequenos Curiosos" } },
+    "ano1": {
+        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", intro: "Clica no número que corresponde à quantidade de sílabas!", rodape: "&copy; Pequenos Leitores" },
+        "matematica": { t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano", intro: "Explora os números e diverte-te!", rodape: "&copy; Pequenos Matemáticos" },
+        "estudo": { t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano", intro: "Explora o mundo à tua volta!", rodape: "&copy; Pequenos Exploradores" }
+    },
+    "ano2": {
+        "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano", intro: "Explora as palavras e a leitura!", rodape: "&copy; Jovens Leitores" },
+        "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano", intro: "Diverte-te com os cálculos!", rodape: "&copy; Jovens Matemáticos" },
+        "estudo": { t1: "JOVENS", t2: "INVESTIGADORES", sub: "Estudo do Meio | 2º Ano", intro: "Investiga o mundo!", rodape: "&copy; Jovens Investigadores" }
+    }
 };
 
 const JOGO_CONFIG = {
     linkVoltar: "../",
     textoVoltar: "VOLTAR",
-    caminhoImg: "../../img/",    
-    caminhoIcons: "../../icons/", 
+    caminhoImg: "../../../img/",    
+    caminhoIcons: "../../../icons/", 
     sons: {
         acerto: "https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3",
         erro: "https://cdn.pixabay.com/audio/2022/03/10/audio_c330c67761.mp3",
@@ -32,13 +39,89 @@ const JOGO_CONFIG = {
     iconesMenu: { home: "home.png", pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png" },
     links: { home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4" },
     categorias: {
-        domesticos: { nome: "Animais Domésticos", totalRondas: 10, imgCapa: "animaisdomesticos/vaca.png", itens: [{ id: 1, img: "animaisdomesticos/burro.png" }, { id: 2, img: "animaisdomesticos/cabra.png" }, { id: 3, img: "animaisdomesticos/cao.png" }, { id: 4, img: "animaisdomesticos/cavalo.png" }, { id: 5, img: "animaisdomesticos/coelho.png" }, { id: 6, img: "animaisdomesticos/galinha.png" }, { id: 7, img: "animaisdomesticos/galo.png" }, { id: 8, img: "animaisdomesticos/gato.png" }, { id: 9, img: "animaisdomesticos/ovelha.png" }, { id: 10, img: "animaisdomesticos/pato.png" }, { id: 11, img: "animaisdomesticos/peru.png" }, { id: 12, img: "animaisdomesticos/porco.png" }, { id: 13, img: "animaisdomesticos/vaca.png" }] },
-        selvagens: { nome: "Animais Selvagens", totalRondas: 10, imgCapa: "animaisselvagens/leao.png", itens: [{ id: 101, img: "animaisselvagens/abelha.png" }, { id: 102, img: "animaisselvagens/abutre.png" }, { id: 103, img: "animaisselvagens/aguia.png" }, { id: 104, img: "animaisselvagens/aranha.png" }, { id: 105, img: "animaisselvagens/avestruz.png" }, { id: 106, img: "animaisselvagens/baleia.png" }, { id: 107, img: "animaisselvagens/borboleta.png" }, { id: 108, img: "animaisselvagens/canguru.png" }, { id: 109, img: "animaisselvagens/caracol.png" }, { id: 110, img: "animaisselvagens/carangueijo.png" }, { id: 111, img: "animaisselvagens/coala.png" }, { id: 112, img: "animaisselvagens/crocodilo.png" }, { id: 113, img: "animaisselvagens/elefante.png" }, { id: 114, img: "animaisselvagens/foca.png" }, { id: 115, img: "animaisselvagens/formiga.png" }, { id: 116, img: "animaisselvagens/girafa.png" }, { id: 117, img: "animaisselvagens/gorila.png" }, { id: 118, img: "animaisselvagens/hiena.png" }, { id: 119, img: "animaisselvagens/hipopotamo.png" }, { id: 120, img: "animaisselvagens/leao.png" }, { id: 121, img: "animaisselvagens/lobo.png" }, { id: 122, img: "animaisselvagens/macaco.png" }, { id: 123, img: "animaisselvagens/morcego.png" }, { id: 124, img: "animaisselvagens/panda.png" }, { id: 125, img: "animaisselvagens/papagaio.png" }, { id: 126, img: "animaisselvagens/peixe.png" }, { id: 127, img: "animaisselvagens/polvo.png" }, { id: 128, img: "animaisselvagens/pombo.png" }, { id: 129, img: "animaisselvagens/raia.png" }, { id: 130, img: "animaisselvagens/raposa.png" }, { id: 131, img: "animaisselvagens/rato.png" }, { id: 132, img: "animaisselvagens/rinosseronte.png" }, { id: 133, img: "animaisselvagens/tartaruga.png" }, { id: 134, img: "animaisselvagens/texugo.png" }, { id: 135, img: "animaisselvagens/tigre.png" }, { id: 136, img: "animaisselvagens/tubarao.png" }, { id: 137, img: "animaisselvagens/tucano.png" }, { id: 138, img: "animaisselvagens/urso.png" }, { id: 139, img: "animaisselvagens/zebra.png" }] },
-        frutas: { nome: "Frutas", totalRondas: 10, imgCapa: "frutas/morango.png", itens: [{ id: 201, img: "frutas/amora.png" }, { id: 202, img: "frutas/ananas.png" }, { id: 203, img: "frutas/banana.png" }, { id: 204, img: "frutas/castanha.png" }, { id: 205, img: "frutas/cereja.png" }, { id: 206, img: "frutas/diospiro.png" }, { id: 207, img: "frutas/figo.png" }, { id: 208, img: "frutas/goiaba.png" }, { id: 209, img: "frutas/kiwi.png" }, { id: 210, img: "frutas/laranja.png" }, { id: 211, img: "frutas/limao.png" }, { id: 212, img: "frutas/maca.png" }, { id: 213, img: "frutas/maracuja.png" }, { id: 214, img: "frutas/melancia.png" }, { id: 215, img: "frutas/melao.png" }, { id: 216, img: "frutas/morango.png" }, { id: 217, img: "frutas/papaia.png" }, { id: 218, img: "frutas/pera.png" }, { id: 219, img: "frutas/roma.png" }, { id: 220, img: "frutas/uvas.png" }] },
-        objetos: { nome: "Objetos", totalRondas: 10, imgCapa: "objetos/carrinho.png", itens: [{ id: 301, img: "objetos/anel.png" }, { id: 302, img: "objetos/balde.png" }, { id: 303, img: "objetos/bola.png" }, { id: 304, img: "objetos/boneca.png" }, { id: 305, img: "objetos/carrinho.png" }, { id: 306, img: "objetos/cesto.png" }, { id: 307, img: "objetos/colher.png" }, { id: 308, img: "objetos/copo.png" }, { id: 309, img: "objetos/dado.png" }, { id: 310, img: "objetos/dedal.png" }, { id: 311, img: "objetos/dragao.png" }, { id: 312, img: "objetos/escova.png" }, { id: 313, img: "objetos/garfo.png" }, { id: 314, img: "objetos/garrafa.png" }, { id: 315, img: "objetos/isqueiro.png" }, { id: 316, img: "objetos/oculos.png" }, { id: 317, img: "objetos/pa.png" }, { id: 318, img: "objetos/panela.png" }, { id: 319, img: "objetos/pincel.png" }, { id: 320, img: "objetos/vassoura.png" }, { id: 321, img: "objetos/vela.png" }, { id: 322, img: "materialescolar/afia.png" }, { id: 323, img: "materialescolar/borracha.png" }, { id: 324, img: "materialescolar/caderno.png" }, { id: 325, img: "materialescolar/caneta.png" }, { id: 326, img: "materialescolar/capa.png" }, { id: 327, img: "materialescolar/cola.png" }, { id: 328, img: "materialescolar/esquadro.png" }, { id: 329, img: "materialescolar/estojo.png" }, { id: 330, img: "materialescolar/folha.png" }, { id: 331, img: "materialescolar/lapis.png" }, { id: 332, img: "materialescolar/livro.png" }, { id: 333, img: "materialescolar/mochila.png" }, { id: 334, img: "materialescolar/pincel.png" }, { id: 335, img: "materialescolar/regua.png" }, { id: 336, img: "materialescolar/tesoura.png" }] }
+        animais: {
+            nome: "Animais", exemplo: "E-LE-FAN-TE", exemploImg: "animaisselvagens/elefante.png", total: 4, imgCapa: "animaisselvagens/leao.png",
+            itens: [
+                { nome: "ABELHA", silabas: 3, img: "animaisselvagens/abelha.png" },
+                { nome: "ÁGUIA", silabas: 3, img: "animaisselvagens/aguia.png" },
+                { nome: "ARANHA", silabas: 3, img: "animaisselvagens/aranha.png" },
+                { nome: "BALEIA", silabas: 3, img: "animaisselvagens/baleia.png" },
+                { nome: "CANGURU", silabas: 3, img: "animaisselvagens/canguru.png" },
+                { nome: "CARANGUEIJO", silabas: 4, img: "animaisselvagens/carangueijo.png" },
+                { nome: "COALA", silabas: 3, img: "animaisselvagens/coala.png" },
+                { nome: "CROCODILO", silabas: 4, img: "animaisselvagens/crocodilo.png" },
+                { nome: "ELEFANTE", silabas: 4, img: "animaisselvagens/elefante.png" },
+                { nome: "FOCA", silabas: 2, img: "animaisselvagens/foca.png" },
+                { nome: "GORILA", silabas: 3, img: "animaisselvagens/gorila.png" },
+                { nome: "LEÃO", silabas: 2, img: "animaisselvagens/leao.png" },
+                { nome: "MACACO", silabas: 3, img: "animaisselvagens/macaco.png" },
+                { nome: "PAPAGAIO", silabas: 4, img: "animaisselvagens/papagaio.png" }
+            ]
+        },
+        frutos: {
+            nome: "Frutos", exemplo: "MO-RAN-GO", exemploImg: "frutas/morango.png", total: 3, imgCapa: "frutas/maca.png",
+            itens: [
+                { nome: "AMORA", silabas: 3, img: "frutas/amora.png" },
+                { nome: "ANANÁS", silabas: 3, img: "frutas/ananas.png" },
+                { nome: "BANANA", silabas: 3, img: "frutas/banana.png" },
+                { nome: "CASTANHA", silabas: 3, img: "frutas/castanha.png" },
+                { nome: "CEREJA", silabas: 3, img: "frutas/cereja.png" },
+                { nome: "DIÓSPIRO", silabas: 3, img: "frutas/diospiro.png" },
+                { nome: "FIGO", silabas: 2, img: "frutas/figo.png" },
+                { nome: "GOIABA", silabas: 3, img: "frutas/goiaba.png" },
+                { nome: "KIWI", silabas: 2, img: "frutas/kiwi.png" },
+                { nome: "LARANJA", silabas: 3, img: "frutas/laranja.png" },
+                { nome: "LIMÃO", silabas: 2, img: "frutas/limao.png" },
+                { nome: "MAÇÃ", silabas: 2, img: "frutas/maca.png" },
+                { nome: "MARACUJÁ", silabas: 4, img: "frutas/maracuja.png" },
+                { nome: "MELANCIA", silabas: 4, img: "frutas/melancia.png" },
+                { nome: "MELÃO", silabas: 2, img: "frutas/melao.png" },
+                { nome: "MORANGO", silabas: 3, img: "frutas/morango.png" }
+            ]
+        },
+        objetos: {
+            nome: "Objetos", exemplo: "BO-NE-CA", exemploImg: "objetos/boneca.png", total: 3, imgCapa: "objetos/bola.png",
+            itens: [
+                { nome: "BALDE", silabas: 2, img: "objetos/balde.png" },
+                { nome: "BOLA", silabas: 2, img: "objetos/bola.png" },
+                { nome: "BONECA", silabas: 3, img: "objetos/boneca.png" },
+                { nome: "CARRINHO", silabas: 3, img: "objetos/carrinho.png" },
+                { nome: "CESTO", silabas: 2, img: "objetos/cesto.png" },
+                { nome: "COLHER", silabas: 2, img: "objetos/colher.png" },
+                { nome: "COPO", silabas: 2, img: "objetos/copo.png" },
+                { nome: "DADO", silabas: 2, img: "objetos/dado.png" },
+                { nome: "DEDAL", silabas: 2, img: "objetos/dedal.png" },
+                { nome: "DRAGÃO", silabas: 2, img: "objetos/dragao.png" },
+                { nome: "ESCOVA", silabas: 3, img: "objetos/escova.png" },
+                { nome: "GARFO", silabas: 2, img: "objetos/garfo.png" },
+                { nome: "GARRAFA", silabas: 3, img: "objetos/garrafa.png" },
+                { nome: "ISQUEIRO", silabas: 3, img: "objetos/isqueiro.png" },
+                { nome: "ÓCULOS", silabas: 3, img: "objetos/oculos.png" }
+            ]
+        },
+        material: {
+            nome: "Material Escolar", exemplo: "MO-CHI-LA", exemploImg: "materialescolar/mochila.png", total: 3, imgCapa: "materialescolar/estojo.png",
+            itens: [
+                { nome: "AFIA", silabas: 2, img: "materialescolar/afia.png" },
+                { nome: "BORRACHA", silabas: 3, img: "materialescolar/borracha.png" },
+                { nome: "CADERNO", silabas: 3, img: "materialescolar/caderno.png" },
+                { nome: "CANETA", silabas: 3, img: "materialescolar/caneta.png" },
+                { nome: "CAPA", silabas: 2, img: "materialescolar/capa.png" },
+                { nome: "COLA", silabas: 2, img: "materialescolar/cola.png" },
+                { nome: "ESQUADRO", silabas: 3, img: "materialescolar/esquadro.png" },
+                { nome: "ESTOJO", silabas: 3, img: "materialescolar/estojo.png" },
+                { nome: "FOLHA", silabas: 2, img: "materialescolar/folha.png" },
+                { nome: "LÁPIS", silabas: 2, img: "materialescolar/lapis.png" },
+                { nome: "LIVRO", silabas: 2, img: "materialescolar/livro.png" },
+                { nome: "MOCHILA", silabas: 3, img: "materialescolar/mochila.png" },
+                { nome: "PINCEL", silabas: 2, img: "materialescolar/pincel.png" },
+                { nome: "RÉGUA", silabas: 2, img: "materialescolar/regua.png" },
+                { nome: "TESOURA", silabas: 3, img: "materialescolar/tesoura.png" }
+            ]
+        }
     },
     relatorios: [
-        { min: 90, max: 100, titulo: "És um mestre das sombras!", img: "taca_1.png" },
+        { min: 90, max: 100, titulo: "És um craque!", img: "taca_1.png" },
         { min: 70, max: 89, titulo: "Muito bem!", img: "taca_2.png" },
         { min: 50, max: 69, titulo: "Estás quase lá!", img: "taca_2.png" },
         { min: 0, max: 49, titulo: "Continua a tentar!", img: "taca_4.png" }
