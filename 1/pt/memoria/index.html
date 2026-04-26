@@ -3,76 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pequenos Leitores - Memória</title>
+    <title>Pequenos Leitores - Jogo da Memória</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --bg-page: #e9f0f8; --primary-blue: #5ba4e5; --primary-dark: #3d7db8; --highlight-green: #7ed321; --error-red: #ff5e5e; --white: #ffffff; --text-grey: #5d7082; --header-h: 70px; }
+        :root { 
+            --bg-page: #e9f0f8; 
+            --primary-blue: #5ba4e5; 
+            --primary-dark: #3d7db8; 
+            --highlight-green: #7ed321; 
+            --error-red: #ff5e5e; 
+            --white: #ffffff; 
+            --text-grey: #5d7082; 
+            --header-h: 70px; 
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; transition: background-color 0.5s; }
-        header { height: var(--header-h); background: #f0f7ff; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 2500; flex-shrink: 0; box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4); position: relative; }
+        
+        body { 
+            background-color: var(--bg-page); 
+            height: 100dvh; 
+            width: 100vw; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            transition: background-color 0.5s;
+        }
+        
+        /* HEADER */
+        header { 
+            height: var(--header-h); 
+            background: #f0f7ff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 20px; 
+            z-index: 2500; 
+            flex-shrink: 0; 
+            box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4); 
+            position: relative; 
+        }
+        
         .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; pointer-events: none; white-space: nowrap; }
         .logo-center img { height: 48px; }
         .logo-text h1 { font-size: 17px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 8px; color: #88a; font-weight: 700; text-transform: uppercase; }
+
         .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
         .btn-voltar-header { background: var(--primary-blue); color: white; padding: 7px 15px; border-radius: 12px; text-decoration: none; font-weight: 900; font-size: 13px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 0 var(--primary-dark); }
+
+        /* MENU DROPDOWN */
         .menu-dropdown { position: absolute; top: 60px; left: 15px; display: none; flex-direction: column; gap: 6px; z-index: 3000; }
         .menu-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 0.85rem; min-width: 180px; }
+        .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
+
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 2000; }
+
+        /* GAME AREA */
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 15px; overflow: hidden; }
         .game-card { background: #f0f7ff; width: 100%; max-width: 1000px; height: 100%; border-radius: 40px; box-shadow: 0 15px 35px rgba(176,196,217,0.5); display: flex; flex-direction: column; padding: 20px; position: relative; overflow: hidden; }
+
         .status-bar { display: none; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .badge { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 12px; font-weight: 900; font-size: 12px; color: white; }
         .badge-timer { background: #cbd9e6; color: var(--text-grey); }
         .badge-round { background: var(--primary-blue); box-shadow: 0 3px 0 var(--primary-dark); }
+
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; flex: 1; }
         .screen.active { display: flex !important; }
+
         #game-main-content { flex: 1; width: 100%; background: var(--white); border: 3px dashed rgba(91, 164, 229, 0.4); border-radius: 30px; display: flex; align-items: center; justify-content: center; padding: 10px; position: relative; overflow: hidden; }
-        .btn-jogar-stretch { background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 16px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); width: 100%; }
-        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 4000; padding: 20px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); max-height: 85vh; overflow-y: auto; }
+
+        .btn-jogar-stretch { background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 16px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); transition: 0.1s; width: 100%; text-decoration: none; text-align: center; }
+        .btn-jogar-stretch:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--primary-dark); }
+
+        /* RD PANEL - 2 COLUNAS */
+        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 4000; padding: 25px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); max-height: 85vh; overflow-y: auto; }
         .rd-panel.active { bottom: 0; }
-        .rd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .rd-column { display: flex; flex-direction: column; gap: 8px; }
-        .rd-item { background: #f8f9fa; border: 2px solid #eef5ff; border-radius: 15px; padding: 10px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; font-weight: 700; color: var(--text-grey); font-size: 11px; }
-        .rd-item.selected { border-color: var(--primary-blue); background: #f0f7ff; color: var(--primary-blue); }
+        
+        .rd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .rd-column { display: flex; flex-direction: column; gap: 10px; }
+        .rd-column-title { font-weight: 900; color: var(--primary-blue); font-size: 12px; text-transform: uppercase; text-align: center; margin-bottom: 5px; border-bottom: 2px solid #f0f7ff; padding-bottom: 5px; }
+
+        .rd-item { background: #f8f9fa; border: 2px solid #eef5ff; border-radius: 15px; padding: 12px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; font-weight: 700; color: var(--text-grey); transition: 0.2s; }
+        .rd-item.selected { border-color: var(--primary-blue); background: #f0f7ff; color: var(--primary-blue); transform: scale(1.02); }
         .rd-item img { width: 35px; height: 35px; object-fit: contain; }
+
+        @media (max-width: 600px) {
+            .rd-grid { gap: 10px; }
+            .rd-item { padding: 8px; font-size: 11px; }
+            .logo-text h1 { font-size: 14px; }
+        }
     </style>
 </head>
 <body>
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+    
     <header>
-        <div class="header-left"><i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i><div id="dropdownMenu" class="menu-dropdown"></div></div>
-        <div class="logo-center"><img id="head-logo" src=""><div class="logo-text"><h1 id="tit-l1"></h1><h1 id="tit-l2"></h1><p id="sub-tit"></p></div></div>
-        <div class="header-right"><a href="#" id="link-voltar-header" class="btn-voltar-header"><img id="header-back-icon" src="" width="16"> <span id="txt-voltar-header"></span></a></div>
+        <div class="header-left">
+            <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
+            <div id="dropdownMenu" class="menu-dropdown"></div>
+        </div>
+        <div class="logo-center">
+            <img id="head-logo" src="">
+            <div class="logo-text">
+                <h1 id="tit-l1"></h1>
+                <h1 id="tit-l2"></h1>
+                <p id="sub-tit"></p>
+            </div>
+        </div>
+        <div class="header-right">
+            <a href="#" id="link-voltar-header" class="btn-voltar-header">
+                <img id="header-back-icon" src="" width="16"> <span id="txt-voltar-header"></span>
+            </a>
+        </div>
     </header>
 
     <main class="game-container">
         <div class="game-card">
+            <!-- STATUS BAR -->
             <div class="status-bar" id="status-bar">
-                <div style="display:flex; gap:10px;"><div class="badge badge-timer">⏳ <span id="timer-val">00:00</span></div><div class="badge badge-round"><span id="round-val">1 / 10</span></div></div>
-                <div style="display:flex; gap:8px; align-items:center;">
+                <div style="display:flex; gap:10px;">
+                    <div class="badge badge-timer">⏳ <span id="timer-val">00:00</span></div>
+                    <div class="badge badge-round"><span id="round-val">1 / 10</span></div>
+                </div>
+                <div style="display:flex; gap:10px; align-items:center;">
                     <div class="badge" style="background:var(--highlight-green);"><i class="fas fa-check"></i> <span id="hits-val">0</span></div>
                     <div class="badge" style="background:var(--error-red);"><i class="fas fa-times"></i> <span id="miss-val">0</span></div>
                     <img id="rd-game-btn" src="" style="height:32px; cursor:pointer;" onclick="openRDMenu()">
                 </div>
             </div>
+
+            <!-- TELAS -->
             <section class="screen active" id="scr-intro">
-                <div id="intro-animation-container" style="flex:1; width:100%; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.5); border-radius:30px; margin-bottom:15px; position:relative; overflow:hidden;"></div>
-                <p id="intro-instr" style="font-weight: 800; color: var(--text-grey); text-align: center; margin-bottom: 20px; padding:0 10px;"></p>
-                <div style="display:flex; width:100%; gap:15px; align-items:center; padding:0 10px;">
+                <div id="intro-animation-container" style="flex:1; width:100%; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.5); border-radius:30px; margin-bottom:15px;"></div>
+                <p id="intro-instr" style="font-weight: 800; color: var(--text-grey); text-align: center; margin-bottom: 20px; padding: 0 10px;"></p>
+                <div style="display:flex; width:100%; gap:15px; align-items:center;">
                     <button class="btn-jogar-stretch" onclick="goToGame()">JOGAR</button>
                     <img id="rd-intro-btn" src="" onclick="openRDMenu()" style="height:55px; cursor:pointer;">
                 </div>
             </section>
-            <section class="screen" id="scr-game"><div id="game-main-content"></div></section>
+
+            <section class="screen" id="scr-game">
+                <div id="game-main-content"></div>
+            </section>
+
             <section class="screen" id="scr-result">
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%;">
                     <img id="res-taca" style="width:120px; margin-bottom:10px;">
-                    <h2 id="res-tit" style="font-size:26px; color: var(--primary-blue); font-weight:900; margin-bottom:15px; text-align:center;"></h2>
+                    <h2 id="res-tit" style="font-size:28px; color: var(--primary-blue); font-weight:900; margin-bottom:15px; text-align:center;"></h2>
                     <div style="display:flex; gap:12px; margin-bottom:20px;">
-                        <div style="background:white; padding:10px 20px; border-radius:15px; text-align:center; min-width:110px;"><span id="res-pts" style="font-size:24px; font-weight:900; color:var(--primary-blue);"></span><br><small style="font-weight:900; color:#88a;">ACERTOS</small></div>
-                        <div style="background:white; padding:10px 20px; border-radius:15px; text-align:center; min-width:110px;"><span id="res-tim" style="font-size:24px; font-weight:900; color:var(--primary-blue);"></span><br><small style="font-weight:900; color:#88a;">TEMPO</small></div>
+                        <div style="background:white; padding:10px 20px; border-radius:15px; text-align:center; min-width:110px;">
+                            <span id="res-pts" style="font-size:24px; font-weight:900; color:var(--primary-blue);"></span><br>
+                            <small style="font-weight:900; color:#88a;">ACERTOS</small>
+                        </div>
+                        <div style="background:white; padding:10px 20px; border-radius:15px; text-align:center; min-width:110px;">
+                            <span id="res-tim" style="font-size:24px; font-weight:900; color:var(--primary-blue);"></span><br>
+                            <small style="font-weight:900; color:#88a;">TEMPO</small>
+                        </div>
                     </div>
                     <button class="btn-jogar-stretch" style="max-width:300px;" onclick="location.reload()">JOGAR DE NOVO</button>
                 </div>
@@ -80,6 +167,7 @@
         </div>
     </main>
 
+    <!-- RD MENU (TEMA + NÍVEL) -->
     <div id="rdMenu" class="rd-panel">
         <div style="width:40px; height:4px; background:#eee; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div>
         <div class="rd-grid">
@@ -92,51 +180,100 @@
     <script src="jogo.js"></script>
     <script>
     function initUI() {
-        const setup = CONFIG_MESTRE; const tema = BIBLIOTECA_TEMAS[setup.area]; 
-        const cont = BIBLIOTECA_CONTEUDO[setup.ano][setup.area]; const conf = JOGO_CONFIG;
-        document.documentElement.style.setProperty('--primary-blue', tema.corPrimaria);
-        document.documentElement.style.setProperty('--primary-dark', tema.corEscura);
-        document.documentElement.style.setProperty('--bg-page', tema.corPagina);
-        document.getElementById('tit-l1').innerText = cont.t1; document.getElementById('tit-l2').innerText = cont.t2;
-        document.getElementById('sub-tit').innerText = cont.sub; document.getElementById('intro-instr').innerText = cont.intro;
+        const setup = CONFIG_MESTRE; 
+        const temaBase = BIBLIOTECA_TEMAS[setup.area]; // Cor fixa pela área (portugues)
+        const cont = BIBLIOTECA_CONTEUDO[setup.ano][setup.area]; 
+        const conf = JOGO_CONFIG;
+
+        // CSS Variables
+        document.documentElement.style.setProperty('--primary-blue', temaBase.corPrimaria);
+        document.documentElement.style.setProperty('--primary-dark', temaBase.corEscura);
+        document.documentElement.style.setProperty('--bg-page', temaBase.corPagina);
+
+        // Header Texts
+        document.getElementById('tit-l1').innerText = cont.t1;
+        document.getElementById('tit-l2').innerText = cont.t2;
+        document.getElementById('sub-tit').innerText = cont.sub;
+        document.getElementById('intro-instr').innerText = cont.intro;
+
+        // Assets
         document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu[setup.ano];
         document.getElementById('header-back-icon').src = conf.caminhoIcons + "voltar.png";
         document.getElementById('link-voltar-header').href = conf.linkVoltar;
         document.getElementById('txt-voltar-header').innerText = conf.textoVoltar;
         document.getElementById('rd-intro-btn').src = conf.caminhoImg + "rd.png";
         document.getElementById('rd-game-btn').src = conf.caminhoImg + "rd.png";
+
         preencherRD();
         if(window.startLogic) window.startLogic();
     }
+
     function preencherRD() {
-        const conf = JOGO_CONFIG; const colT = document.getElementById('col-temas'); const colL = document.getElementById('col-niveis');
-        colT.innerHTML = '<p style="font-weight:900; color:var(--primary-blue); font-size:11px; text-align:center;">TEMA</p>';
-        colL.innerHTML = '<p style="font-weight:900; color:var(--primary-blue); font-size:11px; text-align:center;">NÍVEL</p>';
+        const conf = JOGO_CONFIG;
+        const colT = document.getElementById('col-temas');
+        const colL = document.getElementById('col-niveis');
+        
+        colT.innerHTML = '<p class="rd-column-title">1. TEMA</p>';
+        colL.innerHTML = '<p class="rd-column-title">2. NÍVEL</p>';
+
+        // Temas
         Object.keys(conf.categorias).forEach(key => {
-            const c = conf.categorias[key]; const div = document.createElement('div');
-            div.className = `rd-item ${CONFIG_MESTRE.area === key ? 'selected' : ''}`;
+            const c = conf.categorias[key];
+            const div = document.createElement('div');
+            div.className = `rd-item ${CONFIG_MESTRE.tema_jogo === key ? 'selected' : ''}`;
             div.innerHTML = `<img src="${conf.caminhoImg}${c.imgCapa}"><span>${c.nome}</span>`;
-            div.onclick = () => { CONFIG_MESTRE.area = key; initUI(); }; colT.appendChild(div);
+            div.onclick = () => { 
+                CONFIG_MESTRE.tema_jogo = key; 
+                preencherRD(); 
+                if(window.startLogic) window.startLogic(); // Atualiza animação da intro
+            };
+            colT.appendChild(div);
         });
+
+        // Níveis
         conf.niveis_disponiveis.forEach(n => {
             const div = document.createElement('div');
             div.className = `rd-item ${CONFIG_MESTRE.nivel === n.id ? 'selected' : ''}`;
-            div.innerHTML = `<span style="font-size:18px;">${n.icon}</span><span>${n.nome}</span>`;
-            div.onclick = () => { CONFIG_MESTRE.nivel = n.id; preencherRD(); }; colL.appendChild(div);
+            div.innerHTML = `<span style="font-size:18px;">${n.icon}</span><span>${n.nome}</span><small style="font-size:9px; opacity:0.6;">${n.pares*2} cartas</small>`;
+            div.onclick = () => { 
+                CONFIG_MESTRE.nivel = n.id; 
+                preencherRD(); 
+            };
+            colL.appendChild(div);
         });
     }
-    function goToIntro() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-intro').classList.add('active'); document.getElementById('status-bar').style.display = 'none'; }
-    function goToGame() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-game').classList.add('active'); document.getElementById('status-bar').style.display = 'flex'; if(window.initGame) window.initGame(); }
-    window.mostrarResultados = function(pts, tempo) { 
-        const perc = (pts/10)*100; const feedback = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
-        document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + feedback.img;
-        document.getElementById('res-tit').innerText = feedback.titulo;
-        document.getElementById('res-pts').innerText = pts + "/10"; document.getElementById('res-tim').innerText = tempo;
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-result').classList.add('active'); document.getElementById('status-bar').style.display = 'none';
-    };
-    function toggleHamburger(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; document.getElementById('overlay').style.display = m.style.display; }
-    function openRDMenu() { document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
-    function closeMenus() { document.getElementById('rdMenu').classList.remove('active'); document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; }
+
+    function goToIntro() { 
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
+        document.getElementById('scr-intro').classList.add('active'); 
+        document.getElementById('status-bar').style.display = 'none'; 
+    }
+
+    function goToGame() { 
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
+        document.getElementById('scr-game').classList.add('active'); 
+        document.getElementById('status-bar').style.display = 'flex'; 
+        if(window.initGame) window.initGame(); 
+    }
+
+    function toggleHamburger(e) { 
+        e.stopPropagation(); 
+        const m = document.getElementById('dropdownMenu'); 
+        m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; 
+        document.getElementById('overlay').style.display = m.style.display; 
+    }
+
+    function openRDMenu() { 
+        document.getElementById('rdMenu').classList.add('active'); 
+        document.getElementById('overlay').style.display = 'block'; 
+    }
+
+    function closeMenus() { 
+        document.getElementById('rdMenu').classList.remove('active'); 
+        document.getElementById('dropdownMenu').style.display = 'none'; 
+        document.getElementById('overlay').style.display = 'none'; 
+    }
+
     window.onload = initUI;
     </script>
 </body>
