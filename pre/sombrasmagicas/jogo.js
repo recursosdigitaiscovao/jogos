@@ -7,37 +7,48 @@ let timerInterval;
 let itensNaRonda = [];
 let totalItensConcluidos = 0;
 
-// Configuração de Estilo Dinâmico para o Jogo de Sombras
+// Estilos Dinâmicos Otimizados para 6 Itens
 const style = document.createElement('style');
 style.innerHTML = `
-    .game-area { display: flex; flex-direction: column; width: 100%; height: 100%; justify-content: space-around; align-items: center; }
-    .row-shadows { display: flex; gap: 20px; justify-content: center; width: 100%; }
-    .row-images { display: flex; gap: 20px; justify-content: center; width: 100%; margin-top: 20px; }
+    .game-area { 
+        display: flex; flex-direction: column; width: 100%; height: 100%; 
+        justify-content: center; align-items: center; gap: 10px;
+    }
+    .row-shadows, .row-images { 
+        display: grid; 
+        grid-template-columns: repeat(6, 1fr); 
+        gap: 10px; width: 100%; max-width: 900px; 
+        justify-items: center;
+    }
     
     .slot-sombra { 
-        width: 100px; height: 100px; border: 3px dashed #ccc; border-radius: 20px; 
-        display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.03);
-        position: relative;
+        width: 100%; max-width: 120px; aspect-ratio: 1/1;
+        border: 3px dashed #ccc; border-radius: 15px; 
+        display: flex; align-items: center; justify-content: center; 
+        background: rgba(255,255,255,0.4); position: relative;
     }
     .img-sombra { 
-        width: 80%; height: 80%; object-fit: contain; 
-        filter: brightness(0); opacity: 0.3; pointer-events: none;
+        width: 75%; height: 75%; object-fit: contain; 
+        filter: brightness(0); opacity: 0.2; pointer-events: none;
     }
     
     .peça-cor { 
-        width: 100px; height: 100px; cursor: grab; touch-action: none;
+        width: 100%; max-width: 120px; aspect-ratio: 1/1;
+        cursor: grab; touch-action: none;
         display: flex; align-items: center; justify-content: center;
-        background: white; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        z-index: 10;
+        background: white; border-radius: 15px; 
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 10;
     }
-    .peça-cor img { width: 80%; height: 80%; object-fit: contain; pointer-events: none; }
-    .peça-cor.dragging { opacity: 0.7; transform: scale(1.1); cursor: grabbing; }
+    .peça-cor img { width: 75%; height: 75%; object-fit: contain; pointer-events: none; }
+    .peça-cor.dragging { opacity: 0.8; transform: scale(1.1); cursor: grabbing; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
     
-    .acertou { border-color: var(--highlight-green) !important; background: #f0fff0 !important; }
-    .acertou .img-sombra { filter: none !important; opacity: 1 !important; transition: 0.5s; }
+    .acertou { border-color: var(--highlight-green) !important; background: #e8f5e9 !important; border-style: solid !important; }
+    .acertou .img-sombra { filter: none !important; opacity: 1 !important; transition: 0.4s transform ease-out, 0.4s opacity; transform: scale(1.1); }
 
-    @media (max-width: 600px) {
-        .slot-sombra, .peça-cor { width: 80px; height: 80px; }
+    /* Ajuste para ecrãs pequenos (Mobile) */
+    @media (max-width: 700px) {
+        .row-shadows, .row-images { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .slot-sombra, .peça-cor { max-width: 90px; }
     }
 `;
 document.head.appendChild(style);
@@ -60,12 +71,12 @@ function renderIntroAnimation() {
     const cat = JOGO_CONFIG.categorias[categoriaAtual];
     container.innerHTML = `
         <div style="text-align:center">
-            <div style="display:flex; gap:20px; justify-content:center; align-items:center;">
-                <img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="width:80px; filter:brightness(0); opacity:0.3">
-                <i class="fas fa-arrow-right" style="color:#ccc; font-size:24px"></i>
-                <img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="width:80px;">
+            <div style="display:flex; gap:15px; justify-content:center; align-items:center;">
+                <img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="width:70px; filter:brightness(0); opacity:0.2">
+                <i class="fas fa-magic" style="color:var(--primary-blue); font-size:20px"></i>
+                <img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" style="width:70px;">
             </div>
-            <p style="margin-top:15px; color:#88a; font-weight:bold;">TEMA: ${cat.nome.toUpperCase()}</p>
+            <p style="margin-top:15px; color:var(--text-grey); font-weight:900; font-size:1.1rem;">TEMA: ${cat.nome.toUpperCase()}</p>
         </div>
     `;
 }
@@ -97,7 +108,7 @@ function proximaRonda() {
     document.getElementById('hits-val').innerText = acertos;
     document.getElementById('miss-val').innerText = erros;
 
-    // Selecionar itens aleatórios para esta ronda
+    // Selecionar 6 itens aleatórios para esta ronda
     const embaralhados = [...cat.itens].sort(() => 0.5 - Math.random());
     itensNaRonda = embaralhados.slice(0, cat.itensPorRonda);
     totalItensConcluidos = 0;
@@ -110,6 +121,7 @@ function renderizarTabuleiro() {
     container.innerHTML = `
         <div class="game-area">
             <div class="row-shadows" id="container-sombras"></div>
+            <div style="height:10px;"></div>
             <div class="row-images" id="container-pecas"></div>
         </div>
     `;
@@ -117,7 +129,7 @@ function renderizarTabuleiro() {
     const containerSombras = document.getElementById('container-sombras');
     const containerPecas = document.getElementById('container-pecas');
 
-    // Sombras (ordem fixa da seleção)
+    // Renderizar Sombras
     itensNaRonda.forEach(item => {
         const slot = document.createElement('div');
         slot.className = 'slot-sombra';
@@ -126,16 +138,14 @@ function renderizarTabuleiro() {
         containerSombras.appendChild(slot);
     });
 
-    // Peças coloridas (embaralhadas para a criança procurar)
+    // Renderizar Peças (Embaralhadas)
     [...itensNaRonda].sort(() => 0.5 - Math.random()).forEach(item => {
         const peca = document.createElement('div');
         peca.className = 'peça-cor';
         peca.dataset.id = item.id;
         peca.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${item.img}">`;
         
-        // Adicionar eventos de Drag
         initDragEvents(peca);
-        
         containerPecas.appendChild(peca);
     });
 }
@@ -170,15 +180,17 @@ function initDragEvents(el) {
         el.style.left = (initialX + dx) + 'px';
         el.style.top = (initialY + dy) + 'px';
 
-        // Check hover over shadow
-        el.style.display = 'none';
+        // Detetar sobreposição
+        el.style.visibility = 'hidden';
         let elemBelow = document.elementFromPoint(e.clientX, e.clientY);
-        el.style.display = 'flex';
+        el.style.visibility = 'visible';
 
         let shadowSlot = elemBelow?.closest('.slot-sombra');
-        document.querySelectorAll('.slot-sombra').forEach(s => s.style.transform = 'scale(1)');
+        
+        // Feedback visual no alvo
+        document.querySelectorAll('.slot-sombra').forEach(s => s.style.borderColor = '#ccc');
         if (shadowSlot && !shadowSlot.classList.contains('acertou')) {
-            shadowSlot.style.transform = 'scale(1.1)';
+            shadowSlot.style.borderColor = 'var(--primary-blue)';
             currentTarget = shadowSlot;
         } else {
             currentTarget = null;
@@ -186,15 +198,16 @@ function initDragEvents(el) {
     };
 
     el.onpointerup = (e) => {
+        if (!el.classList.contains('dragging')) return;
         el.classList.remove('dragging');
-        document.querySelectorAll('.slot-sombra').forEach(s => s.style.transform = 'scale(1)');
+        document.querySelectorAll('.slot-sombra').forEach(s => s.style.borderColor = '#ccc');
 
         if (currentTarget && currentTarget.dataset.id === el.dataset.id) {
-            // ACERTO
+            // ACERTO MÁGICO
             acertos++;
             playSound(JOGO_CONFIG.sons.acerto);
             currentTarget.classList.add('acertou');
-            el.remove();
+            el.style.display = 'none';
             totalItensConcluidos++;
             
             document.getElementById('hits-val').innerText = acertos;
@@ -203,16 +216,16 @@ function initDragEvents(el) {
                 setTimeout(() => {
                     rondaAtual++;
                     proximaRonda();
-                }, 800);
+                }, 1000);
             }
         } else {
-            // ERRO ou soltou fora
+            // ERRO (apenas se soltou em cima de uma sombra errada)
             if (currentTarget) {
                 erros++;
                 playSound(JOGO_CONFIG.sons.erro);
                 document.getElementById('miss-val').innerText = erros;
             }
-            // Reset position
+            // Volta para a posição original
             el.style.position = 'static';
             el.style.width = '';
             el.style.height = '';
@@ -222,7 +235,7 @@ function initDragEvents(el) {
 
 function playSound(url) {
     const audio = new Audio(url);
-    audio.volume = 0.5;
+    audio.volume = 0.4;
     audio.play().catch(() => {});
 }
 
