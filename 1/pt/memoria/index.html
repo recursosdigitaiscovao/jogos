@@ -17,51 +17,73 @@
         .logo-text h1 { font-size: 17px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 8px; color: #88a; font-weight: 700; text-transform: uppercase; }
 
+        /* TABULEIRO RESPONSIVO */
+        #game-main-content { 
+            flex: 1; width: 100%; background: var(--white); 
+            border: 3px dashed rgba(91, 164, 229, 0.4); border-radius: 30px; 
+            display: grid; 
+            /* Ajuste automático de colunas conforme o espaço disponível */
+            grid-template-columns: repeat(auto-fit, minmax(clamp(70px, 18vw, 110px), 1fr));
+            gap: clamp(8px, 2vw, 15px); 
+            padding: clamp(10px, 3vw, 20px);
+            justify-content: center; align-content: center; 
+            perspective: 1000px; overflow-y: auto;
+        }
+
+        /* ESTILO DA CARTA E ANIMAÇÃO */
+        .carta { 
+            aspect-ratio: 3/4; /* Mantém a proporção vertical */
+            position: relative; 
+            transform-style: preserve-3d; 
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
+            cursor: pointer;
+            width: 100%;
+        }
+        .carta.virada { transform: rotateY(180deg); }
+
+        .face { 
+            position: absolute; width: 100%; height: 100%; 
+            backface-visibility: hidden; 
+            display: flex; align-items: center; justify-content: center; 
+            border-radius: clamp(8px, 2vw, 15px); 
+            border: 3px solid white; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        }
+
+        /* Cérebro nas costas da carta */
+        .frente { background: var(--primary-blue); color: white; }
+        .frente img { width: 60%; height: auto; opacity: 0.8; }
+
+        .verso { background: #fff; transform: rotateY(180deg); padding: 5px; flex-direction: column; }
+        .verso img { max-width: 90%; max-height: 80%; object-fit: contain; }
+        .texto-carta { 
+            font-size: clamp(10px, 2.5vw, 14px); 
+            font-weight: 900; color: var(--primary-dark); 
+            text-align: center; text-transform: uppercase; 
+        }
+
+        /* Outros estilos de UI */
         .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
         .btn-voltar-header { background: var(--primary-blue); color: white; padding: 7px 15px; border-radius: 12px; text-decoration: none; font-weight: 900; font-size: 13px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 0 var(--primary-dark); }
         .btn-voltar-mobile { display: none; text-decoration: none; padding: 5px; z-index: 3001; }
-
         .menu-dropdown { position: absolute; top: 60px; left: 15px; display: none; flex-direction: column; gap: 6px; z-index: 3000; }
-        .menu-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 0.85rem; min-width: 180px; transition: background 0.2s; }
-        .menu-item:not(.menu-item-voltar):hover { background-color: var(--primary-blue); color: white; }
-        .menu-item img { height: 20px; width: 20px; object-fit: contain; }
-        .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
-        .menu-item-voltar img { filter: brightness(0) invert(1); }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 0.85rem; min-width: 180px; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 2000; }
 
-        .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 15px; overflow: hidden; }
-        .game-card { background: #f0f7ff; width: 100%; max-width: 1000px; height: 100%; border-radius: 40px; box-shadow: 0 15px 35px rgba(176,196,217,0.5); display: flex; flex-direction: column; padding: 20px; position: relative; overflow: hidden; }
+        .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden; }
+        .game-card { background: #f0f7ff; width: 100%; max-width: 1000px; height: 100%; border-radius: 40px; box-shadow: 0 15px 35px rgba(176,196,217,0.5); display: flex; flex-direction: column; padding: 15px; position: relative; overflow: hidden; }
 
-        .status-bar { display: none; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-shrink: 0; gap: 5px; }
-        .status-group { display: flex; align-items: center; gap: 8px; }
-        .badge { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 10px; border-radius: 12px; font-weight: 900; font-size: 12px; color: white; }
-        .badge-timer { background: #cbd9e6; color: var(--text-grey); min-width: 65px; }
-        .badge-round { background: var(--primary-blue); box-shadow: 0 3px 0 var(--primary-dark); min-width: 75px; }
+        .status-bar { display: none; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0; }
+        .badge { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 12px; border-radius: 12px; font-weight: 900; font-size: 12px; color: white; }
+        .badge-timer { background: #cbd9e6; color: var(--text-grey); }
+        .badge-round { background: var(--primary-blue); box-shadow: 0 3px 0 var(--primary-dark); }
         .badge-hit { background: var(--highlight-green); box-shadow: 0 3px 0 #6ab51c; }
         .badge-miss { background: var(--error-red); box-shadow: 0 3px 0 #e04a4a; }
 
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; flex: 1; }
         .screen.active { display: flex !important; }
-        
-        /* ESTILO DO TABULEIRO DE MEMÓRIA */
-        #game-main-content { 
-            flex: 1; width: 100%; background: var(--white); 
-            border: 3px dashed rgba(91, 164, 229, 0.4); border-radius: 30px; 
-            display: grid; gap: 10px; padding: 15px; 
-            justify-content: center; align-content: center; 
-            perspective: 1000px; overflow: hidden;
-        }
 
-        /* CARTAS */
-        .carta { width: 90px; height: 120px; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
-        .carta.virada { transform: rotateY(180deg); }
-        .face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 15px; border: 2px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .frente { background: var(--primary-blue); color: white; font-size: 40px; font-weight: 900; }
-        .verso { background: #fff; transform: rotateY(180deg); padding: 5px; flex-direction: column; }
-        .verso img { max-width: 85%; max-height: 85%; object-fit: contain; }
-        .texto-carta { font-size: 13px; font-weight: 900; color: var(--primary-dark); text-align: center; text-transform: uppercase; word-break: break-word; }
-
-        .btn-jogar-stretch { background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 16px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); transition: 0.1s; display: flex; align-items: center; justify-content: center; width: 100%; text-decoration: none; }
+        .btn-jogar-stretch { background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 16px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); display: flex; align-items: center; justify-content: center; width: 100%; text-decoration: none; }
         .btn-jogar-stretch:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--primary-dark); }
         
         .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 4000; padding: 25px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); max-height: 80vh; overflow-y: auto; }
@@ -70,31 +92,39 @@
         .rd-item { background: #f8f9fa; border: 2px solid #eef5ff; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; font-weight: 700; color: var(--text-grey); }
         .rd-item img { width: 60px; height: 60px; object-fit: contain; }
 
-        @media (max-width: 650px) { .btn-voltar-header { display: none !important; } .btn-voltar-mobile { display: flex; align-items: center; } .carta { width: 75px; height: 100px; } }
+        @media (max-width: 650px) { .btn-voltar-header { display: none !important; } .btn-voltar-mobile { display: flex; align-items: center; } }
     </style>
 </head>
 <body>
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+    
     <header>
         <div class="header-left"><i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i><div id="dropdownMenu" class="menu-dropdown"></div></div>
         <div class="logo-center"><img id="head-logo" src=""><div class="logo-text"><h1 id="tit-l1"></h1><h1 id="tit-l2"></h1><p id="sub-tit"></p></div></div>
-        <div class="header-right"><a href="#" id="link-voltar-header" class="btn-voltar-header"><img id="header-back-icon" src="" width="16"> <span id="txt-voltar-header"></span></a><a href="#" id="link-voltar-mobile" class="btn-voltar-mobile"><img id="header-back-mobile" src="" alt="Voltar" style="height:32px;"></a></div>
+        <div class="header-right">
+            <a href="#" id="link-voltar-header" class="btn-voltar-header"><img id="header-back-icon" src="" width="16"> <span id="txt-voltar-header"></span></a>
+            <a href="#" id="link-voltar-mobile" class="btn-voltar-mobile"><img id="header-back-mobile" src="" style="height:32px;"></a>
+        </div>
     </header>
 
     <main class="game-container">
         <div class="game-card">
             <div class="status-bar" id="status-bar">
                 <div class="status-group"><div class="badge badge-timer">⏳ <span id="timer-val">00:00</span></div><div class="badge badge-round"><span id="round-val">1 / 10</span></div></div>
-                <div class="status-group"><div class="badge badge-hit"><i class="fas fa-check"></i> <span id="hits-val">0</span></div><div class="badge badge-miss"><i class="fas fa-times"></i> <span id="miss-val">0</span></div><img id="rd-game-btn" src="" style="height:32px; width:32px; cursor:pointer;" onclick="openRDMenu(event)"></div>
+                <div class="status-group"><div class="badge badge-hit"><i class="fas fa-check"></i> <span id="hits-val">0</span></div><div class="badge badge-miss"><i class="fas fa-times"></i> <span id="miss-val">0</span></div><img id="rd-game-btn" src="" style="height:32px; cursor:pointer;" onclick="openRDMenu(event)"></div>
             </div>
 
             <section class="screen active" id="scr-intro">
                 <div id="intro-animation-container" style="flex:1; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:rgba(255,255,255,0.5); border-radius:30px; margin-bottom:15px; border:3px dashed rgba(0,0,0,0.05);">
-                    <i class="fas fa-brain" style="font-size: 80px; color: var(--primary-blue); opacity: 0.5;"></i>
+                    <!-- O ícone do cérebro aqui também para consistência -->
+                    <img id="brain-icon-intro" src="" style="width: 100px; height: auto;">
                     <p id="tema-selecionado-txt" style="margin-top:15px; font-weight:900; color:var(--primary-dark);"></p>
                 </div>
                 <p id="intro-instr" style="font-weight: 800; color: var(--text-grey); text-align: center; margin-bottom: 20px; padding: 0 10px;"></p>
-                <div style="display:flex; width:100%; gap:15px; align-items:center;"><button class="btn-jogar-stretch" onclick="goToGame()">JOGAR</button><img id="rd-intro-btn" src="" onclick="openRDMenu(event)" style="height:55px; cursor:pointer;"></div>
+                <div style="display:flex; width:100%; gap:15px; align-items:center;">
+                    <button class="btn-jogar-stretch" onclick="goToGame()">JOGAR</button>
+                    <img id="rd-intro-btn" src="" onclick="openRDMenu(event)" style="height:55px; cursor:pointer;">
+                </div>
             </section>
 
             <section class="screen" id="scr-game"><div id="game-main-content"></div></section>
@@ -106,17 +136,16 @@
                         <div style="background:white; padding:10px 20px; border-radius:15px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); min-width:110px;"><span id="res-pts" style="font-size:24px; font-weight:900; color:var(--primary-blue);">0</span><br><small style="font-weight:900; color:#88a;">ACERTOS</small></div>
                         <div style="background:white; padding:10px 20px; border-radius:15px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); min-width:110px;"><span id="res-tim" style="font-size:24px; font-weight:900; color:var(--primary-blue);">00:00</span><br><small style="font-weight:900; color:#88a;">TEMPO</small></div>
                     </div>
-                    <div style="display:flex; flex-direction: column; width: 100%; max-width: 400px; gap: 10px;"><button class="btn-jogar-stretch" onclick="location.reload()">JOGAR DE NOVO</button><button class="btn-jogar-stretch" style="background:white; color:var(--primary-blue); border:2px solid var(--primary-blue); box-shadow:none; font-size:15px;" onclick="openRDMenu(event)">OUTRO TEMA / NÍVEL</button><a href="#" id="btn-outro-jogo" class="btn-jogar-stretch" style="background:#cbd9e6; color:#445; box-shadow:none; border:none; font-size:14px;">ESCOLHER OUTRO JOGO</a></div>
+                    <button class="btn-jogar-stretch" onclick="location.reload()">JOGAR DE NOVO</button>
                 </div>
             </section>
         </div>
     </main>
 
-    <div id="rdMenu" class="rd-panel"><div style="width:40px; height:4px; background:#eee; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div><h3 id="rd-title" style="text-align:center; color:var(--primary-blue); margin-bottom:15px; font-weight: 900;">Escolher Tema</h3><div id="rd-list"></div></div>
+    <div id="rdMenu" class="rd-panel"><h3 id="rd-title" style="text-align:center; color:var(--primary-blue); margin-bottom:15px; font-weight: 900;">Escolher Tema</h3><div id="rd-list"></div></div>
 
     <script src="dados.js"></script>
     <script>
-    // --- ESTADO DO JOGO ---
     let jogoEstado = {
         categoria: 'animais', nivelID: 1, nivelDados: null,
         ronda: 1, acertosRonda: 0, totalAcertos: 0, erros: 0, tempo: 0,
@@ -124,41 +153,44 @@
     };
 
     function initUI() {
-        const setup = CONFIG_MESTRE; const tema = BIBLIOTECA_TEMAS[setup.area]; const cont = BIBLIOTECA_CONTEUDO[setup.ano][setup.area]; const conf = JOGO_CONFIG;
-        document.documentElement.style.setProperty('--primary-blue', tema.corPrimaria); document.documentElement.style.setProperty('--primary-dark', tema.corEscura); document.documentElement.style.setProperty('--bg-page', tema.corPagina);
-        document.getElementById('tit-l1').innerText = cont.t1; document.getElementById('tit-l2').innerText = cont.t2; document.getElementById('sub-tit').innerText = cont.sub; document.getElementById('intro-instr').innerText = cont.intro;
-        document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu[setup.ano];
-        document.getElementById('header-back-icon').src = conf.caminhoIcons + "voltar.png"; document.getElementById('header-back-mobile').src = conf.caminhoIcons + tema.voltarMobile;
-        document.getElementById('rd-intro-btn').src = conf.caminhoImg + "rd.png"; document.getElementById('rd-game-btn').src = conf.caminhoImg + "rd.png";
-        document.getElementById('link-voltar-header').href = conf.linkVoltar; document.getElementById('link-voltar-mobile').href = conf.linkVoltar; document.getElementById('btn-outro-jogo').href = conf.linkVoltar; document.getElementById('txt-voltar-header').innerText = conf.textoVoltar;
-        
-        // Dropdown Menu
-        const menuBox = document.getElementById('dropdownMenu'); menuBox.innerHTML = '';
-        const labels = { home: "Início", pre: "Pré-Escolar", ano1: "1º Ano", ano2: "2º Ano", ano3: "3º Ano", ano4: "4º Ano" };
-        ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
-            const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
-            a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}"><span>${labels[k]}</span>`;
-            menuBox.appendChild(a);
-        });
-        const divider = document.createElement('div'); divider.className = 'menu-divider'; menuBox.appendChild(divider);
-        const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = conf.linkVoltar;
-        btnV.innerHTML = `<img src="${conf.caminhoIcons}voltar.png"> <span>${conf.textoVoltar}</span>`;
-        menuBox.appendChild(btnV);
+        const conf = JOGO_CONFIG; const setup = CONFIG_MESTRE;
+        const tema = BIBLIOTECA_TEMAS[setup.area];
+        const cont = BIBLIOTECA_CONTEUDO[setup.ano][setup.area];
 
-        // Carregar Tema Inicial e Nível Inicial
+        document.documentElement.style.setProperty('--primary-blue', tema.corPrimaria);
+        document.documentElement.style.setProperty('--primary-dark', tema.corEscura);
+        document.documentElement.style.setProperty('--bg-page', tema.corPagina);
+
+        document.getElementById('tit-l1').innerText = cont.t1;
+        document.getElementById('tit-l2').innerText = cont.t2;
+        document.getElementById('sub-tit').innerText = cont.sub;
+        document.getElementById('intro-instr').innerText = cont.intro;
+        
+        // Caminhos de Icons
+        const pathIcons = conf.caminhoIcons;
+        const pathImg = conf.caminhoImg;
+        
+        document.getElementById('head-logo').src = pathIcons + conf.iconesMenu[setup.ano];
+        document.getElementById('header-back-icon').src = pathIcons + "voltar.png";
+        document.getElementById('header-back-mobile').src = pathIcons + tema.voltarMobile;
+        document.getElementById('rd-intro-btn').src = pathImg + "rd.png";
+        document.getElementById('rd-game-btn').src = pathImg + "rd.png";
+        document.getElementById('brain-icon-intro').src = pathImg + "brain.png"; // Icone do cérebro
+
         jogoEstado.nivelDados = conf.niveis[1];
         atualizarIntroTexto();
         gerarMenuRDTemas();
     }
 
-    // --- NAVEGAÇÃO RD (TEMAS -> NÍVEIS) ---
     function gerarMenuRDTemas() {
         document.getElementById('rd-title').innerText = "Escolher Tema";
         const rdBox = document.getElementById('rd-list'); rdBox.innerHTML = '';
         Object.keys(JOGO_CONFIG.categorias).forEach(key => {
-            const c = JOGO_CONFIG.categorias[key]; const div = document.createElement('div'); div.className = 'rd-item';
+            const c = JOGO_CONFIG.categorias[key];
+            const div = document.createElement('div'); div.className = 'rd-item';
             div.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${c.imgCapa}"><span>${c.nome}</span>`;
-            div.onclick = () => gerarMenuRDNiveis(key); rdBox.appendChild(div);
+            div.onclick = () => gerarMenuRDNiveis(key);
+            rdBox.appendChild(div);
         });
     }
 
@@ -166,9 +198,13 @@
         jogoEstado.categoria = catKey;
         document.getElementById('rd-title').innerText = "Escolher Nível";
         const rdBox = document.getElementById('rd-list'); rdBox.innerHTML = '';
-        Object.keys(JOGO_CONFIG.niveis).forEach(n => {
-            const niv = JOGO_CONFIG.niveis[n]; const div = document.createElement('div'); div.className = 'rd-item';
-            div.innerHTML = `<div style="font-size:22px; font-weight:900; color:var(--primary-blue)">${n}</div><span>${niv.nome}</span><small>${niv.cartas} Cartas</small>`;
+        
+        [1, 2, 3].forEach(n => {
+            const niv = JOGO_CONFIG.niveis[n];
+            const div = document.createElement('div'); div.className = 'rd-item';
+            // Caminho para os icons dos níveis na pasta iconjogos
+            const iconNivel = `${JOGO_CONFIG.caminhoIcons}iconjogos/nivel${n}.png`;
+            div.innerHTML = `<img src="${iconNivel}" style="width:50px;"><span>${niv.nome}</span><small>${niv.cartas} Cartas</small>`;
             div.onclick = () => {
                 jogoEstado.nivelID = n;
                 jogoEstado.nivelDados = niv;
@@ -180,63 +216,35 @@
         });
     }
 
-    function atualizarIntroTexto() {
-        const catNome = JOGO_CONFIG.categorias[jogoEstado.categoria].nome;
-        document.getElementById('tema-selecionado-txt').innerText = `Tema: ${catNome} | Nível: ${jogoEstado.nivelDados.nome}`;
-    }
-
-    // --- LÓGICA DO JOGO ---
-    function goToIntro() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-intro').classList.add('active'); document.getElementById('status-bar').style.display = 'none'; }
-    
-    function goToGame() { 
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
-        document.getElementById('scr-game').classList.add('active'); 
-        document.getElementById('status-bar').style.display = 'flex';
-        iniciarMotorJogo(); 
-    }
-
-    function iniciarMotorJogo() {
-        jogoEstado.ronda = 1; jogoEstado.totalAcertos = 0; jogoEstado.erros = 0; jogoEstado.tempo = 0;
-        document.getElementById('hits-val').innerText = "0"; document.getElementById('miss-val').innerText = "0";
-        iniciarTimer();
-        prepararRonda();
-    }
-
-    function iniciarTimer() {
-        clearInterval(jogoEstado.timerInterval);
-        jogoEstado.timerInterval = setInterval(() => {
-            jogoEstado.tempo++;
-            const m = Math.floor(jogoEstado.tempo/60).toString().padStart(2,'0');
-            const s = (jogoEstado.tempo%60).toString().padStart(2,'0');
-            document.getElementById('timer-val').innerText = `${m}:${s}`;
-        }, 1000);
-    }
-
     function prepararRonda() {
         jogoEstado.acertosRonda = 0; jogoEstado.cartasViradas = []; jogoEstado.bloquear = false;
         document.getElementById('round-val').innerText = `${jogoEstado.ronda} / ${jogoEstado.nivelDados.rondas}`;
         
         const container = document.getElementById('game-main-content'); container.innerHTML = '';
         
-        // Ajuste de Grid baseado no nível
-        const numCartas = jogoEstado.nivelDados.cartas;
-        container.style.gridTemplateColumns = numCartas > 8 ? "repeat(4, auto)" : "repeat(3, auto)";
-
-        // Selecionar Itens
         const cat = JOGO_CONFIG.categorias[jogoEstado.categoria];
         const sorteados = [...cat.itens].sort(() => 0.5 - Math.random()).slice(0, jogoEstado.nivelDados.pares);
 
-        // Criar Deck (Pares: Imagem e Texto)
         let deck = [];
         sorteados.forEach(item => {
-            deck.push({ nome: item.nome, tipo: 'img', content: `<img src="${JOGO_CONFIG.caminhoImg}${cat.pastaImg || ""}${item.img || item.nome.toLowerCase()+'.png'}">` });
+            // Lógica de imagem: tenta usar cat.pastaImg se existir, senão usa o nome
+            const pasta = cat.pastaImg ? cat.pastaImg + "/" : "";
+            const imgFile = item.img ? item.img : item.nome.toLowerCase() + ".png";
+            
+            deck.push({ nome: item.nome, tipo: 'img', content: `<img src="${JOGO_CONFIG.caminhoImg}${pasta}${imgFile}">` });
             deck.push({ nome: item.nome, tipo: 'txt', content: `<div class="texto-carta">${item.nome}</div>` });
         });
         deck.sort(() => 0.5 - Math.random());
 
         deck.forEach(item => {
-            const card = document.createElement('div'); card.className = 'carta'; card.dataset.nome = item.nome;
-            card.innerHTML = `<div class="face frente">?</div><div class="face verso">${item.content}</div>`;
+            const card = document.createElement('div'); 
+            card.className = 'carta'; 
+            card.dataset.nome = item.nome;
+            // Face da frente tem o cérebro, face de trás (verso) tem o conteúdo
+            card.innerHTML = `
+                <div class="face frente"><img src="${JOGO_CONFIG.caminhoImg}brain.png"></div>
+                <div class="face verso">${item.content}</div>
+            `;
             card.onclick = () => virarCarta(card);
             container.appendChild(card);
         });
@@ -256,19 +264,15 @@
 
     function verificarPar() {
         const [c1, c2] = jogoEstado.cartasViradas;
-        const ePar = c1.dataset.nome === c2.dataset.nome;
-
-        if(ePar) {
+        if(c1.dataset.nome === c2.dataset.nome) {
             tocarSom('acerto');
             jogoEstado.acertosRonda++; jogoEstado.totalAcertos++;
             document.getElementById('hits-val').innerText = jogoEstado.totalAcertos;
-            jogoEstado.cartasViradas = [];
-            jogoEstado.bloquear = false;
+            jogoEstado.cartasViradas = []; jogoEstado.bloquear = false;
             if(jogoEstado.acertosRonda === jogoEstado.nivelDados.pares) setTimeout(proximaRonda, 1000);
         } else {
             tocarSom('erro');
-            jogoEstado.erros++;
-            document.getElementById('miss-val').innerText = jogoEstado.erros;
+            jogoEstado.erros++; document.getElementById('miss-val').innerText = jogoEstado.erros;
             setTimeout(() => {
                 c1.classList.remove('virada'); c2.classList.remove('virada');
                 jogoEstado.cartasViradas = []; jogoEstado.bloquear = false;
@@ -276,39 +280,21 @@
         }
     }
 
-    function proximaRonda() {
-        if(jogoEstado.ronda < jogoEstado.nivelDados.rondas) {
-            jogoEstado.ronda++; prepararRonda();
-        } else {
-            finalizarJogo();
-        }
+    // Funções de Apoio (Mantidas do original)
+    function atualizarIntroTexto() {
+        const catNome = JOGO_CONFIG.categorias[jogoEstado.categoria].nome;
+        document.getElementById('tema-selecionado-txt').innerText = `${catNome} | Nível ${jogoEstado.nivelID}`;
     }
-
-    function finalizarJogo() {
-        clearInterval(jogoEstado.timerInterval);
-        const tempoFinal = document.getElementById('timer-val').innerText;
-        const totalCartasRondas = jogoEstado.nivelDados.pares * jogoEstado.nivelDados.rondas;
-        const perc = Math.round((jogoEstado.totalAcertos / (jogoEstado.totalAcertos + jogoEstado.erros)) * 100);
-        
-        let rank = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
-        
-        document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rank.img;
-        document.getElementById('res-tit').innerText = rank.titulo;
-        document.getElementById('res-pts').innerText = `${jogoEstado.totalAcertos} Pares`;
-        document.getElementById('res-tim').innerText = tempoFinal;
-
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById('scr-result').classList.add('active');
-        document.getElementById('status-bar').style.display = 'none';
-        tocarSom('vitoria');
-    }
-
-    function tocarSom(s) { const a = new Audio(JOGO_CONFIG.sons[s]); a.play().catch(()=>{}); }
-
-    // --- UI CONTROLS ---
+    function goToIntro() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-intro').classList.add('active'); document.getElementById('status-bar').style.display = 'none'; }
+    function goToGame() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-game').classList.add('active'); document.getElementById('status-bar').style.display = 'flex'; iniciarMotorJogo(); }
+    function iniciarMotorJogo() { jogoEstado.ronda = 1; jogoEstado.totalAcertos = 0; jogoEstado.erros = 0; jogoEstado.tempo = 0; iniciarTimer(); prepararRonda(); }
+    function iniciarTimer() { clearInterval(jogoEstado.timerInterval); jogoEstado.timerInterval = setInterval(() => { jogoEstado.tempo++; const m = Math.floor(jogoEstado.tempo/60).toString().padStart(2,'0'); const s = (jogoEstado.tempo%60).toString().padStart(2,'0'); document.getElementById('timer-val').innerText = `${m}:${s}`; }, 1000); }
+    function proximaRonda() { if(jogoEstado.ronda < jogoEstado.nivelDados.rondas) { jogoEstado.ronda++; prepararRonda(); } else { finalizarJogo(); } }
+    function finalizarJogo() { clearInterval(jogoEstado.timerInterval); const tempoFinal = document.getElementById('timer-val').innerText; const perc = Math.round((jogoEstado.totalAcertos / (jogoEstado.totalAcertos + jogoEstado.erros)) * 100) || 0; let rank = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max); document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + rank.img; document.getElementById('res-tit').innerText = rank.titulo; document.getElementById('res-pts').innerText = `${jogoEstado.totalAcertos} Pares`; document.getElementById('res-tim').innerText = tempoFinal; document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-result').classList.add('active'); document.getElementById('status-bar').style.display = 'none'; tocarSom('vitoria'); }
     function toggleHamburger(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); const ov = document.getElementById('overlay'); m.style.display = (m.style.display==='flex')?'none':'flex'; ov.style.display = m.style.display==='flex'?'block':'none'; }
     function openRDMenu(e) { if(e) e.stopPropagation(); gerarMenuRDTemas(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
     function closeMenus() { document.getElementById('rdMenu').classList.remove('active'); document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; }
+    function tocarSom(s) { const a = new Audio(JOGO_CONFIG.sons[s]); a.play().catch(()=>{}); }
     
     window.onload = initUI;
     </script>
