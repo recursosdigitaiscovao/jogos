@@ -96,6 +96,7 @@ const JOGO_CONFIG = {
             nome: "Objetos",
             totalRondas: 10, itensPorRonda: 6, imgCapa: "objetos/carrinho.png",
             itens: [
+                // Da pasta objetos/
                 { id: 301, img: "objetos/anel.png" }, { id: 302, img: "objetos/balde.png" },
                 { id: 303, img: "objetos/bola.png" }, { id: 304, img: "objetos/boneca.png" },
                 { id: 305, img: "objetos/carrinho.png" }, { id: 306, img: "objetos/cesto.png" },
@@ -106,7 +107,16 @@ const JOGO_CONFIG = {
                 { id: 315, img: "objetos/isqueiro.png" }, { id: 316, img: "objetos/oculos.png" },
                 { id: 317, img: "objetos/pa.png" }, { id: 318, img: "objetos/panela.png" },
                 { id: 319, img: "objetos/pincel.png" }, { id: 320, img: "objetos/vassoura.png" },
-                { id: 321, img: "objetos/vela.png" }
+                { id: 321, img: "objetos/vela.png" },
+                // Da pasta materialescolar/
+                { id: 322, img: "materialescolar/afia.png" }, { id: 323, img: "materialescolar/borracha.png" },
+                { id: 324, img: "materialescolar/caderno.png" }, { id: 325, img: "materialescolar/caneta.png" },
+                { id: 326, img: "materialescolar/capa.png" }, { id: 327, img: "materialescolar/cola.png" },
+                { id: 328, img: "materialescolar/esquadro.png" }, { id: 329, img: "materialescolar/estojo.png" },
+                { id: 330, img: "materialescolar/folha.png" }, { id: 331, img: "materialescolar/lapis.png" },
+                { id: 332, img: "materialescolar/livro.png" }, { id: 333, img: "materialescolar/mochila.png" },
+                { id: 334, img: "materialescolar/pincel.png" }, { id: 335, img: "materialescolar/regua.png" },
+                { id: 336, img: "materialescolar/tesoura.png" }
             ]
         }
     },
