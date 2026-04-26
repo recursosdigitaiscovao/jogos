@@ -1,4 +1,5 @@
-let itensAtuais = []; // Para compatibilidade com o index.html
+// VARIÁVEIS GLOBAIS
+window.itensAtuais = Array(10).fill({}); // Importante para o cálculo do relatório no index.html
 let indiceAtual = 0;
 let acertos = 0;
 let erros = 0;
@@ -13,9 +14,11 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-window.startLogic = function() { selecionarCategoria('consecutivas'); };
+window.startLogic = function() { 
+    selecionarCategoria('consecutivas'); 
+};
 
-// 1. ANIMAÇÃO DE INTRODUÇÃO (Melhorada e Dinâmica)
+// 1. ANIMAÇÃO DE INTRODUÇÃO REALISTA
 window.selecionarCategoria = function(key) {
     const cat = JOGO_CONFIG.categorias[key];
     if (!cat) return;
@@ -61,7 +64,6 @@ window.selecionarCategoria = function(key) {
 
 window.initGame = function() { 
     indiceAtual = 0; acertos = 0; erros = 0; 
-    itensAtuais = Array(10).fill({}); // Dummy para o index.html saber o total
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
     iniciarTimer(); 
@@ -73,7 +75,9 @@ function iniciarTimer() {
     tempoInicio = Date.now();
     intervaloTimer = setInterval(() => {
         const decorrido = Math.floor((Date.now() - tempoInicio) / 1000);
-        document.getElementById('timer-val').innerText = `${Math.floor(decorrido/60).toString().padStart(2,'0')}:${(decorrido%60).toString().padStart(2,'0')}`;
+        const m = Math.floor(decorrido / 60).toString().padStart(2, '0');
+        const s = (decorrido % 60).toString().padStart(2, '0');
+        document.getElementById('timer-val').innerText = `${m}:${s}`;
     }, 1000);
 }
 
@@ -89,15 +93,16 @@ function proximaRodada() {
         let start = Math.floor(Math.random() * (pool.length - 3));
         cartasDaRodada = pool.slice(start, start + 4);
     } else if (catAtiva === 'mesma_inicial') {
-        // LÓGICA 3ª CATEGORIA: Filtrar grupos com a mesma inicial
+        // Agrupar palavras por letra inicial
         const grupos = {};
         pool.forEach(it => {
-            const letra = it.nome[0].toUpperCase();
+            const letra = it.nome.charAt(0).toUpperCase();
             if(!grupos[letra]) grupos[letra] = [];
             grupos[letra].push(it);
         });
+        // Filtrar apenas letras que têm pelo menos 4 palavras
         const letrasValidas = Object.keys(grupos).filter(l => grupos[l].length >= 4);
-        const letraSorteada = letrasValidas[Math.floor(Math.random() * letrasValidas.length)];
+        const letraSorteada = letrasValidas[Math.floor(Math.random() * letrasValidas.length)] || Object.keys(grupos)[0];
         cartasDaRodada = grupos[letraSorteada].sort(() => Math.random() - 0.5).slice(0, 4);
     } else {
         cartasDaRodada = pool.sort(() => Math.random() - 0.5).slice(0, 4);
@@ -116,10 +121,10 @@ function montarInterface() {
             <div id="shelf" style="display:flex; gap:10px; justify-content:center; width:100%;">
                 ${[0,1,2,3].map(i => `
                     <div class="slot" id="slot-${i}" ondrop="drop(event, ${i})" ondragover="allowDrop(event)" onclick="removerDoSlot(${i})" style="
-                        width:${isMobile ? '75px' : '110px'}; height:${isMobile ? '95px' : '140px'}; 
+                        width:${isMobile ? '72px' : '110px'}; height:${isMobile ? '95px' : '140px'}; 
                         border:3px dashed #cbd9e6; border-radius:20px; background:rgba(255,255,255,0.4);
                         display:flex; align-items:center; justify-content:center; position:relative; cursor:pointer;">
-                        <span style="position:absolute; top:4px; font-size:11px; color:#cbd9e6; font-weight:900;">${i+1}º</span>
+                        <span id="label-${i}" style="position:absolute; top:4px; font-size:11px; color:#cbd9e6; font-weight:900;">${i+1}º</span>
                     </div>`).join('')}
             </div>
 
@@ -137,12 +142,11 @@ function montarInterface() {
     `;
 }
 
-// DRAG & DROP
+// INTERAÇÃO
 window.allowDrop = (e) => e.preventDefault();
 window.drag = (e, nome) => { e.dataTransfer.setData("text", nome); };
 window.drop = (e, slotIdx) => { e.preventDefault(); moverParaSlot(e.dataTransfer.getData("text"), slotIdx); };
 
-// CLIQUE
 window.clicarNaCarta = (nome) => {
     const firstEmpty = slotsEstado.indexOf(null);
     if (firstEmpty !== -1) moverParaSlot(nome, firstEmpty);
@@ -153,7 +157,9 @@ window.removerDoSlot = (slotIdx) => {
     if (carta) {
         const cardEl = document.getElementById(`card-${carta.nome}`);
         const slotEl = document.getElementById(`slot-${slotIdx}`);
-        cardEl.style.opacity = "1"; cardEl.style.pointerEvents = "auto"; cardEl.style.transform = "scale(1)";
+        if(cardEl) {
+            cardEl.style.opacity = "1"; cardEl.style.pointerEvents = "auto"; cardEl.style.transform = "scale(1)";
+        }
         slotsEstado[slotIdx] = null;
         slotEl.style.background = "rgba(255,255,255,0.4)"; slotEl.style.border = "3px dashed #cbd9e6";
         slotEl.innerHTML = `<span style="position:absolute; top:4px; font-size:11px; color:#cbd9e6; font-weight:900;">${slotIdx+1}º</span>`;
@@ -182,6 +188,7 @@ function moverParaSlot(nome, slotIdx) {
 function validarSequencia() {
     let errosRonda = 0;
     slotsEstado.forEach((carta, i) => {
+        if (!carta) return;
         const slotEl = document.getElementById(`slot-${i}`);
         if (carta.nome === ordemCorreta[i].nome) slotEl.style.borderColor = "#7ed321";
         else { errosRonda++; devolverComErro(i, carta.nome); }
@@ -206,7 +213,9 @@ function devolverComErro(slotIdx, nome) {
         slotEl.style.animation = ""; slotEl.style.background = "rgba(255,255,255,0.4)";
         slotEl.style.border = "3px dashed #cbd9e6";
         slotEl.innerHTML = `<span style="position:absolute; top:4px; font-size:11px; color:#cbd9e6; font-weight:900;">${slotIdx+1}º</span>`;
-        cardEl.style.opacity = "1"; cardEl.style.pointerEvents = "auto"; cardEl.style.transform = "scale(1)";
+        if(cardEl) {
+            cardEl.style.opacity = "1"; cardEl.style.pointerEvents = "auto"; cardEl.style.transform = "scale(1)";
+        }
     }, 800);
 }
 
@@ -214,5 +223,7 @@ function finalizarJogo() {
     clearInterval(intervaloTimer);
     somVitoria.play();
     const tempoFinal = document.getElementById('timer-val').innerText;
-    window.mostrarResultados(acertos, tempoFinal);
+    if (window.mostrarResultados) {
+        window.mostrarResultados(acertos, tempoFinal);
+    }
 }
