@@ -1,158 +1,163 @@
-let itensAtuais = Array(10).fill({}); 
-let indiceAtual = 0; 
-let acertos = 0; 
+let categoriaAtual = "consecutivas";
+let nivelAtual = 1;
+let cartasViradas = [];
+let paresEncontrados = 0;
 let erros = 0;
-let tempoInicio;
-let intervaloTimer;
-
-let cartasNoGrid = [];
-let primeiraCarta = null;
-let segundaCarta = null;
-let bloqueado = false;
-let paresEncontradosNestaRonda = 0;
-let totalParesNecessarios = 0;
+let tempoSegundos = 0;
+let cronometro;
+let jogoBloqueado = false;
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-window.startLogic = function() { 
-    // Atualiza a animação de intro com base no tema escolhido
-    const cat = JOGO_CONFIG.categorias[CONFIG_MESTRE.tema_jogo];
-    const containerIntro = document.getElementById('intro-animation-container');
-    containerIntro.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:20px; width:100%;">
-            <div style="perspective: 1000px; display:flex; gap:15px;">
-                <div id="demo-flip" style="width:70px; height:90px; position:relative; transform-style: preserve-3d; transition: transform 1s; animation: autoFlip 3s infinite;">
-                    <div style="position:absolute; width:100%; height:100%; backface-visibility: hidden; background: linear-gradient(135deg, var(--primary-blue), #8dc4ff); border-radius:12px; border:3px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:30px;"><i class="fas fa-lightbulb"></i></div>
-                    <div style="position:absolute; width:100%; height:100%; backface-visibility: hidden; transform: rotateY(180deg); background: white; border-radius:12px; border:3px solid var(--primary-blue); display:flex; align-items:center; justify-content:center; color:var(--primary-blue); font-size:12px; font-weight:900; text-align:center; padding:5px; text-transform:uppercase;">${cat.exemplo}</div>
-                </div>
-            </div>
-            <p style="font-weight:900; color:var(--primary-blue); text-transform:uppercase;">ENCONTRA OS PARES!</p>
-        </div>
-        <style> @keyframes autoFlip { 0%, 20% { transform: rotateY(0deg); } 50%, 80% { transform: rotateY(180deg); } 100% { transform: rotateY(0deg); } } </style>`;
-};
-
-window.initGame = function() { 
-    indiceAtual = 0; acertos = 0; erros = 0; 
-    document.getElementById('hits-val').innerText = "0";
-    document.getElementById('miss-val').innerText = "0";
-    
-    // Pega o número de pares do nível configurado
-    const nivelData = JOGO_CONFIG.niveis_disponiveis.find(n => n.id === CONFIG_MESTRE.nivel);
-    totalParesNecessarios = nivelData.pares;
-
-    iniciarTimer(); 
-    proximaRodada(); 
-};
-
-function iniciarTimer() {
-    clearInterval(intervaloTimer);
-    tempoInicio = Date.now();
-    intervaloTimer = setInterval(() => {
-        const decorrido = Math.floor((Date.now() - tempoInicio) / 1000);
-        document.getElementById('timer-val').innerText = `${Math.floor(decorrido/60).toString().padStart(2,'0')}:${(decorrido%60).toString().padStart(2,'0')}`;
-    }, 1000);
+function startLogic() {
+    renderMenuRD();
+    selecionarCategoria(categoriaAtual);
+    selecionarNivel(nivelAtual);
+    goToIntro();
 }
 
-function proximaRodada() {
-    if (indiceAtual >= 10) { finalizarJogo(); return; }
-    document.getElementById('round-val').innerText = `${indiceAtual + 1} / 10`;
-    paresEncontradosNestaRonda = 0;
+function renderMenuRD() {
+    const boxTemas = document.getElementById('lista-temas');
+    const boxNiveis = document.getElementById('lista-niveis');
     
-    const categoria = JOGO_CONFIG.categorias[CONFIG_MESTRE.tema_jogo];
-    const itensSorteados = [...categoria.itens].sort(() => Math.random() - 0.5).slice(0, totalParesNecessarios);
-    
-    cartasNoGrid = [];
-    itensSorteados.forEach(item => {
-        cartasNoGrid.push({ id: item.nome, tipo: 'img', conteudo: item.img });
-        cartasNoGrid.push({ id: item.nome, tipo: 'txt', conteudo: item.nome });
+    boxTemas.innerHTML = '';
+    Object.keys(JOGO_CONFIG.categorias).forEach(key => {
+        const c = JOGO_CONFIG.categorias[key];
+        const div = document.createElement('div');
+        div.className = `rd-item cat-${key}`;
+        div.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${c.imgCapa}"><span>${c.nome}</span>`;
+        div.onclick = () => selecionarCategoria(key);
+        boxTemas.appendChild(div);
     });
 
-    cartasNoGrid.sort(() => Math.random() - 0.5);
-    montarGrid();
+    boxNiveis.innerHTML = '';
+    Object.keys(JOGO_CONFIG.niveis).forEach(num => {
+        const n = JOGO_CONFIG.niveis[num];
+        const div = document.createElement('div');
+        div.className = `rd-item niv-${num}`;
+        div.innerHTML = `<span>${n.nome}</span><small>${n.cartas} Cartas</small>`;
+        div.onclick = () => selecionarNivel(num);
+        boxNiveis.appendChild(div);
+    });
 }
 
-function montarGrid() {
+function selecionarCategoria(key) {
+    categoriaAtual = key;
+    document.querySelectorAll('#lista-temas .rd-item').forEach(el => el.classList.remove('selected'));
+    document.querySelector(`.cat-${key}`).classList.add('selected');
+    document.getElementById('img-capa-intro').src = JOGO_CONFIG.caminhoImg + JOGO_CONFIG.categorias[key].imgCapa;
+}
+
+function selecionarNivel(num) {
+    nivelAtual = num;
+    document.querySelectorAll('#lista-niveis .rd-item').forEach(el => el.classList.remove('selected'));
+    document.querySelector(`.niv-${num}`).classList.add('selected');
+}
+
+function initGame() {
     const container = document.getElementById('game-main-content');
-    const isLandscape = window.innerWidth > window.innerHeight;
-    const lvl = CONFIG_MESTRE.nivel;
+    container.innerHTML = '';
+    cartasViradas = [];
+    paresEncontrados = 0;
+    erros = 0;
+    tempoSegundos = 0;
+    jogoBloqueado = false;
     
-    let cols = 3;
-    if (!isLandscape) {
-        if (lvl === "nivel1") cols = 3; // 3x2 (6 cartas)
-        if (lvl === "nivel2") cols = 3; // 3+3+2 (8 cartas)
-        if (lvl === "nivel3") cols = 3; // 3x4 (12 cartas)
-    } else {
-        if (lvl === "nivel1") cols = 3; // 3x2
-        if (lvl === "nivel2") cols = 4; // 4x2
-        if (lvl === "nivel3") cols = 4; // 4x3
-    }
+    document.getElementById('timer-val').innerText = "00:00";
+    clearInterval(cronometro);
+    iniciarCronometro();
 
-    container.innerHTML = `
-        <div id="memory-board" style="
-            display: grid; grid-template-columns: repeat(${cols}, 1fr); 
-            gap: 10px; width: 100%; height: 100%; max-width: 600px;
-            padding: 5px; align-content: center; justify-items: center; margin: auto;
-        ">
-            ${cartasNoGrid.map((carta, i) => `
-                <div class="card-box" id="card-${i}" onclick="virarCarta(this, ${i})" style="
-                    width: 100%; max-width: 110px; aspect-ratio: 3 / 4; position: relative;
-                    transform-style: preserve-3d; transition: transform 0.5s; cursor: pointer; user-select: none;
-                ">
-                    <div style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: linear-gradient(135deg, var(--primary-blue), #8dc4ff); border-radius: 12px; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; font-size: 25px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);"><i class="fas fa-lightbulb"></i></div>
-                    <div id="front-${i}" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; transform: rotateY(180deg); background: white; border-radius: 12px; border: 3px solid var(--primary-blue); display: flex; align-items: center; justify-content: center; overflow: hidden;"></div>
+    const configNivel = JOGO_CONFIG.niveis[nivelAtual];
+    document.getElementById('round-label').innerText = configNivel.nome;
+
+    // Preparar Cartas
+    let itensPool = [...JOGO_CONFIG.categorias[categoriaAtual].itens];
+    itensPool.sort(() => Math.random() - 0.5);
+    let selecionados = itensPool.slice(0, configNivel.cartas / 2);
+    let deck = [...selecionados, ...selecionados].sort(() => Math.random() - 0.5);
+
+    const grid = document.createElement('div');
+    grid.className = 'memory-grid';
+    grid.style.gridTemplateColumns = `repeat(${configNivel.colunas}, 1fr)`;
+    grid.style.width = "100%";
+    grid.style.height = "100%";
+
+    deck.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'memory-card';
+        card.dataset.name = item.nome;
+        card.innerHTML = `
+            <div class="card-inner">
+                <div class="card-back">?</div>
+                <div class="card-front">
+                    <img src="${JOGO_CONFIG.caminhoImg}${item.img}">
+                    <span>${item.nome}</span>
                 </div>
-            `).join('')}
-        </div>
-    `;
+            </div>
+        `;
+        card.onclick = () => virarCarta(card);
+        grid.appendChild(card);
+    });
+    container.appendChild(grid);
 }
 
-window.virarCarta = function(el, idx) {
-    if (bloqueado || el.classList.contains('flipped') || el.style.visibility === "hidden") return;
-    const info = cartasNoGrid[idx];
-    const front = document.getElementById(`front-${idx}`);
+function virarCarta(card) {
+    if (jogoBloqueado || card.classList.contains('flipped')) return;
+    card.classList.add('flipped');
+    cartasViradas.push(card);
 
-    if (info.tipo === 'img') {
-        front.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${info.conteudo}" style="width:85%; height:85%; object-fit:contain; transform: rotateY(180deg);">`;
-    } else {
-        const fs = info.conteudo.length > 8 ? '9px' : '13px';
-        front.innerHTML = `<span style="font-size: ${fs}; color: var(--primary-blue); font-weight:900; text-transform:uppercase; text-align:center; transform: rotateY(180deg); padding:5px;">${info.conteudo}</span>`;
+    if (cartasViradas.length === 2) {
+        jogoBloqueado = true;
+        verificarPar();
     }
-
-    el.classList.add('flipped');
-    el.style.transform = "rotateY(180deg)";
-
-    if (!primeiraCarta) { primeiraCarta = { el, idx, id: info.id }; } 
-    else { segundaCarta = { el, idx, id: info.id }; bloqueado = true; setTimeout(verificarPar, 500); }
-};
+}
 
 function verificarPar() {
-    if (primeiraCarta.id === segundaCarta.id && primeiraCarta.idx !== segundaCarta.idx) {
-        somAcerto.play(); acertos++; paresEncontradosNestaRonda++;
-        document.getElementById('hits-val').innerText = acertos;
-        
-        primeiraCarta.el.querySelector('div:nth-child(2)').style.borderColor = "#7ed321";
-        segundaCarta.el.querySelector('div:nth-child(2)').style.borderColor = "#7ed321";
-
-        setTimeout(() => {
-            primeiraCarta.el.style.opacity = "0"; primeiraCarta.el.style.visibility = "hidden";
-            segundaCarta.el.style.opacity = "0"; segundaCarta.el.style.visibility = "hidden";
-            primeiraCarta = null; segundaCarta = null; bloqueado = false;
-            if (paresEncontradosNestaRonda === totalParesNecessarios) { indiceAtual++; setTimeout(proximaRodada, 600); }
-        }, 600);
+    const [c1, c2] = cartasViradas;
+    if (c1.dataset.name === c2.dataset.name) {
+        paresEncontrados++;
+        somAcerto.play();
+        cartasViradas = [];
+        jogoBloqueado = false;
+        if (paresEncontrados === JOGO_CONFIG.niveis[nivelAtual].cartas / 2) finalizarJogo();
     } else {
-        erros++; somErro.play(); document.getElementById('miss-val').innerText = erros;
+        erros++;
+        somErro.play();
         setTimeout(() => {
-            primeiraCarta.el.style.transform = "rotateY(0deg)"; primeiraCarta.el.classList.remove('flipped');
-            segundaCarta.el.style.transform = "rotateY(0deg)"; segundaCarta.el.classList.remove('flipped');
-            primeiraCarta = null; segundaCarta = null; bloqueado = false;
+            c1.classList.remove('flipped');
+            c2.classList.remove('flipped');
+            cartasViradas = [];
+            jogoBloqueado = false;
         }, 1000);
     }
 }
 
-function finalizarJogo() {
-    clearInterval(intervaloTimer);
-    somVitoria.play();
-    window.mostrarResultados(acertos, document.getElementById('timer-val').innerText);
+function iniciarCronometro() {
+    cronometro = setInterval(() => {
+        tempoSegundos++;
+        let m = Math.floor(tempoSegundos / 60).toString().padStart(2, '0');
+        let s = (tempoSegundos % 60).toString().padStart(2, '0');
+        document.getElementById('timer-val').innerText = `${m}:${s}`;
+    }, 1000);
 }
+
+function finalizarJogo() {
+    clearInterval(cronometro);
+    somVitoria.play();
+    setTimeout(() => {
+        const perc = (paresEncontrados / (paresEncontrados + erros)) * 100;
+        const feedback = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max) || JOGO_CONFIG.relatorios[2];
+        document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + feedback.img;
+        document.getElementById('res-tit').innerText = feedback.titulo;
+        document.getElementById('res-pts').innerText = erros;
+        document.getElementById('res-tim').innerText = document.getElementById('timer-val').innerText;
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('scr-result').classList.add('active');
+        document.getElementById('status-bar').style.display = 'none';
+    }, 1000);
+}
+
+window.startLogic = startLogic;
+window.initGame = initGame;
