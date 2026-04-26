@@ -1,132 +1,136 @@
-/**
- * JOGO DE MEMÓRIA - Lógica Principal
- */
-
 let jogoEstado = {
-    categoriaAtual: null,
-    nivelAtual: null,
-    rondaAtual: 1,
-    pontos: 0,
+    categoria: null,
+    nivelID: null,
+    nivelDados: null,
+    ronda: 1,
+    acertosRonda: 0,
+    totalAcertos: 0,
     erros: 0,
+    tempo: 0,
+    timerInterval: null,
     cartasViradas: [],
-    bloquearTabuleiro: false,
-    paresEncontrados: 0
+    bloquear: false
 };
 
 // --- INICIALIZAÇÃO ---
-window.onload = () => {
-    aplicarTema();
-    gerarMenuCategorias();
+window.startLogic = function() {
+    // Definir valores padrão caso o utilizador não escolha no RD
+    jogoEstado.categoria = Object.keys(JOGO_CONFIG.categorias)[0];
+    selecionarCategoria(jogoEstado.categoria);
 };
 
-function aplicarTema() {
-    const tema = BIBLIOTECA_TEMAS[CONFIG_MESTRE.area];
-    const conteudo = BIBLIOTECA_CONTEUDO[CONFIG_MESTRE.ano][CONFIG_MESTRE.area];
-
-    // Aplicar Cores
-    document.body.style.backgroundColor = tema.corPagina;
-    document.documentElement.style.setProperty('--cor-primaria', tema.corPrimaria);
-    document.documentElement.style.setProperty('--cor-escura', tema.corEscura);
-    document.documentElement.style.setProperty('--cor-texto', tema.corTexto);
-
-    // Aplicar Textos
-    document.getElementById('titulo1').innerText = conteudo.t1;
-    document.getElementById('titulo2').innerText = conteudo.t2;
-    document.getElementById('subtitulo').innerText = conteudo.sub;
-    document.getElementById('intro-texto').innerText = conteudo.intro;
-    document.getElementById('rodape').innerHTML = conteudo.rodape;
-}
-
-// --- MENUS ---
-function gerarMenuCategorias() {
-    const container = document.getElementById('menu-selecao');
-    container.innerHTML = '<h2>Escolhe um tema:</h2>';
-    
-    Object.keys(JOGO_CONFIG.categorias).forEach(chave => {
-        const cat = JOGO_CONFIG.categorias[chave];
-        const btn = document.createElement('div');
-        btn.className = 'card-menu';
-        btn.innerHTML = `
-            <img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" alt="${cat.nome}">
-            <span>${cat.nome}</span>
-        `;
-        btn.onclick = () => selecionarNivel(chave);
-        container.appendChild(btn);
-    });
-}
-
-function selecionarNivel(chaveCat) {
-    jogoEstado.categoriaAtual = chaveCat;
-    const container = document.getElementById('menu-selecao');
-    container.innerHTML = '<h2>Escolhe o nível:</h2>';
+function selecionarCategoria(key) {
+    jogoEstado.categoria = key;
+    // Quando escolhe categoria no RD, vamos mudar o título do menu RD para escolher nível
+    const rdBox = document.getElementById('rd-list');
+    const rdTitle = document.querySelector('#rdMenu h3');
+    rdTitle.innerText = "Escolher Nível";
+    rdBox.innerHTML = '';
 
     Object.keys(JOGO_CONFIG.niveis).forEach(n => {
-        const nivel = JOGO_CONFIG.niveis[n];
-        const btn = document.createElement('button');
-        btn.className = 'btn-nivel';
-        btn.innerHTML = `NÍVEL ${n}<br><small>${nivel.cartas} Cartas</small>`;
-        btn.onclick = () => iniciarJogo(parseInt(n));
-        container.appendChild(btn);
+        const niv = JOGO_CONFIG.niveis[n];
+        const div = document.createElement('div');
+        div.className = 'rd-item';
+        div.innerHTML = `<div style="font-size:24px; font-weight:900;">${n}</div><span>${niv.nome}</span><small>${niv.cartas} Cartas</small>`;
+        div.onclick = () => {
+            jogoEstado.nivelID = n;
+            jogoEstado.nivelDados = niv;
+            closeMenus();
+            goToIntro();
+        };
+        rdBox.appendChild(div);
     });
+}
+
+// Resetar o menu RD para categorias quando fechado ou ao início
+function resetRDMenu() {
+    const rdTitle = document.querySelector('#rdMenu h3');
+    rdTitle.innerText = "Escolher Tema";
+    const rdBox = document.getElementById('rd-list');
+    rdBox.innerHTML = '';
+    Object.keys(JOGO_CONFIG.categorias).forEach(key => {
+        const c = JOGO_CONFIG.categorias[key];
+        const div = document.createElement('div');
+        div.className = 'rd-item';
+        div.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${c.imgCapa}"><span>${c.nome}</span>`;
+        div.onclick = () => selecionarCategoria(key);
+        rdBox.appendChild(div);
+    });
+}
+
+// Sobrescrever a função openRDMenu original para garantir o reset
+const originalOpenRDMenu = window.openRDMenu;
+window.openRDMenu = function(e) {
+    resetRDMenu();
+    originalOpenRDMenu(e);
 }
 
 // --- LÓGICA DO JOGO ---
-function iniciarJogo(n) {
-    jogoEstado.nivelAtual = JOGO_CONFIG.niveis[n];
-    jogoEstado.rondaAtual = 1;
-    jogoEstado.pontos = 0;
+window.initGame = function() {
+    if(!jogoEstado.nivelID) { // Forçar nível 1 se não escolhido
+        jogoEstado.nivelID = 1;
+        jogoEstado.nivelDados = JOGO_CONFIG.niveis[1];
+    }
+    
+    jogoEstado.ronda = 1;
+    jogoEstado.totalAcertos = 0;
     jogoEstado.erros = 0;
+    jogoEstado.tempo = 0;
     
-    document.getElementById('tela-inicio').style.display = 'none';
-    document.getElementById('tela-jogo').style.display = 'block';
-    
+    atualizarStatus();
+    iniciarTimer();
     prepararRonda();
+};
+
+function iniciarTimer() {
+    clearInterval(jogoEstado.timerInterval);
+    jogoEstado.timerInterval = setInterval(() => {
+        jogoEstado.tempo++;
+        const min = Math.floor(jogoEstado.tempo / 60).toString().padStart(2, '0');
+        const sec = (jogoEstado.tempo % 60).toString().padStart(2, '0');
+        document.getElementById('timer-val').innerText = `${min}:${sec}`;
+    }, 1000);
 }
 
 function prepararRonda() {
-    jogoEstado.paresEncontrados = 0;
+    jogoEstado.acertosRonda = 0;
     jogoEstado.cartasViradas = [];
-    jogoEstado.bloquearTabuleiro = false;
+    jogoEstado.bloquear = false;
     
-    // Atualizar HUD
-    document.getElementById('info-ronda').innerText = `Ronda: ${jogoEstado.rondaAtual} / ${jogoEstado.nivelAtual.rondas}`;
+    document.getElementById('round-val').innerText = `${jogoEstado.ronda} / ${jogoEstado.nivelDados.rondas}`;
     
-    const container = document.getElementById('tabuleiro');
+    const container = document.getElementById('game-main-content');
     container.innerHTML = '';
     
-    // Ajustar grid conforme número de cartas
-    const colunas = jogoEstado.nivelAtual.cartas > 8 ? 4 : 3;
-    container.style.gridTemplateColumns = `repeat(${colunas}, 1fr)`;
+    // Configurar Grid
+    const colunas = jogoEstado.nivelDados.cartas > 8 ? 4 : 3;
+    container.style.gridTemplateColumns = `repeat(${colunas}, auto)`;
 
-    // 1. Escolher itens aleatórios da categoria
-    const todosItens = [...JOGO_CONFIG.categorias[jogoEstado.categoriaAtual].itens];
-    const itensEscolhidos = todosItens.sort(() => 0.5 - Math.random()).slice(0, jogoEstado.nivelAtual.pares);
+    // Selecionar itens aleatórios
+    const cat = JOGO_CONFIG.categorias[jogoEstado.categoria];
+    const itens = [...cat.itens].sort(() => 0.5 - Math.random()).slice(0, jogoEstado.nivelDados.pares);
 
-    // 2. Criar pares (Um de Imagem, um de Texto)
+    // Criar Deck (Imagem + Texto)
     let deck = [];
-    itensEscolhidos.forEach(item => {
+    itens.forEach(item => {
         deck.push({ ...item, tipo: 'img' });
         deck.push({ ...item, tipo: 'txt' });
     });
-
-    // 3. Baralhar deck
     deck.sort(() => 0.5 - Math.random());
 
-    // 4. Criar Elementos HTML
-    deck.forEach((item, index) => {
+    // Gerar HTML
+    deck.forEach(item => {
         const carta = document.createElement('div');
         carta.className = 'carta';
         carta.dataset.nome = item.nome;
-        carta.dataset.index = index;
-
-        const pasta = JOGO_CONFIG.categorias[jogoEstado.categoriaAtual].pastaImg;
-        const conteudoCarta = item.tipo === 'img' 
-            ? `<img src="${JOGO_CONFIG.caminhoImg}${pasta}/${item.img}">` 
-            : `<p class="texto-carta">${item.nome}</p>`;
+        
+        const conteudo = item.tipo === 'img' 
+            ? `<img src="${JOGO_CONFIG.caminhoImg}${cat.pastaImg}/${item.img}">` 
+            : `<div class="texto-carta">${item.nome}</div>`;
 
         carta.innerHTML = `
             <div class="face frente">?</div>
-            <div class="face verso">${conteudoCarta}</div>
+            <div class="face verso">${conteudo}</div>
         `;
         
         carta.onclick = () => virarCarta(carta);
@@ -135,10 +139,9 @@ function prepararRonda() {
 }
 
 function virarCarta(carta) {
-    if (jogoEstado.bloquearTabuleiro) return;
-    if (carta.classList.contains('virada')) return;
+    if (jogoEstado.bloquear || carta.classList.contains('virada')) return;
 
-    tocarSom('virar');
+    tocarSom('pop'); // Som de clique
     carta.classList.add('virada');
     jogoEstado.cartasViradas.push(carta);
 
@@ -148,64 +151,60 @@ function virarCarta(carta) {
 }
 
 function verificarPar() {
-    jogoEstado.bloquearTabuleiro = true;
+    jogoEstado.bloquear = true;
     const [c1, c2] = jogoEstado.cartasViradas;
 
-    const ePar = c1.dataset.nome === c2.dataset.nome;
-
-    if (ePar) {
+    if (c1.dataset.nome === c2.dataset.nome) {
         tocarSom('acerto');
-        jogoEstado.paresEncontrados++;
-        jogoEstado.pontos += 10;
+        jogoEstado.acertosRonda++;
+        jogoEstado.totalAcertos++;
         jogoEstado.cartasViradas = [];
-        jogoEstado.bloquearTabuleiro = false;
+        jogoEstado.bloquear = false;
+        atualizarStatus();
 
-        if (jogoEstado.paresEncontrados === jogoEstado.nivelAtual.pares) {
+        if (jogoEstado.acertosRonda === jogoEstado.nivelDados.pares) {
             setTimeout(proximaRonda, 1000);
         }
     } else {
         tocarSom('erro');
         jogoEstado.erros++;
+        atualizarStatus();
         setTimeout(() => {
             c1.classList.remove('virada');
             c2.classList.remove('virada');
             jogoEstado.cartasViradas = [];
-            jogoEstado.bloquearTabuleiro = false;
+            jogoEstado.bloquear = false;
         }, 1000);
     }
 }
 
 function proximaRonda() {
-    if (jogoEstado.rondaAtual < jogoEstado.nivelAtual.rondas) {
-        jogoEstado.rondaAtual++;
+    if (jogoEstado.ronda < jogoEstado.nivelDados.rondas) {
+        jogoEstado.ronda++;
         prepararRonda();
     } else {
         finalizarJogo();
     }
 }
 
-// --- FINALIZAÇÃO ---
+function atualizarStatus() {
+    document.getElementById('hits-val').innerText = jogoEstado.totalAcertos;
+    document.getElementById('miss-val').innerText = jogoEstado.erros;
+}
+
 function finalizarJogo() {
-    tocarSom('vitoria');
-    document.getElementById('tela-jogo').style.display = 'none';
-    document.getElementById('tela-relatorio').style.display = 'block';
-
-    // Cálculo de performance (0 a 100)
-    const totalJogadas = jogoEstado.pontos + jogoEstado.erros;
-    const perc = Math.round((jogoEstado.pontos / (jogoEstado.pontos + jogoEstado.erros)) * 100) || 0;
-
-    const rank = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
-
-    document.getElementById('resumo-final').innerHTML = `
-        <img src="${JOGO_CONFIG.caminhoIcons}${rank.img}" style="width:120px">
-        <h2>${rank.titulo}</h2>
-        <p>Concluíste as 10 rondas do nível ${jogoEstado.nivelAtual.nome}!</p>
-        <p>Precisão: ${perc}%</p>
-        <button class="btn-nivel" onclick="location.reload()">JOGAR NOVAMENTE</button>
-    `;
+    clearInterval(jogoEstado.timerInterval);
+    const tempoFinal = document.getElementById('timer-val').innerText;
+    
+    // Calcular precisão para o relatório
+    const totalTentativas = jogoEstado.totalAcertos + jogoEstado.erros;
+    const perc = Math.round((jogoEstado.totalAcertos / totalTentativas) * 100) || 0;
+    
+    // Usar a função global definida no teu HTML
+    window.mostrarResultados(jogoEstado.totalAcertos, tempoFinal);
 }
 
 function tocarSom(som) {
     const audio = new Audio(JOGO_CONFIG.sons[som]);
-    audio.play().catch(() => {}); // Catch para evitar erro de interação do browser
+    audio.play().catch(() => {});
 }
