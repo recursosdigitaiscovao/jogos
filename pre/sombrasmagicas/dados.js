@@ -1,7 +1,7 @@
 // === CONFIGURAÇÃO MESTRE ===
 const CONFIG_MESTRE = {
-    ano: "pre",        // "pre", "ano1", "ano2" , "ano3" , "ano4"
-    area: "pre",       // "pre", "portugues", "matematica", "estudo"
+    ano: "pre",        // OPÇÕES: "pre", "ano1", "ano2", "ano3", "ano4"
+    area: "pre",       // OPÇÕES: "pre", "portugues", "matematica", "estudo"
     nomeJogo: "SOMBRAS MÁGICAS"
 };
 
@@ -34,9 +34,24 @@ const BIBLIOTECA_CONTEUDO = {
     },
     "ano1": {
         "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", intro: "Treina a tua atenção com as sombras das palavras!" },
-        "matematica": { t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano", intro: "Descobre as formas e as suas sombras!" }
+        "matematica": { t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano", intro: "Descobre as formas e as suas sombras!" },
+        "estudo": { t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano", intro: "Observa bem a natureza e encontra as silhuetas!" }
+    },
+    "ano2": {
+        "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano", intro: "Serás capaz de identificar todas as sombras corretamente?" },
+        "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano", intro: "Usa o teu raciocínio para ligar os pares de sombras!" },
+        "estudo": { t1: "JOVENS", t2: "EXPLORADORES", sub: "Estudo do Meio | 2º Ano", intro: "Explora os objetos e animais através das suas formas!" }
+    },
+    "ano3": {
+        "portugues": { t1: "JOVENS", t2: "ESCRITORES", sub: "Português | 3º Ano", intro: "Desafia o teu olhar e encontra o par de cada imagem!" },
+        "matematica": { t1: "JOVENS", t2: "CIENTISTAS", sub: "Matemática | 3º Ano", intro: "Geometria e formas: consegue encontrar a sombra certa?" },
+        "estudo": { t1: "JOVENS", t2: "EXPLORADORES", sub: "Estudo do Meio | 3º Ano", intro: "Investiga o mundo e descobre o que se esconde nas sombras!" }
+    },
+    "ano4": {
+        "portugues": { t1: "MESTRES", t2: "LEITORES", sub: "Português | 4º Ano", intro: "Um desafio para mestres: identifica as silhuetas escondidas!" },
+        "matematica": { t1: "MESTRES", t2: "MATEMÁTICOS", sub: "Matemática | 4º Ano", intro: "Resolve este enigma visual arrastando as imagens para as sombras!" },
+        "estudo": { t1: "MESTRES", t2: "EXPLORADORES", sub: "Estudo do Meio | 4º Ano", intro: "Conhecimento total: associa cada elemento à sua forma correta!" }
     }
-    // Adicionar outros conforme necessário...
 };
 
 const JOGO_CONFIG = {
