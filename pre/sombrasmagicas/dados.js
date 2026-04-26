@@ -6,10 +6,46 @@ const CONFIG_MESTRE = {
 };
 
 const BIBLIOTECA_TEMAS = {
-    "portugues": { corPagina: "#e9f0f8", corPrimaria: "#5ba4e5", corEscura: "#3d7db8", corTexto: "#5d7082", voltarMobile: "voltar_az.png" },
-    "matematica": { corPagina: "#e8f9f4", corPrimaria: "#45cfa8", corEscura: "#2BA886", corTexto: "#45cfa8", voltarMobile: "voltar_vr.png" },
-    "estudo": { corPagina: "#EAE2E5", corPrimaria: "#994D4D", corEscura: "#6C3737", corTexto: "#994D4D", voltarMobile: "voltar_cs.png" },
-    "pre": { corPagina: "#FFEAEA", corPrimaria: "#E691A7", corEscura: "#D54267", corTexto: "#E691A7", voltarMobile: "voltar_rs.png" }
+    "portugues": { 
+        corPagina: "#e9f0f8", 
+        corPrimaria: "#5ba4e5", 
+        corEscura: "#3d7db8", 
+        corHeader: "#f0f7ff", 
+        corCard: "#f0f7ff", 
+        corInner: "#ffffff",
+        corTexto: "#5d7082", 
+        voltarMobile: "voltar_az.png" 
+    },
+    "matematica": { 
+        corPagina: "#e8f9f4", 
+        corPrimaria: "#45cfa8", 
+        corEscura: "#2BA886", 
+        corHeader: "#f0fdfa", 
+        corCard: "#f0fdfa", 
+        corInner: "#ffffff",
+        corTexto: "#45cfa8", 
+        voltarMobile: "voltar_vr.png" 
+    },
+    "estudo": { 
+        corPagina: "#EAE2E5", 
+        corPrimaria: "#994D4D", 
+        corEscura: "#6C3737", 
+        corHeader: "#f7f1f3", 
+        corCard: "#f7f1f3", 
+        corInner: "#ffffff",
+        corTexto: "#994D4D", 
+        voltarMobile: "voltar_cs.png" 
+    },
+    "pre": { 
+        corPagina: "#FFEAEA", 
+        corPrimaria: "#E691A7", 
+        corEscura: "#D54267", 
+        corHeader: "#FFF5F5", // Cor do Header
+        corCard: "#FFF5F5",   // Cor do Cartão do Jogo
+        corInner: "#ffffff",  // Cor do fundo onde as peças ficam
+        corTexto: "#E691A7", 
+        voltarMobile: "voltar_rs.png" 
+    }
 };
 
 const BIBLIOTECA_CONTEUDO = {
@@ -96,7 +132,6 @@ const JOGO_CONFIG = {
             nome: "Objetos",
             totalRondas: 10, itensPorRonda: 6, imgCapa: "objetos/carrinho.png",
             itens: [
-                // Da pasta objetos/
                 { id: 301, img: "objetos/anel.png" }, { id: 302, img: "objetos/balde.png" },
                 { id: 303, img: "objetos/bola.png" }, { id: 304, img: "objetos/boneca.png" },
                 { id: 305, img: "objetos/carrinho.png" }, { id: 306, img: "objetos/cesto.png" },
@@ -108,7 +143,6 @@ const JOGO_CONFIG = {
                 { id: 317, img: "objetos/pa.png" }, { id: 318, img: "objetos/panela.png" },
                 { id: 319, img: "objetos/pincel.png" }, { id: 320, img: "objetos/vassoura.png" },
                 { id: 321, img: "objetos/vela.png" },
-                // Da pasta materialescolar/
                 { id: 322, img: "materialescolar/afia.png" }, { id: 323, img: "materialescolar/borracha.png" },
                 { id: 324, img: "materialescolar/caderno.png" }, { id: 325, img: "materialescolar/caneta.png" },
                 { id: 326, img: "materialescolar/capa.png" }, { id: 327, img: "materialescolar/cola.png" },
