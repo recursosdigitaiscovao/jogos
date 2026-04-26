@@ -27,8 +27,8 @@ const BIBLIOTECA_CONTEUDO = {
 const JOGO_CONFIG = {
     linkVoltar: "../",
     textoVoltar: "VOLTAR",
-    caminhoImg: "../../../img/",    
-    caminhoIcons: "../../../icons/", 
+    caminhoImg: "../../img/",    
+    caminhoIcons: "../../icons/", 
     sons: {
         acerto: "https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3",
         erro: "https://cdn.pixabay.com/audio/2022/03/10/audio_c330c67761.mp3",
