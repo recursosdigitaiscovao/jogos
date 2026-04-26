@@ -1,3 +1,7 @@
+// =============================================================
+// ESTRUTURA DO JOGO - NÃO ALTERAR NOMES DAS CHAVES (KEYS)
+// =============================================================
+
 // === CONFIGURAÇÃO MESTRE ===
 const CONFIG_MESTRE = {
     ano: "pre",        
@@ -5,6 +9,7 @@ const CONFIG_MESTRE = {
     nomeJogo: "CONTAR SÍLABAS"
 };
 
+// === BIBLIOTECA DE ESTILOS ===
 const BIBLIOTECA_TEMAS = {
     "portugues": { corPagina: "#e9f0f8", corPrimaria: "#5ba4e5", corEscura: "#3d7db8", corTexto: "#5d7082", voltarMobile: "voltar_az.png" },
     "matematica": { corPagina: "#e8f9f4", corPrimaria: "#45cfa8", corEscura: "#2BA886", corTexto: "#45cfa8", voltarMobile: "voltar_vr.png" },
@@ -12,20 +17,34 @@ const BIBLIOTECA_TEMAS = {
     "pre": { corPagina: "#FFF5F7", corPrimaria: "#E691A7", corEscura: "#D54267", corTexto: "#E691A7", voltarMobile: "voltar_rs.png" }
 };
 
+// === BIBLIOTECA de TEXTOS (Atualizada com 3º e 4º ano e sem intros) ===
 const BIBLIOTECA_CONTEUDO = {
-    "pre": { "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar", intro: "Brinca com os números e as cores!", rodape: "&copy; Pequenos Curiosos" } },
+    "pre": { 
+        "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar", rodape: "&copy; Pequenos Curiosos - Recursos Educativos" } 
+    },
     "ano1": {
-        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", intro: "Clica no número que corresponde à quantidade de sílabas!", rodape: "&copy; Pequenos Leitores" },
-        "matematica": { t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano", intro: "Explora os números e diverte-te!", rodape: "&copy; Pequenos Matemáticos" },
-        "estudo": { t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano", intro: "Explora o mundo à tua volta!", rodape: "&copy; Pequenos Exploradores" }
+        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", rodape: "&copy; Pequenos Leitores - Recursos Educativos" },
+        "matematica": { t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano", rodape: "&copy; Pequenos Matemáticos - Recursos Educativos" },
+        "estudo": { t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano", rodape: "&copy; Pequenos Exploradores - Recursos Educativos" }
     },
     "ano2": {
-        "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano", intro: "Explora as palavras e a leitura!", rodape: "&copy; Jovens Leitores" },
-        "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano", intro: "Diverte-te com os cálculos!", rodape: "&copy; Jovens Matemáticos" },
-        "estudo": { t1: "JOVENS", t2: "INVESTIGADORES", sub: "Estudo do Meio | 2º Ano", intro: "Investiga o mundo!", rodape: "&copy; Jovens Investigadores" }
+        "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano", rodape: "&copy; Jovens Leitores - Recursos Educativos" },
+        "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano", rodape: "&copy; Jovens Matemáticos - Recursos Educativos" },
+        "estudo": { t1: "JOVENS", t2: "EXPLORADORES", sub: "Estudo do Meio | 2º Ano", rodape: "&copy; Jovens Investigadores - Recursos Educativos" }
+    },
+    "ano3": {
+        "portugues": { t1: "SUPER", t2: "LEITORES", sub: "Português | 3º Ano", rodape: "&copy; Super Leitores - Recursos Educativos" },
+        "matematica": { t1: "SUPER", t2: "MATEMÁTICOS", sub: "Matemática | 3º Ano", rodape: "&copy; Super Matemáticos - Recursos Educativos" },
+        "estudo": { t1: "SUPER", t2: "EXPLORADORES", sub: "Estudo do Meio | 3º Ano", rodape: "&copy; Super Exploradores - Recursos Educativos" }
+    },
+    "ano4": {
+        "portugues": { t1: "MESTRES", t2: "LEITORES", sub: "Português | 4º Ano", rodape: "&copy; Mestres Leitores - Recursos Educativos" },
+        "matematica": { t1: "MESTRES", t2: "MATEMÁTICOS", sub: "Matemática | 4º Ano", rodape: "&copy; Mestres Matemáticos - Recursos Educativos" },
+        "estudo": { t1: "MESTRES", t2: "EXPLORADORES", sub: "Estudo do Meio | 4º Ano", rodape: "&copy; Mestres Exploradores - Recursos Educativos" }
     }
 };
 
+// === CONFIGURAÇÃO DO JOGO (CONTEÚDO NÃO EDITÁVEL) ===
 const JOGO_CONFIG = {
     linkVoltar: "../",
     textoVoltar: "VOLTAR",
@@ -38,9 +57,15 @@ const JOGO_CONFIG = {
     },
     iconesMenu: { home: "home.png", pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png" },
     links: { home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4" },
+
+    // === CONFIGURAÇÃO DAS CATEGORIAS (CONTEÚDO EDITÁVEL) ===
     categorias: {
         animais: {
-            nome: "Animais", exemplo: "E-LE-FAN-TE", exemploImg: "animaisselvagens/elefante.png", total: 4, imgCapa: "animaisselvagens/leao.png",
+            nome: "Animais", 
+            exemplo: "E-LE-FAN-TE", 
+            exemploImg: "animaisselvagens/elefante.png", 
+            total: 4, 
+            imgCapa: "animaisselvagens/leao.png",
             itens: [
                 { nome: "ABELHA", silabas: 3, img: "animaisselvagens/abelha.png" },
                 { nome: "ÁGUIA", silabas: 3, img: "animaisselvagens/aguia.png" },
@@ -59,7 +84,11 @@ const JOGO_CONFIG = {
             ]
         },
         frutos: {
-            nome: "Frutos", exemplo: "MO-RAN-GO", exemploImg: "frutas/morango.png", total: 3, imgCapa: "frutas/maca.png",
+            nome: "Frutos", 
+            exemplo: "MO-RAN-GO", 
+            exemploImg: "frutas/morango.png", 
+            total: 3, 
+            imgCapa: "frutas/maca.png",
             itens: [
                 { nome: "AMORA", silabas: 3, img: "frutas/amora.png" },
                 { nome: "ANANÁS", silabas: 3, img: "frutas/ananas.png" },
@@ -80,7 +109,11 @@ const JOGO_CONFIG = {
             ]
         },
         objetos: {
-            nome: "Objetos", exemplo: "BO-NE-CA", exemploImg: "objetos/boneca.png", total: 3, imgCapa: "objetos/bola.png",
+            nome: "Objetos", 
+            exemplo: "BO-NE-CA", 
+            exemploImg: "objetos/boneca.png", 
+            total: 3, 
+            imgCapa: "objetos/bola.png",
             itens: [
                 { nome: "BALDE", silabas: 2, img: "objetos/balde.png" },
                 { nome: "BOLA", silabas: 2, img: "objetos/bola.png" },
@@ -100,7 +133,11 @@ const JOGO_CONFIG = {
             ]
         },
         material: {
-            nome: "Material Escolar", exemplo: "MO-CHI-LA", exemploImg: "materialescolar/mochila.png", total: 3, imgCapa: "materialescolar/estojo.png",
+            nome: "Material Escolar", 
+            exemplo: "MO-CHI-LA", 
+            exemploImg: "materialescolar/mochila.png", 
+            total: 3, 
+            imgCapa: "materialescolar/estojo.png",
             itens: [
                 { nome: "AFIA", silabas: 2, img: "materialescolar/afia.png" },
                 { nome: "BORRACHA", silabas: 3, img: "materialescolar/borracha.png" },
@@ -120,6 +157,8 @@ const JOGO_CONFIG = {
             ]
         }
     },
+
+    // === CONFIGURAÇÃO DO RELATÓRIO (CONTEÚDO NÃO EDITÁVEL) ===
     relatorios: [
         { min: 90, max: 100, titulo: "És um craque!", img: "taca_1.png" },
         { min: 70, max: 89, titulo: "Muito bem!", img: "taca_2.png" },
