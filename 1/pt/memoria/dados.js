@@ -12,9 +12,9 @@ const BIBLIOTECA_TEMAS = {
 };
 
 const BIBLIOTECA_CONTEUDO = {
-    "pre": { "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar", intro: "Encontra os pares de cartas iguais!", rodape: "&copy; Pequenos Curiosos" } },
+    "pre": { "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar", intro: "Encontra os pares de cartas!", rodape: "&copy; Pequenos Curiosos" } },
     "ano1": {
-        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", intro: "Encontra os pares de cartas iguais!", rodape: "&copy; Pequenos Leitores" }
+        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", intro: "Encontra os pares de cartas!", rodape: "&copy; Pequenos Leitores" }
     }
 };
 
@@ -28,7 +28,6 @@ const JOGO_CONFIG = {
         erro: "https://cdn.pixabay.com/audio/2022/03/10/audio_c330c67761.mp3",
         vitoria: "https://cdn.pixabay.com/audio/2024/02/07/audio_293963428f.mp3"
     },
-    // CONFIGURAÇÃO DE NÍVEIS
     niveis: {
         1: { nome: "Nível 1", cartas: 6, colunas: 3 },
         2: { nome: "Nível 2", cartas: 8, colunas: 4 },
@@ -37,20 +36,32 @@ const JOGO_CONFIG = {
     iconesMenu: { home: "home.png", pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png" },
     links: { home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4" },
     categorias: {
-        consecutivas: {
-            nome: "Letras", exemploImg: "letras/letra_a.png", imgCapa: "letras/letra_a.png",
-            itens: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').map(l => ({ nome: l, img: `letras/letra_${l.toLowerCase()}.png` }))
-        },
-        mesma_inicial: {
-            nome: "Imagens", exemploImg: "frutas/amora.png", imgCapa: "frutas/amora.png",
+        animais: {
+            nome: "Animais", imgCapa: "animaisdomesticos/cao.png",
             itens: [
-                { nome: "ABELHA", img: "animaisselvagens/abelha.png" }, { nome: "ÁGUIA", img: "animaisselvagens/aguia.png" }, { nome: "ANEL", img: "objetos/anel.png" }, { nome: "AMORA", img: "frutas/amora.png" }, { nome: "BANANA", img: "frutas/banana.png" }, { nome: "BALEIA", img: "animaisselvagens/baleia.png" }, { nome: "CÃO", img: "animaisdomesticos/cao.png" }, { nome: "CAVALO", img: "animaisdomesticos/cavalo.png" }, { nome: "DADO", img: "objetos/dado.png" }, { nome: "ESCOVA", img: "objetos/escova.png" }, { nome: "GATO", img: "animaisdomesticos/gato.png" }, { nome: "LEÃO", img: "animaisselvagens/leao.png" }
+                { nome: "CÃO", img: "animaisdomesticos/cao.png" }, { nome: "GATO", img: "animaisdomesticos/gato.png" }, { nome: "COELHO", img: "animaisdomesticos/coelho.png" }, { nome: "CAVALO", img: "animaisdomesticos/cavalo.png" }, { nome: "BALEIA", img: "animaisselvagens/baleia.png" }, { nome: "LEÃO", img: "animaisselvagens/leao.png" }, { nome: "PANDA", img: "animaisselvagens/panda.png" }, { nome: "ZEBRA", img: "animaisselvagens/zebra.png" }
             ]
+        },
+        frutas: {
+            nome: "Frutas", imgCapa: "frutas/maca.png",
+            itens: [
+                { nome: "MAÇÃ", img: "frutas/maca.png" }, { nome: "BANANA", img: "frutas/banana.png" }, { nome: "UVA", img: "frutas/uva.png" }, { nome: "CEREJA", img: "frutas/cereja.png" }, { nome: "ANANÁS", img: "frutas/ananas.png" }, { nome: "AMORA", img: "frutas/amora.png" }, { nome: "KIWI", img: "frutas/kiwi.png" }, { nome: "PERA", img: "frutas/pera.png" }
+            ]
+        },
+        escola: {
+            nome: "Escolar", imgCapa: "materialescolar/borracha.png",
+            itens: [
+                { nome: "BORRACHA", img: "materialescolar/borracha.png" }, { nome: "CADERNO", img: "materialescolar/caderno.png" }, { nome: "CANETA", img: "materialescolar/caneta.png" }, { nome: "LÁPIS", img: "materialescolar/lapis.png" }, { nome: "RÉGUA", img: "materialescolar/regua.png" }, { nome: "AFIA", img: "materialescolar/afia.png" }, { nome: "TESOURA", img: "materialescolar/tesoura.png" }, { nome: "MOCHILA", img: "materialescolar/mochila.png" }
+            ]
+        },
+        letras: {
+            nome: "Letras", imgCapa: "letras/letra_a.png",
+            itens: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').map(l => ({ nome: l, img: `letras/letra_${l.toLowerCase()}.png` }))
         }
     },
     relatorios: [
-        { min: 90, max: 100, titulo: "Incrível! Memória de elefante!", img: "taca_1.png" },
+        { min: 90, max: 100, titulo: "És um craque!", img: "taca_1.png" },
         { min: 70, max: 89, titulo: "Muito bem!", img: "taca_2.png" },
-        { min: 0, max: 69, titulo: "Continua a praticar!", img: "taca_4.png" }
+        { min: 0, max: 69, titulo: "Continua a tentar!", img: "taca_4.png" }
     ]
 };
