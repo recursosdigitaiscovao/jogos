@@ -39,8 +39,8 @@ function renderIntroAnimation() {
     const container = document.getElementById('intro-animation-container');
     const cat = JOGO_CONFIG.categorias[categoriaAtual];
     container.innerHTML = `
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-            <p style="font-weight: 800; color: var(--text-grey); text-align: center; max-width: 250px;">${cat.intro || ""}</p>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+            <p style="font-weight: 800; color: var(--text-grey); text-align: center; max-width: 280px; line-height: 1.3;">${cat.intro || ""}</p>
             <div class="tutorial-box">
                 <i class="fas fa-hand-pointer hand-icon"></i>
                 <div class="slot-sombra demo-shadow" style="width:75px; height:75px;"><img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" class="img-sombra"></div>
