@@ -9,15 +9,47 @@ const CONFIG_MESTRE = {
     nomeJogo: "CONTAR SÍLABAS"
 };
 
-// === BIBLIOTECA DE ESTILOS ===
+// === BIBLIOTECA DE ESTILOS (Agora com suporte a Header e Container) ===
 const BIBLIOTECA_TEMAS = {
-    "portugues": { corPagina: "#e9f0f8", corPrimaria: "#5ba4e5", corEscura: "#3d7db8", corTexto: "#5d7082", voltarMobile: "voltar_az.png" },
-    "matematica": { corPagina: "#e8f9f4", corPrimaria: "#45cfa8", corEscura: "#2BA886", corTexto: "#45cfa8", voltarMobile: "voltar_vr.png" },
-    "estudo": { corPagina: "#EAE2E5", corPrimaria: "#994D4D", corEscura: "#6C3737", corTexto: "#994D4D", voltarMobile: "voltar_cs.png" },
-    "pre": { corPagina: "#FFF5F7", corPrimaria: "#E691A7", corEscura: "#D54267", corTexto: "#E691A7", voltarMobile: "voltar_rs.png" }
+    "portugues": { 
+        corPagina: "#e9f0f8", 
+        corHeader: "#ffffff",    // Cor do fundo do topo
+        corContainer: "#ffffff", // Cor da bolha central do jogo
+        corPrimaria: "#5ba4e5", 
+        corEscura: "#3d7db8", 
+        corTexto: "#5d7082", 
+        voltarMobile: "voltar_az.png" 
+    },
+    "matematica": { 
+        corPagina: "#e8f9f4", 
+        corHeader: "#ffffff", 
+        corContainer: "#ffffff",
+        corPrimaria: "#45cfa8", 
+        corEscura: "#2BA886", 
+        corTexto: "#45cfa8", 
+        voltarMobile: "voltar_vr.png" 
+    },
+    "estudo": { 
+        corPagina: "#EAE2E5", 
+        corHeader: "#ffffff", 
+        corContainer: "#ffffff",
+        corPrimaria: "#994D4D", 
+        corEscura: "#6C3737", 
+        corTexto: "#994D4D", 
+        voltarMobile: "voltar_cs.png" 
+    },
+    "pre": { 
+        corPagina: "#FFF5F7", 
+        corHeader: "#ffffff", 
+        corContainer: "#ffffff",
+        corPrimaria: "#E691A7", 
+        corEscura: "#D54267", 
+        corTexto: "#E691A7", 
+        voltarMobile: "voltar_rs.png" 
+    }
 };
 
-// === BIBLIOTECA de TEXTOS (Atualizada com 3º e 4º ano e sem intros) ===
+// === BIBLIOTECA de TEXTOS (Conforme o teu modelo, sem intros) ===
 const BIBLIOTECA_CONTEUDO = {
     "pre": { 
         "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar", rodape: "&copy; Pequenos Curiosos - Recursos Educativos" } 
