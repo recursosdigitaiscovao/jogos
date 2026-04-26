@@ -11,8 +11,7 @@ window.selecionarCategoria = (key) => {
 
 window.initGame = () => {
     acertos = 0; rodadaAtual = 1; tempoInicio = new Date();
-    iniciarCronometro();
-    proximaRodada();
+    iniciarCronometro(); proximaRodada();
 };
 
 function proximaRodada() {
@@ -26,102 +25,70 @@ function proximaRodada() {
     container.innerHTML = '';
     itemCorreto = itensAtuais[rodadaAtual - 1];
 
-    // Criar Wrapper que se ajusta ao tamanho do card
-    const wrapper = document.createElement('div');
-    wrapper.style.cssText = "display:flex; flex-direction:column; align-items:center; justify-content:space-evenly; width:100%; height:100%; padding:10px;";
-
-    // 1. Título do Jogo (Ocupa pouco espaço)
-    const title = document.createElement('h3');
-    title.innerText = "COLOQUE A IMAGEM NA SOMBRA";
-    title.style.cssText = "color:var(--primary-blue); font-size:clamp(14px, 3vh, 18px); font-weight:900;";
-
-    // 2. Alvo da Sombra (Escala conforme a altura disponível)
-    const shadowBox = document.createElement('div');
-    shadowBox.id = "drop-zone";
-    shadowBox.className = "drop-target";
-    shadowBox.style.cssText = "background:#f9f9f9; border:3px dashed var(--primary-blue); border-radius:25px; width:clamp(140px, 25vh, 200px); height:clamp(140px, 25vh, 200px); display:flex; align-items:center; justify-content:center; transition:0.3s; position:relative;";
-
-    const shadowImg = document.createElement('img');
-    shadowImg.src = JOGO_CONFIG.caminhoImg + itemCorreto.img;
-    shadowImg.style.cssText = "max-height:80%; max-width:80%; filter:brightness(0); pointer-events:none; transition:0.3s;";
-    shadowBox.appendChild(shadowImg);
-
-    // 3. Opções de Resposta
-    const optionsBox = document.createElement('div');
-    optionsBox.style.cssText = "display:flex; gap:10px; justify-content:center; width:100%; flex-wrap:wrap;";
-
-    // Gerar 3 opções (Correta + 2 aleatórias)
     let pool = categoriaAtiva.itens.filter(i => i.nome !== itemCorreto.nome).sort(() => Math.random() - 0.5);
-    let choices = [itemCorreto, pool[0], pool[1]].sort(() => Math.random() - 0.5);
+    let opcoes = [itemCorreto, pool[0], pool[1]].sort(() => Math.random() - 0.5);
 
-    choices.forEach(item => {
-        const card = document.createElement('div');
-        card.className = "choice-card";
-        card.draggable = true;
-        card.style.cssText = "background:white; border:2px solid #eee; border-radius:15px; width:clamp(100px, 15vw, 130px); padding:10px; cursor:grab; display:flex; flex-direction:column; align-items:center; box-shadow:0 4px 8px rgba(0,0,0,0.05); transition:0.2s;";
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = "display:flex; flex-direction:column; align-items:center; justify-content:center; gap:25px; width:100%; height:100%;";
+
+    // Zona da Sombra
+    const sombraDiv = document.createElement('div');
+    sombraDiv.id = "drop-zone";
+    sombraDiv.style.cssText = "background:rgba(0,0,0,0.02); padding:25px; border-radius:35px; border:4px dashed var(--primary-blue); display:flex; align-items:center; justify-content:center; width:200px; height:200px; transition:0.3s;";
+    
+    const imgS = document.createElement('img');
+    imgS.src = JOGO_CONFIG.caminhoImg + itemCorreto.img;
+    imgS.style.cssText = "height:120px; filter:brightness(0); pointer-events:none;";
+    sombraDiv.appendChild(imgS);
+
+    // Eventos Drag
+    sombraDiv.ondragover = (e) => { e.preventDefault(); sombraDiv.style.background = "#f0f7ff"; };
+    sombraDiv.ondragleave = () => { sombraDiv.style.background = "rgba(0,0,0,0.02)"; };
+    sombraDiv.ondrop = (e) => { e.preventDefault(); validarAcao(e.dataTransfer.getData("text")); };
+
+    // Opções
+    const opcoesDiv = document.createElement('div');
+    opcoesDiv.style.cssText = "display:flex; gap:15px; justify-content:center; width:100%;";
+
+    opcoes.forEach(item => {
+        const btn = document.createElement('div');
+        btn.draggable = true;
+        btn.style.cssText = "background:white; border:3px solid #eee; border-radius:20px; padding:10px; cursor:grab; width:120px; display:flex; flex-direction:column; align-items:center; box-shadow:0 4px 8px rgba(0,0,0,0.05);";
         
         const img = document.createElement('img');
         img.src = JOGO_CONFIG.caminhoImg + item.img;
-        img.style.cssText = "max-height:60px; max-width:80%; pointer-events:none; margin-bottom:5px;";
+        img.style.cssText = "height:70px; pointer-events:none; margin-bottom:5px;";
         
-        const name = document.createElement('span');
-        name.innerText = item.nome;
-        name.style.cssText = "font-size:10px; font-weight:900; color:var(--text-grey);";
+        const span = document.createElement('span');
+        span.innerText = item.nome;
+        span.style.cssText = "font-weight:900; font-size:10px; color:var(--text-grey); pointer-events:none;";
 
-        card.append(img, name);
+        btn.append(img, span);
+        btn.ondragstart = (e) => { e.dataTransfer.setData("text", item.nome); btn.style.opacity = "0.5"; };
+        btn.ondragend = () => { btn.style.opacity = "1"; };
+        btn.onclick = () => validarAcao(item.nome, btn);
 
-        // --- Eventos de Drag & Clique ---
-        card.ondragstart = (e) => {
-            e.dataTransfer.setData("text", item.nome);
-            card.classList.add('dragging');
-        };
-        card.ondragend = () => card.classList.remove('dragging');
-        card.onclick = () => checkMatch(item.nome, card);
-
-        optionsBox.appendChild(card);
+        opcoesDiv.appendChild(btn);
     });
 
-    // --- Eventos de Drop ---
-    shadowBox.ondragover = (e) => { e.preventDefault(); shadowBox.classList.add('hover'); };
-    shadowBox.ondragleave = () => shadowBox.classList.remove('hover');
-    shadowBox.ondrop = (e) => {
-        e.preventDefault();
-        shadowBox.classList.remove('hover');
-        checkMatch(e.dataTransfer.getData("text"));
-    };
-
-    wrapper.append(title, shadowBox, optionsBox);
+    wrapper.append(sombraDiv, opcoesDiv);
     container.appendChild(wrapper);
 }
 
-function checkMatch(selectedName, element) {
-    const isCorrect = (selectedName === itemCorreto.nome);
-    const dropZone = document.getElementById('drop-zone');
-    const allCards = document.querySelectorAll('.choice-card');
+function validarAcao(nome, el) {
+    const dz = document.getElementById('drop-zone');
+    document.querySelectorAll('#game-main-content div').forEach(d => d.style.pointerEvents = 'none');
 
-    // Desativar interações
-    allCards.forEach(c => c.style.pointerEvents = 'none');
-
-    if (isCorrect) {
-        acertos++;
-        somAcerto.play();
-        dropZone.style.background = "#e7f9e7";
-        dropZone.style.borderColor = "var(--highlight-green)";
-        dropZone.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${itemCorreto.img}" style="max-height:80%; animation: bounceIn 0.5s;">`;
+    if (nome === itemCorreto.nome) {
+        acertos++; somAcerto.play();
+        dz.style.background = "#e7f9e7"; dz.style.borderColor = "var(--highlight-green)";
+        dz.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${itemCorreto.img}" style="height:120px;">`;
     } else {
         somErro.play();
-        if(element) element.style.borderColor = "var(--error-red)";
-        dropZone.style.borderColor = "var(--error-red)";
-        // Mostrar o correto
-        allCards.forEach(c => {
-            if(c.innerText.includes(itemCorreto.nome)) c.style.borderColor = "var(--highlight-green)";
-        });
+        if(el) el.style.borderColor = "var(--error-red)";
+        dz.style.borderColor = "var(--error-red)";
     }
-
-    setTimeout(() => {
-        rodadaAtual++;
-        proximaRodada();
-    }, 1500);
+    setTimeout(() => { rodadaAtual++; proximaRodada(); }, 1500);
 }
 
 function iniciarCronometro() {
@@ -133,7 +100,6 @@ function iniciarCronometro() {
 }
 
 function finalizarJogo() {
-    clearInterval(cronometroInterval);
-    somVitoria.play();
+    clearInterval(cronometroInterval); somVitoria.play();
     window.mostrarResultados(acertos, document.getElementById('timer-val').innerText);
 }
