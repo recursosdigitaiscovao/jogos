@@ -1,7 +1,7 @@
 // === CONFIGURAÇÃO MESTRE ===
 const CONFIG_MESTRE = {
-    ano: "pre",        
-    area: "pre",       
+    ano: "matematica",        
+    area: "ano1",       
     nomeJogo: "SOMBRAS MÁGICAS"
 };
 
@@ -14,26 +14,10 @@ const BIBLIOTECA_TEMAS = {
 
 const BIBLIOTECA_CONTEUDO = {
     "pre": { "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar" } },
-    "ano1": {
-        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano" },
-        "matematica": { t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano" },
-        "estudo": { t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano" }
-    },
-    "ano2": {
-        "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano" },
-        "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano" },
-        "estudo": { t1: "JOVENS", t2: "EXPLORADORES", sub: "Estudo do Meio | 2º Ano" }
-    },
-    "ano3": {
-        "portugues": { t1: "JOVENS", t2: "ESCRITORES", sub: "Português | 3º Ano" },
-        "matematica": { t1: "JOVENS", t2: "CIENTISTAS", sub: "Matemática | 3º Ano" },
-        "estudo": { t1: "JOVENS", t2: "INVESTIGADORES", sub: "Estudo do Meio | 3º Ano" }
-    },
-    "ano4": {
-        "portugues": { t1: "MESTRES", t2: "LEITORES", sub: "Português | 4º Ano" },
-        "matematica": { t1: "MESTRES", t2: "MATEMÁTICOS", sub: "Matemática | 4º Ano" },
-        "estudo": { t1: "MESTRES", t2: "EXPLORADORES", sub: "Estudo do Meio | 4º Ano" }
-    }
+    "ano1": { "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano" }, "matematica": { t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano" }, "estudo": { t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano" } },
+    "ano2": { "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano" }, "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano" }, "estudo": { t1: "JOVENS", t2: "EXPLORADORES", sub: "Estudo do Meio | 2º Ano" } },
+    "ano3": { "portugues": { t1: "JOVENS", t2: "ESCRITORES", sub: "Português | 3º Ano" }, "matematica": { t1: "JOVENS", t2: "CIENTISTAS", sub: "Matemática | 3º Ano" }, "estudo": { t1: "JOVENS", t2: "INVESTIGADORES", sub: "Estudo do Meio | 3º Ano" } },
+    "ano4": { "portugues": { t1: "MESTRES", t2: "LEITORES", sub: "Português | 4º Ano" }, "matematica": { t1: "MESTRES", t2: "MATEMÁTICOS", sub: "Matemática | 4º Ano" }, "estudo": { t1: "MESTRES", t2: "EXPLORADORES", sub: "Estudo do Meio | 4º Ano" } }
 };
 
 const JOGO_CONFIG = {
