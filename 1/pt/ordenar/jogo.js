@@ -1,5 +1,5 @@
-// VARIÁVEIS GLOBAIS
-window.itensAtuais = Array(10).fill({}); // Importante para o cálculo do relatório no index.html
+// Variáveis Globais
+window.itensAtuais = Array(10).fill({}); // Dummy para o template calcular o total
 let indiceAtual = 0;
 let acertos = 0;
 let erros = 0;
@@ -38,6 +38,10 @@ window.selecionarCategoria = function(key) {
             <div id="demo-hand-intro" style="position:absolute; bottom:10px; right:15%; font-size:35px; transition: 1.5s ease-in-out; z-index:10;">👆</div>
             <p style="font-weight:900; color:var(--primary-blue); font-size:14px; text-transform:uppercase; margin-top:15px;">${cat.nome}</p>
         </div>
+        <style>
+            @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+            @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        </style>
     `;
 
     const hand = document.getElementById('demo-hand-intro');
@@ -75,9 +79,7 @@ function iniciarTimer() {
     tempoInicio = Date.now();
     intervaloTimer = setInterval(() => {
         const decorrido = Math.floor((Date.now() - tempoInicio) / 1000);
-        const m = Math.floor(decorrido / 60).toString().padStart(2, '0');
-        const s = (decorrido % 60).toString().padStart(2, '0');
-        document.getElementById('timer-val').innerText = `${m}:${s}`;
+        document.getElementById('timer-val').innerText = `${Math.floor(decorrido/60).toString().padStart(2,'0')}:${(decorrido%60).toString().padStart(2,'0')}`;
     }, 1000);
 }
 
@@ -90,24 +92,26 @@ function proximaRodada() {
     const pool = [...JOGO_CONFIG.categorias[catAtiva].itens];
 
     if (catAtiva === 'consecutivas') {
-        let start = Math.floor(Math.random() * (pool.length - 3));
-        cartasDaRodada = pool.slice(start, start + 4);
+        // Escolhe 4 letras seguidas (A-B-C-D, etc)
+        let startIdx = Math.floor(Math.random() * (pool.length - 3));
+        cartasDaRodada = pool.slice(startIdx, startIdx + 4);
     } else if (catAtiva === 'mesma_inicial') {
-        // Agrupar palavras por letra inicial
+        // Agrupa por inicial e escolhe uma letra que tenha pelo menos 4 palavras
         const grupos = {};
         pool.forEach(it => {
             const letra = it.nome.charAt(0).toUpperCase();
             if(!grupos[letra]) grupos[letra] = [];
             grupos[letra].push(it);
         });
-        // Filtrar apenas letras que têm pelo menos 4 palavras
         const letrasValidas = Object.keys(grupos).filter(l => grupos[l].length >= 4);
         const letraSorteada = letrasValidas[Math.floor(Math.random() * letrasValidas.length)] || Object.keys(grupos)[0];
         cartasDaRodada = grupos[letraSorteada].sort(() => Math.random() - 0.5).slice(0, 4);
     } else {
+        // Sorteio aleatório normal
         cartasDaRodada = pool.sort(() => Math.random() - 0.5).slice(0, 4);
     }
     
+    // Ordem correta para validação
     ordemCorreta = [...cartasDaRodada].sort((a, b) => a.nome.localeCompare(b.nome, 'pt'));
     montarInterface();
 }
@@ -121,7 +125,7 @@ function montarInterface() {
             <div id="shelf" style="display:flex; gap:10px; justify-content:center; width:100%;">
                 ${[0,1,2,3].map(i => `
                     <div class="slot" id="slot-${i}" ondrop="drop(event, ${i})" ondragover="allowDrop(event)" onclick="removerDoSlot(${i})" style="
-                        width:${isMobile ? '72px' : '110px'}; height:${isMobile ? '95px' : '140px'}; 
+                        width:${isMobile ? '75px' : '110px'}; height:${isMobile ? '95px' : '140px'}; 
                         border:3px dashed #cbd9e6; border-radius:20px; background:rgba(255,255,255,0.4);
                         display:flex; align-items:center; justify-content:center; position:relative; cursor:pointer;">
                         <span id="label-${i}" style="position:absolute; top:4px; font-size:11px; color:#cbd9e6; font-weight:900;">${i+1}º</span>
@@ -142,7 +146,7 @@ function montarInterface() {
     `;
 }
 
-// INTERAÇÃO
+// LOGICA DE INTERAÇÃO
 window.allowDrop = (e) => e.preventDefault();
 window.drag = (e, nome) => { e.dataTransfer.setData("text", nome); };
 window.drop = (e, slotIdx) => { e.preventDefault(); moverParaSlot(e.dataTransfer.getData("text"), slotIdx); };
@@ -182,7 +186,7 @@ function moverParaSlot(nome, slotIdx) {
             <span style="font-size:9px; font-weight:900; color:var(--primary-blue); text-transform:uppercase;">${dados.nome}</span>
         </div>`;
     
-    if (!slotsEstado.includes(null)) setTimeout(validarSequencia, 500);
+    if (!slotsEstado.includes(null)) setTimeout(validarSequencia, 600);
 }
 
 function validarSequencia() {
@@ -190,8 +194,12 @@ function validarSequencia() {
     slotsEstado.forEach((carta, i) => {
         if (!carta) return;
         const slotEl = document.getElementById(`slot-${i}`);
-        if (carta.nome === ordemCorreta[i].nome) slotEl.style.borderColor = "#7ed321";
-        else { errosRonda++; devolverComErro(i, carta.nome); }
+        if (carta.nome === ordemCorreta[i].nome) {
+            slotEl.style.borderColor = "#7ed321";
+        } else {
+            errosRonda++;
+            devolverComErro(i, carta.nome);
+        }
     });
 
     if (errosRonda === 0) {
@@ -223,6 +231,7 @@ function finalizarJogo() {
     clearInterval(intervaloTimer);
     somVitoria.play();
     const tempoFinal = document.getElementById('timer-val').innerText;
+    // Ativa o relatório do index.html
     if (window.mostrarResultados) {
         window.mostrarResultados(acertos, tempoFinal);
     }
