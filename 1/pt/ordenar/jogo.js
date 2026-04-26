@@ -1,5 +1,4 @@
-// Variáveis Globais
-window.itensAtuais = Array(10).fill({}); // Dummy para o template calcular o total
+let itensAtuais = Array(10).fill({}); // Dummy para o template original
 let indiceAtual = 0;
 let acertos = 0;
 let erros = 0;
@@ -9,6 +8,7 @@ let intervaloTimer;
 let cartasDaRodada = [];
 let ordemCorreta = [];
 let slotsEstado = [null, null, null, null]; 
+let catAtiva = "consecutivas";
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
@@ -22,7 +22,7 @@ window.startLogic = function() {
 window.selecionarCategoria = function(key) {
     const cat = JOGO_CONFIG.categorias[key];
     if (!cat) return;
-    CONFIG_MESTRE.area = key;
+    catAtiva = key;
 
     const containerIntro = document.getElementById('intro-animation-container');
     containerIntro.innerHTML = `
@@ -38,10 +38,6 @@ window.selecionarCategoria = function(key) {
             <div id="demo-hand-intro" style="position:absolute; bottom:10px; right:15%; font-size:35px; transition: 1.5s ease-in-out; z-index:10;">👆</div>
             <p style="font-weight:900; color:var(--primary-blue); font-size:14px; text-transform:uppercase; margin-top:15px;">${cat.nome}</p>
         </div>
-        <style>
-            @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
-            @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
-        </style>
     `;
 
     const hand = document.getElementById('demo-hand-intro');
@@ -79,7 +75,9 @@ function iniciarTimer() {
     tempoInicio = Date.now();
     intervaloTimer = setInterval(() => {
         const decorrido = Math.floor((Date.now() - tempoInicio) / 1000);
-        document.getElementById('timer-val').innerText = `${Math.floor(decorrido/60).toString().padStart(2,'0')}:${(decorrido%60).toString().padStart(2,'0')}`;
+        const m = Math.floor(decorrido / 60).toString().padStart(2, '0');
+        const s = (decorrido % 60).toString().padStart(2, '0');
+        document.getElementById('timer-val').innerText = `${m}:${s}`;
     }, 1000);
 }
 
@@ -88,15 +86,12 @@ function proximaRodada() {
     slotsEstado = [null, null, null, null];
     document.getElementById('round-val').innerText = `${indiceAtual + 1} / 10`;
 
-    const catAtiva = CONFIG_MESTRE.area;
     const pool = [...JOGO_CONFIG.categorias[catAtiva].itens];
 
     if (catAtiva === 'consecutivas') {
-        // Escolhe 4 letras seguidas (A-B-C-D, etc)
-        let startIdx = Math.floor(Math.random() * (pool.length - 3));
-        cartasDaRodada = pool.slice(startIdx, startIdx + 4);
+        let start = Math.floor(Math.random() * (pool.length - 3));
+        cartasDaRodada = pool.slice(start, start + 4);
     } else if (catAtiva === 'mesma_inicial') {
-        // Agrupa por inicial e escolhe uma letra que tenha pelo menos 4 palavras
         const grupos = {};
         pool.forEach(it => {
             const letra = it.nome.charAt(0).toUpperCase();
@@ -107,11 +102,9 @@ function proximaRodada() {
         const letraSorteada = letrasValidas[Math.floor(Math.random() * letrasValidas.length)] || Object.keys(grupos)[0];
         cartasDaRodada = grupos[letraSorteada].sort(() => Math.random() - 0.5).slice(0, 4);
     } else {
-        // Sorteio aleatório normal
         cartasDaRodada = pool.sort(() => Math.random() - 0.5).slice(0, 4);
     }
     
-    // Ordem correta para validação
     ordemCorreta = [...cartasDaRodada].sort((a, b) => a.nome.localeCompare(b.nome, 'pt'));
     montarInterface();
 }
@@ -121,7 +114,7 @@ function montarInterface() {
     const isMobile = window.innerWidth < 650;
 
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content: space-evenly; padding: 10px 0;">
+        <div style="display:flex; flex-direction:column; align-items:center; width:100%; height:100%; justify-content: space-evenly; padding: 10px 0; touch-action: none;">
             <div id="shelf" style="display:flex; gap:10px; justify-content:center; width:100%;">
                 ${[0,1,2,3].map(i => `
                     <div class="slot" id="slot-${i}" ondrop="drop(event, ${i})" ondragover="allowDrop(event)" onclick="removerDoSlot(${i})" style="
@@ -137,7 +130,7 @@ function montarInterface() {
                     <div class="card" id="card-${item.nome}" draggable="true" ondragstart="drag(event, '${item.nome}')" onclick="clicarNaCarta('${item.nome}')" style="
                         width:${isMobile ? '78px' : '115px'}; background:white; border:3px solid var(--primary-blue); 
                         border-radius:20px; padding:8px; cursor:grab; box-shadow:0 6px 0 var(--primary-dark);
-                        display:flex; flex-direction:column; align-items:center; transition: 0.2s; touch-action:none;">
+                        display:flex; flex-direction:column; align-items:center; transition: 0.2s;">
                         <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:100%; height:${isMobile ? '55px' : '85px'}; object-fit:contain; pointer-events:none;">
                         <span style="font-size:${isMobile ? '9px' : '13px'}; font-weight:900; color:var(--primary-blue); text-align:center; margin-top:5px; text-transform:uppercase;">${item.nome}</span>
                     </div>`).join('')}
@@ -146,7 +139,7 @@ function montarInterface() {
     `;
 }
 
-// LOGICA DE INTERAÇÃO
+// DRAG & DROP
 window.allowDrop = (e) => e.preventDefault();
 window.drag = (e, nome) => { e.dataTransfer.setData("text", nome); };
 window.drop = (e, slotIdx) => { e.preventDefault(); moverParaSlot(e.dataTransfer.getData("text"), slotIdx); };
@@ -161,9 +154,7 @@ window.removerDoSlot = (slotIdx) => {
     if (carta) {
         const cardEl = document.getElementById(`card-${carta.nome}`);
         const slotEl = document.getElementById(`slot-${slotIdx}`);
-        if(cardEl) {
-            cardEl.style.opacity = "1"; cardEl.style.pointerEvents = "auto"; cardEl.style.transform = "scale(1)";
-        }
+        if(cardEl) { cardEl.style.opacity = "1"; cardEl.style.pointerEvents = "auto"; cardEl.style.transform = "scale(1)"; }
         slotsEstado[slotIdx] = null;
         slotEl.style.background = "rgba(255,255,255,0.4)"; slotEl.style.border = "3px dashed #cbd9e6";
         slotEl.innerHTML = `<span style="position:absolute; top:4px; font-size:11px; color:#cbd9e6; font-weight:900;">${slotIdx+1}º</span>`;
@@ -194,12 +185,8 @@ function validarSequencia() {
     slotsEstado.forEach((carta, i) => {
         if (!carta) return;
         const slotEl = document.getElementById(`slot-${i}`);
-        if (carta.nome === ordemCorreta[i].nome) {
-            slotEl.style.borderColor = "#7ed321";
-        } else {
-            errosRonda++;
-            devolverComErro(i, carta.nome);
-        }
+        if (carta.nome === ordemCorreta[i].nome) slotEl.style.borderColor = "#7ed321";
+        else { errosRonda++; devolverComErro(i, carta.nome); }
     });
 
     if (errosRonda === 0) {
@@ -221,9 +208,7 @@ function devolverComErro(slotIdx, nome) {
         slotEl.style.animation = ""; slotEl.style.background = "rgba(255,255,255,0.4)";
         slotEl.style.border = "3px dashed #cbd9e6";
         slotEl.innerHTML = `<span style="position:absolute; top:4px; font-size:11px; color:#cbd9e6; font-weight:900;">${slotIdx+1}º</span>`;
-        if(cardEl) {
-            cardEl.style.opacity = "1"; cardEl.style.pointerEvents = "auto"; cardEl.style.transform = "scale(1)";
-        }
+        if(cardEl) { cardEl.style.opacity = "1"; cardEl.style.pointerEvents = "auto"; cardEl.style.transform = "scale(1)"; }
     }, 800);
 }
 
@@ -231,7 +216,6 @@ function finalizarJogo() {
     clearInterval(intervaloTimer);
     somVitoria.play();
     const tempoFinal = document.getElementById('timer-val').innerText;
-    // Ativa o relatório do index.html
     if (window.mostrarResultados) {
         window.mostrarResultados(acertos, tempoFinal);
     }
