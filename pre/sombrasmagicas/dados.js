@@ -39,9 +39,7 @@ const JOGO_CONFIG = {
     categorias: {
         domesticos: {
             nome: "Animais Domésticos",
-            totalRondas: 10,
-            itensPorRonda: 6,
-            imgCapa: "animaisdomesticos/vaca.png",
+            totalRondas: 10, itensPorRonda: 6, imgCapa: "animaisdomesticos/vaca.png",
             itens: [
                 { id: 1, img: "animaisdomesticos/burro.png" }, { id: 2, img: "animaisdomesticos/cabra.png" },
                 { id: 3, img: "animaisdomesticos/cao.png" }, { id: 4, img: "animaisdomesticos/cavalo.png" },
@@ -54,9 +52,7 @@ const JOGO_CONFIG = {
         },
         selvagens: {
             nome: "Animais Selvagens",
-            totalRondas: 10,
-            itensPorRonda: 6,
-            imgCapa: "animaisselvagens/leao.png",
+            totalRondas: 10, itensPorRonda: 6, imgCapa: "animaisselvagens/leao.png",
             itens: [
                 { id: 101, img: "animaisselvagens/abelha.png" }, { id: 102, img: "animaisselvagens/abutre.png" },
                 { id: 103, img: "animaisselvagens/aguia.png" }, { id: 104, img: "animaisselvagens/aranha.png" },
@@ -78,6 +74,39 @@ const JOGO_CONFIG = {
                 { id: 135, img: "animaisselvagens/tigre.png" }, { id: 136, img: "animaisselvagens/tubarao.png" },
                 { id: 137, img: "animaisselvagens/tucano.png" }, { id: 138, img: "animaisselvagens/urso.png" },
                 { id: 139, img: "animaisselvagens/zebra.png" }
+            ]
+        },
+        frutas: {
+            nome: "Frutas",
+            totalRondas: 10, itensPorRonda: 6, imgCapa: "frutas/morango.png",
+            itens: [
+                { id: 201, img: "frutas/amora.png" }, { id: 202, img: "frutas/ananas.png" },
+                { id: 203, img: "frutas/banana.png" }, { id: 204, img: "frutas/castanha.png" },
+                { id: 205, img: "frutas/cereja.png" }, { id: 206, img: "frutas/diospiro.png" },
+                { id: 207, img: "frutas/figo.png" }, { id: 208, img: "frutas/goiaba.png" },
+                { id: 209, img: "frutas/kiwi.png" }, { id: 210, img: "frutas/laranja.png" },
+                { id: 211, img: "frutas/limao.png" }, { id: 212, img: "frutas/maca.png" },
+                { id: 213, img: "frutas/maracuja.png" }, { id: 214, img: "frutas/melancia.png" },
+                { id: 215, img: "frutas/melao.png" }, { id: 216, img: "frutas/morango.png" },
+                { id: 217, img: "frutas/papaia.png" }, { id: 218, img: "frutas/pera.png" },
+                { id: 219, img: "frutas/roma.png" }, { id: 220, img: "frutas/uvas.png" }
+            ]
+        },
+        objetos: {
+            nome: "Objetos",
+            totalRondas: 10, itensPorRonda: 6, imgCapa: "objetos/carrinho.png",
+            itens: [
+                { id: 301, img: "objetos/anel.png" }, { id: 302, img: "objetos/balde.png" },
+                { id: 303, img: "objetos/bola.png" }, { id: 304, img: "objetos/boneca.png" },
+                { id: 305, img: "objetos/carrinho.png" }, { id: 306, img: "objetos/cesto.png" },
+                { id: 307, img: "objetos/colher.png" }, { id: 308, img: "objetos/copo.png" },
+                { id: 309, img: "objetos/dado.png" }, { id: 310, img: "objetos/dedal.png" },
+                { id: 311, img: "objetos/dragao.png" }, { id: 312, img: "objetos/escova.png" },
+                { id: 313, img: "objetos/garfo.png" }, { id: 314, img: "objetos/garrafa.png" },
+                { id: 315, img: "objetos/isqueiro.png" }, { id: 316, img: "objetos/oculos.png" },
+                { id: 317, img: "objetos/pa.png" }, { id: 318, img: "objetos/panela.png" },
+                { id: 319, img: "objetos/pincel.png" }, { id: 320, img: "objetos/vassoura.png" },
+                { id: 321, img: "objetos/vela.png" }
             ]
         }
     },
