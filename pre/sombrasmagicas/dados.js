@@ -1,6 +1,6 @@
 // === CONFIGURAÇÃO MESTRE ===
 const CONFIG_MESTRE = {
-    ano: "pre",        // "pre", "ano1", "ano2"
+    ano: "pre",        // "pre", "ano1", "ano2" , "ano3" , "ano4"
     area: "pre",       // "pre", "portugues", "matematica", "estudo"
     nomeJogo: "SOMBRAS MÁGICAS"
 };
@@ -30,7 +30,7 @@ const BIBLIOTECA_TEMAS = {
 
 const BIBLIOTECA_CONTEUDO = {
     "pre": { 
-        "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Pré-Escolar", intro: "Consegues encontrar a sombra correta? Arrasta as 6 imagens para os seus pares!" } 
+        "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar", intro: "Consegues encontrar a sombra correta? Arrasta as 6 imagens para os seus pares!" } 
     },
     "ano1": {
         "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", intro: "Treina a tua atenção com as sombras das palavras!" },
