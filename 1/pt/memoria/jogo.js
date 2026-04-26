@@ -16,40 +16,36 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-window.startLogic = function() { selecionarCategoria('animais'); };
+window.startLogic = function() { 
+    // Inicia a animação inicial conforme a categoria do CONFIG_MESTRE
+    selecionarCategoria(CONFIG_MESTRE.area); 
+};
 
-// 1. ANIMAÇÃO DE INTRODUÇÃO (Igual ao Jogo)
 window.selecionarCategoria = function(key) {
     const cat = JOGO_CONFIG.categorias[key];
-    if (!cat) return;
-    CONFIG_MESTRE.area = key;
-
     const containerIntro = document.getElementById('intro-animation-container');
     containerIntro.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; gap:20px; width:100%;">
             <div style="perspective: 1000px; display:flex; gap:15px;">
                 <div id="demo-flip" style="width:70px; height:90px; position:relative; transform-style: preserve-3d; transition: transform 1s; animation: autoFlip 3s infinite;">
-                    <!-- Verso -->
-                    <div style="position:absolute; width:100%; height:100%; backface-visibility: hidden; background: linear-gradient(135deg, var(--primary-blue), #8dc4ff); border-radius:12px; border:3px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:30px;">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <!-- Frente -->
-                    <div style="position:absolute; width:100%; height:100%; backface-visibility: hidden; transform: rotateY(180deg); background: white; border-radius:12px; border:3px solid var(--primary-blue); display:flex; align-items:center; justify-content:center; color:var(--primary-blue); font-size:12px; font-weight:900; text-align:center; padding:5px;">
-                        ${cat.exemplo}
-                    </div>
+                    <div style="position:absolute; width:100%; height:100%; backface-visibility: hidden; background: linear-gradient(135deg, var(--primary-blue), #8dc4ff); border-radius:12px; border:3px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:30px;"><i class="fas fa-lightbulb"></i></div>
+                    <div style="position:absolute; width:100%; height:100%; backface-visibility: hidden; transform: rotateY(180deg); background: white; border-radius:12px; border:3px solid var(--primary-blue); display:flex; align-items:center; justify-content:center; color:var(--primary-blue); font-size:12px; font-weight:900; text-align:center; padding:5px;">${cat.exemplo}</div>
                 </div>
             </div>
-            <p style="font-weight:900; color:var(--primary-blue); text-transform:uppercase;">Encontra os pares!</p>
+            <p style="font-weight:900; color:var(--primary-blue); text-transform:uppercase;">ENCONTRA OS PARES!</p>
         </div>
-        <style>
-            @keyframes autoFlip { 0%, 20% { transform: rotateY(0deg); } 50%, 80% { transform: rotateY(180deg); } 100% { transform: rotateY(0deg); } }
-        </style>`;
+        <style> @keyframes autoFlip { 0%, 20% { transform: rotateY(0deg); } 50%, 80% { transform: rotateY(180deg); } 100% { transform: rotateY(0deg); } } </style>`;
 };
 
 window.initGame = function() { 
     indiceAtual = 0; acertos = 0; erros = 0; 
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
+    
+    // Fixar o número de pares pelo nível escolhido
+    const nivelData = JOGO_CONFIG.niveis.find(n => n.id === CONFIG_MESTRE.nivel);
+    totalParesNecessarios = nivelData.pares;
+
     iniciarTimer(); 
     proximaRodada(); 
 };
@@ -70,17 +66,8 @@ function proximaRodada() {
     document.getElementById('round-val').innerText = `${indiceAtual + 1} / 10`;
     paresEncontradosNestaRonda = 0;
     
-    // NÍVEIS
-    if (indiceAtual < 3) totalParesNecessarios = 3;      // 6 cartas
-    else if (indiceAtual < 6) totalParesNecessarios = 4; // 8 cartas
-    else totalParesNecessarios = 6;                      // 12 cartas
-
-    gerarTabuleiro(totalParesNecessarios);
-}
-
-function gerarTabuleiro(numPares) {
     const categoria = JOGO_CONFIG.categorias[CONFIG_MESTRE.area];
-    const itensSorteados = [...categoria.itens].sort(() => Math.random() - 0.5).slice(0, numPares);
+    const itensSorteados = [...categoria.itens].sort(() => Math.random() - 0.5).slice(0, totalParesNecessarios);
     
     cartasNoGrid = [];
     itensSorteados.forEach(item => {
@@ -95,50 +82,32 @@ function gerarTabuleiro(numPares) {
 function montarGrid() {
     const container = document.getElementById('game-main-content');
     const isLandscape = window.innerWidth > window.innerHeight;
+    const lvl = CONFIG_MESTRE.nivel;
     
-    // REGRAS DE GRELHA ESPECÍFICAS
     let cols = 3;
-    if (isLandscape) {
-        if (totalParesNecessarios === 3) cols = 3; // 3x2
-        if (totalParesNecessarios === 4) cols = 4; // 4x2
-        if (totalParesNecessarios === 6) cols = 4; // 4x3
-    } else {
-        if (totalParesNecessarios === 3) cols = 3; // 3x2
-        if (totalParesNecessarios === 4) cols = 3; // 3+3+2
-        if (totalParesNecessarios === 6) cols = 3; // 3x4
+    if (!isLandscape) { // VERTICAL (PORTRAIT)
+        if (lvl === "nivel1") cols = 3; // 3x2 (6 cartas)
+        if (lvl === "nivel2") cols = 3; // 3+3+2 (8 cartas)
+        if (lvl === "nivel3") cols = 3; // 3x4 (12 cartas)
+    } else { // HORIZONTAL (LANDSCAPE)
+        if (lvl === "nivel1") cols = 3; // 3x2
+        if (lvl === "nivel2") cols = 4; // 4x2
+        if (lvl === "nivel3") cols = 4; // 4x3
     }
 
     container.innerHTML = `
         <div id="memory-board" style="
-            display: grid; 
-            grid-template-columns: repeat(${cols}, 1fr); 
-            gap: clamp(5px, 2vh, 15px); 
-            width: 100%; height: 100%; 
-            max-width: 800px;
-            padding: 10px; 
-            align-content: center;
-            justify-items: center;
-            margin: auto;
+            display: grid; grid-template-columns: repeat(${cols}, 1fr); 
+            gap: 10px; width: 100%; height: 100%; max-width: 600px;
+            padding: 10px; align-content: center; justify-items: center; margin: auto;
         ">
             ${cartasNoGrid.map((carta, i) => `
                 <div class="card-box" id="card-${i}" onclick="virarCarta(this, ${i})" style="
-                    width: 100%;
-                    max-width: 120px;
-                    aspect-ratio: 3 / 4;
-                    position: relative;
-                    transform-style: preserve-3d;
-                    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-                    cursor: pointer;
-                    user-select: none;
+                    width: 100%; max-width: 100px; aspect-ratio: 3 / 4; position: relative;
+                    transform-style: preserve-3d; transition: transform 0.5s; cursor: pointer; user-select: none;
                 ">
-                    <!-- VERSO (Lâmpada atrativa) -->
-                    <div style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: linear-gradient(135deg, var(--primary-blue), #8dc4ff); border-radius: 12px; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; font-size: min(8vw, 35px); box-shadow: 0 4px 8px rgba(0,0,0,0.15);">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <!-- FRENTE (Conteúdo) -->
-                    <div id="front-${i}" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; transform: rotateY(180deg); background: white; border-radius: 12px; border: 3px solid var(--primary-blue); display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                        <!-- Conteúdo injetado via JS -->
-                    </div>
+                    <div style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: linear-gradient(135deg, var(--primary-blue), #8dc4ff); border-radius: 12px; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; font-size: 25px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);"><i class="fas fa-lightbulb"></i></div>
+                    <div id="front-${i}" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; transform: rotateY(180deg); background: white; border-radius: 12px; border: 3px solid var(--primary-blue); display: flex; align-items: center; justify-content: center; overflow: hidden;"></div>
                 </div>
             `).join('')}
         </div>
@@ -147,80 +116,49 @@ function montarGrid() {
 
 window.virarCarta = function(el, idx) {
     if (bloqueado || el.classList.contains('flipped') || el.style.visibility === "hidden") return;
-
     const info = cartasNoGrid[idx];
     const front = document.getElementById(`front-${idx}`);
 
-    // Injetar conteúdo na frente
     if (info.tipo === 'img') {
-        front.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${info.conteudo}" style="width:85%; height:85%; object-fit:contain; pointer-events:none;">`;
+        front.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${info.conteudo}" style="width:85%; height:85%; object-fit:contain; transform: rotateY(180deg);">`;
     } else {
-        const fs = info.conteudo.length > 8 ? 'min(3vw, 10px)' : 'min(4.5vw, 14px)';
-        front.innerHTML = `<span style="font-size: ${fs}; color: var(--primary-blue); font-weight:900; text-transform:uppercase; text-align:center; padding:5px; line-height:1.1;">${info.conteudo}</span>`;
+        const fs = info.conteudo.length > 8 ? '9px' : '13px';
+        front.innerHTML = `<span style="font-size: ${fs}; color: var(--primary-blue); font-weight:900; text-transform:uppercase; text-align:center; transform: rotateY(180deg); padding:5px;">${info.conteudo}</span>`;
     }
 
     el.classList.add('flipped');
     el.style.transform = "rotateY(180deg)";
 
-    if (!primeiraCarta) {
-        primeiraCarta = { el, idx, id: info.id };
-    } else {
-        segundaCarta = { el, idx, id: info.id };
-        bloqueado = true;
-        setTimeout(verificarPar, 500);
-    }
+    if (!primeiraCarta) { primeiraCarta = { el, idx, id: info.id }; } 
+    else { segundaCarta = { el, idx, id: info.id }; bloqueado = true; setTimeout(verificarPar, 500); }
 };
 
 function verificarPar() {
     if (primeiraCarta.id === segundaCarta.id && primeiraCarta.idx !== segundaCarta.idx) {
-        // ACERTO
-        somAcerto.play();
-        acertos++;
-        paresEncontradosNestaRonda++;
+        somAcerto.play(); acertos++; paresEncontradosNestaRonda++;
         document.getElementById('hits-val').innerText = acertos;
-
-        // Visual de acerto antes de sumir
+        
         primeiraCarta.el.querySelector('div:nth-child(2)').style.borderColor = "#7ed321";
         segundaCarta.el.querySelector('div:nth-child(2)').style.borderColor = "#7ed321";
 
         setTimeout(() => {
-            primeiraCarta.el.style.opacity = "0";
-            primeiraCarta.el.style.visibility = "hidden";
-            segundaCarta.el.style.opacity = "0";
-            segundaCarta.el.style.visibility = "hidden";
-            
-            resetTurno();
-
-            if (paresEncontradosNestaRonda === totalParesNecessarios) {
-                indiceAtual++;
-                setTimeout(proximaRodada, 600);
-            }
+            primeiraCarta.el.style.opacity = "0"; primeiraCarta.el.style.visibility = "hidden";
+            segundaCarta.el.style.opacity = "0"; segundaCarta.el.style.visibility = "hidden";
+            primeiraCarta = null; segundaCarta = null; bloqueado = false;
+            if (paresEncontradosNestaRonda === totalParesNecessarios) { indiceAtual++; setTimeout(proximaRodada, 600); }
         }, 600);
     } else {
-        // ERRO
-        erros++;
-        somErro.play();
-        document.getElementById('miss-val').innerText = erros;
-        
+        erros++; somErro.play(); document.getElementById('miss-val').innerText = erros;
         setTimeout(() => {
-            primeiraCarta.el.style.transform = "rotateY(0deg)";
-            primeiraCarta.el.classList.remove('flipped');
-            segundaCarta.el.style.transform = "rotateY(0deg)";
-            segundaCarta.el.classList.remove('flipped');
-            resetTurno();
+            primeiraCarta.el.style.transform = "rotateY(0deg)"; primeiraCarta.el.classList.remove('flipped');
+            segundaCarta.el.style.transform = "rotateY(0deg)"; segundaCarta.el.classList.remove('flipped');
+            primeiraCarta = null; segundaCarta = null; bloqueado = false;
         }, 1000);
     }
-}
-
-function resetTurno() {
-    primeiraCarta = null;
-    segundaCarta = null;
-    bloqueado = false;
 }
 
 function finalizarJogo() {
     clearInterval(intervaloTimer);
     somVitoria.play();
-    const tempo = document.getElementById('timer-val').innerText;
-    window.mostrarResultados(acertos, tempo);
+    window.mostrarResultados(acertos, document.getElementById('timer-val').innerText);
 }
