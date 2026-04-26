@@ -1,4 +1,4 @@
-let itensAtuais = Array(10).fill({}); // Dummy para o template original
+let itensAtuais = Array(10).fill({}); 
 let indiceAtual = 0;
 let acertos = 0;
 let erros = 0;
@@ -10,15 +10,18 @@ let ordemCorreta = [];
 let slotsEstado = [null, null, null, null]; 
 let catAtiva = "consecutivas";
 
+// Variáveis para Arrastar no Telemóvel
+let activeTouchCard = null;
+let touchOffsetX = 0;
+let touchOffsetY = 0;
+
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-window.startLogic = function() { 
-    selecionarCategoria('consecutivas'); 
-};
+window.startLogic = function() { selecionarCategoria('consecutivas'); };
 
-// 1. ANIMAÇÃO DE INTRODUÇÃO REALISTA
+// 1. ANIMAÇÃO DE INTRODUÇÃO PROFISSIONAL (TUTORIAL)
 window.selecionarCategoria = function(key) {
     const cat = JOGO_CONFIG.categorias[key];
     if (!cat) return;
@@ -26,40 +29,40 @@ window.selecionarCategoria = function(key) {
 
     const containerIntro = document.getElementById('intro-animation-container');
     containerIntro.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:10px; width:100%; position:relative; height:180px; justify-content:center; transform:scale(0.85);">
-            <div style="display:flex; gap:10px; margin-bottom:40px;">
-                <div style="width:45px; height:60px; border:2px dashed var(--primary-blue); border-radius:10px; background:rgba(255,255,255,0.3);"></div>
-                <div style="width:45px; height:60px; border:2px dashed var(--primary-blue); border-radius:10px; background:rgba(255,255,255,0.3);"></div>
+        <div style="position:relative; width:100%; height:200px; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden;">
+            <!-- Slots -->
+            <div style="display:flex; gap:10px; margin-bottom:50px;">
+                <div id="demo-slot" style="width:45px; height:60px; border:2px dashed var(--primary-blue); border-radius:10px; background:rgba(255,255,255,0.2);"></div>
+                <div style="width:45px; height:60px; border:2px dashed var(--primary-blue); border-radius:10px; opacity:0.3;"></div>
             </div>
-            <div style="display:flex; gap:10px;">
-                <div id="demo-card-intro" style="width:45px; height:60px; background:white; border:3px solid var(--primary-blue); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); font-size:18px; z-index:5;">A</div>
-                <div style="width:45px; height:60px; background:white; border:3px solid var(--primary-blue); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); font-size:18px; opacity:0.4;">B</div>
+            <!-- Cartas -->
+            <div style="display:flex; gap:15px;">
+                <div id="demo-card" style="width:45px; height:60px; background:white; border:3px solid var(--primary-blue); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); z-index:5; transition: border-color 0.3s;">A</div>
+                <div style="width:45px; height:60px; background:white; border:3px solid var(--primary-blue); border-radius:10px; opacity:0.3;"></div>
             </div>
-            <div id="demo-hand-intro" style="position:absolute; bottom:10px; right:15%; font-size:35px; transition: 1.5s ease-in-out; z-index:10;">👆</div>
-            <p style="font-weight:900; color:var(--primary-blue); font-size:14px; text-transform:uppercase; margin-top:15px;">${cat.nome}</p>
+            <!-- Mão Animada -->
+            <div id="demo-hand" style="position:absolute; bottom:10px; right:20%; font-size:35px; z-index:10; pointer-events:none;">👆</div>
+            <p style="margin-top:15px; font-weight:900; color:var(--primary-blue); text-transform:uppercase; font-size:13px;">${cat.nome}</p>
         </div>
+        <style>
+            @keyframes tutorialMove {
+                0% { transform: translate(0, 0); }
+                30% { transform: translate(-75px, -15px); } /* Pega a carta */
+                60% { transform: translate(-75px, -110px); } /* Leva ao slot */
+                80% { transform: translate(-75px, -110px); } /* Pausa */
+                100% { transform: translate(0, 0); }
+            }
+            @keyframes cardFollow {
+                0%, 30% { transform: translate(0, 0); opacity:1; }
+                60%, 80% { transform: translate(0, -95px); border-color:#7ed321; opacity:1; }
+                90%, 100% { opacity:0; }
+            }
+            #demo-hand { animation: tutorialMove 3s infinite ease-in-out; }
+            #demo-card { animation: cardFollow 3s infinite ease-in-out; }
+            @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+            @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        </style>
     `;
-
-    const hand = document.getElementById('demo-hand-intro');
-    const card = document.getElementById('demo-card-intro');
-
-    function runIntro() {
-        if(!hand || !card) return;
-        card.style.transition = "none"; hand.style.transition = "none";
-        card.style.transform = "translate(0, 0)"; hand.style.transform = "translate(0, 0)";
-        card.style.borderColor = "var(--primary-blue)";
-        setTimeout(() => {
-            if(!hand) return;
-            hand.style.transition = "1.5s ease-in-out"; card.style.transition = "1.5s ease-in-out";
-            hand.style.transform = "translate(-70px, -75px)";
-            card.style.transform = "translate(-55px, -100px)";
-            setTimeout(() => {
-                if(card) card.style.borderColor = "#7ed321";
-                setTimeout(runIntro, 1000);
-            }, 1600);
-        }, 500);
-    }
-    runIntro();
 };
 
 window.initGame = function() { 
@@ -75,9 +78,7 @@ function iniciarTimer() {
     tempoInicio = Date.now();
     intervaloTimer = setInterval(() => {
         const decorrido = Math.floor((Date.now() - tempoInicio) / 1000);
-        const m = Math.floor(decorrido / 60).toString().padStart(2, '0');
-        const s = (decorrido % 60).toString().padStart(2, '0');
-        document.getElementById('timer-val').innerText = `${m}:${s}`;
+        document.getElementById('timer-val').innerText = `${Math.floor(decorrido/60).toString().padStart(2,'0')}:${(decorrido%60).toString().padStart(2,'0')}`;
     }, 1000);
 }
 
@@ -127,10 +128,15 @@ function montarInterface() {
 
             <div id="pile" style="display:flex; gap:12px; justify-content:center; align-items:center; flex-wrap:wrap; width:100%; min-height:150px;">
                 ${[...cartasDaRodada].sort(() => Math.random() - 0.5).map((item) => `
-                    <div class="card" id="card-${item.nome}" draggable="true" ondragstart="drag(event, '${item.nome}')" onclick="clicarNaCarta('${item.nome}')" style="
-                        width:${isMobile ? '78px' : '115px'}; background:white; border:3px solid var(--primary-blue); 
-                        border-radius:20px; padding:8px; cursor:grab; box-shadow:0 6px 0 var(--primary-dark);
-                        display:flex; flex-direction:column; align-items:center; transition: 0.2s;">
+                    <div class="card" id="card-${item.nome}" draggable="true" 
+                         ondragstart="drag(event, '${item.nome}')" 
+                         onclick="clicarNaCarta('${item.nome}')"
+                         ontouchstart="handleTouchStart(event, '${item.nome}')"
+                         ontouchmove="handleTouchMove(event)"
+                         ontouchend="handleTouchEnd(event)"
+                         style="width:${isMobile ? '78px' : '115px'}; background:white; border:3px solid var(--primary-blue); 
+                         border-radius:20px; padding:8px; cursor:grab; box-shadow:0 6px 0 var(--primary-dark);
+                         display:flex; flex-direction:column; align-items:center; transition: transform 0.1s; z-index:100;">
                         <img src="${JOGO_CONFIG.caminhoImg}${item.img}" style="width:100%; height:${isMobile ? '55px' : '85px'}; object-fit:contain; pointer-events:none;">
                         <span style="font-size:${isMobile ? '9px' : '13px'}; font-weight:900; color:var(--primary-blue); text-align:center; margin-top:5px; text-transform:uppercase;">${item.nome}</span>
                     </div>`).join('')}
@@ -139,12 +145,60 @@ function montarInterface() {
     `;
 }
 
-// DRAG & DROP
+// --- LÓGICA DE ARRASTAR (TOUCH MOBILE) ---
+window.handleTouchStart = function(e, nome) {
+    activeTouchCard = document.getElementById(`card-${nome}`);
+    const touch = e.touches[0];
+    const rect = activeTouchCard.getBoundingClientRect();
+    touchOffsetX = touch.clientX - rect.left;
+    touchOffsetY = touch.clientY - rect.top;
+    activeTouchCard.style.transition = "none";
+    activeTouchCard.style.zIndex = "1000";
+};
+
+window.handleTouchMove = function(e) {
+    if (!activeTouchCard) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    activeTouchCard.style.position = "fixed";
+    activeTouchCard.style.left = (touch.clientX - touchOffsetX) + "px";
+    activeTouchCard.style.top = (touch.clientY - touchOffsetY) + "px";
+};
+
+window.handleTouchEnd = function(e) {
+    if (!activeTouchCard) return;
+    activeTouchCard.style.display = "none"; 
+    const touch = e.changedTouches[0];
+    const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+    activeTouchCard.style.display = "flex"; 
+
+    const slot = dropTarget ? dropTarget.closest('.slot') : null;
+    const cardNome = activeTouchCard.id.replace("card-", "");
+
+    if (slot) {
+        const slotIdx = parseInt(slot.id.replace("slot-", ""));
+        moverParaSlot(cardNome, slotIdx);
+    }
+
+    // Reset visual da carta se não ficou no slot
+    activeTouchCard.style.position = "relative";
+    activeTouchCard.style.left = "0";
+    activeTouchCard.style.top = "0";
+    activeTouchCard.style.zIndex = "100";
+    activeTouchCard = null;
+};
+
+// --- LÓGICA DE ARRASTAR (MOUSE PC) ---
 window.allowDrop = (e) => e.preventDefault();
 window.drag = (e, nome) => { e.dataTransfer.setData("text", nome); };
-window.drop = (e, slotIdx) => { e.preventDefault(); moverParaSlot(e.dataTransfer.getData("text"), slotIdx); };
+window.drop = (e, slotIdx) => {
+    e.preventDefault();
+    moverParaSlot(e.dataTransfer.getData("text"), slotIdx);
+};
 
+// --- LÓGICA DE CLIQUE ---
 window.clicarNaCarta = (nome) => {
+    if (activeTouchCard) return; // Evita conflito touch/click
     const firstEmpty = slotsEstado.indexOf(null);
     if (firstEmpty !== -1) moverParaSlot(nome, firstEmpty);
 };
@@ -154,7 +208,7 @@ window.removerDoSlot = (slotIdx) => {
     if (carta) {
         const cardEl = document.getElementById(`card-${carta.nome}`);
         const slotEl = document.getElementById(`slot-${slotIdx}`);
-        if(cardEl) { cardEl.style.opacity = "1"; cardEl.style.pointerEvents = "auto"; cardEl.style.transform = "scale(1)"; }
+        cardEl.style.opacity = "1"; cardEl.style.pointerEvents = "auto";
         slotsEstado[slotIdx] = null;
         slotEl.style.background = "rgba(255,255,255,0.4)"; slotEl.style.border = "3px dashed #cbd9e6";
         slotEl.innerHTML = `<span style="position:absolute; top:4px; font-size:11px; color:#cbd9e6; font-weight:900;">${slotIdx+1}º</span>`;
@@ -168,9 +222,11 @@ function moverParaSlot(nome, slotIdx) {
     const dados = cartasDaRodada.find(c => c.nome === nome);
     if(!cardEl || !dados) return;
 
-    cardEl.style.opacity = "0"; cardEl.style.pointerEvents = "none"; cardEl.style.transform = "scale(0.5)";
+    cardEl.style.opacity = "0"; cardEl.style.pointerEvents = "none";
     slotsEstado[slotIdx] = dados;
-    slotEl.style.background = "white"; slotEl.style.border = "3px solid var(--primary-blue)";
+
+    slotEl.style.background = "white";
+    slotEl.style.border = "3px solid var(--primary-blue)";
     slotEl.innerHTML = `
         <div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; animation: popIn 0.3s forwards;">
             <img src="${JOGO_CONFIG.caminhoImg}${dados.img}" style="width:85%; max-height:75%; object-fit:contain;">
@@ -185,8 +241,12 @@ function validarSequencia() {
     slotsEstado.forEach((carta, i) => {
         if (!carta) return;
         const slotEl = document.getElementById(`slot-${i}`);
-        if (carta.nome === ordemCorreta[i].nome) slotEl.style.borderColor = "#7ed321";
-        else { errosRonda++; devolverComErro(i, carta.nome); }
+        if (carta.nome === ordemCorreta[i].nome) {
+            slotEl.style.borderColor = "#7ed321";
+        } else {
+            errosRonda++;
+            devolverComErro(i, carta.nome);
+        }
     });
 
     if (errosRonda === 0) {
@@ -208,7 +268,7 @@ function devolverComErro(slotIdx, nome) {
         slotEl.style.animation = ""; slotEl.style.background = "rgba(255,255,255,0.4)";
         slotEl.style.border = "3px dashed #cbd9e6";
         slotEl.innerHTML = `<span style="position:absolute; top:4px; font-size:11px; color:#cbd9e6; font-weight:900;">${slotIdx+1}º</span>`;
-        if(cardEl) { cardEl.style.opacity = "1"; cardEl.style.pointerEvents = "auto"; cardEl.style.transform = "scale(1)"; }
+        cardEl.style.opacity = "1"; cardEl.style.pointerEvents = "auto";
     }, 800);
 }
 
@@ -216,7 +276,5 @@ function finalizarJogo() {
     clearInterval(intervaloTimer);
     somVitoria.play();
     const tempoFinal = document.getElementById('timer-val').innerText;
-    if (window.mostrarResultados) {
-        window.mostrarResultados(acertos, tempoFinal);
-    }
+    window.mostrarResultados(acertos, tempoFinal);
 }
