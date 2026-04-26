@@ -12,13 +12,13 @@ gameStyle.innerHTML = `
     .game-area { display: flex; flex-direction: column; width: 100%; height: 100%; justify-content: space-evenly; align-items: center; }
     .row-shadows, .row-images { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 900px; justify-items: center; }
     @media (min-width: 768px) { .row-shadows, .row-images { grid-template-columns: repeat(6, 1fr); gap: 20px; } }
-    .slot-sombra { width: 100%; max-width: 150px; aspect-ratio: 1/1; border: 3px dashed #cbd9e6; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.4); position: relative; }
-    .img-sombra { width: 85%; height: 85%; object-fit: contain; filter: brightness(0); opacity: 0.15; pointer-events: none; }
-    .peça-cor { width: 100%; max-width: 150px; aspect-ratio: 1/1; cursor: grab; touch-action: none; display: flex; align-items: center; justify-content: center; background: white; border-radius: 20px; box-shadow: 0 6px 12px rgba(0,0,0,0.1); z-index: 10; }
-    .peça-cor img { width: 85%; height: 85%; object-fit: contain; pointer-events: none; }
+    .slot-sombra { width: 100%; max-width: 140px; aspect-ratio: 1/1; border: 3px dashed #cbd9e6; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.4); position: relative; }
+    .img-sombra { width: 80%; height: 80%; object-fit: contain; filter: brightness(0); opacity: 0.15; pointer-events: none; }
+    .peça-cor { width: 100%; max-width: 140px; aspect-ratio: 1/1; cursor: grab; touch-action: none; display: flex; align-items: center; justify-content: center; background: white; border-radius: 20px; box-shadow: 0 6px 12px rgba(0,0,0,0.1); z-index: 10; }
+    .peça-cor img { width: 80%; height: 80%; object-fit: contain; pointer-events: none; }
     .peça-cor.dragging { opacity: 0.9; transform: scale(1.1); cursor: grabbing; box-shadow: 0 15px 30px rgba(0,0,0,0.2); z-index: 5000; }
     .acertou { border-color: #7ed321 !important; background: #f0fff0 !important; border-style: solid !important; }
-    .acertou .img-sombra { filter: none !important; opacity: 1 !important; transform: scale(1.1); transition: 0.4s; }
+    .acertou .img-sombra { filter: none !important; opacity: 1 !important; transform: scale(1.15); transition: 0.4s; }
     .target-hover { border-color: var(--primary-blue) !important; transform: scale(1.05); }
 
     .tutorial-box { position: relative; width: 220px; height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
@@ -40,7 +40,7 @@ function renderIntroAnimation() {
     const cat = JOGO_CONFIG.categorias[categoriaAtual];
     container.innerHTML = `
         <div style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
-            <p style="font-weight: 900; color: var(--text-grey); text-align: center; max-width: 280px; font-size: 1.1rem;">Associa os pares de <b>${cat.nome}</b>!</p>
+            <p style="font-weight: 900; color: var(--text-grey); text-align: center; max-width: 280px; font-size: 1.1rem;">Associa cada imagem de <b>${cat.nome}</b> à sombra correta!</p>
             <div class="tutorial-box">
                 <i class="fas fa-hand-pointer hand-icon"></i>
                 <div class="slot-sombra demo-shadow" style="width:75px; height:75px;"><img src="${JOGO_CONFIG.caminhoImg}${cat.imgCapa}" class="img-sombra"></div>
