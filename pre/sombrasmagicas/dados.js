@@ -5,157 +5,128 @@ const CONFIG_MESTRE = {
     nomeJogo: "CONTAR SÍLABAS"
 };
 
+// === DEFINIÇÃO DE CORES POR ÁREA (PADRÃO) ===
 const BIBLIOTECA_TEMAS = {
     "portugues": { 
-        corPagina: "#e9f0f8",    
-        corHeader: "#f0f7ff",    
-        corContainer: "#e9f0f8", // Fundo da área do jogo (NOVO)
-        sombraCard: "0 15px 35px rgba(176,196,217,0.5)", // Sombra (NOVO)
-        corPrimaria: "#5ba4e5",  
-        corEscura: "#3d7db8",    
-        corTexto: "#5d7082",     
+        corPagina: "#e9f0f8",       // Fundo da página
+        corHeader: "#f0f7ff",       // Fundo do Header
+        corContainer: "#e9f0f8",    // Fundo do Game-Container
+        corCard: "#ffffff",         // Fundo do Game-Card
+        bordaCard: "none",          // Borda do Game-Card
+        sombraCard: "0 15px 35px rgba(176,196,217,0.5)", // Sombra do Card
+        corEspacoJogo: "#ffffff",   // Fundo do src-game (Espaço do Jogo)
+        bordaEspacoJogo: "3px dashed rgba(91, 164, 229, 0.4)", // Borda do Espaço do Jogo
+        corPrimaria: "#5ba4e5",     // Azul principal
+        corEscura: "#3d7db8",       // Azul escuro
+        corTexto: "#5d7082",        // Cor do texto informativo
         voltarMobile: "voltar_az.png" 
     },
     "matematica": { 
-        corPagina: "#e8f9f4",    
-        corHeader: "#f0fdfa",    
+        corPagina: "#e8f9f4",
+        corHeader: "#f0fdfa",
         corContainer: "#e8f9f4",
+        corCard: "#ffffff",
+        bordaCard: "none",
         sombraCard: "0 15px 35px rgba(160,210,190,0.5)",
-        corPrimaria: "#45cfa8",  
-        corEscura: "#2BA886",    
+        corEspacoJogo: "#ffffff",
+        bordaEspacoJogo: "3px dashed rgba(69, 207, 168, 0.4)",
+        corPrimaria: "#45cfa8",
+        corEscura: "#2BA886",
         corTexto: "#45cfa8",
         voltarMobile: "voltar_vr.png"
     },
     "estudo": { 
-        corPagina: "#EAE2E5",    
-        corHeader: "#f7f3f4",    
+        corPagina: "#EAE2E5",
+        corHeader: "#f7f3f4",
         corContainer: "#EAE2E5",
+        corCard: "#ffffff",
+        bordaCard: "none",
         sombraCard: "0 15px 35px rgba(180,160,170,0.5)",
-        corPrimaria: "#994D4D",  
-        corEscura: "#6C3737",    
+        corEspacoJogo: "#ffffff",
+        bordaEspacoJogo: "3px dashed rgba(153, 77, 77, 0.4)",
+        corPrimaria: "#994D4D",
+        corEscura: "#6C3737",
         corTexto: "#994D4D",
         voltarMobile: "voltar_cs.png"
     },
     "pre": { 
-        corPagina: "#FFF5F7",    
-        corHeader: "#ffffff",    
+        corPagina: "#FFF5F7",
+        corHeader: "#fff0f3",
         corContainer: "#FFF5F7",
+        corCard: "#ffffff",
+        bordaCard: "none",
         sombraCard: "0 15px 35px rgba(230,180,190,0.5)",
-        corPrimaria: "#E691A7",  
-        corEscura: "#D54267",    
+        corEspacoJogo: "#ffffff",
+        bordaEspacoJogo: "3px dashed rgba(230, 145, 167, 0.4)",
+        corPrimaria: "#E691A7",
+        corEscura: "#D54267",
         corTexto: "#E691A7",
         voltarMobile: "voltar_rs.png"
     }
 };
 
-// ... restante do ficheiro (CONTEUDO e CONFIG) mantém-se igual ...
-
+// === CONTEÚDO E CUSTOMIZAÇÃO POR ANO/ÁREA ===
 const BIBLIOTECA_CONTEUDO = {
     "pre": {
         "pre": { 
-            t1: "PEQUENOS", 
-            t2: "CURIOSOS", 
-            sub: "Atividades | Pré-Escolar", 
-            intro: "Brinca com os números e as cores!", 
-            rodape: "&copy; Pequenos Curiosos" 
+            t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar", 
+            rodape: "&copy; Pequenos Curiosos",
+            // Podes sobrescrever as cores do tema aqui se quiseres:
+            corCard: "#ffffff",
+            bordaCard: "4px solid #E691A7"
         }
     },
     "ano1": {
         "portugues": { 
-            t1: "PEQUENOS", 
-            t2: "LEITORES", 
-            sub: "Português | 1º Ano", 
-            intro: "Clica no número que corresponde à quantidade de sílabas!", 
-            rodape: "&copy; Pequenos Leitores" 
+            t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", rodape: "&copy; Pequenos Leitores",
+            corEspacoJogo: "#ffffff",
+            bordaEspacoJogo: "3px dashed #5ba4e5"
         },
         "matematica": { 
-            t1: "PEQUENOS", 
-            t2: "MATEMÁTICOS", 
-            sub: "Matemática | 1º Ano", 
-            intro: "Explora os números e diverte-te!", 
-            rodape: "&copy; Pequenos Matemáticos" 
+            t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano", rodape: "&copy; Pequenos Matemáticos" 
         },
         "estudo": { 
-            t1: "PEQUENOS", 
-            t2: "EXPLORADORES", 
-            sub: "Estudo do Meio | 1º Ano", 
-            intro: "Explora o mundo à tua volta!", 
-            rodape: "&copy; Pequenos Exploradores" 
+            t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano", rodape: "&copy; Pequenos Exploradores" 
         }
     },
     "ano2": {
         "portugues": { 
-            t1: "JOVENS", 
-            t2: "LEITORES", 
-            sub: "Português | 2º Ano", 
-            intro: "Explora as palavras e a leitura!", 
-            rodape: "&copy; Jovens Leitores" 
+            t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano", rodape: "&copy; Jovens Leitores" 
         },
         "matematica": { 
-            t1: "JOVENS", 
-            t2: "MATEMÁTICOS", 
-            sub: "Matemática | 2º Ano", 
-            intro: "Diverte-te com os cálculos!", 
-            rodape: "&copy; Jovens Matemáticos" 
+            t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano", rodape: "&copy; Jovens Matemáticos" 
         },
         "estudo": { 
-            t1: "JOVENS", 
-            t2: "INVESTIGADORES", 
-            sub: "Estudo do Meio | 2º Ano", 
-            intro: "Investiga o mundo!", 
-            rodape: "&copy; Jovens Investigadores" 
+            t1: "JOVENS", t2: "INVESTIGADORES", sub: "Estudo do Meio | 2º Ano", rodape: "&copy; Jovens Investigadores" 
         }
     },
     "ano3": {
         "portugues": { 
-            t1: "MESTRES", 
-            t2: "DA LÍNGUA", 
-            sub: "Português | 3º Ano", 
-            intro: "Explora a gramática e a escrita!", 
-            rodape: "&copy; Mestres da Língua" 
+            t1: "MESTRES", t2: "DA LÍNGUA", sub: "Português | 3º Ano", rodape: "&copy; Mestres da Língua" 
         },
         "matematica": { 
-            t1: "MESTRES", 
-            t2: "DO CÁLCULO", 
-            sub: "Matemática | 3º Ano", 
-            intro: "Resolve desafios matemáticos!", 
-            rodape: "&copy; Mestres do Cálculo" 
+            t1: "MESTRES", t2: "DO CÁLCULO", sub: "Matemática | 3º Ano", rodape: "&copy; Mestres do Cálculo" 
         },
         "estudo": { 
-            t1: "GRANDES", 
-            t2: "CIENTISTAS", 
-            sub: "Estudo do Meio | 3º Ano", 
-            intro: "Descobre a ciência e a história!", 
-            rodape: "&copy; Grandes Cientistas" 
+            t1: "GRANDES", t2: "CIENTISTAS", sub: "Estudo do Meio | 3º Ano", rodape: "&copy; Grandes Cientistas" 
         }
     },
     "ano4": {
         "portugues": { 
-            t1: "GURU", 
-            t2: "DAS LETRAS", 
-            sub: "Português | 4º Ano", 
-            intro: "Aperfeiçoa a tua leitura e escrita!", 
-            rodape: "&copy; Guru das Letras" 
+            t1: "GURU", t2: "DAS LETRAS", sub: "Português | 4º Ano", rodape: "&copy; Guru das Letras" 
         },
         "matematica": { 
-            t1: "GURU", 
-            t2: "DOS NÚMEROS", 
-            sub: "Matemática | 4º Ano", 
-            intro: "Domina os números e a geometria!", 
-            rodape: "&copy; Guru dos Números" 
+            t1: "GURU", t2: "DOS NÚMEROS", sub: "Matemática | 4º Ano", rodape: "&copy; Guru dos Números" 
         },
         "estudo": { 
-            t1: "GURU", 
-            t2: "DO MUNDO", 
-            sub: "Estudo do Meio | 4º Ano", 
-            intro: "Investiga o mundo e a sociedade!", 
-            rodape: "&copy; Guru do Mundo" 
+            t1: "GURU", t2: "DO MUNDO", sub: "Estudo do Meio | 4º Ano", rodape: "&copy; Guru do Mundo" 
         }
     }
 };
 
+// === CONFIGURAÇÕES GERAIS DO JOGO ===
 const JOGO_CONFIG = {
-    linkVoltar: "../",
+    linkVoltar: "../../",
     textoVoltar: "VOLTAR",
     caminhoImg: "../../img/",    
     caminhoIcons: "../../icons/", 
@@ -187,25 +158,9 @@ const JOGO_CONFIG = {
     categorias: JOGO_CATEGORIAS,
 
     relatorios: [
-        { 
-            min: 90, max: 100, 
-            titulo: "És um craque!", 
-            img: "taca_1.png" 
-        },
-        { 
-            min: 70, max: 89, 
-            titulo: "Muito bem!", 
-            img: "taca_2.png" 
-        },
-        { 
-            min: 50, max: 69, 
-            titulo: "Estás quase lá!", 
-            img: "taca_2.png" 
-        },
-        { 
-            min: 0, max: 49, 
-            titulo: "Continua a tentar!", 
-            img: "taca_4.png" 
-        }
+        { min: 90, max: 100, titulo: "És um craque!", img: "taca_1.png" },
+        { min: 70, max: 89, titulo: "Muito bem!", img: "taca_2.png" },
+        { min: 50, max: 69, titulo: "Estás quase lá!", img: "taca_2.png" },
+        { min: 0, max: 49, titulo: "Continua a tentar!", img: "taca_4.png" }
     ]
 };
