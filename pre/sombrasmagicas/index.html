@@ -3,312 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pequenos Leitores - Sombras Mágicas</title>
+    <title>Pequenos Leitores</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
-    
     <style>
-        :root { 
-            --bg-page: #e9f0f8; --primary-blue: #5ba4e5; --primary-dark: #3d7db8; 
-            --highlight-green: #7ed321; --error-red: #ff5e5e; --white: #ffffff; 
-            --text-grey: #5d7082; --header-h: 70px; 
-        }
-
+        :root { --bg-page: #f0f4f8; --primary-blue: #5ba4e5; --primary-dark: #3d7db8; --white: #ffffff; --text-grey: #5d7082; --error-red: #ff5e5e; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-page); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
         
-        body { 
-            background-color: var(--bg-page); height: 100dvh; width: 100vw; 
-            overflow: hidden; display: flex; flex-direction: column; 
-            user-select: none; -webkit-user-select: none;
-        }
-        
-        /* HEADER E NAVEGAÇÃO */
-        header { 
-            height: var(--header-h); background: #ffffff; display: flex; 
-            align-items: center; justify-content: space-between; padding: 0 20px; 
-            z-index: 2500; flex-shrink: 0; box-shadow: 0px 4px 15px rgba(0,0,0,0.05); 
-            position: relative; 
-        }
-        .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; pointer-events: none; }
-        .logo-center img { height: 45px; width: auto; }
-        .logo-text h1 { font-size: 16px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 1; }
-        .logo-text p { font-size: 8px; color: #88a; font-weight: 700; text-transform: uppercase; }
+        header { height: 70px; background: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 2500; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; }
+        .logo-text h1 { font-size: 16px; color: var(--primary-blue); font-weight: 900; line-height: 0.9; }
+        .logo-text p { font-size: 9px; color: #88a; font-weight: 700; text-transform: uppercase; }
 
-        .hamburger-btn { font-size: 26px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
-        .btn-voltar-header { background: var(--primary-blue); color: white; padding: 8px 16px; border-radius: 12px; text-decoration: none; font-weight: 900; font-size: 13px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 0 var(--primary-dark); }
-        .btn-voltar-mobile { display: none; text-decoration: none; }
+        .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 15px; }
+        .game-card { width: 100%; max-width: 900px; height: 100%; display: flex; flex-direction: column; }
 
-        /* MENU DROPDOWN */
-        .menu-dropdown { position: absolute; top: 75px; left: 20px; display: none; flex-direction: column; gap: 6px; z-index: 3000; }
-        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: white; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 14px; min-width: 200px; }
-        .menu-item img { height: 24px; width: 24px; object-fit: contain; }
-        .menu-divider { height: 1px; background: #eee; margin: 4px 0; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 2000; backdrop-filter: blur(2px); }
-
-        /* CONTENTORES PRINCIPAIS */
-        .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 15px; position: relative; }
-        .game-card { 
-            background: #ffffff; width: 100%; max-width: 1100px; height: 100%; 
-            border-radius: 35px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); 
-            display: flex; flex-direction: column; padding: 20px; position: relative; 
-        }
-
-        /* BARRA DE ESTADO */
-        .status-bar { display: none; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .badge { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 15px; font-weight: 900; color: white; font-size: 14px; }
-        .badge-timer { background: #f0f4f8; color: var(--text-grey); }
-        .badge-round { background: var(--primary-blue); box-shadow: 0 4px 0 var(--primary-dark); }
-
-        /* GESTÃO DE ECRÃS */
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; background: var(--white); border: 5px dashed var(--primary-blue); border-radius: 35px; padding: 20px; }
         .screen.active { display: flex; }
 
-        /* ECRÃ 1: INTRO / EXPLICAÇÃO */
-        #scr-intro .anim-box { 
-            flex: 1; width: 100%; max-height: 350px; background: #f9fbff; 
-            border-radius: 25px; margin-bottom: 20px; border: 3px dashed #e1e8f0;
-            display: flex; align-items: center; justify-content: center;
-        }
-        #scr-intro .instr-text { font-size: 1.2rem; font-weight: 800; color: var(--text-grey); text-align: center; margin-bottom: 25px; max-width: 500px; }
+        .status-bar { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .badge { padding: 6px 15px; border-radius: 12px; font-weight: 900; color: white; background: var(--primary-blue); font-size: 13px; box-shadow: 0 3px 0 var(--primary-dark); }
 
-        /* ECRÃ 2: JOGO (Drag & Drop) */
-        #game-area { 
-            flex: 1; width: 100%; display: flex; flex-direction: column; gap: 20px; 
-            justify-content: space-around; align-items: center; 
-        }
-        .drop-zone-container { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-        .drag-items-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; padding: 15px; background: #f8fbff; border-radius: 20px; width: 100%; }
-        
-        /* Estilo das Peças e Sombras */
-        .draggable { 
-            width: 80px; height: 80px; cursor: grab; touch-action: none; 
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); transition: transform 0.2s;
-        }
-        .draggable:active { transform: scale(1.1); cursor: grabbing; }
-        .shadow-target { 
-            width: 85px; height: 85px; background: #e0e7ee; border-radius: 15px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .shadow-target img { width: 80%; opacity: 0.3; filter: brightness(0); }
+        .shadow-target { width: 180px; height: 180px; background: #f9f9f9; border: 3px dashed var(--primary-blue); border-radius: 25px; display: flex; align-items: center; justify-content: center; margin-bottom: 30px; }
+        .draggable { width: 100px; height: 100px; cursor: grab; touch-action: none; background: #fff; border: 2px solid #f0f0f0; border-radius: 20px; padding: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
 
-        /* ECRÃ 3: RELATÓRIO */
-        #scr-result .result-card { text-align: center; }
-        #res-taca { width: 150px; margin-bottom: 20px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1)); }
-        .score-box { display: flex; gap: 15px; margin: 20px 0; }
-        .score-item { background: #f0f7ff; padding: 15px 25px; border-radius: 20px; min-width: 120px; }
-        .score-item span { display: block; font-size: 24px; font-weight: 900; color: var(--primary-blue); }
-        .score-item label { font-size: 10px; font-weight: 800; color: #88a; text-transform: uppercase; }
-
-        /* BOTÕES */
-        .btn-main { 
-            background: var(--primary-blue); color: white; border: none; 
-            border-radius: 20px; padding: 18px 40px; font-size: 20px; font-weight: 900; 
-            cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); transition: 0.1s; 
-            width: 100%; max-width: 300px;
-        }
-        .btn-main:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--primary-dark); }
-
-        /* PAINEL DE CATEGORIAS (RD) */
-        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 4000; padding: 30px; border-radius: 35px 35px 0 0; transition: 0.4s; box-shadow: 0 -10px 40px rgba(0,0,0,0.1); max-height: 85vh; overflow-y: auto; }
+        .btn-main { background: var(--primary-blue); color: white; border: none; border-radius: 20px; padding: 15px 40px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); }
+        .hamburger-btn { font-size: 24px; color: var(--primary-blue); cursor: pointer; }
+        .menu-dropdown { position: absolute; top: 75px; left: 20px; display: none; flex-direction: column; gap: 5px; background: white; padding: 10px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 3000; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 2000; }
+        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 4000; padding: 25px; border-radius: 30px 30px 0 0; transition: 0.4s; }
         .rd-panel.active { bottom: 0; }
-        .rd-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
-        .rd-item { background: #f8fafc; border: 2px solid #f1f5f9; border-radius: 20px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .rd-item:hover { border-color: var(--primary-blue); background: #f0f7ff; }
-        .rd-item img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 10px; }
-
-        @media (max-width: 650px) {
-            .btn-voltar-header { display: none; }
-            .btn-voltar-mobile { display: block; }
-            .logo-center h1 { font-size: 14px; }
-        }
     </style>
 </head>
 <body>
-
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
-
     <header>
-        <div class="header-left">
-            <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
-            <div id="dropdownMenu" class="menu-dropdown"></div>
-        </div>
+        <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger()"></i>
+        <div id="dropdownMenu" class="menu-dropdown"></div>
         <div class="logo-center">
-            <img id="head-logo" src="">
-            <div class="logo-text">
-                <h1 id="tit-l1"></h1>
-                <h1 id="tit-l2"></h1>
-                <p id="sub-tit"></p>
-            </div>
+            <img id="head-logo" src="" height="45">
+            <div class="logo-text"><h1 id="tit-l1"></h1><h1 id="tit-l2"></h1><p id="sub-tit"></p></div>
         </div>
-        <div class="header-right">
-            <a href="#" id="link-voltar-header" class="btn-voltar-header">
-                <img id="header-back-icon" src="" width="16"> 
-                <span id="txt-voltar-header">VOLTAR</span>
-            </a>
-            <a href="#" id="link-voltar-mobile" class="btn-voltar-mobile">
-                <img id="header-back-mobile" src="" style="height:35px;">
-            </a>
-        </div>
+        <a href="#" id="link-voltar" style="background:var(--primary-blue); color:white; padding:8px 15px; border-radius:10px; text-decoration:none; font-weight:900; font-size:12px;">VOLTAR</a>
     </header>
 
     <main class="game-container">
         <div class="game-card">
-            
-            <!-- BARRA DE ESTADO (Ativa apenas no Ecrã 2) -->
-            <div class="status-bar" id="status-bar">
-                <div class="badge badge-timer">⏳ <span id="timer-val">00:00</span></div>
-                <div class="badge badge-round"><span id="round-val">1 / 10</span></div>
-                <img id="btn-change-category" src="" style="height:35px; cursor:pointer;" onclick="openRDMenu()">
+            <div class="status-bar">
+                <div class="badge">⏳ <span id="timer-val">00:00</span></div>
+                <div class="badge" id="round-val">1 / 10</div>
+                <img id="btn-rd" src="" height="35" style="cursor:pointer" onclick="openRDMenu()">
             </div>
-
-            <!-- ECRÃ 1: INTRODUÇÃO -->
-            <section class="screen active" id="scr-intro">
-                <div class="anim-box" id="intro-anim">
-                    <!-- Aqui entrará a animação via jogo.js -->
-                    <img id="img-exemplo-intro" src="" style="max-height: 80%;">
-                </div>
-                <p class="instr-text" id="intro-instr">Carregando instruções...</p>
-                <button class="btn-main" onclick="startPlay()">JOGAR</button>
+            <section class="screen active" id="scr-game">
+                <div id="alvos-sombras"></div>
+                <div id="pecas-coloridas" style="display:flex; gap:15px;"></div>
             </section>
-
-            <!-- ECRÃ 2: O JOGO -->
-            <section class="screen" id="scr-game">
-                <div id="game-area">
-                    <div class="drop-zone-container" id="alvos-sombras">
-                        <!-- Sombras geradas pelo jogo.js -->
-                    </div>
-                    <div class="drag-items-container" id="pecas-coloridas">
-                        <!-- Peças geradas pelo jogo.js -->
-                    </div>
-                </div>
-            </section>
-
-            <!-- ECRÃ 3: RESULTADOS -->
             <section class="screen" id="scr-result">
-                <div class="result-card">
-                    <img id="res-taca" src="">
-                    <h2 id="res-tit" style="font-size: 32px; font-weight: 900; color: var(--primary-blue);"></h2>
-                    <div class="score-box">
-                        <div class="score-item"><span id="res-pts">0</span><label>Acertos</label></div>
-                        <div class="score-item"><span id="res-tim">00:00</span><label>Tempo</label></div>
-                    </div>
-                    <div style="display:flex; flex-direction:column; gap:10px; width:100%; align-items:center;">
-                        <button class="btn-main" onclick="location.reload()">REPETIR</button>
-                        <button class="btn-main" style="background:white; color:var(--primary-blue); box-shadow:none; border:2px solid #eee; font-size:14px;" onclick="openRDMenu()">OUTRO TEMA</button>
-                    </div>
-                </div>
+                <img id="res-taca" src="" width="130">
+                <h2 id="res-tit" style="margin:20px 0; font-size:28px; color:var(--primary-blue); font-weight:900;"></h2>
+                <p style="font-weight:900; color:#88a; margin-bottom:30px;">Acertos: <span id="res-pts"></span> | Tempo: <span id="res-tim"></span></p>
+                <button class="btn-main" onclick="location.reload()">REPETIR</button>
             </section>
-
         </div>
     </main>
 
-    <!-- MENU DE SELEÇÃO DE TEMAS (RD) -->
     <div id="rdMenu" class="rd-panel">
-        <div style="width:50px; height:5px; background:#eee; border-radius:10px; margin: 0 auto 20px;" onclick="closeMenus()"></div>
-        <h3 style="text-align:center; margin-bottom:20px; font-weight:900; color:var(--text-grey);">Escolha um Tema</h3>
-        <div id="rd-list" class="rd-grid"></div>
+        <h3 style="text-align:center; margin-bottom:20px;">Escolha um Tema</h3>
+        <div id="rd-list" style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;"></div>
     </div>
 
-    <!-- CARREGAMENTO DOS DADOS -->
     <script src="dados.js"></script>
     <script src="categorias.js"></script>
     <script src="jogo.js"></script>
-
     <script>
-        // === CONTROLO DE INTERFACE (UI) ===
-
         function initUI() {
             const setup = CONFIG_MESTRE;
             const tema = BIBLIOTECA_TEMAS[setup.area];
             const cont = BIBLIOTECA_CONTEUDO[setup.ano][setup.area];
             const conf = JOGO_CONFIG;
 
-            // Aplica Cores do Tema
             document.documentElement.style.setProperty('--primary-blue', tema.corPrimaria);
             document.documentElement.style.setProperty('--primary-dark', tema.corEscura);
             document.documentElement.style.setProperty('--bg-page', tema.corPagina);
 
-            // Cabeçalho e Logos
             document.getElementById('tit-l1').innerText = cont.t1;
             document.getElementById('tit-l2').innerText = cont.t2;
             document.getElementById('sub-tit').innerText = cont.sub;
             document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu[setup.ano];
-            document.getElementById('header-back-icon').src = conf.caminhoIcons + "voltar.png";
-            document.getElementById('header-back-mobile').src = conf.caminhoIcons + tema.voltarMobile;
-            document.getElementById('btn-change-category').src = conf.caminhoImg + "rd.png";
-            
-            // Links
-            document.getElementById('link-voltar-header').href = conf.linkVoltar;
-            document.getElementById('link-voltar-mobile').href = conf.linkVoltar;
+            document.getElementById('btn-rd').src = conf.caminhoImg + "rd.png";
+            document.getElementById('link-voltar').href = conf.linkVoltar;
 
-            // Criar Menu Lateral (Hamburger)
-            const menuBox = document.getElementById('dropdownMenu');
-            menuBox.innerHTML = '';
-            const labels = { home: "Início", pre: "Pré-Escolar", ano1: "1º Ano", ano2: "2º Ano", ano3: "3º Ano", ano4: "4º Ano" };
-            
-            ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(key => {
-                const item = document.createElement('a');
-                item.className = 'menu-item';
-                item.href = conf.links[key];
-                item.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[key]}"> <span>${labels[key]}</span>`;
-                menuBox.appendChild(item);
+            const menu = document.getElementById('dropdownMenu');
+            Object.keys(conf.links).forEach(k => {
+                const a = document.createElement('a'); a.className='menu-item'; a.href=conf.links[k];
+                a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}" width="22"> ${k.toUpperCase()}`;
+                menu.appendChild(a);
             });
 
-            // Criar Lista de Categorias (Painel RD)
-            const rdBox = document.getElementById('rd-list');
-            rdBox.innerHTML = '';
-            Object.keys(conf.categorias).forEach(catKey => {
-                const cat = conf.categorias[catKey];
-                const div = document.createElement('div');
-                div.className = 'rd-item';
-                div.innerHTML = `<img src="${conf.caminhoImg}${cat.imgCapa}"> <p style="font-size:12px; font-weight:800;">${cat.nome.split(':')[1] || cat.nome}</p>`;
-                div.onclick = () => {
-                    if(window.selecionarCategoria) window.selecionarCategoria(catKey);
-                    closeMenus();
-                    showScreen('scr-intro');
-                };
-                rdBox.appendChild(div);
+            const rd = document.getElementById('rd-list');
+            Object.keys(conf.categorias).forEach(k => {
+                const d = document.createElement('div');
+                d.style.cssText = "background:#f8f9fa; padding:15px; border-radius:15px; text-align:center; cursor:pointer; font-weight:800; color:#5d7082;";
+                d.innerHTML = `<img src="${conf.caminhoImg}${conf.categorias[k].imgCapa}" height="40"><br>${conf.categorias[k].nome.split(':')[1]}`;
+                d.onclick = () => { selecionarCategoria(k); closeMenus(); comecarJogo(); };
+                rd.appendChild(d);
             });
-
-            // Chamar lógica inicial do jogo.js
             if(window.iniciarLogicaJogo) window.iniciarLogicaJogo();
         }
 
-        // Navegação entre Ecrãs
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-            
-            // Mostrar barra de status apenas no jogo
-            document.getElementById('status-bar').style.display = (screenId === 'scr-game') ? 'flex' : 'none';
-        }
+        window.mostrarResultados = (pts, tim, total) => {
+            const perc = (pts/total)*100;
+            const feedback = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
+            document.getElementById('res-taca').src = JOGO_CONFIG.caminhoIcons + feedback.img;
+            document.getElementById('res-tit').innerText = feedback.titulo;
+            document.getElementById('res-pts').innerText = pts + "/" + total;
+            document.getElementById('res-tim').innerText = tim;
+            document.getElementById('scr-game').classList.remove('active');
+            document.getElementById('scr-result').classList.add('active');
+        };
 
-        function startPlay() {
-            showScreen('scr-game');
-            if(window.comecarJogo) window.comecarJogo();
-        }
-
-        // Menus e Overlays
-        function toggleHamburger(e) {
-            e.stopPropagation();
-            const menu = document.getElementById('dropdownMenu');
-            const ov = document.getElementById('overlay');
-            const isVisible = menu.style.display === 'flex';
-            menu.style.display = isVisible ? 'none' : 'flex';
-            ov.style.display = isVisible ? 'none' : 'block';
-        }
-
-        function openRDMenu() {
-            document.getElementById('rdMenu').classList.add('active');
-            document.getElementById('overlay').style.display = 'block';
-        }
-
-        function closeMenus() {
-            document.getElementById('rdMenu').classList.remove('active');
-            document.getElementById('dropdownMenu').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
-        }
-
+        function toggleHamburger() { document.getElementById('dropdownMenu').style.display = 'flex'; document.getElementById('overlay').style.display = 'block'; }
+        function openRDMenu() { document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
+        function closeMenus() { document.getElementById('rdMenu').classList.remove('active'); document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; }
         window.onload = initUI;
     </script>
 </body>
