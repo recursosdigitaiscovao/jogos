@@ -26,34 +26,34 @@ function criarAnimacaoTutorial() {
     if(!container) return;
 
     container.innerHTML = `
-        <div class="tut-box">
-            <div class="tut-item">
-                <img src="${JOGO_CONFIG.caminhoImg}${JOGO_CATEGORIAS.animais.itens[0].img}" class="tut-shadow">
-                <div class="tut-hand">☝️</div>
+        <div class="tut-container">
+            <div class="tut-main">
+                <img src="${JOGO_CONFIG.caminhoImg}${JOGO_CATEGORIAS.animais.itens[0].img}" class="tut-shadow-img">
             </div>
             <div class="tut-options">
-                <div class="tut-opt"></div>
-                <div class="tut-opt tut-active">
-                     <img src="${JOGO_CONFIG.caminhoImg}${JOGO_CATEGORIAS.animais.itens[0].img}">
+                <div class="tut-card"></div>
+                <div class="tut-card tut-correct">
+                    <img src="${JOGO_CONFIG.caminhoImg}${JOGO_CATEGORIAS.animais.itens[0].img}">
+                    <div class="tut-hand">☝️</div>
                 </div>
-                <div class="tut-opt"></div>
+                <div class="tut-card"></div>
             </div>
         </div>
         <style>
-            .tut-box { display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0.8; }
-            .tut-item { position: relative; width: 80px; height: 80px; background: #eee; border-radius: 15px; display: flex; align-items: center; justify-content: center; }
-            .tut-shadow { width: 70%; filter: brightness(0); opacity: 0.5; }
-            .tut-options { display: flex; gap: 5px; }
-            .tut-opt { width: 40px; height: 40px; border: 2px solid #ddd; border-radius: 8px; background: white; }
-            .tut-active { border-color: var(--primary-blue); position: relative; }
-            .tut-active img { width: 80%; margin: 10%; }
+            .tut-container { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+            .tut-main { width: 100px; height: 100px; background: #f0f0f0; border-radius: 20px; display: flex; align-items: center; justify-content: center; }
+            .tut-shadow-img { width: 70%; filter: brightness(0); opacity: 0.3; }
+            .tut-options { display: flex; gap: 10px; }
+            .tut-card { width: 50px; height: 50px; background: white; border: 2px solid #ddd; border-radius: 10px; position: relative; }
+            .tut-correct { border-color: var(--primary-blue); display: flex; align-items: center; justify-content: center; }
+            .tut-correct img { width: 80%; }
             .tut-hand { 
-                position: absolute; font-size: 30px; bottom: -40px; right: -10px;
-                animation: tapTap 2s infinite; pointer-events: none;
+                position: absolute; font-size: 35px; bottom: -30px; right: -15px;
+                animation: tapMove 2s infinite; 
             }
-            @keyframes tapTap {
-                0%, 100% { transform: translateY(0) scale(1); }
-                50% { transform: translateY(-30px) scale(1.2); }
+            @keyframes tapMove {
+                0%, 100% { transform: translate(0, 0); }
+                50% { transform: translate(-10px, -20px) scale(1.1); }
             }
         </style>
     `;
@@ -102,61 +102,62 @@ function mostrarPergunta() {
 
     container.innerHTML = `
         <style>
-            .game-screen {
+            .game-wrapper {
                 display: flex; flex-direction: column;
                 width: 100%; height: 100%;
                 justify-content: space-between; align-items: center;
-                padding: 1vh; box-sizing: border-box;
+                box-sizing: border-box; padding: 10px;
             }
-            /* Contentor da Sombra - Ocupa o topo */
-            .main-shadow-container {
+            .shadow-zone {
                 flex: 1; display: flex; align-items: center; justify-content: center;
-                width: 100%; min-height: 0; background: rgba(255,255,255,0.4);
-                border-radius: 25px; margin-bottom: 15px;
+                width: 100%; min-height: 0; 
+                background: rgba(255,255,255,0.3); border-radius: 30px;
+                margin-bottom: 15px;
             }
-            .img-target {
+            .shadow-img {
                 max-height: 85%; max-width: 85%; object-fit: contain;
-                filter: brightness(0); opacity: 0.8; transition: 0.4s;
+                filter: brightness(0); opacity: 0.8; transition: 0.5s;
             }
-            /* Grelha das 3 Opções */
-            .options-row {
-                display: grid; grid-template-columns: repeat(3, 1fr);
-                gap: 15px; width: 100%; max-width: 700px;
-                height: 25vh; /* Altura baseada no ecrã */
-                max-height: 180px; min-height: 100px;
+            .options-container {
+                display: grid; 
+                grid-template-columns: repeat(3, 1fr); /* 3 colunas */
+                gap: 12px; width: 100%; max-width: 600px;
+                justify-items: center; align-items: center;
             }
-            .card-choice {
+            .card-option {
                 background: white; border: 4px solid #eee; border-radius: 20px;
+                width: 100%; 
+                aspect-ratio: 1 / 1; /* FORÇA O QUADRADO */
                 display: flex; align-items: center; justify-content: center;
-                cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #ddd;
-                padding: 10px; position: relative; overflow: hidden;
+                cursor: pointer; transition: 0.2s; box-shadow: 0 6px 0 #ddd;
+                padding: 10px; box-sizing: border-box;
             }
-            .card-choice img { max-height: 85%; max-width: 85%; object-fit: contain; }
-            .card-choice:hover { border-color: var(--primary-blue); transform: translateY(-2px); }
-            .card-choice:active { transform: translateY(3px); box-shadow: none; }
+            .card-option img { max-height: 90%; max-width: 90%; object-fit: contain; }
+            .card-option:hover { border-color: var(--primary-blue); }
+            .card-option:active { transform: translateY(3px); box-shadow: none; }
 
-            .correct-card { background: #eaffea !important; border-color: #7ed321 !important; box-shadow: 0 5px 0 #5ea31a !important; }
-            .wrong-card { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 5px 0 #d13d3d !important; }
+            .is-correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 6px 0 #5ea31a !important; }
+            .is-wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 6px 0 #d13d3d !important; }
 
-            /* AJUSTE LANDSCAPE EXTREMO (Ex: telemóvel deitado) */
+            /* AJUSTE PARA LANDSCAPE (Ecrãs deitados e curtos) */
             @media (orientation: landscape) and (max-height: 500px) {
-                .game-screen { flex-direction: row; gap: 15px; }
-                .main-shadow-container { height: 100%; margin-bottom: 0; }
-                .options-row { 
-                    grid-template-columns: 1fr; grid-template-rows: repeat(3, 1fr);
-                    width: 150px; height: 100%; max-height: none;
+                .game-wrapper { flex-direction: row; padding: 5px; gap: 15px; }
+                .shadow-zone { margin-bottom: 0; height: 100%; }
+                .options-container { 
+                    grid-template-columns: 1fr; /* Muda para coluna */
+                    width: auto; height: 100%; gap: 8px;
                 }
-                .card-choice { border-width: 2px; padding: 5px; }
+                .card-option { height: 30%; width: auto; aspect-ratio: 1 / 1; }
             }
         </style>
         
-        <div class="game-screen">
-            <div class="main-shadow-container">
-                <img src="${JOGO_CONFIG.caminhoImg}${pergunta.img}" class="img-target" id="shadow-obj">
+        <div class="game-wrapper">
+            <div class="shadow-zone">
+                <img src="${JOGO_CONFIG.caminhoImg}${pergunta.img}" class="shadow-img" id="target-obj">
             </div>
-            <div class="options-row">
+            <div class="options-container">
                 ${opcoes.map(opt => `
-                    <div class="card-choice" onclick="verificarClique(this, ${opt.img === pergunta.img})">
+                    <div class="card-option" onclick="validarClique(this, ${opt.img === pergunta.img})">
                         <img src="${JOGO_CONFIG.caminhoImg}${opt.img}">
                     </div>
                 `).join('')}
@@ -165,23 +166,23 @@ function mostrarPergunta() {
     `;
 }
 
-function verificarClique(elemento, isCorrect) {
-    const todos = document.querySelectorAll('.card-choice');
-    todos.forEach(c => c.style.pointerEvents = 'none');
+function validarClique(el, acerto) {
+    const cards = document.querySelectorAll('.card-option');
+    cards.forEach(c => c.style.pointerEvents = 'none');
 
-    const sombra = document.getElementById('shadow-obj');
+    const obj = document.getElementById('target-obj');
 
-    if (isCorrect) {
+    if (acerto) {
         acertos++;
         somAcerto.play();
-        elemento.classList.add('correct-card');
-        sombra.style.filter = "none";
-        sombra.style.opacity = "1";
+        el.classList.add('is-correct');
+        obj.style.filter = "none";
+        obj.style.opacity = "1";
         document.getElementById('hits-val').innerText = acertos;
     } else {
         erros++;
         somErro.play();
-        elemento.classList.add('wrong-card');
+        el.classList.add('is-wrong');
         document.getElementById('miss-val').innerText = erros;
     }
 
@@ -190,23 +191,23 @@ function verificarClique(elemento, isCorrect) {
         if (indicePergunta < perguntas.length) {
             mostrarPergunta();
         } else {
-            finalizarJogo();
+            vitoria();
         }
     }, 1500);
 }
 
-function finalizarJogo() {
+function vitoria() {
     clearInterval(intervaloTempo);
     somVitoria.play();
-    const perc = (acertos / perguntas.length) * 100;
-    const rel = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
+    const p = (acertos / perguntas.length) * 100;
+    const r = JOGO_CONFIG.relatorios.find(res => p >= res.min && p <= res.max);
 
     document.getElementById('scr-game').classList.remove('active');
     document.getElementById('scr-result').classList.add('active');
     document.getElementById('status-bar').style.display = 'none';
 
-    document.getElementById('res-tit').innerText = rel.titulo;
-    document.getElementById('res-taca').src = JOGO_CONFIG.caminhoImg + rel.img;
+    document.getElementById('res-tit').innerText = r.titulo;
+    document.getElementById('res-taca').src = JOGO_CONFIG.caminhoImg + r.img;
     document.getElementById('res-pts').innerText = acertos;
     document.getElementById('res-tim').innerText = document.getElementById('timer-val').innerText;
 }
