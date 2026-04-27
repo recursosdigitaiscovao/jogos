@@ -16,14 +16,13 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* INÍCIO: PÁGINA INVISÍVEL PARA EVITAR FLASH DE CORES */
+        /* EVITAR FLASH DE CORES */
         body { 
             background-color: var(--bg-page); 
             height: 100dvh; width: 100vw; 
-            overflow: hidden; 
-            display: flex; flex-direction: column; 
-            opacity: 0; /* Começa escondido */
-            transition: opacity 0.2s ease-in; /* Transição suave ao aparecer */
+            overflow: hidden; display: flex; flex-direction: column; 
+            opacity: 0; /* Invisível até o JS carregar as cores */
+            transition: opacity 0.15s ease-in; 
         }
         
         header { 
@@ -61,13 +60,13 @@
             padding: 20px; position: relative; overflow: hidden; 
         }
 
-        /* BOTÃO JOGAR EXPANSÍVEL */
+        /* BOTÃO JOGAR VERDADEIRAMENTE EXTENSÍVEL */
         .btn-jogar-stretch { 
             background: var(--primary-blue); color: white; border: none; border-radius: 15px; 
             padding: 16px; font-size: 18px; font-weight: 900; cursor: pointer; 
             box-shadow: 0 6px 0 var(--primary-dark); 
             display: flex; justify-content: center; align-items: center; text-decoration: none; 
-            flex: 1; width: 100%;
+            flex: 1; /* Ocupa o máximo de espaço na linha */
         }
         .btn-jogar-stretch:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
 
@@ -124,8 +123,10 @@
             <section class="screen active" id="scr-intro">
                 <div class="screen-box">
                     <div id="intro-animation-container" style="flex:1; display:flex; align-items:center; justify-content:center;"></div>
-                    <p id="intro-instr" style="font-weight: 800; color: var(--text-grey); text-align: center; margin-bottom: 25px; font-size: 1rem; padding: 0 10px;"></p>
-                    <div style="display:flex; width:100%; max-width:600px; gap:15px; align-items:center; padding: 0 15px;">
+                    <p id="intro-instr" style="font-weight: 800; color: var(--text-grey); text-align: center; margin-bottom: 25px; font-size: 1rem; width: 100%;"></p>
+                    
+                    <!-- Contentor com width: 100% permite ao botão esticar-se -->
+                    <div style="display:flex; width:100%; gap:15px; align-items:center; padding: 0 10px;">
                         <button class="btn-jogar-stretch" onclick="goToGame()">JOGAR</button>
                         <img id="rd-intro-btn" src="" onclick="openRDMenu(event)" style="height:55px; width:55px; cursor:pointer; flex-shrink: 0; object-fit: contain;">
                     </div>
@@ -170,7 +171,7 @@
         document.title = setup.nomeJogo;
 
         const root = document.documentElement;
-        // APLICAR CORES
+        // Aplicação das cores
         root.style.setProperty('--primary-blue', tema.corPrimaria); 
         root.style.setProperty('--primary-dark', tema.corEscura); 
         root.style.setProperty('--bg-page', tema.corPagina);
@@ -182,7 +183,7 @@
         root.style.setProperty('--bg-espaco-jogo', cont.corEspacoJogo || tema.corEspacoJogo || '#ffffff');
         root.style.setProperty('--borda-espaco-jogo', cont.bordaEspacoJogo || tema.bordaEspacoJogo || '3px dashed #ccc');
 
-        // REVELAR A PÁGINA (Já com as cores aplicadas)
+        // REVELAR PÁGINA APÓS CONFIGURAR CORES
         document.body.style.opacity = '1';
 
         document.getElementById('tit-l1').innerText = cont.t1 || ""; 
@@ -200,7 +201,6 @@
 
         if(window.gerarIntroJogo) document.getElementById('intro-instr').innerText = window.gerarIntroJogo();
 
-        // Menu Hamburguer
         const menuBox = document.getElementById('dropdownMenu'); menuBox.innerHTML = '';
         const labels = { home: "Início", pre: "Pré-Escolar", ano1: "1º Ano", ano2: "2º Ano", ano3: "3º Ano", ano4: "4º Ano" };
         ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
@@ -213,7 +213,6 @@
         btnV.innerHTML = `<img src="${conf.caminhoIcons}voltar.png" width="20"> <span>${conf.textoVoltar}</span>`;
         menuBox.appendChild(btnV);
 
-        // Painel RD
         const rdBox = document.getElementById('rd-list'); rdBox.innerHTML = '';
         Object.keys(conf.categorias).forEach(key => {
             const c = conf.categorias[key]; 
@@ -222,7 +221,6 @@
             div.onclick = () => { selecionarCategoria(key); closeMenus(); goToIntro(); }; 
             rdBox.appendChild(div);
         });
-
         if(window.startLogic) window.startLogic();
     }
 
