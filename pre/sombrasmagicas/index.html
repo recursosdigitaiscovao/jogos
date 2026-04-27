@@ -7,23 +7,22 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* VARIÁVEIS DINÂMICAS */
         :root { 
             --bg-page: #e9f0f8; 
             --bg-header: #f0f7ff;
             --bg-card: #f0f7ff;
-            --borda-card: rgba(91, 164, 229, 0.4);
             --primary-blue: #5ba4e5; 
             --primary-dark: #3d7db8; 
             --highlight-green: #7ed321; 
             --error-red: #ff5e5e; 
             --white: #ffffff; 
             --text-grey: #5d7082; 
-            --header-h: 70px; 
+            --header-h: 70px;
+            /* Cor da borda tracejada interna */
+            --cor-tracejado: rgba(91, 164, 229, 0.4); 
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
         body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
         
         header { 
@@ -42,7 +41,6 @@
         .btn-voltar-header { background: var(--primary-blue); color: white; padding: 7px 15px; border-radius: 12px; text-decoration: none; font-weight: 900; font-size: 13px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 0 var(--primary-dark); }
         .btn-voltar-mobile { display: none; text-decoration: none; padding: 5px; z-index: 3001; }
 
-        /* MENU DROPDOWN */
         .menu-dropdown { position: absolute; top: 60px; left: 15px; display: none; flex-direction: column; gap: 6px; z-index: 3000; }
         .menu-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 0.85rem; min-width: 180px; transition: background 0.2s; }
         .menu-item:not(.menu-item-voltar):hover { background-color: var(--primary-blue); color: white !important; }
@@ -53,14 +51,13 @@
         .menu-divider { height: 1px; background-color: rgba(0,0,0,0.05); margin: 2px 10px; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 2000; }
 
-        .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 15px; overflow: hidden; }
+        .game-container { flex: 1; display: flex; justify(content: center; align-items: center; padding: 15px; overflow: hidden; }
         
         .game-card { 
             background: var(--bg-card); 
             width: 100%; max-width: 1000px; height: 100%; border-radius: 40px; 
             box-shadow: 0 15px 35px rgba(176,196,217,0.5); 
             display: flex; flex-direction: column; padding: 20px; position: relative; overflow: hidden; 
-            border: 4px solid var(--borda-card);
         }
 
         .status-bar { display: none; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-shrink: 0; gap: 5px; }
@@ -76,7 +73,7 @@
         
         #game-main-content { 
             flex: 1; width: 100%; background: var(--white); 
-            border: 3px dashed var(--borda-card); 
+            border: 3px dashed var(--cor-tracejado); 
             border-radius: 30px; display: flex; align-items: center; justify-content: center; padding: 15px; position: relative; overflow: hidden; 
         }
 
@@ -95,7 +92,6 @@
 </head>
 <body>
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
-    
     <header id="main-header">
         <div class="header-left">
             <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
@@ -103,11 +99,7 @@
         </div>
         <div class="logo-center">
             <img id="head-logo" src="">
-            <div class="logo-text">
-                <h1 id="tit-l1"></h1>
-                <h1 id="tit-l2"></h1>
-                <p id="sub-tit"></p>
-            </div>
+            <div class="logo-text"><h1 id="tit-l1"></h1><h1 id="tit-l2"></h1><p id="sub-tit"></p></div>
         </div>
         <div class="header-right">
             <a href="#" id="link-voltar-header" class="btn-voltar-header"><img id="header-back-icon" src="" width="16"> <span id="txt-voltar-header"></span></a>
@@ -115,7 +107,7 @@
         </div>
     </header>
 
-    <main class="game-container" id="main-container">
+    <main class="game-container">
         <div class="game-card" id="main-card">
             <div class="status-bar" id="status-bar">
                 <div class="status-group">
@@ -138,9 +130,7 @@
                 </div>
             </section>
 
-            <section class="screen" id="scr-game">
-                <div id="game-main-content"></div>
-            </section>
+            <section class="screen" id="scr-game"><div id="game-main-content"></div></section>
             
             <section class="screen" id="scr-result">
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%;">
@@ -166,7 +156,6 @@
         <div id="rd-list"></div>
     </div>
 
-    <!-- SCRIPTS -->
     <script src="categorias.js"></script>
     <script src="dados.js"></script>
     <script src="jogo.js"></script>
@@ -178,23 +167,21 @@
         const cont = BIBLIOTECA_CONTEUDO[setup.ano][setup.area]; 
         const conf = JOGO_CONFIG;
 
-        // APLICAÇÃO DAS CORES DINÂMICAS (CSS Variables)
         const root = document.documentElement;
         root.style.setProperty('--primary-blue', tema.corPrimaria); 
         root.style.setProperty('--primary-dark', tema.corEscura); 
         root.style.setProperty('--bg-page', tema.corPagina);
         
-        // Novas cores (se não existirem no dados.js, usa o padrão)
+        // Cores Dinâmicas do Header, Card e Tracejado interno
         root.style.setProperty('--bg-header', tema.corHeader || '#f0f7ff');
         root.style.setProperty('--bg-card', tema.corCard || '#f0f7ff');
-        root.style.setProperty('--borda-card', tema.corBordaCard || 'rgba(91, 164, 229, 0.4)');
+        root.style.setProperty('--cor-tracejado', tema.corTracejado || 'rgba(91, 164, 229, 0.4)');
 
-        // TEXTOS E LOGOS
         document.getElementById('tit-l1').innerText = cont.t1; 
         document.getElementById('tit-l2').innerText = cont.t2; 
         document.getElementById('sub-tit').innerText = cont.sub; 
         
-        // INTRO GERADA PELO JOGO.JS
+        // Intro gerada pelo jogo.js
         document.getElementById('intro-instr').innerText = window.gerarIntroJogo ? window.gerarIntroJogo() : "";
 
         document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu[setup.ano];
@@ -208,9 +195,7 @@
         document.getElementById('btn-outro-jogo').href = conf.linkVoltar; 
         document.getElementById('txt-voltar-header').innerText = conf.textoVoltar;
         
-        // MENU HAMBURGUER (Ordem: Níveis -> Divisor -> Voltar)
-        const menuBox = document.getElementById('dropdownMenu'); 
-        menuBox.innerHTML = '';
+        const menuBox = document.getElementById('dropdownMenu'); menuBox.innerHTML = '';
         const labels = { home: "Início", pre: "Pré-Escolar", ano1: "1º Ano", ano2: "2º Ano", ano3: "3º Ano", ano4: "4º Ano" };
         ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
             const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
@@ -222,7 +207,6 @@
         btnV.innerHTML = `<img src="${conf.caminhoIcons}voltar.png"> <span>${conf.textoVoltar}</span>`;
         menuBox.appendChild(btnV);
 
-        // SELETOR DE TEMAS
         const rdBox = document.getElementById('rd-list'); rdBox.innerHTML = '';
         Object.keys(conf.categorias).forEach(key => {
             const c = conf.categorias[key]; 
@@ -231,13 +215,10 @@
             div.onclick = () => { selecionarCategoria(key); closeMenus(); goToIntro(); }; 
             rdBox.appendChild(div);
         });
-
         if(window.startLogic) window.startLogic();
     }
-
     function goToIntro() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-intro').classList.add('active'); document.getElementById('status-bar').style.display = 'none'; }
     function goToGame() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-game').classList.add('active'); document.getElementById('status-bar').style.display = 'flex'; if(window.initGame) window.initGame(); }
-    
     window.mostrarResultados = function(acertos, tempo) { 
         const conf = JOGO_CONFIG; const total = itensAtuais.length; const perc = (acertos / total) * 100;
         let feedback = conf.relatorios.find(p => perc >= p.min && perc <= p.max);
@@ -247,11 +228,9 @@
         document.getElementById('res-tim').innerText = tempo;
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-result').classList.add('active'); document.getElementById('status-bar').style.display = 'none';
     }
-
     function toggleHamburger(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); const ov = document.getElementById('overlay'); if(m.style.display === 'flex') { closeMenus(); } else { m.style.display = 'flex'; ov.style.display = 'block'; } }
     function openRDMenu(e) { if(e) e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
     function closeMenus() { document.getElementById('rdMenu').classList.remove('active'); document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; }
-    
     window.onload = initUI;
     </script>
 </body>
