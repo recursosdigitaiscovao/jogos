@@ -2,7 +2,7 @@
 const JOGO_CATEGORIAS = {
     "animais": {
         nome: "Animais",
-        imgCapa: "cat_animais.png", // Imagem que aparece no menu RD
+        imgCapa: "macaco.png", // Imagem que aparece no menu RD
         itens: [
             { id: 1, img: "leao.png" },
             { id: 2, img: "elefante.png" },
@@ -16,7 +16,7 @@ const JOGO_CATEGORIAS = {
     },
     "transportes": {
         nome: "Transportes",
-        imgCapa: "cat_transportes.png",
+        imgCapa: "carro.png",
         itens: [
             { id: 9, img: "carro.png" },
             { id: 10, img: "aviao.png" },
@@ -30,7 +30,7 @@ const JOGO_CATEGORIAS = {
     },
     "frutas": {
         nome: "Frutas",
-        imgCapa: "cat_frutas.png",
+        imgCapa: "maca.png",
         itens: [
             { id: 17, img: "maca.png" },
             { id: 18, img: "banana.png" },
