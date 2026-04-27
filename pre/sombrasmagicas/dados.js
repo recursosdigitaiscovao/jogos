@@ -1,41 +1,46 @@
-// === CONFIGURAÇÃO MESTRE ===
+// === 1. CONFIGURAÇÃO ATIVA ===
 const CONFIG_MESTRE = {
-    ano: "pre",        
-    area: "pre",  
+    ano: "ano1",        // pre, ano1, ano2, ano3, ano4
+    area: "portugues",  // pre, portugues, matematica, estudo
     nomeJogo: "SOMBRAS MÁGICAS"
 };
 
+// === 2. TEMAS POR ÁREA (Cores e Ícones) ===
 const BIBLIOTECA_TEMAS = {
-    "portugues": { corPagina: "#e9f0f8", corHeader: "#ffffff", corContainer: "#ffffff", corPrimaria: "#5ba4e5", corEscura: "#3d7db8", corTexto: "#5d7082", voltarMobile: "voltar_az.png" },
-    "matematica": { corPagina: "#e8f9f4", corHeader: "#ffffff", corContainer: "#ffffff", corPrimaria: "#45cfa8", corEscura: "#2BA886", corTexto: "#45cfa8", voltarMobile: "voltar_vr.png" },
-    "estudo": { corPagina: "#EAE2E5", corHeader: "#ffffff", corContainer: "#ffffff", corPrimaria: "#994D4D", corEscura: "#6C3737", corTexto: "#994D4D", voltarMobile: "voltar_cs.png" },
-    "pre": { corPagina: "#FFF5F7", corHeader: "#ffffff", corContainer: "#ffffff", corPrimaria: "#E691A7", corEscura: "#D54267", corTexto: "#E691A7", voltarMobile: "voltar_rs.png" }
+    "portugues": { corPagina: "#e9f0f8", corPrimaria: "#5ba4e5", corEscura: "#3d7db8", voltarMobile: "voltar_az.png" },
+    "matematica": { corPagina: "#e8f9f4", corPrimaria: "#45cfa8", corEscura: "#2BA886", voltarMobile: "voltar_vr.png" },
+    "estudo":     { corPagina: "#EAE2E5", corPrimaria: "#994D4D", corEscura: "#6C3737", voltarMobile: "voltar_cs.png" },
+    "pre":        { corPagina: "#FFF5F7", corPrimaria: "#E691A7", corEscura: "#D54267", voltarMobile: "voltar_rs.png" }
 };
 
+// === 3. CONTEÚDO POR ANO E ÁREA (Títulos e Textos) ===
 const BIBLIOTECA_CONTEUDO = {
-    "pre": { "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar", rodape: "&copy; Pequenos Curiosos - Recursos Educativos" } },
+    "pre": {
+        "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Pré-Escolar" }
+    },
     "ano1": {
-        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", rodape: "&copy; Pequenos Leitores - Recursos Educativos" },
-        "matematica": { t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano", rodape: "&copy; Pequenos Matemáticos - Recursos Educativos" },
-        "estudo": { t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano", rodape: "&copy; Pequenos Exploradores - Recursos Educativos" }
+        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano" },
+        "matematica": { t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano" },
+        "estudo": { t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano" }
     },
     "ano2": {
-        "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano", rodape: "&copy; Jovens Leitores - Recursos Educativos" },
-        "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano", rodape: "&copy; Jovens Matemáticos - Recursos Educativos" },
-        "estudo": { t1: "JOVENS", t2: "EXPLORADORES", sub: "Estudo do Meio | 2º Ano", rodape: "&copy; Jovens Investigadores - Recursos Educativos" }
+        "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano" },
+        "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano" },
+        "estudo": { t1: "JOVENS", t2: "EXPLORADORES", sub: "Estudo do Meio | 2º Ano" }
     },
     "ano3": {
-        "portugues": { t1: "SUPER", t2: "LEITORES", sub: "Português | 3º Ano", rodape: "&copy; Super Leitores - Recursos Educativos" },
-        "matematica": { t1: "SUPER", t2: "MATEMÁTICOS", sub: "Matemática | 3º Ano", rodape: "&copy; Super Matemáticos - Recursos Educativos" },
-        "estudo": { t1: "SUPER", t2: "EXPLORADORES", sub: "Estudo do Meio | 3º Ano", rodape: "&copy; Super Exploradores - Recursos Educativos" }
+        "portugues": { t1: "SUPER", t2: "LEITORES", sub: "Português | 3º Ano" },
+        "matematica": { t1: "SUPER", t2: "MATEMÁTICOS", sub: "Matemática | 3º Ano" },
+        "estudo": { t1: "SUPER", t2: "EXPLORADORES", sub: "Estudo do Meio | 3º Ano" }
     },
     "ano4": {
-        "portugues": { t1: "MESTRES", t2: "LEITORES", sub: "Português | 4º Ano", rodape: "&copy; Mestres Leitores - Recursos Educativos" },
-        "matematica": { t1: "MESTRES", t2: "MATEMÁTICOS", sub: "Matemática | 4º Ano", rodape: "&copy; Mestres Matemáticos - Recursos Educativos" },
-        "estudo": { t1: "MESTRES", t2: "EXPLORADORES", sub: "Estudo do Meio | 4º Ano", rodape: "&copy; Mestres Exploradores - Recursos Educativos" }
+        "portugues": { t1: "MESTRES", t2: "LEITORES", sub: "Português | 4º Ano" },
+        "matematica": { t1: "MESTRES", t2: "MATEMÁTICOS", sub: "Matemática | 4º Ano" },
+        "estudo": { t1: "MESTRES", t2: "EXPLORADORES", sub: "Estudo do Meio | 4º Ano" }
     }
 };
 
+// === 4. CONFIGURAÇÕES GERAIS ===
 const JOGO_CONFIG = {
     linkVoltar: "../",
     textoVoltar: "VOLTAR",
@@ -54,5 +59,5 @@ const JOGO_CONFIG = {
         { min: 50, max: 69, titulo: "Estás quase lá!", img: "taca_2.png" },
         { min: 0, max: 49, titulo: "Continua a tentar!", img: "taca_4.png" }
     ],
-    categorias: {} // Ficará vazio e será preenchido pelo categorias.js
+    categorias: {} 
 };
