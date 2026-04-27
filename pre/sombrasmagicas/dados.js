@@ -37,10 +37,19 @@ const BIBLIOTECA_CONTEUDO = {
         "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano", intro: "Presta atenção aos detalhes da palavra!" },
         "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano", intro: "Calcula com atenção para encontrar o par!" },
         "estudo": { t1: "JOVENS", t2: "EXPLORADORES", sub: "Estudo do Meio | 2º Ano", intro: "Observa a natureza e descobre os seus contornos!" }
-    } // ... podes continuar a adicionar os outros anos conforme a necessidade
+    },
+    "ano3": {
+        "portugues": { t1: "SUPER", t2: "LEITORES", sub: "Português | 3º Ano", intro: "Um desafio de leitura para super heróis!" },
+        "matematica": { t1: "SUPER", t2: "MATEMÁTICOS", sub: "Matemática | 3º Ano", intro: "Resolve e descobre o resultado correto!" },
+        "estudo": { t1: "SUPER", t2: "EXPLORADORES", sub: "Estudo do Meio | 3º Ano", intro: "Investiga a sombra e encontra o objeto!" }
+    },
+    "ano4": {
+        "portugues": { t1: "MESTRES", t2: "LEITORES", sub: "Português | 4º Ano", intro: "Nível avançado! Consegues ler e encontrar a sombra?" },
+        "matematica": { t1: "MESTRES", t2: "MATEMÁTICOS", sub: "Matemática | 4º Ano", intro: "Usa o raciocínio para descobrir a figura certa!" },
+        "estudo": { t1: "MESTRES", t2: "EXPLORADORES", sub: "Estudo do Meio | 4º Ano", intro: "Uma investigação para verdadeiros mestres!" }
+    }
 };
 
-// === 4. CONFIGURAÇÕES GERAIS ===
 const JOGO_CONFIG = {
     linkVoltar: "../",
     textoVoltar: "VOLTAR",
