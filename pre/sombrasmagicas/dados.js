@@ -39,7 +39,7 @@ const BIBLIOTECA_TEMAS = {
     "pre": { 
         corPagina: "#FFF5F7",    
         corHeader: "#ffffff",    
-        corContainer: "#5EA2E6",
+        corContainer: "#FFF5F7",
         sombraCard: "0 15px 35px rgba(230,180,190,0.5)",
         corPrimaria: "#E691A7",  
         corEscura: "#D54267",    
