@@ -73,7 +73,7 @@ const BIBLIOTECA_CONTEUDO = {
             t1: "PEQUENOS", 
             t2: "CURIOSOS", 
             sub: "Atividades | Pré-Escolar", 
-            rodape: "&copy; Pequenos Curiosos" 
+            rodape: "&copy; Pequenos Curiosos - Recursos Digitais Covão" 
             // Podes adicionar corCard, bordaEspacoJogo, etc, aqui para mudar apenas neste ano
         }
     },
@@ -83,19 +83,19 @@ const BIBLIOTECA_CONTEUDO = {
             t1: "PEQUENOS", 
             t2: "LEITORES", 
             sub: "Português | 1º Ano", 
-            rodape: "&copy; Pequenos Leitores" 
+            rodape: "&copy; Pequenos Leitores - Recursos Digitais Covão" 
         },
         "matematica": { 
             t1: "PEQUENOS", 
             t2: "MATEMÁTICOS", 
             sub: "Matemática | 1º Ano", 
-            rodape: "&copy; Pequenos Matemáticos" 
+            rodape: "&copy; Pequenos Matemáticos - Recursos Digitais Covão" 
         },
         "estudo": { 
             t1: "PEQUENOS", 
             t2: "EXPLORADORES", 
             sub: "Estudo do Meio | 1º Ano", 
-            rodape: "&copy; Pequenos Exploradores" 
+            rodape: "&copy; Pequenos Cientistas - Recursos Digitais Covão" 
         }
     },
 
@@ -104,19 +104,19 @@ const BIBLIOTECA_CONTEUDO = {
             t1: "JOVENS", 
             t2: "LEITORES", 
             sub: "Português | 2º Ano", 
-            rodape: "&copy; Jovens Leitores" 
+            rodape: "&copy; Jovens Leitores - Recursos Digitais Covão" 
         },
         "matematica": { 
             t1: "JOVENS", 
             t2: "MATEMÁTICOS", 
             sub: "Matemática | 2º Ano", 
-            rodape: "&copy; Jovens Matemáticos" 
+            rodape: "&copy; Jovens Matemáticos - Recursos Digitais Covão" 
         },
         "estudo": { 
             t1: "JOVENS", 
             t2: "INVESTIGADORES", 
             sub: "Estudo do Meio | 2º Ano", 
-            rodape: "&copy; Jovens Investigadores" 
+            rodape: "&copy; Jovens Cientistas - Recursos Digitais Covão" 
         }
     },
 
@@ -125,19 +125,19 @@ const BIBLIOTECA_CONTEUDO = {
             t1: "MESTRES", 
             t2: "DA LÍNGUA", 
             sub: "Português | 3º Ano", 
-            rodape: "&copy; Mestres da Língua" 
+            rodape: "&copy; Super Leitores - Recursos Digitais Covão" 
         },
         "matematica": { 
             t1: "MESTRES", 
             t2: "DO CÁLCULO", 
             sub: "Matemática | 3º Ano", 
-            rodape: "&copy; Mestres do Cálculo" 
+            rodape: "&copy; Super Matemáticos - Recursos Digitais Covão" 
         },
         "estudo": { 
             t1: "GRANDES", 
             t2: "CIENTISTAS", 
             sub: "Estudo do Meio | 3º Ano", 
-            rodape: "&copy; Grandes Cientistas" 
+            rodape: "&copy; Super Cientistas - Recursos Digitais Covão" 
         }
     },
 
@@ -146,19 +146,19 @@ const BIBLIOTECA_CONTEUDO = {
             t1: "GURU", 
             t2: "DAS LETRAS", 
             sub: "Português | 4º Ano", 
-            rodape: "&copy; Guru das Letras" 
+            rodape: "&copy; Mestres Leitores - Recursos Digitais Covão" 
         },
         "matematica": { 
             t1: "GURU", 
             t2: "DOS NÚMEROS", 
             sub: "Matemática | 4º Ano", 
-            rodape: "&copy; Guru dos Números" 
+            rodape: "&copy; Mestres Matemáticos - Recursos Digitais Covão" 
         },
         "estudo": { 
             t1: "GURU", 
             t2: "DO MUNDO", 
             sub: "Estudo do Meio | 4º Ano", 
-            rodape: "&copy; Guru do Mundo" 
+            rodape: "&copy; Mestres Cientistas - Recursos Digitais Covão" 
         }
     }
 };
