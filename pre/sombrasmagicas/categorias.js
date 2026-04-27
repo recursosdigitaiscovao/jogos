@@ -1,8 +1,7 @@
-const BIBLIOTECA_CATEGORIAS = {
+// === DEFINIÇÃO DAS CATEGORIAS E ITENS ===
+const JOGO_CATEGORIAS = {
     animais: {
-        nome: "Sombras: Animais", 
-        exemploImg: "animaisselvagens/leao.png", 
-        imgCapa: "animaisselvagens/leao.png",
+        nome: "Animais", exemplo: "E-LE-FAN-TE", exemploImg: "animaisselvagens/elefante.png", total: 4, imgCapa: "animaisselvagens/leao.png",
         itens: [
             { nome: "ABELHA", silabas: 3, img: "animaisselvagens/abelha.png" },
             { nome: "ÁGUIA", silabas: 3, img: "animaisselvagens/aguia.png" },
@@ -21,16 +20,14 @@ const BIBLIOTECA_CATEGORIAS = {
         ]
     },
     frutos: {
-        nome: "Sombras: Frutos", 
-        exemploImg: "frutas/morango.png", 
-        imgCapa: "frutas/maca.png",
+        nome: "Frutos", exemplo: "MO-RAN-GO", exemploImg: "frutas/morango.png", total: 3, imgCapa: "frutas/maca.png",
         itens: [
             { nome: "AMORA", silabas: 3, img: "frutas/amora.png" },
             { nome: "ANANÁS", silabas: 3, img: "frutas/ananas.png" },
             { nome: "BANANA", silabas: 3, img: "frutas/banana.png" },
             { nome: "CASTANHA", silabas: 3, img: "frutas/castanha.png" },
             { nome: "CEREJA", silabas: 3, img: "frutas/cereja.png" },
-            { nome: "DIÓSPIRO", silabas: 4, img: "frutas/diospiro.png" },
+            { nome: "DIÓSPIRO", silabas: 3, img: "frutas/diospiro.png" },
             { nome: "FIGO", silabas: 2, img: "frutas/figo.png" },
             { nome: "GOIABA", silabas: 3, img: "frutas/goiaba.png" },
             { nome: "KIWI", silabas: 2, img: "frutas/kiwi.png" },
@@ -44,9 +41,7 @@ const BIBLIOTECA_CATEGORIAS = {
         ]
     },
     objetos: {
-        nome: "Sombras: Objetos", 
-        exemploImg: "objetos/bola.png", 
-        imgCapa: "objetos/bola.png",
+        nome: "Objetos", exemplo: "BO-NE-CA", exemploImg: "objetos/boneca.png", total: 3, imgCapa: "objetos/bola.png",
         itens: [
             { nome: "BALDE", silabas: 2, img: "objetos/balde.png" },
             { nome: "BOLA", silabas: 2, img: "objetos/bola.png" },
@@ -66,9 +61,7 @@ const BIBLIOTECA_CATEGORIAS = {
         ]
     },
     material: {
-        nome: "Sombras: Material", 
-        exemploImg: "materialescolar/mochila.png", 
-        imgCapa: "materialescolar/estojo.png",
+        nome: "Material Escolar", exemplo: "MO-CHI-LA", exemploImg: "materialescolar/mochila.png", total: 3, imgCapa: "materialescolar/estojo.png",
         itens: [
             { nome: "AFIA", silabas: 2, img: "materialescolar/afia.png" },
             { nome: "BORRACHA", silabas: 3, img: "materialescolar/borracha.png" },
@@ -88,6 +81,3 @@ const BIBLIOTECA_CATEGORIAS = {
         ]
     }
 };
-
-// Injeta as categorias no objeto de configuração global
-JOGO_CONFIG.categorias = BIBLIOTECA_CATEGORIAS;
