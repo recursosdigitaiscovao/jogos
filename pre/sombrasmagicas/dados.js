@@ -1,7 +1,7 @@
 // === 1. CONFIGURAÇÃO ATIVA ===
 const CONFIG_MESTRE = {
-    ano: "ano1",        // pre, ano1, ano2, ano3, ano4
-    area: "portugues",  // pre, portugues, matematica, estudo
+    ano: "pre",        // pre, ano1, ano2, ano3, ano4
+    area: "pre",  // pre, portugues, matematica, estudo
     nomeJogo: "SOMBRAS MÁGICAS"
 };
 
