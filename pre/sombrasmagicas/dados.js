@@ -56,7 +56,7 @@ const BIBLIOTECA_TEMAS = {
         corContainer: "#FFF5F7",
         corCard: "#fff0f3",
         bordaCard: "none",
-        sombraCard: "0 15px 35px rgba(230,180,190,0.4)",
+        sombraCard: "0 0 35px rgba(230,180,190,0.4)",
         corEspacoJogo: "#ffffff",
         bordaEspacoJogo: "3px dashed #E691A7",
         corPrimaria: "#E691A7",
