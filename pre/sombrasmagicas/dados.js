@@ -8,6 +8,7 @@ const CONFIG_MESTRE = {
 const BIBLIOTECA_TEMAS = {
     "portugues": { 
         corPagina: "#e9f0f8",    // Fundo da página
+        corHeader: "#f0f7ff",    // Cor do fundo do Header (NOVO)
         corPrimaria: "#5ba4e5",  // Azul principal
         corEscura: "#3d7db8",    // Azul escuro (sombras/hover)
         corTexto: "#5d7082",     // Cor do texto
@@ -15,6 +16,7 @@ const BIBLIOTECA_TEMAS = {
     },
     "matematica": { 
         corPagina: "#e8f9f4",    // Verde água
+        corHeader: "#f0fdfa",    // Cor do fundo do Header (NOVO)
         corPrimaria: "#45cfa8",  // Verde principal
         corEscura: "#2BA886",    // Verde escuro
         corTexto: "#45cfa8",
@@ -22,6 +24,7 @@ const BIBLIOTECA_TEMAS = {
     },
     "estudo": { 
         corPagina: "#EAE2E5",    // Castanho/Cinza claro
+        corHeader: "#f7f3f4",    // Cor do fundo do Header (NOVO)
         corPrimaria: "#994D4D",  // Castanho principal
         corEscura: "#6C3737",    // Castanho escuro
         corTexto: "#994D4D",
@@ -29,6 +32,7 @@ const BIBLIOTECA_TEMAS = {
     },
     "pre": { 
         corPagina: "#FFF5F7",    // Rosa claro
+        corHeader: "#ffffff",    // Cor do fundo do Header (NOVO)
         corPrimaria: "#E691A7",  // Rosa principal
         corEscura: "#D54267",    // Rosa escuro
         corTexto: "#E691A7",
