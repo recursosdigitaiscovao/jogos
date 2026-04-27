@@ -2,7 +2,7 @@
 const CONFIG_MESTRE = {
     ano: "pre",        
     area: "pre",  
-    nomeJogo: "SOMBRAS MÁGICAS"
+    nomeJogo: "CONTAR SÍLABAS"
 };
 
 const BIBLIOTECA_TEMAS = {
@@ -29,8 +29,8 @@ const BIBLIOTECA_CONTEUDO = {
 const JOGO_CONFIG = {
     linkVoltar: "../",
     textoVoltar: "VOLTAR",
-    caminhoImg: "../../../img/",    
-    caminhoIcons: "../../../icons/", 
+    caminhoImg: "../../img/",    
+    caminhoIcons: "../../icons/", 
     sons: {
         acerto: "https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3",
         erro: "https://cdn.pixabay.com/audio/2022/03/10/audio_c330c67761.mp3",
@@ -39,8 +39,8 @@ const JOGO_CONFIG = {
     iconesMenu: { home: "home.png", pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png" },
     links: { home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4" },
     
-    // Aqui puxamos os dados do ficheiro categorias.js
-    categorias: JOGO_CATEGORIAS, 
+    // Liga os dados do outro ficheiro aqui
+    categorias: JOGO_CATEGORIAS,
 
     relatorios: [
         { min: 90, max: 100, titulo: "És um craque!", img: "taca_1.png" },
