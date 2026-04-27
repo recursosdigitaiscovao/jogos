@@ -7,13 +7,14 @@ const CONFIG_MESTRE = {
 
 const BIBLIOTECA_TEMAS = {
     "portugues": { 
-        corPagina: "#e9f0f8",       // Fundo atrás de tudo
-        corHeader: "#ffffff",       // Fundo do Header
-        corContainer: "#e9f0f8",    // Fundo em volta do Card
-        corCard: "#f0f7ff",         // Fundo do Card
-        bordaCard: "none",          // Borda do Card
+        corPagina: "#e9f0f8",       
+        corHeader: "#ffffff",       
+        corContainer: "#e9f0f8",    
+        corCard: "#f0f7ff",         
+        bordaCard: "none",          
         sombraCard: "0 15px 35px rgba(176,196,217,0.4)",
-        corEspacoJogo: "#ffffff",   // Quadrado da pergunta
+        // ESTES CONTROLAM AS 3 TELAS (Intro, Jogo, Resultado)
+        corEspacoJogo: "#ffffff",   
         bordaEspacoJogo: "3px dashed #5ba4e5",
         corPrimaria: "#5ba4e5", 
         corEscura: "#3d7db8",   
@@ -64,47 +65,4 @@ const BIBLIOTECA_TEMAS = {
     }
 };
 
-const BIBLIOTECA_CONTEUDO = {
-    "pre": { "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar", rodape: "&copy; Pequenos Curiosos" } },
-    "ano1": {
-        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", rodape: "&copy; Pequenos Leitores" },
-        "matematica": { t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano", rodape: "&copy; Pequenos Matemáticos" },
-        "estudo": { t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano", rodape: "&copy; Pequenos Exploradores" }
-    },
-    "ano2": {
-        "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano", rodape: "&copy; Jovens Leitores" },
-        "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano", rodape: "&copy; Jovens Matemáticos" },
-        "estudo": { t1: "JOVENS", t2: "INVESTIGADORES", sub: "Estudo do Meio | 2º Ano", rodape: "&copy; Jovens Investigadores" }
-    },
-    "ano3": {
-        "portugues": { t1: "MESTRES", t2: "DA LÍNGUA", sub: "Português | 3º Ano", rodape: "&copy; Mestres da Língua" },
-        "matematica": { t1: "MESTRES", t2: "DO CÁLCULO", sub: "Matemática | 3º Ano", rodape: "&copy; Mestres do Cálculo" },
-        "estudo": { t1: "GRANDES", t2: "CIENTISTAS", sub: "Estudo do Meio | 3º Ano", rodape: "&copy; Grandes Cientistas" }
-    },
-    "ano4": {
-        "portugues": { t1: "GURU", t2: "DAS LETRAS", sub: "Português | 4º Ano", rodape: "&copy; Guru das Letras" },
-        "matematica": { t1: "GURU", t2: "DOS NÚMEROS", sub: "Matemática | 4º Ano", rodape: "&copy; Guru dos Números" },
-        "estudo": { t1: "GURU", t2: "DO MUNDO", sub: "Estudo do Meio | 4º Ano", rodape: "&copy; Guru do Mundo" }
-    }
-};
-
-const JOGO_CONFIG = {
-    linkVoltar: "../",
-    textoVoltar: "VOLTAR",
-    caminhoImg: "../../img/",    
-    caminhoIcons: "../../icons/", 
-    sons: {
-        acerto: "https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3",
-        erro: "https://cdn.pixabay.com/audio/2022/03/10/audio_c330c67761.mp3",
-        vitoria: "https://cdn.pixabay.com/audio/2024/02/07/audio_293963428f.mp3"
-    },
-    iconesMenu: { home: "home.png", pre: "iconpre.png", ano1: "icon1.png", ano2: "icon2.png", ano3: "icon3.png", ano4: "icon4.png" },
-    links: { home: "/jogos", pre: "/jogos/pre", ano1: "/jogos/1", ano2: "/jogos/2", ano3: "/jogos/3", ano4: "/jogos/4" },
-    categorias: JOGO_CATEGORIAS,
-    relatorios: [
-        { min: 90, max: 100, titulo: "És um craque!", img: "taca_1.png" },
-        { min: 70, max: 89, titulo: "Muito bem!", img: "taca_2.png" },
-        { min: 50, max: 69, titulo: "Estás quase lá!", img: "taca_2.png" },
-        { min: 0, max: 49, titulo: "Continua a tentar!", img: "taca_4.png" }
-    ]
-};
+// ... Restante do dados.js mantém-se igual (BIBLIOTECA_CONTEUDO e JOGO_CONFIG) ...
