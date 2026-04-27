@@ -7,11 +7,32 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --bg-page: #e9f0f8; --primary-blue: #5ba4e5; --primary-dark: #3d7db8; --highlight-green: #7ed321; --error-red: #ff5e5e; --white: #ffffff; --text-grey: #5d7082; --header-h: 70px; }
+        /* VARIÁVEIS DINÂMICAS */
+        :root { 
+            --bg-page: #e9f0f8; 
+            --bg-header: #f0f7ff;
+            --bg-card: #f0f7ff;
+            --borda-card: rgba(91, 164, 229, 0.4);
+            --primary-blue: #5ba4e5; 
+            --primary-dark: #3d7db8; 
+            --highlight-green: #7ed321; 
+            --error-red: #ff5e5e; 
+            --white: #ffffff; 
+            --text-grey: #5d7082; 
+            --header-h: 70px; 
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
         body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
         
-        header { height: var(--header-h); background: #f0f7ff; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 2500; flex-shrink: 0; box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4); position: relative; }
+        header { 
+            height: var(--header-h); 
+            background: var(--bg-header); 
+            display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 2500; flex-shrink: 0; 
+            box-shadow: 0px 4px 15px rgba(176, 196, 217, 0.4); position: relative; 
+        }
+
         .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; pointer-events: none; white-space: nowrap; }
         .logo-center img { height: 48px; width: auto; }
         .logo-text h1 { font-size: 17px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
@@ -29,12 +50,18 @@
 
         .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
         .menu-item-voltar img { filter: brightness(0) invert(1); }
-
         .menu-divider { height: 1px; background-color: rgba(0,0,0,0.05); margin: 2px 10px; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 2000; }
 
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 15px; overflow: hidden; }
-        .game-card { background: #f0f7ff; width: 100%; max-width: 1000px; height: 100%; border-radius: 40px; box-shadow: 0 15px 35px rgba(176,196,217,0.5); display: flex; flex-direction: column; padding: 20px; position: relative; overflow: hidden; }
+        
+        .game-card { 
+            background: var(--bg-card); 
+            width: 100%; max-width: 1000px; height: 100%; border-radius: 40px; 
+            box-shadow: 0 15px 35px rgba(176,196,217,0.5); 
+            display: flex; flex-direction: column; padding: 20px; position: relative; overflow: hidden; 
+            border: 4px solid var(--borda-card);
+        }
 
         .status-bar { display: none; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-shrink: 0; gap: 5px; }
         .status-group { display: flex; align-items: center; gap: 8px; }
@@ -46,7 +73,12 @@
 
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; flex: 1; }
         .screen.active { display: flex !important; }
-        #game-main-content { flex: 1; width: 100%; background: var(--white); border: 3px dashed rgba(91, 164, 229, 0.4); border-radius: 30px; display: flex; align-items: center; justify-content: center; padding: 15px; position: relative; overflow: hidden; }
+        
+        #game-main-content { 
+            flex: 1; width: 100%; background: var(--white); 
+            border: 3px dashed var(--borda-card); 
+            border-radius: 30px; display: flex; align-items: center; justify-content: center; padding: 15px; position: relative; overflow: hidden; 
+        }
 
         .btn-jogar-stretch { background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 16px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); transition: 0.1s; display: flex; align-items: center; justify-content: center; width: 100%; text-decoration: none; user-select: none; }
         .btn-jogar-stretch:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--primary-dark); }
@@ -63,7 +95,8 @@
 </head>
 <body>
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
-    <header>
+    
+    <header id="main-header">
         <div class="header-left">
             <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
             <div id="dropdownMenu" class="menu-dropdown"></div>
@@ -82,8 +115,8 @@
         </div>
     </header>
 
-    <main class="game-container">
-        <div class="game-card">
+    <main class="game-container" id="main-container">
+        <div class="game-card" id="main-card">
             <div class="status-bar" id="status-bar">
                 <div class="status-group">
                     <div class="badge badge-timer">⏳ <span id="timer-val">00:00</span></div>
@@ -105,7 +138,9 @@
                 </div>
             </section>
 
-            <section class="screen" id="scr-game"><div id="game-main-content"></div></section>
+            <section class="screen" id="scr-game">
+                <div id="game-main-content"></div>
+            </section>
             
             <section class="screen" id="scr-result">
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%;">
@@ -131,7 +166,7 @@
         <div id="rd-list"></div>
     </div>
 
-    <!-- CARREGAMENTO DOS DADOS -->
+    <!-- SCRIPTS -->
     <script src="categorias.js"></script>
     <script src="dados.js"></script>
     <script src="jogo.js"></script>
@@ -143,14 +178,25 @@
         const cont = BIBLIOTECA_CONTEUDO[setup.ano][setup.area]; 
         const conf = JOGO_CONFIG;
 
-        document.documentElement.style.setProperty('--primary-blue', tema.corPrimaria); 
-        document.documentElement.style.setProperty('--primary-dark', tema.corEscura); 
-        document.documentElement.style.setProperty('--bg-page', tema.corPagina);
+        // APLICAÇÃO DAS CORES DINÂMICAS (CSS Variables)
+        const root = document.documentElement;
+        root.style.setProperty('--primary-blue', tema.corPrimaria); 
+        root.style.setProperty('--primary-dark', tema.corEscura); 
+        root.style.setProperty('--bg-page', tema.corPagina);
+        
+        // Novas cores (se não existirem no dados.js, usa o padrão)
+        root.style.setProperty('--bg-header', tema.corHeader || '#f0f7ff');
+        root.style.setProperty('--bg-card', tema.corCard || '#f0f7ff');
+        root.style.setProperty('--borda-card', tema.corBordaCard || 'rgba(91, 164, 229, 0.4)');
 
+        // TEXTOS E LOGOS
         document.getElementById('tit-l1').innerText = cont.t1; 
         document.getElementById('tit-l2').innerText = cont.t2; 
         document.getElementById('sub-tit').innerText = cont.sub; 
-        document.getElementById('intro-instr').innerText = cont.intro;
+        
+        // INTRO GERADA PELO JOGO.JS
+        document.getElementById('intro-instr').innerText = window.gerarIntroJogo ? window.gerarIntroJogo() : "";
+
         document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu[setup.ano];
         document.getElementById('header-back-icon').src = conf.caminhoIcons + "voltar.png"; 
         document.getElementById('header-back-mobile').src = conf.caminhoIcons + tema.voltarMobile;
@@ -162,30 +208,21 @@
         document.getElementById('btn-outro-jogo').href = conf.linkVoltar; 
         document.getElementById('txt-voltar-header').innerText = conf.textoVoltar;
         
-        // --- MENU DROPDOWN (Hamburger) ---
+        // MENU HAMBURGUER (Ordem: Níveis -> Divisor -> Voltar)
         const menuBox = document.getElementById('dropdownMenu'); 
         menuBox.innerHTML = '';
-        
-        // 1. Itens dos Anos
         const labels = { home: "Início", pre: "Pré-Escolar", ano1: "1º Ano", ano2: "2º Ano", ano3: "3º Ano", ano4: "4º Ano" };
         ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
             const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
             a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}"><span>${labels[k]}</span>`;
             menuBox.appendChild(a);
         });
-
-        // 2. Divisor
-        const divider = document.createElement('div'); divider.className = 'menu-divider'; 
-        menuBox.appendChild(divider);
-
-        // 3. Botão VOLTAR (Último da lista)
-        const btnV = document.createElement('a'); 
-        btnV.className = 'menu-item menu-item-voltar'; 
-        btnV.href = conf.linkVoltar;
+        const divider = document.createElement('div'); divider.className = 'menu-divider'; menuBox.appendChild(divider);
+        const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = conf.linkVoltar;
         btnV.innerHTML = `<img src="${conf.caminhoIcons}voltar.png"> <span>${conf.textoVoltar}</span>`;
         menuBox.appendChild(btnV);
 
-        // --- SELETOR DE TEMAS (RD Panel) ---
+        // SELETOR DE TEMAS
         const rdBox = document.getElementById('rd-list'); rdBox.innerHTML = '';
         Object.keys(conf.categorias).forEach(key => {
             const c = conf.categorias[key]; 
@@ -202,17 +239,13 @@
     function goToGame() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-game').classList.add('active'); document.getElementById('status-bar').style.display = 'flex'; if(window.initGame) window.initGame(); }
     
     window.mostrarResultados = function(acertos, tempo) { 
-        const conf = JOGO_CONFIG; 
-        const total = itensAtuais.length; 
-        const perc = (acertos / total) * 100;
+        const conf = JOGO_CONFIG; const total = itensAtuais.length; const perc = (acertos / total) * 100;
         let feedback = conf.relatorios.find(p => perc >= p.min && perc <= p.max);
         document.getElementById('res-taca').src = conf.caminhoIcons + feedback.img; 
         document.getElementById('res-tit').innerText = feedback.titulo;
         document.getElementById('res-pts').innerText = acertos + " / " + total; 
         document.getElementById('res-tim').innerText = tempo;
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
-        document.getElementById('scr-result').classList.add('active'); 
-        document.getElementById('status-bar').style.display = 'none';
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-result').classList.add('active'); document.getElementById('status-bar').style.display = 'none';
     }
 
     function toggleHamburger(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); const ov = document.getElementById('overlay'); if(m.style.display === 'flex') { closeMenus(); } else { m.style.display = 'flex'; ov.style.display = 'block'; } }
