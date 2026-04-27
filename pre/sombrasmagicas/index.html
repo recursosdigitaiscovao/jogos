@@ -8,70 +8,70 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --bg-page: #e9f0f8; 
-            --bg-header: #f0f7ff;
-            --bg-container: #e9f0f8;
-            --bg-card: #ffffff;
-            --borda-card: none;
-            --sombra-card: 0 15px 35px rgba(0,0,0,0.1);
-            /* Espaço do Jogo (src-game) */
-            --bg-espaco-jogo: #ffffff;
-            --borda-espaco-jogo: 3px dashed #ccc;
-            
-            --primary-blue: #5ba4e5; 
-            --primary-dark: #3d7db8; 
-            --text-grey: #5d7082; 
-            --header-h: 70px; 
+            --bg-page: #e9f0f8; --bg-header: #ffffff; --bg-container: #e9f0f8; 
+            --bg-card: #ffffff; --borda-card: none; --sombra-card: 0 10px 30px rgba(0,0,0,0.1);
+            --bg-espaco-jogo: #ffffff; --borda-espaco-jogo: 3px dashed #ccc;
+            --primary-blue: #5ba4e5; --primary-dark: #3d7db8; --text-grey: #5d7082; --header-h: 70px; 
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
-        body { background-color: var(--bg-page); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
         
         header { 
             height: var(--header-h); background: var(--bg-header); 
-            display: flex; align-items: center; justify-content: space-between; padding: 0 20px; 
-            box-shadow: 0px 4px 15px rgba(0,0,0,0.05); z-index: 2500;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 2500; flex-shrink: 0; 
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.05); position: relative; 
         }
 
-        .game-container { 
-            flex: 1; display: flex; justify-content: center; align-items: center; padding: 15px; 
-            background-color: var(--bg-container); 
-        }
+        .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; pointer-events: none; white-space: nowrap; }
+        .logo-center img { height: 48px; width: auto; }
+        .logo-text h1 { font-size: 17px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
+        .logo-text p { font-size: 8px; color: #88a; font-weight: 700; text-transform: uppercase; }
+
+        .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 15px; background-color: var(--bg-container); overflow: hidden; }
         
         .game-card { 
-            background: var(--bg-card); width: 100%; max-width: 1000px; height: 100%; 
-            border-radius: 40px; padding: 20px; display: flex; flex-direction: column;
-            border: var(--borda-card);
-            box-shadow: var(--sombra-card);
-            position: relative; overflow: hidden;
+            background: var(--bg-card); width: 100%; max-width: 1000px; height: 100%; border-radius: 40px; 
+            box-shadow: var(--sombra-card); border: var(--borda-card);
+            display: flex; flex-direction: column; padding: 20px; position: relative; overflow: hidden; 
         }
 
-        /* ESPAÇO DO JOGO (src-game) */
         #game-main-content { 
-            flex: 1; width: 100%; 
-            background: var(--bg-espaco-jogo); 
-            border: var(--borda-espaco-jogo); 
-            border-radius: 30px; display: flex; align-items: center; justify-content: center; 
-            padding: 15px; position: relative; overflow: hidden; 
+            flex: 1; width: 100%; background: var(--bg-espaco-jogo); 
+            border: var(--borda-espaco-jogo); border-radius: 30px; 
+            display: flex; align-items: center; justify-content: center; padding: 15px; position: relative; overflow: hidden; 
         }
 
-        /* Badges Flat */
-        .badge { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 12px; border-radius: 12px; font-weight: 900; font-size: 12px; color: white; }
+        /* Status Bar e Badges Flat */
+        .status-bar { display: none; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-shrink: 0; }
+        .status-group { display: flex; align-items: center; gap: 8px; }
+        .badge { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 12px; border-radius: 12px; font-weight: 900; font-size: 12px; color: white; white-space: nowrap; }
         .badge-timer { background: #cbd9e6; color: var(--text-grey); }
         .badge-round { background: var(--primary-blue); }
         .badge-hit { background: #7ed321; }
         .badge-miss { background: #ff5e5e; }
 
-        /* Estilos base omitidos para brevidade, mantêm-se os originais do menu/telas */
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; flex: 1; }
         .screen.active { display: flex !important; }
-        .status-bar { display: none; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .status-group { display: flex; align-items: center; gap: 8px; }
-        .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; }
+
+        /* Menu Hamburguer */
+        .hamburger-btn { font-size: 28px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
+        .menu-dropdown { position: absolute; top: 60px; left: 15px; display: none; flex-direction: column; gap: 6px; z-index: 3000; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 0.85rem; min-width: 180px; }
+        .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
+        .menu-item-voltar img { filter: brightness(0) invert(1); }
+        .menu-divider { height: 1px; background-color: rgba(0,0,0,0.05); margin: 2px 10px; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 2000; }
+
+        .btn-jogar-stretch { background: var(--primary-blue); color: white; border: none; border-radius: 18px; padding: 16px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); transition: 0.1s; width: 100%; display: flex; justify-content: center; text-decoration: none; }
+        .btn-jogar-stretch:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--primary-dark); }
+        
+        @media (max-width: 650px) { .header-right { display: none; } }
     </style>
 </head>
 <body>
-    <header id="main-header">
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+    <header>
         <div class="header-left"><i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i><div id="dropdownMenu" class="menu-dropdown"></div></div>
         <div class="logo-center"><img id="head-logo" src=""><div class="logo-text"><h1 id="tit-l1"></h1><h1 id="tit-l2"></h1><p id="sub-tit"></p></div></div>
         <div class="header-right"></div>
@@ -81,19 +81,16 @@
         <div class="game-card">
             <div class="status-bar" id="status-bar">
                 <div class="status-group"><div class="badge badge-timer">⏳ <span id="timer-val">00:00</span></div><div class="badge badge-round"><span id="round-val">1 / 10</span></div></div>
-                <div class="status-group"><div class="badge badge-hit">✓ <span id="hits-val">0</span></div><div class="badge badge-miss">✗ <span id="miss-val">0</span></div></div>
+                <div class="status-group"><div class="badge badge-hit">✓ <span id="hits-val">0</span></div><div class="badge badge-miss">✗ <span id="miss-val">0</span></div><img id="rd-game-btn" src="" style="height:32px; cursor:pointer;" onclick="openRDMenu(event)"></div>
             </div>
 
             <section class="screen active" id="scr-intro">
-                <p id="intro-instr"></p>
-                <button onclick="goToGame()">JOGAR</button>
+                <div id="intro-animation-container" style="flex:1; width:100%; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.5); border-radius:30px; margin-bottom:15px; border:3px dashed rgba(0,0,0,0.05);"></div>
+                <p id="intro-instr" style="font-weight: 800; color: var(--text-grey); text-align: center; margin-bottom: 20px;"></p>
+                <div style="display:flex; width:100%; gap:15px; align-items:center;"><button class="btn-jogar-stretch" onclick="goToGame()">JOGAR</button><img id="rd-intro-btn" src="" onclick="openRDMenu(event)" style="height:55px; cursor:pointer;"></div>
             </section>
 
-            <section class="screen" id="scr-game">
-                <div id="game-main-content">
-                    <!-- Espaço do Jogo (src-game) -->
-                </div>
-            </section>
+            <section class="screen" id="scr-game"><div id="game-main-content"></div></section>
         </div>
     </main>
 
@@ -105,49 +102,51 @@
     function initUI() {
         const setup = CONFIG_MESTRE; 
         const tema = BIBLIOTECA_TEMAS[setup.area]; 
-        const cont = BIBLIOTECA_CONTEUDO[setup.ano][setup.area]; 
+        const cont = (BIBLIOTECA_CONTEUDO[setup.ano] && BIBLIOTECA_CONTEUDO[setup.ano][setup.area]) ? BIBLIOTECA_CONTEUDO[setup.ano][setup.area] : {};
         const conf = JOGO_CONFIG;
 
         const root = document.documentElement;
-
-        // 1. APLICAÇÃO CIRÚRGICA DE CORES (Prioridade para o Conteúdo do Ano)
+        // Aplicar Cores (Prioridade para Conteúdo, senão Tema)
         root.style.setProperty('--primary-blue', tema.corPrimaria); 
+        root.style.setProperty('--primary-dark', tema.corEscura); 
         root.style.setProperty('--bg-page', tema.corPagina);
-        
-        // Header
-        root.style.setProperty('--bg-header', cont.corHeader || tema.corHeader || '#f0f7ff');
-        
-        // Container
-        root.style.setProperty('--bg-container', cont.corContainer || tema.corContainer || tema.corPagina);
-        
-        // Card Principal
-        root.style.setProperty('--bg-card', cont.corCard || tema.corCard || '#ffffff');
-        root.style.setProperty('--borda-card', cont.bordaCard || 'none');
-        root.style.setProperty('--sombra-card', cont.sombraCard || '0 15px 35px rgba(0,0,0,0.1)');
+        root.style.setProperty('--bg-header', cont.corHeader || tema.corHeader);
+        root.style.setProperty('--bg-container', cont.corContainer || tema.corContainer);
+        root.style.setProperty('--bg-card', cont.corCard || tema.corCard);
+        root.style.setProperty('--borda-card', cont.bordaCard || tema.bordaCard);
+        root.style.setProperty('--sombra-card', cont.sombraCard || tema.sombraCard);
+        root.style.setProperty('--bg-espaco-jogo', cont.corEspacoJogo || tema.corEspacoJogo);
+        root.style.setProperty('--borda-espaco-jogo', cont.bordaEspacoJogo || tema.bordaEspacoJogo);
 
-        // Espaço do Jogo (src-game / game-main-content)
-        root.style.setProperty('--bg-espaco-jogo', cont.corEspacoJogo || '#ffffff');
-        root.style.setProperty('--borda-espaco-jogo', cont.bordaEspacoJogo || '3px dashed rgba(0,0,0,0.1)');
-
-        // Textos
-        document.getElementById('tit-l1').innerText = cont.t1; 
-        document.getElementById('tit-l2').innerText = cont.t2; 
-        document.getElementById('sub-tit').innerText = cont.sub; 
-        
-        if(window.gerarIntroJogo) {
-            document.getElementById('intro-instr').innerText = window.gerarIntroJogo();
-        }
-        
-        // Restante da lógica de ícones e menus...
+        document.getElementById('tit-l1').innerText = cont.t1 || ""; 
+        document.getElementById('tit-l2').innerText = cont.t2 || ""; 
+        document.getElementById('sub-tit').innerText = cont.sub || ""; 
         document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu[setup.ano];
+        document.getElementById('rd-intro-btn').src = conf.caminhoImg + "rd.png";
+        document.getElementById('rd-game-btn').src = conf.caminhoImg + "rd.png";
+
+        // Intro via jogo.js
+        if(window.gerarIntroJogo) document.getElementById('intro-instr').innerText = window.gerarIntroJogo();
+
+        // Menu Hamburguer
+        const menuBox = document.getElementById('dropdownMenu'); menuBox.innerHTML = '';
+        const labels = { home: "Início", pre: "Pré-Escolar", ano1: "1º Ano", ano2: "2º Ano", ano3: "3º Ano", ano4: "4º Ano" };
+        ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
+            const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
+            a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}"><span>${labels[k]}</span>`;
+            menuBox.appendChild(a);
+        });
+        const divider = document.createElement('div'); divider.className = 'menu-divider'; menuBox.appendChild(divider);
+        const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = conf.linkVoltar;
+        btnV.innerHTML = `<img src="${conf.caminhoIcons}voltar.png"> <span>${conf.textoVoltar}</span>`;
+        menuBox.appendChild(btnV);
+
+        if(window.startLogic) window.startLogic();
     }
 
-    function toggleHamburger(e) { /* Lógica Hamburguer */ }
-    function goToGame() { 
-        document.getElementById('scr-intro').classList.remove('active'); 
-        document.getElementById('scr-game').classList.add('active'); 
-        document.getElementById('status-bar').style.display = 'flex';
-    }
+    function toggleHamburger(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); const ov = document.getElementById('overlay'); if(m.style.display === 'flex') { closeMenus(); } else { m.style.display = 'flex'; ov.style.display = 'block'; } }
+    function closeMenus() { document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; }
+    function goToGame() { document.getElementById('scr-intro').classList.remove('active'); document.getElementById('scr-game').classList.add('active'); document.getElementById('status-bar').style.display = 'flex'; if(window.initGame) window.initGame(); }
     
     window.onload = initUI;
     </script>
