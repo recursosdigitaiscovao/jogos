@@ -16,7 +16,7 @@ const BIBLIOTECA_TEMAS = {
 // === 3. CONTEÚDO POR ANO E ÁREA (Títulos e Textos) ===
 const BIBLIOTECA_CONTEUDO = {
     "pre": {
-        "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Pré-Escolar" }
+        "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar" }
     },
     "ano1": {
         "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano" },
