@@ -27,7 +27,6 @@
         .menu-item:not(.menu-item-voltar):hover { background-color: var(--primary-blue); color: white !important; }
         .menu-item img { height: 20px; width: 20px; object-fit: contain; }
 
-        /* Estilo do Botão Voltar no Menu */
         .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
         .menu-item-voltar img { filter: brightness(0) invert(1); }
 
@@ -37,7 +36,6 @@
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 15px; overflow: hidden; }
         .game-card { background: #f0f7ff; width: 100%; max-width: 1000px; height: 100%; border-radius: 40px; box-shadow: 0 15px 35px rgba(176,196,217,0.5); display: flex; flex-direction: column; padding: 20px; position: relative; overflow: hidden; }
 
-        /* BARRA DE STATUS HORIZONTAL (ORIGINAL) */
         .status-bar { display: none; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-shrink: 0; gap: 5px; }
         .status-group { display: flex; align-items: center; gap: 8px; }
         .badge { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 10px; border-radius: 12px; font-weight: 900; font-size: 12px; color: white; white-space: nowrap; }
@@ -86,7 +84,6 @@
 
     <main class="game-container">
         <div class="game-card">
-            <!-- Barra de Status Horizontal -->
             <div class="status-bar" id="status-bar">
                 <div class="status-group">
                     <div class="badge badge-timer">⏳ <span id="timer-val">00:00</span></div>
@@ -108,9 +105,7 @@
                 </div>
             </section>
 
-            <section class="screen" id="scr-game">
-                <div id="game-main-content"></div>
-            </section>
+            <section class="screen" id="scr-game"><div id="game-main-content"></div></section>
             
             <section class="screen" id="scr-result">
                 <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%;">
@@ -136,7 +131,7 @@
         <div id="rd-list"></div>
     </div>
 
-    <!-- SCRIPTS EXTERNOS -->
+    <!-- CARREGAMENTO DOS DADOS -->
     <script src="categorias.js"></script>
     <script src="dados.js"></script>
     <script src="jogo.js"></script>
@@ -161,28 +156,17 @@
         document.getElementById('header-back-mobile').src = conf.caminhoIcons + tema.voltarMobile;
         document.getElementById('rd-intro-btn').src = conf.caminhoImg + "rd.png"; 
         document.getElementById('rd-game-btn').src = conf.caminhoImg + "rd.png";
+        
         document.getElementById('link-voltar-header').href = conf.linkVoltar; 
         document.getElementById('link-voltar-mobile').href = conf.linkVoltar; 
         document.getElementById('btn-outro-jogo').href = conf.linkVoltar; 
         document.getElementById('txt-voltar-header').innerText = conf.textoVoltar;
         
-        // Renderizar Menu Dropdown com botão Voltar no topo
+        // --- MENU DROPDOWN (Hamburger) ---
         const menuBox = document.getElementById('dropdownMenu'); 
         menuBox.innerHTML = '';
         
-        // 1. Botão Voltar (topo do menu)
-        const btnV = document.createElement('a'); 
-        btnV.className = 'menu-item menu-item-voltar'; 
-        btnV.href = conf.linkVoltar;
-        btnV.innerHTML = `<img src="${conf.caminhoIcons}voltar.png"> <span>${conf.textoVoltar}</span>`;
-        menuBox.appendChild(btnV);
-
-        // 2. Divisor
-        const divider = document.createElement('div'); 
-        divider.className = 'menu-divider'; 
-        menuBox.appendChild(divider);
-
-        // 3. Links dos Anos
+        // 1. Itens dos Anos
         const labels = { home: "Início", pre: "Pré-Escolar", ano1: "1º Ano", ano2: "2º Ano", ano3: "3º Ano", ano4: "4º Ano" };
         ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
             const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
@@ -190,7 +174,18 @@
             menuBox.appendChild(a);
         });
 
-        // Renderizar Seletor de Temas (RD)
+        // 2. Divisor
+        const divider = document.createElement('div'); divider.className = 'menu-divider'; 
+        menuBox.appendChild(divider);
+
+        // 3. Botão VOLTAR (Último da lista)
+        const btnV = document.createElement('a'); 
+        btnV.className = 'menu-item menu-item-voltar'; 
+        btnV.href = conf.linkVoltar;
+        btnV.innerHTML = `<img src="${conf.caminhoIcons}voltar.png"> <span>${conf.textoVoltar}</span>`;
+        menuBox.appendChild(btnV);
+
+        // --- SELETOR DE TEMAS (RD Panel) ---
         const rdBox = document.getElementById('rd-list'); rdBox.innerHTML = '';
         Object.keys(conf.categorias).forEach(key => {
             const c = conf.categorias[key]; 
@@ -203,19 +198,9 @@
         if(window.startLogic) window.startLogic();
     }
 
-    function goToIntro() { 
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
-        document.getElementById('scr-intro').classList.add('active'); 
-        document.getElementById('status-bar').style.display = 'none'; 
-    }
-
-    function goToGame() { 
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
-        document.getElementById('scr-game').classList.add('active'); 
-        document.getElementById('status-bar').style.display = 'flex'; 
-        if(window.initGame) window.initGame(); 
-    }
-
+    function goToIntro() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-intro').classList.add('active'); document.getElementById('status-bar').style.display = 'none'; }
+    function goToGame() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-game').classList.add('active'); document.getElementById('status-bar').style.display = 'flex'; if(window.initGame) window.initGame(); }
+    
     window.mostrarResultados = function(acertos, tempo) { 
         const conf = JOGO_CONFIG; 
         const total = itensAtuais.length; 
@@ -230,25 +215,10 @@
         document.getElementById('status-bar').style.display = 'none';
     }
 
-    function toggleHamburger(e) { 
-        e.stopPropagation(); 
-        const m = document.getElementById('dropdownMenu'); 
-        const ov = document.getElementById('overlay'); 
-        if(m.style.display === 'flex') { closeMenus(); } else { m.style.display = 'flex'; ov.style.display = 'block'; } 
-    }
-
-    function openRDMenu(e) { 
-        if(e) e.stopPropagation(); 
-        document.getElementById('rdMenu').classList.add('active'); 
-        document.getElementById('overlay').style.display = 'block'; 
-    }
-
-    function closeMenus() { 
-        document.getElementById('rdMenu').classList.remove('active'); 
-        document.getElementById('dropdownMenu').style.display = 'none'; 
-        document.getElementById('overlay').style.display = 'none'; 
-    }
-
+    function toggleHamburger(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); const ov = document.getElementById('overlay'); if(m.style.display === 'flex') { closeMenus(); } else { m.style.display = 'flex'; ov.style.display = 'block'; } }
+    function openRDMenu(e) { if(e) e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
+    function closeMenus() { document.getElementById('rdMenu').classList.remove('active'); document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; }
+    
     window.onload = initUI;
     </script>
 </body>
