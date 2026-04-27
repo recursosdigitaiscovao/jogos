@@ -1,42 +1,72 @@
 // === 1. CONFIGURAÇÃO ATIVA ===
 const CONFIG_MESTRE = {
-    ano: "pre",        // pre, ano1, ano2, ano3, ano4
-    area: "pre",  // pre, portugues, matematica, estudo
+    ano: "pre",        // Opções: pre, ano1, ano2, ano3, ano4
+    area: "pre",       // Opções: pre, portugues, matematica, estudo
     nomeJogo: "SOMBRAS MÁGICAS"
 };
 
-// === 2. TEMAS POR ÁREA (Cores e Ícones) ===
+// === 2. TEMAS POR ÁREA (Cores Dinâmicas) ===
 const BIBLIOTECA_TEMAS = {
-    "portugues": { corPagina: "#e9f0f8", corPrimaria: "#5ba4e5", corEscura: "#3d7db8", voltarMobile: "voltar_az.png" },
-    "matematica": { corPagina: "#e8f9f4", corPrimaria: "#45cfa8", corEscura: "#2BA886", voltarMobile: "voltar_vr.png" },
-    "estudo":     { corPagina: "#EAE2E5", corPrimaria: "#994D4D", corEscura: "#6C3737", voltarMobile: "voltar_cs.png" },
-    "pre":        { corPagina: "#FFF5F7", corPrimaria: "#E691A7", corEscura: "#D54267", voltarMobile: "voltar_rs.png" }
+    "portugues": { 
+        corHeader: "#ffffff",         // Fundo do Header
+        corFundoMain: "#e9f0f8",       // Fundo fora do cartão
+        corFundoCard: "#ffffff",       // Fundo dentro do cartão
+        corBordaCard: "#5ba4e5",       // Cor do limite ponteado
+        corPrimaria: "#5ba4e5",        // Cor de botões e badges
+        corEscura: "#3d7db8",          // Sombra dos botões
+        voltarMobile: "voltar_az.png" 
+    },
+    "matematica": { 
+        corHeader: "#ffffff", 
+        corFundoMain: "#e8f9f4", 
+        corFundoCard: "#ffffff", 
+        corBordaCard: "#45cfa8", 
+        corPrimaria: "#45cfa8", 
+        corEscura: "#2BA886", 
+        voltarMobile: "voltar_vr.png" 
+    },
+    "estudo": { 
+        corHeader: "#ffffff", 
+        corFundoMain: "#EAE2E5", 
+        corFundoCard: "#ffffff", 
+        corBordaCard: "#994D4D", 
+        corPrimaria: "#994D4D", 
+        corEscura: "#6C3737", 
+        voltarMobile: "voltar_cs.png" 
+    },
+    "pre": { 
+        corHeader: "#ffffff", 
+        corFundoMain: "#FFF5F7", 
+        corFundoCard: "#ffffff", 
+        corBordaCard: "#E691A7", 
+        corPrimaria: "#E691A7", 
+        corEscura: "#D54267", 
+        voltarMobile: "voltar_rs.png" 
+    }
 };
 
-// === 3. CONTEÚDO POR ANO E ÁREA (Títulos e Textos) ===
+// === 3. CONTEÚDO POR ANO E ÁREA ===
 const BIBLIOTECA_CONTEUDO = {
-    "pre": {
-        "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar" }
-    },
+    "pre": { "pre": { t1: "PEQUENOS", t2: "CURIOSOS", sub: "Atividades | Pré-Escolar", intro: "Observa a sombra e descobre a imagem correta!" } },
     "ano1": {
-        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano" },
-        "matematica": { t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano" },
-        "estudo": { t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano" }
+        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", intro: "Lê a palavra e encontra a sombra certa!" },
+        "matematica": { t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano", intro: "Resolve o desafio e descobre a forma!" },
+        "estudo": { t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano", intro: "Explora os elementos e descobre a sua sombra!" }
     },
     "ano2": {
-        "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano" },
-        "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano" },
-        "estudo": { t1: "JOVENS", t2: "EXPLORADORES", sub: "Estudo do Meio | 2º Ano" }
+        "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano", intro: "Presta atenção aos detalhes da palavra!" },
+        "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano", intro: "Calcula com atenção para encontrar o par!" },
+        "estudo": { t1: "JOVENS", t2: "EXPLORADORES", sub: "Estudo do Meio | 2º Ano", intro: "Observa a natureza e descobre os seus contornos!" }
     },
     "ano3": {
-        "portugues": { t1: "SUPER", t2: "LEITORES", sub: "Português | 3º Ano" },
-        "matematica": { t1: "SUPER", t2: "MATEMÁTICOS", sub: "Matemática | 3º Ano" },
-        "estudo": { t1: "SUPER", t2: "EXPLORADORES", sub: "Estudo do Meio | 3º Ano" }
+        "portugues": { t1: "SUPER", t2: "LEITORES", sub: "Português | 3º Ano", intro: "Um desafio de leitura para super heróis!" },
+        "matematica": { t1: "SUPER", t2: "MATEMÁTICOS", sub: "Matemática | 3º Ano", intro: "Desafio matemático à vista! Encontra o resultado." },
+        "estudo": { t1: "SUPER", t2: "EXPLORADORES", sub: "Estudo do Meio | 3º Ano", intro: "Consegues identificar este elemento histórico?" }
     },
     "ano4": {
-        "portugues": { t1: "MESTRES", t2: "LEITORES", sub: "Português | 4º Ano" },
-        "matematica": { t1: "MESTRES", t2: "MATEMÁTICOS", sub: "Matemática | 4º Ano" },
-        "estudo": { t1: "MESTRES", t2: "EXPLORADORES", sub: "Estudo do Meio | 4º Ano" }
+        "portugues": { t1: "MESTRES", t2: "LEITORES", sub: "Português | 4º Ano", intro: "Nível avançado de leitura! Estás pronto?" },
+        "matematica": { t1: "MESTRES", t2: "MATEMÁTICOS", sub: "Matemática | 4º Ano", intro: "Usa o teu raciocínio para vencer este nível!" },
+        "estudo": { t1: "MESTRES", t2: "EXPLORADORES", sub: "Estudo do Meio | 4º Ano", intro: "Uma verdadeira investigação científica!" }
     }
 };
 
