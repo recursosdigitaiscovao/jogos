@@ -7,38 +7,48 @@ const CONFIG_MESTRE = {
 
 const BIBLIOTECA_TEMAS = {
     "portugues": { 
-        corPagina: "#e9f0f8",    // Fundo da página
-        corHeader: "#f0f7ff",    // Cor do fundo do Header (NOVO)
-        corPrimaria: "#5ba4e5",  // Azul principal
-        corEscura: "#3d7db8",    // Azul escuro (sombras/hover)
-        corTexto: "#5d7082",     // Cor do texto
+        corPagina: "#e9f0f8",    
+        corHeader: "#f0f7ff",    
+        corContainer: "#e9f0f8", // Fundo da área do jogo (NOVO)
+        sombraCard: "0 15px 35px rgba(176,196,217,0.5)", // Sombra (NOVO)
+        corPrimaria: "#5ba4e5",  
+        corEscura: "#3d7db8",    
+        corTexto: "#5d7082",     
         voltarMobile: "voltar_az.png" 
     },
     "matematica": { 
-        corPagina: "#e8f9f4",    // Verde água
-        corHeader: "#f0fdfa",    // Cor do fundo do Header (NOVO)
-        corPrimaria: "#45cfa8",  // Verde principal
-        corEscura: "#2BA886",    // Verde escuro
+        corPagina: "#e8f9f4",    
+        corHeader: "#f0fdfa",    
+        corContainer: "#e8f9f4",
+        sombraCard: "0 15px 35px rgba(160,210,190,0.5)",
+        corPrimaria: "#45cfa8",  
+        corEscura: "#2BA886",    
         corTexto: "#45cfa8",
         voltarMobile: "voltar_vr.png"
     },
     "estudo": { 
-        corPagina: "#EAE2E5",    // Castanho/Cinza claro
-        corHeader: "#f7f3f4",    // Cor do fundo do Header (NOVO)
-        corPrimaria: "#994D4D",  // Castanho principal
-        corEscura: "#6C3737",    // Castanho escuro
+        corPagina: "#EAE2E5",    
+        corHeader: "#f7f3f4",    
+        corContainer: "#EAE2E5",
+        sombraCard: "0 15px 35px rgba(180,160,170,0.5)",
+        corPrimaria: "#994D4D",  
+        corEscura: "#6C3737",    
         corTexto: "#994D4D",
         voltarMobile: "voltar_cs.png"
     },
     "pre": { 
-        corPagina: "#FFF5F7",    // Rosa claro
-        corHeader: "#ffffff",    // Cor do fundo do Header (NOVO)
-        corPrimaria: "#E691A7",  // Rosa principal
-        corEscura: "#D54267",    // Rosa escuro
+        corPagina: "#FFF5F7",    
+        corHeader: "#ffffff",    
+        corContainer: "#FFF5F7",
+        sombraCard: "0 15px 35px rgba(230,180,190,0.5)",
+        corPrimaria: "#E691A7",  
+        corEscura: "#D54267",    
         corTexto: "#E691A7",
         voltarMobile: "voltar_rs.png"
     }
 };
+
+// ... restante do ficheiro (CONTEUDO e CONFIG) mantém-se igual ...
 
 const BIBLIOTECA_CONTEUDO = {
     "pre": {
