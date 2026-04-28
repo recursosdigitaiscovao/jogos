@@ -31,21 +31,21 @@ function criarAnimacaoTutorial() {
     if(!container) return;
     const itemTut = JOGO_CATEGORIAS.animais.itens[0];
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:15px; position:relative;">
-            <div style="width:100px; height:100px; background:#f0f0f0; border-radius:20px; display:flex; align-items:center; justify-content:center;">
-                <img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:70px; width:auto; filter:brightness(0); opacity:0.3; object-fit:contain;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px; width:100%; height:100%; justify-content:center;">
+            <div style="height:40%; aspect-ratio:1/1; background:#f0f0f0; border-radius:20px; display:flex; align-items:center; justify-content:center;">
+                <img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:70%; width:auto; filter:brightness(0); opacity:0.3; object-fit:contain;">
             </div>
-            <div style="display:flex; gap:10px;">
-                <div style="width:45px; height:45px; background:white; border:2px solid #ddd; border-radius:10px;"></div>
-                <div style="width:45px; height:45px; background:white; border:2px solid var(--primary-blue); border-radius:10px; display:flex; align-items:center; justify-content:center; position:relative;">
-                    <img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:32px; width:auto; object-fit:contain;">
-                    <div id="tut-hand" style="position:absolute; font-size:40px; bottom:-30px; right:-20px; animation: tapHand 2s infinite;">☝️</div>
+            <div style="display:flex; gap:10px; height:20%;">
+                <div style="height:100%; aspect-ratio:1/1; background:white; border:2px solid #ddd; border-radius:10px;"></div>
+                <div style="height:100%; aspect-ratio:1/1; background:white; border:2px solid var(--primary-blue); border-radius:10px; display:flex; align-items:center; justify-content:center; position:relative;">
+                    <img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:70%; width:auto; object-fit:contain;">
+                    <div id="tut-hand" style="position:absolute; font-size:40px; bottom:-20px; right:-15px; animation: tapHand 2s infinite; z-index:10;">☝️</div>
                 </div>
-                <div style="width:45px; height:45px; background:white; border:2px solid #ddd; border-radius:10px;"></div>
+                <div style="height:100%; aspect-ratio:1/1; background:white; border:2px solid #ddd; border-radius:10px;"></div>
             </div>
         </div>
         <style>
-            @keyframes tapHand { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-10px,-15px) scale(1.1); } }
+            @keyframes tapHand { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-5px,-10px) scale(1.1); } }
         </style>
     `;
 }
@@ -80,40 +80,50 @@ function mostrarPergunta() {
 
     container.innerHTML = `
         <style>
-            .game-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; justify-content: space-between; align-items: center; padding: 10px; box-sizing: border-box; }
-            .shadow-zone { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; min-height: 0; background: rgba(255,255,255,0.3); border-radius: 30px; margin-bottom: 15px; }
-            
-            /* ALTURA FIXA PARA A SOMBRA CENTRAL */
+            .game-wrapper { 
+                display: flex; flex-direction: column; 
+                width: 100%; height: 100%; 
+                justify-content: space-between; align-items: center; 
+                padding: 5px; box-sizing: border-box; overflow: hidden;
+            }
+            .shadow-zone { 
+                flex: 1; display: flex; align-items: center; justify-content: center; 
+                width: 100%; min-height: 0; background: rgba(255,255,255,0.3); 
+                border-radius: 25px; margin-bottom: 10px;
+            }
             .shadow-img { 
-                height: 25vh; /* Altura relativa ao ecrã para manter proporção */
-                max-height: 250px;
-                width: auto; 
+                max-height: 90%; max-width: 90%; 
                 object-fit: contain; 
-                filter: brightness(0); 
-                opacity: 0.8; 
-                transition: 0.5s; 
+                filter: brightness(0); opacity: 0.8; transition: 0.5s; 
             }
-            
-            .options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; max-width: 600px; justify-items: center; }
-            .card-opt { background: white; border: 4px solid #eee; border-radius: 20px; width: 100%; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; box-shadow: 0 6px 0 #ddd; padding: 10px; box-sizing: border-box; }
-            
-            /* ALTURA FIXA PARA AS IMAGENS NOS CARTÕES */
+            .options-grid { 
+                display: grid; grid-template-columns: repeat(3, 1fr); 
+                gap: 10px; width: 100%; max-width: 600px; 
+                height: 30%; /* Fixamos a altura da área das opções em 30% do ecrã de jogo */
+                flex-shrink: 0;
+            }
+            .card-opt { 
+                background: white; border: 4px solid #eee; border-radius: 20px; 
+                height: 100%; aspect-ratio: 1/1; margin: 0 auto;
+                display: flex; align-items: center; justify-content: center; 
+                cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 #ddd; 
+                padding: 8px; box-sizing: border-box; overflow: hidden;
+            }
             .card-opt img { 
-                height: 70%; /* Altura fixa relativa ao cartão quadrado */
-                width: auto; 
+                height: 75%; /* Altura da imagem sempre 75% do cartão */
+                width: auto; max-width: 90%;
                 object-fit: contain; 
             }
-            
             .card-opt:hover { border-color: var(--primary-blue); }
-            .card-opt:active { transform: translateY(3px); box-shadow: none; }
-            .is-correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 6px 0 #5ea31a !important; }
-            .is-wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 6px 0 #d13d3d !important; }
+            .card-opt:active { transform: translateY(2px); box-shadow: none; }
+            .is-correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 4px 0 #5ea31a !important; }
+            .is-wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 4px 0 #d13d3d !important; }
             
             @media (orientation: landscape) and (max-height: 500px) {
-                .game-wrapper { flex-direction: row; gap: 15px; } .shadow-zone { margin-bottom: 0; }
-                .options-grid { grid-template-columns: 1fr; width: auto; height: 100%; gap: 8px; }
-                .card-opt { height: 30%; width: auto; aspect-ratio: 1/1; }
-                .shadow-img { height: 40vh; }
+                .game-wrapper { flex-direction: row; gap: 10px; } 
+                .shadow-zone { margin-bottom: 0; }
+                .options-grid { grid-template-columns: 1fr; width: auto; height: 100%; gap: 5px; }
+                .card-opt { height: 30%; width: auto; }
             }
         </style>
         <div class="game-wrapper">
@@ -154,10 +164,9 @@ function finalizarJogo() {
 
     resScreen.className = "screen screen-box active"; 
 
-    // MUDANÇA: Agora procura o rel.img (taça) na pasta ICONS como o menu hambúrguer
     resScreen.innerHTML = `
-        <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="width:140px; height:auto; margin-bottom:10px; object-fit:contain;">
-        <h2 style="color: var(--primary-blue); font-weight:900; font-size:28px; margin-bottom:20px; text-align:center;">${rel.titulo}</h2>
+        <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:25%; width:auto; margin-bottom:10px; object-fit:contain;">
+        <h2 style="color: var(--primary-blue); font-weight:900; font-size:1.5rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
         
         <div class="res-stats-container">
             <div class="res-stat-card">
