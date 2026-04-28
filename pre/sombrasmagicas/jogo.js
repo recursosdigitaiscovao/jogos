@@ -17,7 +17,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Observa a sombra e escolhe o desenho correto!";
+    return "Olha para a sombra e escolhe o desenho correto!";
 };
 
 function selecionarCategoria(key) {
@@ -36,12 +36,12 @@ function criarAnimacaoTutorial() {
                 <img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:70px; width:auto; filter:brightness(0); opacity:0.3; object-fit:contain;">
             </div>
             <div style="display:flex; gap:12px; justify-content:center;">
-                <div style="height:50px; width:50px; background:white; border:2px solid #eee; border-radius:12px;"></div>
-                <div style="height:50px; width:50px; background:white; border:2px solid var(--primary-blue); border-radius:12px; display:flex; align-items:center; justify-content:center; position:relative;">
-                    <img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:35px; width:auto; object-fit:contain;">
-                    <div style="position:absolute; font-size:40px; bottom:-35px; right:-20px; animation: tapH 2s infinite; z-index:10;">☝️</div>
+                <div style="height:60px; width:60px; background:white; border:2px solid #eee; border-radius:12px;"></div>
+                <div style="height:60px; width:60px; background:white; border:2px solid var(--primary-blue); border-radius:12px; display:flex; align-items:center; justify-content:center; position:relative;">
+                    <img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:40px; width:auto; object-fit:contain;">
+                    <div style="position:absolute; font-size:45px; bottom:-35px; right:-25px; animation: tapH 2s infinite; z-index:10;">☝️</div>
                 </div>
-                <div style="height:50px; width:50px; background:white; border:2px solid #eee; border-radius:12px;"></div>
+                <div style="height:60px; width:60px; background:white; border:2px solid #eee; border-radius:12px;"></div>
             </div>
         </div>
         <style>@keyframes tapH { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-8px,-12px) scale(1.1); } }</style>
@@ -82,7 +82,7 @@ function mostrarPergunta() {
                 display: flex; flex-direction: column; 
                 width: 100%; height: 100%; 
                 align-items: center; 
-                padding-top: 50px; padding-bottom: 50px; /* DISTÂNCIA DE 50PX DO TOPO E FUNDO */
+                padding-top: 50px; padding-bottom: 50px;
                 box-sizing: border-box; overflow: hidden;
             }
             .shadow-zone { 
@@ -91,33 +91,38 @@ function mostrarPergunta() {
                 background: rgba(255,255,255,0.4); border-radius: 30px; 
             }
             .shadow-img { 
-                height: 85%; width: auto; max-width: 90%; 
+                height: 80%; width: auto; max-width: 85%; 
                 object-fit: contain; 
                 filter: brightness(0); opacity: 0.8; transition: 0.5s; 
             }
-            .spacer { height: 30px; flex-shrink: 0; } /* Espaço entre a sombra e os cartões */
+            .spacer { height: 35px; flex-shrink: 0; }
             
             .options-row { 
                 display: flex; justify-content: center; gap: 15px; 
-                width: 100%; height: 75px; /* TAMANHO CONTROLADO PARA AS OPÇÕES */
-                flex-shrink: 0;
+                width: 100%; flex-shrink: 0;
             }
             .card-opt { 
-                background: white; border: 3px solid #eee; border-radius: 15px; 
-                height: 75px; width: 75px; /* QUADRADO IGUAL À ANIMAÇÃO */
+                background: white; border: 3px solid #eee; border-radius: 20px; 
+                height: 90px; width: 90px; /* Tamanho Mobile */
                 display: flex; align-items: center; justify-content: center; 
                 cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #ddd; 
-                padding: 10px; box-sizing: border-box; flex-shrink: 0;
+                padding: 12px; box-sizing: border-box; flex-shrink: 0;
             }
             .card-opt img { height: 100%; width: auto; max-width: 100%; object-fit: contain; }
-            .is-correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 4px 0 #5ea31a !important; }
-            .is-wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 4px 0 #d13d3d !important; }
+            .is-correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 5px 0 #5ea31a !important; }
+            .is-wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 5px 0 #d13d3d !important; }
             
+            /* AJUSTE PC */
+            @media (min-width: 800px) {
+                .card-opt { height: 125px; width: 125px; border-width: 4px; }
+                .spacer { height: 50px; }
+            }
+
             @media (orientation: landscape) and (max-height: 500px) {
                 .game-wrapper { flex-direction: row; padding: 20px; gap: 20px; justify-content: center; }
                 .shadow-zone { height: 100%; width: 100%; margin-bottom: 0; }
                 .options-row { flex-direction: column; width: auto; height: 100%; gap: 10px; }
-                .card-opt { height: 60px; width: 60px; }
+                .card-opt { height: 65px; width: 65px; }
                 .spacer { display: none; }
             }
         </style>
@@ -161,18 +166,25 @@ function finalizarJogo() {
     resScreen.className = "screen screen-box active"; 
 
     resScreen.innerHTML = `
-        <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:20%; width:auto; margin-bottom:15px; object-fit:contain;">
-        <h2 style="color: var(--primary-blue); font-weight:900; font-size:1.4rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
-        
-        <div class="res-stats-container">
-            <div class="res-stat-card"><span class="res-stat-val">${acertos} / ${totalP}</span><span class="res-stat-lab">Acertos</span></div>
-            <div class="res-stat-card"><span class="res-stat-val">${tempoFinal}</span><span class="res-stat-lab">Tempo</span></div>
-        </div>
+        <style>
+            .res-inner { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 20px; box-sizing: border-box; }
+            .res-btn-group-final { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 280px; }
+            .res-stats-final { display: flex; gap: 12px; width: 100%; max-width: 280px; margin-bottom: 20px; }
+        </style>
+        <div class="res-inner">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:120px; width:auto; margin-bottom:15px; object-fit:contain;">
+            <h2 style="color: var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
+            
+            <div class="res-stats-final">
+                <div class="res-stat-card"><span class="res-stat-val">${acertos} / ${totalP}</span><span class="res-stat-lab">Acertos</span></div>
+                <div class="res-stat-card"><span class="res-stat-val">${tempoFinal}</span><span class="res-stat-lab">Tempo</span></div>
+            </div>
 
-        <div class="res-btn-group" style="padding-bottom: 20px;">
-            <button class="btn-res btn-res-primary" onclick="location.reload()">Jogar de Novo</button>
-            <button class="btn-res btn-res-outline" onclick="openRDMenu()">Outro Tema / Nível</button>
-            <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-res-muted">Escolher outro jogo</a>
+            <div class="res-btn-group-final">
+                <button class="btn-res btn-res-primary" onclick="location.reload()">Jogar de Novo</button>
+                <button class="btn-res btn-res-outline" onclick="openRDMenu()">Outro Tema / Nível</button>
+                <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-res-muted">Escolher outro jogo</a>
+            </div>
         </div>
     `;
 
