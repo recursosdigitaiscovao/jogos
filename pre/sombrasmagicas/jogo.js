@@ -82,7 +82,7 @@ function mostrarPergunta() {
                 display: flex; flex-direction: column; 
                 width: 100%; height: 100%; 
                 align-items: center; 
-                padding-top: 50px; padding-bottom: 50px;
+                padding-top: 30px; padding-bottom: 30px; /* Margens padrão */
                 box-sizing: border-box; overflow: hidden;
             }
             .shadow-zone { 
@@ -103,7 +103,7 @@ function mostrarPergunta() {
             }
             .card-opt { 
                 background: white; border: 3px solid #eee; border-radius: 20px; 
-                height: 90px; width: 90px; /* Tamanho Mobile */
+                height: 90px; width: 90px; /* Base Mobile */
                 display: flex; align-items: center; justify-content: center; 
                 cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #ddd; 
                 padding: 12px; box-sizing: border-box; flex-shrink: 0;
@@ -112,14 +112,15 @@ function mostrarPergunta() {
             .is-correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 5px 0 #5ea31a !important; }
             .is-wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 5px 0 #d13d3d !important; }
             
-            /* AJUSTE PC */
+            /* AJUSTE PC: Equilíbrio entre Sombra e Opções */
             @media (min-width: 800px) {
-                .card-opt { height: 125px; width: 125px; border-width: 4px; }
-                .spacer { height: 50px; }
+                .shadow-img { height: 65%; } /* Sombra um pouco menor no PC */
+                .card-opt { height: 140px; width: 140px; border-width: 4px; } /* Opções maiores no PC */
+                .spacer { height: 40px; }
             }
 
             @media (orientation: landscape) and (max-height: 500px) {
-                .game-wrapper { flex-direction: row; padding: 20px; gap: 20px; justify-content: center; }
+                .game-wrapper { flex-direction: row; padding: 15px; gap: 20px; justify-content: center; }
                 .shadow-zone { height: 100%; width: 100%; margin-bottom: 0; }
                 .options-row { flex-direction: column; width: auto; height: 100%; gap: 10px; }
                 .card-opt { height: 65px; width: 65px; }
@@ -165,25 +166,37 @@ function finalizarJogo() {
 
     resScreen.className = "screen screen-box active"; 
 
+    // REMOVIDO PADDING DE 50PX - Conteúdo ocupa o espaço natural
     resScreen.innerHTML = `
         <style>
-            .res-inner { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 20px; box-sizing: border-box; }
-            .res-btn-group-final { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 280px; }
-            .res-stats-final { display: flex; gap: 12px; width: 100%; max-width: 280px; margin-bottom: 20px; }
+            .res-inner { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; box-sizing: border-box; }
+            .res-btn-group-final { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 320px; }
+            .res-stats-final { display: flex; gap: 12px; width: 100%; max-width: 320px; margin: 15px 0 20px; }
+            .res-btn { padding: 15px; border-radius: 18px; font-weight: 900; font-size: 15px; cursor: pointer; border: none; text-align: center; text-decoration: none; text-transform: uppercase; }
+            .res-btn-p { background: var(--primary-blue); color: white; box-shadow: 0 5px 0 var(--primary-dark); }
+            .res-btn-o { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); box-shadow: 0 5px 0 var(--primary-blue); padding: 12px; }
+            .res-btn-m { background: #dce4ee; color: #5d7082; box-shadow: 0 5px 0 #b8c5d4; }
+            .res-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
         </style>
         <div class="res-inner">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:120px; width:auto; margin-bottom:15px; object-fit:contain;">
-            <h2 style="color: var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:120px; width:auto; margin-bottom:10px; object-fit:contain;">
+            <h2 style="color: var(--primary-blue); font-weight:900; font-size:1.7rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
             
             <div class="res-stats-final">
-                <div class="res-stat-card"><span class="res-stat-val">${acertos} / ${totalP}</span><span class="res-stat-lab">Acertos</span></div>
-                <div class="res-stat-card"><span class="res-stat-val">${tempoFinal}</span><span class="res-stat-lab">Tempo</span></div>
+                <div class="res-stat-card" style="background:white; border-radius:15px; padding:10px; flex:1; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid #f0f0f0;">
+                    <span style="display:block; font-size:22px; font-weight:900; color:var(--primary-blue);">${acertos} / ${totalP}</span>
+                    <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Acertos</span>
+                </div>
+                <div class="res-stat-card" style="background:white; border-radius:15px; padding:10px; flex:1; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid #f0f0f0;">
+                    <span style="display:block; font-size:22px; font-weight:900; color:var(--primary-blue);">${tempoFinal}</span>
+                    <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Tempo</span>
+                </div>
             </div>
 
             <div class="res-btn-group-final">
-                <button class="btn-res btn-res-primary" onclick="location.reload()">Jogar de Novo</button>
-                <button class="btn-res btn-res-outline" onclick="openRDMenu()">Outro Tema / Nível</button>
-                <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-res-muted">Escolher outro jogo</a>
+                <button class="res-btn res-btn-p" onclick="location.reload()">Jogar de Novo</button>
+                <button class="res-btn res-btn-o" onclick="openRDMenu()">Outro Tema / Nível</button>
+                <a href="${JOGO_CONFIG.linkVoltar}" class="res-btn res-btn-m">Escolher outro jogo</a>
             </div>
         </div>
     `;
