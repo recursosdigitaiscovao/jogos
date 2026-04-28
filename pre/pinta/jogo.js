@@ -20,14 +20,22 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// === INICIALIZAÇÃO ===
+// === 1. LÓGICA DE INICIALIZAÇÃO (Chamada pelo Index) ===
+
 window.startLogic = function() {
+    // Carrega os itens da categoria "niveis"
     perguntas = JOGO_CATEGORIAS.niveis.itens;
     criarAnimacaoTutorial();
 };
 
 window.gerarIntroJogo = function() {
-    return "Olha para o modelo e pinta a grelha com as mesmas cores!";
+    return "Olha para o modelo e pinta a grelha com as mesmas cores! Quando terminares, clica no V.";
+};
+
+// Esta função é chamada pelo menu lateral do teu Index
+window.selecionarCategoria = function(key) {
+    // Como este jogo é por níveis, mantemos a lista de níveis
+    indicePergunta = 0;
 };
 
 function criarAnimacaoTutorial() {
@@ -41,7 +49,7 @@ function criarAnimacaoTutorial() {
             <div style="font-size:24px; color:var(--primary-blue); animation: pulse 1s infinite;">➡️</div>
             <div style="width:80px; height:80px; background:white; border:3px solid var(--primary-blue); border-radius:10px; position:relative; display:flex; align-items:center; justify-content:center;">
                 <div style="width:30px; height:30px; background:#ff4d5e; border-radius:5px;"></div>
-                <div style="position:absolute; font-size:40px; bottom:-25px; right:-15px; animation: tapH 2s infinite;">☝️</div>
+                <div style="position:absolute; font-size:40px; bottom:-25px; right:-15px; animation: tapH 2s infinite; z-index:10;">☝️</div>
             </div>
         </div>
         <style>
@@ -51,9 +59,12 @@ function criarAnimacaoTutorial() {
     `;
 }
 
-// === LÓGICA DO JOGO ===
+// === 2. EXECUÇÃO DO JOGO ===
+
 window.initGame = function() {
-    indicePergunta = 0; acertos = 0; erros = 0;
+    indicePergunta = 0;
+    acertos = 0;
+    erros = 0;
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
     iniciarCronometro();
@@ -74,85 +85,87 @@ function iniciarCronometro() {
 function mostrarPergunta() {
     const container = document.getElementById('game-main-content');
     const nivel = perguntas[indicePergunta];
-    document.getElementById('round-val').innerText = `Nível ${nivel.nivel}`;
+    document.getElementById('round-val').innerText = `Nível ${nivel.nivel} / ${perguntas.length}`;
 
+    // Reset da grelha do utilizador
     grelhaUtilizador = new Array(nivel.padrao.length).fill(0);
 
     container.innerHTML = `
         <style>
-            .game-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-between; padding: 10px; box-sizing: border-box; }
+            .game-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-between; padding: 10px; box-sizing: border-box; overflow:hidden; }
             .grids-row { display: flex; width: 100%; flex: 1; align-items: center; justify-content: center; gap: 20px; min-height: 0; }
             
-            .model-img { height: 85%; aspect-ratio: 1/1; object-fit: contain; border: 4px solid #eee; border-radius: 15px; background: white; }
+            .model-box { height: 80%; aspect-ratio: 1/1; display:flex; align-items:center; justify-content:center; }
+            .model-img { max-height: 100%; max-width: 100%; border: 4px solid #eee; border-radius: 15px; background: white; object-fit: contain; }
             
             .grid-paint { 
                 display: grid; 
                 grid-template-columns: repeat(${nivel.tamanho}, 1fr); 
                 gap: 2px; background: #ccc; border: 4px solid #ccc; 
-                height: 85%; aspect-ratio: 1/1; 
+                height: 80%; aspect-ratio: 1/1; 
             }
             .cell { background: white; width: 100%; height: 100%; cursor: pointer; transition: 0.1s; }
-            .cell:active { filter: brightness(0.9); }
-
-            .palette { display: flex; gap: 12px; align-items: center; justify-content: center; padding: 15px; width: 100%; flex-shrink: 0; }
-            .tool { width: 55px; height: 55px; border-radius: 50%; cursor: pointer; border: 4px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: 0.2s; display: flex; align-items: center; justify-content: center; }
-            .tool.active { transform: scale(1.15); border-color: #555; }
             
-            .btn-v { width: 65px; height: 65px; border-radius: 50%; background: #2ecc71; color: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 28px; cursor: pointer; box-shadow: 0 5px 0 #27ae60; }
+            .palette { display: flex; gap: 10px; align-items: center; justify-content: center; padding: 10px; width: 100%; flex-shrink: 0; }
+            .tool { width: 50px; height: 50px; border-radius: 50%; cursor: pointer; border: 4px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+            .tool.active { transform: scale(1.15); border-color: #555; }
+            .tool img { width: 60%; pointer-events: none; }
+            
+            .btn-v { width: 60px; height: 60px; border-radius: 50%; background: #2ecc71; color: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 24px; cursor: pointer; box-shadow: 0 5px 0 #27ae60; margin-left: 10px; }
             .btn-v:active { transform: translateY(3px); box-shadow: none; }
 
             @media (max-width: 600px) {
                 .grids-row { gap: 10px; }
-                .tool { width: 45px; height: 45px; }
-                .btn-v { width: 55px; height: 55px; }
+                .tool { width: 40px; height: 40px; }
+                .btn-v { width: 50px; height: 50px; }
             }
         </style>
 
         <div class="game-wrapper">
             <div class="grids-row">
-                <!-- IMAGEM PNG DO NÍVEL -->
-                <img src="${JOGO_CONFIG.caminhoImg}${nivel.imgModelo}" class="model-img">
+                <div class="model-box">
+                    <img src="${JOGO_CONFIG.caminhoImg}${nivel.imgModelo}" class="model-img">
+                </div>
                 
-                <!-- GRELHA INTERATIVA -->
                 <div class="grid-paint" id="user-grid">
-                    ${grelhaUtilizador.map((c, i) => `<div class="cell" id="cell-${i}" onclick="pintar(${i})" style="background:white"></div>`).join('')}
+                    ${grelhaUtilizador.map((c, i) => `<div class="cell" id="cell-${i}" onclick="executarPintura(${i})" style="background:white"></div>`).join('')}
                 </div>
             </div>
 
             <div class="palette">
                 ${[1, 2, 3, 4].map(num => `
                     <div class="tool ${corSelecionada === num ? 'active' : ''}" 
-                         style="background:${CORES[num]}" onclick="setCor(this, ${num})"></div>
+                         style="background:${CORES[num]}" onclick="mudarFerramenta(this, ${num})"></div>
                 `).join('')}
                 
                 <div class="tool ${corSelecionada === 0 ? 'active' : ''}" 
-                     style="background:white;" onclick="setCor(this, 0)">
-                     <img src="${JOGO_CONFIG.caminhoImg}borracha.png" style="width:70%;">
+                     style="background:white;" onclick="mudarFerramenta(this, 0)">
+                     <img src="${JOGO_CONFIG.caminhoImg}borracha.png">
                 </div>
 
-                <div class="btn-v" onclick="checar()">V</div>
+                <div class="btn-v" onclick="validarResposta()">V</div>
             </div>
         </div>
     `;
 }
 
-function setCor(el, num) {
+window.mudarFerramenta = function(el, num) {
     corSelecionada = num;
     document.querySelectorAll('.tool').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
-}
+};
 
-function pintar(idx) {
+window.executarPintura = function(idx) {
     grelhaUtilizador[idx] = corSelecionada;
     document.getElementById(`cell-${idx}`).style.background = CORES[corSelecionada];
-}
+};
 
-function checar() {
+window.validarResposta = function() {
     const nivel = perguntas[indicePergunta];
     const userStr = grelhaUtilizador.join(',');
-    const targetStr = nivel.padrao.join(',');
+    const patternStr = nivel.padrao.join(',');
 
-    if (userStr === targetStr) {
+    if (userStr === patternStr) {
         acertos++;
         somAcerto.play();
         document.getElementById('hits-val').innerText = acertos;
@@ -168,9 +181,12 @@ function checar() {
         somErro.play();
         document.getElementById('miss-val').innerText = erros;
         document.getElementById('user-grid').style.borderColor = "#ff4d5e";
-        setTimeout(() => { document.getElementById('user-grid').style.borderColor = "#ccc"; }, 1000);
+        setTimeout(() => { 
+            if(document.getElementById('user-grid')) 
+                document.getElementById('user-grid').style.borderColor = "#ccc"; 
+        }, 1000);
     }
-}
+};
 
 function finalizarJogo() {
     clearInterval(intervaloTempo); somVitoria.play();
@@ -183,8 +199,9 @@ function finalizarJogo() {
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:15px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:120px; width:auto; margin-bottom:10px; object-fit:contain;">
-            <h2 style="color: var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; width:auto; margin-bottom:10px; object-fit:contain;">
+            <h2 style="color: var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
+            
             <div class="res-stats-container" style="display:flex; gap:10px; width:100%; max-width:300px; margin-bottom:20px;">
                 <div class="res-stat-card" style="background:white; border-radius:15px; padding:10px; flex:1; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid #f0f0f0;">
                     <span style="display:block; font-size:22px; font-weight:900; color:var(--primary-blue);">${acertos}</span>
@@ -195,9 +212,10 @@ function finalizarJogo() {
                     <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Tempo</span>
                 </div>
             </div>
+
             <div style="display:flex; flex-direction:column; gap:10px; width:100%; max-width:280px;">
                 <button class="res-btn res-btn-p" onclick="location.reload()" style="background:var(--primary-blue); color:white; border:none; padding:15px; border-radius:15px; font-weight:900; cursor:pointer; box-shadow:0 5px 0 var(--primary-dark);">Jogar de Novo</button>
-                <a href="${JOGO_CONFIG.linkVoltar}" class="res-btn res-btn-m" style="background:#dce4ee; color:#5d7082; border:none; padding:15px; border-radius:15px; font-weight:900; text-align:center; text-decoration:none; box-shadow:0 5px 0 #b8c5d4;">Sair</a>
+                <a href="${JOGO_CONFIG.linkVoltar}" style="background:#dce4ee; color:#5d7082; border:none; padding:15px; border-radius:15px; font-weight:900; text-align:center; text-decoration:none; box-shadow:0 5px 0 #b8c5d4;">Sair</a>
             </div>
         </div>
     `;
