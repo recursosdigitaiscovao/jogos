@@ -4,11 +4,12 @@ let acertos = 0;
 let erros = 0;
 let tempoInicio;
 let intervaloTempo;
-let categoriaAtual = "pintura";
-let corSelecionada = 1; // Padrão: Vermelho
-let grelhaUtilizador = [];
 
-// Cores exatas da paleta
+let tamanhoGrelha = 3; // Padrão inicial
+let padraoCorreto = [];
+let grelhaUtilizador = [];
+let corSelecionada = 1; // Padrão: Vermelho
+
 const CORES = {
     0: "#ffffff", // Branco (Borracha)
     1: "#ff4d5e", // Vermelho
@@ -23,17 +24,19 @@ const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
 // === 1. INICIALIZAÇÃO ===
 window.startLogic = function() {
-    selecionarCategoria("pintura");
+    if (!JOGO_CATEGORIAS[categoriaAtual]) {
+        selecionarCategoria(Object.keys(JOGO_CATEGORIAS)[0]);
+    }
     criarAnimacaoTutorial();
 };
 
 window.gerarIntroJogo = function() {
-    return "Olha para o modelo e pinta a grelha com as cores iguais! No fim, clica no V para verificar.";
+    return "Observa o modelo da esquerda e pinta a grelha da direita com as cores iguais!";
 };
 
 window.selecionarCategoria = function(key) {
     categoriaAtual = key;
-    perguntas = JOGO_CATEGORIAS[key].itens;
+    tamanhoGrelha = JOGO_CATEGORIAS[key].tamanho;
 };
 
 function criarAnimacaoTutorial() {
@@ -41,12 +44,12 @@ function criarAnimacaoTutorial() {
     if(!container) return;
     container.innerHTML = `
         <div style="display:flex; align-items:center; gap:20px; height:100%; justify-content:center;">
-            <div style="width:100px; height:100px; background:white; border:2px solid #ccc; display:grid; grid-template-columns:repeat(2,1fr);">
+            <div style="width:80px; height:80px; background:white; border:2px solid #ccc; display:grid; grid-template-columns:repeat(2,1fr);">
                 <div style="background:${CORES[1]}"></div><div style="background:${CORES[3]}"></div>
                 <div style="background:${CORES[2]}"></div><div style="background:${CORES[4]}"></div>
             </div>
             <div style="font-size:30px; color:var(--primary-blue); animation: pulse 1s infinite;">➡️</div>
-            <div style="width:100px; height:100px; background:white; border:3px solid var(--primary-blue); position:relative; display:grid; grid-template-columns:repeat(2,1fr);">
+            <div style="width:80px; height:80px; background:white; border:3px solid var(--primary-blue); position:relative; display:grid; grid-template-columns:repeat(2,1fr);">
                 <div style="background:white"></div><div style="background:white"></div>
                 <div style="background:white"></div><div style="background:white"></div>
                 <div style="position:absolute; font-size:45px; bottom:-30px; right:-20px; animation: tapH 2s infinite; z-index:10;">☝️</div>
@@ -61,11 +64,13 @@ function criarAnimacaoTutorial() {
 
 // === 2. LÓGICA DO JOGO ===
 window.initGame = function() {
-    indicePergunta = 0; acertos = 0; erros = 0;
+    indicePergunta = 0;
+    acertos = 0;
+    erros = 0;
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
     iniciarCronometro();
-    mostrarPergunta();
+    proximaRonda();
 };
 
 function iniciarCronometro() {
@@ -79,66 +84,59 @@ function iniciarCronometro() {
     }, 1000);
 }
 
+function proximaRonda() {
+    if (indicePergunta >= 10) {
+        finalizarJogo();
+        return;
+    }
+    
+    // Gerar novo padrão aleatório
+    padraoCorreto = [];
+    for (let i = 0; i < tamanhoGrelha * tamanhoGrelha; i++) {
+        padraoCorreto.push(Math.floor(Math.random() * 4) + 1); // Sorteia cores 1 a 4
+    }
+    
+    grelhaUtilizador = new Array(tamanhoGrelha * tamanhoGrelha).fill(0);
+    mostrarPergunta();
+}
+
 function mostrarPergunta() {
     const container = document.getElementById('game-main-content');
-    const nivel = perguntas[indicePergunta];
-    
-    // Atualiza a Ronda corretamente
-    document.getElementById('round-val').innerText = `${indicePergunta + 1} / ${perguntas.length}`;
-
-    grelhaUtilizador = new Array(nivel.padrao.length).fill(0);
+    document.getElementById('round-val').innerText = `${indicePergunta + 1} / 10`;
 
     container.innerHTML = `
         <style>
-            .game-inner { 
-                display: flex; flex-direction: column; width: 100%; height: 100%; 
-                align-items: center; justify-content: space-between; box-sizing: border-box; padding: 5px;
-            }
-            .stage-row { 
-                display: flex; width: 100%; flex: 1; min-height: 0; 
-                align-items: center; justify-content: center; gap: 20px; padding: 10px;
-            }
-            .img-model { 
-                height: 90%; max-width: 45%; aspect-ratio: 1/1; 
-                object-fit: contain; border: 3px solid #eee; border-radius: 15px; background: white; 
-            }
-            .grid-user { 
-                display: grid; grid-template-columns: repeat(${nivel.tamanho}, 1fr); 
-                height: 90%; aspect-ratio: 1/1; gap: 2px; 
-                background: #ddd; border: 4px solid #ddd; border-radius: 5px;
-            }
-            .cell { background: white; width: 100%; height: 100%; cursor: pointer; transition: 0.1s; }
-            .cell:active { filter: brightness(0.9); }
+            .game-inner { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-between; box-sizing: border-box; padding: 5px; overflow: hidden; }
+            .stage-row { display: flex; width: 100%; flex: 1; min-height: 0; align-items: center; justify-content: center; gap: 20px; padding: 10px; }
+            
+            .grid-container { height: 90%; aspect-ratio: 1/1; display: grid; grid-template-columns: repeat(${tamanhoGrelha}, 1fr); gap: 2px; background: #ddd; border: 4px solid #ddd; border-radius: 8px; }
+            .grid-model { border-color: #ccc; background: #ccc; }
+            
+            .cell { background: white; width: 100%; height: 100%; }
+            .cell-paint { cursor: pointer; transition: 0.1s; }
+            .cell-paint:active { filter: brightness(0.9); }
 
-            .palette-bar { 
-                display: flex; align-items: center; justify-content: center; gap: 12px; 
-                width: 100%; height: 80px; flex-shrink: 0; padding-bottom: 5px;
-            }
-            .color-btn { 
-                width: 55px; height: 55px; border-radius: 50%; cursor: pointer; 
-                border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s;
-            }
+            .palette-bar { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; height: 80px; flex-shrink: 0; padding-bottom: 5px; }
+            .color-btn { width: 55px; height: 55px; border-radius: 50%; cursor: pointer; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s; }
             .color-btn.active { transform: scale(1.15); border-color: #555; }
-            .btn-verify { 
-                width: 60px; height: 60px; border-radius: 50%; background: #2ecc71; 
-                color: white; display: flex; align-items: center; justify-content: center; 
-                font-weight: 900; font-size: 26px; cursor: pointer; box-shadow: 0 5px 0 #27ae60; 
-            }
-            .btn-verify:active { transform: translateY(3px); box-shadow: none; }
-
-            /* AJUSTE MOBILE VERTICAL */
+            .btn-verify { width: 60px; height: 60px; border-radius: 50%; background: #2ecc71; color: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 26px; cursor: pointer; box-shadow: 0 5px 0 #27ae60; }
+            
             @media (max-width: 600px) {
                 .stage-row { flex-direction: column; gap: 10px; }
-                .img-model, .grid-user { height: 45%; max-width: 90%; }
+                .grid-container { height: 45%; }
                 .color-btn { width: 42px; height: 42px; }
                 .btn-verify { width: 50px; height: 50px; }
             }
         </style>
         <div class="game-inner">
             <div class="stage-row">
-                <img src="${JOGO_CONFIG.caminhoImg}${nivel.imgModelo}" class="img-model">
-                <div class="grid-user" id="user-grid">
-                    ${grelhaUtilizador.map((c, i) => `<div class="cell" id="c-${i}" onclick="pintar(${i})"></div>`).join('')}
+                <!-- GRELHA MODELO (GERADA) -->
+                <div class="grid-container grid-model">
+                    ${padraoCorreto.map(c => `<div class="cell" style="background:${CORES[c]}"></div>`).join('')}
+                </div>
+                <!-- GRELHA UTILIZADOR -->
+                <div class="grid-container" id="user-grid">
+                    ${grelhaUtilizador.map((c, i) => `<div class="cell cell-paint" id="c-${i}" onclick="pintar(${i})"></div>`).join('')}
                 </div>
             </div>
             <div class="palette-bar">
@@ -164,8 +162,7 @@ window.pintar = function(i) {
 };
 
 window.validar = function() {
-    const nivel = perguntas[indicePergunta];
-    const correto = grelhaUtilizador.every((v, i) => v === nivel.padrao[i]);
+    const correto = grelhaUtilizador.every((v, i) => v === padraoCorreto[i]);
 
     if (correto) {
         acertos++; somAcerto.play();
@@ -173,8 +170,7 @@ window.validar = function() {
         document.getElementById('user-grid').style.borderColor = "#2ecc71";
         setTimeout(() => {
             indicePergunta++;
-            if (indicePergunta < perguntas.length) mostrarPergunta();
-            else finalizarJogo();
+            proximaRonda();
         }, 1200);
     } else {
         erros++; somErro.play();
@@ -186,8 +182,7 @@ window.validar = function() {
 
 function finalizarJogo() {
     clearInterval(intervaloTempo); somVitoria.play();
-    const total = perguntas.length;
-    const perc = (acertos / total) * 100;
+    const perc = (acertos / 10) * 100;
     const rel = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
     const tempo = document.getElementById('timer-val').innerText;
     const resScreen = document.getElementById('scr-result');
@@ -199,8 +194,8 @@ function finalizarJogo() {
             <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats-container" style="display:flex; gap:10px; width:100%; max-width:300px; margin-bottom:20px;">
                 <div class="res-stat-card" style="background:white; border-radius:15px; padding:10px; flex:1; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid #f0f0f0;">
-                    <span style="display:block; font-size:22px; font-weight:900; color:var(--primary-blue);">${acertos}</span>
-                    <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Rondas</span>
+                    <span style="display:block; font-size:22px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span>
+                    <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Acertos</span>
                 </div>
                 <div class="res-stat-card" style="background:white; border-radius:15px; padding:10px; flex:1; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid #f0f0f0;">
                     <span style="display:block; font-size:22px; font-weight:900; color:var(--primary-blue);">${tempo}</span>
