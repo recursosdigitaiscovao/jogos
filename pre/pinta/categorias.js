@@ -1,39 +1,18 @@
-// === DEFINIÇÃO DOS NÍVEIS (ITENS) ===
+// === DEFINIÇÃO DAS CATEGORIAS (TAMANHOS DE GRELHA) ===
 const JOGO_CATEGORIAS = {
-    "pintura": {
-        nome: "Pinta Igual",
-        imgCapa: "nivel1.png",
-        itens: [
-            { 
-                tamanho: 3, 
-                imgModelo: "nivel1.png",
-                padrao: [
-                    4, 3, 4,
-                    3, 2, 1,
-                    1, 1, 1
-                ]
-            },
-            { 
-                tamanho: 4, 
-                imgModelo: "nivel2.png",
-                padrao: [
-                    0, 3, 3, 0,
-                    3, 3, 3, 3,
-                    0, 3, 3, 0,
-                    0, 3, 3, 0
-                ]
-            },
-            { 
-                tamanho: 5, 
-                imgModelo: "nivel3.png",
-                padrao: [
-                    0, 0, 2, 0, 0,
-                    0, 2, 4, 2, 0,
-                    2, 4, 4, 4, 2,
-                    0, 2, 4, 2, 0,
-                    0, 0, 2, 0, 0
-                ]
-            }
-        ]
+    "facil": {
+        nome: "Grelha 3x3",
+        imgCapa: "nivel1.png", // Podes usar um ícone genérico
+        tamanho: 3
+    },
+    "medio": {
+        nome: "Grelha 4x4",
+        imgCapa: "nivel2.png",
+        tamanho: 4
+    },
+    "dificil": {
+        nome: "Grelha 5x5",
+        imgCapa: "nivel3.png",
+        tamanho: 5
     }
 };
