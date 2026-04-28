@@ -1,4 +1,3 @@
-let perguntas = [];
 let indicePergunta = 0;
 let acertos = 0;
 let erros = 0;
@@ -8,31 +7,31 @@ let intervaloTempo;
 let tamanhoGrelha = 3; 
 let padraoCorreto = [];
 let grelhaUtilizador = [];
-let corSelecionada = 1; 
+let corSelecionada = ""; // Cor hexadecimal ativa
 
-// Paleta base (o jogo escolherá cores daqui para o desenho)
-const CORES_PALETA = ["#ff4d5e", "#2ecc71", "#2196f3", "#ff9800", "#9c27b0", "#e91e63", "#3f51b5"];
-let coresDaRonda = [];
+// Master Palette: Cores vivas para o jogo escolher
+const PALETA_MESTRE = ["#ff4d5e", "#2ecc71", "#2196f3", "#ff9800", "#9c27b0", "#e91e63", "#3f51b5", "#00bcd4", "#8bc34a"];
+let coresAtivasNaRonda = [];
 
-// Biblioteca de Formas (0 = vazio, 1 = pintado)
-const BIBLIOTECA_FORMAS = {
+// Biblioteca de Desenhos Multi-cor (0=Vazio, 1=Parte A, 2=Parte B, 3=Parte C)
+const DESENHOS = {
     3: [
-        [0,1,0, 1,1,1, 0,1,0], // Cruz
-        [1,1,1, 1,0,0, 1,1,1], // Letra S / Cobra
-        [1,0,1, 1,1,1, 1,0,1], // Letra H
-        [1,1,1, 0,1,0, 0,1,0]  // Letra T
+        [0,1,0, 1,2,1, 0,1,0], // Flor (Pétalas e Centro)
+        [1,1,1, 0,2,0, 0,2,0], // Cogumelo (Topo e Caule)
+        [1,0,1, 1,2,1, 1,0,1], // Robô simples
+        [0,1,0, 2,2,2, 0,1,0]  // Avião simples
     ],
     4: [
-        [0,1,1,0, 1,1,1,1, 1,1,1,1, 0,0,0,0], // Chapéu (como na imagem)
-        [0,0,1,0, 0,1,1,0, 0,0,1,0, 0,0,1,0], // Número 1 (como na imagem)
-        [1,0,0,1, 1,1,1,1, 1,1,1,1, 1,0,0,1], // Carro simples
-        [0,1,1,0, 1,0,0,1, 1,0,0,1, 0,1,1,0]  // Círculo/O
+        [0,1,1,0, 1,1,1,1, 2,2,2,2, 0,0,0,0], // Chapéu (Topo cor 1, Aba cor 2)
+        [0,0,1,0, 0,1,1,0, 0,0,2,0, 0,0,2,0], // Número 1 (Corpo 1, Base 2)
+        [0,1,1,0, 1,2,2,1, 1,2,2,1, 0,1,1,0], // Moldura/Janela
+        [0,1,1,0, 2,2,2,2, 3,3,3,3, 0,1,1,0]  // Barco (Vela, Casco, Mar)
     ],
     5: [
-        [0,1,0,1,0, 1,1,1,1,1, 1,1,1,1,1, 0,1,1,1,0, 0,0,1,0,0], // Coração
-        [0,0,1,0,0, 0,1,1,1,0, 1,1,1,1,1, 0,0,1,0,0, 0,0,1,0,0], // Árvore/Seta
-        [0,0,1,0,0, 0,1,1,1,0, 1,1,1,1,1, 1,1,1,1,1, 1,0,0,0,1], // Casa
-        [1,1,1,1,1, 1,0,0,0,1, 1,0,0,0,1, 1,0,0,0,1, 1,1,1,1,1]  // Moldura
+        [0,1,1,1,0, 1,1,1,1,1, 1,1,1,1,1, 0,2,2,2,0, 0,0,2,0,0], // Coração com "seta" ou base
+        [0,0,1,0,0, 0,1,1,1,0, 2,2,2,2,2, 0,0,3,0,0, 0,0,3,0,0], // Árvore (Folhas1, Folhas2, Tronco)
+        [0,0,1,0,0, 0,1,2,1,0, 1,2,2,2,1, 3,3,3,3,3, 0,3,3,3,0], // Casa (Telhado, Parede, Porta, Base)
+        [1,1,0,1,1, 1,1,0,1,1, 0,0,2,0,0, 3,3,3,3,3, 0,3,3,3,0]  // Gato/Face
     ]
 };
 
@@ -41,12 +40,12 @@ const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
 window.startLogic = function() {
-    if (!JOGO_CATEGORIAS[categoriaAtual]) selecionarCategoria("facil");
+    if (!categoriaAtual) selecionarCategoria("facil");
     criarAnimacaoTutorial();
 };
 
 window.gerarIntroJogo = function() {
-    return "Pinta a grelha da direita exatamente igual ao modelo da esquerda!";
+    return "Pinta o desenho da direita com as mesmas cores do modelo da esquerda!";
 };
 
 window.selecionarCategoria = function(key) {
@@ -58,16 +57,16 @@ function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if(!container) return;
     container.innerHTML = `
-        <div style="display:flex; align-items:center; gap:20px; justify-content:center;">
-            <div style="width:80px; height:80px; background:#eee; display:grid; grid-template-columns:repeat(2,1fr); gap:2px;">
-                <div style="background:#2196f3"></div><div style="background:white"></div>
-                <div style="background:white"></div><div style="background:#2196f3"></div>
+        <div style="display:flex; align-items:center; gap:20px; justify-content:center; height:100%;">
+            <div style="width:90px; height:90px; display:grid; grid-template-columns:repeat(2,1fr); gap:2px; border:2px solid #ccc; background:#eee;">
+                <div style="background:#ff4d5e"></div><div style="background:#2196f3"></div>
+                <div style="background:#2196f3"></div><div style="background:#ff4d5e"></div>
             </div>
             <div style="font-size:30px; color:var(--primary-blue); animation: bounce 1s infinite;">➡️</div>
-            <div style="width:80px; height:80px; background:white; border:2px solid var(--primary-blue); position:relative; display:grid; grid-template-columns:repeat(2,1fr); gap:2px;">
-                <div style="background:#2196f3"></div><div style="background:white"></div>
+            <div style="width:90px; height:90px; background:white; border:3px solid var(--primary-blue); position:relative; display:grid; grid-template-columns:repeat(2,1fr); gap:2px;">
+                <div style="background:#ff4d5e"></div><div style="background:white"></div>
                 <div style="background:white"></div><div style="background:white"></div>
-                <div style="position:absolute; font-size:40px; bottom:-25px; right:-20px; animation: tapH 2s infinite;">☝️</div>
+                <div style="position:absolute; font-size:45px; bottom:-30px; right:-20px; animation: tapH 2s infinite; z-index:10;">☝️</div>
             </div>
         </div>
         <style>
@@ -98,16 +97,25 @@ function iniciarCronometro() {
 
 function proximaRonda() {
     if (indicePergunta >= 10) { finalizarJogo(); return; }
+
+    // 1. Escolher um desenho da biblioteca
+    const lista = DESENHOS[tamanhoGrelha];
+    const desenhoBase = lista[Math.floor(Math.random() * lista.length)];
+
+    // 2. Definir quantas cores este desenho usa (excluindo o 0)
+    const numPartes = Math.max(...desenhoBase);
     
-    // 1. Escolher cor aleatória para esta ronda
-    let corRonda = CORES_PALETA[Math.floor(Math.random() * CORES_PALETA.length)];
-    coresDaRonda = ["#ffffff", corRonda]; // 0: branco, 1: cor do desenho
+    // 3. Sortear cores únicas da paleta mestre para as partes
+    let coresSorteadas = [...PALETA_MESTRE].sort(() => 0.5 - Math.random()).slice(0, numPartes);
     
-    // 2. Escolher forma aleatória da biblioteca
-    const formasDisponiveis = BIBLIOTECA_FORMAS[tamanhoGrelha];
-    padraoCorreto = formasDisponiveis[Math.floor(Math.random() * formasDisponiveis.length)];
+    // 4. Mapear o padrão correto com as cores hexadecimais
+    coresAtivasNaRonda = coresSorteadas; 
+    padraoCorreto = desenhoBase.map(v => v === 0 ? "#ffffff" : coresSorteadas[v-1]);
     
-    grelhaUtilizador = new Array(tamanhoGrelha * tamanhoGrelha).fill(0);
+    // 5. Resetar grelha do utilizador e cor selecionada
+    grelhaUtilizador = new Array(tamanhoGrelha * tamanhoGrelha).fill("#ffffff");
+    corSelecionada = coresAtivasNaRonda[0]; 
+
     mostrarPergunta();
 }
 
@@ -117,41 +125,48 @@ function mostrarPergunta() {
 
     container.innerHTML = `
         <style>
-            .game-inner { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-between; padding: 5px; box-sizing: border-box; }
+            .game-inner { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-between; padding: 5px; box-sizing: border-box; overflow: hidden; }
             .stage { display: flex; width: 100%; flex: 1; align-items: center; justify-content: center; gap: 30px; padding: 10px; min-height: 0; }
             
-            .grid-box { height: 95%; aspect-ratio: 1/1; display: grid; grid-template-columns: repeat(${tamanhoGrelha}, 1fr); gap: 2px; background: #ddd; border: 4px solid #ddd; border-radius: 10px; }
-            .cell { background: white; width: 100%; height: 100%; transition: background 0.2s; }
+            .grid-box { height: 95%; aspect-ratio: 1/1; display: grid; grid-template-columns: repeat(${tamanhoGrelha}, 1fr); gap: 2px; background: #ddd; border: 4px solid #ddd; border-radius: 10px; overflow: hidden; }
+            .cell { background: white; width: 100%; height: 100%; transition: background 0.1s; }
             .cell-paint { cursor: pointer; }
 
-            .controls { display: flex; align-items: center; justify-content: center; gap: 20px; width: 100%; height: 90px; flex-shrink: 0; padding-bottom: 10px; }
-            .color-sel { width: 60px; height: 60px; border-radius: 50%; background: ${coresDaRonda[1]}; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); cursor: pointer; }
-            .btn-action { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; box-shadow: 0 5px 0 rgba(0,0,0,0.1); transition: 0.1s; }
+            .controls { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 80px; flex-wrap: wrap; padding: 5px 0 10px; }
+            .color-btn { width: 50px; height: 50px; border-radius: 50%; border: 4px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s; }
+            .color-btn.active { transform: scale(1.2); border-color: #555; }
+            
+            .btn-action { width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; box-shadow: 0 4px 0 rgba(0,0,0,0.1); transition: 0.1s; }
             .btn-clear { background: #eee; }
-            .btn-verify { background: #2ecc71; color: white; font-weight: 900; font-size: 28px; box-shadow: 0 5px 0 #27ae60; }
-            .btn-action:active { transform: translateY(3px); box-shadow: none; }
+            .btn-verify { background: #2ecc71; color: white; font-weight: 900; font-size: 24px; box-shadow: 0 4px 0 #27ae60; }
+            .btn-action:active { transform: translateY(2px); box-shadow: none; }
 
             @media (max-width: 600px) {
                 .stage { flex-direction: column; gap: 10px; }
-                .grid-box { height: 45%; }
-                .color-sel, .btn-action { width: 50px; height: 50px; }
+                .grid-box { height: 46%; }
+                .color-btn, .btn-action { width: 42px; height: 42px; }
             }
         </style>
         <div class="game-inner">
             <div class="stage">
                 <!-- MODELO -->
                 <div class="grid-box">
-                    ${padraoCorreto.map(c => `<div class="cell" style="background:${coresDaRonda[c]}"></div>`).join('')}
+                    ${padraoCorreto.map(cor => `<div class="cell" style="background:${cor}"></div>`).join('')}
                 </div>
                 <!-- TELA DO JOGADOR -->
                 <div class="grid-box" id="user-grid">
-                    ${grelhaUtilizador.map((c, i) => `<div class="cell cell-paint" id="c-${i}" onclick="pintar(${i})" style="background:white"></div>`).join('')}
+                    ${grelhaUtilizador.map((cor, i) => `<div class="cell cell-paint" id="c-${i}" onclick="pintar(${i})" style="background:${cor}"></div>`).join('')}
                 </div>
             </div>
             <div class="controls">
-                <!-- Mostra a cor atual -->
-                <div class="color-sel" title="Cor Ativa"></div>
+                <!-- Paleta dinâmica com as cores do desenho -->
+                ${coresAtivasNaRonda.map(cor => `
+                    <div class="color-btn ${corSelecionada === cor ? 'active' : ''}" 
+                         style="background:${cor}" onclick="selecionarCor(this, '${cor}')"></div>
+                `).join('')}
                 
+                <div style="width: 2px; height: 40px; background: #eee; margin: 0 5px;"></div>
+
                 <!-- Borracha Limpa Tudo -->
                 <button class="btn-action btn-clear" onclick="limparTudo()" title="Limpar Tudo">
                     <img src="${JOGO_CONFIG.caminhoImg}borracha.png" style="width:60%;">
@@ -164,19 +179,25 @@ function mostrarPergunta() {
     `;
 }
 
+window.selecionarCor = function(el, cor) {
+    corSelecionada = cor;
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+};
+
 window.pintar = function(i) {
-    grelhaUtilizador[i] = 1; // Pinta com a cor da ronda
-    document.getElementById(`c-${i}`).style.background = coresDaRonda[1];
+    if (!corSelecionada) return;
+    grelhaUtilizador[i] = corSelecionada;
+    document.getElementById(`c-${i}`).style.background = corSelecionada;
 };
 
 window.limparTudo = function() {
-    grelhaUtilizador = new Array(tamanhoGrelha * tamanhoGrelha).fill(0);
-    const cells = document.querySelectorAll('.cell-paint');
-    cells.forEach(cell => cell.style.background = "white");
+    grelhaUtilizador = new Array(tamanhoGrelha * tamanhoGrelha).fill("#ffffff");
+    document.querySelectorAll('.cell-paint').forEach(cell => cell.style.background = "white");
 };
 
 window.validar = function() {
-    const correto = grelhaUtilizador.every((v, i) => v === padraoCorreto[i]);
+    const correto = grelhaUtilizador.every((v, i) => v.toLowerCase() === padraoCorreto[i].toLowerCase());
 
     if (correto) {
         acertos++; somAcerto.play();
@@ -198,7 +219,8 @@ window.validar = function() {
 
 function finalizarJogo() {
     clearInterval(intervaloTempo); somVitoria.play();
-    const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
+    const perc = (acertos / 10) * 100;
+    const rel = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
     const tempo = document.getElementById('timer-val').innerText;
     const resScreen = document.getElementById('scr-result');
 
