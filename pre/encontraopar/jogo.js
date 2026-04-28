@@ -17,30 +17,29 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Olha para o desenho em destaque e encontra o seu par igual nas opções em baixo!";
+    return "Encontra o desenho igual ao que está em destaque!";
 };
 
 function selecionarCategoria(key) {
     categoriaAtual = key;
     const cat = JOGO_CATEGORIAS[key];
-    // Baralha e escolhe 10 para a ronda
     perguntas = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
 }
 
 function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if(!container) return;
-    const itemTut = JOGO_CATEGORIAS.animais.itens[1]; // Águia ou similar
+    const itemTut = JOGO_CATEGORIAS.animais.itens[0];
     container.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:15px;">
-            <div style="height:90px; width:90px; background:white; border:3px solid var(--primary-blue); border-radius:20px; display:flex; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
-                <img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:65px; width:auto; object-fit:contain;">
+            <div style="height:80px; width:80px; background:white; border:3px solid var(--primary-blue); border-radius:15px; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 20px rgba(0,0,0,0.05);">
+                <img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:70%; width:auto; object-fit:contain;">
             </div>
             <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px;">
                 ${[1,2,3,4,5,6,7,8].map(i => `
-                    <div style="width:35px; height:35px; background:white; border:1px solid ${i===6 ? 'var(--primary-blue)' : '#eee'}; border-radius:8px; display:flex; align-items:center; justify-content:center; position:relative;">
-                        ${i === 6 ? `<img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="width:70%;">` : ''}
-                        ${i === 6 ? `<div style="position:absolute; font-size:35px; bottom:-25px; right:-15px; animation: tapP 2s infinite; z-index:10;">☝️</div>` : ''}
+                    <div style="width:35px; height:35px; background:white; border:1px solid ${i===3 ? 'var(--primary-blue)' : '#eee'}; border-radius:8px; display:flex; align-items:center; justify-content:center; position:relative;">
+                        ${i === 3 ? `<img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="width:70%;">` : ''}
+                        ${i === 3 ? `<div style="position:absolute; font-size:35px; bottom:-25px; right:-15px; animation: tapP 2s infinite; z-index:10;">☝️</div>` : ''}
                     </div>
                 `).join('')}
             </div>
@@ -74,78 +73,80 @@ function mostrarPergunta() {
     const alvo = perguntas[indicePergunta];
     document.getElementById('round-val').innerText = `${indicePergunta + 1} / ${perguntas.length}`;
 
-    // Gerar 8 opções: 1 alvo + 7 distratores da mesma categoria
-    let outras = JOGO_CATEGORIAS[categoriaAtual].itens
-        .filter(i => i.img !== alvo.img)
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 7);
-    
-    let opcoes = [alvo, ...outras].sort(() => Math.random() - 0.5);
+    // 1 certo + 7 errados (total 8)
+    let erradas = JOGO_CATEGORIAS[categoriaAtual].itens.filter(i => i.img !== alvo.img).sort(() => Math.random() - 0.5).slice(0, 7);
+    let opcoes = [alvo, ...erradas].sort(() => Math.random() - 0.5);
 
     container.innerHTML = `
         <style>
             .game-wrapper { 
                 display: flex; flex-direction: column; 
                 width: 100%; height: 100%; 
-                align-items: center; 
-                padding: 20px 10px;
-                box-sizing: border-box; overflow: hidden;
+                align-items: center; justify-content: space-between;
+                padding: 10px; box-sizing: border-box; overflow: hidden;
             }
-            /* ÁREA DO ALVO (DESTAQUE) */
-            .target-area { 
+            /* ALVO: Ocupa exatamente 35% da altura disponível */
+            .target-zone {
                 height: 35%; width: 100%;
-                display: flex; align-items: center; justify-content: center; 
-                margin-bottom: 20px;
+                display: flex; align-items: center; justify-content: center;
+                flex-shrink: 0;
             }
             .target-card {
-                height: 100%; aspect-ratio: 1/1;
-                background: white; border: 5px solid var(--primary-blue);
-                border-radius: 30px; display: flex; align-items: center; justify-content: center;
-                box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+                height: 90%; aspect-ratio: 1/1;
+                background: white; border: 4px solid var(--primary-blue);
+                border-radius: 20px; display: flex; align-items: center; justify-content: center;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.05);
             }
             .target-card img { height: 75%; width: auto; object-fit: contain; }
 
-            /* GRELHA DE 8 OPÇÕES */
-            .options-grid { 
+            /* GRELHA: Ocupa os restantes 60-65% da altura */
+            .options-grid {
+                flex: 1; width: 100%;
                 display: grid; 
-                grid-template-columns: repeat(4, 1fr); /* 4 colunas no PC */
-                gap: 12px; width: 100%; max-width: 800px;
-                flex: 1; min-height: 0;
+                grid-template-columns: repeat(4, 1fr); /* 4 colunas para caber 8 opções (4x2) */
+                grid-template-rows: repeat(2, 1fr);
+                gap: 10px;
+                min-height: 0; /* Essencial para o flex não transbordar */
+                padding: 5px;
             }
-            .item-card { 
-                background: white; border: 3px solid #eee; border-radius: 15px; 
-                display: flex; align-items: center; justify-content: center; 
-                cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #ddd; 
-                padding: 10px; box-sizing: border-box;
+            .card-item {
+                background: white; border: 3px solid #eee; border-radius: 15px;
+                height: 100%; width: 100%;
+                display: flex; align-items: center; justify-content: center;
+                cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 #ddd;
+                padding: 8px; box-sizing: border-box;
+                overflow: hidden;
             }
-            .item-card img { height: 85%; width: auto; max-width: 95%; object-fit: contain; }
-            .item-card:hover { border-color: var(--primary-blue); transform: translateY(-2px); }
-            
-            .correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 5px 0 #5ea31a !important; }
-            .wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 5px 0 #d13d3d !important; }
-            
-            /* AJUSTE MOBILE VERTICAL (2 Colunas x 4 Linhas para caber melhor) */
+            .card-item img { height: 80%; width: auto; max-width: 90%; object-fit: contain; }
+            .is-correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 4px 0 #5ea31a !important; }
+            .is-wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 4px 0 #d13d3d !important; }
+
+            /* AJUSTE PARA TELEMÓVEL VERTICAL (Grelha 2x4 para botões maiores) */
             @media (max-width: 500px) {
-                .options-grid { grid-template-columns: repeat(3, 1fr); } /* 3 colunas em mobile */
-                .target-area { height: 30%; }
-                .item-card { padding: 8px; }
+                .options-grid { 
+                    grid-template-columns: repeat(2, 1fr); 
+                    grid-template-rows: repeat(4, 1fr);
+                    gap: 8px;
+                }
+                .target-zone { height: 30%; }
             }
 
+            /* AJUSTE LANDSCAPE EXTREMO */
             @media (orientation: landscape) and (max-height: 500px) {
-                .game-wrapper { flex-direction: row; padding: 15px; gap: 20px; }
-                .target-area { height: 100%; width: 40%; margin-bottom: 0; }
-                .options-grid { grid-template-columns: repeat(4, 1fr); height: 100%; width: 60%; }
+                .game-wrapper { flex-direction: row; padding: 10px; gap: 15px; }
+                .target-zone { height: 100%; width: 35%; flex: none; }
+                .options-grid { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); height: 100%; flex: 1; }
             }
         </style>
         <div class="game-wrapper">
-            <div class="target-area">
+            <div class="target-zone">
                 <div class="target-card">
                     <img src="${JOGO_CONFIG.caminhoImg}${alvo.img}">
                 </div>
             </div>
             <div class="options-grid">
                 ${opcoes.map(opt => `
-                    <div class="item-card" onclick="verificarClique(this, ${opt.img === alvo.img})">
+                    <div class="card-item" onclick="verificar(this, ${opt.img === alvo.img})">
                         <img src="${JOGO_CONFIG.caminhoImg}${opt.img}">
                     </div>
                 `).join('')}
@@ -154,13 +155,13 @@ function mostrarPergunta() {
     `;
 }
 
-function verificarClique(el, acerto) {
-    document.querySelectorAll('.item-card').forEach(c => c.style.pointerEvents = 'none');
+function verificar(el, acerto) {
+    document.querySelectorAll('.card-item').forEach(c => c.style.pointerEvents = 'none');
     if (acerto) {
-        acertos++; somAcerto.play(); el.classList.add('correct');
+        acertos++; somAcerto.play(); el.classList.add('is-correct');
         document.getElementById('hits-val').innerText = acertos;
     } else {
-        erros++; somErro.play(); el.classList.add('wrong');
+        erros++; somErro.play(); el.classList.add('is-wrong');
         document.getElementById('miss-val').innerText = erros;
     }
     setTimeout(() => {
@@ -182,21 +183,11 @@ function finalizarJogo() {
     resScreen.className = "screen screen-box active"; 
 
     resScreen.innerHTML = `
-        <style>
-            .res-inner { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; box-sizing: border-box; }
-            .res-btn-group-final { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 280px; }
-            .res-stats-final { display: flex; gap: 12px; width: 100%; max-width: 280px; margin: 15px 0 20px; }
-            .res-btn { padding: 15px; border-radius: 18px; font-weight: 900; font-size: 15px; cursor: pointer; border: none; text-align: center; text-decoration: none; text-transform: uppercase; }
-            .res-btn-p { background: var(--primary-blue); color: white; box-shadow: 0 5px 0 var(--primary-dark); }
-            .res-btn-o { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); box-shadow: 0 5px 0 var(--primary-blue); padding: 12px; }
-            .res-btn-m { background: #dce4ee; color: #5d7082; box-shadow: 0 5px 0 #b8c5d4; }
-            .res-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
-        </style>
-        <div class="res-inner">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:120px; width:auto; margin-bottom:10px; object-fit:contain;">
-            <h2 style="color: var(--primary-blue); font-weight:900; font-size:1.7rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:15px; box-sizing:border-box;">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:110px; width:auto; margin-bottom:10px; object-fit:contain;">
+            <h2 style="color: var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
             
-            <div class="res-stats-final">
+            <div class="res-stats-container" style="display:flex; gap:10px; width:100%; max-width:300px; margin-bottom:20px;">
                 <div class="res-stat-card" style="background:white; border-radius:15px; padding:10px; flex:1; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid #f0f0f0;">
                     <span style="display:block; font-size:22px; font-weight:900; color:var(--primary-blue);">${acertos} / ${totalP}</span>
                     <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Acertos</span>
@@ -207,10 +198,10 @@ function finalizarJogo() {
                 </div>
             </div>
 
-            <div class="res-btn-group-final">
-                <button class="res-btn res-btn-p" onclick="location.reload()">Jogar de Novo</button>
-                <button class="res-btn res-btn-o" onclick="openRDMenu()">Outro Tema / Nível</button>
-                <a href="${JOGO_CONFIG.linkVoltar}" class="res-btn res-btn-m">Escolher outro jogo</a>
+            <div class="res-btn-group" style="display:flex; flex-direction:column; gap:10px; width:100%; max-width:280px;">
+                <button class="btn-res btn-res-primary" style="padding:15px; border-radius:15px; font-weight:900; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 5px 0 var(--primary-dark);" onclick="location.reload()">Jogar de Novo</button>
+                <button class="btn-res btn-res-outline" style="padding:12px; border-radius:15px; font-weight:900; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer; box-shadow:0 5px 0 var(--primary-blue);" onclick="openRDMenu()">Outro Tema / Nível</button>
+                <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-res-muted" style="padding:15px; border-radius:15px; font-weight:900; background:#dce4ee; color:#5d7082; border:none; text-align:center; text-decoration:none; box-shadow:0 5px 0 #b8c5d4;">Sair</a>
             </div>
         </div>
     `;
