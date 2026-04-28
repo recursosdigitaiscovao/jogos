@@ -1,6 +1,6 @@
-// === DEFINIÇÃO DOS NÍVEIS (PADRÕES DAS IMAGENS PNG) ===
+// === DEFINIÇÃO DOS NÍVEIS (GABARITO DAS IMAGENS PNG) ===
 const JOGO_CATEGORIAS = {
-    niveis: {
+    "niveis": {
         nome: "Pinta Igual",
         imgCapa: "nivel1.png",
         itens: [
@@ -8,7 +8,7 @@ const JOGO_CATEGORIAS = {
                 nivel: 1, 
                 tamanho: 3, 
                 imgModelo: "nivel1.png",
-                // Representação exata das cores da imagem nivel1.png
+                // Representação das cores da imagem nivel1.png
                 padrao: [
                     4, 3, 4,
                     3, 2, 1,
