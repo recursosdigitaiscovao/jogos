@@ -132,28 +132,31 @@ function finalizarJogo() {
     const tempoFinal = document.getElementById('timer-val').innerText;
     const resScreen = document.getElementById('scr-result');
 
+    // MUDANÇA: O scr-result agora usa a classe screen-box nativa do index
+    resScreen.className = "screen screen-box active"; 
+
     resScreen.innerHTML = `
-        <div class="screen-box" style="border:none; background:transparent;">
-            <img src="${JOGO_CONFIG.caminhoImg}${rel.img}" style="width:140px; margin-bottom:10px;">
-            <h2 style="color: var(--primary-blue); font-weight:900; font-size:28px; margin-bottom:20px; text-align:center;">${rel.titulo}</h2>
-            <div class="res-stats-container">
-                <div class="res-stat-card">
-                    <span class="res-stat-val">${acertos} / ${totalP}</span>
-                    <span class="res-stat-lab">Acertos</span>
-                </div>
-                <div class="res-stat-card">
-                    <span class="res-stat-val">${tempoFinal}</span>
-                    <span class="res-stat-lab">Tempo</span>
-                </div>
+        <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="width:140px; margin-bottom:10px;">
+        <h2 style="color: var(--primary-blue); font-weight:900; font-size:28px; margin-bottom:20px; text-align:center;">${rel.titulo}</h2>
+        
+        <div class="res-stats-container">
+            <div class="res-stat-card">
+                <span class="res-stat-val">${acertos} / ${totalP}</span>
+                <span class="res-stat-lab">Acertos</span>
             </div>
-            <div class="res-btn-group">
-                <button class="btn-res btn-res-primary" onclick="location.reload()">Jogar de Novo</button>
-                <button class="btn-res btn-res-outline" onclick="openRDMenu()">Outro Tema / Nível</button>
-                <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-res-muted">Escolher outro jogo</a>
+            <div class="res-stat-card">
+                <span class="res-stat-val">${tempoFinal}</span>
+                <span class="res-stat-lab">Tempo</span>
             </div>
         </div>
+
+        <div class="res-btn-group">
+            <button class="btn-res btn-res-primary" onclick="location.reload()">Jogar de Novo</button>
+            <button class="btn-res btn-res-outline" onclick="openRDMenu()">Outro Tema / Nível</button>
+            <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-res-muted">Escolher outro jogo</a>
+        </div>
     `;
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    resScreen.classList.add('active');
+
+    document.querySelectorAll('.screen').forEach(s => { if(s.id !== 'scr-result') s.classList.remove('active'); });
     document.getElementById('status-bar').style.display = 'none';
 }
