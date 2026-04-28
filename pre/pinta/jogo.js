@@ -7,31 +7,31 @@ let intervaloTempo;
 let tamanhoGrelha = 3; 
 let padraoCorreto = [];
 let grelhaUtilizador = [];
-let corSelecionada = ""; // Cor hexadecimal ativa
+let corSelecionada = ""; 
 
-// Master Palette: Cores vivas para o jogo escolher
+// Cores vivas para o jogo sortear
 const PALETA_MESTRE = ["#ff4d5e", "#2ecc71", "#2196f3", "#ff9800", "#9c27b0", "#e91e63", "#3f51b5", "#00bcd4", "#8bc34a"];
 let coresAtivasNaRonda = [];
 
-// Biblioteca de Desenhos Multi-cor (0=Vazio, 1=Parte A, 2=Parte B, 3=Parte C)
+// Biblioteca de Formas (1, 2, 3 representam partes diferentes do desenho para cores diferentes)
 const DESENHOS = {
     3: [
-        [0,1,0, 1,2,1, 0,1,0], // Flor (Pétalas e Centro)
-        [1,1,1, 0,2,0, 0,2,0], // Cogumelo (Topo e Caule)
-        [1,0,1, 1,2,1, 1,0,1], // Robô simples
-        [0,1,0, 2,2,2, 0,1,0]  // Avião simples
+        [0,1,0, 1,2,1, 0,1,0], // Flor/Cruz
+        [1,1,1, 0,2,0, 0,2,0], // Cogumelo
+        [1,0,1, 1,2,1, 1,0,1], // Robô
+        [0,1,0, 2,2,2, 0,1,0]  // Avião
     ],
     4: [
-        [0,1,1,0, 1,1,1,1, 2,2,2,2, 0,0,0,0], // Chapéu (Topo cor 1, Aba cor 2)
-        [0,0,1,0, 0,1,1,0, 0,0,2,0, 0,0,2,0], // Número 1 (Corpo 1, Base 2)
-        [0,1,1,0, 1,2,2,1, 1,2,2,1, 0,1,1,0], // Moldura/Janela
-        [0,1,1,0, 2,2,2,2, 3,3,3,3, 0,1,1,0]  // Barco (Vela, Casco, Mar)
+        [0,1,1,0, 1,1,1,1, 2,2,2,2, 0,0,0,0], // Chapéu (conforme a tua imagem)
+        [0,0,1,0, 0,1,1,0, 0,0,1,0, 0,2,2,2], // Número 1 (conforme a tua imagem)
+        [1,1,1,1, 1,0,0,1, 1,0,0,1, 2,2,2,2], // Cadeira / Janela
+        [0,1,1,0, 1,2,2,1, 1,2,2,1, 0,1,1,0]  // Moldura O
     ],
     5: [
-        [0,1,1,1,0, 1,1,1,1,1, 1,1,1,1,1, 0,2,2,2,0, 0,0,2,0,0], // Coração com "seta" ou base
-        [0,0,1,0,0, 0,1,1,1,0, 2,2,2,2,2, 0,0,3,0,0, 0,0,3,0,0], // Árvore (Folhas1, Folhas2, Tronco)
-        [0,0,1,0,0, 0,1,2,1,0, 1,2,2,2,1, 3,3,3,3,3, 0,3,3,3,0], // Casa (Telhado, Parede, Porta, Base)
-        [1,1,0,1,1, 1,1,0,1,1, 0,0,2,0,0, 3,3,3,3,3, 0,3,3,3,0]  // Gato/Face
+        [0,1,1,1,0, 1,1,1,1,1, 1,1,1,1,1, 0,2,2,2,0, 0,0,2,0,0], // Coração
+        [0,0,1,0,0, 0,1,1,1,0, 2,2,2,2,2, 0,0,3,0,0, 0,0,3,0,0], // Árvore
+        [0,0,1,0,0, 0,1,2,1,0, 1,2,2,2,1, 3,3,3,3,3, 0,3,3,3,0], // Casa
+        [1,1,0,1,1, 1,1,0,1,1, 0,0,2,0,0, 3,3,3,3,3, 0,3,3,3,0]  // Gato
     ]
 };
 
@@ -40,12 +40,12 @@ const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
 window.startLogic = function() {
-    if (!categoriaAtual) selecionarCategoria("facil");
+    if (!JOGO_CATEGORIAS[categoriaAtual]) selecionarCategoria("facil");
     criarAnimacaoTutorial();
 };
 
 window.gerarIntroJogo = function() {
-    return "Pinta o desenho da direita com as mesmas cores do modelo da esquerda!";
+    return "Pinta a grelha da direita exatamente igual ao modelo da esquerda!";
 };
 
 window.selecionarCategoria = function(key) {
@@ -58,11 +58,11 @@ function criarAnimacaoTutorial() {
     if(!container) return;
     container.innerHTML = `
         <div style="display:flex; align-items:center; gap:20px; justify-content:center; height:100%;">
-            <div style="width:90px; height:90px; display:grid; grid-template-columns:repeat(2,1fr); gap:2px; border:2px solid #ccc; background:#eee;">
+            <div style="width:90px; height:90px; display:grid; grid-template-columns:repeat(2,1fr); gap:2px; border:2px solid #ccc;">
                 <div style="background:#ff4d5e"></div><div style="background:#2196f3"></div>
                 <div style="background:#2196f3"></div><div style="background:#ff4d5e"></div>
             </div>
-            <div style="font-size:30px; color:var(--primary-blue); animation: bounce 1s infinite;">➡️</div>
+            <div style="font-size:30px; color:var(--primary-blue); animation: pulse 1s infinite;">➡️</div>
             <div style="width:90px; height:90px; background:white; border:3px solid var(--primary-blue); position:relative; display:grid; grid-template-columns:repeat(2,1fr); gap:2px;">
                 <div style="background:#ff4d5e"></div><div style="background:white"></div>
                 <div style="background:white"></div><div style="background:white"></div>
@@ -71,7 +71,7 @@ function criarAnimacaoTutorial() {
         </div>
         <style>
             @keyframes tapH { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-10px,-15px) scale(1.1); } }
-            @keyframes bounce { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(10px); } }
+            @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         </style>
     `;
 }
@@ -98,21 +98,14 @@ function iniciarCronometro() {
 function proximaRonda() {
     if (indicePergunta >= 10) { finalizarJogo(); return; }
 
-    // 1. Escolher um desenho da biblioteca
     const lista = DESENHOS[tamanhoGrelha];
     const desenhoBase = lista[Math.floor(Math.random() * lista.length)];
-
-    // 2. Definir quantas cores este desenho usa (excluindo o 0)
     const numPartes = Math.max(...desenhoBase);
     
-    // 3. Sortear cores únicas da paleta mestre para as partes
     let coresSorteadas = [...PALETA_MESTRE].sort(() => 0.5 - Math.random()).slice(0, numPartes);
-    
-    // 4. Mapear o padrão correto com as cores hexadecimais
     coresAtivasNaRonda = coresSorteadas; 
     padraoCorreto = desenhoBase.map(v => v === 0 ? "#ffffff" : coresSorteadas[v-1]);
     
-    // 5. Resetar grelha do utilizador e cor selecionada
     grelhaUtilizador = new Array(tamanhoGrelha * tamanhoGrelha).fill("#ffffff");
     corSelecionada = coresAtivasNaRonda[0]; 
 
@@ -149,30 +142,13 @@ function mostrarPergunta() {
         </style>
         <div class="game-inner">
             <div class="stage">
-                <!-- MODELO -->
-                <div class="grid-box">
-                    ${padraoCorreto.map(cor => `<div class="cell" style="background:${cor}"></div>`).join('')}
-                </div>
-                <!-- TELA DO JOGADOR -->
-                <div class="grid-box" id="user-grid">
-                    ${grelhaUtilizador.map((cor, i) => `<div class="cell cell-paint" id="c-${i}" onclick="pintar(${i})" style="background:${cor}"></div>`).join('')}
-                </div>
+                <div class="grid-box">${padraoCorreto.map(cor => `<div class="cell" style="background:${cor}"></div>`).join('')}</div>
+                <div class="grid-box" id="user-grid">${grelhaUtilizador.map((cor, i) => `<div class="cell cell-paint" id="c-${i}" onclick="pintar(${i})" style="background:${cor}"></div>`).join('')}</div>
             </div>
             <div class="controls">
-                <!-- Paleta dinâmica com as cores do desenho -->
-                ${coresAtivasNaRonda.map(cor => `
-                    <div class="color-btn ${corSelecionada === cor ? 'active' : ''}" 
-                         style="background:${cor}" onclick="selecionarCor(this, '${cor}')"></div>
-                `).join('')}
-                
+                ${coresAtivasNaRonda.map(cor => `<div class="color-btn ${corSelecionada === cor ? 'active' : ''}" style="background:${cor}" onclick="selecionarCor(this, '${cor}')"></div>`).join('')}
                 <div style="width: 2px; height: 40px; background: #eee; margin: 0 5px;"></div>
-
-                <!-- Borracha Limpa Tudo -->
-                <button class="btn-action btn-clear" onclick="limparTudo()" title="Limpar Tudo">
-                    <img src="${JOGO_CONFIG.caminhoImg}borracha.png" style="width:60%;">
-                </button>
-                
-                <!-- Verificar -->
+                <button class="btn-action btn-clear" onclick="limparTudo()" title="Limpar Tudo"><img src="${JOGO_CONFIG.caminhoImg}borracha.png" style="width:60%;"></button>
                 <button class="btn-action btn-verify" onclick="validar()">V</button>
             </div>
         </div>
@@ -186,7 +162,6 @@ window.selecionarCor = function(el, cor) {
 };
 
 window.pintar = function(i) {
-    if (!corSelecionada) return;
     grelhaUtilizador[i] = corSelecionada;
     document.getElementById(`c-${i}`).style.background = corSelecionada;
 };
@@ -198,50 +173,46 @@ window.limparTudo = function() {
 
 window.validar = function() {
     const correto = grelhaUtilizador.every((v, i) => v.toLowerCase() === padraoCorreto[i].toLowerCase());
-
     if (correto) {
         acertos++; somAcerto.play();
         document.getElementById('hits-val').innerText = acertos;
         document.getElementById('user-grid').style.borderColor = "#2ecc71";
-        setTimeout(() => {
-            indicePergunta++;
-            proximaRonda();
-        }, 1200);
+        setTimeout(() => { indicePergunta++; proximaRonda(); }, 1200);
     } else {
         erros++; somErro.play();
         document.getElementById('miss-val').innerText = erros;
         document.getElementById('user-grid').style.borderColor = "#ff4d5e";
-        setTimeout(() => { 
-            if(document.getElementById('user-grid')) document.getElementById('user-grid').style.borderColor = "#ddd"; 
-        }, 800);
+        setTimeout(() => { if(document.getElementById('user-grid')) document.getElementById('user-grid').style.borderColor = "#ddd"; }, 800);
     }
 };
 
 function finalizarJogo() {
     clearInterval(intervaloTempo); somVitoria.play();
-    const perc = (acertos / 10) * 100;
+    const totalP = 10;
+    const perc = (acertos / totalP) * 100;
     const rel = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
-    const tempo = document.getElementById('timer-val').innerText;
+    const tempoFinal = document.getElementById('timer-val').innerText;
     const resScreen = document.getElementById('scr-result');
 
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:15px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:110px; width:auto; margin-bottom:10px; object-fit:contain;">
-            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
-            <div class="res-stats-container" style="display:flex; gap:10px; width:100%; max-width:300px; margin-bottom:20px;">
-                <div class="res-stat-card" style="background:white; border-radius:15px; padding:10px; flex:1; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid #f0f0f0;">
-                    <span style="display:block; font-size:22px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span>
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; box-sizing:border-box; padding:10px;">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:25%; min-height:80px; width:auto; margin-bottom:10px; object-fit:contain;">
+            <h2 style="color: var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
+            <div class="res-stats-container" style="display:flex; gap:10px; width:100%; max-width:300px; margin-bottom:15px;">
+                <div style="background:white; border-radius:15px; padding:10px; flex:1; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid #f0f0f0;">
+                    <span style="display:block; font-size:22px; font-weight:900; color:var(--primary-blue);">${acertos} / ${totalP}</span>
                     <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Acertos</span>
                 </div>
-                <div class="res-stat-card" style="background:white; border-radius:15px; padding:10px; flex:1; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid #f0f0f0;">
-                    <span style="display:block; font-size:22px; font-weight:900; color:var(--primary-blue);">${tempo}</span>
+                <div style="background:white; border-radius:15px; padding:10px; flex:1; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid #f0f0f0;">
+                    <span style="display:block; font-size:22px; font-weight:900; color:var(--primary-blue);">${tempoFinal}</span>
                     <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Tempo</span>
                 </div>
             </div>
-            <div style="display:flex; flex-direction:column; gap:10px; width:100%; max-width:260px;">
-                <button class="res-btn res-btn-p" onclick="location.reload()" style="background:var(--primary-blue); color:white; border:none; padding:15px; border-radius:15px; font-weight:900; cursor:pointer; box-shadow:0 5px 0 var(--primary-dark);">Jogar de Novo</button>
-                <a href="${JOGO_CONFIG.linkVoltar}" style="background:#dce4ee; color:#5d7082; border:none; padding:15px; border-radius:15px; font-weight:900; text-align:center; text-decoration:none; box-shadow:0 5px 0 #b8c5d4;">Sair</a>
+            <div style="display:flex; flex-direction:column; gap:8px; width:100%; max-width:260px;">
+                <button class="res-btn res-btn-p" style="padding:14px; border-radius:15px; font-weight:900; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 5px 0 var(--primary-dark);" onclick="location.reload()">Jogar de Novo</button>
+                <button class="res-btn res-btn-o" style="padding:11px; border-radius:15px; font-weight:900; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer; box-shadow:0 5px 0 var(--primary-blue);" onclick="openRDMenu()">Outro Tema</button>
+                <a href="${JOGO_CONFIG.linkVoltar}" style="padding:14px; border-radius:15px; font-weight:900; background:#dce4ee; color:#5d7082; border:none; text-align:center; text-decoration:none; box-shadow:0 5px 0 #b8c5d4;">Sair</a>
             </div>
         </div>
     `;
