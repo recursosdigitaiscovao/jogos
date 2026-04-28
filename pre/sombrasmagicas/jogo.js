@@ -1,1 +1,182 @@
+let perguntas = [];
+let indicePergunta = 0;
+let acertos = 0;
+let erros = 0;
+let tempoInicio;
+let intervaloTempo;
+let categoriaAtual = "animais";
 
+const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
+const somErro = new Audio(JOGO_CONFIG.sons.erro);
+const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
+
+// === 1. INICIALIZAÇÃO E TUTORIAL ===
+window.startLogic = function() {
+    selecionarCategoria(categoriaAtual);
+    criarAnimacaoTutorial();
+};
+
+window.gerarIntroJogo = function() {
+    return "Observa a sombra e escolhe o desenho correto!";
+};
+
+function selecionarCategoria(key) {
+    categoriaAtual = key;
+    const cat = JOGO_CATEGORIAS[key];
+    perguntas = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
+}
+
+function criarAnimacaoTutorial() {
+    const container = document.getElementById('intro-animation-container');
+    if(!container) return;
+    const itemTut = JOGO_CATEGORIAS.animais.itens[0];
+    container.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; gap:15px; position:relative;">
+            <div style="width:100px; height:100px; background:#f0f0f0; border-radius:20px; display:flex; align-items:center; justify-content:center;">
+                <img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:70px; width:auto; filter:brightness(0); opacity:0.3; object-fit:contain;">
+            </div>
+            <div style="display:flex; gap:10px;">
+                <div style="width:45px; height:45px; background:white; border:2px solid #ddd; border-radius:10px;"></div>
+                <div style="width:45px; height:45px; background:white; border:2px solid var(--primary-blue); border-radius:10px; display:flex; align-items:center; justify-content:center; position:relative;">
+                    <img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:32px; width:auto; object-fit:contain;">
+                    <div id="tut-hand" style="position:absolute; font-size:40px; bottom:-30px; right:-20px; animation: tapHand 2s infinite;">☝️</div>
+                </div>
+                <div style="width:45px; height:45px; background:white; border:2px solid #ddd; border-radius:10px;"></div>
+            </div>
+        </div>
+        <style>
+            @keyframes tapHand { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-10px,-15px) scale(1.1); } }
+        </style>
+    `;
+}
+
+// === 2. LÓGICA DO JOGO ===
+window.initGame = function() {
+    indicePergunta = 0; acertos = 0; erros = 0;
+    document.getElementById('hits-val').innerText = "0";
+    document.getElementById('miss-val').innerText = "0";
+    iniciarCronometro();
+    mostrarPergunta();
+};
+
+function iniciarCronometro() {
+    tempoInicio = Date.now();
+    clearInterval(intervaloTempo);
+    intervaloTempo = setInterval(() => {
+        const decorrido = Math.floor((Date.now() - tempoInicio) / 1000);
+        const min = Math.floor(decorrido / 60).toString().padStart(2, '0');
+        const seg = (decorrido % 60).toString().padStart(2, '0');
+        document.getElementById('timer-val').innerText = `${min}:${seg}`;
+    }, 1000);
+}
+
+function mostrarPergunta() {
+    const container = document.getElementById('game-main-content');
+    const pergunta = perguntas[indicePergunta];
+    document.getElementById('round-val').innerText = `${indicePergunta + 1} / ${perguntas.length}`;
+
+    let erradas = JOGO_CATEGORIAS[categoriaAtual].itens.filter(i => i.img !== pergunta.img).sort(() => Math.random() - 0.5).slice(0, 2);
+    let opcoes = [pergunta, ...erradas].sort(() => Math.random() - 0.5);
+
+    container.innerHTML = `
+        <style>
+            .game-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; justify-content: space-between; align-items: center; padding: 10px; box-sizing: border-box; }
+            .shadow-zone { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; min-height: 0; background: rgba(255,255,255,0.3); border-radius: 30px; margin-bottom: 15px; }
+            
+            /* ALTURA FIXA PARA A SOMBRA CENTRAL */
+            .shadow-img { 
+                height: 25vh; /* Altura relativa ao ecrã para manter proporção */
+                max-height: 250px;
+                width: auto; 
+                object-fit: contain; 
+                filter: brightness(0); 
+                opacity: 0.8; 
+                transition: 0.5s; 
+            }
+            
+            .options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; max-width: 600px; justify-items: center; }
+            .card-opt { background: white; border: 4px solid #eee; border-radius: 20px; width: 100%; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; box-shadow: 0 6px 0 #ddd; padding: 10px; box-sizing: border-box; }
+            
+            /* ALTURA FIXA PARA AS IMAGENS NOS CARTÕES */
+            .card-opt img { 
+                height: 70%; /* Altura fixa relativa ao cartão quadrado */
+                width: auto; 
+                object-fit: contain; 
+            }
+            
+            .card-opt:hover { border-color: var(--primary-blue); }
+            .card-opt:active { transform: translateY(3px); box-shadow: none; }
+            .is-correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 6px 0 #5ea31a !important; }
+            .is-wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 6px 0 #d13d3d !important; }
+            
+            @media (orientation: landscape) and (max-height: 500px) {
+                .game-wrapper { flex-direction: row; gap: 15px; } .shadow-zone { margin-bottom: 0; }
+                .options-grid { grid-template-columns: 1fr; width: auto; height: 100%; gap: 8px; }
+                .card-opt { height: 30%; width: auto; aspect-ratio: 1/1; }
+                .shadow-img { height: 40vh; }
+            }
+        </style>
+        <div class="game-wrapper">
+            <div class="shadow-zone"><img src="${JOGO_CONFIG.caminhoImg}${pergunta.img}" class="shadow-img" id="target-obj"></div>
+            <div class="options-grid">
+                ${opcoes.map(opt => `<div class="card-opt" onclick="validar(this, ${opt.img === pergunta.img})"><img src="${JOGO_CONFIG.caminhoImg}${opt.img}"></div>`).join('')}
+            </div>
+        </div>
+    `;
+}
+
+function validar(el, acerto) {
+    document.querySelectorAll('.card-opt').forEach(c => c.style.pointerEvents = 'none');
+    const obj = document.getElementById('target-obj');
+    if (acerto) {
+        acertos++; somAcerto.play(); el.classList.add('is-correct');
+        obj.style.filter = "none"; obj.style.opacity = "1";
+        document.getElementById('hits-val').innerText = acertos;
+    } else {
+        erros++; somErro.play(); el.classList.add('is-wrong');
+        document.getElementById('miss-val').innerText = erros;
+    }
+    setTimeout(() => {
+        indicePergunta++;
+        if (indicePergunta < perguntas.length) mostrarPergunta();
+        else finalizarJogo();
+    }, 1500);
+}
+
+// === 3. FINALIZAÇÃO E RESULTADOS ===
+function finalizarJogo() {
+    clearInterval(intervaloTempo); somVitoria.play();
+    const totalP = perguntas.length;
+    const perc = (acertos / totalP) * 100;
+    const rel = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
+    const tempoFinal = document.getElementById('timer-val').innerText;
+    const resScreen = document.getElementById('scr-result');
+
+    resScreen.className = "screen screen-box active"; 
+
+    // MUDANÇA: Agora procura o rel.img (taça) na pasta ICONS como o menu hambúrguer
+    resScreen.innerHTML = `
+        <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="width:140px; height:auto; margin-bottom:10px; object-fit:contain;">
+        <h2 style="color: var(--primary-blue); font-weight:900; font-size:28px; margin-bottom:20px; text-align:center;">${rel.titulo}</h2>
+        
+        <div class="res-stats-container">
+            <div class="res-stat-card">
+                <span class="res-stat-val">${acertos} / ${totalP}</span>
+                <span class="res-stat-lab">Acertos</span>
+            </div>
+            <div class="res-stat-card">
+                <span class="res-stat-val">${tempoFinal}</span>
+                <span class="res-stat-lab">Tempo</span>
+            </div>
+        </div>
+
+        <div class="res-btn-group">
+            <button class="btn-res btn-res-primary" onclick="location.reload()">Jogar de Novo</button>
+            <button class="btn-res btn-res-outline" onclick="openRDMenu()">Outro Tema / Nível</button>
+            <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-res-muted">Escolher outro jogo</a>
+        </div>
+    `;
+
+    document.querySelectorAll('.screen').forEach(s => { if(s.id !== 'scr-result') s.classList.remove('active'); });
+    document.getElementById('status-bar').style.display = 'none';
+}
