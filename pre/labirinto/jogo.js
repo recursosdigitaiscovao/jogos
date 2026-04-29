@@ -16,7 +16,7 @@ const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 // === 1. INICIALIZAÇÃO ===
 window.startLogic = function() {
     const primeiraCat = Object.keys(JOGO_CATEGORIAS)[0];
-    if (!categoriaAtual) categoriaAtual = primeiraCat;
+    if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = primeiraCat;
     selecionarCategoria(categoriaAtual);
     setTimeout(criarAnimacaoTutorial, 100);
 };
@@ -29,6 +29,7 @@ window.selecionarCategoria = function(key) {
     categoriaAtual = key;
     const itens = JOGO_CATEGORIAS[key].itens;
     perguntas = [];
+    // Criar ciclo de 10 níveis
     for(let i=0; i<10; i++) { perguntas.push(itens[i % itens.length]); }
 };
 
@@ -146,6 +147,7 @@ function mostrarPergunta() {
                         const x = i % nivelAtual.tamanho;
                         const y = Math.floor(i / nivelAtual.tamanho);
                         let content = "";
+                        // AQUI: Usa a imagem definida em cat.obstaculo
                         if (nivelAtual.mapa[y][x] === 1) content = `<img src="${JOGO_CONFIG.caminhoImg}${cat.obstaculo}" class="wall-img">`;
                         else if (x === nivelAtual.fim[0] && y === nivelAtual.fim[1]) content = `<img src="${JOGO_CONFIG.caminhoImg}${cat.objetivo}" class="goal-img">`;
                         return `<div class="maze-cell">${content}</div>`;
