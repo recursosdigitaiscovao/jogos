@@ -5,8 +5,9 @@ let erros = 0;
 let tempoInicio;
 let intervaloTempo;
 
-let categoriaAtual = "geral";
-let itemIntruso = null;
+let categoriaAtual = "facil";
+let configuracaoNivel = {};
+let itemIntruso = "";
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
@@ -14,14 +15,19 @@ const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
 // === 1. INICIALIZAÇÃO E TUTORIAL ===
 window.startLogic = function() {
+    if (!categoriaAtual) categoriaAtual = "facil";
+    configuracaoNivel = JOGO_CATEGORIAS[categoriaAtual];
     setTimeout(criarAnimacaoTutorial, 100);
 };
 
 window.gerarIntroJogo = function() {
-    return "Encontra e clica no desenho que não pertence ao grupo!";
+    return "Encontra o desenho que não pertence ao grupo! Presta muita atenção.";
 };
 
-window.selecionarCategoria = function(key) { categoriaAtual = key; };
+window.selecionarCategoria = function(key) {
+    categoriaAtual = key;
+    configuracaoNivel = JOGO_CATEGORIAS[key];
+};
 
 function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
@@ -29,24 +35,24 @@ function criarAnimacaoTutorial() {
 
     container.innerHTML = `
         <div class="tut-intruso">
-            <div class="tut-grid-2x2">
+            <div class="tut-grid-demo">
                 <div class="tut-item"><img src="${JOGO_CONFIG.caminhoImg}frutas/maca.png"></div>
+                <div class="tut-item tut-target"><img src="${JOGO_CONFIG.caminhoImg}animaisselvagens/abelha.png"></div>
                 <div class="tut-item"><img src="${JOGO_CONFIG.caminhoImg}frutas/banana.png"></div>
-                <div class="tut-item tut-target"><img src="${JOGO_CONFIG.caminhoImg}objetos/bola.png"></div>
                 <div class="tut-item"><img src="${JOGO_CONFIG.caminhoImg}frutas/laranja.png"></div>
             </div>
-            <div id="tut-hand-intruso" class="tut-hand">☝️</div>
+            <div id="tut-hand" class="tut-hand">☝️</div>
         </div>
         <style>
             .tut-intruso { position: relative; padding: 15px; background: white; border-radius: 20px; border: 2px solid #eee; }
-            .tut-grid-2x2 { display: grid; grid-template-columns: repeat(2, 45px); gap: 8px; }
-            .tut-item { width: 45px; height: 45px; border: 1px solid #eee; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+            .tut-grid-demo { display: grid; grid-template-columns: repeat(2, 45px); gap: 10px; }
+            .tut-item { width: 45px; height: 45px; border: 1px solid #eee; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #fff; }
             .tut-item img { width: 80%; }
             .tut-target { border-color: var(--primary-blue); background: #f0f7ff; }
-            .tut-hand { position: absolute; font-size: 40px; z-index: 10; animation: animHandIntruso 3s infinite; }
-            @keyframes animHandIntruso {
-                0%, 100% { transform: translate(60px, 60px); }
-                50% { transform: translate(35px, 20px) scale(0.8); }
+            .tut-hand { position: absolute; font-size: 40px; z-index: 10; animation: tutHandMove 3s infinite; }
+            @keyframes tutHandMove {
+                0%, 100% { transform: translate(70px, 70px); }
+                50% { transform: translate(45px, 0px) scale(0.8); }
             }
         </style>
     `;
@@ -75,18 +81,19 @@ function iniciarCronometro() {
 function proximaRonda() {
     if (indicePergunta >= 10) { finalizarJogo(); return; }
 
-    const chaves = JOGO_CATEGORIAS[categoriaAtual].grupos;
+    const gruposDisponiveis = Object.keys(BANCO_DE_DADOS);
+    const shuffleGrupos = gruposDisponiveis.sort(() => Math.random() - 0.5);
     
-    // 1. Escolher Categoria Base (as 3 iguais) e Categoria Intruso (a 1 diferente)
-    let baralho = [...chaves].sort(() => Math.random() - 0.5);
-    let catBase = baralho[0];
-    let catIntruso = baralho[1];
+    const catBase = shuffleGrupos[0];
+    const catIntruso = shuffleGrupos[1];
 
-    // 2. Escolher itens
-    let itensBase = [...DADOS_GRUPOS[catBase]].sort(() => Math.random() - 0.5).slice(0, 3);
-    itemIntruso = [...DADOS_GRUPOS[catIntruso]].sort(() => Math.random() - 0.5)[0];
+    const n = configuracaoNivel.totalItens;
+    
+    // Sortear itens do grupo base
+    let itensBase = [...BANCO_DE_DADOS[catBase]].sort(() => Math.random() - 0.5).slice(0, n - 1);
+    // Sortear 1 item intruso
+    itemIntruso = [...BANCO_DE_DADOS[catIntruso]].sort(() => Math.random() - 0.5)[0];
 
-    // 3. Juntar e baralhar as 4 opções
     let opcoes = [...itensBase, itemIntruso].sort(() => Math.random() - 0.5);
 
     mostrarPergunta(opcoes);
@@ -98,33 +105,52 @@ function mostrarPergunta(opcoes) {
 
     container.innerHTML = `
         <style>
-            .game-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; overflow: hidden; }
+            .game-wrapper { 
+                display: flex; flex-direction: column; width: 100%; height: 100%; 
+                align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; overflow: hidden; 
+            }
             .intruso-grid { 
-                display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr);
-                height: 90%; aspect-ratio: 1/1; gap: 20px; padding: 10px;
+                display: grid; 
+                grid-template-columns: repeat(${configuracaoNivel.colunas}, 1fr); 
+                gap: 12px; width: 100%; max-width: 900px; height: 95%; min-height: 0;
             }
-            .card-intruso { 
-                background: white; border: 4px solid #eee; border-radius: 30px; 
+            .card-item { 
+                background: white; border: 3px solid #eee; border-radius: 20px; 
                 display: flex; align-items: center; justify-content: center;
-                cursor: pointer; transition: 0.2s; box-shadow: 0 8px 0 #ddd;
-                padding: 20px; box-sizing: border-box;
+                cursor: pointer; transition: 0.2s; box-shadow: 0 6px 0 #ddd;
+                padding: 10px; box-sizing: border-box; height: 100%; width: 100%;
+                min-height: 0;
             }
-            .card-intruso img { height: 90%; width: auto; max-width: 90%; object-fit: contain; }
-            .card-intruso:hover { border-color: var(--primary-blue); transform: translateY(-3px); }
-            .card-intruso:active { transform: translateY(5px); box-shadow: none; }
+            .card-item img { max-height: 85%; max-width: 85%; object-fit: contain; }
+            .card-item:hover { border-color: var(--primary-blue); }
+            .card-item:active { transform: translateY(3px); box-shadow: none; }
 
-            .is-correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 8px 0 #5ea31a !important; }
-            .is-wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 8px 0 #d13d3d !important; }
+            .correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 6px 0 #5ea31a !important; }
+            .wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 6px 0 #d13d3d !important; }
 
+            /* AJUSTE LANDSCAPE PORTÁTEIS */
             @media (orientation: landscape) and (max-height: 550px) {
-                .intruso-grid { grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr; width: 95%; height: 75%; aspect-ratio: auto; }
+                .intruso-grid { 
+                    grid-template-columns: repeat(${configuracaoNivel.totalItens}, 1fr); 
+                    grid-template-rows: 1fr; 
+                    height: 80%;
+                }
+                .card-item { border-radius: 12px; padding: 5px; }
+            }
+            
+            /* AJUSTE MOBILE VERTICAL PARA NÍVEL DIFICIL */
+            @media (max-width: 500px) {
+                .intruso-grid { 
+                    grid-template-columns: repeat(2, 1fr); 
+                    gap: 8px;
+                }
             }
         </style>
         <div class="game-wrapper">
             <div class="intruso-grid">
-                ${opcoes.map(item => `
-                    <div class="card-intruso" onclick="verificar(this, ${item === itemIntruso})">
-                        <img src="${JOGO_CONFIG.caminhoImg}${item.img}">
+                ${opcoes.map(img => `
+                    <div class="card-item" onclick="verificar(this, '${img}')">
+                        <img src="${JOGO_CONFIG.caminhoImg}${img}">
                     </div>
                 `).join('')}
             </div>
@@ -132,22 +158,22 @@ function mostrarPergunta(opcoes) {
     `;
 }
 
-function verificar(el, acerto) {
-    // Bloquear cliques
-    document.querySelectorAll('.card-intruso').forEach(c => c.style.pointerEvents = 'none');
+function verificar(el, img) {
+    const cards = document.querySelectorAll('.card-item');
+    cards.forEach(c => c.style.pointerEvents = 'none');
 
-    if (acerto) {
+    if (img === itemIntruso) {
         acertos++; somAcerto.play();
-        el.classList.add('is-correct');
+        el.classList.add('correct');
         document.getElementById('hits-val').innerText = acertos;
     } else {
         erros++; somErro.play();
-        el.classList.add('is-wrong');
+        el.classList.add('wrong');
         document.getElementById('miss-val').innerText = erros;
         
-        // Destacar o correto para a criança aprender
-        document.querySelectorAll('.card-intruso').forEach(c => {
-            // Se tivéssemos guardado a ref do elemento correto, destacaríamos aqui
+        // Mostrar onde estava o intruso
+        cards.forEach(c => {
+            if (c.innerHTML.includes(itemIntruso)) c.style.borderColor = "var(--primary-blue)";
         });
     }
 
@@ -163,18 +189,20 @@ function finalizarJogo() {
     const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
     const tempo = document.getElementById('timer-val').innerText;
     const resScreen = document.getElementById('scr-result');
+
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:10px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; width:auto; margin-bottom:10px; object-fit:contain;">
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; box-sizing:border-box; padding:10px;">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:22%; min-height:80px; width:auto; margin-bottom:10px; object-fit:contain;">
             <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats-container">
                 <div class="res-stat-card"><span class="res-stat-val">${acertos} / 10</span><span class="res-stat-lab">Acertos</span></div>
                 <div class="res-stat-card"><span class="res-stat-val">${tempo}</span><span class="res-stat-lab">Tempo</span></div>
             </div>
-            <div style="display:flex; flex-direction:column; gap:8px; width:100%; max-width:260px;">
-                <button class="res-btn res-btn-p" style="padding:14px; border-radius:15px; font-weight:900; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 5px 0 var(--primary-dark);" onclick="location.reload()">Jogar de Novo</button>
-                <a href="${JOGO_CONFIG.linkVoltar}" style="padding:14px; border-radius:15px; font-weight:900; background:#dce4ee; color:#5d7082; border:none; text-align:center; text-decoration:none; box-shadow:0 5px 0 #b8c5d4;">Sair</a>
+            <div class="res-btn-group-final">
+                <button class="res-btn res-btn-p" onclick="location.reload()">Jogar de Novo</button>
+                <button class="res-btn res-btn-o" onclick="openRDMenu()">Outro Tema / Nível</button>
+                <a href="${JOGO_CONFIG.linkVoltar}" class="res-btn res-btn-m">Escolher outro jogo</a>
             </div>
         </div>
     `;
