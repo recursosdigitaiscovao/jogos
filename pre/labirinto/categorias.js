@@ -5,7 +5,7 @@ const JOGO_CATEGORIAS = {
         imgCapa: "animaisselvagens/abelha.png",
         personagem: "animaisselvagens/abelha.png",
         objetivo: "natureza/flor.png",
-        obstaculo: "objetos/arvore.png",
+        obstaculo: "natureza/arvore.png",
         tamanho: 5 // Grelha 5x5
     },
     "quinta": {
