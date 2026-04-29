@@ -1,33 +1,43 @@
-// === CATEGORIAS PARA O INTRUSO ===
+// === CATEGORIAS DE DIFICULDADE (MENU RD) ===
 const JOGO_CATEGORIAS = {
-    "geral": {
-        nome: "Mistura Divertida",
+    "facil": {
+        nome: "Nível Fácil",
         imgCapa: "objetos/bola.png",
-        // O jogo vai cruzar dados entre Animais, Frutos, Objetos e Material Escolar
-        grupos: ["animais", "frutos", "objetos", "material"]
+        totalItens: 4,
+        colunas: 2
+    },
+    "medio": {
+        nome: "Nível Médio",
+        imgCapa: "frutas/laranja.png",
+        totalItens: 6,
+        colunas: 3
+    },
+    "dificil": {
+        nome: "Nível Difícil",
+        imgCapa: "animaisselvagens/leao.png",
+        totalItens: 8,
+        colunas: 4
     }
 };
 
-// Dados de suporte (os mesmos que já tens no teu projeto)
-const DADOS_GRUPOS = {
+// Base de dados consolidada para o sorteio lógico
+const BANCO_DE_DADOS = {
     animais: [
-        { img: "animaisselvagens/abelha.png" }, { img: "animaisselvagens/aguia.png" },
-        { img: "animaisselvagens/elefante.png" }, { img: "animaisselvagens/leao.png" },
-        { img: "animaisselvagens/macaco.png" }, { img: "animaisselvagens/girafa.png" }
+        "animaisselvagens/abelha.png", "animaisselvagens/aguia.png", "animaisselvagens/aranha.png",
+        "animaisselvagens/baleia.png", "animaisselvagens/canguru.png", "animaisselvagens/elefante.png",
+        "animaisselvagens/foca.png", "animaisselvagens/leao.png", "animaisselvagens/macaco.png"
     ],
     frutos: [
-        { img: "frutas/amora.png" }, { img: "frutas/ananas.png" },
-        { img: "frutas/banana.png" }, { img: "frutas/cereja.png" },
-        { img: "frutas/laranja.png" }, { img: "frutas/maca.png" }
+        "frutas/amora.png", "frutas/ananas.png", "frutas/banana.png", "frutas/cereja.png",
+        "frutas/laranja.png", "frutas/limao.png", "frutas/maca.png", "frutas/morango.png"
     ],
     objetos: [
-        { img: "objetos/balde.png" }, { img: "objetos/bola.png" },
-        { img: "objetos/boneca.png" }, { img: "objetos/carrinho.png" },
-        { img: "objetos/copo.png" }, { img: "objetos/dado.png" }
+        "objetos/balde.png", "objetos/bola.png", "objetos/boneca.png", "objetos/carrinho.png",
+        "objetos/copo.png", "objetos/dado.png", "objetos/escova.png", "objetos/garrafa.png"
     ],
     material: [
-        { img: "materialescolar/afia.png" }, { img: "materialescolar/borracha.png" },
-        { img: "materialescolar/caderno.png" }, { img: "materialescolar/lapis.png" },
-        { img: "materialescolar/mochila.png" }, { img: "materialescolar/tesoura.png" }
+        "materialescolar/afia.png", "materialescolar/borracha.png", "materialescolar/caderno.png",
+        "materialescolar/cola.png", "materialescolar/estojo.png", "materialescolar/lapis.png",
+        "materialescolar/mochila.png", "materialescolar/tesoura.png"
     ]
 };
