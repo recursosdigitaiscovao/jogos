@@ -1,13 +1,14 @@
+// === DEFINIÇÃO DAS CATEGORIAS DO LABIRINTO ===
 const JOGO_CATEGORIAS = {
     "natureza": {
         nome: "Jardim da Abelha",
         imgCapa: "animaisselvagens/abelha.png",
         personagem: "animaisselvagens/abelha.png",
-        objetivo: "natureza/flor.png", // Imagem da flor
+        objetivo: "objetos/flor.png",
+        obstaculo: "objetos/arvore.png", // AQUI: Imagem das paredes para este tema
         itens: [
             { 
-                nivel: 1, 
-                tamanho: 5, // Grelha 5x5
+                tamanho: 5, 
                 mapa: [
                     [0, 0, 1, 0, 0],
                     [1, 0, 1, 0, 1],
@@ -17,6 +18,18 @@ const JOGO_CATEGORIAS = {
                 ],
                 inicio: [0, 0], // x, y
                 fim: [4, 4]
+            },
+            { 
+                tamanho: 5, 
+                mapa: [
+                    [0, 1, 0, 0, 0],
+                    [0, 0, 0, 1, 0],
+                    [1, 1, 0, 1, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 1, 1, 1, 0] 
+                ],
+                inicio: [0, 0],
+                fim: [4, 0]
             }
         ]
     },
@@ -24,10 +37,10 @@ const JOGO_CATEGORIAS = {
         nome: "Caminho do Rato",
         imgCapa: "animaisselvagens/rato.png",
         personagem: "animaisselvagens/rato.png",
-        objetivo: "comida/queijo.png",
+        objetivo: "objetos/queijo.png",
+        obstaculo: "objetos/cesto.png", // Paredes de cestos para o rato
         itens: [
             { 
-                nivel: 1, 
                 tamanho: 6,
                 mapa: [
                     [0, 1, 0, 0, 0, 0],
@@ -38,7 +51,7 @@ const JOGO_CATEGORIAS = {
                     [0, 0, 0, 1, 1, 0]
                 ],
                 inicio: [0, 0],
-                fim: [5, 5]
+                fim: [2, 4]
             }
         ]
     }
