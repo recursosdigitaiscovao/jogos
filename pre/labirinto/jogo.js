@@ -13,7 +13,20 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// === 1. INICIALIZAÇÃO ===
+// === 1. CONTROLO POR TECLADO ===
+window.addEventListener('keydown', function(e) {
+    // Só move se o ecrã de jogo estiver ativo
+    if (!document.getElementById('scr-game').classList.contains('active')) return;
+
+    switch(e.key) {
+        case "ArrowUp":    tentarMover(0, -1); e.preventDefault(); break;
+        case "ArrowDown":  tentarMover(0, 1);  e.preventDefault(); break;
+        case "ArrowLeft":  tentarMover(-1, 0); e.preventDefault(); break;
+        case "ArrowRight": tentarMover(1, 0);  e.preventDefault(); break;
+    }
+});
+
+// === 2. INICIALIZAÇÃO ===
 window.startLogic = function() {
     const primeiraCat = Object.keys(JOGO_CATEGORIAS)[0];
     if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = primeiraCat;
@@ -22,14 +35,13 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Leva o teu amigo ao objetivo usando as setas! Não batas nas paredes!";
+    return "Leva o teu amigo ao objetivo usando as setas ou o teclado! Não batas nas paredes!";
 };
 
 window.selecionarCategoria = function(key) {
     categoriaAtual = key;
     const itens = JOGO_CATEGORIAS[key].itens;
     perguntas = [];
-    // Criar ciclo de 10 níveis
     for(let i=0; i<10; i++) { perguntas.push(itens[i % itens.length]); }
 };
 
@@ -58,7 +70,7 @@ function criarAnimacaoTutorial() {
     `;
 }
 
-// === 2. LÓGICA DO JOGO ===
+// === 3. LÓGICA DO JOGO ===
 window.initGame = function() {
     indicePergunta = 0; acertos = 0; erros = 0;
     document.getElementById('hits-val').innerText = "0";
@@ -108,13 +120,16 @@ function mostrarPergunta() {
                 position: relative; box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
             }
             .maze-cell { border: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-            .wall-img { width: 100%; height: 100%; object-fit: cover; }
+            
+            /* Paredes um pouco mais pequenas */
+            .wall-img { width: 80%; height: 80%; object-fit: contain; }
+            
             .goal-img { width: 70%; height: 70%; object-fit: contain; animation: bounce 2s infinite; }
             
             .hero-p { 
                 position: absolute; width: calc(100% / ${nivelAtual.tamanho}); height: calc(100% / ${nivelAtual.tamanho});
                 display: flex; align-items: center; justify-content: center;
-                transition: all 0.2s ease; z-index: 10;
+                transition: all 0.15s ease; z-index: 10;
             }
             .hero-p img { width: 85%; height: 85%; object-fit: contain; }
 
@@ -132,7 +147,6 @@ function mostrarPergunta() {
             .b-dir:active { transform: translateY(2px); box-shadow: none; }
             .b-undo { background: #f8f8f8; color: #999; font-size: 18px; }
 
-            /* AJUSTE PARA PORTÁTEIS (LANDSCAPE) */
             @media (orientation: landscape) and (max-height: 550px) {
                 .maze-wrapper { flex-direction: row; padding: 10px; gap: 20px; }
                 .maze-controls { height: 100%; justify-content: center; }
@@ -147,7 +161,6 @@ function mostrarPergunta() {
                         const x = i % nivelAtual.tamanho;
                         const y = Math.floor(i / nivelAtual.tamanho);
                         let content = "";
-                        // AQUI: Usa a imagem definida em cat.obstaculo
                         if (nivelAtual.mapa[y][x] === 1) content = `<img src="${JOGO_CONFIG.caminhoImg}${cat.obstaculo}" class="wall-img">`;
                         else if (x === nivelAtual.fim[0] && y === nivelAtual.fim[1]) content = `<img src="${JOGO_CONFIG.caminhoImg}${cat.objetivo}" class="goal-img">`;
                         return `<div class="maze-cell">${content}</div>`;
@@ -175,6 +188,7 @@ window.tentarMover = function(dx, dy) {
     let nx = posPersonagem.x + dx;
     let ny = posPersonagem.y + dy;
 
+    // Verificar se saiu dos limites ou bateu numa parede
     if (nx < 0 || nx >= nivelAtual.tamanho || ny < 0 || ny >= nivelAtual.tamanho || nivelAtual.mapa[ny][nx] === 1) {
         somErro.play(); return;
     }
@@ -183,9 +197,12 @@ window.tentarMover = function(dx, dy) {
     posPersonagem.y = ny;
     
     const p = document.getElementById('player');
-    p.style.left = `${nx * (100/nivelAtual.tamanho)}%`;
-    p.style.top = `${ny * (100/nivelAtual.tamanho)}%`;
+    if(p) {
+        p.style.left = `${nx * (100/nivelAtual.tamanho)}%`;
+        p.style.top = `${ny * (100/nivelAtual.tamanho)}%`;
+    }
 
+    // Verificar se chegou ao objetivo
     if (nx === nivelAtual.fim[0] && ny === nivelAtual.fim[1]) {
         document.querySelectorAll('.b-dir').forEach(b => b.style.pointerEvents = 'none');
         acertos++; somAcerto.play();
@@ -197,8 +214,10 @@ window.tentarMover = function(dx, dy) {
 window.resetPos = function() {
     posPersonagem = { x: nivelAtual.inicio[0], y: nivelAtual.inicio[1] };
     const p = document.getElementById('player');
-    p.style.left = `${posPersonagem.x * (100/nivelAtual.tamanho)}%`;
-    p.style.top = `${posPersonagem.y * (100/nivelAtual.tamanho)}%`;
+    if(p) {
+        p.style.left = `${posPersonagem.x * (100/nivelAtual.tamanho)}%`;
+        p.style.top = `${posPersonagem.y * (100/nivelAtual.tamanho)}%`;
+    }
 };
 
 function finalizarJogo() {
@@ -210,11 +229,11 @@ function finalizarJogo() {
     resScreen.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:10px; box-sizing:border-box;">
             <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; width:auto; margin-bottom:10px; object-fit:contain;">
-            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:10px;">${rel.titulo}</h2>
+            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats-container" style="display:flex; gap:10px; width:100%; max-width:300px; margin-bottom:15px;">
                 <div style="background:white; border-radius:15px; padding:10px; flex:1; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid #f0f0f0;">
-                    <span style="display:block; font-size:22px; font-weight:900; color:var(--primary-blue);">${acertos}</span>
-                    <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Níveis</span>
+                    <span style="display:block; font-size:22px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span>
+                    <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Acertos</span>
                 </div>
                 <div style="background:white; border-radius:15px; padding:10px; flex:1; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid #f0f0f0;">
                     <span style="display:block; font-size:22px; font-weight:900; color:var(--primary-blue);">${tempo}</span>
@@ -223,6 +242,7 @@ function finalizarJogo() {
             </div>
             <div style="display:flex; flex-direction:column; gap:8px; width:100%; max-width:260px;">
                 <button class="res-btn res-btn-p" style="padding:14px; border-radius:15px; font-weight:900; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 5px 0 var(--primary-dark);" onclick="location.reload()">Jogar de Novo</button>
+                <button class="res-btn res-btn-o" style="padding:11px; border-radius:15px; font-weight:900; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer; box-shadow:0 5px 0 var(--primary-blue);" onclick="openRDMenu()">Outro Tema</button>
                 <a href="${JOGO_CONFIG.linkVoltar}" style="padding:14px; border-radius:15px; font-weight:900; background:#dce4ee; color:#5d7082; border:none; text-align:center; text-decoration:none; box-shadow:0 5px 0 #b8c5d4;">Sair</a>
             </div>
         </div>
