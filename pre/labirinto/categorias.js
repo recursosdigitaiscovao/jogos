@@ -4,7 +4,7 @@ const JOGO_CATEGORIAS = {
         nome: "Jardim da Abelha",
         imgCapa: "animaisselvagens/abelha.png",
         personagem: "animaisselvagens/abelha.png",
-        objetivo: "objetos/flor.png",
+        objetivo: "natureza/flor.png",
         obstaculo: "natureza/arvore.png", // AQUI: Imagem das paredes para este tema
         itens: [
             { 
@@ -37,7 +37,7 @@ const JOGO_CATEGORIAS = {
         nome: "Caminho do Rato",
         imgCapa: "animaisselvagens/rato.png",
         personagem: "animaisselvagens/rato.png",
-        objetivo: "objetos/queijo.png",
+        objetivo: "comida/queijo.png",
         obstaculo: "objetos/cesto.png", // Paredes de cestos para o rato
         itens: [
             { 
