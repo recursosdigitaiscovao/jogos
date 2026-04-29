@@ -53,6 +53,7 @@
 </head>
 <body>
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+    
     <header>
         <div class="header-left">
             <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
@@ -85,8 +86,8 @@
                 <div class="screen-box">
                     <div id="intro-animation-container" style="flex:1; display:flex; align-items:center; justify-content:center; width:100%; min-height: 0;"></div>
                     <p id="intro-instr" style="font-weight: 800; color: var(--text-grey); text-align: center; margin: 15px 0; font-size: 0.95rem; padding: 0 20px;"></p>
-                    <div style="display:flex; width:100%; gap:15px; align-items:center; padding: 0 20px 20px; flex-shrink: 0;">
-                        <button style="flex:1; background:var(--primary-blue); color:white; border:none; border-radius:15px; padding:16px; font-weight:900; font-size:18px; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark);" onclick="goToGame()">JOGAR</button>
+                    <div style="display:flex; width:100%; max-width: 350px; gap:15px; align-items:center; padding: 0 20px 20px; flex-shrink: 0;">
+                        <button style="flex:1; background:var(--primary-blue); color:white; border:none; border-radius:15px; padding:15px; font-weight:900; font-size:18px; cursor:pointer; box-shadow:0 5px 0 var(--primary-dark);" onclick="goToGame()">JOGAR</button>
                         <img id="rd-intro-btn" src="" onclick="openRDMenu(event)" style="height:55px; width:55px; cursor:pointer; object-fit: contain; flex-shrink: 0;">
                     </div>
                 </div>
@@ -105,6 +106,7 @@
         <div id="rd-list"></div>
     </div>
 
+    <!-- CARREGAMENTO DOS SCRIPTS NA ORDEM CORRETA -->
     <script src="categorias.js"></script>
     <script src="dados.js"></script>
     <script src="jogo.js"></script>
@@ -115,10 +117,15 @@
         const tema = BIBLIOTECA_TEMAS[setup.area]; 
         const cont = BIBLIOTECA_CONTEUDO[setup.ano][setup.area];
         const conf = JOGO_CONFIG;
+
         document.body.style.opacity = '1';
         const root = document.documentElement;
         root.style.setProperty('--primary-blue', tema.corPrimaria); 
         root.style.setProperty('--primary-dark', tema.corEscura);
+        root.style.setProperty('--bg-page', tema.corPagina);
+        root.style.setProperty('--bg-card', tema.corCard);
+        root.style.setProperty('--borda-espaco-jogo', tema.bordaEspacoJogo);
+
         document.getElementById('tit-l1').innerText = cont.t1; 
         document.getElementById('tit-l2').innerText = cont.t2; 
         document.getElementById('sub-tit').innerText = cont.sub; 
@@ -126,15 +133,18 @@
         document.getElementById('header-back-mobile').src = conf.caminhoIcons + tema.voltarMobile;
         document.getElementById('rd-intro-btn').src = conf.caminhoImg + "rd.png";
         document.getElementById('rd-game-btn').src = conf.caminhoImg + "rd.png";
+        
         if(window.gerarIntroJogo) document.getElementById('intro-instr').innerText = window.gerarIntroJogo();
 
+        // Menu Lateral
         const menuBox = document.getElementById('dropdownMenu'); menuBox.innerHTML = '';
         ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
             const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
-            a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}" width="20"><span>${conf.links[k]}</span>`;
+            a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}" width="20"><span>${k.toUpperCase()}</span>`;
             menuBox.appendChild(a);
         });
 
+        // Lista RD
         const rdBox = document.getElementById('rd-list'); rdBox.innerHTML = '';
         Object.keys(conf.categorias).forEach(key => {
             const c = conf.categorias[key]; 
@@ -143,13 +153,14 @@
             div.onclick = () => { selecionarCategoria(key); closeMenus(); goToIntro(); }; 
             rdBox.appendChild(div);
         });
-        window.startLogic();
+
+        if(window.startLogic) window.startLogic();
     }
     function toggleHamburger(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); const ov = document.getElementById('overlay'); const isOpen = m.style.display === 'flex'; m.style.display = isOpen ? 'none' : 'flex'; ov.style.display = isOpen ? 'none' : 'block'; }
     function openRDMenu(e) { if(e) e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
     function closeMenus() { document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('rdMenu').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; }
-    function goToIntro() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-intro').classList.add('active'); document.getElementById('status-bar').style.display = 'none'; window.startLogic(); }
-    function goToGame() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-game').classList.add('active'); document.getElementById('status-bar').style.display = 'flex'; window.initGame(); }
+    function goToIntro() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-intro').classList.add('active'); document.getElementById('status-bar').style.display = 'none'; if(window.startLogic) window.startLogic(); }
+    function goToGame() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-game').classList.add('active'); document.getElementById('status-bar').style.display = 'flex'; if(window.initGame) window.initGame(); }
     window.onload = initUI;
     </script>
 </body>
