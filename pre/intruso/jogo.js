@@ -87,7 +87,6 @@ function mostrarPergunta(opcoes) {
             .intruso-grid { display: grid; grid-template-columns: repeat(${configuracaoNivel.colunas}, 1fr); gap: 12px; width: 100%; max-width: 850px; height: 95%; min-height: 0; }
             .card-item { background: white; border: 3px solid #eee; border-radius: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; box-shadow: 0 6px 0 #ddd; padding: 8px; box-sizing: border-box; height: 100%; width: 100%; min-height: 0; }
             .card-item img { max-height: 85%; max-width: 85%; object-fit: contain; }
-            .card-item:active { transform: translateY(2px); box-shadow: none; }
             .correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 5px 0 #5ea31a !important; }
             .wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 5px 0 #d13d3d !important; }
             @media (max-width: 500px) { .intruso-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -111,7 +110,7 @@ function verificar(el, img) {
     setTimeout(() => { indicePergunta++; proximaRonda(); }, 1200);
 }
 
-// === 3. FINALIZAÇÃO E RESULTADOS (AJUSTADO CONFORME IMAGEM) ===
+// === 3. FINALIZAÇÃO E RESULTADOS (ALINHADO COM DADOS.JS E IMAGEM PEDIDA) ===
 function finalizarJogo() {
     clearInterval(intervaloTempo); somVitoria.play();
     const totalP = 10;
@@ -128,15 +127,13 @@ function finalizarJogo() {
             .res-stats { display: flex; gap: 12px; width: 100%; max-width: 320px; margin: 15px 0; }
             .res-card { background: white; border-radius: 18px; padding: 12px; flex: 1; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; }
             .res-val { display: block; font-size: 24px; font-weight: 900; color: var(--primary-blue); line-height: 1.1; }
-            .res-lab { font-size: 10px; font-weight: 800; color: #88a; text-transform: uppercase; letter-spacing: 0.5px; }
+            .res-lab { font-size: 10px; font-weight: 800; color: #88a; text-transform: uppercase; }
             
             .res-btns { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px; }
             .btn-f { padding: 16px; border-radius: 20px; font-weight: 900; font-size: 16px; cursor: pointer; border: none; text-align: center; text-decoration: none; text-transform: uppercase; transition: 0.2s; }
-            
             .btn-f-primary { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
             .btn-f-outline { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); box-shadow: 0 6px 0 var(--primary-blue); padding: 13px; }
             .btn-f-muted { background: #dce4ee; color: #5d7082; box-shadow: 0 6px 0 #b8c5d4; }
-            
             .btn-f:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
         </style>
         <div class="res-container">
