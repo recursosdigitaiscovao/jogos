@@ -3,7 +3,7 @@ const JOGO_CATEGORIAS = {
         nome: "Jardim da Abelha",
         imgCapa: "animaisselvagens/abelha.png",
         personagem: "animaisselvagens/abelha.png",
-        objetivo: "objetos/flor.png", // Imagem da flor
+        objetivo: "natureza/flor.png", // Imagem da flor
         itens: [
             { 
                 nivel: 1, 
@@ -24,7 +24,7 @@ const JOGO_CATEGORIAS = {
         nome: "Caminho do Rato",
         imgCapa: "animaisselvagens/rato.png",
         personagem: "animaisselvagens/rato.png",
-        objetivo: "objetos/queijo.png",
+        objetivo: "comida/queijo.png",
         itens: [
             { 
                 nivel: 1, 
