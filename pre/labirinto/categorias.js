@@ -5,7 +5,7 @@ const JOGO_CATEGORIAS = {
         imgCapa: "animaisselvagens/abelha.png",
         personagem: "animaisselvagens/abelha.png",
         objetivo: "objetos/flor.png",
-        obstaculo: "objetos/arvore.png", // AQUI: Imagem das paredes para este tema
+        obstaculo: "natureza/arvore.png", // AQUI: Imagem das paredes para este tema
         itens: [
             { 
                 tamanho: 5, 
