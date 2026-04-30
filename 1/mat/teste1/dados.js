@@ -122,19 +122,19 @@ const BIBLIOTECA_CONTEUDO = {
 
     "ano3": {
         "portugues": { 
-            t1: "MESTRES", 
+            t1: "SUPER", 
             t2: "DA LÍNGUA", 
             sub: "Português | 3º Ano", 
             rodape: "&copy; Super Leitores - Recursos Digitais Covão" 
         },
         "matematica": { 
-            t1: "MESTRES", 
+            t1: "SUPER", 
             t2: "DO CÁLCULO", 
             sub: "Matemática | 3º Ano", 
             rodape: "&copy; Super Matemáticos - Recursos Digitais Covão" 
         },
         "estudo": { 
-            t1: "GRANDES", 
+            t1: "SUPER", 
             t2: "CIENTISTAS", 
             sub: "Estudo do Meio | 3º Ano", 
             rodape: "&copy; Super Cientistas - Recursos Digitais Covão" 
@@ -143,19 +143,19 @@ const BIBLIOTECA_CONTEUDO = {
 
     "ano4": {
         "portugues": { 
-            t1: "GURU", 
+            t1: "MESTRES", 
             t2: "DAS LETRAS", 
             sub: "Português | 4º Ano", 
             rodape: "&copy; Mestres Leitores - Recursos Digitais Covão" 
         },
         "matematica": { 
-            t1: "GURU", 
+            t1: "MESTRES", 
             t2: "DOS NÚMEROS", 
             sub: "Matemática | 4º Ano", 
             rodape: "&copy; Mestres Matemáticos - Recursos Digitais Covão" 
         },
         "estudo": { 
-            t1: "GURU", 
+            t1: "MESTRES", 
             t2: "DO MUNDO", 
             sub: "Estudo do Meio | 4º Ano", 
             rodape: "&copy; Mestres Cientistas - Recursos Digitais Covão" 
