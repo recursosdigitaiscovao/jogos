@@ -1,21 +1,21 @@
-// === DEFINIÇÃO DAS MISSÕES ESPACIAIS ===
+// === DEFINIÇÃO DAS CATEGORIAS (NÍVEIS DE MAR) ===
 const JOGO_CATEGORIAS = {
-    "facil": {
-        nome: "Missão até 10",
-        imgCapa: "rd.png", 
-        range: [1, 10],
-        quantidade: 4
+    "mar-calmo": {
+        nome: "Mar Calmo (1-10)",
+        imgCapa: "objetos/bola.png", // Imagem do peixe na pasta img
+        maxNum: 10,
+        velocidade: 0.03
     },
-    "medio": {
-        nome: "Missão até 20",
-        imgCapa: "rd.png",
-        range: [1, 20],
-        quantidade: 4
+    "mar-profundo": {
+        nome: "Mar Profundo (1-20)",
+        imgCapa: "objetos/boneca.png",
+        maxNum: 20,
+        velocidade: 0.05
     },
-    "dificil": {
-        nome: "Exploração até 50",
-        imgCapa: "rd.png",
-        range: [1, 50],
-        quantidade: 4
+    "oceano": {
+        nome: "Oceano (1-50)",
+        imgCapa: "objetos/bola.png",
+        maxNum: 50,
+        velocidade: 0.07
     }
 };
