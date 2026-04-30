@@ -5,28 +5,19 @@ let erros = 0;
 let tempoInicio;
 let intervaloTempo;
 
-// Variáveis Three.js
-let scene, camera, renderer, raycaster, mouse;
-let fishes = [];
-let animationId;
+let categoriaAtual = "mar-calmo";
 let targetNum = 0;
 let rule = 'greater'; // 'greater' ou 'less'
+let spawnInterval;
 let jogoAtivo = false;
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// Injetar script Three.js dinamicamente se não existir
-if (!window.THREE) {
-    const script = document.createElement('script');
-    script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
-    document.head.appendChild(script);
-}
-
 // === 1. INICIALIZAÇÃO E TUTORIAL ===
 window.startLogic = function() {
-    if (!categoriaAtual) categoriaAtual = "mar-calmo";
+    if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "mar-calmo";
     setTimeout(criarAnimacaoTutorial, 100);
 };
 
@@ -34,17 +25,21 @@ window.gerarIntroJogo = function() {
     return "Pesca o peixe que tem o número correto para cumprir a missão do Comandante!";
 };
 
+window.selecionarCategoria = function(key) {
+    categoriaAtual = key;
+};
+
 function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
-            <div style="font-size:60px; animation: swim 3s infinite ease-in-out;">🐠</div>
-            <div id="tut-hand" style="font-size:40px; animation: tap 2s infinite;">☝️</div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px; position:relative; background:#e0f2fe; padding:20px; border-radius:20px; border:2px solid #bae6fd;">
+            <div style="font-size:50px; animation: swimTut 3s infinite ease-in-out;">🐠</div>
+            <div style="position:absolute; font-size:40px; bottom:-10px; right:10px; animation: tapH 2s infinite;">☝️</div>
         </div>
         <style>
-            @keyframes swim { 0%, 100% { transform: translateX(-20px) rotate(10deg); } 50% { transform: translateX(20px) rotate(-10deg); } }
-            @keyframes tap { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px) scale(0.9); } }
+            @keyframes swimTut { 0%, 100% { transform: translateX(-20px); } 50% { transform: translateX(20px); } }
+            @keyframes tapH { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px) scale(0.9); } }
         </style>
     `;
 }
@@ -56,8 +51,13 @@ window.initGame = function() {
     document.getElementById('miss-val').innerText = "0";
     jogoAtivo = true;
     iniciarCronometro();
-    setupThreeJS();
+    montarCenario();
     proximaMissao();
+    
+    // Criar peixes periodicamente
+    spawnInterval = setInterval(() => {
+        if(jogoAtivo) criarPeixe();
+    }, 1500);
 };
 
 function iniciarCronometro() {
@@ -71,153 +71,136 @@ function iniciarCronometro() {
     }, 1000);
 }
 
-function setupThreeJS() {
+function montarCenario() {
     const container = document.getElementById('game-main-content');
-    container.style.background = "linear-gradient(180deg, #bae6fd 0%, #38bdf8 100%)";
-    container.innerHTML = `<div id="canvas-container" style="width:100%; height:100%; position:relative; cursor:crosshair;"></div>
-                            <div id="mission-ui" style="position:absolute; top:20px; background:white; padding:10px 20px; border-radius:20px; font-weight:900; color:#0369a1; border:3px solid #0ea5e9; box-shadow:0 5px 15px rgba(0,0,0,0.1); z-index:10;"></div>
-                            <div id="labels-layer" style="position:absolute; inset:0; pointer-events:none;"></div>`;
+    container.innerHTML = `
+        <style>
+            .ocean-bg { 
+                width: 100%; height: 100%; background: linear-gradient(180deg, #bae6fd 0%, #0284c7 100%);
+                position: relative; overflow: hidden; border-radius: 25px; cursor: crosshair;
+            }
+            .bubble { position: absolute; background: rgba(255,255,255,0.3); border-radius: 50%; animation: rise 4s infinite ease-in; }
+            @keyframes rise { 0% { transform: translateY(100%); opacity: 0; } 50% { opacity: 0.5; } 100% { transform: translateY(-100px); opacity: 0; } }
+            
+            .mission-panel {
+                position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
+                background: white; padding: 10px 25px; border-radius: 20px;
+                border: 3px solid #0ea5e9; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                font-weight: 900; color: #0369a1; z-index: 100; text-align: center; white-space: nowrap;
+            }
 
-    const canvasBox = document.getElementById('canvas-container');
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(45, canvasBox.clientWidth / canvasBox.clientHeight, 0.1, 1000);
-    camera.position.z = 15;
-
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(canvasBox.clientWidth, canvasBox.clientHeight);
-    canvasBox.appendChild(renderer.domElement);
-
-    const ambient = new THREE.AmbientLight(0xffffff, 1);
-    scene.add(ambient);
-
-    raycaster = new THREE.Raycaster();
-    mouse = new THREE.Vector2();
-
-    canvasBox.addEventListener('mousedown', aoClicar);
-    animate();
+            .fish {
+                position: absolute; width: 80px; height: 50px; cursor: pointer;
+                transition: transform 0.2s; z-index: 50;
+                display: flex; align-items: center; justify-content: center;
+            }
+            .fish-body { 
+                width: 100%; height: 100%; border-radius: 50% 50% 40% 40%;
+                position: relative; display: flex; align-items: center; justify-content: center;
+            }
+            .fish-tail {
+                position: absolute; left: -15px; width: 0; height: 0;
+                border-top: 15px solid transparent; border-bottom: 15px solid transparent;
+            }
+            .fish-value { color: white; font-weight: 900; font-size: 22px; text-shadow: 2px 2px #000; font-family: Fredoka; z-index: 2; }
+            
+            @keyframes moveRight { from { left: -100px; } to { left: 100%; } }
+            @keyframes moveLeft { from { right: -100px; } to { right: 100%; } }
+        </style>
+        <div class="ocean-bg" id="ocean">
+            <div class="mission-panel" id="mission-ui">Carregando missão...</div>
+        </div>
+    `;
+    // Criar algumas bolhas de fundo
+    for(let i=0; i<10; i++) {
+        const b = document.createElement('div');
+        b.className = 'bubble';
+        const size = Math.random()*15+5;
+        b.style.width = b.style.height = size+'px';
+        b.style.left = Math.random()*90+'%';
+        b.style.animationDelay = Math.random()*4+'s';
+        document.getElementById('ocean').appendChild(b);
+    }
 }
 
 function proximaMissao() {
     if (indicePergunta >= 10) { finalizar(); return; }
-    
     const config = JOGO_CATEGORIAS[categoriaAtual];
     targetNum = Math.floor(Math.random() * (config.maxNum - 2)) + 2;
     rule = Math.random() > 0.5 ? 'greater' : 'less';
     
-    const missionUI = document.getElementById('mission-ui');
-    if(missionUI) {
-        missionUI.innerHTML = `PESCA UM NÚMERO <span style="color:#ef4444">${rule === 'greater' ? 'MAIOR' : 'MENOR'}</span> QUE ${targetNum}`;
-    }
+    document.getElementById('mission-ui').innerHTML = 
+        `PESCA UM NÚMERO <span style="color:#ef4444">${rule === 'greater' ? 'MAIOR' : 'MENOR'}</span> QUE ${targetNum}`;
 }
 
-function createFish() {
+function criarPeixe() {
+    const ocean = document.getElementById('ocean');
+    if(!ocean) return;
+
     const config = JOGO_CATEGORIAS[categoriaAtual];
-    const group = new THREE.Group();
-    const value = Math.floor(Math.random() * config.maxNum) + 1;
+    const val = Math.floor(Math.random() * config.maxNum) + 1;
+    const colors = ["#ff6b6b", "#ff9f43", "#54a0ff", "#1dd1a1", "#feca57"];
+    const color = colors[Math.floor(Math.random()*colors.length)];
     
-    const colors = [0xff6b6b, 0xff9f43, 0x54a0ff, 0x1dd1a1, 0xfeca57];
-    const mat = new THREE.MeshPhongMaterial({ color: colors[Math.floor(Math.random()*colors.length)] });
+    const fish = document.createElement('div');
+    fish.className = 'fish';
+    
+    const isLeft = Math.random() > 0.5;
+    fish.style.top = (Math.random()*60 + 20) + '%';
+    fish.style.animation = `${isLeft ? 'moveRight' : 'moveLeft'} ${config.velocidade}s linear forwards`;
+    
+    if(!isLeft) fish.style.transform = 'scaleX(-1)';
 
-    // Corpo Simples
-    const body = new THREE.Mesh(new THREE.SphereGeometry(0.7, 16, 16), mat);
-    body.scale.set(1.5, 0.8, 0.5);
-    group.add(body);
+    fish.innerHTML = `
+        <div class="fish-body" style="background:${color}">
+            <div class="fish-tail" style="border-right: 20px solid ${color}"></div>
+            <div class="fish-value" style="${!isLeft ? 'transform:scaleX(-1)' : ''}">${val}</div>
+        </div>
+    `;
 
-    // Cauda
-    const tail = new THREE.Mesh(new THREE.ConeGeometry(0.4, 0.7, 3), mat);
-    tail.position.x = -1.1;
-    tail.rotation.z = Math.PI / 2;
-    group.add(tail);
+    fish.onclick = (e) => {
+        e.stopPropagation();
+        capturarPeixe(fish, val);
+    };
 
-    const side = Math.random() > 0.5 ? 1 : -1;
-    group.position.set(side * 12, (Math.random() - 0.5) * 8, 0);
-    if(side === -1) group.rotation.y = Math.PI;
-
-    // Texto (DOM Label)
-    const label = document.createElement('div');
-    label.style.cssText = "position:absolute; color:white; font-weight:900; font-size:24px; text-shadow:2px 2px #000; pointer-events:none; font-family:Nunito;";
-    label.innerText = value;
-    document.getElementById('labels-layer').appendChild(label);
-
-    group.userData = { value, speed: (config.velocidade + Math.random() * 0.02) * -side, label };
-    scene.add(group);
-    fishes.push(group);
+    ocean.appendChild(fish);
+    
+    // Remover peixe após animação
+    setTimeout(() => { if(fish.parentNode) fish.remove(); }, config.velocidade * 1000);
 }
 
-function aoClicar(event) {
-    const rect = renderer.domElement.getBoundingClientRect();
-    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(fishes, true);
-
-    if (intersects.length > 0) {
-        let fish = intersects[0].object;
-        while(fish.parent && !fish.userData.value) fish = fish.parent;
-        
-        const val = fish.userData.value;
-        const acerto = rule === 'greater' ? val > targetNum : val < targetNum;
-
-        if(acerto) {
-            acertos++; somAcerto.play();
-            document.getElementById('hits-val').innerText = acertos;
-            indicePergunta++;
-            proximaMissao();
-        } else {
-            erros++; somErro.play();
-            document.getElementById('miss-val').innerText = erros;
-        }
-        removerPeixe(fish);
+function capturarPeixe(el, val) {
+    const acerto = (rule === 'greater' ? val > targetNum : val < targetNum);
+    
+    if(acerto) {
+        acertos++; somAcerto.play();
+        el.style.transform = "scale(1.5) rotate(360deg)";
+        el.style.opacity = "0";
+        document.getElementById('hits-val').innerText = acertos;
+        indicePergunta++;
+        proximaMissao();
+    } else {
+        erros++; somErro.play();
+        el.style.transform = "translateX(20px)";
+        setTimeout(() => el.style.transform = "translateX(-20px)", 100);
+        document.getElementById('miss-val').innerText = erros;
     }
-}
-
-function removerPeixe(fish) {
-    if(fish.userData.label) fish.userData.label.remove();
-    scene.remove(fish);
-    fishes = fishes.filter(f => f !== fish);
-}
-
-function animate() {
-    if(!jogoAtivo) return;
-    animationId = requestAnimationFrame(animate);
-
-    if(Math.random() < 0.02 && fishes.length < 6) createFish();
-
-    const vector = new THREE.Vector3();
-    const rect = renderer.domElement.getBoundingClientRect();
-
-    fishes.forEach(fish => {
-        fish.position.x += fish.userData.speed;
-        
-        // Update Label Pos
-        fish.getWorldPosition(vector);
-        vector.project(camera);
-        const x = (vector.x * 0.5 + 0.5) * rect.width;
-        const y = (-(vector.y * 0.5) + 0.5) * rect.height;
-        fish.userData.label.style.left = `${x}px`;
-        fish.userData.label.style.top = `${y}px`;
-
-        if(Math.abs(fish.position.x) > 15) removerPeixe(fish);
-    });
-
-    renderer.render(scene, camera);
 }
 
 function finalizar() {
     jogoAtivo = false;
-    cancelAnimationFrame(animationId);
+    clearInterval(spawnInterval);
     clearInterval(intervaloTempo);
     somVitoria.play();
 
     const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
     const tempo = document.getElementById('timer-val').innerText;
     const resScreen = document.getElementById('scr-result');
+    
     resScreen.className = "screen screen-box active"; 
-
     resScreen.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:10px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:25%; min-height:90px; width:auto; margin-bottom:10px; object-fit:contain;">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:22%; min-height:80px; width:auto; margin-bottom:10px; object-fit:contain;">
             <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:10px; width:100%; max-width:320px; margin:15px 0;">
                 <div style="background:white; border-radius:15px; padding:12px; flex:1; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06); border:1px solid #f0f0f0;">
