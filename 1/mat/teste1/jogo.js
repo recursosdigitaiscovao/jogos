@@ -105,44 +105,79 @@ function mostrarPergunta() {
 
     container.innerHTML = `
         <style>
-            .game-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-around; padding: 10px; box-sizing: border-box; overflow: hidden; }
+            .game-wrapper { 
+                display: flex; flex-direction: column; 
+                width: 100%; height: 100%; 
+                align-items: center; justify-content: space-around; 
+                padding: 10px; box-sizing: border-box; overflow: hidden; 
+            }
             
-            /* ÁREA DO COMBOIO OCUPA 60% DA ALTURA */
-            .train-stage { flex: 0 1 60%; width: 100%; display: flex; align-items: center; justify-content: center; min-height: 0; }
-            .train-wrapper { display: flex; align-items: flex-end; gap: 1vw; transition: transform 0.8s ease-in-out; transform: translateX(-120vw); max-width: 95%; }
-            .train-wrapper.entering { transform: translateX(0); }
-            .train-wrapper.leaving { transform: translateX(120vw); }
+            /* CONTENTOR PRINCIPAL DO COMBOIO */
+            .train-stage { 
+                flex: 1; width: 100%; 
+                display: flex; align-items: center; justify-content: center; 
+                min-height: 0; padding: 0 10px;
+            }
 
-            .locomotive { width: 10vw; max-width: 100px; height: 12vw; max-height: 120px; background: #ef4444; border-radius: 12px 35% 5px 5px; position: relative; border-bottom: 6px solid #b91c1c; display: flex; align-items: center; justify-content: center; color: white; order: 2; flex-shrink: 0; }
-            .locomotive::after { content: ''; position: absolute; top: -15px; left: 20%; width: 15%; height: 20%; background: #475569; border-radius: 2px; }
+            .train-wrapper { 
+                display: flex; align-items: flex-end; 
+                gap: 5px; width: 100%; max-width: 800px;
+                transition: transform 0.8s ease-in-out; 
+                transform: translateX(-120%); 
+            }
+            .train-wrapper.entering { transform: translateX(0); }
+            .train-wrapper.leaving { transform: translateX(120%); }
+
+            /* LOCOMOTIVA E CARRUAGENS USAM FLEX:1 PARA ENCOLHEREM IGUAIS */
+            .locomotive { 
+                flex: 1.2; height: 100px; max-width: 90px;
+                background: #ef4444; border-radius: 10px 30px 5px 5px; 
+                position: relative; border-bottom: 5px solid #b91c1c; 
+                display: flex; align-items: center; justify-content: center; 
+                color: white; order: 2; flex-shrink: 1;
+            }
+            .locomotive::after { content: ''; position: absolute; top: -12px; left: 20%; width: 15%; height: 20%; background: #475569; border-radius: 2px; }
             
-            .carriages { display: flex; gap: 1vw; order: 1; }
-            .carriage { width: 9vw; max-width: 80px; height: 10vw; max-height: 100px; background: #3b82f6; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: clamp(1rem, 4vw, 2.5rem); position: relative; border-bottom: 5px solid #1d4ed8; flex-shrink: 0; }
+            .carriages-list { display: flex; gap: 5px; order: 1; flex: 4; }
+            .carriage { 
+                flex: 1; height: 80px; max-width: 75px;
+                background: #3b82f6; border-radius: 8px; 
+                display: flex; align-items: center; justify-content: center; 
+                color: white; font-weight: 900; font-size: 1.5rem; 
+                position: relative; border-bottom: 5px solid #1d4ed8; 
+                flex-shrink: 1; min-width: 0; /* Permite encolher em ecrãs verticais */
+            }
             .carriage.missing { background: #f8fafc; border-bottom: 5px solid #cbd5e1; color: #3b82f6; border-style: dashed; border-width: 3px; }
             
-            .wheel { position: absolute; bottom: -8%; width: 22%; aspect-ratio: 1/1; background: #334155; border-radius: 50%; border: 2px solid #94a3b8; }
+            .wheel { position: absolute; bottom: -8px; width: 15px; height: 15px; background: #334155; border-radius: 50%; border: 2px solid #94a3b8; }
             .wheel-l { left: 10%; } .wheel-r { right: 10%; }
 
-            /* OPÇÕES OCUPAM O RESTANTE */
-            .options-row { display: flex; justify-content: center; gap: 15px; width: 100%; max-width: 600px; flex-shrink: 0; padding: 10px 0; }
-            .opt-btn { background: white; border: 3px solid #cbd5e1; border-radius: 20px; flex: 1; aspect-ratio: 1/1; max-width: 90px; display: flex; align-items: center; justify-content: center; font-size: clamp(1.2rem, 5vw, 2.2rem); font-weight: 900; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #ddd; color: #334155; }
-            .opt-btn:active { transform: translateY(2px); box-shadow: none; }
-            .correct-btn { background: #e8f9e8 !important; border-color: #7ed321 !important; color: #2e7d32 !important; }
-            .wrong-btn { background: #fff1f1 !important; border-color: #ff5e5e !important; color: #b91c1c !important; }
+            /* OPÇÕES */
+            .options-row { 
+                display: flex; justify-content: center; gap: 10px; 
+                width: 100%; max-width: 500px; flex-shrink: 0; padding: 10px 0; 
+            }
+            .opt-btn { 
+                background: white; border: 3px solid #cbd5e1; border-radius: 15px; 
+                flex: 1; aspect-ratio: 1/1; max-width: 75px; 
+                display: flex; align-items: center; justify-content: center; 
+                font-size: 1.6rem; font-weight: 900; cursor: pointer; 
+                box-shadow: 0 4px 0 #ddd; color: #334155; 
+            }
 
-            @media (orientation: landscape) and (max-height: 500px) {
-                .train-stage { flex: 0 1 50%; }
-                .locomotive { width: 80px; height: 90px; }
-                .carriage { width: 65px; height: 75px; }
-                .opt-btn { max-width: 60px; border-radius: 12px; }
+            /* AJUSTE PARA ECRÃS VERTICAIS MUITO ESTREITOS */
+            @media (max-width: 400px) {
+                .carriage { font-size: 1.1rem; height: 60px; }
+                .locomotive { height: 75px; }
+                .opt-btn { font-size: 1.3rem; }
             }
         </style>
 
         <div class="game-wrapper">
             <div class="train-stage">
                 <div id="train" class="train-wrapper">
-                    <div class="locomotive"><i class="fas fa-smile" style="font-size: 3vw;"></i></div>
-                    <div class="carriages">
+                    <div class="locomotive"><i class="fas fa-smile" style="font-size: 25px;"></i></div>
+                    <div class="carriages-list">
                         ${currentSequence.map((num, i) => `
                             <div class="carriage ${i === missingIndex ? 'missing' : ''}" id="${i === missingIndex ? 'target-c' : ''}">
                                 ${i === missingIndex ? '?' : num}
@@ -165,30 +200,24 @@ function verificar(btn, val) {
     const train = document.getElementById('train');
     if (val === correctAnswer) {
         acertos++; somAcerto.play();
-        btn.classList.add('correct-btn');
+        btn.style.background = "#e8f9e8"; btn.style.borderColor = "#7ed321";
         document.getElementById('hits-val').innerText = acertos;
         const target = document.getElementById('target-c');
         target.innerText = correctAnswer;
         target.classList.remove('missing');
         target.style.background = "#10b981";
-        target.innerHTML += '<div class="wheel wheel-l"></div><div class="wheel wheel-r"></div>';
         setTimeout(() => {
             train.classList.remove('entering'); train.classList.add('leaving');
             setTimeout(() => { indicePergunta++; proximaRonda(); }, 800);
         }, 1000);
     } else {
         erros++; somErro.play();
-        btn.classList.add('wrong-btn');
+        btn.style.background = "#fff1f1"; btn.style.borderColor = "#ff5e5e";
         document.getElementById('miss-val').innerText = erros;
-        document.querySelectorAll('.opt-btn').forEach(b => { if(parseInt(b.innerText) === correctAnswer) b.classList.add('correct-btn'); });
-        setTimeout(() => {
-            train.style.transform = "translateX(-10px)";
-            setTimeout(() => { train.style.transform = "translateX(0)"; indicePergunta++; proximaRonda(); }, 200);
-        }, 1500);
+        setTimeout(() => { indicePergunta++; proximaRonda(); }, 1500);
     }
 }
 
-// === 3. FINALIZAÇÃO E RESULTADOS ===
 function finalizarJogo() {
     clearInterval(intervaloTempo); somVitoria.play();
     const totalP = 10;
