@@ -1,21 +1,21 @@
-// === DEFINIÇÃO DAS CATEGORIAS (MARÉS) ===
+// === DEFINIÇÃO DAS CATEGORIAS (DIFICULDADE) ===
 const JOGO_CATEGORIAS = {
     "mar-calmo": {
         nome: "Mar Calmo (1-10)",
-        imgCapa: "rd.png", 
+        imgCapa: "peixe01.png", 
         maxNum: 10,
-        velocidade: 10 // segundos para atravessar o ecrã
+        velocidadeBase: 7 // Segundos para atravessar
     },
     "mar-profundo": {
         nome: "Mar Profundo (1-20)",
-        imgCapa: "rd.png",
+        imgCapa: "peixe03.png",
         maxNum: 20,
-        velocidade: 10
+        velocidadeBase: 5.5
     },
     "oceano": {
         nome: "Oceano (1-50)",
-        imgCapa: "rd.png",
+        imgCapa: "peixe05.png",
         maxNum: 50,
-        velocidade: 10
+        velocidadeBase: 4.5
     }
 };
