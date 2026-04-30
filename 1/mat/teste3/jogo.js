@@ -21,7 +21,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Ajuda os foguetões a descolar! Coloca-os por ordem, do número mais baixo para o mais alto.";
+    return "Ordena os foguetões do número mais pequeno para o maior para os veres descolar!";
 };
 
 window.selecionarCategoria = function(key) {
@@ -34,16 +34,21 @@ function criarAnimacaoTutorial() {
     container.innerHTML = `
         <div class="tut-space">
             <div class="tut-pad">1º</div>
-            <div class="tut-rocket-demo">5</div>
+            <div class="tut-rocket-demo">
+                <div class="tut-nose"></div>
+                <div class="tut-body">1</div>
+            </div>
             <div class="tut-hand-space">☝️</div>
         </div>
         <style>
-            .tut-space { position: relative; width: 150px; height: 120px; background: #0f172a; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; border: 2px solid #334155; }
-            .tut-pad { width: 50px; height: 50px; border: 2px dashed #475569; border-radius: 10px; color: #475569; display: flex; align-items: center; justify-content: center; font-weight: 900; }
-            .tut-rocket-demo { width: 30px; height: 50px; background: #ef4444; border-radius: 50% 50% 5px 5px; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+            .tut-space { position: relative; width: 160px; height: 140px; background: #0f172a; border-radius: 25px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; border: 2px solid #334155; }
+            .tut-pad { width: 50px; height: 60px; border: 2px dashed #475569; border-radius: 10px; color: #475569; display: flex; align-items: center; justify-content: center; font-weight: 900; }
+            .tut-rocket-demo { position: relative; width: 30px; }
+            .tut-nose { width: 30px; height: 15px; background: #ef4444; border-radius: 50% 50% 0 0; }
+            .tut-body { width: 30px; height: 35px; background: #cbd5e1; color: #1e293b; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; border-radius: 0 0 5px 5px; }
             .tut-hand-space { position: absolute; font-size: 40px; animation: moveHandRocket 3s infinite; }
             @keyframes moveHandRocket {
-                0%, 100% { transform: translate(0, 40px); }
+                0%, 100% { transform: translate(0, 50px); }
                 50% { transform: translate(0, -30px) scale(0.8); }
             }
         </style>
@@ -85,89 +90,93 @@ function proximaMissao() {
     mostrarPergunta();
 }
 
+function getRocketHTML(num, isPlaced = false) {
+    return `
+        <div class="rocket ${isPlaced ? 'placed' : ''}" id="r-${num}" data-val="${num}" 
+             ${!isPlaced ? 'draggable="true" ondragstart="dragRocket(event)" ontouchstart="touchStart(event)" ontouchmove="touchMove(event)" ontouchend="touchEnd(event)"' : ''}>
+            <div class="rocket-nose"></div>
+            <div class="rocket-body">
+                <div class="rocket-window"></div>
+                <div class="rocket-number">${num}</div>
+            </div>
+            <div class="fin fin-l"></div>
+            <div class="fin fin-r"></div>
+            <div class="engine-part"></div>
+            <div class="fire-glow"></div>
+        </div>
+    `;
+}
+
 function mostrarPergunta() {
     const container = document.getElementById('game-main-content');
     document.getElementById('round-val').innerText = `${indicePergunta + 1} / 10`;
 
     container.innerHTML = `
         <style>
-            .space-bg { 
+            .space-viewport { 
                 display: flex; flex-direction: column; width: 100%; height: 100%; 
                 background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
                 align-items: center; justify-content: space-around; padding: 10px; box-sizing: border-box; 
                 position: relative; overflow: hidden; border-radius: 25px;
             }
-            .stars { position: absolute; inset: 0; pointer-events: none; }
             .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle 2s infinite; }
             @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-            /* ZONA DE LANÇAMENTO */
-            .pads-container { display: flex; gap: 15px; z-index: 5; height: 35%; align-items: center; }
+            /* BASES */
+            .pads-row { display: flex; gap: 12px; z-index: 5; height: 35%; align-items: center; width: 100%; justify-content: center; }
             .pad {
-                width: 75px; height: 100px; border: 2px dashed rgba(255,255,255,0.2); 
-                border-radius: 15px; background: rgba(255,255,255,0.03);
+                flex: 1; max-width: 90px; height: 120px; border: 2px dashed rgba(255,255,255,0.2); 
+                border-radius: 20px; background: rgba(255,255,255,0.03);
                 display: flex; align-items: center; justify-content: center; position: relative;
             }
-            .pad-label { position: absolute; bottom: -20px; color: #64748b; font-size: 9px; font-weight: 800; text-transform: uppercase; white-space: nowrap; }
+            .pad-label { position: absolute; bottom: -22px; color: #64748b; font-size: 8px; font-weight: 800; text-transform: uppercase; text-align: center; width: 100%; }
 
-            /* FOGUETÕES */
-            .pool { display: flex; gap: 20px; z-index: 10; height: 120px; align-items: center; }
-            .rocket {
-                width: 50px; height: 90px; position: relative; cursor: grab; transition: transform 0.2s;
-                touch-action: none; display: flex; flex-direction: column; align-items: center;
-            }
-            .rocket-body {
-                width: 34px; height: 65px; background: linear-gradient(to right, #ef4444, #dc2626);
-                border-radius: 50% 50% 10% 10%; display: flex; align-items: center; justify-content: center;
-                border: 1px solid rgba(0,0,0,0.2); z-index: 2;
-            }
-            .rocket-number { color: white; font-weight: 900; font-size: 16px; font-family: 'Fredoka'; z-index: 3; }
-            .rocket-nose { width: 34px; height: 15px; background: #1e293b; border-radius: 50% 50% 0 0; margin-bottom: -10px; z-index: 1; }
-            .fin { position: absolute; bottom: 20px; width: 15px; height: 30px; background: #1e293b; z-index: 1; }
-            .fin-l { left: 0; border-radius: 100% 0 0 0; } .fin-r { right: 0; border-radius: 0 100% 0 0; }
-            .fire { 
-                position: absolute; top: 80%; width: 15px; height: 30px; 
-                background: linear-gradient(to bottom, #fbbf24, transparent); 
-                border-radius: 50%; display: none; animation: flicker 0.1s infinite alternate; 
-            }
-            @keyframes flicker { 0% { height: 20px; } 100% { height: 30px; } }
+            /* FOGUETÃO PREMIUM */
+            .rocket-pool { display: flex; gap: 15px; z-index: 10; height: 130px; align-items: center; width: 100%; justify-content: center; }
+            .rocket { width: 60px; height: 110px; position: relative; cursor: grab; display: flex; flex-direction: column; align-items: center; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.4)); touch-action: none; }
+            
+            .rocket-nose { width: 34px; height: 25px; background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); border-radius: 50% 50% 0 0; z-index: 3; border-bottom: 2px solid rgba(0,0,0,0.1); }
+            .rocket-body { width: 38px; height: 60px; background: linear-gradient(to right, #f8fafc 0%, #cbd5e1 50%, #94a3b8 100%); border-radius: 5px 5px 12px 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 2; border: 1px solid rgba(0,0,0,0.1); margin-top: -5px; }
+            
+            .rocket-window { width: 18px; height: 18px; background: #38bdf8; border: 2px solid #475569; border-radius: 50%; position: relative; overflow: hidden; box-shadow: inset 1px 1px 3px rgba(0,0,0,0.4); }
+            .rocket-window::after { content: ''; position: absolute; top: 2px; left: 2px; width: 6px; height: 3px; background: white; border-radius: 50%; opacity: 0.6; transform: rotate(-30deg); }
+            .rocket-number { color: #1e293b; font-weight: 900; font-size: 16px; margin-top: 3px; font-family: 'Fredoka', sans-serif; }
+            
+            .fin { position: absolute; bottom: 20px; width: 18px; height: 35px; background: linear-gradient(to bottom, #ef4444, #991b1b); z-index: 1; }
+            .fin-l { left: -3px; transform: skewY(-15deg); border-radius: 100% 0 0 20%; }
+            .fin-r { right: -3px; transform: skewY(15deg); border-radius: 0 100% 20% 0; }
+            
+            .engine-part { width: 22px; height: 6px; background: #334155; border-radius: 0 0 4px 4px; margin-top: -2px; }
+            .fire-glow { position: absolute; top: 85px; width: 15px; height: 35px; background: linear-gradient(to bottom, #fbbf24, #f59e0b, transparent); border-radius: 50%; display: none; animation: flicker 0.1s infinite alternate; filter: blur(1px); }
 
+            @keyframes flicker { 0% { height: 25px; opacity: 0.7; } 100% { height: 35px; opacity: 1; } }
             .rocket.launching { animation: liftOff 1.5s forwards ease-in; }
             @keyframes liftOff { 100% { transform: translateY(-100vh); opacity: 0; } }
             .rocket.shake { animation: shake 0.4s; }
             @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
             @media (min-width: 800px) {
-                .pad { width: 100px; height: 130px; }
-                .rocket { width: 70px; height: 110px; }
-                .rocket-body { width: 45px; height: 80px; }
-                .rocket-number { font-size: 22px; }
+                .pad { max-width: 110px; height: 150px; }
+                .rocket { width: 80px; height: 130px; }
+                .rocket-body { width: 45px; height: 75px; }
+                .rocket-nose { width: 40px; height: 30px; }
+                .rocket-number { font-size: 20px; }
+                .fire-glow { top: 105px; width: 20px; }
             }
         </style>
 
-        <div class="space-bg">
-            <div class="stars" id="stars-container"></div>
+        <div class="space-viewport">
+            <div id="stars-container"></div>
             
-            <div class="pads-container">
+            <div class="pads-row">
                 <div class="pad" data-idx="0" ondragover="event.preventDefault()" ondrop="dropRocket(event)"><span class="pad-label">1º Menor</span></div>
                 <div class="pad" data-idx="1" ondragover="event.preventDefault()" ondrop="dropRocket(event)"><span class="pad-label">2º</span></div>
                 <div class="pad" data-idx="2" ondragover="event.preventDefault()" ondrop="dropRocket(event)"><span class="pad-label">3º</span></div>
                 <div class="pad" data-idx="3" ondragover="event.preventDefault()" ondrop="dropRocket(event)"><span class="pad-label">4º Maior</span></div>
             </div>
 
-            <div class="pool" id="rocket-pool">
-                ${numerosDaRonda.sort(() => Math.random() - 0.5).map(n => `
-                    <div class="rocket" draggable="true" id="r-${n}" data-val="${n}" 
-                         ondragstart="dragRocket(event)" 
-                         ontouchstart="touchStart(event)" 
-                         ontouchmove="touchMove(event)" 
-                         ontouchend="touchEnd(event)">
-                        <div class="rocket-nose"></div>
-                        <div class="rocket-body"><div class="rocket-number">${n}</div></div>
-                        <div class="fin fin-l"></div><div class="fin fin-r"></div>
-                        <div class="fire"></div>
-                    </div>
-                `).join('')}
+            <div class="rocket-pool" id="pool">
+                ${numerosDaRonda.sort(() => Math.random() - 0.5).map(n => getRocketHTML(n)).join('')}
             </div>
         </div>
     `;
@@ -176,7 +185,7 @@ function mostrarPergunta() {
 
 function generateStars() {
     const sc = document.getElementById('stars-container');
-    for(let i=0; i<40; i++) {
+    for(let i=0; i<50; i++) {
         const s = document.createElement('div');
         s.className = 'star';
         s.style.left = Math.random()*100+'%';
@@ -187,95 +196,82 @@ function generateStars() {
     }
 }
 
-// DRAG & DROP LOGIC
+// GESTÃO DE EVENTOS
 let draggedVal = null;
-
 window.dragRocket = function(e) {
     draggedVal = e.target.closest('.rocket').dataset.val;
-    e.dataTransfer.setData("text", draggedVal);
 };
 
 window.dropRocket = function(e) {
     e.preventDefault();
     const val = parseInt(draggedVal);
     const padIdx = parseInt(e.currentTarget.dataset.idx);
-    validarPosicao(val, padIdx, e.currentTarget);
+    validar(val, padIdx, e.currentTarget);
 };
 
-// TOUCH LOGIC
-let activeTouchRocket = null;
+let activeTouch = null;
 window.touchStart = function(e) {
-    activeTouchRocket = e.currentTarget;
-    e.currentTarget.style.zIndex = "1000";
+    activeTouch = e.currentTarget;
+    activeTouch.style.zIndex = "1000";
 };
 
 window.touchMove = function(e) {
     e.preventDefault();
-    const touch = e.touches[0];
-    activeTouchRocket.style.position = 'fixed';
-    activeTouchRocket.style.left = (touch.clientX - 25) + 'px';
-    activeTouchRocket.style.top = (touch.clientY - 45) + 'px';
+    const t = e.touches[0];
+    activeTouch.style.position = 'fixed';
+    activeTouch.style.left = (t.clientX - 30) + 'px';
+    activeTouch.style.top = (t.clientY - 55) + 'px';
 };
 
 window.touchEnd = function(e) {
-    const touch = e.changedTouches[0];
-    activeTouchRocket.style.position = 'relative';
-    activeTouchRocket.style.left = '0';
-    activeTouchRocket.style.top = '0';
-    
-    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+    const t = e.changedTouches[0];
+    activeTouch.style.position = 'relative';
+    activeTouch.style.left = '0'; activeTouch.style.top = '0';
+    const target = document.elementFromPoint(t.clientX, t.clientY);
     const pad = target?.closest('.pad');
-    
-    if(pad) {
-        validarPosicao(parseInt(activeTouchRocket.dataset.val), parseInt(pad.dataset.idx), pad);
-    }
-    activeTouchRocket = null;
+    if(pad) validar(parseInt(activeTouch.dataset.val), parseInt(pad.dataset.idx), pad);
+    activeTouch = null;
 };
 
-function validarPosicao(val, padIdx, padEl) {
+function validar(val, padIdx, padEl) {
     if (val === numerosOrdenados[padIdx]) {
         somAcerto.play();
-        padEl.innerHTML = `
-            <div class="rocket placed" style="height:80%; pointer-events:none;">
-                <div class="rocket-nose"></div>
-                <div class="rocket-body" style="background:linear-gradient(to right, #10b981, #059669);"><div class="rocket-number">${val}</div></div>
-                <div class="fin fin-l"></div><div class="fin fin-r"></div>
-                <div class="fire"></div>
-            </div>
-        `;
+        padEl.innerHTML = getRocketHTML(val, true);
         document.getElementById(`r-${val}`).style.visibility = 'hidden';
         colocadosNaRonda++;
-        if(colocadosNaRonda === 4) descolar();
+        if(colocadosNaRonda === 4) iniciarLancamento();
     } else {
         somErro.play();
         const r = document.getElementById(`r-${val}`);
         r.classList.add('shake');
         setTimeout(() => r.classList.remove('shake'), 400);
-        erros++;
-        document.getElementById('miss-val').innerText = erros;
+        erros++; document.getElementById('miss-val').innerText = erros;
     }
 }
 
-function descolar() {
-    acertos++;
-    document.getElementById('hits-val').innerText = acertos;
-    
+function iniciarLancamento() {
+    acertos++; document.getElementById('hits-val').innerText = acertos;
     setTimeout(() => {
-        const placed = document.querySelectorAll('.placed');
-        placed.forEach((r, i) => {
+        const rockets = document.querySelectorAll('.placed');
+        rockets.forEach((r, i) => {
             setTimeout(() => {
-                r.querySelector('.fire').style.display = 'block';
-                r.classList.add('launching');
+                r.querySelector('.fire-glow').style.display = 'block';
+                r.style.animation = 'shake 0.1s infinite';
             }, i * 200);
         });
-        
         setTimeout(() => {
-            indicePergunta++;
-            proximaMissao();
-        }, 2000);
+            rockets.forEach((r, i) => {
+                setTimeout(() => {
+                    r.style.animation = 'none';
+                    r.classList.add('launching');
+                }, i * 150);
+            });
+            setTimeout(() => { indicePergunta++; proximaMissao(); }, 2000);
+        }, 1500);
     }, 500);
 }
 
+// === 3. FINALIZAÇÃO E RESULTADOS ===
 function finalizarJogo() {
     clearInterval(intervaloTempo); somVitoria.play();
     const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
@@ -283,23 +279,28 @@ function finalizarJogo() {
     const resScreen = document.getElementById('scr-result');
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:10px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; width:auto; margin-bottom:10px; object-fit:contain;">
-            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
-            <div class="res-stats-container" style="display:flex; gap:10px; width:100%; max-width:300px; margin-bottom:15px;">
-                <div style="background:white; border-radius:15px; padding:10px; flex:1; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid #f0f0f0;">
-                    <span style="display:block; font-size:22px; font-weight:900; color:var(--primary-blue);">${acertos}</span>
-                    <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Missões</span>
-                </div>
-                <div style="background:white; border-radius:15px; padding:10px; flex:1; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); border:1px solid #f0f0f0;">
-                    <span style="display:block; font-size:22px; font-weight:900; color:var(--primary-blue);">${tempo}</span>
-                    <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Tempo</span>
-                </div>
+        <style>
+            .res-inner { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 10px; box-sizing: border-box; }
+            .res-stats-c { display: flex; gap: 10px; width: 100%; max-width: 320px; margin: 15px 0; }
+            .res-card-final { background: white; border-radius: 18px; padding: 12px; flex: 1; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; }
+            .res-btn-g { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 280px; }
+            .btn-f { padding: 15px; border-radius: 20px; font-weight: 900; font-size: 15px; cursor: pointer; border: none; text-align: center; text-decoration: none; text-transform: uppercase; transition: 0.2s; }
+            .btn-f-p { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
+            .btn-f-o { background: white; color: var(--primary-blue); border: 3.5px solid var(--primary-blue); box-shadow: 0 5px 0 var(--primary-blue); padding: 11.5px; }
+            .btn-f-m { background: #dce4ee; color: #5d7082; box-shadow: 0 5px 0 #b8c5d4; }
+            .btn-f:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
+        </style>
+        <div class="res-inner">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:25%; min-height:90px; width:auto; margin-bottom:10px; object-fit:contain;">
+            <h2 style="color: var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
+            <div class="res-stats-c">
+                <div class="res-card-final"><span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span><span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Acertos</span></div>
+                <div class="res-card-final"><span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${tempo}</span><span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Tempo</span></div>
             </div>
-            <div style="display:flex; flex-direction:column; gap:8px; width:100%; max-width:260px;">
-                <button class="res-btn res-btn-p" style="padding:14px; border-radius:15px; font-weight:900; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 5px 0 var(--primary-dark);" onclick="location.reload()">Repetir Missão</button>
-                <button class="res-btn res-btn-o" style="padding:11px; border-radius:15px; font-weight:900; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer; box-shadow:0 5px 0 var(--primary-blue);" onclick="openRDMenu()">Outro Nível</button>
-                <a href="${JOGO_CONFIG.linkVoltar}" style="padding:14px; border-radius:15px; font-weight:900; background:#dce4ee; color:#5d7082; border:none; text-align:center; text-decoration:none; box-shadow:0 5px 0 #b8c5d4;">Sair</a>
+            <div class="res-btn-g">
+                <button class="btn-f btn-f-p" onclick="location.reload()">Jogar de Novo</button>
+                <button class="btn-f btn-f-o" onclick="openRDMenu()">Outro Tema / Nível</button>
+                <a href="${JOGO_CONFIG.linkVoltar}" class="btn-f btn-f-m">Sair do Jogo</a>
             </div>
         </div>
     `;
