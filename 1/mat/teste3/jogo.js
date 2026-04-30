@@ -14,14 +14,14 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// === 1. INICIALIZAÇÃO E TUTORIAL ===
+// === 1. INICIALIZAÇÃO ===
 window.startLogic = function() {
     if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "facil";
     setTimeout(criarAnimacaoTutorial, 100);
 };
 
 window.gerarIntroJogo = function() {
-    return "Ordena os foguetões do número mais pequeno para o maior para os veres descolar!";
+    return "Clica nos foguetões pela ordem dos números (do menor para o maior) ou arrasta-os para as bases!";
 };
 
 window.selecionarCategoria = function(key) {
@@ -47,10 +47,7 @@ function criarAnimacaoTutorial() {
             .tut-nose { width: 30px; height: 15px; background: #ef4444; border-radius: 50% 50% 0 0; }
             .tut-body { width: 30px; height: 35px; background: #cbd5e1; color: #1e293b; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; border-radius: 0 0 5px 5px; }
             .tut-hand-space { position: absolute; font-size: 40px; animation: moveHandRocket 3s infinite; }
-            @keyframes moveHandRocket {
-                0%, 100% { transform: translate(0, 50px); }
-                50% { transform: translate(0, -30px) scale(0.8); }
-            }
+            @keyframes moveHandRocket { 0%, 100% { transform: translate(0, 50px); } 50% { transform: translate(0, -30px) scale(0.8); } }
         </style>
     `;
 }
@@ -77,7 +74,6 @@ function iniciarCronometro() {
 
 function proximaMissao() {
     if (indicePergunta >= 10) { finalizarJogo(); return; }
-    
     const config = JOGO_CATEGORIAS[categoriaAtual];
     numerosDaRonda = [];
     while(numerosDaRonda.length < 4) {
@@ -86,13 +82,13 @@ function proximaMissao() {
     }
     numerosOrdenados = [...numerosDaRonda].sort((a,b) => a - b);
     colocadosNaRonda = 0;
-
     mostrarPergunta();
 }
 
 function getRocketHTML(num, isPlaced = false) {
     return `
         <div class="rocket ${isPlaced ? 'placed' : ''}" id="r-${num}" data-val="${num}" 
+             onclick="cliqueFoguetao(${num}, this)"
              ${!isPlaced ? 'draggable="true" ondragstart="dragRocket(event)" ontouchstart="touchStart(event)" ontouchmove="touchMove(event)" ontouchend="touchEnd(event)"' : ''}>
             <div class="rocket-nose"></div>
             <div class="rocket-body">
@@ -122,18 +118,17 @@ function mostrarPergunta() {
             .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle 2s infinite; }
             @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-            /* BASES */
             .pads-row { display: flex; gap: 12px; z-index: 5; height: 35%; align-items: center; width: 100%; justify-content: center; }
             .pad {
                 flex: 1; max-width: 90px; height: 120px; border: 2px dashed rgba(255,255,255,0.2); 
                 border-radius: 20px; background: rgba(255,255,255,0.03);
-                display: flex; align-items: center; justify-content: center; position: relative;
+                display: flex; align-items: center; justify-content: center; position: relative; transition: 0.3s;
             }
+            .pad.active-target { border-color: var(--primary-blue); background: rgba(91, 164, 229, 0.1); }
             .pad-label { position: absolute; bottom: -22px; color: #64748b; font-size: 8px; font-weight: 800; text-transform: uppercase; text-align: center; width: 100%; }
 
-            /* FOGUETÃO PREMIUM */
             .rocket-pool { display: flex; gap: 15px; z-index: 10; height: 130px; align-items: center; width: 100%; justify-content: center; }
-            .rocket { width: 60px; height: 110px; position: relative; cursor: grab; display: flex; flex-direction: column; align-items: center; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.4)); touch-action: none; }
+            .rocket { width: 60px; height: 110px; position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.4)); touch-action: none; transition: transform 0.2s, opacity 0.2s; }
             
             .rocket-nose { width: 34px; height: 25px; background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); border-radius: 50% 50% 0 0; z-index: 3; border-bottom: 2px solid rgba(0,0,0,0.1); }
             .rocket-body { width: 38px; height: 60px; background: linear-gradient(to right, #f8fafc 0%, #cbd5e1 50%, #94a3b8 100%); border-radius: 5px 5px 12px 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 2; border: 1px solid rgba(0,0,0,0.1); margin-top: -5px; }
@@ -167,14 +162,13 @@ function mostrarPergunta() {
 
         <div class="space-viewport">
             <div id="stars-container"></div>
-            
             <div class="pads-row">
-                <div class="pad" data-idx="0" ondragover="event.preventDefault()" ondrop="dropRocket(event)"><span class="pad-label">1º Menor</span></div>
-                <div class="pad" data-idx="1" ondragover="event.preventDefault()" ondrop="dropRocket(event)"><span class="pad-label">2º</span></div>
-                <div class="pad" data-idx="2" ondragover="event.preventDefault()" ondrop="dropRocket(event)"><span class="pad-label">3º</span></div>
-                <div class="pad" data-idx="3" ondragover="event.preventDefault()" ondrop="dropRocket(event)"><span class="pad-label">4º Maior</span></div>
+                ${[0,1,2,3].map(i => `
+                    <div class="pad ${i === colocadosNaRonda ? 'active-target' : ''}" data-idx="${i}" id="pad-${i}" ondragover="event.preventDefault()" ondrop="dropRocket(event)">
+                        <span class="pad-label">${i+1}º Lugar</span>
+                    </div>
+                `).join('')}
             </div>
-
             <div class="rocket-pool" id="pool">
                 ${numerosDaRonda.sort(() => Math.random() - 0.5).map(n => getRocketHTML(n)).join('')}
             </div>
@@ -185,18 +179,23 @@ function mostrarPergunta() {
 
 function generateStars() {
     const sc = document.getElementById('stars-container');
-    for(let i=0; i<50; i++) {
+    for(let i=0; i<40; i++) {
         const s = document.createElement('div');
         s.className = 'star';
-        s.style.left = Math.random()*100+'%';
-        s.style.top = Math.random()*100+'%';
+        s.style.left = Math.random()*100+'%'; s.style.top = Math.random()*100+'%';
         s.style.width = s.style.height = Math.random()*3+'px';
         s.style.animationDelay = Math.random()*2+'s';
         sc.appendChild(s);
     }
 }
 
-// GESTÃO DE EVENTOS
+// === 3. MECÂNICAS DE JOGO (CLIQUE E DRAG) ===
+
+window.cliqueFoguetao = function(val, el) {
+    if (el.classList.contains('placed')) return;
+    validar(val, el);
+};
+
 let draggedVal = null;
 window.dragRocket = function(e) {
     draggedVal = e.target.closest('.rocket').dataset.val;
@@ -205,46 +204,52 @@ window.dragRocket = function(e) {
 window.dropRocket = function(e) {
     e.preventDefault();
     const val = parseInt(draggedVal);
-    const padIdx = parseInt(e.currentTarget.dataset.idx);
-    validar(val, padIdx, e.currentTarget);
+    validar(val, document.getElementById(`r-${val}`));
 };
 
+// Touch Support (simplificado)
 let activeTouch = null;
-window.touchStart = function(e) {
-    activeTouch = e.currentTarget;
-    activeTouch.style.zIndex = "1000";
-};
-
+window.touchStart = function(e) { activeTouch = e.currentTarget; activeTouch.style.zIndex = "1000"; };
 window.touchMove = function(e) {
-    e.preventDefault();
-    const t = e.touches[0];
+    e.preventDefault(); const t = e.touches[0];
     activeTouch.style.position = 'fixed';
-    activeTouch.style.left = (t.clientX - 30) + 'px';
-    activeTouch.style.top = (t.clientY - 55) + 'px';
+    activeTouch.style.left = (t.clientX - 30) + 'px'; activeTouch.style.top = (t.clientY - 55) + 'px';
 };
-
 window.touchEnd = function(e) {
     const t = e.changedTouches[0];
-    activeTouch.style.position = 'relative';
-    activeTouch.style.left = '0'; activeTouch.style.top = '0';
+    activeTouch.style.position = 'relative'; activeTouch.style.left = '0'; activeTouch.style.top = '0';
     const target = document.elementFromPoint(t.clientX, t.clientY);
     const pad = target?.closest('.pad');
-    if(pad) validar(parseInt(activeTouch.dataset.val), parseInt(pad.dataset.idx), pad);
+    if(pad) validar(parseInt(activeTouch.dataset.val), activeTouch);
     activeTouch = null;
 };
 
-function validar(val, padIdx, padEl) {
-    if (val === numerosOrdenados[padIdx]) {
+// === 4. VALIDAÇÃO E LANÇAMENTO ===
+
+function validar(val, el) {
+    // Verificar se é o próximo da ordem correta
+    if (val === numerosOrdenados[colocadosNaRonda]) {
         somAcerto.play();
-        padEl.innerHTML = getRocketHTML(val, true);
-        document.getElementById(`r-${val}`).style.visibility = 'hidden';
+        const targetPad = document.getElementById(`pad-${colocadosNaRonda}`);
+        
+        // "Fixar" o foguetão na base
+        targetPad.innerHTML = getRocketHTML(val, true);
+        targetPad.classList.remove('active-target');
+        el.style.visibility = 'hidden';
+        el.style.pointerEvents = 'none';
+
         colocadosNaRonda++;
-        if(colocadosNaRonda === 4) iniciarLancamento();
+        
+        if(colocadosNaRonda === 4) {
+            iniciarLancamento();
+        } else {
+            // Destacar a próxima base
+            document.getElementById(`pad-${colocadosNaRonda}`).classList.add('active-target');
+        }
     } else {
         somErro.play();
-        const r = document.getElementById(`r-${val}`);
-        r.classList.add('shake');
-        setTimeout(() => r.classList.remove('shake'), 400);
+        el.classList.add('shake');
+        setTimeout(() => el.classList.remove('shake'), 400);
         erros++; document.getElementById('miss-val').innerText = erros;
     }
 }
@@ -271,7 +276,7 @@ function iniciarLancamento() {
     }, 500);
 }
 
-// === 3. FINALIZAÇÃO E RESULTADOS ===
+// === 5. FINALIZAÇÃO ===
 function finalizarJogo() {
     clearInterval(intervaloTempo); somVitoria.play();
     const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
@@ -286,20 +291,19 @@ function finalizarJogo() {
             .res-btn-g { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 280px; }
             .btn-f { padding: 15px; border-radius: 20px; font-weight: 900; font-size: 15px; cursor: pointer; border: none; text-align: center; text-decoration: none; text-transform: uppercase; transition: 0.2s; }
             .btn-f-p { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
-            .btn-f-o { background: white; color: var(--primary-blue); border: 3.5px solid var(--primary-blue); box-shadow: 0 5px 0 var(--primary-blue); padding: 11.5px; }
+            .btn-f-o { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); box-shadow: 0 5px 0 var(--primary-blue); padding: 11.5px; }
             .btn-f-m { background: #dce4ee; color: #5d7082; box-shadow: 0 5px 0 #b8c5d4; }
-            .btn-f:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
         </style>
         <div class="res-inner">
             <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:25%; min-height:90px; width:auto; margin-bottom:10px; object-fit:contain;">
             <h2 style="color: var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats-c">
-                <div class="res-card-final"><span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span><span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Acertos</span></div>
+                <div class="res-card-final"><span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span><span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Missões</span></div>
                 <div class="res-card-final"><span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${tempo}</span><span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Tempo</span></div>
             </div>
             <div class="res-btn-g">
                 <button class="btn-f btn-f-p" onclick="location.reload()">Jogar de Novo</button>
-                <button class="btn-f btn-f-o" onclick="openRDMenu()">Outro Tema / Nível</button>
+                <button class="btn-f btn-f-o" onclick="openRDMenu()">Outro Nível</button>
                 <a href="${JOGO_CONFIG.linkVoltar}" class="btn-f btn-f-m">Sair do Jogo</a>
             </div>
         </div>
