@@ -21,7 +21,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Clica nos foguetões pela ordem dos números (do menor para o maior) ou arrasta-os para as bases!";
+    return "Ordena os foguetões do menor para o maior para eles levantarem voo!";
 };
 
 window.selecionarCategoria = function(key) {
@@ -128,27 +128,43 @@ function mostrarPergunta() {
             .pad-label { position: absolute; bottom: -22px; color: #64748b; font-size: 8px; font-weight: 800; text-transform: uppercase; text-align: center; width: 100%; }
 
             .rocket-pool { display: flex; gap: 15px; z-index: 10; height: 130px; align-items: center; width: 100%; justify-content: center; }
-            .rocket { width: 60px; height: 110px; position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.4)); touch-action: none; transition: transform 0.2s, opacity 0.2s; }
             
+            /* DESIGN DO FOGUETÃO */
+            .rocket { width: 60px; height: 110px; position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.4)); touch-action: none; transition: transform 0.2s; }
             .rocket-nose { width: 34px; height: 25px; background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); border-radius: 50% 50% 0 0; z-index: 3; border-bottom: 2px solid rgba(0,0,0,0.1); }
             .rocket-body { width: 38px; height: 60px; background: linear-gradient(to right, #f8fafc 0%, #cbd5e1 50%, #94a3b8 100%); border-radius: 5px 5px 12px 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 2; border: 1px solid rgba(0,0,0,0.1); margin-top: -5px; }
-            
             .rocket-window { width: 18px; height: 18px; background: #38bdf8; border: 2px solid #475569; border-radius: 50%; position: relative; overflow: hidden; box-shadow: inset 1px 1px 3px rgba(0,0,0,0.4); }
             .rocket-window::after { content: ''; position: absolute; top: 2px; left: 2px; width: 6px; height: 3px; background: white; border-radius: 50%; opacity: 0.6; transform: rotate(-30deg); }
             .rocket-number { color: #1e293b; font-weight: 900; font-size: 16px; margin-top: 3px; font-family: 'Fredoka', sans-serif; }
-            
             .fin { position: absolute; bottom: 20px; width: 18px; height: 35px; background: linear-gradient(to bottom, #ef4444, #991b1b); z-index: 1; }
             .fin-l { left: -3px; transform: skewY(-15deg); border-radius: 100% 0 0 20%; }
             .fin-r { right: -3px; transform: skewY(15deg); border-radius: 0 100% 20% 0; }
-            
             .engine-part { width: 22px; height: 6px; background: #334155; border-radius: 0 0 4px 4px; margin-top: -2px; }
-            .fire-glow { position: absolute; top: 85px; width: 15px; height: 35px; background: linear-gradient(to bottom, #fbbf24, #f59e0b, transparent); border-radius: 50%; display: none; animation: flicker 0.1s infinite alternate; filter: blur(1px); }
+            
+            /* CHAMA */
+            .fire-glow { 
+                position: absolute; top: 90px; width: 20px; height: 50px; 
+                background: linear-gradient(to bottom, #fbbf24, #f59e0b, transparent); 
+                border-radius: 50% 50% 20% 20%; display: none; 
+                animation: flicker 0.1s infinite alternate; filter: blur(2px); z-index: 1;
+            }
 
-            @keyframes flicker { 0% { height: 25px; opacity: 0.7; } 100% { height: 35px; opacity: 1; } }
-            .rocket.launching { animation: liftOff 1.5s forwards ease-in; }
-            @keyframes liftOff { 100% { transform: translateY(-100vh); opacity: 0; } }
-            .rocket.shake { animation: shake 0.4s; }
-            @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+            /* ANIMAÇÕES DE VOO */
+            @keyframes flicker { 0% { height: 30px; opacity: 0.7; } 100% { height: 50px; opacity: 1; } }
+            
+            .rocket.shake-launch { animation: ignite 0.1s infinite; }
+            @keyframes ignite { 0% { transform: translate(1px, 1px) rotate(0deg); } 50% { transform: translate(-1px, -1px) rotate(0.5deg); } 100% { transform: translate(1px, -1px) rotate(-0.5deg); } }
+
+            .rocket.fly-away { 
+                animation: liftOff 2s forwards cubic-bezier(0.4, 0, 0.2, 1); 
+            }
+            @keyframes liftOff { 
+                0% { transform: translateY(0); }
+                100% { transform: translateY(-120vh); } 
+            }
+
+            .rocket.error-shake { animation: shake 0.4s; }
+            @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
 
             @media (min-width: 800px) {
                 .pad { max-width: 110px; height: 150px; }
@@ -156,7 +172,7 @@ function mostrarPergunta() {
                 .rocket-body { width: 45px; height: 75px; }
                 .rocket-nose { width: 40px; height: 30px; }
                 .rocket-number { font-size: 20px; }
-                .fire-glow { top: 105px; width: 20px; }
+                .fire-glow { top: 105px; width: 25px; }
             }
         </style>
 
@@ -189,7 +205,7 @@ function generateStars() {
     }
 }
 
-// === 3. MECÂNICAS DE JOGO (CLIQUE E DRAG) ===
+// === 3. MECÂNICAS DE JOGO ===
 
 window.cliqueFoguetao = function(val, el) {
     if (el.classList.contains('placed')) return;
@@ -207,7 +223,7 @@ window.dropRocket = function(e) {
     validar(val, document.getElementById(`r-${val}`));
 };
 
-// Touch Support (simplificado)
+// Touch Support
 let activeTouch = null;
 window.touchStart = function(e) { activeTouch = e.currentTarget; activeTouch.style.zIndex = "1000"; };
 window.touchMove = function(e) {
@@ -224,54 +240,56 @@ window.touchEnd = function(e) {
     activeTouch = null;
 };
 
-// === 4. VALIDAÇÃO E LANÇAMENTO ===
+// === 4. VALIDAÇÃO E LANÇAMENTO (O VOO ESTÁ AQUI) ===
 
 function validar(val, el) {
-    // Verificar se é o próximo da ordem correta
     if (val === numerosOrdenados[colocadosNaRonda]) {
         somAcerto.play();
         const targetPad = document.getElementById(`pad-${colocadosNaRonda}`);
-        
-        // "Fixar" o foguetão na base
         targetPad.innerHTML = getRocketHTML(val, true);
         targetPad.classList.remove('active-target');
         el.style.visibility = 'hidden';
-        el.style.pointerEvents = 'none';
-
         colocadosNaRonda++;
-        
-        if(colocadosNaRonda === 4) {
-            iniciarLancamento();
-        } else {
-            // Destacar a próxima base
-            document.getElementById(`pad-${colocadosNaRonda}`).classList.add('active-target');
-        }
+        if(colocadosNaRonda === 4) iniciarLancamento();
+        else document.getElementById(`pad-${colocadosNaRonda}`).classList.add('active-target');
     } else {
         somErro.play();
-        el.classList.add('shake');
-        setTimeout(() => el.classList.remove('shake'), 400);
+        el.classList.add('error-shake');
+        setTimeout(() => el.classList.remove('error-shake'), 400);
         erros++; document.getElementById('miss-val').innerText = erros;
     }
 }
 
 function iniciarLancamento() {
     acertos++; document.getElementById('hits-val').innerText = acertos;
+    
+    // Pequena pausa para a criança ver todos no lugar
     setTimeout(() => {
         const rockets = document.querySelectorAll('.placed');
+        
+        // FASE 1: Ignição (Ligar motores e tremer)
         rockets.forEach((r, i) => {
             setTimeout(() => {
                 r.querySelector('.fire-glow').style.display = 'block';
-                r.style.animation = 'shake 0.1s infinite';
-            }, i * 200);
+                r.classList.add('shake-launch');
+            }, i * 250);
         });
+
+        // FASE 2: Decolagem (Voar para cima)
         setTimeout(() => {
             rockets.forEach((r, i) => {
                 setTimeout(() => {
-                    r.style.animation = 'none';
-                    r.classList.add('launching');
+                    r.classList.remove('shake-launch');
+                    r.classList.add('fly-away');
                 }, i * 150);
             });
-            setTimeout(() => { indicePergunta++; proximaMissao(); }, 2000);
+
+            // FASE 3: Próxima Ronda
+            setTimeout(() => {
+                indicePergunta++;
+                proximaMissao();
+            }, 2500);
+            
         }, 1500);
     }, 500);
 }
@@ -284,16 +302,6 @@ function finalizarJogo() {
     const resScreen = document.getElementById('scr-result');
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
-        <style>
-            .res-inner { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 10px; box-sizing: border-box; }
-            .res-stats-c { display: flex; gap: 10px; width: 100%; max-width: 320px; margin: 15px 0; }
-            .res-card-final { background: white; border-radius: 18px; padding: 12px; flex: 1; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; }
-            .res-btn-g { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 280px; }
-            .btn-f { padding: 15px; border-radius: 20px; font-weight: 900; font-size: 15px; cursor: pointer; border: none; text-align: center; text-decoration: none; text-transform: uppercase; transition: 0.2s; }
-            .btn-f-p { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
-            .btn-f-o { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); box-shadow: 0 5px 0 var(--primary-blue); padding: 11.5px; }
-            .btn-f-m { background: #dce4ee; color: #5d7082; box-shadow: 0 5px 0 #b8c5d4; }
-        </style>
         <div class="res-inner">
             <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:25%; min-height:90px; width:auto; margin-bottom:10px; object-fit:contain;">
             <h2 style="color: var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
@@ -303,7 +311,7 @@ function finalizarJogo() {
             </div>
             <div class="res-btn-g">
                 <button class="btn-f btn-f-p" onclick="location.reload()">Jogar de Novo</button>
-                <button class="btn-f btn-f-o" onclick="openRDMenu()">Outro Nível</button>
+                <button class="btn-f btn-f-o" onclick="openRDMenu()">Outro Tema / Nível</button>
                 <a href="${JOGO_CONFIG.linkVoltar}" class="btn-f btn-f-m">Sair do Jogo</a>
             </div>
         </div>
