@@ -7,7 +7,7 @@ let intervaloTempo;
 
 let categoriaAtual = "mar-calmo";
 let targetNum = 0;
-let rule = 'greater'; // 'greater' ou 'less'
+let rule = 'greater'; 
 let spawnInterval;
 let jogoAtivo = false;
 
@@ -15,14 +15,14 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// === 1. INICIALIZAÇÃO E TUTORIAL ===
+// === 1. INICIALIZAÇÃO ===
 window.startLogic = function() {
     if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "mar-calmo";
     setTimeout(criarAnimacaoTutorial, 100);
 };
 
 window.gerarIntroJogo = function() {
-    return "Pesca o peixe que tem o número correto para cumprir a missão do Comandante!";
+    return "Pesca o peixe com o número correto! Tens 10 missões para completar.";
 };
 
 window.selecionarCategoria = function(key) {
@@ -46,18 +46,22 @@ function criarAnimacaoTutorial() {
 
 // === 2. LÓGICA DO JOGO ===
 window.initGame = function() {
-    indicePergunta = 0; acertos = 0; erros = 0;
+    indicePergunta = 0; 
+    acertos = 0; 
+    erros = 0;
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
+    document.getElementById('round-val').innerText = "1 / 10";
+    
     jogoAtivo = true;
     iniciarCronometro();
     montarCenario();
     proximaMissao();
     
-    // Criar peixes periodicamente
+    clearInterval(spawnInterval);
     spawnInterval = setInterval(() => {
         if(jogoAtivo) criarPeixe();
-    }, 1500);
+    }, 1200); // Peixes aparecem com mais frequência
 };
 
 function iniciarCronometro() {
@@ -90,43 +94,41 @@ function montarCenario() {
             }
 
             .fish {
-                position: absolute; width: 80px; height: 50px; cursor: pointer;
+                position: absolute; width: 85px; height: 55px; cursor: pointer;
                 transition: transform 0.2s; z-index: 50;
                 display: flex; align-items: center; justify-content: center;
+                filter: drop-shadow(0 3px 5px rgba(0,0,0,0.2));
             }
             .fish-body { 
                 width: 100%; height: 100%; border-radius: 50% 50% 40% 40%;
                 position: relative; display: flex; align-items: center; justify-content: center;
             }
             .fish-tail {
-                position: absolute; left: -15px; width: 0; height: 0;
-                border-top: 15px solid transparent; border-bottom: 15px solid transparent;
+                position: absolute; left: -18px; width: 0; height: 0;
+                border-top: 18px solid transparent; border-bottom: 18px solid transparent;
             }
-            .fish-value { color: white; font-weight: 900; font-size: 22px; text-shadow: 2px 2px #000; font-family: Fredoka; z-index: 2; }
+            .fish-value { color: white; font-weight: 900; font-size: 24px; text-shadow: 2px 2px #000; font-family: Fredoka; z-index: 2; }
             
-            @keyframes moveRight { from { left: -100px; } to { left: 100%; } }
-            @keyframes moveLeft { from { right: -100px; } to { right: 100%; } }
+            @keyframes moveRight { from { left: -120px; } to { left: 110%; } }
+            @keyframes moveLeft { from { right: -120px; } to { right: 110%; } }
         </style>
         <div class="ocean-bg" id="ocean">
-            <div class="mission-panel" id="mission-ui">Carregando missão...</div>
+            <div class="mission-panel" id="mission-ui">Preparando rede...</div>
         </div>
     `;
-    // Criar algumas bolhas de fundo
-    for(let i=0; i<10; i++) {
-        const b = document.createElement('div');
-        b.className = 'bubble';
-        const size = Math.random()*15+5;
-        b.style.width = b.style.height = size+'px';
-        b.style.left = Math.random()*90+'%';
-        b.style.animationDelay = Math.random()*4+'s';
-        document.getElementById('ocean').appendChild(b);
-    }
 }
 
 function proximaMissao() {
-    if (indicePergunta >= 10) { finalizar(); return; }
+    if (indicePergunta >= 10) { 
+        finalizar(); 
+        return; 
+    }
+    
+    // Atualizar Barra de Status
+    document.getElementById('round-val').innerText = `${indicePergunta + 1} / 10`;
+
     const config = JOGO_CATEGORIAS[categoriaAtual];
-    targetNum = Math.floor(Math.random() * (config.maxNum - 2)) + 2;
+    targetNum = Math.floor(Math.random() * (config.maxNum - 4)) + 3; // Evita extremos 1 e Max
     rule = Math.random() > 0.5 ? 'greater' : 'less';
     
     document.getElementById('mission-ui').innerHTML = 
@@ -139,50 +141,63 @@ function criarPeixe() {
 
     const config = JOGO_CATEGORIAS[categoriaAtual];
     const val = Math.floor(Math.random() * config.maxNum) + 1;
-    const colors = ["#ff6b6b", "#ff9f43", "#54a0ff", "#1dd1a1", "#feca57"];
+    const colors = ["#ff6b6b", "#ff9f43", "#54a0ff", "#1dd1a1", "#feca57", "#ff4d5e", "#2ecc71"];
     const color = colors[Math.floor(Math.random()*colors.length)];
     
     const fish = document.createElement('div');
     fish.className = 'fish';
     
     const isLeft = Math.random() > 0.5;
-    fish.style.top = (Math.random()*60 + 20) + '%';
-    fish.style.animation = `${isLeft ? 'moveRight' : 'moveLeft'} ${config.velocidade}s linear forwards`;
+    fish.style.top = (Math.random()*65 + 15) + '%';
+    
+    // Velocidade ligeiramente variável para não parecer mecânico
+    const variacaoVel = config.velocidade + (Math.random() * 2 - 1);
+    fish.style.animation = `${isLeft ? 'moveRight' : 'moveLeft'} ${variacaoVel}s linear forwards`;
     
     if(!isLeft) fish.style.transform = 'scaleX(-1)';
 
     fish.innerHTML = `
         <div class="fish-body" style="background:${color}">
-            <div class="fish-tail" style="border-right: 20px solid ${color}"></div>
+            <div class="fish-tail" style="border-right: 25px solid ${color}"></div>
             <div class="fish-value" style="${!isLeft ? 'transform:scaleX(-1)' : ''}">${val}</div>
         </div>
     `;
 
     fish.onclick = (e) => {
         e.stopPropagation();
-        capturarPeixe(fish, val);
+        if(jogoAtivo) capturarPeixe(fish, val);
     };
 
     ocean.appendChild(fish);
     
-    // Remover peixe após animação
-    setTimeout(() => { if(fish.parentNode) fish.remove(); }, config.velocidade * 1000);
+    // Auto-remover peixes que escaparam
+    setTimeout(() => { if(fish.parentNode) fish.remove(); }, variacaoVel * 1000);
 }
 
 function capturarPeixe(el, val) {
     const acerto = (rule === 'greater' ? val > targetNum : val < targetNum);
     
     if(acerto) {
-        acertos++; somAcerto.play();
-        el.style.transform = "scale(1.5) rotate(360deg)";
+        acertos++; 
+        somAcerto.play();
+        el.style.pointerEvents = "none";
+        el.style.transform = "scale(1.8) rotate(360deg)";
         el.style.opacity = "0";
+        
         document.getElementById('hits-val').innerText = acertos;
-        indicePergunta++;
-        proximaMissao();
+        
+        indicePergunta++; // Avança a ronda
+        
+        setTimeout(() => {
+            if(el.parentNode) el.remove();
+            proximaMissao();
+        }, 300);
     } else {
-        erros++; somErro.play();
-        el.style.transform = "translateX(20px)";
-        setTimeout(() => el.style.transform = "translateX(-20px)", 100);
+        erros++; 
+        somErro.play();
+        el.style.transform = "translateX(30px) rotate(10deg)";
+        setTimeout(() => el.style.transform = "translateX(-30px) rotate(-10deg)", 100);
+        setTimeout(() => el.style.transform = "scale(1)", 200);
         document.getElementById('miss-val').innerText = erros;
     }
 }
@@ -200,7 +215,7 @@ function finalizar() {
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:10px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:22%; min-height:80px; width:auto; margin-bottom:10px; object-fit:contain;">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:22%; min-height:90px; width:auto; margin-bottom:10px; object-fit:contain;">
             <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:10px; width:100%; max-width:320px; margin:15px 0;">
                 <div style="background:white; border-radius:15px; padding:12px; flex:1; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06); border:1px solid #f0f0f0;">
