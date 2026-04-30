@@ -22,7 +22,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Pesca o peixe com o número correto! Tens 10 missões para completar.";
+    return "Pesca o peixe com o número correto! Se errares, ele afunda e a missão muda.";
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -32,11 +32,11 @@ function criarAnimacaoTutorial() {
     if (!container) return;
     container.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; gap:10px; position:relative; padding:20px;">
-            <div class="fish-container" style="position:relative; width:100px; height:60px; animation: swimTut 3s infinite ease-in-out;">
+            <div style="position:relative; width:120px; height:80px; animation: swimTut 3s infinite ease-in-out;">
                 <img src="${JOGO_CONFIG.caminhoImg}peixe01.png" style="width:100%; height:100%; object-fit:contain;">
-                <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:white; font-weight:900; font-size:20px; text-shadow:2px 2px #000;">8</div>
+                <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:white; font-weight:900; font-size:24px; text-shadow:2px 2px #000;">8</div>
             </div>
-            <div id="tut-hand" style="position:absolute; font-size:45px; bottom:-10px; right:10px; animation: tapH 2s infinite; z-index:10;">☝️</div>
+            <div style="position:absolute; font-size:45px; bottom:-10px; right:0; animation: tapH 2s infinite; z-index:10;">☝️</div>
         </div>
         <style>
             @keyframes swimTut { 0%, 100% { transform: translateX(-30px); } 50% { transform: translateX(30px); } }
@@ -78,19 +78,23 @@ function montarCenario() {
             .ocean-bg { width: 100%; height: 100%; background: linear-gradient(180deg, #38bdf8 0%, #0369a1 100%); position: relative; overflow: hidden; border-radius: 25px; cursor: crosshair; }
             .mission-panel { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.95); padding: 10px 30px; border-radius: 25px; border: 3px solid #0ea5e9; box-shadow: 0 8px 20px rgba(0,0,0,0.15); font-weight: 900; color: #0369a1; z-index: 1000; text-align: center; font-size: 1.1rem; white-space: nowrap; }
             
-            .fish-box { position: absolute; width: 100px; height: 70px; cursor: pointer; z-index: 100; transition: transform 0.3s; }
-            .fish-img { width: 100%; height: 100%; object-fit: contain; position: absolute; inset: 0; z-index: 1; }
-            .fish-num { position: absolute; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 26px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); font-family: 'Fredoka', sans-serif; pointer-events: none; }
+            /* CONTENTOR DO PEIXE */
+            .fish-box { position: absolute; width: 110px; height: 80px; cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center; }
             
-            @keyframes swimRight { from { left: -120px; } to { left: 110%; } }
-            @keyframes swimLeft { from { right: -120px; } to { right: 110%; } }
+            /* IMAGEM DO PEIXE (Apenas esta vira) */
+            .fish-img { width: 100%; height: 100%; object-fit: contain; position: absolute; inset: 0; z-index: 1; transition: filter 0.5s; }
             
-            /* Efeito de Erro: Gray, Barriga p/ cima e Cai */
+            /* NÚMERO (Fica sempre direito) */
+            .fish-num { position: relative; z-index: 2; color: white; font-weight: 900; font-size: 28px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); font-family: 'Fredoka', sans-serif; pointer-events: none; }
+            
+            @keyframes swimRight { from { left: -150px; } to { left: 110%; } }
+            @keyframes swimLeft { from { right: -150px; } to { right: 110%; } }
+            
             .fish-dead { 
                 transition: all 1.8s ease-in !important; 
                 top: 90% !important; 
                 transform: rotate(180deg) !important; 
-                filter: grayscale(1) brightness(0.7) !important; 
+                filter: grayscale(1) brightness(0.6) !important; 
                 pointer-events: none !important; 
             }
         </style>
@@ -113,28 +117,36 @@ function criarPeixe() {
     const config = JOGO_CATEGORIAS[categoriaAtual];
     const val = Math.floor(Math.random() * config.maxNum) + 1;
     
-    // Sorteia uma das 8 imagens
+    // Sorteia de 1 a 8 com o nome correto: peixe01.png, peixe02.png...
     const numImg = Math.floor(Math.random() * 8) + 1;
     const imgName = `peixe${numImg.toString().padStart(2, '0')}.png`;
     
     const isLeft = Math.random() > 0.5;
-    const fish = document.createElement('div');
-    fish.className = 'fish-box';
-    fish.style.top = (Math.random()*65 + 15) + '%';
+    const fishBox = document.createElement('div');
+    fishBox.className = 'fish-box';
+    fishBox.style.top = (Math.random()*65 + 15) + '%';
     
     const vel = config.velocidadeBase + (Math.random() * 2 - 1);
-    fish.style.animation = `${isLeft ? 'swimRight' : 'swimLeft'} ${vel}s linear forwards`;
+    fishBox.style.animation = `${isLeft ? 'swimRight' : 'swimLeft'} ${vel}s linear forwards`;
 
-    fish.innerHTML = `
-        <img src="${JOGO_CONFIG.caminhoImg}${imgName}" class="fish-img" style="${!isLeft ? 'transform: scaleX(-1)' : ''}">
+    // Inversão apenas na imagem (fish-img)
+    const flipStyle = !isLeft ? 'transform: scaleX(-1);' : '';
+
+    fishBox.innerHTML = `
+        <img src="${JOGO_CONFIG.caminhoImg}${imgName}" class="fish-img" style="${flipStyle}">
         <div class="fish-num">${val}</div>
     `;
 
-    fish.onclick = (e) => { e.stopPropagation(); if(jogoAtivo) capturarPeixe(fish, val); };
-    ocean.appendChild(fish);
+    fishBox.onclick = (e) => { 
+        e.stopPropagation(); 
+        if(jogoAtivo && !fishBox.classList.contains('fish-dead')) {
+            capturarPeixe(fishBox, val); 
+        }
+    };
+
+    ocean.appendChild(fishBox);
     
-    // Remove peixes que saíram do ecrã
-    setTimeout(() => { if(fish.parentNode && !fish.classList.contains('fish-dead')) fish.remove(); }, vel * 1000);
+    setTimeout(() => { if(fishBox.parentNode && !fishBox.classList.contains('fish-dead')) fishBox.remove(); }, vel * 1000);
 }
 
 function capturarPeixe(el, val) {
@@ -143,14 +155,14 @@ function capturarPeixe(el, val) {
 
     if(acerto) {
         acertos++; somAcerto.play();
-        el.style.transform = "scale(1.5) translateY(-60px)";
+        el.style.transform = "scale(1.6) translateY(-80px)";
         el.style.opacity = "0";
         document.getElementById('hits-val').innerText = acertos;
         setTimeout(() => { if(el.parentNode) el.remove(); }, 500);
     } else {
         erros++; somErro.play();
         el.style.animationPlayState = "paused";
-        el.classList.add('fish-dead'); // Ativa a queda e o cinzento
+        el.classList.add('fish-dead'); 
         document.getElementById('miss-val').innerText = erros;
         setTimeout(() => { if(el.parentNode) el.remove(); }, 2000);
     }
