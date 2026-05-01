@@ -77,23 +77,28 @@ function montarCenario() {
         <style>
             .ocean-bg { width: 100%; height: 100%; background: linear-gradient(180deg, #38bdf8 0%, #0369a1 100%); position: relative; overflow: hidden; border-radius: 25px; cursor: crosshair; }
             
-            /* PAINEL DE COMANDO ULTRA DESTACADO */
+            /* PAINEL DE COMANDO VERTICAL */
             .mission-panel { 
                 position: absolute; 
-                top: 20px; 
+                top: 15px; 
                 left: 50%; 
                 transform: translateX(-50%); 
                 background: #ffffff; 
-                padding: 10px 40px; 
-                border-radius: 50px; 
-                border: 5px solid #0ea5e9; 
+                padding: 10px 35px; 
+                border-radius: 30px; 
+                border: 4px solid #0ea5e9; 
                 box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
                 z-index: 1000; 
                 display: flex;
+                flex-direction: column; /* Organiza em colunas: cima, meio, baixo */
                 align-items: center;
                 justify-content: center;
-                min-width: 180px;
+                min-width: 200px;
             }
+
+            .mission-label-top { font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: -5px; }
+            .mission-main-row { display: flex; align-items: center; justify-content: center; gap: 10px; line-height: 1; }
+            .mission-label-bottom { font-size: 0.9rem; font-weight: 900; text-transform: uppercase; margin-top: -5px; }
 
             /* IMAGEM DE FUNDO ESTÁTICA */
             .decoracao-fundo { 
@@ -132,11 +137,16 @@ function proximaMissao() {
     rule = Math.random() > 0.5 ? 'greater' : 'less';
 
     const simbolo = rule === 'greater' ? '>' : '<';
-    const corSimbolo = rule === 'greater' ? '#16a34a' : '#ef4444'; // Verde para >, Vermelho para <
+    const textoBaixo = rule === 'greater' ? 'Maiores' : 'Menores';
+    const corTema = rule === 'greater' ? '#16a34a' : '#ef4444'; // Verde para >, Vermelho para <
 
     document.getElementById('mission-ui').innerHTML = `
-        <span style="font-size: 4rem; font-weight: 900; color: ${corSimbolo}; margin-right: 15px; font-family: sans-serif;">${simbolo}</span>
-        <span style="font-size: 3.5rem; font-weight: 900; color: #0369a1;">${targetNum}</span>
+        <div class="mission-label-top">Pesca números</div>
+        <div class="mission-main-row">
+            <span style="font-size: 3.8rem; font-weight: 900; color: ${corTema}; font-family: sans-serif;">${simbolo}</span>
+            <span style="font-size: 3.5rem; font-weight: 900; color: #0369a1;">${targetNum}</span>
+        </div>
+        <div class="mission-label-bottom" style="color: ${corTema}">${textoBaixo}</div>
     `;
 }
 
