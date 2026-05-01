@@ -22,7 +22,7 @@ const JOGO_CATEGORIAS = {
         carruagens: 4
     },
     "Nível 4": {
-        nome: "Contar de 2 em 2",
+        nome: "Contar até 100",
         imgCapa: "rd.png",
         maxNum: 100,
         passo: 1,
