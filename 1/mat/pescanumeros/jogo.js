@@ -76,8 +76,23 @@ function montarCenario() {
     container.innerHTML = `
         <style>
             .ocean-bg { width: 100%; height: 100%; background: linear-gradient(180deg, #38bdf8 0%, #0369a1 100%); position: relative; overflow: hidden; border-radius: 25px; cursor: crosshair; }
+            
+            /* Painel de Missão */
             .mission-panel { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.95); padding: 10px 30px; border-radius: 25px; border: 3px solid #0ea5e9; box-shadow: 0 8px 20px rgba(0,0,0,0.15); font-weight: 900; color: #0369a1; z-index: 1000; text-align: center; font-size: 1.1rem; white-space: nowrap; }
             
+            /* Imagem Decorativa de Fundo */
+            .decoracao-fundo { 
+                position: absolute; 
+                bottom: 0; 
+                right: 0; 
+                width: 280px; 
+                height: auto; 
+                z-index: 5; 
+                pointer-events: none; 
+                opacity: 0.9;
+            }
+
+            /* Peixes */
             .fish-box { position: absolute; width: 110px; height: 80px; cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center; }
             .fish-img { width: 100%; height: 100%; object-fit: contain; position: absolute; inset: 0; z-index: 1; transition: filter 0.5s; }
             .fish-num { position: relative; z-index: 2; color: white; font-weight: 900; font-size: 28px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); font-family: 'Fredoka', sans-serif; pointer-events: none; }
@@ -87,7 +102,11 @@ function montarCenario() {
             
             .fish-dead { transition: all 1.8s ease-in !important; top: 90% !important; transform: rotate(180deg) !important; filter: grayscale(1) brightness(0.6) !important; pointer-events: none !important; }
         </style>
-        <div class="ocean-bg" id="ocean"><div class="mission-panel" id="mission-ui"></div></div>
+        <div class="ocean-bg" id="ocean">
+            <div class="mission-panel" id="mission-ui"></div>
+            <!-- IMAGEM SOLICITADA -->
+            <img src="${JOGO_CONFIG.caminhoImg}fundomar.png" class="decoracao-fundo">
+        </div>
     `;
 }
 
@@ -105,12 +124,10 @@ function criarPeixe() {
     if(!ocean) return;
     const config = JOGO_CATEGORIAS[categoriaAtual];
     
-    // 1. Gerar Valor e Imagem
     const val = Math.floor(Math.random() * config.maxNum) + 1;
     const numImg = Math.floor(Math.random() * 8) + 1;
     const imgName = `peixe${numImg.toString().padStart(2, '0')}.png`;
     
-    // 2. Definir Direção (isFromLeft significa que começa na esquerda e vai para a direita)
     const isFromLeft = Math.random() > 0.5;
     
     const fishBox = document.createElement('div');
@@ -120,9 +137,6 @@ function criarPeixe() {
     const vel = config.velocidadeBase + (Math.random() * 2 - 1);
     fishBox.style.animation = `${isFromLeft ? 'swimRight' : 'swimLeft'} ${vel}s linear forwards`;
 
-    // 3. Lógica de "Nadar para a frente":
-    // Se nadar para a DIREITA (isFromLeft = true), mantemos a imagem normal (assumindo que o PNG olha para a direita).
-    // Se nadar para a ESQUERDA (isFromLeft = false), espelhamos a imagem.
     const flipImg = isFromLeft ? '' : 'transform: scaleX(-1);';
 
     fishBox.innerHTML = `
