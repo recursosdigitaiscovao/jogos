@@ -1,7 +1,7 @@
 // === CONFIGURAÇÃO MESTRE ===
 const CONFIG_MESTRE = {
-    ano: "ano3",        
-    area: "estudo",  
+    ano: "ano1",        
+    area: "matematica",  
     nomeJogo: "sequências"
 };
 
