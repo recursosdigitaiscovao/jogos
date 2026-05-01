@@ -22,7 +22,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Pesca o peixe com o número correto! Se errares, ele afunda e perdemos uma tentativa.";
+    return "Pesca o peixe com o número correto! Se errares, ele afunda.";
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -77,25 +77,39 @@ function montarCenario() {
         <style>
             .ocean-bg { width: 100%; height: 100%; background: linear-gradient(180deg, #38bdf8 0%, #0369a1 100%); position: relative; overflow: hidden; border-radius: 25px; cursor: crosshair; }
             
-            /* Painel de Missão */
-            .mission-panel { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.95); padding: 10px 30px; border-radius: 25px; border: 3px solid #0ea5e9; box-shadow: 0 8px 20px rgba(0,0,0,0.15); font-weight: 900; color: #0369a1; z-index: 1000; text-align: center; font-size: 1.1rem; white-space: nowrap; }
-            
-            /* Imagem Decorativa de Fundo */
+            /* PAINEL DE COMANDO ULTRA DESTACADO */
+            .mission-panel { 
+                position: absolute; 
+                top: 20px; 
+                left: 50%; 
+                transform: translateX(-50%); 
+                background: #ffffff; 
+                padding: 10px 40px; 
+                border-radius: 50px; 
+                border: 5px solid #0ea5e9; 
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+                z-index: 1000; 
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 180px;
+            }
+
+            /* IMAGEM DE FUNDO ESTÁTICA */
             .decoracao-fundo { 
                 position: absolute; 
-                bottom: 0; 
-                right: 0; 
-                width: 280px; 
+                bottom: -5px; 
+                right: -5px; 
+                width: 320px; 
                 height: auto; 
                 z-index: 5; 
                 pointer-events: none; 
-                opacity: 0.9;
+                opacity: 0.95;
             }
 
-            /* Peixes */
             .fish-box { position: absolute; width: 110px; height: 80px; cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center; }
             .fish-img { width: 100%; height: 100%; object-fit: contain; position: absolute; inset: 0; z-index: 1; transition: filter 0.5s; }
-            .fish-num { position: relative; z-index: 2; color: white; font-weight: 900; font-size: 28px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); font-family: 'Fredoka', sans-serif; pointer-events: none; }
+            .fish-num { position: relative; z-index: 2; color: white; font-weight: 900; font-size: 32px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); font-family: 'Fredoka', sans-serif; pointer-events: none; }
             
             @keyframes swimRight { from { left: -150px; } to { left: 110%; } }
             @keyframes swimLeft { from { right: -150px; } to { right: 110%; } }
@@ -104,7 +118,6 @@ function montarCenario() {
         </style>
         <div class="ocean-bg" id="ocean">
             <div class="mission-panel" id="mission-ui"></div>
-            <!-- IMAGEM SOLICITADA -->
             <img src="${JOGO_CONFIG.caminhoImg}fundomar.png" class="decoracao-fundo">
         </div>
     `;
@@ -113,10 +126,18 @@ function montarCenario() {
 function proximaMissao() {
     if (indicePergunta >= 10) { finalizar(); return; }
     document.getElementById('round-val').innerText = `${indicePergunta + 1} / 10`;
+    
     const config = JOGO_CATEGORIAS[categoriaAtual];
     targetNum = Math.floor(Math.random() * (config.maxNum - 4)) + 3;
     rule = Math.random() > 0.5 ? 'greater' : 'less';
-    document.getElementById('mission-ui').innerHTML = `Missão: Pesca um número <b style="color:#ef4444">${rule === 'greater' ? 'MAIOR' : 'MENOR'}</b> que ${targetNum}`;
+
+    const simbolo = rule === 'greater' ? '>' : '<';
+    const corSimbolo = rule === 'greater' ? '#16a34a' : '#ef4444'; // Verde para >, Vermelho para <
+
+    document.getElementById('mission-ui').innerHTML = `
+        <span style="font-size: 4rem; font-weight: 900; color: ${corSimbolo}; margin-right: 15px; font-family: sans-serif;">${simbolo}</span>
+        <span style="font-size: 3.5rem; font-weight: 900; color: #0369a1;">${targetNum}</span>
+    `;
 }
 
 function criarPeixe() {
