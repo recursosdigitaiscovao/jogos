@@ -21,7 +21,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Qual é o número que falta? Escolhe a carruagem certa!";
+    return "Qual é o número que falta na carruagem? Escolhe a resposta certa!";
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -30,13 +30,15 @@ function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
     container.innerHTML = `
-        <div style="display:flex; align-items:flex-end; gap:5px; background:white; padding:20px; border-radius:20px; position:relative;">
-            <div style="width:30px; height:35px; background:#3b82f6; border-radius:5px; color:white; display:flex; align-items:center; justify-content:center; font-weight:900;">1</div>
-            <div style="width:30px; height:35px; background:#f8fafc; border:2px dashed #3b82f6; color:#3b82f6; display:flex; align-items:center; justify-content:center; font-weight:900;">?</div>
-            <div style="font-size:40px;">🚂</div>
-            <div style="position:absolute; font-size:40px; bottom:-10px; right:10px; animation: tapH 2s infinite; z-index:10;">☝️</div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+            <div style="display:flex; align-items:flex-end; gap:2px; position:relative;">
+                <div style="width:30px; height:35px; background:#3b82f6; border-radius:4px;"></div>
+                <div style="width:10px; height:4px; background:#475569; margin-bottom:10px;"></div>
+                <div style="width:40px; height:45px; background:#ef4444; border-radius:5px 15px 2px 2px;"></div>
+                <div style="position:absolute; font-size:30px; bottom:-15px; right:-10px; animation: tapH 2s infinite;">☝️</div>
+            </div>
         </div>
-        <style> @keyframes tapH { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } } </style>
+        <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-10px); } } </style>
     `;
 }
 
@@ -83,81 +85,88 @@ function mostrarPergunta() {
 
     container.innerHTML = `
         <style>
-            .game-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; justify-content:space-around; padding:10px; box-sizing:border-box; overflow:hidden; }
+            .game-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; justify-content:space-around; overflow:hidden; position:relative; }
             
-            .train-stage { flex:1; width:100%; display:flex; align-items:center; justify-content:center; }
+            /* CENÁRIO / TRILHOS */
+            .train-track { 
+                width: 90%; height: 10px; background: #64748b; position: absolute; top: 65%; 
+                border-radius: 10px; box-shadow: 0 4px 0 #475569;
+            }
 
-            /* COMBOIO COMPLETO */
-            .train-full { 
-                display:flex; align-items:flex-end; width:100%; max-width:900px;
+            .train-stage { flex:1; width:100%; display:flex; align-items:center; justify-content:center; z-index: 10; }
+
+            /* COMBOIO UNIFICADO */
+            .train-unit { 
+                display:flex; align-items:flex-end; 
                 transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-                transform: translateX(-120%); 
+                transform: translateX(-150%); 
             }
-            .train-full.entering { transform: translateX(0); }
-            .train-full.leaving { transform: translateX(120%); }
+            .train-unit.entering { transform: translateX(0); }
+            .train-unit.leaving { transform: translateX(150%); }
 
-            /* LOCOMOTIVA (À FRENTE - DIREITA) */
-            .locomotive { 
-                flex: 0 1 110px; height: 100px; background: #ef4444; border-radius: 10px 45px 5px 5px; 
-                position: relative; border-bottom: 6px solid #b91c1c; z-index: 5;
+            /* LOCOMOTIVA - CABINE E CORPO */
+            .loco-main { 
+                width: 90px; height: 95px; background: #ef4444; border-radius: 5px 35px 5px 5px; 
+                position: relative; border-bottom: 6px solid #b91c1c; flex-shrink: 0;
             }
-            .locomotive::after { /* Chaminé */
-                content:''; position:absolute; top:-15px; right:20px; width:18px; height:25px; background:#334155; border-radius:3px;
+            .loco-cab { position: absolute; top: 15px; left: 10px; width: 35px; height: 35px; background: #bae6fd; border: 3px solid #334155; border-radius: 4px; }
+            .loco-chimney { position: absolute; top: -20px; right: 15px; width: 18px; height: 25px; background: #334155; border-radius: 3px; }
+            .smoke { 
+                position: absolute; top: -30px; right: 18px; width: 12px; height: 12px; 
+                background: #cbd5e1; border-radius: 50%; opacity: 0; animation: smoke 1.5s infinite; 
             }
-            .locomotive-window { position:absolute; top:15px; right:12px; width:35px; height:30px; background:#bae6fd; border:3px solid #334155; border-radius:5px; }
+            @keyframes smoke { 0% { transform: translateY(0) scale(0.5); opacity:0.8; } 100% { transform: translateY(-40px) scale(2); opacity:0; } }
 
             /* CARRUAGENS */
-            .carriage-box { flex: 1; display:flex; align-items:flex-end; }
-            .carriage { 
-                flex: 1; height: 80px; min-width: 45px; max-width: 80px;
-                background: #3b82f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; 
-                color: white; font-weight: 900; font-size: clamp(1rem, 4vw, 1.8rem); 
-                position: relative; border-bottom: 6px solid #1d4ed8; 
+            .carr-item { 
+                width: 75px; height: 75px; background: #3b82f6; border-radius: 6px; 
+                display:flex; align-items:center; justify-content:center; color:white; 
+                font-weight:900; font-size: clamp(1.2rem, 3vw, 1.8rem); 
+                position:relative; border-bottom: 6px solid #1d4ed8; flex-shrink: 1;
             }
-            .carriage.missing { background: #ffffff; border: 3px dashed #3b82f6; color: #3b82f6; border-bottom: 6px dashed #3b82f6; }
+            .carr-item.missing { background: #ffffff; border: 3px dashed #3b82f6; color: #3b82f6; border-bottom: 6px dashed #3b82f6; }
 
-            /* ENGATES */
-            .coupler { width: 12px; height: 8px; background: #475569; margin-bottom: 18px; flex-shrink: 0; }
+            /* ENGATES / JUNÇÕES */
+            .connector { width: 10px; height: 6px; background: #475569; margin-bottom: 15px; flex-shrink: 0; }
 
             /* RODAS */
             .wheel { position: absolute; bottom: -10px; width: 18px; height: 18px; background: #334155; border-radius: 50%; border: 3px solid #94a3b8; }
             .wheel-l { left: 8px; } .wheel-r { right: 8px; }
 
             /* OPÇÕES */
-            .options-row { display: flex; justify-content: center; gap: 10px; width: 100%; padding: 15px 0; }
+            .options-row { display: flex; justify-content: center; gap: 12px; width: 100%; padding: 20px; z-index: 20; }
             .opt-btn { 
-                flex: 1; max-width: 80px; aspect-ratio: 1/1; background: white; border: 3px solid #cbd5e1; 
-                border-radius: 18px; font-size: clamp(1.2rem, 5vw, 2rem); font-weight: 900; cursor: pointer; 
-                box-shadow: 0 5px 0 #cbd5e1; color: #334155; 
+                width: 75px; height: 75px; background: white; border: 3px solid #cbd5e1; border-radius: 18px; 
+                font-size: 1.8rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #cbd5e1; color: #334155; 
             }
             .opt-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #cbd5e1; }
 
-            /* RESPONSIVIDADE PARA ECRÃS PEQUENOS */
             @media (max-width: 500px) {
-                .locomotive { height: 80px; flex-basis: 80px; }
-                .carriage { height: 65px; }
-                .coupler { width: 8px; }
-                .locomotive-window { width: 25px; height: 22px; top: 10px; }
+                .loco-main { width: 70px; height: 75px; }
+                .carr-item { width: 55px; height: 55px; }
+                .opt-btn { width: 60px; height: 60px; font-size: 1.4rem; }
             }
         </style>
 
         <div class="game-wrapper">
+            <div class="train-track"></div>
             <div class="train-stage">
-                <div id="train-obj" class="train-full">
-                    <!-- CARRUAGENS PRIMEIRO -->
-                    <div class="carriage-box">
-                        ${currentSequence.map((num, i) => `
-                            <div class="carriage ${i === missingIndex ? 'missing' : ''}" id="${i === missingIndex ? 'target-c' : ''}">
-                                ${i === missingIndex ? '?' : num}
-                                <div class="wheel wheel-l"></div><div class="wheel wheel-r"></div>
-                            </div>
-                            <div class="coupler"></div>
-                        `).join('')}
-                    </div>
+                <div id="train-unit" class="train-unit">
+                    <!-- LISTA DE CARRUAGENS ATRÁS -->
+                    ${currentSequence.map((num, i) => `
+                        <div class="carr-item ${i === missingIndex ? 'missing' : ''}" id="${i === missingIndex ? 'target-c' : ''}">
+                            ${i === missingIndex ? '?' : num}
+                            <div class="wheel wheel-l"></div><div class="wheel wheel-r"></div>
+                        </div>
+                        <div class="connector"></div>
+                    `).join('')}
 
-                    <!-- LOCOMOTIVA NO FIM (FRENTE DO MOVIMENTO) -->
-                    <div class="locomotive">
-                        <div class="locomotive-window"></div>
+                    <!-- LOCOMOTIVA À FRENTE (DIREITA) -->
+                    <div class="loco-main">
+                        <div class="smoke"></div>
+                        <div class="smoke" style="animation-delay: 0.5s"></div>
+                        <div class="loco-chimney"></div>
+                        <div class="loco-cab"></div>
                         <div class="wheel wheel-l"></div><div class="wheel wheel-r"></div>
                     </div>
                 </div>
@@ -168,18 +177,19 @@ function mostrarPergunta() {
             </div>
         </div>
     `;
-    setTimeout(() => document.getElementById('train-obj').classList.add('entering'), 100);
+    setTimeout(() => document.getElementById('train-unit').classList.add('entering'), 100);
 }
 
 function verificar(btn, val) {
     document.querySelectorAll('.opt-btn').forEach(b => b.style.pointerEvents = 'none');
-    const train = document.getElementById('train-obj');
+    const train = document.getElementById('train-unit');
     const target = document.getElementById('target-c');
 
     if (val === correctAnswer) {
         acertos++; somAcerto.play();
         btn.style.background = "#dcfce7"; btn.style.borderColor = "#22c55e";
         document.getElementById('hits-val').innerText = acertos;
+        
         target.innerText = correctAnswer;
         target.classList.remove('missing');
         target.style.background = "#10b981"; target.style.color = "white";
@@ -202,25 +212,19 @@ function verificar(btn, val) {
 function finalizarJogo() {
     clearInterval(intervaloTempo); somVitoria.play();
     const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
-    const tempoFinal = document.getElementById('timer-val').innerText;
     const resScreen = document.getElementById('scr-result');
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:20px; text-align:center;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:120px; margin-bottom:20px;">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:20px;">
             <h2 style="color:var(--primary-blue); font-size:1.8rem; font-weight:900;">${rel.titulo}</h2>
             <div style="display:flex; gap:15px; margin:20px 0;">
                 <div style="background:white; padding:15px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
                     <div style="font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos}/10</div>
                     <div style="font-size:12px; color:#88a;">Acertos</div>
                 </div>
-                <div style="background:white; padding:15px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-                    <div style="font-size:24px; font-weight:900; color:var(--primary-blue);">${tempoFinal}</div>
-                    <div style="font-size:12px; color:#88a;">Tempo</div>
-                </div>
             </div>
             <button onclick="location.reload()" style="background:var(--primary-blue); color:white; border:none; padding:15px 40px; border-radius:50px; font-weight:900; cursor:pointer; box-shadow:0 5px 0 var(--primary-dark);">JOGAR DE NOVO</button>
-            <a href="${JOGO_CONFIG.linkVoltar}" style="margin-top:20px; color:#88a; text-decoration:none; font-weight:700;">Sair</a>
         </div>
     `;
     document.querySelectorAll('.screen').forEach(s => { if(s.id !== 'scr-result') s.classList.remove('active'); });
