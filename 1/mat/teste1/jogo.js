@@ -44,62 +44,37 @@ function criarAnimacaoTutorial() {
                 </div>
             </div>
             <div class="tut-rail"></div>
-            
             <div class="tut-options">
                 <div class="tut-btn">0</div>
                 <div class="tut-btn tut-target">2</div>
                 <div class="tut-btn">5</div>
             </div>
-
             <div class="tut-hand">☝️</div>
         </div>
-
         <style>
-            .tut-wrapper { 
-                position: relative; width: 100%; max-width: 280px; 
-                display: flex; flex-direction: column; align-items: center; 
-                padding: 10px; box-sizing: border-box;
-            }
+            .tut-wrapper { position: relative; width: 100%; max-width: 280px; display: flex; flex-direction: column; align-items: center; padding: 10px; box-sizing: border-box; }
             .tut-train { display: flex; align-items: flex-end; margin-bottom: -2px; z-index: 2; }
-            .tut-carr { 
-                width: 40px; height: 40px; background: #3b82f6; border-radius: 4px; 
-                color: white; font-weight: 900; font-size: 14px; 
-                display: flex; align-items: center; justify-content: center; position: relative;
-            }
+            .tut-carr { width: 40px; height: 40px; background: #3b82f6; border-radius: 4px; color: white; font-weight: 900; font-size: 14px; display: flex; align-items: center; justify-content: center; position: relative; }
             .tut-empty { background: #fff; border: 2px dashed #3b82f6; color: #3b82f6; }
-            .tut-loco { 
-                width: 50px; height: 50px; background: #ef4444; border-radius: 4px 15px 2px 2px; 
-                position: relative; 
-            }
+            .tut-loco { width: 50px; height: 50px; background: #ef4444; border-radius: 4px 15px 2px 2px; position: relative; }
             .tut-win { position: absolute; top: 8px; right: 6px; width: 15px; height: 15px; background: #bae6fd; border: 2px solid #334155; border-radius: 2px; }
             .tut-chim { position: absolute; top: -10px; right: 10px; width: 8px; height: 12px; background: #334155; }
             .tut-conn { width: 8px; height: 4px; background: #475569; margin-bottom: 10px; }
             .tut-w { position: absolute; bottom: -6px; left: 4px; width: 10px; height: 10px; background: #334155; border-radius: 50%; border: 1px solid #fff; }
             .tut-wr { left: auto; right: 4px; }
-            
             .tut-rail { width: 100%; height: 3px; background: #94a3b8; border-radius: 2px; margin-bottom: 15px; }
-
             .tut-options { display: flex; gap: 8px; }
             .tut-btn { width: 35px; height: 35px; background: white; border: 2px solid #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; }
-            
-            .tut-hand { 
-                position: absolute; font-size: 35px; z-index: 10;
-                animation: tutClick 3s infinite ease-in-out;
-            }
-
+            .tut-hand { position: absolute; font-size: 35px; z-index: 10; animation: tutClick 3s infinite ease-in-out; }
             @keyframes tutClick {
                 0% { transform: translate(20px, 80px); opacity: 0; }
-                20% { transform: translate(20px, 60px); opacity: 1; } /* Sobe para a opção */
-                40% { transform: translate(20px, 60px) scale(0.8); } /* Clica */
-                60% { transform: translate(-30px, 20px); } /* Move para a lacuna */
-                80% { transform: translate(-30px, 20px) scale(0.8); opacity: 1; } /* Clica na lacuna */
+                20% { transform: translate(20px, 60px); opacity: 1; }
+                40% { transform: translate(20px, 60px) scale(0.8); }
+                60% { transform: translate(-30px, 20px); }
+                80% { transform: translate(-30px, 20px) scale(0.8); opacity: 1; }
                 100% { transform: translate(-30px, 10px); opacity: 0; }
             }
-
-            /* Ajuste para ecrãs muito pequenos */
-            @media (max-width: 350px) {
-                .tut-wrapper { transform: scale(0.85); }
-            }
+            @media (max-width: 350px) { .tut-wrapper { transform: scale(0.85); } }
         </style>
     `;
 }
@@ -136,6 +111,7 @@ function proximaRonda() {
 
 function mostrarPergunta() {
     const container = document.getElementById('game-main-content');
+    const config = JOGO_CATEGORIAS[categoriaAtual];
     document.getElementById('round-val').innerText = `${indicePergunta + 1} / 10`;
 
     let choices = [correctAnswer];
@@ -147,8 +123,25 @@ function mostrarPergunta() {
 
     container.innerHTML = `
         <style>
-            .game-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; justify-content:space-around; overflow:hidden; }
+            .game-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; justify-content:space-around; overflow:hidden; position: relative; }
+            
+            /* RÓTULO DA CATEGORIA */
+            .category-label {
+                background: #f1f5f9;
+                color: #475569;
+                padding: 6px 20px;
+                border-radius: 20px;
+                font-weight: 800;
+                font-size: 0.85rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                border: 2px solid #cbd5e1;
+                margin-top: 5px;
+                z-index: 20;
+            }
+
             .train-stage { flex:1; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; }
+            
             .track-container { position: absolute; width: 100%; height: 20px; top: 60%; display: flex; align-items: center; justify-content: center; }
             .rail-line { width: 100%; height: 6px; background: #475569; position: relative; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
             .rail-line::before { content: ''; position: absolute; width: 100%; height: 10px; top: 6px; background-image: linear-gradient(90deg, #78350f 20%, transparent 20%); background-size: 40px 100%; }
@@ -169,7 +162,6 @@ function mostrarPergunta() {
             }
             .loco-cab { position: absolute; top: 15px; left: 12px; width: 38px; height: 35px; background: #bae6fd; border: 3px solid #334155; border-radius: 4px; }
             .loco-chimney { position: absolute; top: -20px; right: 18px; width: 20px; height: 25px; background: #334155; border-radius: 3px; }
-            
             .smoke { position: absolute; top: -35px; right: 22px; width: 15px; height: 15px; background: rgba(200, 200, 200, 0.8); border-radius: 50%; opacity: 0; animation: smokeMove 1.2s infinite; }
             @keyframes smokeMove { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-50px) translateX(-20px) scale(2.5); opacity: 0; } }
 
@@ -194,10 +186,14 @@ function mostrarPergunta() {
                 .loco-main { width: 70px; height: 75px; }
                 .carr-item { width: 55px; height: 55px; font-size: 1.4rem; }
                 .opt-btn { width: 65px; height: 65px; font-size: 1.5rem; }
+                .category-label { font-size: 0.7rem; padding: 4px 15px; }
             }
         </style>
 
         <div class="game-wrapper">
+            <!-- NOME DA CATEGORIA AQUI -->
+            <div class="category-label">${config.nome}</div>
+
             <div class="train-stage">
                 <div class="track-container"><div class="rail-line"></div></div>
                 <div id="train-unit" class="train-unit">
