@@ -29,37 +29,27 @@ window.selecionarCategoria = function(key) { categoriaAtual = key; };
 function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
+    const imgC = JOGO_CONFIG.caminhoImg + "comboio_seq.png";
+    const imgCarr = JOGO_CONFIG.caminhoImg + "carruagem_seq.png";
+
     container.innerHTML = `
         <div class="tut-wrapper">
             <div class="tut-train">
-                <div class="tut-carr">1 <div class="tut-w"></div><div class="tut-w tut-wr"></div></div>
-                <div class="tut-conn"></div>
-                <div class="tut-carr tut-empty">? <div class="tut-w"></div><div class="tut-w tut-wr"></div></div>
-                <div class="tut-conn"></div>
-                <div class="tut-loco"><div class="tut-win"></div><div class="tut-chim"></div><div class="tut-w"></div><div class="tut-w tut-wr"></div></div>
-            </div>
-            <div class="tut-rail"></div>
-            <div class="tut-options">
-                <div class="tut-btn">0</div><div class="tut-btn tut-target">2</div><div class="tut-btn">5</div>
+                <div class="tut-img-box"><img src="${imgCarr}"><span>1</span></div>
+                <div class="tut-img-box tut-empty"><img src="${imgCarr}"><span>?</span></div>
+                <div class="tut-img-box"><img src="${imgC}"></div>
             </div>
             <div class="tut-hand">☝️</div>
         </div>
         <style>
-            .tut-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; padding: 10px; }
-            .tut-train { display: flex; align-items: flex-end; margin-bottom: -2px; }
-            .tut-carr { width: 40px; height: 40px; background: #3b82f6; border-radius: 4px; color: white; font-weight: 900; display: flex; align-items: center; justify-content: center; position: relative; }
-            .tut-empty { background: #fff; border: 2px dashed #3b82f6; color: #3b82f6; }
-            .tut-loco { width: 50px; height: 50px; background: #ef4444; border-radius: 4px 15px 2px 2px; position: relative; }
-            .tut-win { position: absolute; top: 8px; right: 6px; width: 15px; height: 15px; background: #bae6fd; border: 2px solid #334155; border-radius: 2px; }
-            .tut-chim { position: absolute; top: -10px; right: 10px; width: 8px; height: 12px; background: #334155; }
-            .tut-conn { width: 8px; height: 4px; background: #475569; margin-bottom: 10px; }
-            .tut-w { position: absolute; bottom: -6px; left: 4px; width: 10px; height: 10px; background: #334155; border-radius: 50%; border: 1px solid #fff; }
-            .tut-wr { left: auto; right: 4px; }
-            .tut-rail { width: 120px; height: 3px; background: #94a3b8; margin-bottom: 15px; }
-            .tut-options { display: flex; gap: 8px; }
-            .tut-btn { width: 35px; height: 35px; background: white; border: 2px solid #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; }
-            .tut-hand { position: absolute; font-size: 35px; animation: tutClick 3s infinite ease-in-out; }
-            @keyframes tutClick { 0%, 100% { transform: translate(20px, 80px); opacity: 0; } 20% { opacity: 1; transform: translate(20px, 60px); } 50% { transform: translate(-30px, 20px); } }
+            .tut-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; padding: 20px; max-width: 100%; }
+            .tut-train { display: flex; align-items: flex-end; gap: 4px; }
+            .tut-img-box { position: relative; width: 45px; }
+            .tut-img-box img { width: 100%; height: auto; display: block; }
+            .tut-img-box span { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 900; color: white; font-size: 12px; }
+            .tut-empty img { filter: grayscale(1); opacity: 0.5; }
+            .tut-hand { position: absolute; font-size: 30px; animation: tutClick 3s infinite ease-in-out; bottom: -10px; }
+            @keyframes tutClick { 0%, 100% { transform: translate(20px, 20px); opacity: 0; } 20% { opacity: 1; transform: translate(20px, 0px); } 50% { transform: translate(-20px, -30px); } }
         </style>
     `;
 }
@@ -87,9 +77,7 @@ function iniciarCronometro() {
 function proximaRonda() {
     if (indicePergunta >= 10) { finalizarJogo(); return; }
     const config = JOGO_CATEGORIAS[categoriaAtual];
-    
-    // FORÇADO A 4 CARRUAGENS
-    const numCarr = 4;
+    const numCarr = 4; // SEMPRE 4 CARRUAGENS
     let start = Math.floor(Math.random() * (config.maxNum - (numCarr * config.passo))) + 1;
     currentSequence = Array.from({length: numCarr}, (_, i) => start + (i * config.passo));
     missingIndex = Math.floor(Math.random() * numCarr);
@@ -102,6 +90,9 @@ function mostrarPergunta() {
     const config = JOGO_CATEGORIAS[categoriaAtual];
     document.getElementById('round-val').innerText = `${indicePergunta + 1} / 10`;
 
+    const imgComboio = JOGO_CONFIG.caminhoImg + "comboio_seq.png";
+    const imgCarruagem = JOGO_CONFIG.caminhoImg + "carruagem_seq.png";
+
     let choices = [correctAnswer];
     while(choices.length < 4) {
         let w = correctAnswer + (Math.floor(Math.random() * 10) - 5);
@@ -111,67 +102,65 @@ function mostrarPergunta() {
 
     container.innerHTML = `
         <style>
-            .game-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; justify-content:space-between; overflow:hidden; padding: 20px 0; }
+            .game-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; justify-content:space-between; overflow:hidden; padding: 30px 0; }
             
             .category-label {
-                background: #ffffff; color: #1e293b; padding: 8px 25px; border-radius: 25px; 
-                font-weight: 900; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px;
-                border: 3px solid #3b82f6; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 10px;
+                background: #ffffff; color: #1e293b; padding: 12px 35px; border-radius: 40px; 
+                font-weight: 900; font-size: 1rem; text-transform: uppercase; letter-spacing: 2px;
+                border: 4px solid #3b82f6; box-shadow: 0 8px 20px rgba(0,0,0,0.08); margin-bottom: 25px;
             }
 
             .train-stage { flex:1; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; }
             
             .track-container { position: absolute; width: 100%; height: 20px; top: 62%; display: flex; align-items: center; justify-content: center; }
-            .rail-line { width: 100%; height: 6px; background: #475569; position: relative; }
+            .rail-line { width: 100%; height: 8px; background: #475569; position: relative; border-radius: 4px; }
             .rail-line::before { 
-                content: ''; position: absolute; width: 100%; height: 10px; top: 6px; 
-                background-image: linear-gradient(90deg, #78350f 20%, transparent 20%); background-size: 45px 100%; 
+                content: ''; position: absolute; width: 100%; height: 12px; top: 8px; 
+                background-image: linear-gradient(90deg, #78350f 15%, transparent 15%); background-size: 50px 100%; 
             }
 
             .train-unit { 
                 display:flex; align-items:flex-end; position: relative; z-index: 10;
                 transition: transform 0.8s cubic-bezier(0.45, 0.05, 0.55, 0.95);
                 transform: translateX(-150%); 
-                margin-bottom: -11px; /* AJUSTE PARA ASSENTAR NO CARRIL */
+                margin-bottom: -10px; /* AJUSTE PARA AS RODAS TOCAREM NO CARRIL */
             }
-            .train-unit.entering { transform: translateX(0); animation: trainShake 0.4s infinite; }
+            .train-unit.entering { transform: translateX(0); animation: trainShake 0.5s infinite; }
             .train-unit.leaving { transform: translateX(150%); }
 
-            @keyframes trainShake { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+            @keyframes trainShake { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 
-            .loco-main { 
-                width: 95px; height: 100px; background: #ef4444; border-radius: 5px 40px 5px 5px; 
-                position: relative; border-bottom: 6px solid #b91c1c; flex-shrink: 0;
-            }
-            .loco-cab { position: absolute; top: 15px; left: 12px; width: 38px; height: 35px; background: #bae6fd; border: 3px solid #334155; border-radius: 4px; }
-            .loco-chimney { position: absolute; top: -20px; right: 18px; width: 20px; height: 25px; background: #334155; border-radius: 3px; }
-            .smoke { position: absolute; top: -35px; right: 22px; width: 15px; height: 15px; background: rgba(200, 200, 200, 0.8); border-radius: 50%; opacity: 0; animation: smokeMove 1.2s infinite; }
-            @keyframes smokeMove { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-40px) translateX(-15px) scale(2.5); opacity: 0; } }
-
-            .carr-item { 
-                width: 80px; height: 80px; background: #3b82f6; border-radius: 8px; 
-                display:flex; align-items:center; justify-content:center; color:white; 
-                font-weight:900; font-size: 1.8rem; position:relative; border-bottom: 6px solid #1d4ed8; flex-shrink: 0;
-            }
-            .carr-item.missing { background: #ffffff; border: 3px dashed #3b82f6; color: #3b82f6; border-bottom: 6px dashed #3b82f6; }
-            .connector { width: 12px; height: 8px; background: #334155; margin-bottom: 18px; flex-shrink: 0; }
+            .train-part { position: relative; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
             
-            .wheel { position: absolute; bottom: -13px; width: 24px; height: 24px; background: #1e293b; border-radius: 50%; border: 3px solid #94a3b8; }
-            .wheel-l { left: 8px; } .wheel-r { right: 8px; }
+            .img-comboio { width: 120px; height: auto; display: block; }
+            .img-carruagem { width: 100px; height: auto; display: block; }
+
+            /* POSICIONAMENTO DO NÚMERO EXATAMENTE NO CENTRO */
+            .carr-num { 
+                position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                font-weight: 900; font-size: 2.2rem; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+                pointer-events: none; z-index: 5; line-height: 1;
+            }
+
+            .train-part.missing img { filter: grayscale(1) brightness(0.8); opacity: 0.6; }
+            .train-part.missing .carr-num { color: #ffffff; text-shadow: 2px 2px 0px #3b82f6; }
+
+            .connector { width: 8px; height: 6px; background: #334155; margin-bottom: 25px; flex-shrink: 0; }
 
             .options-row { display: flex; justify-content: center; gap: 15px; width: 100%; padding: 20px 10px; }
             .opt-btn { 
-                width: 75px; height: 75px; background: white; border: 3px solid #cbd5e1; border-radius: 20px; 
-                font-size: 1.8rem; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 #cbd5e1; color: #334155; 
+                width: 85px; height: 85px; background: white; border: 4px solid #cbd5e1; border-radius: 22px; 
+                font-size: 2.2rem; font-weight: 900; cursor: pointer; box-shadow: 0 8px 0 #cbd5e1; color: #1e293b; 
             }
-            .opt-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #cbd5e1; }
+            .opt-btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #cbd5e1; }
 
             @media (max-width: 600px) {
-                .loco-main { width: 70px; height: 75px; }
-                .carr-item { width: 55px; height: 55px; font-size: 1.4rem; }
-                .opt-btn { width: 60px; height: 60px; font-size: 1.5rem; }
-                .wheel { width: 18px; height: 18px; bottom: -10px; }
-                .train-unit { margin-bottom: -8px; }
+                .img-comboio { width: 85px; }
+                .img-carruagem { width: 70px; }
+                .carr-num { font-size: 1.6rem; }
+                .opt-btn { width: 65px; height: 65px; font-size: 1.6rem; }
+                .train-unit { margin-bottom: -6px; }
+                .category-label { font-size: 0.8rem; padding: 8px 20px; margin-bottom: 10px; }
             }
         </style>
 
@@ -181,20 +170,22 @@ function mostrarPergunta() {
             <div class="train-stage">
                 <div class="track-container"><div class="rail-line"></div></div>
                 <div id="train-unit" class="train-unit">
+                    <!-- CARRUAGENS PRIMEIRO -->
                     ${currentSequence.map((num, i) => `
-                        <div class="carr-item ${i === missingIndex ? 'missing' : ''}" id="${i === missingIndex ? 'target-c' : ''}">
-                            ${i === missingIndex ? '?' : num}
-                            <div class="wheel wheel-l"></div><div class="wheel wheel-r"></div>
+                        <div class="train-part ${i === missingIndex ? 'missing' : ''}" id="${i === missingIndex ? 'target-c' : ''}">
+                            <img src="${imgCarruagem}" class="img-carruagem">
+                            <span class="carr-num">${i === missingIndex ? '?' : num}</span>
                         </div>
                         <div class="connector"></div>
                     `).join('')}
-                    <div class="loco-main">
-                        <div class="smoke"></div><div class="smoke" style="animation-delay: 0.4s"></div>
-                        <div class="loco-chimney"></div><div class="loco-cab"></div>
-                        <div class="wheel wheel-l"></div><div class="wheel wheel-r"></div>
+
+                    <!-- LOCOMOTIVA À FRENTE -->
+                    <div class="train-part">
+                        <img src="${imgComboio}" class="img-comboio">
                     </div>
                 </div>
             </div>
+            
             <div class="options-row">
                 ${choices.map(val => `<button class="opt-btn" onclick="verificar(this, ${val})">${val}</button>`).join('')}
             </div>
@@ -212,8 +203,15 @@ function verificar(btn, val) {
         acertos++; somAcerto.play();
         btn.style.background = "#dcfce7"; btn.style.borderColor = "#22c55e";
         document.getElementById('hits-val').innerText = acertos;
-        target.innerText = correctAnswer; target.classList.remove('missing');
-        target.style.background = "#10b981"; target.style.color = "white";
+        
+        const numSpan = target.querySelector('.carr-num');
+        numSpan.innerText = correctAnswer;
+        target.classList.remove('missing');
+        target.querySelector('img').style.filter = "none";
+        target.querySelector('img').style.opacity = "1";
+        numSpan.style.color = "white";
+        numSpan.style.textShadow = "2px 2px 4px rgba(0,0,0,0.5)";
+
         setTimeout(() => {
             train.classList.remove('entering'); train.classList.add('leaving');
             setTimeout(() => { indicePergunta++; proximaRonda(); }, 800);
@@ -221,6 +219,7 @@ function verificar(btn, val) {
     } else {
         erros++; somErro.play();
         btn.style.background = "#fee2e2"; btn.style.borderColor = "#ef4444";
+        document.getElementById('hits-val').innerText = acertos; // Apenas mantém
         document.getElementById('miss-val').innerText = erros;
         setTimeout(() => { train.classList.add('leaving'); setTimeout(() => { indicePergunta++; proximaRonda(); }, 800); }, 1000);
     }
