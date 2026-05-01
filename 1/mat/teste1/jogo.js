@@ -21,7 +21,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Qual é o número que falta na carruagem? Escolhe a resposta certa para o comboio seguir viagem!";
+    return "Qual é o número que falta na carruagem? Escolhe a resposta certa!";
 };
 
 window.selecionarCategoria = function(key) {
@@ -38,26 +38,17 @@ function criarAnimacaoTutorial() {
                 <div class="tut-loco">🚂</div>
                 <div class="tut-carr">1</div>
                 <div class="tut-carr tut-empty">?</div>
-                <div class="tut-carr">3</div>
-            </div>
-            <div class="tut-opts">
-                <div class="tut-opt">4</div>
-                <div class="tut-opt tut-active">2</div>
-                <div class="tut-opt">0</div>
             </div>
             <div id="tut-hand" class="tut-hand">☝️</div>
         </div>
         <style>
-            .tut-train-box { display: flex; flex-direction: column; align-items: center; gap: 15px; background: white; padding: 15px; border-radius: 20px; border: 2px solid #eee; position: relative; }
+            .tut-train-box { display: flex; flex-direction: column; align-items: center; gap: 15px; background: white; padding: 20px; border-radius: 20px; position: relative; }
             .tut-train-row { display: flex; gap: 5px; align-items: flex-end; }
-            .tut-loco { font-size: 35px; }
-            .tut-carr { width: 30px; height: 35px; background: #3b82f6; border-radius: 5px; color: white; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; }
+            .tut-loco { font-size: 40px; transform: scaleX(-1); }
+            .tut-carr { width: 35px; height: 40px; background: #3b82f6; border-radius: 5px; color: white; display: flex; align-items: center; justify-content: center; font-weight: 900; }
             .tut-empty { background: #f8fafc; border: 2px dashed #cbd5e1; color: #3b82f6; }
-            .tut-opts { display: flex; gap: 8px; }
-            .tut-opt { width: 35px; height: 35px; border: 2px solid #eee; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; color: #555; }
-            .tut-active { border-color: var(--primary-blue); color: var(--primary-blue); }
             .tut-hand { position: absolute; font-size: 40px; animation: moveHandTrain 3s infinite; z-index: 10; }
-            @keyframes moveHandTrain { 0%, 100% { transform: translate(30px, 40px); } 50% { transform: translate(5px, 0px) scale(0.8); } }
+            @keyframes moveHandTrain { 0%, 100% { transform: translate(40px, 20px); } 50% { transform: translate(10px, -10px); } }
         </style>
     `;
 }
@@ -112,146 +103,176 @@ function mostrarPergunta() {
                 padding: 10px; box-sizing: border-box; overflow: hidden; 
             }
             
-            /* CONTENTOR PRINCIPAL DO COMBOIO */
             .train-stage { 
                 flex: 1; width: 100%; 
                 display: flex; align-items: center; justify-content: center; 
-                min-height: 0; padding: 0 10px;
+                padding: 20px 0;
             }
 
-            .train-wrapper { 
-                display: flex; align-items: flex-end; 
-                gap: 5px; width: 100%; max-width: 800px;
-                transition: transform 0.8s ease-in-out; 
-                transform: translateX(-120%); 
+            /* Contentor único para todo o comboio */
+            .train-full {
+                display: flex; align-items: flex-end;
+                transition: transform 0.8s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+                transform: translateX(-150%);
             }
-            .train-wrapper.entering { transform: translateX(0); }
-            .train-wrapper.leaving { transform: translateX(120%); }
+            .train-full.entering { transform: translateX(0); }
+            .train-full.leaving { transform: translateX(150%); }
 
-            /* LOCOMOTIVA E CARRUAGENS USAM FLEX:1 PARA ENCOLHEREM IGUAIS */
-            .locomotive { 
-                flex: 1.2; height: 100px; max-width: 90px;
-                background: #ef4444; border-radius: 10px 30px 5px 5px; 
-                position: relative; border-bottom: 5px solid #b91c1c; 
-                display: flex; align-items: center; justify-content: center; 
-                color: white; order: 2; flex-shrink: 1;
+            /* Estilo da Locomotiva */
+            .locomotive {
+                width: 100px; height: 110px;
+                background: #ef4444;
+                border-radius: 10px 40px 5px 5px;
+                position: relative;
+                border-bottom: 6px solid #b91c1c;
+                display: flex; align-items: center; justify-content: center;
+                z-index: 2;
             }
-            .locomotive::after { content: ''; position: absolute; top: -12px; left: 20%; width: 15%; height: 20%; background: #475569; border-radius: 2px; }
-            
-            .carriages-list { display: flex; gap: 5px; order: 1; flex: 4; }
-            .carriage { 
-                flex: 1; height: 80px; max-width: 75px;
-                background: #3b82f6; border-radius: 8px; 
-                display: flex; align-items: center; justify-content: center; 
-                color: white; font-weight: 900; font-size: 1.5rem; 
-                position: relative; border-bottom: 5px solid #1d4ed8; 
-                flex-shrink: 1; min-width: 0; /* Permite encolher em ecrãs verticais */
+            .locomotive::before { /* Chaminé */
+                content: ''; position: absolute; top: -15px; left: 60px;
+                width: 20px; height: 25px; background: #334155; border-radius: 4px;
             }
-            .carriage.missing { background: #f8fafc; border-bottom: 5px solid #cbd5e1; color: #3b82f6; border-style: dashed; border-width: 3px; }
-            
-            .wheel { position: absolute; bottom: -8px; width: 15px; height: 15px; background: #334155; border-radius: 50%; border: 2px solid #94a3b8; }
-            .wheel-l { left: 10%; } .wheel-r { right: 10%; }
+            .locomotive-window {
+                position: absolute; top: 15px; left: 15px;
+                width: 40px; height: 35px; background: #bae6fd;
+                border: 3px solid #334155; border-radius: 5px;
+            }
 
-            /* OPÇÕES */
+            /* Engate entre a locomotiva e as carruagens */
+            .coupler {
+                width: 15px; height: 8px;
+                background: #475569;
+                margin-bottom: 20px;
+                flex-shrink: 0;
+            }
+
+            /* Lista de Carruagens */
+            .carriages-list { display: flex; align-items: flex-end; }
+
+            .carriage {
+                width: 80px; height: 85px;
+                background: #3b82f6; border-radius: 8px;
+                display: flex; align-items: center; justify-content: center;
+                color: white; font-weight: 900; font-size: 1.8rem;
+                position: relative; border-bottom: 6px solid #1d4ed8;
+                flex-shrink: 0;
+            }
+            .carriage.missing { 
+                background: #ffffff; border: 3px dashed #3b82f6; 
+                color: #3b82f6; border-bottom: 6px dashed #3b82f6; 
+            }
+
+            .wheel { position: absolute; bottom: -10px; width: 20px; height: 20px; background: #334155; border-radius: 50%; border: 3px solid #94a3b8; }
+            .wheel-l { left: 10px; } .wheel-r { right: 10px; }
+
+            /* Opções de Resposta */
             .options-row { 
-                display: flex; justify-content: center; gap: 10px; 
-                width: 100%; max-width: 500px; flex-shrink: 0; padding: 10px 0; 
+                display: flex; justify-content: center; gap: 15px; 
+                width: 100%; padding: 20px;
             }
             .opt-btn { 
-                background: white; border: 3px solid #cbd5e1; border-radius: 15px; 
-                flex: 1; aspect-ratio: 1/1; max-width: 75px; 
+                background: white; border: 3px solid #cbd5e1; border-radius: 20px; 
+                width: 80px; height: 80px;
                 display: flex; align-items: center; justify-content: center; 
-                font-size: 1.6rem; font-weight: 900; cursor: pointer; 
-                box-shadow: 0 4px 0 #ddd; color: #334155; 
+                font-size: 2rem; font-weight: 900; cursor: pointer; 
+                box-shadow: 0 6px 0 #cbd5e1; color: #334155; transition: 0.2s;
             }
-
-            /* AJUSTE PARA ECRÃS VERTICAIS MUITO ESTREITOS */
-            @media (max-width: 400px) {
-                .carriage { font-size: 1.1rem; height: 60px; }
-                .locomotive { height: 75px; }
-                .opt-btn { font-size: 1.3rem; }
-            }
+            .opt-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #cbd5e1; }
         </style>
 
         <div class="game-wrapper">
             <div class="train-stage">
-                <div id="train" class="train-wrapper">
-                    <div class="locomotive"><i class="fas fa-smile" style="font-size: 25px;"></i></div>
+                <div id="train-obj" class="train-full">
+                    <!-- LOCOMOTIVA À FRENTE -->
+                    <div class="locomotive">
+                        <div class="locomotive-window"></div>
+                        <div class="wheel wheel-l"></div>
+                        <div class="wheel wheel-r"></div>
+                    </div>
+                    
+                    <!-- ENCOSTE / CONEXÃO -->
+                    <div class="coupler"></div>
+
+                    <!-- CARRUAGENS -->
                     <div class="carriages-list">
                         ${currentSequence.map((num, i) => `
                             <div class="carriage ${i === missingIndex ? 'missing' : ''}" id="${i === missingIndex ? 'target-c' : ''}">
                                 ${i === missingIndex ? '?' : num}
-                                <div class="wheel wheel-l"></div><div class="wheel wheel-r"></div>
+                                <div class="wheel wheel-l"></div>
+                                <div class="wheel wheel-r"></div>
                             </div>
+                            ${i < currentSequence.length - 1 ? '<div class="coupler"></div>' : ''}
                         `).join('')}
                     </div>
                 </div>
             </div>
+            
             <div class="options-row">
                 ${choices.map(val => `<button class="opt-btn" onclick="verificar(this, ${val})">${val}</button>`).join('')}
             </div>
         </div>
     `;
-    setTimeout(() => document.getElementById('train').classList.add('entering'), 50);
+    // Dispara a entrada do comboio unido
+    setTimeout(() => document.getElementById('train-obj').classList.add('entering'), 100);
 }
 
 function verificar(btn, val) {
-    document.querySelectorAll('.opt-btn').forEach(b => b.style.pointerEvents = 'none');
-    const train = document.getElementById('train');
+    const btns = document.querySelectorAll('.opt-btn');
+    btns.forEach(b => b.style.pointerEvents = 'none');
+    
+    const train = document.getElementById('train-obj');
+    const target = document.getElementById('target-c');
+
     if (val === correctAnswer) {
         acertos++; somAcerto.play();
-        btn.style.background = "#e8f9e8"; btn.style.borderColor = "#7ed321";
+        btn.style.background = "#dcfce7"; btn.style.borderColor = "#22c55e"; btn.style.color = "#166534";
         document.getElementById('hits-val').innerText = acertos;
-        const target = document.getElementById('target-c');
+        
         target.innerText = correctAnswer;
         target.classList.remove('missing');
         target.style.background = "#10b981";
+        target.style.borderColor = "#047857";
+
         setTimeout(() => {
-            train.classList.remove('entering'); train.classList.add('leaving');
+            train.classList.remove('entering');
+            train.classList.add('leaving');
             setTimeout(() => { indicePergunta++; proximaRonda(); }, 800);
-        }, 1000);
+        }, 1200);
     } else {
         erros++; somErro.play();
-        btn.style.background = "#fff1f1"; btn.style.borderColor = "#ff5e5e";
+        btn.style.background = "#fee2e2"; btn.style.borderColor = "#ef4444"; btn.style.color = "#991b1b";
         document.getElementById('miss-val').innerText = erros;
-        setTimeout(() => { indicePergunta++; proximaRonda(); }, 1500);
+        
+        // Breve pausa para ver o erro e passa
+        setTimeout(() => { 
+            train.classList.add('leaving');
+            setTimeout(() => { indicePergunta++; proximaRonda(); }, 800);
+        }, 1000);
     }
 }
 
 function finalizarJogo() {
     clearInterval(intervaloTempo); somVitoria.play();
-    const totalP = 10;
-    const perc = (acertos / totalP) * 100;
-    const rel = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
+    const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
     const tempoFinal = document.getElementById('timer-val').innerText;
     const resScreen = document.getElementById('scr-result');
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
-        <style>
-            .res-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 10px; box-sizing: border-box; }
-            .res-stats { display: flex; gap: 12px; width: 100%; max-width: 320px; margin: 15px 0; }
-            .res-card { background: white; border-radius: 18px; padding: 12px; flex: 1; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; }
-            .res-val { display: block; font-size: 24px; font-weight: 900; color: var(--primary-blue); line-height: 1.1; }
-            .res-lab { font-size: 10px; font-weight: 800; color: #88a; text-transform: uppercase; letter-spacing: 0.5px; }
-            .res-btns { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 280px; }
-            .btn-f { padding: 16px; border-radius: 20px; font-weight: 900; font-size: 16px; cursor: pointer; border: none; text-align: center; text-decoration: none; text-transform: uppercase; transition: 0.2s; }
-            .btn-f-primary { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
-            .btn-f-outline { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); box-shadow: 0 6px 0 var(--primary-blue); padding: 13px; }
-            .btn-f-muted { background: #dce4ee; color: #5d7082; box-shadow: 0 6px 0 #b8c5d4; }
-            .btn-f:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
-        </style>
-        <div class="res-container">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:25%; min-height:90px; width:auto; margin-bottom:10px; object-fit:contain;">
-            <h2 style="color: var(--primary-blue); font-weight:900; font-size:1.8rem; margin-bottom:5px; text-align:center;">${rel.titulo}</h2>
-            <div class="res-stats">
-                <div class="res-card"><span class="res-val">${acertos} / ${totalP}</span><span class="res-lab">Acertos</span></div>
-                <div class="res-card"><span class="res-val">${tempoFinal}</span><span class="res-lab">Tempo</span></div>
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:20px; text-align:center;">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:120px; margin-bottom:20px;">
+            <h2 style="color:var(--primary-blue); font-size:2rem; font-weight:900;">${rel.titulo}</h2>
+            <div style="display:flex; gap:15px; margin:20px 0;">
+                <div style="background:white; padding:15px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                    <div style="font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos}/10</div>
+                    <div style="font-size:12px; color:#88a;">Acertos</div>
+                </div>
+                <div style="background:white; padding:15px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                    <div style="font-size:24px; font-weight:900; color:var(--primary-blue);">${tempoFinal}</div>
+                    <div style="font-size:12px; color:#88a;">Tempo</div>
+                </div>
             </div>
-            <div class="res-btns">
-                <button class="btn-f btn-f-primary" onclick="location.reload()">Jogar de Novo</button>
-                <button class="btn-f btn-f-outline" onclick="openRDMenu()">Outro Tema / Nível</button>
-                <a href="${JOGO_CONFIG.linkVoltar}" class="btn-f btn-f-muted">Sair do Jogo</a>
-            </div>
+            <button onclick="location.reload()" style="background:var(--primary-blue); color:white; border:none; padding:15px 40px; border-radius:50px; font-weight:900; cursor:pointer; box-shadow:0 5px 0 var(--primary-dark);">JOGAR DE NOVO</button>
+            <a href="${JOGO_CONFIG.linkVoltar}" style="margin-top:20px; color:#88a; text-decoration:none; font-weight:700;">Sair</a>
         </div>
     `;
     document.querySelectorAll('.screen').forEach(s => { if(s.id !== 'scr-result') s.classList.remove('active'); });
