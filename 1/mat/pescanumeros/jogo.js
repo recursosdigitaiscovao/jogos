@@ -54,7 +54,7 @@ window.initGame = function() {
     
     iniciarCronometro();
     montarCenario();
-    proximaMissao(); // proximaMissao agora cuida de ativar o jogoAtivo e o spawn
+    proximaMissao(); 
 };
 
 function iniciarCronometro() {
@@ -79,14 +79,17 @@ function montarCenario() {
                 background: #ffffff; padding: 10px 35px; border-radius: 30px; border: 4px solid #0ea5e9; 
                 box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 1000; 
                 display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 200px;
+                animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             }
+            @keyframes popIn { from { transform: translateX(-50%) scale(0.5); opacity: 0; } to { transform: translateX(-50%) scale(1); opacity: 1; } }
+
             .mission-label-top { font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: -5px; }
             .mission-main-row { display: flex; align-items: center; justify-content: center; gap: 10px; line-height: 1; }
             .mission-label-bottom { font-size: 0.9rem; font-weight: 900; text-transform: uppercase; margin-top: -5px; }
 
             .decoracao-fundo { position: absolute; bottom: -5px; right: -5px; width: 320px; height: auto; z-index: 5; pointer-events: none; opacity: 0.95; }
 
-            .fish-box { position: absolute; width: 110px; height: 80px; cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center; transition: opacity 0.4s; }
+            .fish-box { position: absolute; width: 110px; height: 80px; cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center; }
             .fish-img { width: 100%; height: 100%; object-fit: contain; position: absolute; inset: 0; z-index: 1; transition: filter 0.5s; }
             .fish-num { position: relative; z-index: 2; color: white; font-weight: 900; font-size: 32px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); font-family: 'Fredoka', sans-serif; pointer-events: none; }
             
@@ -105,17 +108,19 @@ function montarCenario() {
 function proximaMissao() {
     if (indicePergunta >= 10) { finalizar(); return; }
     
-    // 1. Limpar peixes existentes no oceano para recomeçar
+    // 1. Bloqueia o jogo e o spawn para a troca de instrução
+    jogoAtivo = false;
+    clearInterval(spawnInterval);
+
+    // 2. Limpa o oceano imediatamente
     const ocean = document.getElementById('ocean');
     if(ocean) {
         const peixesAtuais = ocean.querySelectorAll('.fish-box');
         peixesAtuais.forEach(p => p.remove());
     }
 
-    // 2. Atualizar UI de progresso
+    // 3. Atualiza progresso e Regra
     document.getElementById('round-val').innerText = `${indicePergunta + 1} / 10`;
-    
-    // 3. Gerar nova regra
     const config = JOGO_CATEGORIAS[categoriaAtual];
     targetNum = Math.floor(Math.random() * (config.maxNum - 4)) + 3;
     rule = Math.random() > 0.5 ? 'greater' : 'less';
@@ -124,7 +129,9 @@ function proximaMissao() {
     const textoBaixo = rule === 'greater' ? 'Maiores' : 'Menores';
     const corTema = rule === 'greater' ? '#16a34a' : '#ef4444';
 
-    document.getElementById('mission-ui').innerHTML = `
+    // Aplica a nova instrução na UI
+    const missionUI = document.getElementById('mission-ui');
+    missionUI.innerHTML = `
         <div class="mission-label-top">Pesca números</div>
         <div class="mission-main-row">
             <span style="font-size: 3.8rem; font-weight: 900; color: ${corTema}; font-family: sans-serif;">${simbolo}</span>
@@ -133,10 +140,14 @@ function proximaMissao() {
         <div class="mission-label-bottom" style="color: ${corTema}">${textoBaixo}</div>
     `;
 
-    // 4. Reiniciar o Spawn de peixes
-    jogoAtivo = true;
-    clearInterval(spawnInterval);
-    spawnInterval = setInterval(() => { if(jogoAtivo) criarPeixe(); }, 1300);
+    // 4. AGUARDA 1.2 SEGUNDOS antes de começar a soltar os peixes
+    setTimeout(() => {
+        if(indicePergunta < 10) {
+            jogoAtivo = true;
+            spawnInterval = setInterval(() => { if(jogoAtivo) criarPeixe(); }, 1300);
+            criarPeixe(); // Cria o primeiro peixe imediatamente após o tempo de leitura
+        }
+    }, 1200);
 }
 
 function criarPeixe() {
@@ -151,7 +162,10 @@ function criarPeixe() {
     const isFromLeft = Math.random() > 0.5;
     const fishBox = document.createElement('div');
     fishBox.className = 'fish-box';
-    fishBox.style.top = (Math.random()*65 + 15) + '%';
+    
+    // AJUSTE DE POSIÇÃO: Começa abaixo da placa (30%) e vai até perto do fundo (80%)
+    // Isso evita que o peixe passe por baixo da instrução
+    fishBox.style.top = (Math.random() * 50 + 30) + '%';
     
     const vel = config.velocidadeBase + (Math.random() * 2 - 1);
     fishBox.style.animation = `${isFromLeft ? 'swimRight' : 'swimLeft'} ${vel}s linear forwards`;
@@ -177,7 +191,7 @@ function capturarPeixe(el, val) {
     el.style.pointerEvents = "none";
 
     if(acerto) {
-        // PARAR O JOGO TEMPORARIAMENTE NO ACERTO
+        // Pausa o jogo para preparar a próxima instrução
         jogoAtivo = false; 
         clearInterval(spawnInterval);
 
@@ -186,11 +200,10 @@ function capturarPeixe(el, val) {
         el.style.opacity = "0";
         document.getElementById('hits-val').innerText = acertos;
         
-        // Espera a animação de captura e inicia a próxima missão (que limpa tudo e recomeça o movimento)
         indicePergunta++;
         setTimeout(proximaMissao, 800);
     } else {
-        // No erro, o peixe afunda mas o jogo continua sem limpar os outros
+        // No erro, apenas o peixe atingido afunda, o jogo continua
         erros++; somErro.play();
         el.style.animationPlayState = "paused";
         el.classList.add('fish-dead'); 
