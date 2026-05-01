@@ -17,7 +17,7 @@ const JOGO_CATEGORIAS = {
     "dificil": {
         nome: "Contar de 2 em 2",
         imgCapa: "rd.png",
-        maxNum: 30,
+        maxNum: 30000,
         passo: 2,
         carruagens: 5
     }
