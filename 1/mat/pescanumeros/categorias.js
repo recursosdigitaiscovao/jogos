@@ -3,7 +3,7 @@ const JOGO_CATEGORIAS = {
     "mar-calmo": {
         nome: "Mar Calmo (1000-2000)",
         imgCapa: "peixe01.png", 
-        maxNum: 10,
+        maxNum: 100000,
         velocidadeBase: 10 // Segundos para atravessar
     },
     "mar-profundo": {
