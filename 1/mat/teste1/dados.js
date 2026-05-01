@@ -1,8 +1,8 @@
 // === CONFIGURAÇÃO MESTRE ===
 const CONFIG_MESTRE = {
-    ano: "ano3",        
-    area: "estudo",  
-    nomeJogo: "sequências"
+    ano: "ano1",        
+    area: "matematica",  
+    nomeJogo: "Sequências"
 };
 
 // === BIBLIOTECA DE TEMAS (CORES PADRÃO POR ÁREA) ===
