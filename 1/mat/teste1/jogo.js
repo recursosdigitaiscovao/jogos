@@ -30,13 +30,14 @@ function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
-            <div style="display:flex; align-items:flex-end; gap:2px; position:relative;">
-                <div style="width:30px; height:35px; background:#3b82f6; border-radius:4px;"></div>
-                <div style="width:10px; height:4px; background:#475569; margin-bottom:10px;"></div>
-                <div style="width:40px; height:45px; background:#ef4444; border-radius:5px 15px 2px 2px;"></div>
-                <div style="position:absolute; font-size:30px; bottom:-15px; right:-10px; animation: tapH 2s infinite;">☝️</div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px; position:relative;">
+            <div style="display:flex; align-items:flex-end; gap:2px;">
+                <div style="width:30px; height:35px; background:#3b82f6; border-radius:4px; border-bottom:3px solid #1d4ed8;"></div>
+                <div style="width:8px; height:4px; background:#475569; margin-bottom:10px;"></div>
+                <div style="width:40px; height:45px; background:#ef4444; border-radius:5px 15px 2px 2px; border-bottom:3px solid #b91c1c;"></div>
             </div>
+            <div style="width:100px; height:4px; background:#64748b; border-radius:2px;"></div>
+            <div id="tut-hand" style="position:absolute; font-size:30px; bottom:-10px; right:-5px; animation: tapH 2s infinite; z-index:10;">☝️</div>
         </div>
         <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-10px); } } </style>
     `;
@@ -85,74 +86,109 @@ function mostrarPergunta() {
 
     container.innerHTML = `
         <style>
-            .game-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; justify-content:space-around; overflow:hidden; position:relative; }
+            .game-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; justify-content:space-around; overflow:hidden; }
             
-            /* CENÁRIO / TRILHOS */
-            .train-track { 
-                width: 90%; height: 10px; background: #64748b; position: absolute; top: 65%; 
-                border-radius: 10px; box-shadow: 0 4px 0 #475569;
+            /* CONTENTOR DO PALCO DO COMBOIO */
+            .train-stage { 
+                flex:1; width:100%; display:flex; flex-direction:column; 
+                align-items:center; justify-content:center; position:relative; 
             }
 
-            .train-stage { flex:1; width:100%; display:flex; align-items:center; justify-content:center; z-index: 10; }
+            /* LINHA DO COMBOIO (TRILHOS) */
+            .track-container {
+                position: absolute; width: 100%; height: 20px; top: 60%; 
+                display: flex; align-items: center; justify-content: center;
+            }
+            .rail-line {
+                width: 100%; height: 6px; background: #475569; position: relative;
+                box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            }
+            /* Dormentes (as madeiras da linha) */
+            .rail-line::before {
+                content: ''; position: absolute; width: 100%; height: 10px; top: 6px;
+                background-image: linear-gradient(90deg, #78350f 20%, transparent 20%);
+                background-size: 40px 100%;
+            }
 
             /* COMBOIO UNIFICADO */
             .train-unit { 
-                display:flex; align-items:flex-end; 
-                transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+                display:flex; align-items:flex-end; position: relative; z-index: 10;
+                transition: transform 0.8s cubic-bezier(0.45, 0.05, 0.55, 0.95);
                 transform: translateX(-150%); 
+                margin-bottom: -4px; /* Faz as rodas tocarem no carril */
             }
-            .train-unit.entering { transform: translateX(0); }
-            .train-unit.leaving { transform: translateX(150%); }
+            .train-unit.entering { 
+                transform: translateX(0); 
+                animation: trainShake 0.4s infinite; /* Balanço do comboio */
+            }
+            .train-unit.leaving { transform: translateX(150%); animation: trainShake 0.2s infinite; }
 
-            /* LOCOMOTIVA - CABINE E CORPO */
+            @keyframes trainShake {
+                0%, 100% { margin-top: 0; }
+                50% { margin-top: -3px; }
+            }
+
+            /* LOCOMOTIVA */
             .loco-main { 
-                width: 90px; height: 95px; background: #ef4444; border-radius: 5px 35px 5px 5px; 
+                width: 95px; height: 100px; background: #ef4444; border-radius: 5px 40px 5px 5px; 
                 position: relative; border-bottom: 6px solid #b91c1c; flex-shrink: 0;
             }
-            .loco-cab { position: absolute; top: 15px; left: 10px; width: 35px; height: 35px; background: #bae6fd; border: 3px solid #334155; border-radius: 4px; }
-            .loco-chimney { position: absolute; top: -20px; right: 15px; width: 18px; height: 25px; background: #334155; border-radius: 3px; }
+            .loco-cab { position: absolute; top: 15px; left: 12px; width: 38px; height: 35px; background: #bae6fd; border: 3px solid #334155; border-radius: 4px; }
+            .loco-chimney { position: absolute; top: -20px; right: 18px; width: 20px; height: 25px; background: #334155; border-radius: 3px; }
+            
+            /* FUMO */
             .smoke { 
-                position: absolute; top: -30px; right: 18px; width: 12px; height: 12px; 
-                background: #cbd5e1; border-radius: 50%; opacity: 0; animation: smoke 1.5s infinite; 
+                position: absolute; top: -35px; right: 22px; width: 15px; height: 15px; 
+                background: rgba(200, 200, 200, 0.8); border-radius: 50%; opacity: 0; animation: smokeMove 1.2s infinite; 
             }
-            @keyframes smoke { 0% { transform: translateY(0) scale(0.5); opacity:0.8; } 100% { transform: translateY(-40px) scale(2); opacity:0; } }
+            @keyframes smokeMove {
+                0% { transform: translateY(0) scale(0.5); opacity: 0; }
+                20% { opacity: 1; }
+                100% { transform: translateY(-50px) translateX(-20px) scale(2.5); opacity: 0; }
+            }
 
             /* CARRUAGENS */
             .carr-item { 
-                width: 75px; height: 75px; background: #3b82f6; border-radius: 6px; 
+                width: 80px; height: 80px; background: #3b82f6; border-radius: 8px; 
                 display:flex; align-items:center; justify-content:center; color:white; 
-                font-weight:900; font-size: clamp(1.2rem, 3vw, 1.8rem); 
-                position:relative; border-bottom: 6px solid #1d4ed8; flex-shrink: 1;
+                font-weight:900; font-size: 1.8rem; 
+                position:relative; border-bottom: 6px solid #1d4ed8; flex-shrink: 0;
             }
             .carr-item.missing { background: #ffffff; border: 3px dashed #3b82f6; color: #3b82f6; border-bottom: 6px dashed #3b82f6; }
 
-            /* ENGATES / JUNÇÕES */
-            .connector { width: 10px; height: 6px; background: #475569; margin-bottom: 15px; flex-shrink: 0; }
+            /* ENGATES */
+            .connector { width: 12px; height: 8px; background: #334155; margin-bottom: 18px; flex-shrink: 0; }
 
             /* RODAS */
-            .wheel { position: absolute; bottom: -10px; width: 18px; height: 18px; background: #334155; border-radius: 50%; border: 3px solid #94a3b8; }
-            .wheel-l { left: 8px; } .wheel-r { right: 8px; }
+            .wheel { position: absolute; bottom: -12px; width: 22px; height: 22px; background: #1e293b; border-radius: 50%; border: 3px solid #94a3b8; }
+            .wheel-l { left: 10px; } .wheel-r { right: 10px; }
 
             /* OPÇÕES */
-            .options-row { display: flex; justify-content: center; gap: 12px; width: 100%; padding: 20px; z-index: 20; }
+            .options-row { display: flex; justify-content: center; gap: 15px; width: 100%; padding: 30px 10px; background: rgba(255,255,255,0.5); }
             .opt-btn { 
-                width: 75px; height: 75px; background: white; border: 3px solid #cbd5e1; border-radius: 18px; 
-                font-size: 1.8rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #cbd5e1; color: #334155; 
+                width: 80px; height: 80px; background: white; border: 3px solid #cbd5e1; border-radius: 20px; 
+                font-size: 2rem; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 #cbd5e1; color: #334155; 
             }
             .opt-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #cbd5e1; }
 
-            @media (max-width: 500px) {
-                .loco-main { width: 70px; height: 75px; }
-                .carr-item { width: 55px; height: 55px; }
-                .opt-btn { width: 60px; height: 60px; font-size: 1.4rem; }
+            @media (max-width: 600px) {
+                .loco-main { width: 75px; height: 80px; }
+                .carr-item { width: 60px; height: 60px; font-size: 1.4rem; }
+                .opt-btn { width: 65px; height: 65px; font-size: 1.5rem; }
+                .wheel { width: 16px; height: 16px; bottom: -8px; }
             }
         </style>
 
         <div class="game-wrapper">
-            <div class="train-track"></div>
             <div class="train-stage">
+                <!-- LINHA -->
+                <div class="track-container">
+                    <div class="rail-line"></div>
+                </div>
+
+                <!-- COMBOIO -->
                 <div id="train-unit" class="train-unit">
-                    <!-- LISTA DE CARRUAGENS ATRÁS -->
+                    <!-- CARRUAGENS ATRÁS -->
                     ${currentSequence.map((num, i) => `
                         <div class="carr-item ${i === missingIndex ? 'missing' : ''}" id="${i === missingIndex ? 'target-c' : ''}">
                             ${i === missingIndex ? '?' : num}
@@ -161,10 +197,11 @@ function mostrarPergunta() {
                         <div class="connector"></div>
                     `).join('')}
 
-                    <!-- LOCOMOTIVA À FRENTE (DIREITA) -->
+                    <!-- LOCOMOTIVA À FRENTE -->
                     <div class="loco-main">
                         <div class="smoke"></div>
-                        <div class="smoke" style="animation-delay: 0.5s"></div>
+                        <div class="smoke" style="animation-delay: 0.4s"></div>
+                        <div class="smoke" style="animation-delay: 0.8s"></div>
                         <div class="loco-chimney"></div>
                         <div class="loco-cab"></div>
                         <div class="wheel wheel-l"></div><div class="wheel wheel-r"></div>
@@ -218,11 +255,9 @@ function finalizarJogo() {
         <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:20px; text-align:center;">
             <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:20px;">
             <h2 style="color:var(--primary-blue); font-size:1.8rem; font-weight:900;">${rel.titulo}</h2>
-            <div style="display:flex; gap:15px; margin:20px 0;">
-                <div style="background:white; padding:15px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-                    <div style="font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos}/10</div>
-                    <div style="font-size:12px; color:#88a;">Acertos</div>
-                </div>
+            <div style="background:white; padding:15px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1); margin: 20px 0;">
+                <div style="font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos}/10</div>
+                <div style="font-size:12px; color:#88a;">Acertos</div>
             </div>
             <button onclick="location.reload()" style="background:var(--primary-blue); color:white; border:none; padding:15px 40px; border-radius:50px; font-weight:900; cursor:pointer; box-shadow:0 5px 0 var(--primary-dark);">JOGAR DE NOVO</button>
         </div>
