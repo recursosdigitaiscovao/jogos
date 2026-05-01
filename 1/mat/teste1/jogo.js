@@ -5,7 +5,8 @@ let erros = 0;
 let tempoInicio;
 let intervaloTempo;
 
-let categoriaAtual = "facil";
+// 1. AJUSTE: Começa logo com o "Nível 1" por defeito
+let categoriaAtual = "Nível 1"; 
 let currentSequence = [];
 let missingIndex = 0;
 let correctAnswer = 0;
@@ -16,7 +17,10 @@ const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
 // === 1. INICIALIZAÇÃO ===
 window.startLogic = function() {
-    if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "facil";
+    // Verifica se a categoria atual existe, se não, força o Nível 1
+    if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) {
+        categoriaAtual = Object.keys(JOGO_CATEGORIAS)[0] || "Nível 1";
+    }
     setTimeout(criarAnimacaoTutorial, 100);
 };
 
@@ -24,7 +28,9 @@ window.gerarIntroJogo = function() {
     return "Qual é o número que falta? Escolhe a carruagem certa!";
 };
 
-window.selecionarCategoria = function(key) { categoriaAtual = key; };
+window.selecionarCategoria = function(key) { 
+    categoriaAtual = key; 
+};
 
 function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
@@ -75,8 +81,11 @@ function iniciarCronometro() {
 
 function proximaRonda() {
     if (indicePergunta >= 10) { finalizarJogo(); return; }
+    
+    // Pega as configurações da categoria atual (Nível 1, 2, 3 ou 4)
     const config = JOGO_CATEGORIAS[categoriaAtual];
-    const numCarr = 4; 
+    const numCarr = 4; // Sempre 4 carruagens conforme pedido
+    
     let start = Math.floor(Math.random() * (config.maxNum - (numCarr * config.passo))) + 1;
     currentSequence = Array.from({length: numCarr}, (_, i) => start + (i * config.passo));
     missingIndex = Math.floor(Math.random() * numCarr);
@@ -112,7 +121,7 @@ function mostrarPergunta() {
                 font-size: 0.85rem; 
                 text-transform: uppercase; 
                 letter-spacing: 1.2px;
-                border: 3px solid #0369a1;
+                border: 4px solid #0369a1; /* Borda destacada */
                 margin-top: 5px;
                 box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             }
@@ -132,14 +141,12 @@ function mostrarPergunta() {
             
             .img-comboio, .img-carruagem { width: 100%; height: auto; display: block; max-height: 140px; object-fit: contain; }
 
-            /* NÚMERO DIRETO NA CARRUAGEM SEM CÍRCULO */
+            /* NÚMERO DIRETO NA CARRUAGEM SEM CÍRCULO E PARA ATÉ 3 DÍGITOS */
             .carr-num { 
                 position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%);
                 color: white; 
                 font-weight: 900; 
-                /* Font-size responsivo para caber 3 dígitos */
                 font-size: clamp(1.2rem, 5vw, 2.4rem); 
-                /* Sombra para garantir leitura em qualquer fundo */
                 text-shadow: 2px 2px 0px #0369a1, -1px -1px 0px #0369a1, 1px -1px 0px #0369a1, -1px 1px 0px #0369a1, 0px 4px 8px rgba(0,0,0,0.4);
                 z-index: 5;
                 white-space: nowrap;
@@ -161,7 +168,6 @@ function mostrarPergunta() {
             }
             .opt-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #cbd5e1; }
 
-            /* AJUSTES MOBILE EXTREMO */
             @media (max-width: 480px) {
                 .train-unit { max-width: 100%; }
                 .carr-num { font-size: 1.4rem; top: 44%; }
@@ -171,6 +177,7 @@ function mostrarPergunta() {
         </style>
 
         <div class="game-wrapper">
+            <!-- Mostra o nome do Nível atual -->
             <div class="category-label">${config.nome}</div>
 
             <div class="train-stage">
