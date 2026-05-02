@@ -15,7 +15,7 @@ const JOGO_CATEGORIAS = {
         carruagens: 4
     },
     "Nível 3": {
-        nome: "Números até 20",
+        nome: "Números até 50",
         imgCapa: "seq_ate_50.png",
         maxNum: 50,
         passo: 1,
