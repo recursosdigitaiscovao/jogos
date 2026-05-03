@@ -17,7 +17,7 @@ const JOGO_CONFIG = {
     
     listaJogos: [
         { nome: "Pesca Números", icon: "pescanumeros.png", link: "pescanumeros/index.html" },
-        { nome: "Contar os Números", icon: "conta.png", link: "conta/index.html" },
+        { nome: "Contar Objetos", icon: "conta.png", link: "conta/index.html" },
         { nome: "Formas Geométricas", icon: "formas.png", link: "formas/index.html" },
         { nome: "Somas Divertidas", icon: "soma.png", link: "soma/index.html" },
         { nome: "Subtração", icon: "subtrair.png", link: "subtrair/index.html" },
