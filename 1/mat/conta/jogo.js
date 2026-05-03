@@ -48,7 +48,7 @@ function criarAnimacaoTutorial() {
         <style>
             .tut-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; gap: 15px; }
             .tut-items { display: flex; gap: 5px; }
-            .tut-items img { width: 45px; height: 45px; object-fit: contain; }
+            .tut-items img { width: 40px; height: 40px; object-fit: contain; }
             .tut-options { display: flex; gap: 8px; }
             .tut-btn { width: 35px; height: 35px; background: white; border: 2px solid #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; }
             .tut-hand { position: absolute; font-size: 30px; animation: tutClick 3s infinite ease-in-out; bottom: -10px; }
@@ -112,14 +112,21 @@ function mostrarPergunta() {
                 border: 4px solid #0369a1; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             }
 
+            /* ORGANIZAÇÃO EM GRID */
             .display-stage { 
-                flex:1; width:100%; display:flex; flex-wrap: wrap; 
-                align-items:center; justify-content:center; align-content: center;
-                gap: 12px; padding: 15px; max-width: 650px;
+                flex:1; width:100%; max-width: 800px;
+                display: grid; 
+                /* PADRÃO LANDSCAPE: 10 colunas */
+                grid-template-columns: repeat(10, 1fr); 
+                gap: 10px; 
+                padding: 20px;
+                justify-items: center;
+                align-items: center;
+                align-content: center;
             }
 
             .count-item {
-                width: 80px; height: 80px; object-fit: contain;
+                width: 100%; max-width: 70px; height: auto; aspect-ratio: 1/1; object-fit: contain;
                 animation: popItem 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
                 opacity: 0;
             }
@@ -138,8 +145,14 @@ function mostrarPergunta() {
             }
             .opt-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #cbd5e1; }
 
-            @media (max-width: 480px) {
-                .count-item { width: 50px; height: 50px; }
+            /* AJUSTE PARA MOBILE / VERTICAL: 5 colunas */
+            @media (max-width: 600px) {
+                .display-stage { 
+                    grid-template-columns: repeat(5, 1fr); 
+                    gap: 8px;
+                    padding: 10px;
+                }
+                .count-item { max-width: 50px; }
                 .opt-btn { height: 60px; font-size: 1.6rem; }
                 .category-label { font-size: 0.75rem; padding: 8px 15px; }
             }
