@@ -48,7 +48,7 @@ function criarAnimacaoTutorial() {
         <style>
             .tut-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; gap: 15px; }
             .tut-items { display: flex; gap: 5px; }
-            .tut-items img { width: 40px; height: 40px; object-fit: contain; }
+            .tut-items img { width: 45px; height: 45px; object-fit: contain; }
             .tut-options { display: flex; gap: 8px; }
             .tut-btn { width: 35px; height: 35px; background: white; border: 2px solid #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; }
             .tut-hand { position: absolute; font-size: 30px; animation: tutClick 3s infinite ease-in-out; bottom: -10px; }
@@ -81,10 +81,7 @@ function proximaRonda() {
     if (indicePergunta >= 10) { finalizarJogo(); return; }
     const config = JOGO_CATEGORIAS[categoriaAtual];
     
-    // Sorteia a quantidade
     totalObjetos = Math.floor(Math.random() * config.maxNum) + 1;
-    
-    // Sorteia QUAL item vai aparecer nesta ronda
     const randomIndex = Math.floor(Math.random() * config.itens.length);
     itemSorteado = config.itens[randomIndex];
     
@@ -100,29 +97,29 @@ function mostrarPergunta() {
 
     let choices = [totalObjetos];
     while(choices.length < 4) {
-        let w = totalObjetos + (Math.floor(Math.random() * 6) - 3);
-        if(w > 0 && w <= (config.maxNum + 5) && !choices.includes(w)) choices.push(w);
+        let w = totalObjetos + (Math.floor(Math.random() * 8) - 4);
+        if(w > 0 && !choices.includes(w)) choices.push(w);
     }
     choices.sort((a, b) => a - b);
 
     container.innerHTML = `
         <style>
-            .game-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; justify-content:space-between; padding: 20px 5px; box-sizing: border-box; }
+            .game-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; justify-content:space-between; padding: 15px 5px; box-sizing: border-box; }
             
             .category-label {
                 background: #ffffff; color: #0369a1; padding: 10px 25px; border-radius: 20px; 
                 font-weight: 900; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px;
-                border: 4px solid #0369a1; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                border: 4px solid #0369a1; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             }
 
             .display-stage { 
                 flex:1; width:100%; display:flex; flex-wrap: wrap; 
                 align-items:center; justify-content:center; align-content: center;
-                gap: 12px; padding: 15px; max-width: 600px;
+                gap: 12px; padding: 15px; max-width: 650px;
             }
 
             .count-item {
-                width: 75px; height: 75px; object-fit: contain;
+                width: 80px; height: 80px; object-fit: contain;
                 animation: popItem 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
                 opacity: 0;
             }
@@ -132,7 +129,7 @@ function mostrarPergunta() {
                 to { transform: scale(1); opacity: 1; }
             }
 
-            .options-row { display: flex; justify-content: center; gap: 10px; width: 100%; padding-bottom: 20px; }
+            .options-row { display: flex; justify-content: center; gap: 10px; width: 100%; padding-bottom: 25px; }
             
             .opt-btn { 
                 width: 75px; height: 75px; background: white; border: 4px solid #cbd5e1; border-radius: 20px; 
@@ -142,9 +139,9 @@ function mostrarPergunta() {
             .opt-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #cbd5e1; }
 
             @media (max-width: 480px) {
-                .count-item { width: 55px; height: 55px; }
+                .count-item { width: 50px; height: 50px; }
                 .opt-btn { height: 60px; font-size: 1.6rem; }
-                .category-label { font-size: 0.75rem; padding: 6px 15px; }
+                .category-label { font-size: 0.75rem; padding: 8px 15px; }
             }
         </style>
 
