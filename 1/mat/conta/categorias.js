@@ -4,16 +4,16 @@ const JOGO_CATEGORIAS = {
         nome: "Números até 5",
         imgCapa: "cnivel1.png", 
         maxNum: 5,
-        pasta: "animaisselvagens/",
+        pasta: "animaisdomesticos/",
         // Ajusta estes nomes conforme os ficheiros que tens na tua pasta animais/
-        itens: ["cao.png", "gato.png", "leao.png", "girafa.png", "macaco.png", "pato.png", "peixe.png", "vaca.png", "ovelha.png", "porco.png"]
+        itens: ["cao.png", "gato.png", "galo.png", "burro.png", "galinha.png", "pato.png", "peru.png", "vaca.png", "ovelha.png", "porco.png"]
     },
     "Nível 2": {
         nome: "Números até 10",
         imgCapa: "cnivel2.png",
         maxNum: 10,
         pasta: "animaisselvagens/",
-        itens: ["cao.png", "gato.png", "leao.png", "girafa.png", "macaco.png", "pato.png", "peixe.png", "vaca.png", "ovelha.png", "porco.png"]
+        itens: ["borboleta.png", "morcego.png", "leao.png", "girafa.png", "macaco.png", "hiena.png", "rato.png", "panda.png", "urso.png", "aguia.png"]
     },
     "Nível 3": {
         nome: "Números até 15",
