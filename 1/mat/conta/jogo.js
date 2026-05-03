@@ -112,21 +112,25 @@ function mostrarPergunta() {
                 border: 4px solid #0369a1; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             }
 
-            /* ORGANIZAÇÃO EM GRID */
+            /* ORGANIZAÇÃO CENTRADA E AGRUPADA */
             .display-stage { 
                 flex:1; width:100%; max-width: 800px;
-                display: grid; 
-                /* PADRÃO LANDSCAPE: 10 colunas */
-                grid-template-columns: repeat(10, 1fr); 
-                gap: 10px; 
-                padding: 20px;
-                justify-items: center;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center; /* CENTRA OS ITENS NA FILA */
                 align-items: center;
                 align-content: center;
+                gap: 10px;
+                padding: 15px;
             }
 
             .count-item {
-                width: 100%; max-width: 70px; height: auto; aspect-ratio: 1/1; object-fit: contain;
+                /* No PC (Landscape), para caberem 10, usamos aprox 9% da largura */
+                width: calc(10% - 12px); 
+                max-width: 75px; 
+                height: auto; 
+                aspect-ratio: 1/1; 
+                object-fit: contain;
                 animation: popItem 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
                 opacity: 0;
             }
@@ -145,14 +149,17 @@ function mostrarPergunta() {
             }
             .opt-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #cbd5e1; }
 
-            /* AJUSTE PARA MOBILE / VERTICAL: 5 colunas */
+            /* AJUSTE PARA MOBILE / VERTICAL: 5 colunas e centrado */
             @media (max-width: 600px) {
                 .display-stage { 
-                    grid-template-columns: repeat(5, 1fr); 
                     gap: 8px;
                     padding: 10px;
                 }
-                .count-item { max-width: 50px; }
+                .count-item { 
+                    /* Para caberem 5 por fila, usamos aprox 18% da largura */
+                    width: calc(20% - 10px); 
+                    max-width: 55px; 
+                }
                 .opt-btn { height: 60px; font-size: 1.6rem; }
                 .category-label { font-size: 0.75rem; padding: 8px 15px; }
             }
