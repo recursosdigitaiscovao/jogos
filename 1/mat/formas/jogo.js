@@ -47,8 +47,8 @@ function criarAnimacaoTutorial() {
             .tut-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; }
             .tut-items { display: flex; gap: 10px; }
             .tut-items img { width: 50px; height: 50px; object-fit: contain; }
-            .tut-hand { position: absolute; font-size: 35px; animation: tutClickShapes 3s infinite ease-in-out; bottom: -20px; }
-            @keyframes tutClickShapes { 0%, 100% { transform: translate(20px, 20px); opacity: 0; } 20% { opacity: 1; transform: translate(30px, 0px); } 50% { transform: translate(5px, -35px); } }
+            .tut-hand { position: absolute; font-size: 30px; animation: tutClickShapes 3s infinite ease-in-out; bottom: -20px; }
+            @keyframes tutClickShapes { 0%, 100% { transform: translate(20px, 20px); opacity: 0; } 20% { opacity: 1; transform: translate(20px, 0px); } 50% { transform: translate(5px, -35px); } }
         </style>
     `;
 }
@@ -88,7 +88,6 @@ function proximaRonda() {
         itensNoEcra.push({ tipo: formaRandom, cor: corRandom });
     }
 
-    // Garantir que existe pelo menos uma resposta correta
     const temAlvo = itensNoEcra.some(item => item.tipo === formaAlvo || (formaAlvo === "retangulo" && item.tipo === "quadrado"));
     if (!temAlvo) {
         itensNoEcra[Math.floor(Math.random() * 12)].tipo = formaAlvo;
@@ -116,7 +115,6 @@ function mostrarPergunta() {
             .instruction-box { margin: 10px 0; font-size: 1.3rem; font-weight: 900; color: #1e293b; text-align: center; }
             .instruction-box b { color: #ef4444; text-transform: uppercase; padding: 0 5px; }
 
-            /* ORGANIZAÇÃO EM GRID 4 COLUNAS X 3 LINHAS */
             .display-stage { 
                 flex:1; width:100%; max-width: 600px;
                 display: grid; 
@@ -132,7 +130,7 @@ function mostrarPergunta() {
             .shape-item {
                 width: 100%; max-width: 85px; height: auto; aspect-ratio: 1/1; 
                 object-fit: contain; cursor: pointer;
-                transition: transform 0.2s;
+                transition: all 0.3s;
                 animation: popShape 0.4s forwards;
             }
             .shape-item:active { transform: scale(0.9); }
@@ -145,11 +143,6 @@ function mostrarPergunta() {
                 .shape-item { max-width: 65px; }
                 .instruction-box { font-size: 1.1rem; }
             }
-            
-            /* Em landscape (horizontal), garantimos que o grid não estique demais */
-            @media (orientation: landscape) and (min-width: 600px) {
-                .display-stage { max-width: 500px; }
-            }
         </style>
 
         <div class="game-wrapper">
@@ -161,6 +154,7 @@ function mostrarPergunta() {
                 ${itensNoEcra.map((item, i) => `
                     <img src="${path}${item.tipo}_${item.cor}.png" 
                          class="shape-item" 
+                         data-tipo="${item.tipo}"
                          onclick="verificarForma(this, '${item.tipo}')"
                          style="animation-delay: ${i * 0.03}s">
                 `).join('')}
@@ -172,27 +166,35 @@ function mostrarPergunta() {
 function verificarForma(el, tipoClicado) {
     if (el.classList.contains('clicked')) return;
 
+    // Regra: Quadrado também é Retângulo
     const eCorreto = (tipoClicado === formaAlvo) || (formaAlvo === "retangulo" && tipoClicado === "quadrado");
 
     if (eCorreto) {
-        somAcerto.play();
+        // Apenas feedback visual imediato (SEM SOM AQUI)
         el.classList.add('clicked');
-        el.style.filter = "grayscale(1) opacity(0.3)";
+        el.style.filter = "grayscale(1) opacity(0.2)";
+        el.style.transform = "scale(0.8)";
         el.style.pointerEvents = "none";
 
-        // Verificar se ainda existem alvos
-        const formasRestantes = Array.from(document.querySelectorAll('.shape-item:not(.clicked)')).filter(img => {
-            const src = img.getAttribute('src');
-            const tipo = src.split('/').pop().split('_')[0];
+        // Verificar se ainda restam alvos no ecrã
+        const formasNoEcra = Array.from(document.querySelectorAll('.shape-item:not(.clicked)'));
+        const restamAlvos = formasNoEcra.some(img => {
+            const tipo = img.getAttribute('data-tipo');
             return (tipo === formaAlvo) || (formaAlvo === "retangulo" && tipo === "quadrado");
         });
 
-        if (formasRestantes.length === 0) {
+        // SOM DE ACERTO APENAS QUANDO TODOS FOREM ENCONTRADOS
+        if (!restamAlvos) {
+            somAcerto.play();
             acertos++;
             document.getElementById('hits-val').innerText = acertos;
-            setTimeout(() => { indicePergunta++; proximaRonda(); }, 600);
+            setTimeout(() => { 
+                indicePergunta++; 
+                proximaRonda(); 
+            }, 800);
         }
     } else {
+        // ERRO
         erros++;
         somErro.play();
         document.getElementById('miss-val').innerText = erros;
@@ -214,11 +216,11 @@ function finalizarJogo() {
             <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.8rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
                 <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06); border:1px solid #f0f0f0;">
-                    <span style="display:block; font-size:26px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span>
+                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span>
                     <span style="font-size:11px; font-weight:800; color:#88a; text-transform:uppercase;">Acertos</span>
                 </div>
                 <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06); border:1px solid #f0f0f0;">
-                    <span style="display:block; font-size:26px; font-weight:900; color:var(--primary-blue);">${tempoFinal}</span>
+                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${tempoFinal}</span>
                     <span style="font-size:11px; font-weight:800; color:#88a; text-transform:uppercase;">Tempo</span>
                 </div>
             </div>
