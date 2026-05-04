@@ -22,7 +22,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Consegues identificar as formas geométricas? Presta atenção ao que é pedido!";
+    return "Encontra todas as formas pedidas! Lembra-te: o quadrado também é um retângulo.";
 };
 
 window.selecionarCategoria = function(key) { 
@@ -36,7 +36,6 @@ function criarAnimacaoTutorial() {
 
     container.innerHTML = `
         <div class="tut-wrapper">
-            <p style="font-weight:900; color:#0369a1; margin-bottom:10px;">"Encontra o Quadrado"</p>
             <div class="tut-items">
                 <img src="${path}circulo_v.png">
                 <img src="${path}quadrado_v.png" class="tut-target">
@@ -49,7 +48,7 @@ function criarAnimacaoTutorial() {
             .tut-items { display: flex; gap: 10px; }
             .tut-items img { width: 50px; height: 50px; object-fit: contain; }
             .tut-hand { position: absolute; font-size: 35px; animation: tutClickShapes 3s infinite ease-in-out; bottom: -20px; }
-            @keyframes tutClickShapes { 0%, 100% { transform: translate(30px, 20px); opacity: 0; } 20% { opacity: 1; transform: translate(30px, 0px); } 50% { transform: translate(5px, -35px); } }
+            @keyframes tutClickShapes { 0%, 100% { transform: translate(20px, 20px); opacity: 0; } 20% { opacity: 1; transform: translate(30px, 0px); } 50% { transform: translate(5px, -35px); } }
         </style>
     `;
 }
@@ -78,23 +77,21 @@ function proximaRonda() {
     if (indicePergunta >= 10) { finalizarJogo(); return; }
     const config = JOGO_CATEGORIAS[categoriaAtual];
     
-    // Escolher a forma que o aluno deve procurar
     formaAlvo = BIBLIOTECA_FORMAS.formas[Math.floor(Math.random() * BIBLIOTECA_FORMAS.formas.length)];
     
-    // Gerar os itens do ecrã
     itensNoEcra = [];
     const corBase = BIBLIOTECA_FORMAS.cores[Math.floor(Math.random() * BIBLIOTECA_FORMAS.cores.length)];
 
-    for (let i = 0; i < config.quantidade; i++) {
+    for (let i = 0; i < 12; i++) {
         let formaRandom = BIBLIOTECA_FORMAS.formas[Math.floor(Math.random() * BIBLIOTECA_FORMAS.formas.length)];
         let corRandom = config.coresMisturadas ? BIBLIOTECA_FORMAS.cores[Math.floor(Math.random() * BIBLIOTECA_FORMAS.cores.length)] : corBase;
-        
         itensNoEcra.push({ tipo: formaRandom, cor: corRandom });
     }
 
-    // Garantir que existe pelo menos uma resposta correta no ecrã
-    if (!itensNoEcra.some(item => item.tipo === formaAlvo || (formaAlvo === "retangulo" && item.tipo === "quadrado"))) {
-        itensNoEcra[0].tipo = formaAlvo;
+    // Garantir que existe pelo menos uma resposta correta
+    const temAlvo = itensNoEcra.some(item => item.tipo === formaAlvo || (formaAlvo === "retangulo" && item.tipo === "quadrado"));
+    if (!temAlvo) {
+        itensNoEcra[Math.floor(Math.random() * 12)].tipo = formaAlvo;
     }
 
     mostrarPergunta();
@@ -104,7 +101,6 @@ function mostrarPergunta() {
     const container = document.getElementById('game-main-content');
     const config = JOGO_CATEGORIAS[categoriaAtual];
     document.getElementById('round-val').innerText = `${indicePergunta + 1} / 10`;
-
     const path = JOGO_CONFIG.caminhoImg + "formas/";
 
     container.innerHTML = `
@@ -117,33 +113,42 @@ function mostrarPergunta() {
                 border: 4px solid #0369a1; margin-top: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             }
 
-            .instruction-box {
-                margin: 10px 0; font-size: 1.4rem; font-weight: 900; color: #1e293b; text-align: center;
-            }
-            .instruction-box b { color: #ef4444; text-transform: uppercase; }
+            .instruction-box { margin: 10px 0; font-size: 1.3rem; font-weight: 900; color: #1e293b; text-align: center; }
+            .instruction-box b { color: #ef4444; text-transform: uppercase; padding: 0 5px; }
 
+            /* ORGANIZAÇÃO EM GRID 4 COLUNAS X 3 LINHAS */
             .display-stage { 
-                flex:1; width:100%; max-width: 850px;
-                display: flex; flex-wrap: wrap; 
-                align-items:center; justify-content:center; align-content: center;
-                gap: 15px; padding: 15px;
+                flex:1; width:100%; max-width: 600px;
+                display: grid; 
+                grid-template-columns: repeat(4, 1fr); 
+                grid-template-rows: repeat(3, 1fr);
+                gap: 15px; 
+                padding: 10px;
+                justify-items: center;
+                align-items: center;
+                align-content: center;
             }
 
             .shape-item {
-                width: calc(20% - 15px); max-width: 80px; height: auto; aspect-ratio: 1/1; 
+                width: 100%; max-width: 85px; height: auto; aspect-ratio: 1/1; 
                 object-fit: contain; cursor: pointer;
                 transition: transform 0.2s;
-                animation: popShape 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                animation: popShape 0.4s forwards;
             }
-            .shape-item:hover { transform: scale(1.1); }
             .shape-item:active { transform: scale(0.9); }
 
             @keyframes popShape { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+            @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
 
-            @media (max-width: 600px) {
-                .shape-item { width: calc(25% - 10px); max-width: 60px; }
+            @media (max-width: 480px) {
+                .display-stage { gap: 10px; }
+                .shape-item { max-width: 65px; }
                 .instruction-box { font-size: 1.1rem; }
-                .category-label { font-size: 0.75rem; padding: 6px 15px; }
+            }
+            
+            /* Em landscape (horizontal), garantimos que o grid não estique demais */
+            @media (orientation: landscape) and (min-width: 600px) {
+                .display-stage { max-width: 500px; }
             }
         </style>
 
@@ -167,20 +172,16 @@ function mostrarPergunta() {
 function verificarForma(el, tipoClicado) {
     if (el.classList.contains('clicked')) return;
 
-    // Regra especial: Quadrado também é retângulo
     const eCorreto = (tipoClicado === formaAlvo) || (formaAlvo === "retangulo" && tipoClicado === "quadrado");
 
     if (eCorreto) {
         somAcerto.play();
         el.classList.add('clicked');
-        el.style.filter = "drop-shadow(0 0 10px #22c55e) brightness(1.1)";
-        el.style.transform = "scale(0.8)";
-        el.style.opacity = "0.5";
+        el.style.filter = "grayscale(1) opacity(0.3)";
         el.style.pointerEvents = "none";
 
-        // Verificar se ainda existem mais formas alvo no ecrã
+        // Verificar se ainda existem alvos
         const formasRestantes = Array.from(document.querySelectorAll('.shape-item:not(.clicked)')).filter(img => {
-            // Extrai o tipo do src ou usa um atributo data
             const src = img.getAttribute('src');
             const tipo = src.split('/').pop().split('_')[0];
             return (tipo === formaAlvo) || (formaAlvo === "retangulo" && tipo === "quadrado");
@@ -189,10 +190,7 @@ function verificarForma(el, tipoClicado) {
         if (formasRestantes.length === 0) {
             acertos++;
             document.getElementById('hits-val').innerText = acertos;
-            setTimeout(() => {
-                indicePergunta++;
-                proximaRonda();
-            }, 800);
+            setTimeout(() => { indicePergunta++; proximaRonda(); }, 600);
         }
     } else {
         erros++;
@@ -201,14 +199,6 @@ function verificarForma(el, tipoClicado) {
         el.style.animation = "shakeError 0.4s";
         setTimeout(() => el.style.animation = "", 400);
     }
-}
-
-// Adicionar animação de erro dinamicamente se não existir no CSS do wrapper
-if (!document.getElementById('shake-style')) {
-    const style = document.createElement('style');
-    style.id = 'shake-style';
-    style.innerHTML = `@keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }`;
-    document.head.appendChild(style);
 }
 
 function finalizarJogo() {
