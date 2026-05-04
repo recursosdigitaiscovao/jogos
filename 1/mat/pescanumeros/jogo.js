@@ -108,19 +108,19 @@ function montarCenario() {
 function proximaMissao() {
     if (indicePergunta >= 10) { finalizar(); return; }
     
-    // 1. Bloqueia o jogo e o spawn para a troca de instrução
+    // 1. Bloqueia o jogo e o spawn para a troca de instrução (Limpamos o oceano para a nova missão)
     jogoAtivo = false;
     clearInterval(spawnInterval);
 
-    // 2. Limpa o oceano imediatamente
     const ocean = document.getElementById('ocean');
     if(ocean) {
         const peixesAtuais = ocean.querySelectorAll('.fish-box');
         peixesAtuais.forEach(p => p.remove());
     }
 
-    // 3. Atualiza progresso e Regra
+    // 2. Atualiza progresso visual (baseado em acertos)
     document.getElementById('round-val').innerText = `${indicePergunta + 1} / 10`;
+    
     const config = JOGO_CATEGORIAS[categoriaAtual];
     targetNum = Math.floor(Math.random() * (config.maxNum - 4)) + 3;
     rule = Math.random() > 0.5 ? 'greater' : 'less';
@@ -129,7 +129,6 @@ function proximaMissao() {
     const textoBaixo = rule === 'greater' ? 'Maiores' : 'Menores';
     const corTema = rule === 'greater' ? '#16a34a' : '#ef4444';
 
-    // Aplica a nova instrução na UI
     const missionUI = document.getElementById('mission-ui');
     missionUI.innerHTML = `
         <div class="mission-label-top">Pesca números</div>
@@ -140,12 +139,12 @@ function proximaMissao() {
         <div class="mission-label-bottom" style="color: ${corTema}">${textoBaixo}</div>
     `;
 
-    // 4. AGUARDA 1.2 SEGUNDOS antes de começar a soltar os peixes
+    // 3. AGUARDA 1.2 SEGUNDOS e inicia o percurso dos peixes
     setTimeout(() => {
         if(indicePergunta < 10) {
             jogoAtivo = true;
             spawnInterval = setInterval(() => { if(jogoAtivo) criarPeixe(); }, 1300);
-            criarPeixe(); // Cria o primeiro peixe imediatamente após o tempo de leitura
+            criarPeixe(); 
         }
     }, 1200);
 }
@@ -162,9 +161,6 @@ function criarPeixe() {
     const isFromLeft = Math.random() > 0.5;
     const fishBox = document.createElement('div');
     fishBox.className = 'fish-box';
-    
-    // AJUSTE DE POSIÇÃO: Começa abaixo da placa (30%) e vai até perto do fundo (80%)
-    // Isso evita que o peixe passe por baixo da instrução
     fishBox.style.top = (Math.random() * 50 + 30) + '%';
     
     const vel = config.velocidadeBase + (Math.random() * 2 - 1);
@@ -191,11 +187,13 @@ function capturarPeixe(el, val) {
     el.style.pointerEvents = "none";
 
     if(acerto) {
-        // Pausa o jogo para preparar a próxima instrução
+        // --- CASO ACERTO ---
+        // Aqui sim, paramos o fluxo para mudar a missão e limpar o oceano
         jogoAtivo = false; 
         clearInterval(spawnInterval);
 
-        acertos++; somAcerto.play();
+        acertos++; 
+        somAcerto.play();
         el.style.transform = "scale(1.6) translateY(-80px)";
         el.style.opacity = "0";
         document.getElementById('hits-val').innerText = acertos;
@@ -203,11 +201,16 @@ function capturarPeixe(el, val) {
         indicePergunta++;
         setTimeout(proximaMissao, 800);
     } else {
-        // No erro, apenas o peixe atingido afunda, o jogo continua
-        erros++; somErro.play();
+        // --- CASO ERRO ---
+        // Apenas contamos o erro. NÃO alteramos 'jogoAtivo', por isso
+        // os peixes que já estão no ecrã continuam a nadar e novos peixes continuam a nascer.
+        erros++; 
+        somErro.play();
         el.style.animationPlayState = "paused";
         el.classList.add('fish-dead'); 
         document.getElementById('miss-val').innerText = erros;
+
+        // Removemos apenas este peixe depois de ele afundar
         setTimeout(() => { if(el.parentNode) el.remove(); }, 2000);
     }
 }
