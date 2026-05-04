@@ -2,286 +2,202 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1º Ano - Matemática - Somar até 10</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Carregando...</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --cor-principal: #ff9100;
-            --cor-vibrante: #ff7300;  
-            --cor-fundo: #e8f9f4;      
-            --cor-texto: #8a6436;      
-            --header-height: 70px;
-            --cor-jogo-verde: #45cfa8; /* Cor solicitada */
-            --cor-erro: #ff4757;
-            --cor-caixa-info: #e8f9f4;
+        :root { 
+            --bg-page: #e9f0f8; --bg-header: #ffffff; --bg-container: #e9f0f8; 
+            --bg-card: #ffffff; --cor-borda-card: transparent; --sombra-card: 0 15px 35px rgba(0,0,0,0.1);
+            --bg-espaco-jogo: #ffffff; --borda-espaco-jogo: 3px dashed #ccc;
+            --primary-blue: #5ba4e5; --primary-dark: #3d7db8; --white: #ffffff; --text-grey: #5d7082; --header-h: 70px; 
         }
 
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
-        body { background: var(--cor-fundo); font-family: 'Fredoka', sans-serif; display: flex; flex-direction: column; }
-
-        /* --- Header --- */
-        .nav-bar { background: white; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: var(--header-height); z-index: 1000; flex-shrink: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; opacity: 0; transition: opacity 0.15s ease-in; }
         
-        .menu-btn { background: none; border: none; font-size: 26px; color: var(--cor-principal); cursor: pointer; }
+        header { height: var(--header-h); background: var(--bg-header); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 2500; flex-shrink: 0; box-shadow: 0px 4px 15px rgba(0,0,0,0.05); position: relative; }
+        .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; pointer-events: none; white-space: nowrap; }
+        .logo-center img { height: 45px; width: auto; }
+        .logo-text h1 { font-size: 16px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
+        .logo-text p { font-size: 8px; color: #88a; font-weight: 700; text-transform: uppercase; }
 
-        .back-btn {
-            background: var(--cor-principal); color: white; padding: 8px 15px; border-radius: 50px;
-            text-decoration: none; font-weight: bold; font-size: 0.8rem; transition: 0.3s;
+        /* MENU HAMBURGUER */
+        .hamburger-btn { font-size: 26px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
+        .menu-dropdown { position: absolute; top: 65px; left: 15px; display: none; flex-direction: column; gap: 6px; z-index: 3000; width: 200px; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 10px 15px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 0.85rem; }
+        .menu-item:not(.menu-item-voltar):hover { background-color: var(--primary-blue); color: white !important; }
+        .menu-item img { width: 20px; height: 20px; object-fit: contain; }
+        .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
+        .menu-item-voltar img { filter: brightness(0) invert(1); }
+
+        /* VOLTAR - MODIFICADO: MOBILE SEMPRE VISÍVEL, HEADER SEMPRE OCULTO */
+        .btn-voltar-header { display: none !important; }
+        .btn-voltar-mobile { display: flex; align-items: center; text-decoration: none; padding: 5px; z-index: 3001; }
+
+        .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 15px; background-color: var(--bg-container); overflow: hidden; }
+        .game-card { background: var(--bg-card); width: 100%; max-width: 1000px; height: 100%; border-radius: 40px; box-shadow: var(--sombra-card); border: 4px solid var(--cor-borda-card); display: flex; flex-direction: column; padding: 15px; position: relative; overflow: hidden; }
+
+        .screen-box { flex: 1; width: 100%; background: var(--bg-espaco-jogo); border: var(--borda-espaco-jogo); border-radius: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0; position: relative; overflow: hidden; }
+
+        /* BOTÃO JOGAR 100% */
+        .btn-jogar-stretch { background: var(--primary-blue); color: white; border: none; border-radius: 15px; padding: 16px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); display: flex; justify-content: center; align-items: center; text-decoration: none; flex: 1; }
+        .btn-jogar-stretch:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
+
+        .status-bar { display: none; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0; padding: 0 10px; }
+        .badge { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 12px; border-radius: 10px; font-weight: 900; font-size: 11px; color: white; }
+        .badge-timer { background: #cbd9e6; color: var(--text-grey); }
+        .badge-round { background: var(--primary-blue); }
+
+        /* RD PANEL */
+        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 4000; padding: 20px; border-radius: 25px 25px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); max-height: 70vh; overflow-y: auto; }
+        .rd-panel.active { bottom: 0; }
+        #rd-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .rd-item { background: #f8f9fa; border: 1px solid #eee; border-radius: 15px; padding: 12px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; font-weight: 700; color: var(--text-grey); font-size: 0.8rem; }
+        .rd-item img { width: 50px; height: 50px; object-fit: contain; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 2000; }
+        .screen { display: none; width: 100%; height: 100%; flex-direction: column; flex: 1; overflow: hidden; }
+        .screen.active { display: flex !important; }
+
+        @media (max-width: 650px) { 
+            /* Media query simplificada: Botões não mudam mais de visibilidade aqui */
         }
-
-        /* --- Sidebar Completa --- */
-        .sidebar { position: fixed; top: 0; left: -260px; width: 240px; height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s; z-index: 2000; padding-top: 10px; }
-        .sidebar.active { left: 0; }
-        
-        .sidebar-item { 
-            display: flex; align-items: center; padding: 15px 25px; 
-            color: #555; text-decoration: none; border-bottom: 1px solid #f9f9f9;
-            transition: all 0.3s ease; cursor: pointer; font-weight: 500;
-        }
-        .sidebar-item:hover { background-color: var(--cor-principal); padding-left: 35px; color: white !important; }
-        .sidebar-item img { width: 28px; height: 28px; margin-right: 12px; object-fit: contain; }
-
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
-        .overlay.active { display: block; }
-
-        /* --- Layout --- */
-        .main-content { flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; height: calc(100% - var(--header-height)); }
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow: hidden; }
-        .screen.active { display: flex; }
-
-        /* ALTERAÇÃO 1: Limite do card em Verde (#45cfa8) */
-        .game-card {
-            background: white; border-radius: 30px; padding: 15px; 
-            border: 4px solid var(--cor-jogo-verde);
-            display: flex; flex-direction: column; width: 100%; max-width: 900px; height: 100%; box-sizing: border-box; overflow: hidden;
-        }
-
-        /* --- Intro --- */
-        .explanation-box { background: var(--cor-caixa-info); border-radius: 20px; flex: 1; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 10px; }
-        .anim-math-container { display: flex; align-items: center; gap: 15px; font-size: 2.5rem; font-weight: bold; color: var(--cor-texto); }
-        .anim-dot { width: 15px; height: 15px; background: var(--cor-principal); border-radius: 50%; opacity: 0; animation: fadeInDot 0.5s forwards; }
-        @keyframes fadeInDot { to { opacity: 1; } }
-
-        /* ALTERAÇÃO 2: Título do jogo em Verde (#45cfa8) */
-        .game-title { color: var(--cor-jogo-verde); text-align: center; font-size: 1.4rem; margin: 10px 0; font-weight: bold; }
-
-        /* --- Jogo --- */
-        .card-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 2px solid #f0f0f0; margin-bottom: 8px; flex-shrink: 0; }
-        .stars-container { display: flex; gap: 4px; }
-        .star { width: 22px; height: 22px; border: 2px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; }
-        .star.correct { background: var(--cor-jogo-verde); border-color: var(--cor-jogo-verde); color: white; }
-        .star.wrong { background: var(--cor-erro); border-color: var(--cor-erro); color: white; }
-
-        .equation-container { 
-            flex: 2; display: flex; justify-content: center; align-items: center; gap: clamp(5px, 2vw, 25px); 
-            background: var(--cor-caixa-info); border-radius: 20px; margin-bottom: 10px; border: 2px dashed #b2dfdb; overflow: hidden;
-        }
-        .num-value { font-size: 4rem; font-weight: 700; color: var(--cor-texto); }
-        .lacuna { width: 90px; height: 90px; border: 4px dashed var(--cor-principal); border-radius: 15px; background: #fff; display: flex; align-items: center; justify-content: center; }
-
-        .numpad { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; padding: 15px; background: var(--cor-caixa-info); border-radius: 20px; flex-shrink: 0; }
-        .num-btn { 
-            background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-texto);
-            font-size: 1.5rem; font-weight: bold; padding: 10px; border-radius: 12px; cursor: pointer; font-family: 'Fredoka';
-        }
-        .num-btn:active { background: var(--cor-jogo-verde); color: white; transform: scale(0.95); }
-
-        .option-btn { background: white; border: 3px solid var(--cor-jogo-verde); color: var(--cor-jogo-verde); font-size: 1.4rem; font-weight: bold; padding: 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; font-family: 'Fredoka'; width: 100%; flex-shrink: 0; }
-        
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 3000; }
-        .modal-content { background: white; padding: 25px; border-radius: 30px; text-align: center; border: 5px solid var(--cor-jogo-verde); max-width: 350px; width: 85%; }
-        
-        .error-shake { animation: shake 0.4s; }
-        @keyframes shake { 0%, 100% {transform:translateX(0);} 25% {transform:translateX(-8px);} 75% {transform:translateX(8px);} }
     </style>
 </head>
 <body>
-
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
     
-    <!-- Sidebar Completa -->
-    <div class="sidebar" id="sidebar">
-        <div style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-weight: bold; color: var(--cor-principal);">MENU</span>
-            <button onclick="toggleMenu()" style="border:none; background:none; cursor:pointer; font-size:20px;">✕</button>
+    <header>
+        <div class="header-left">
+            <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
+            <div id="dropdownMenu" class="menu-dropdown"></div>
         </div>
-        <a href="/jogos/" class="sidebar-item">🏠 Início</a>
-        <a href="/jogos/pre/" class="sidebar-item"><img id="side-pre"> Pré-Escolar</a>
-        <a href="/jogos/1/" class="sidebar-item"><img id="side-1"> 1º Ano</a>
-        <a href="/jogos/2/" class="sidebar-item"><img id="side-2"> 2º Ano</a>
-        <a href="/jogos/3/" class="sidebar-item"><img id="side-3"> 3º Ano</a>
-        <a href="/jogos/4/" class="sidebar-item"><img id="side-4"> 4º Ano</a>
-    </div>
-
-    <header class="nav-bar">
-        <button class="menu-btn" onclick="toggleMenu()">☰</button>
-        <h1 style="display:flex; align-items:center; gap:10px; font-size:1.1rem; color:var(--cor-principal); margin:0;">
-            <img id="header-icon" src="" style="height:32px; width: auto;"> Matemática - 1º Ano
-        </h1>
-        <a href="../" class="back-btn">⬅ Voltar</a>
+        <div class="logo-center">
+            <img id="head-logo" src="">
+            <div class="logo-text"><h1 id="tit-l1"></h1><h1 id="tit-l2"></h1><p id="sub-tit"></p></div>
+        </div>
+        <div class="header-right">
+            <a href="#" id="link-voltar-header" class="btn-voltar-header"><img id="header-back-icon" src="" width="14"> <span id="txt-voltar-header"></span></a>
+            <a href="#" id="link-voltar-mobile" class="btn-voltar-mobile"><img id="header-back-mobile" src="" alt="Voltar" style="height:30px;"></a>
+        </div>
     </header>
 
-    <main class="main-content">
-        <!-- Tela Intro -->
-        <section id="intro-screen" class="screen active">
-            <div class="game-card">
-                <div class="explanation-box">
-                    <div class="anim-math-container">
-                        <span>1 + 2 = <span style="color:var(--cor-jogo-verde)">3</span></span>
+    <main class="game-container">
+        <div class="game-card">
+            <div class="status-bar" id="status-bar">
+                <div class="status-group" style="display:flex; gap:8px;">
+                    <div class="badge badge-timer">⏳ <span id="timer-val">00:00</span></div>
+                    <div class="badge badge-round"><span id="round-val">1 / 10</span></div>
+                </div>
+                <div class="status-group" style="display:flex; gap:8px; align-items:center;">
+                    <div class="badge" style="background:#7ed321;">✓ <span id="hits-val">0</span></div>
+                    <div class="badge" style="background:#ff5e5e;">✗ <span id="miss-val">0</span></div>
+                    <img id="rd-game-btn" src="" style="height:30px; width:30px; cursor:pointer;" onclick="openRDMenu(event)">
+                </div>
+            </div>
+
+            <section class="screen active" id="scr-intro">
+                <div class="screen-box">
+                    <div id="intro-animation-container" style="flex:1; display:flex; align-items:center; justify-content:center; width:100%; min-height: 0;"></div>
+                    <p id="intro-instr" style="font-weight: 800; color: var(--text-grey); text-align: center; margin-bottom: 20px; font-size: 1rem; width: 100%; padding: 0 20px;"></p>
+                    
+                    <div style="display:flex; width:100%; gap:15px; align-items:center; padding: 0 20px 20px;">
+                        <button class="btn-jogar-stretch" onclick="goToGame()">JOGAR</button>
+                        <img id="rd-intro-btn" src="" onclick="openRDMenu(event)" style="height:55px; width:55px; cursor:pointer; flex-shrink: 0; object-fit: contain;">
                     </div>
                 </div>
-                <h2 class="game-title">Somas até 10</h2>
-                <button class="option-btn" style="background:var(--cor-jogo-verde); color:white;" onclick="startGame()">JOGAR</button>
-            </div>
-        </section>
+            </section>
 
-        <!-- Tela Jogo -->
-        <section id="game-screen" class="screen">
-            <div class="game-card">
-                <div class="card-header">
-                    <div>⏳ <span id="timer">00:00</span></div>
-                    <div class="stars-container" id="stars-bar"></div>
-                    <div>PTS: <span id="points">0</span></div>
-                </div>
-                <div id="game-instruction" style="text-align:center; font-weight:bold; color:var(--cor-texto); margin-bottom:10px;">Resolve a conta!</div>
-                
-                <div class="equation-container">
-                    <div id="val-a" class="num-value"></div>
-                    <div style="font-size:3rem; color:var(--cor-principal)">+</div>
-                    <div id="val-b" class="num-value"></div>
-                    <div style="font-size:3rem; color:var(--cor-principal)">=</div>
-                    <div id="val-res" class="num-value"></div>
-                </div>
+            <section class="screen" id="scr-game">
+                <div class="screen-box" id="game-main-content"></div>
+            </section>
 
-                <div class="numpad">
-                    <script>
-                        for(let i=0; i<=10; i++) {
-                            document.write(`<button class="num-btn" onclick="handleInput(${i}, event)">${i}</button>`);
-                        }
-                    </script>
-                </div>
-            </div>
-        </section>
+            <section class="screen" id="scr-result"></section>
+        </div>
     </main>
 
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <h2 id="modal-title"></h2>
-            <div id="modal-msg" style="margin-bottom: 20px;"></div>
-            <button class="option-btn" onclick="location.reload()" style="background: var(--cor-jogo-verde); color: white;">Jogar de Novo</button>
-        </div>
+    <div id="rdMenu" class="rd-panel">
+        <div style="width:40px; height:4px; background:#eee; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div>
+        <h3 style="text-align:center; color:var(--primary-blue); margin-bottom:15px; font-weight: 900; font-size: 1.1rem;">Escolher Tema</h3>
+        <div id="rd-list"></div>
     </div>
 
+    <script src="categorias.js"></script>
     <script src="dados.js"></script>
+    <script src="jogo.js"></script>
+
     <script>
-        let level = 1, questionNum = 1, points = 0, seconds = 0, timerInterval;
-        let valA, valB, result, targetValue, hiddenSlotId, isRoundActive = true;
+    function initUI() {
+        const setup = CONFIG_MESTRE; 
+        const tema = BIBLIOTECA_TEMAS[setup.area]; 
+        const cont = (BIBLIOTECA_CONTEUDO[setup.ano] && BIBLIOTECA_CONTEUDO[setup.ano][setup.area]) ? BIBLIOTECA_CONTEUDO[setup.ano][setup.area] : {};
+        const conf = JOGO_CONFIG;
 
-        window.onload = () => {
-            if(typeof JOGO_CONFIG !== 'undefined') {
-                const pi = JOGO_CONFIG.caminhoIcons;
-                const i = JOGO_CONFIG.iconesMenu;
-                document.getElementById('header-icon').src = pi + i.ano1;
-                document.getElementById('side-pre').src = pi + i.pre;
-                document.getElementById('side-1').src = pi + i.ano1;
-                document.getElementById('side-2').src = pi + i.ano2;
-                document.getElementById('side-3').src = pi + i.ano3;
-                document.getElementById('side-4').src = pi + i.ano4;
-            }
-        };
+        document.title = setup.nomeJogo;
+        const root = document.documentElement;
+        root.style.setProperty('--primary-blue', tema.corPrimaria); 
+        root.style.setProperty('--primary-dark', tema.corEscura); 
+        root.style.setProperty('--bg-page', tema.corPagina);
+        root.style.setProperty('--bg-header', cont.corHeader || tema.corHeader || '#ffffff');
+        root.style.setProperty('--bg-container', cont.corContainer || tema.corContainer || tema.corPagina);
+        root.style.setProperty('--bg-card', cont.corCard || tema.corCard || '#ffffff');
+        root.style.setProperty('--cor-borda-card', cont.bordaCard || tema.bordaCard || 'transparent');
+        root.style.setProperty('--sombra-card', cont.sombraCard || tema.sombraCard || '0 15px 35px rgba(0,0,0,0.1)');
+        root.style.setProperty('--bg-espaco-jogo', cont.corEspacoJogo || tema.corEspacoJogo || '#ffffff');
+        root.style.setProperty('--borda-espaco-jogo', cont.bordaEspacoJogo || tema.bordaEspacoJogo || '3px dashed #ccc');
 
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
+        document.body.style.opacity = '1';
 
-        function startGame() {
-            document.getElementById('intro-screen').classList.remove('active');
-            document.getElementById('game-screen').classList.add('active');
-            startTimer();
-            initStars();
-            loadQuestion();
-        }
+        document.getElementById('tit-l1').innerText = cont.t1 || ""; 
+        document.getElementById('tit-l2').innerText = cont.t2 || ""; 
+        document.getElementById('sub-tit').innerText = cont.sub || ""; 
+        document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu[setup.ano];
+        
+        document.getElementById('link-voltar-header').href = conf.linkVoltar;
+        document.getElementById('link-voltar-mobile').href = conf.linkVoltar;
+        document.getElementById('txt-voltar-header').innerText = conf.textoVoltar;
+        document.getElementById('header-back-icon').src = conf.caminhoIcons + "voltar.png";
+        document.getElementById('header-back-mobile').src = conf.caminhoIcons + tema.voltarMobile;
+        document.getElementById('rd-intro-btn').src = conf.caminhoImg + "rd.png";
+        document.getElementById('rd-game-btn').src = conf.caminhoImg + "rd.png";
 
-        function startTimer() {
-            timerInterval = setInterval(() => {
-                seconds++;
-                let m = Math.floor(seconds/60).toString().padStart(2,'0');
-                let s = (seconds%60).toString().padStart(2,'0');
-                document.getElementById('timer').innerText = `${m}:${s}`;
-            }, 1000);
-        }
+        if(window.gerarIntroJogo) document.getElementById('intro-instr').innerText = window.gerarIntroJogo();
 
-        function initStars() {
-            const bar = document.getElementById('stars-bar');
-            bar.innerHTML = '';
-            for(let i=0; i<5; i++) {
-                const s = document.createElement('div');
-                s.className = 'star'; s.innerText = '★';
-                bar.appendChild(s);
-            }
-        }
+        // Dropdown Menu
+        const menuBox = document.getElementById('dropdownMenu'); menuBox.innerHTML = '';
+        const labels = { home: "Início", pre: "Pré-Escolar", ano1: "1º Ano", ano2: "2º Ano", ano3: "3º Ano", ano4: "4º Ano" };
+        ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
+            const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
+            a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}" width="20"><span>${labels[k]}</span>`;
+            menuBox.appendChild(a);
+        });
+        const divider = document.createElement('div'); divider.className = 'menu-divider'; menuBox.appendChild(divider);
+        const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = conf.linkVoltar;
+        btnV.innerHTML = `<img src="${conf.caminhoIcons}voltar.png" width="20"> <span>${conf.textoVoltar}</span>`;
+        menuBox.appendChild(btnV);
 
-        function loadQuestion() {
-            isRoundActive = true;
-            result = Math.floor(Math.random() * 11);
-            valA = Math.floor(Math.random() * (result + 1));
-            valB = result - valA;
+        // RD Menu List
+        const rdBox = document.getElementById('rd-list'); rdBox.innerHTML = '';
+        Object.keys(conf.categorias).forEach(key => {
+            const c = conf.categorias[key]; 
+            const div = document.createElement('div'); div.className = 'rd-item';
+            div.innerHTML = `<img src="${conf.caminhoImg}${c.imgCapa}"><span>${c.nome}</span>`;
+            div.onclick = () => { selecionarCategoria(key); closeMenus(); goToIntro(); }; 
+            rdBox.appendChild(div);
+        });
 
-            const slotA = document.getElementById('val-a');
-            const slotB = document.getElementById('val-b');
-            const slotRes = document.getElementById('val-res');
+        if(window.startLogic) window.startLogic();
+    }
 
-            [slotA, slotB, slotRes].forEach(s => { s.classList.remove('lacuna', 'error-shake'); s.style.color = "var(--cor-texto)"; s.innerText = ""; });
-
-            if (level === 1) {
-                hiddenSlotId = "val-res"; targetValue = result;
-                slotA.innerText = valA; slotB.innerText = valB;
-                slotRes.classList.add('lacuna');
-            } else {
-                let hide = Math.random() > 0.5 ? "a" : "b";
-                if(hide === "a") { hiddenSlotId = "val-a"; targetValue = valA; slotA.classList.add('lacuna'); slotB.innerText = valB; }
-                else { hiddenSlotId = "val-b"; targetValue = valB; slotB.classList.add('lacuna'); slotA.innerText = valA; }
-                slotRes.innerText = result;
-            }
-        }
-
-        function handleInput(ans, event) {
-            if (!isRoundActive) return;
-            isRoundActive = false;
-            const slot = document.getElementById(hiddenSlotId);
-            slot.innerText = ans;
-
-            const stars = document.querySelectorAll('.star');
-            if (ans === targetValue) {
-                points += 20;
-                slot.style.color = "var(--cor-jogo-verde)";
-                stars[questionNum - 1].classList.add('correct');
-                stars[questionNum - 1].innerText = '✓';
-            } else {
-                slot.style.color = "var(--cor-erro)";
-                slot.classList.add('error-shake');
-                stars[questionNum - 1].classList.add('wrong');
-                stars[questionNum - 1].innerText = '✕';
-            }
-
-            document.getElementById('points').innerText = points;
-            setTimeout(() => {
-                questionNum++;
-                if (questionNum > 5) {
-                    if (level === 1) { level = 2; questionNum = 1; initStars(); loadQuestion(); }
-                    else endGame();
-                } else loadQuestion();
-            }, 1500);
-        }
-
-        function endGame() {
-            clearInterval(timerInterval);
-            document.getElementById('modal-title').innerText = "Fim do Jogo!";
-            document.getElementById('modal-msg').innerHTML = `Pontos: ${points} / 200<br>Tempo: ${document.getElementById('timer').innerText}`;
-            document.getElementById('modal').style.display = 'flex';
-        }
+    function toggleHamburger(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); const ov = document.getElementById('overlay'); const isOpen = m.style.display === 'flex'; m.style.display = isOpen ? 'none' : 'flex'; ov.style.display = isOpen ? 'none' : 'block'; }
+    function openRDMenu(e) { if(e) e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
+    function closeMenus() { document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('rdMenu').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; }
+    function goToIntro() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-intro').classList.add('active'); document.getElementById('status-bar').style.display = 'none'; if(window.startLogic) window.startLogic(); }
+    function goToGame() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-game').classList.add('active'); document.getElementById('status-bar').style.display = 'flex'; if(window.initGame) window.initGame(); }
+    
+    window.onload = initUI;
     </script>
 </body>
 </html>
