@@ -34,7 +34,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Lê com atenção e liga cada número ao seu nome correto!";
+    return "Consegues ligar todos os números? Clica no número e depois no seu nome!";
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -43,17 +43,12 @@ function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
     container.innerHTML = `
-        <div class="tut-container">
-            <div class="tut-item" style="border-color:#45cfa8">7</div>
-            <div class="tut-hand">☝️</div>
-            <div class="tut-item" style="border-color:#45cfa8">sete</div>
+        <div style="display:flex; gap:20px; align-items:center; position:relative;">
+            <div style="padding:10px 15px; background:white; border:3px solid #45cfa8; border-radius:12px; font-weight:900; color:#2BA886;">3</div>
+            <div id="tut-hand" style="position:absolute; font-size:35px; animation: moveLink 3s infinite; z-index:10;">☝️</div>
+            <div style="padding:10px 15px; background:white; border:3px solid #45cfa8; border-radius:12px; font-weight:900; color:#2BA886;">três</div>
         </div>
-        <style>
-            .tut-container { display:flex; gap:30px; align-items:center; position:relative; }
-            .tut-item { padding:10px 20px; background:white; border:3px solid; border-radius:12px; font-weight:900; color:#2BA886; }
-            .tut-hand { position:absolute; font-size:35px; animation: moveH 3s infinite; z-index:5; }
-            @keyframes moveH { 0%, 100% { transform: translate(10px, 20px); } 50% { transform: translate(100px, 20px); } }
-        </style>
+        <style> @keyframes moveLink { 0%, 100% { transform: translate(0, 15px); } 50% { transform: translate(60px, 15px); } } </style>
     `;
 }
 
@@ -103,70 +98,86 @@ function mostrarPergunta() {
 
     container.innerHTML = `
         <style>
-            .game-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; justify-content:space-between; padding: 15px 10px; box-sizing: border-box; }
+            .game-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; justify-content:space-between; padding: 15px 10px; box-sizing: border-box; position: relative; }
             
             .category-label {
-                background: #ffffff; color: #2BA886; padding: 10px 30px; border-radius: 40px; 
-                font-weight: 900; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;
-                border: 4px solid #2BA886; box-shadow: 0 6px 15px rgba(43,168,134,0.2); margin-bottom: 15px;
+                background: white; color: #2BA886; padding: 8px 25px; border-radius: 40px; 
+                font-weight: 900; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px;
+                border: 4px solid #2BA886; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 10px;
             }
 
             .match-grid {
-                flex: 1; width: 100%; max-width: 700px; display: grid; grid-template-columns: 1fr 1.6fr; gap: 15px; align-content: center;
+                flex: 1; width: 100%; max-width: 650px; display: grid; grid-template-columns: 1fr 1.6fr; gap: 15px; align-content: center;
             }
 
             .match-column { display: flex; flex-direction: column; gap: 10px; }
 
             .card-btn {
-                background: white; border: 3px solid #e2e8f0; border-bottom: 6px solid #cbd5e1;
+                background: linear-gradient(145deg, #ffffff, #f0fdfa);
+                border: 2px solid #e2e8f0; border-bottom: 5px solid #cbd5e1;
                 padding: clamp(12px, 3vh, 22px); border-radius: 20px; cursor: pointer;
-                display: flex; align-items: center; justify-content: center;
-                text-align: center; font-weight: 900; color: #2D3748;
-                font-size: clamp(1.1rem, 3.5vw, 1.7rem); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                animation: slideCard 0.4s backwards;
+                display: flex; align-items: center; justify-content: center; gap: 10px;
+                text-align: center; font-weight: 900; color: #334155;
+                font-size: clamp(1.1rem, 3.5vw, 1.6rem); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                position: relative; overflow: hidden;
             }
 
-            @keyframes slideCard { from { opacity:0; transform: translateX(-20px); } to { opacity:1; transform: translateX(0); } }
+            /* Efeito de brilho passar por cima */
+            .card-btn::after {
+                content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+                background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+                transform: rotate(45deg); transition: 0.5s; pointer-events: none;
+            }
+            .card-btn:hover::after { left: 100%; }
 
-            /* ESTADO: SELECIONADO */
+            /* SELECIONADO */
             .card-btn.selected { 
                 border-color: #45cfa8; background: #e8f9f4; color: #2BA886; 
-                transform: scale(1.03); box-shadow: 0 0 20px rgba(69,207,168,0.3);
-                border-bottom-width: 3px; margin-top: 3px;
+                transform: scale(1.05); box-shadow: 0 10px 20px rgba(69,207,168,0.2);
+                border-bottom-width: 3px;
             }
 
-            /* ESTADO: CORRETO */
+            /* ACERTO (CARIMBO VERDE CLARO) */
             .card-btn.matched { 
-                background: #2BA886; border-color: #1f7a63; color: white; 
-                box-shadow: 0 4px 0 #1f7a63; cursor: default;
-                animation: bounceMatched 0.5s;
+                background: #d1fae5; border-color: #10b981; color: #065f46; 
+                box-shadow: 0 4px 0 #10b981; cursor: default;
+                animation: popSuccess 0.4s forwards;
             }
-            @keyframes bounceMatched { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+            .card-btn.matched::before { content: "✅"; font-size: 1.2rem; }
 
-            /* ESTADO: ERRO */
-            .card-btn.error { border-color: #ff5e5e; background: #fff1f1; animation: shake 0.4s; }
+            @keyframes popSuccess { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+
+            /* ERRO */
+            .card-btn.error { border-color: #ff5e5e; background: #fee2e2; animation: shake 0.4s; }
             @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+
+            /* Partículas de acerto */
+            .particle {
+                position: absolute; width: 8px; height: 8px; background: #45cfa8; border-radius: 50%;
+                pointer-events: none; z-index: 100; animation: particleOut 0.6s ease-out forwards;
+            }
+            @keyframes particleOut { from { transform: scale(1); opacity: 1; } to { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; } }
 
             @media (max-width: 480px) {
                 .match-grid { gap: 10px; }
-                .card-btn { padding: 15px 8px; font-size: 1rem; border-radius: 15px; }
+                .card-btn { padding: 15px 5px; font-size: 0.95rem; border-radius: 15px; border-bottom-width: 4px; }
             }
         </style>
 
-        <div class="game-wrapper">
+        <div class="game-wrapper" id="game-area">
             <div class="category-label">${config.nome}</div>
 
             <div class="match-grid">
                 <div class="match-column">
-                    ${paresAtuais.numeros.map((item, i) => `
-                        <div class="card-btn" style="animation-delay: ${i*0.1}s" data-val="${item.val}" data-tipo="${item.tipo}" onclick="tentarMatch(this)">
+                    ${paresAtuais.numeros.map(item => `
+                        <div class="card-btn" data-val="${item.val}" data-tipo="${item.tipo}" onclick="tentarMatch(this)">
                             ${item.txt}
                         </div>
                     `).join('')}
                 </div>
                 <div class="match-column">
-                    ${paresAtuais.palavras.map((item, i) => `
-                        <div class="card-btn" style="animation-delay: ${(i+2)*0.1}s" data-val="${item.val}" data-tipo="${item.tipo}" onclick="tentarMatch(this)">
+                    ${paresAtuais.palavras.map(item => `
+                        <div class="card-btn" data-val="${item.val}" data-tipo="${item.tipo}" onclick="tentarMatch(this)">
                             ${item.txt}
                         </div>
                     `).join('')}
@@ -174,6 +185,22 @@ function mostrarPergunta() {
             </div>
         </div>
     `;
+}
+
+function criarParticulas(x, y) {
+    const area = document.getElementById('game-area');
+    for (let i = 0; i < 8; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const moveX = (Math.random() - 0.5) * 100;
+        const moveY = (Math.random() - 0.5) * 100;
+        p.style.setProperty('--x', `${moveX}px`);
+        p.style.setProperty('--y', `${moveY}px`);
+        p.style.left = `${x}px`;
+        p.style.top = `${y}px`;
+        area.appendChild(p);
+        setTimeout(() => p.remove(), 600);
+    }
 }
 
 function tentarMatch(el) {
@@ -197,6 +224,11 @@ function tentarMatch(el) {
 
     if (itemSelecionado.val === val) {
         // ACERTO
+        const rect1 = el.getBoundingClientRect();
+        const rect2 = itemSelecionado.el.getBoundingClientRect();
+        criarParticulas(rect1.left + rect1.width/2, rect1.top + rect1.height/2);
+        criarParticulas(rect2.left + rect2.width/2, rect2.top + rect2.height/2);
+
         el.classList.add('matched');
         itemSelecionado.el.classList.remove('selected');
         itemSelecionado.el.classList.add('matched');
@@ -233,7 +265,7 @@ function finalizarJogo() {
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:110px; margin-bottom:15px; filter: drop-shadow(0 8px 15px rgba(43,168,134,0.3));">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:110px; margin-bottom:15px;">
             <h2 style="color:#2BA886; font-weight:900; font-size:1.8rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
                 <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
