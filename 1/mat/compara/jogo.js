@@ -22,7 +22,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Compara as quantidades de frutas e escolhe o sinal correto!";
+    return "Compara as quantidades e escolhe o sinal correto: Maior, Menor ou Igual!";
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -31,16 +31,22 @@ function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
     container.innerHTML = `
-        <div class="tut-big-wrapper">
-            <h2 class="tut-header">COMO JOGAR</h2>
-            <div style="display:flex; align-items:center; gap:15px; background:white; padding:20px; border-radius:20px; border:3px solid #45cfa8;">
-               <span>🍎</span> <b>></b> <span>🍐</span>
+        <div class="tut-wrapper">
+            <h2 class="tut-title">COMO JOGAR</h2>
+            <div class="tut-row">
+               <div class="tut-item">🍎🍎</div>
+               <div class="tut-sign">></div>
+               <div class="tut-item">🍎</div>
             </div>
-            <div class="tut-hand-icon" style="position:relative; top:10px; animation: tapH 2s infinite;">☝️</div>
+            <div class="tut-hand">☝️</div>
         </div>
         <style>
-            .tut-big-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
-            .tut-header { color: #2BA886; font-weight: 900; font-size: 1.4rem; background: #e8f9f4; padding: 8px 25px; border-radius: 50px; border: 3px solid #45cfa8; }
+            .tut-wrapper { display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; }
+            .tut-title { color: #2BA886; font-weight: 900; font-size: 1.2rem; margin: 0; }
+            .tut-row { display: flex; align-items: center; gap: 10px; background: white; padding: 15px; border-radius: 15px; border: 3px solid #45cfa8; }
+            .tut-item { font-size: 1.5rem; }
+            .tut-sign { font-size: 2rem; font-weight: 900; color: #ef4444; }
+            .tut-hand { position: absolute; font-size: 35px; animation: tapH 2s infinite; bottom: -20px; }
             @keyframes tapH { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         </style>
     `;
@@ -70,11 +76,9 @@ function proximaRonda() {
     if (indicePergunta >= 10) { finalizarJogo(); return; }
     const config = JOGO_CATEGORIAS[categoriaAtual];
     
-    // Gerar números aleatórios
     numEsquerda = Math.floor(Math.random() * config.maxNum) + 1;
     numDireita = Math.floor(Math.random() * config.maxNum) + 1;
 
-    // Sorteia frutas
     frutaEsq = config.itens[Math.floor(Math.random() * config.itens.length)];
     frutaDir = config.itens[Math.floor(Math.random() * config.itens.length)];
 
@@ -89,96 +93,130 @@ function mostrarPergunta() {
 
     container.innerHTML = `
         <style>
-            .game-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: flex-start; padding: 10px; box-sizing: border-box; }
+            .game-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-between; padding: 10px 5px; box-sizing: border-box; }
             
             .category-label {
-                background: white; color: #2BA886; padding: 8px 25px; border-radius: 40px; 
-                font-weight: 900; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.2px;
-                border: 4px solid #2BA886; box-shadow: 0 4px 10px rgba(43,168,134,0.15); margin-bottom: 15px;
+                background: #ffffff; color: #0369a1; padding: 8px 25px; border-radius: 20px; 
+                font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px;
+                border: 4px solid #0369a1; margin-top: 5px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             }
 
-            .comparison-area {
-                flex: 1; width: 100%; display: grid; grid-template-columns: 1fr 80px 1fr; 
-                gap: 10px; align-items: center; align-content: center;
+            /* CONTAINER DE COMPARAÇÃO LADO A LADO */
+            .comparison-container {
+                flex: 1; width: 100%; max-width: 800px;
+                display: grid;
+                grid-template-columns: 1fr 60px 1fr; /* 3 colunas fixas: Esq, Sinal, Dir */
+                align-items: center;
+                gap: 5px;
+                padding: 10px 0;
             }
 
-            .fruit-box {
-                background: rgba(255,255,255,0.6); border-radius: 20px; border: 2px dashed #45cfa8;
-                height: 100%; min-height: 150px; display: flex; flex-wrap: wrap; 
-                justify-content: center; align-items: center; align-content: center; gap: 8px; padding: 10px;
+            .fruit-zone {
+                height: 100%;
+                background: rgba(255,255,255,0.4);
+                border-radius: 15px;
+                border: 2px dashed #45cfa8;
+                display: flex;
+                flex-wrap: wrap;
+                align-content: center;
+                justify-content: center;
+                gap: 4px;
+                padding: 8px;
             }
 
             .fruit-img {
-                width: calc(20% - 8px); max-width: 45px; height: auto; aspect-ratio: 1/1; object-fit: contain;
-                animation: popFruit 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                /* Tamanho adaptável para caber até 20 */
+                width: calc(33% - 6px); 
+                max-width: 40px; 
+                height: auto;
+                aspect-ratio: 1/1;
+                object-fit: contain;
+                animation: popFruit 0.3s forwards;
             }
 
-            @keyframes popFruit { from { transform: scale(0); opacity:0; } to { transform: scale(1); opacity:1; } }
+            @keyframes popFruit { from { transform: scale(0); } to { transform: scale(1); } }
 
-            .vs-box { font-size: 3rem; font-weight: 950; color: #2BA886; text-align: center; }
+            .sign-spot {
+                font-size: clamp(2rem, 8vw, 3.5rem);
+                font-weight: 950;
+                color: #0369a1;
+                text-align: center;
+                background: white;
+                height: 60px;
+                width: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                border: 3px solid #e2e8f0;
+            }
 
             .options-row { 
-                display: flex; justify-content: center; gap: 15px; width: 100%; 
-                max-width: 500px; padding: 20px 0; 
+                display: flex; justify-content: center; gap: 12px; width: 100%; 
+                max-width: 450px; padding-bottom: 20px; 
             }
             
             .opt-btn { 
-                flex: 1; background: white; border: 4px solid #cbd5e1; border-radius: 20px; 
-                height: 80px; font-size: 2.5rem; font-weight: 900; cursor: pointer; 
-                box-shadow: 0 6px 0 #cbd5e1; color: #1e293b; transition: 0.1s;
+                flex: 1; background: white; border: 4px solid #cbd5e1; border-radius: 18px; 
+                height: 70px; font-size: 2.2rem; font-weight: 900; cursor: pointer; 
+                box-shadow: 0 5px 0 #cbd5e1; color: #1e293b; transition: 0.1s;
                 display: flex; align-items: center; justify-content: center;
             }
-            .opt-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #cbd5e1; }
+            .opt-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #cbd5e1; }
             .opt-btn.correct { background: #dcfce7; border-color: #22c55e; color: #166534; box-shadow: 0 4px 0 #166534; }
             .opt-btn.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; box-shadow: 0 4px 0 #991b1b; }
 
-            @media (max-width: 600px) {
-                .comparison-area { grid-template-columns: 1fr; grid-template-rows: 1fr 50px 1fr; }
-                .vs-box { font-size: 2rem; transform: rotate(90deg); }
-                .fruit-img { width: calc(20% - 5px); max-width: 35px; }
-                .fruit-box { min-height: 100px; }
+            @media (max-width: 400px) {
+                .sign-spot { width: 45px; height: 45px; font-size: 1.8rem; }
+                .comparison-container { grid-template-columns: 1fr 45px 1fr; }
+                .fruit-img { width: calc(50% - 4px); } /* 2 por linha em ecrãs minúsculos */
             }
         </style>
 
         <div class="game-wrapper">
             <div class="category-label">${config.nome}</div>
 
-            <div class="comparison-area">
-                <div class="fruit-box">
-                    ${Array(numEsquerda).fill(0).map((_, i) => `<img src="${path}${frutaEsq}" class="fruit-img" style="animation-delay:${i*0.03}s">`).join('')}
+            <div class="comparison-container">
+                <!-- LADO ESQUERDO -->
+                <div class="fruit-zone">
+                    ${Array(numEsquerda).fill(0).map((_, i) => `<img src="${path}${frutaEsq}" class="fruit-img" style="animation-delay:${i*0.02}s">`).join('')}
                 </div>
 
-                <div class="vs-box" id="result-symbol">?</div>
+                <!-- CENTRO (SINAL) -->
+                <div class="sign-spot" id="display-sign">?</div>
 
-                <div class="fruit-box">
-                    ${Array(numDireita).fill(0).map((_, i) => `<img src="${path}${frutaDir}" class="fruit-img" style="animation-delay:${i*0.03}s">`).join('')}
+                <!-- LADO DIREITO -->
+                <div class="fruit-zone">
+                    ${Array(numDireita).fill(0).map((_, i) => `<img src="${path}${frutaDir}" class="fruit-img" style="animation-delay:${i*0.02}s">`).join('')}
                 </div>
             </div>
             
             <div class="options-row">
-                <button class="opt-btn" onclick="verificarComparacao(this, '<')"><</button>
-                <button class="opt-btn" onclick="verificarComparacao(this, '=')">=</button>
-                <button class="opt-btn" onclick="verificarComparacao(this, '>')">></button>
+                <button class="opt-btn" onclick="validar(this, '<')"><</button>
+                <button class="opt-btn" onclick="validar(this, '=')">=</button>
+                <button class="opt-btn" onclick="validar(this, '>')">></button>
             </div>
         </div>
     `;
 }
 
-function verificarComparacao(btn, escolha) {
-    const botoes = document.querySelectorAll('.opt-btn');
-    botoes.forEach(b => b.style.pointerEvents = 'none');
+function validar(btn, escolha) {
+    const btns = document.querySelectorAll('.opt-btn');
+    btns.forEach(b => b.style.pointerEvents = 'none');
 
-    let respostaCorreta = "=";
-    if (numEsquerda > numDireita) respostaCorreta = ">";
-    if (numEsquerda < numDireita) respostaCorreta = "<";
+    let correto = "=";
+    if (numEsquerda > numDireita) correto = ">";
+    if (numEsquerda < numDireita) correto = "<";
 
-    const displaySimbolo = document.getElementById('result-symbol');
+    const displaySign = document.getElementById('display-sign');
 
-    if (escolha === respostaCorreta) {
+    if (escolha === correto) {
         somAcerto.play();
         btn.classList.add('correct');
-        displaySimbolo.innerText = respostaCorreta;
-        displaySimbolo.style.color = "#22c55e";
+        displaySign.innerText = correto;
+        displaySign.style.color = "#22c55e";
+        displaySign.style.borderColor = "#22c55e";
         acertos++;
         document.getElementById('hits-val').innerText = acertos;
         setTimeout(() => { indicePergunta++; proximaRonda(); }, 1200);
@@ -188,24 +226,24 @@ function verificarComparacao(btn, escolha) {
         erros++;
         document.getElementById('miss-val').innerText = erros;
         
-        // Mostra qual era o botão certo
-        botoes.forEach(b => {
-            if (b.innerText === respostaCorreta) b.classList.add('correct');
-        });
+        // Mostrar o correto no círculo central
+        displaySign.innerText = correto;
+        displaySign.style.color = "#ef4444";
 
-        setTimeout(() => { indicePergunta++; proximaRonda(); }, 1500);
+        btns.forEach(b => { if (b.innerText === correto) b.classList.add('correct'); });
+        setTimeout(() => { indicePergunta++; proximaRonda(); }, 1600);
     }
 }
 
 function finalizarJogo() {
     clearInterval(intervaloTempo); somVitoria.play();
     const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
-    const tempoFinal = document.getElementById('timer-val').innerText;
+    const tempo = document.getElementById('timer-val').innerText;
     const resScreen = document.getElementById('scr-result');
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px; filter: drop-shadow(0 8px 15px rgba(43,168,134,0.3));">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px;">
             <h2 style="color:#2BA886; font-weight:900; font-size:1.8rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
                 <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4;">
@@ -213,7 +251,7 @@ function finalizarJogo() {
                     <span style="font-size:10px; color:#88a; text-transform:uppercase; font-weight:800;">Acertos</span>
                 </div>
                 <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4;">
-                    <span style="display:block; font-size:26px; font-weight:900; color:#2BA886;">${tempoFinal}</span>
+                    <span style="display:block; font-size:26px; font-weight:900; color:#2BA886;">${tempo}</span>
                     <span style="font-size:10px; color:#88a; text-transform:uppercase; font-weight:800;">Tempo</span>
                 </div>
             </div>
