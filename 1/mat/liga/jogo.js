@@ -79,8 +79,7 @@ function proximaRonda() {
     paresResolvidos = 0;
     
     let numeros = new Set();
-    // FORÇADO A 4 PARES em todos os níveis
-    while(numeros.size < 4) {
+    while(numeros.size < 4) { // Fixado em 4 pares
         numeros.add(Math.floor(Math.random() * (config.max - config.min + 1)) + config.min);
     }
     
@@ -101,65 +100,70 @@ function mostrarPergunta() {
         <style>
             .game-wrapper { 
                 display:flex; flex-direction:column; width:100%; height:100%; 
-                align-items:center; justify-content: flex-start; /* Alinhado ao topo */
-                padding: 10px 10px 5px; box-sizing: border-box; position: relative; 
+                align-items:center; justify-content: flex-start;
+                padding: 10px 10px 15px; box-sizing: border-box; position: relative; 
             }
             
             .category-label {
-                background: white; color: #2BA886; padding: 6px 20px; border-radius: 40px; 
+                background: white; color: #2BA886; padding: 8px 25px; border-radius: 40px; 
                 font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.2px;
                 border: 3px solid #2BA886; box-shadow: 0 4px 10px rgba(43,168,134,0.15); 
-                margin-bottom: 5px; flex-shrink: 0;
+                margin-bottom: 10px; flex-shrink: 0;
             }
 
             .match-grid {
-                flex: 1; width: 100%; max-width: 600px; display: grid; 
-                grid-template-columns: 1fr 1.8fr; gap: 12px; 
-                align-items: center; align-content: center; /* Centraliza verticalmente o conteúdo interno */
+                flex: 1; width: 100%; max-width: 650px; display: grid; 
+                grid-template-columns: 1fr 1.8fr; 
+                gap: 25px; /* MAIOR ESPAÇO ENTRE AS DUAS COLUNAS */
+                align-items: center; align-content: center;
             }
 
-            .match-column { display: flex; flex-direction: column; gap: 10px; }
+            .match-column { 
+                display: flex; flex-direction: column; 
+                gap: 15px; /* MAIOR ESPAÇO VERTICAL ENTRE CARTÕES */
+            }
 
             .card-btn {
                 background: linear-gradient(145deg, #ffffff, #f0fdfa);
                 border: 2px solid #e2e8f0; border-bottom: 5px solid #cbd5e1;
-                padding: clamp(10px, 2.5vh, 20px); border-radius: 18px; cursor: pointer;
+                padding: clamp(12px, 3vh, 25px); /* MAIOR PADDING INTERNO */
+                border-radius: 20px; cursor: pointer;
                 display: flex; align-items: center; justify-content: center;
                 text-align: center; font-weight: 900; color: #334155;
-                font-size: clamp(1rem, 4vw, 1.5rem); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                font-size: clamp(1.1rem, 4vw, 1.6rem); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
                 position: relative;
             }
 
             /* ESTADO SELECIONADO */
             .card-btn.selected { 
                 border-color: #45cfa8; background: #e8f9f4; color: #2BA886; 
-                transform: scale(1.04); box-shadow: 0 8px 15px rgba(69,207,168,0.2);
-                border-bottom-width: 3px;
+                transform: scale(1.05); box-shadow: 0 10px 20px rgba(69,207,168,0.25);
+                border-bottom-width: 3px; margin-top: 2px;
             }
 
             /* ACERTO (CARIMBO VERDE CLARO) */
             .card-btn.matched { 
                 background: #dcfce7 !important; border-color: #22c55e !important; color: #166534 !important; 
                 box-shadow: 0 3px 0 #22c55e !important; cursor: default;
-                animation: popSuccess 0.4s forwards;
+                animation: popSuccess 0.4s forwards; transform: scale(0.98);
             }
 
-            @keyframes popSuccess { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+            @keyframes popSuccess { 0% { transform: scale(0.98); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
             /* ERRO */
             .card-btn.error { border-color: #ff5e5e; background: #fee2e2; animation: shake 0.4s; }
             @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 
             .particle {
-                position: absolute; width: 6px; height: 6px; background: #22c55e; border-radius: 50%;
-                pointer-events: none; z-index: 100; animation: pOut 0.6s ease-out forwards;
+                position: absolute; width: 7px; height: 7px; background: #22c55e; border-radius: 50%;
+                pointer-events: none; z-index: 100; animation: pOut 0.7s ease-out forwards;
             }
             @keyframes pOut { from { transform: scale(1); opacity: 1; } to { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; } }
 
             @media (max-width: 480px) {
-                .match-grid { gap: 8px; }
-                .card-btn { padding: 12px 5px; font-size: 0.95rem; border-radius: 12px; border-bottom-width: 4px; }
-                .game-wrapper { padding-top: 5px; }
+                .match-grid { gap: 15px; } /* Ajuste mobile */
+                .match-column { gap: 12px; }
+                .card-btn { padding: 15px 5px; font-size: 1rem; border-radius: 15px; }
             }
         </style>
 
@@ -188,14 +192,14 @@ function mostrarPergunta() {
 
 function criarParticulas(x, y) {
     const area = document.getElementById('game-area');
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 8; i++) {
         const p = document.createElement('div');
         p.className = 'particle';
-        p.style.setProperty('--x', `${(Math.random() - 0.5) * 80}px`);
-        p.style.setProperty('--y', `${(Math.random() - 0.5) * 80}px`);
+        p.style.setProperty('--x', `${(Math.random() - 0.5) * 100}px`);
+        p.style.setProperty('--y', `${(Math.random() - 0.5) * 100}px`);
         p.style.left = `${x}px`; p.style.top = `${y}px`;
         area.appendChild(p);
-        setTimeout(() => p.remove(), 600);
+        setTimeout(() => p.remove(), 700);
     }
 }
 
@@ -231,11 +235,11 @@ function tentarMatch(el) {
         itemSelecionado = null;
         paresResolvidos++;
         
-        if (paresResolvidos === 4) { // Fixado em 4
+        if (paresResolvidos === 4) {
             somAcerto.play();
             acertos++;
             document.getElementById('hits-val').innerText = acertos;
-            setTimeout(() => { indicePergunta++; proximaRonda(); }, 1000);
+            setTimeout(() => { indicePergunta++; proximaRonda(); }, 1200);
         }
     } else {
         // ERRO
@@ -261,7 +265,7 @@ function finalizarJogo() {
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px;">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:110px; margin-bottom:15px; filter: drop-shadow(0 8px 15px rgba(43,168,134,0.3));">
             <h2 style="color:#2BA886; font-weight:900; font-size:1.8rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
                 <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4;">
