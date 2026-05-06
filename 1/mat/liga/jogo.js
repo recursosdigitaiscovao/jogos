@@ -6,7 +6,7 @@ let intervaloTempo;
 
 let categoriaAtual = "Nível 1"; 
 let paresAtuais = [];
-let itemSelecionado = null; // Guarda o primeiro clique (id e tipo)
+let itemSelecionado = null; 
 let paresResolvidos = 0;
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
@@ -18,12 +18,10 @@ function numeroParaExtenso(n) {
     const unidades = ['', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove'];
     const especiais = ['dez', 'onze', 'doze', 'treze', 'catorze', 'quinze', 'dezasseis', 'dezassete', 'dezoito', 'dezanove'];
     const dezenas = ['', '', 'vinte', 'trinta', 'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta', 'noventa', 'cem'];
-
     if (n === 0) return 'zero';
     if (n === 100) return 'cem';
     if (n < 10) return unidades[n];
     if (n >= 10 && n < 20) return especiais[n - 10];
-    
     const u = n % 10;
     const d = Math.floor(n / 10);
     return u === 0 ? dezenas[d] : dezenas[d] + ' e ' + unidades[u];
@@ -36,7 +34,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Lê os nomes e liga-os aos números corretos. Consegues encontrar todos os pares?";
+    return "Lê com atenção e liga cada número ao seu nome correto!";
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -45,18 +43,16 @@ function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
     container.innerHTML = `
-        <div class="tut-link-box">
-            <div class="tut-card">5</div>
-            <div class="tut-line"></div>
-            <div class="tut-card">cinco</div>
+        <div class="tut-container">
+            <div class="tut-item" style="border-color:#45cfa8">7</div>
             <div class="tut-hand">☝️</div>
+            <div class="tut-item" style="border-color:#45cfa8">sete</div>
         </div>
         <style>
-            .tut-link-box { display: flex; align-items: center; gap: 20px; position: relative; }
-            .tut-card { padding: 10px 20px; background: white; border: 2px solid #3b82f6; border-radius: 10px; font-weight: 900; color: #1e3a8a; }
-            .tut-line { width: 40px; height: 4px; background: #22c55e; border-radius: 2px; }
-            .tut-hand { position: absolute; font-size: 30px; animation: linkTap 3s infinite; }
-            @keyframes linkTap { 0%, 100% { transform: translate(10px, 20px); } 50% { transform: translate(80px, 20px); } }
+            .tut-container { display:flex; gap:30px; align-items:center; position:relative; }
+            .tut-item { padding:10px 20px; background:white; border:3px solid; border-radius:12px; font-weight:900; color:#2BA886; }
+            .tut-hand { position:absolute; font-size:35px; animation: moveH 3s infinite; z-index:5; }
+            @keyframes moveH { 0%, 100% { transform: translate(10px, 20px); } 50% { transform: translate(100px, 20px); } }
         </style>
     `;
 }
@@ -84,27 +80,19 @@ function iniciarCronometro() {
 function proximaRonda() {
     if (indicePergunta >= 10) { finalizarJogo(); return; }
     const config = JOGO_CATEGORIAS[categoriaAtual];
-    
     itemSelecionado = null;
     paresResolvidos = 0;
-    paresAtuais = [];
     
-    // Gerar números únicos para a ronda
     let numeros = new Set();
     while(numeros.size < config.paresPorRonda) {
         numeros.add(Math.floor(Math.random() * (config.max - config.min + 1)) + config.min);
     }
     
-    const arrNumeros = [...numeros];
-    const listaNumeros = arrNumeros.map(n => ({ val: n, txt: n.toString(), tipo: 'num' }));
-    const listaPalavras = arrNumeros.map(n => ({ val: n, txt: numeroParaExtenso(n), tipo: 'txt' }));
-
-    // Baralhar as listas separadamente
+    const arr = [...numeros];
     paresAtuais = {
-        numeros: listaNumeros.sort(() => Math.random() - 0.5),
-        palavras: listaPalavras.sort(() => Math.random() - 0.5)
+        numeros: arr.map(n => ({ val: n, txt: n.toString(), tipo: 'num' })).sort(() => Math.random() - 0.5),
+        palavras: arr.map(n => ({ val: n, txt: numeroParaExtenso(n), tipo: 'txt' })).sort(() => Math.random() - 0.5)
     };
-
     mostrarPergunta();
 }
 
@@ -118,52 +106,67 @@ function mostrarPergunta() {
             .game-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; justify-content:space-between; padding: 15px 10px; box-sizing: border-box; }
             
             .category-label {
-                background: #ffffff; color: #0369a1; padding: 8px 25px; border-radius: 20px; 
-                font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px;
-                border: 4px solid #0369a1; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+                background: #ffffff; color: #2BA886; padding: 10px 30px; border-radius: 40px; 
+                font-weight: 900; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;
+                border: 4px solid #2BA886; box-shadow: 0 6px 15px rgba(43,168,134,0.2); margin-bottom: 15px;
             }
 
-            .match-container {
-                flex: 1; width: 100%; max-width: 600px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; align-content: center;
+            .match-grid {
+                flex: 1; width: 100%; max-width: 700px; display: grid; grid-template-columns: 1fr 1.6fr; gap: 15px; align-content: center;
             }
 
-            .column { display: flex; flex-direction: column; gap: 12px; }
+            .match-column { display: flex; flex-direction: column; gap: 10px; }
 
-            .match-card {
-                background: white; border: 3px solid #e2e8f0; border-bottom: 6px solid #e2e8f0;
-                padding: clamp(10px, 3vh, 20px); border-radius: 18px; cursor: pointer;
+            .card-btn {
+                background: white; border: 3px solid #e2e8f0; border-bottom: 6px solid #cbd5e1;
+                padding: clamp(12px, 3vh, 22px); border-radius: 20px; cursor: pointer;
                 display: flex; align-items: center; justify-content: center;
-                text-align: center; font-weight: 900; color: #1e3a8a;
-                font-size: clamp(1.1rem, 4vw, 1.8rem); transition: all 0.2s;
-                user-select: none;
+                text-align: center; font-weight: 900; color: #2D3748;
+                font-size: clamp(1.1rem, 3.5vw, 1.7rem); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                animation: slideCard 0.4s backwards;
             }
 
-            .match-card.selected { border-color: #3b82f6; background: #eff6ff; transform: scale(1.05); }
-            .match-card.matched { border-color: #22c55e; border-bottom-width: 3px; background: #f0fdf4; color: #166534; cursor: default; opacity: 0.8; }
-            .match-card.error { animation: shakeError 0.4s; border-color: #ef4444; }
+            @keyframes slideCard { from { opacity:0; transform: translateX(-20px); } to { opacity:1; transform: translateX(0); } }
 
-            @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+            /* ESTADO: SELECIONADO */
+            .card-btn.selected { 
+                border-color: #45cfa8; background: #e8f9f4; color: #2BA886; 
+                transform: scale(1.03); box-shadow: 0 0 20px rgba(69,207,168,0.3);
+                border-bottom-width: 3px; margin-top: 3px;
+            }
+
+            /* ESTADO: CORRETO */
+            .card-btn.matched { 
+                background: #2BA886; border-color: #1f7a63; color: white; 
+                box-shadow: 0 4px 0 #1f7a63; cursor: default;
+                animation: bounceMatched 0.5s;
+            }
+            @keyframes bounceMatched { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+            /* ESTADO: ERRO */
+            .card-btn.error { border-color: #ff5e5e; background: #fff1f1; animation: shake 0.4s; }
+            @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
 
             @media (max-width: 480px) {
-                .match-container { gap: 10px; }
-                .match-card { padding: 12px 5px; font-size: 1rem; border-radius: 12px; }
+                .match-grid { gap: 10px; }
+                .card-btn { padding: 15px 8px; font-size: 1rem; border-radius: 15px; }
             }
         </style>
 
         <div class="game-wrapper">
             <div class="category-label">${config.nome}</div>
 
-            <div class="match-container">
-                <div class="column">
-                    ${paresAtuais.numeros.map(item => `
-                        <div class="match-card" data-val="${item.val}" data-tipo="${item.tipo}" onclick="tentarLigar(this)">
+            <div class="match-grid">
+                <div class="match-column">
+                    ${paresAtuais.numeros.map((item, i) => `
+                        <div class="card-btn" style="animation-delay: ${i*0.1}s" data-val="${item.val}" data-tipo="${item.tipo}" onclick="tentarMatch(this)">
                             ${item.txt}
                         </div>
                     `).join('')}
                 </div>
-                <div class="column">
-                    ${paresAtuais.palavras.map(item => `
-                        <div class="match-card" data-val="${item.val}" data-tipo="${item.tipo}" onclick="tentarLigar(this)">
+                <div class="match-column">
+                    ${paresAtuais.palavras.map((item, i) => `
+                        <div class="card-btn" style="animation-delay: ${(i+2)*0.1}s" data-val="${item.val}" data-tipo="${item.tipo}" onclick="tentarMatch(this)">
                             ${item.txt}
                         </div>
                     `).join('')}
@@ -173,20 +176,18 @@ function mostrarPergunta() {
     `;
 }
 
-function tentarLigar(el) {
+function tentarMatch(el) {
     if (el.classList.contains('matched') || el.classList.contains('selected')) return;
 
     const val = parseInt(el.getAttribute('data-val'));
     const tipo = el.getAttribute('data-tipo');
 
-    // Primeiro clique
     if (!itemSelecionado) {
         itemSelecionado = { val, tipo, el };
         el.classList.add('selected');
         return;
     }
 
-    // Segundo clique no mesmo tipo (ex: clicou em dois números) -> Troca a seleção
     if (itemSelecionado.tipo === tipo) {
         itemSelecionado.el.classList.remove('selected');
         itemSelecionado = { val, tipo, el };
@@ -194,7 +195,6 @@ function tentarLigar(el) {
         return;
     }
 
-    // Tentativa de Par
     if (itemSelecionado.val === val) {
         // ACERTO
         el.classList.add('matched');
@@ -203,9 +203,7 @@ function tentarLigar(el) {
         itemSelecionado = null;
         paresResolvidos++;
         
-        // Verifica se completou a ronda
-        const totalPares = JOGO_CATEGORIAS[categoriaAtual].paresPorRonda;
-        if (paresResolvidos === totalPares) {
+        if (paresResolvidos === JOGO_CATEGORIAS[categoriaAtual].paresPorRonda) {
             somAcerto.play();
             acertos++;
             document.getElementById('hits-val').innerText = acertos;
@@ -216,16 +214,13 @@ function tentarLigar(el) {
         somErro.play();
         erros++;
         document.getElementById('miss-val').innerText = erros;
-        
         el.classList.add('error');
         itemSelecionado.el.classList.add('error');
-        
-        const tempEl = itemSelecionado.el;
+        const prevEl = itemSelecionado.el;
         itemSelecionado = null;
-        
         setTimeout(() => {
             el.classList.remove('error', 'selected');
-            tempEl.classList.remove('error', 'selected');
+            prevEl.classList.remove('error', 'selected');
         }, 500);
     }
 }
@@ -238,22 +233,22 @@ function finalizarJogo() {
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px; object-fit:contain;">
-            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.8rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:110px; margin-bottom:15px; filter: drop-shadow(0 8px 15px rgba(43,168,134,0.3));">
+            <h2 style="color:#2BA886; font-weight:900; font-size:1.8rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
-                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0;">
-                    <span style="display:block; font-size:26px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span>
-                    <span style="font-size:11px; font-weight:800; color:#88a; text-transform:uppercase;">Acertos</span>
+                <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                    <span style="display:block; font-size:26px; font-weight:900; color:#2BA886;">${acertos}/10</span>
+                    <span style="font-size:10px; color:#88a; text-transform:uppercase; font-weight:800;">Acertos</span>
                 </div>
-                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0;">
-                    <span style="display:block; font-size:26px; font-weight:900; color:var(--primary-blue);">${tempoFinal}</span>
-                    <span style="font-size:11px; font-weight:800; color:#88a; text-transform:uppercase;">Tempo</span>
+                <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                    <span style="display:block; font-size:26px; font-weight:900; color:#2BA886;">${tempoFinal}</span>
+                    <span style="font-size:10px; color:#88a; text-transform:uppercase; font-weight:800;">Tempo</span>
                 </div>
             </div>
             <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:280px;">
-                <button style="padding:16px; border-radius:22px; font-weight:900; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark);" onclick="location.reload()">Jogar de Novo</button>
-                <button style="padding:14px; border-radius:22px; font-weight:900; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer; box-shadow:0 6px 0 var(--primary-blue);" onclick="openRDMenu()">Outro Nível</button>
-                <a href="${JOGO_CONFIG.linkVoltar}" style="padding:16px; border-radius:22px; font-weight:900; background:#dce4ee; color:#5d7082; border:none; text-align:center; text-decoration:none; box-shadow:0 6px 0 #b8c5d4;">Sair</a>
+                <button style="padding:18px; border-radius:22px; font-weight:900; background:#45cfa8; color:white; border:none; cursor:pointer; box-shadow:0 6px 0 #2BA886; text-transform:uppercase;" onclick="location.reload()">Jogar de Novo</button>
+                <button style="padding:15px; border-radius:22px; font-weight:900; background:white; color:#45cfa8; border:3px solid #45cfa8; cursor:pointer; box-shadow:0 6px 0 #45cfa8; text-transform:uppercase;" onclick="openRDMenu()">Outro Nível</button>
+                <a href="${JOGO_CONFIG.linkVoltar}" style="padding:18px; border-radius:22px; font-weight:900; background:#dce4ee; color:#5d7082; border:none; text-align:center; text-decoration:none; box-shadow:0 6px 0 #b8c5d4; text-transform:uppercase;">Sair</a>
             </div>
         </div>
     `;
