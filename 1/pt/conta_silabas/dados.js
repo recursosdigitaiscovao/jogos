@@ -47,7 +47,7 @@ const JOGO_CONFIG = {
                 { nome: "ARANHA", silabas: 3, img: "animaisselvagens/aranha.png" },
                 { nome: "BALEIA", silabas: 3, img: "animaisselvagens/baleia.png" },
                 { nome: "CANGURU", silabas: 3, img: "animaisselvagens/canguru.png" },
-                { nome: "CARANGUEIJO", silabas: 4, img: "animaisselvagens/carangueijo.png" },
+                { nome: "CARANGUEJO", silabas: 4, img: "animaisselvagens/carangueijo.png" },
                 { nome: "COALA", silabas: 3, img: "animaisselvagens/coala.png" },
                 { nome: "CROCODILO", silabas: 4, img: "animaisselvagens/crocodilo.png" },
                 { nome: "ELEFANTE", silabas: 4, img: "animaisselvagens/elefante.png" },
