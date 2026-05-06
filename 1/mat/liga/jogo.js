@@ -34,7 +34,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Consegues ligar todos os números? Clica no número e depois no seu nome!";
+    return "Lê os nomes dos números e liga-os corretamente!";
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -43,12 +43,12 @@ function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
     container.innerHTML = `
-        <div style="display:flex; gap:20px; align-items:center; position:relative;">
-            <div style="padding:10px 15px; background:white; border:3px solid #45cfa8; border-radius:12px; font-weight:900; color:#2BA886;">3</div>
-            <div id="tut-hand" style="position:absolute; font-size:35px; animation: moveLink 3s infinite; z-index:10;">☝️</div>
-            <div style="padding:10px 15px; background:white; border:3px solid #45cfa8; border-radius:12px; font-weight:900; color:#2BA886;">três</div>
+        <div style="display:flex; gap:15px; align-items:center; position:relative;">
+            <div style="padding:10px; background:white; border:3px solid #45cfa8; border-radius:10px; font-weight:900; color:#2BA886;">4</div>
+            <div id="tut-hand" style="position:absolute; font-size:35px; animation: moveTut 3s infinite; z-index:10;">☝️</div>
+            <div style="padding:10px; background:white; border:3px solid #45cfa8; border-radius:10px; font-weight:900; color:#2BA886;">quatro</div>
         </div>
-        <style> @keyframes moveLink { 0%, 100% { transform: translate(0, 15px); } 50% { transform: translate(60px, 15px); } } </style>
+        <style> @keyframes moveTut { 0%, 100% { transform: translate(0, 10px); } 50% { transform: translate(50px, 10px); } } </style>
     `;
 }
 
@@ -79,7 +79,8 @@ function proximaRonda() {
     paresResolvidos = 0;
     
     let numeros = new Set();
-    while(numeros.size < config.paresPorRonda) {
+    // FORÇADO A 4 PARES em todos os níveis
+    while(numeros.size < 4) {
         numeros.add(Math.floor(Math.random() * (config.max - config.min + 1)) + config.min);
     }
     
@@ -98,16 +99,23 @@ function mostrarPergunta() {
 
     container.innerHTML = `
         <style>
-            .game-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; justify-content:space-between; padding: 15px 10px; box-sizing: border-box; position: relative; }
+            .game-wrapper { 
+                display:flex; flex-direction:column; width:100%; height:100%; 
+                align-items:center; justify-content: flex-start; /* Alinhado ao topo */
+                padding: 10px 10px 5px; box-sizing: border-box; position: relative; 
+            }
             
             .category-label {
-                background: white; color: #2BA886; padding: 8px 25px; border-radius: 40px; 
-                font-weight: 900; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px;
-                border: 4px solid #2BA886; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 10px;
+                background: white; color: #2BA886; padding: 6px 20px; border-radius: 40px; 
+                font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.2px;
+                border: 3px solid #2BA886; box-shadow: 0 4px 10px rgba(43,168,134,0.15); 
+                margin-bottom: 5px; flex-shrink: 0;
             }
 
             .match-grid {
-                flex: 1; width: 100%; max-width: 650px; display: grid; grid-template-columns: 1fr 1.6fr; gap: 15px; align-content: center;
+                flex: 1; width: 100%; max-width: 600px; display: grid; 
+                grid-template-columns: 1fr 1.8fr; gap: 12px; 
+                align-items: center; align-content: center; /* Centraliza verticalmente o conteúdo interno */
             }
 
             .match-column { display: flex; flex-direction: column; gap: 10px; }
@@ -115,52 +123,43 @@ function mostrarPergunta() {
             .card-btn {
                 background: linear-gradient(145deg, #ffffff, #f0fdfa);
                 border: 2px solid #e2e8f0; border-bottom: 5px solid #cbd5e1;
-                padding: clamp(12px, 3vh, 22px); border-radius: 20px; cursor: pointer;
-                display: flex; align-items: center; justify-content: center; gap: 10px;
+                padding: clamp(10px, 2.5vh, 20px); border-radius: 18px; cursor: pointer;
+                display: flex; align-items: center; justify-content: center;
                 text-align: center; font-weight: 900; color: #334155;
-                font-size: clamp(1.1rem, 3.5vw, 1.6rem); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                position: relative; overflow: hidden;
+                font-size: clamp(1rem, 4vw, 1.5rem); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                position: relative;
             }
 
-            /* Efeito de brilho passar por cima */
-            .card-btn::after {
-                content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-                background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-                transform: rotate(45deg); transition: 0.5s; pointer-events: none;
-            }
-            .card-btn:hover::after { left: 100%; }
-
-            /* SELECIONADO */
+            /* ESTADO SELECIONADO */
             .card-btn.selected { 
                 border-color: #45cfa8; background: #e8f9f4; color: #2BA886; 
-                transform: scale(1.05); box-shadow: 0 10px 20px rgba(69,207,168,0.2);
+                transform: scale(1.04); box-shadow: 0 8px 15px rgba(69,207,168,0.2);
                 border-bottom-width: 3px;
             }
 
             /* ACERTO (CARIMBO VERDE CLARO) */
             .card-btn.matched { 
-                background: #d1fae5; border-color: #10b981; color: #065f46; 
-                box-shadow: 0 4px 0 #10b981; cursor: default;
+                background: #dcfce7 !important; border-color: #22c55e !important; color: #166534 !important; 
+                box-shadow: 0 3px 0 #22c55e !important; cursor: default;
                 animation: popSuccess 0.4s forwards;
             }
-            .card-btn.matched::before { content: "✅"; font-size: 1.2rem; }
 
-            @keyframes popSuccess { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+            @keyframes popSuccess { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
             /* ERRO */
             .card-btn.error { border-color: #ff5e5e; background: #fee2e2; animation: shake 0.4s; }
-            @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+            @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 
-            /* Partículas de acerto */
             .particle {
-                position: absolute; width: 8px; height: 8px; background: #45cfa8; border-radius: 50%;
-                pointer-events: none; z-index: 100; animation: particleOut 0.6s ease-out forwards;
+                position: absolute; width: 6px; height: 6px; background: #22c55e; border-radius: 50%;
+                pointer-events: none; z-index: 100; animation: pOut 0.6s ease-out forwards;
             }
-            @keyframes particleOut { from { transform: scale(1); opacity: 1; } to { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; } }
+            @keyframes pOut { from { transform: scale(1); opacity: 1; } to { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; } }
 
             @media (max-width: 480px) {
-                .match-grid { gap: 10px; }
-                .card-btn { padding: 15px 5px; font-size: 0.95rem; border-radius: 15px; border-bottom-width: 4px; }
+                .match-grid { gap: 8px; }
+                .card-btn { padding: 12px 5px; font-size: 0.95rem; border-radius: 12px; border-bottom-width: 4px; }
+                .game-wrapper { padding-top: 5px; }
             }
         </style>
 
@@ -189,15 +188,12 @@ function mostrarPergunta() {
 
 function criarParticulas(x, y) {
     const area = document.getElementById('game-area');
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 6; i++) {
         const p = document.createElement('div');
         p.className = 'particle';
-        const moveX = (Math.random() - 0.5) * 100;
-        const moveY = (Math.random() - 0.5) * 100;
-        p.style.setProperty('--x', `${moveX}px`);
-        p.style.setProperty('--y', `${moveY}px`);
-        p.style.left = `${x}px`;
-        p.style.top = `${y}px`;
+        p.style.setProperty('--x', `${(Math.random() - 0.5) * 80}px`);
+        p.style.setProperty('--y', `${(Math.random() - 0.5) * 80}px`);
+        p.style.left = `${x}px`; p.style.top = `${y}px`;
         area.appendChild(p);
         setTimeout(() => p.remove(), 600);
     }
@@ -224,10 +220,10 @@ function tentarMatch(el) {
 
     if (itemSelecionado.val === val) {
         // ACERTO
-        const rect1 = el.getBoundingClientRect();
-        const rect2 = itemSelecionado.el.getBoundingClientRect();
-        criarParticulas(rect1.left + rect1.width/2, rect1.top + rect1.height/2);
-        criarParticulas(rect2.left + rect2.width/2, rect2.top + rect2.height/2);
+        const r1 = el.getBoundingClientRect();
+        const r2 = itemSelecionado.el.getBoundingClientRect();
+        criarParticulas(r1.left + r1.width/2, r1.top + r1.height/2);
+        criarParticulas(r2.left + r2.width/2, r2.top + r2.height/2);
 
         el.classList.add('matched');
         itemSelecionado.el.classList.remove('selected');
@@ -235,7 +231,7 @@ function tentarMatch(el) {
         itemSelecionado = null;
         paresResolvidos++;
         
-        if (paresResolvidos === JOGO_CATEGORIAS[categoriaAtual].paresPorRonda) {
+        if (paresResolvidos === 4) { // Fixado em 4
             somAcerto.play();
             acertos++;
             document.getElementById('hits-val').innerText = acertos;
@@ -248,11 +244,11 @@ function tentarMatch(el) {
         document.getElementById('miss-val').innerText = erros;
         el.classList.add('error');
         itemSelecionado.el.classList.add('error');
-        const prevEl = itemSelecionado.el;
+        const prev = itemSelecionado.el;
         itemSelecionado = null;
         setTimeout(() => {
             el.classList.remove('error', 'selected');
-            prevEl.classList.remove('error', 'selected');
+            prev.classList.remove('error', 'selected');
         }, 500);
     }
 }
@@ -260,20 +256,20 @@ function tentarMatch(el) {
 function finalizarJogo() {
     clearInterval(intervaloTempo); somVitoria.play();
     const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
-    const tempoFinal = document.getElementById('timer-val').innerText;
+    const tempo = document.getElementById('timer-val').innerText;
     const resScreen = document.getElementById('scr-result');
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:110px; margin-bottom:15px;">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px;">
             <h2 style="color:#2BA886; font-weight:900; font-size:1.8rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
-                <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4;">
                     <span style="display:block; font-size:26px; font-weight:900; color:#2BA886;">${acertos}/10</span>
                     <span style="font-size:10px; color:#88a; text-transform:uppercase; font-weight:800;">Acertos</span>
                 </div>
-                <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-                    <span style="display:block; font-size:26px; font-weight:900; color:#2BA886;">${tempoFinal}</span>
+                <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4;">
+                    <span style="display:block; font-size:26px; font-weight:900; color:#2BA886;">${tempo}</span>
                     <span style="font-size:10px; color:#88a; text-transform:uppercase; font-weight:800;">Tempo</span>
                 </div>
             </div>
