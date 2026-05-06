@@ -79,7 +79,7 @@ function proximaRonda() {
     paresResolvidos = 0;
     
     let numeros = new Set();
-    while(numeros.size < 4) { // Fixado em 4 pares
+    while(numeros.size < 4) { 
         numeros.add(Math.floor(Math.random() * (config.max - config.min + 1)) + config.min);
     }
     
@@ -99,78 +99,87 @@ function mostrarPergunta() {
     container.innerHTML = `
         <style>
             .game-wrapper { 
-                display:flex; flex-direction:column; width:100%; height:100%; 
-                align-items:center; justify-content: flex-start;
-                padding: 10px 10px 15px; box-sizing: border-box; position: relative; 
+                display: flex; flex-direction: column; 
+                width: 100%; height: 100%; 
+                padding: 10px; box-sizing: border-box; 
+                align-items: center;
             }
             
             .category-label {
-                background: white; color: #2BA886; padding: 8px 25px; border-radius: 40px; 
-                font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.2px;
-                border: 3px solid #2BA886; box-shadow: 0 4px 10px rgba(43,168,134,0.15); 
-                margin-bottom: 10px; flex-shrink: 0;
+                background: white; color: #2BA886; padding: 10px 30px; border-radius: 40px; 
+                font-weight: 900; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px;
+                border: 4px solid #2BA886; box-shadow: 0 6px 15px rgba(43,168,134,0.15); 
+                margin-bottom: 20px; flex-shrink: 0;
             }
 
-            .match-grid {
-                flex: 1; width: 100%; max-width: 650px; display: grid; 
-                grid-template-columns: 1fr 1.8fr; 
-                gap: 25px; /* MAIOR ESPAÇO ENTRE AS DUAS COLUNAS */
-                align-items: center; align-content: center;
+            /* ÁREA DE JOGO QUE OCUPA O ESPAÇO DISPONÍVEL */
+            .match-area {
+                flex: 1; /* Isto faz com que a grelha ocupe todo o resto da altura */
+                width: 100%;
+                max-width: 700px;
+                display: grid;
+                grid-template-columns: 1fr 1.8fr;
+                gap: 20px;
+                padding-bottom: 10px;
             }
 
-            .match-column { 
-                display: flex; flex-direction: column; 
-                gap: 15px; /* MAIOR ESPAÇO VERTICAL ENTRE CARTÕES */
+            .match-column {
+                display: flex;
+                flex-direction: column;
+                height: 100%; /* Coluna ocupa altura total da match-area */
+                gap: 15px;
             }
 
             .card-btn {
+                flex: 1; /* Cartão estica para dividir o espaço igualmente com os outros 3 */
                 background: linear-gradient(145deg, #ffffff, #f0fdfa);
-                border: 2px solid #e2e8f0; border-bottom: 5px solid #cbd5e1;
-                padding: clamp(12px, 3vh, 25px); /* MAIOR PADDING INTERNO */
+                border: 2px solid #e2e8f0; border-bottom: 6px solid #cbd5e1;
                 border-radius: 20px; cursor: pointer;
                 display: flex; align-items: center; justify-content: center;
                 text-align: center; font-weight: 900; color: #334155;
-                font-size: clamp(1.1rem, 4vw, 1.6rem); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                position: relative;
+                font-size: clamp(1.2rem, 5vw, 1.8rem); 
+                transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                padding: 10px;
+                box-sizing: border-box;
             }
 
-            /* ESTADO SELECIONADO */
+            /* SELECIONADO */
             .card-btn.selected { 
                 border-color: #45cfa8; background: #e8f9f4; color: #2BA886; 
-                transform: scale(1.05); box-shadow: 0 10px 20px rgba(69,207,168,0.25);
-                border-bottom-width: 3px; margin-top: 2px;
+                transform: scale(1.04); box-shadow: 0 10px 20px rgba(69,207,168,0.25);
+                border-bottom-width: 3px;
             }
 
-            /* ACERTO (CARIMBO VERDE CLARO) */
+            /* ACERTO */
             .card-btn.matched { 
                 background: #dcfce7 !important; border-color: #22c55e !important; color: #166534 !important; 
                 box-shadow: 0 3px 0 #22c55e !important; cursor: default;
-                animation: popSuccess 0.4s forwards; transform: scale(0.98);
+                animation: popSuccess 0.4s forwards;
             }
 
-            @keyframes popSuccess { 0% { transform: scale(0.98); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+            @keyframes popSuccess { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
+            @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
 
-            /* ERRO */
             .card-btn.error { border-color: #ff5e5e; background: #fee2e2; animation: shake 0.4s; }
-            @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 
             .particle {
-                position: absolute; width: 7px; height: 7px; background: #22c55e; border-radius: 50%;
+                position: absolute; width: 8px; height: 8px; background: #22c55e; border-radius: 50%;
                 pointer-events: none; z-index: 100; animation: pOut 0.7s ease-out forwards;
             }
             @keyframes pOut { from { transform: scale(1); opacity: 1; } to { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; } }
 
             @media (max-width: 480px) {
-                .match-grid { gap: 15px; } /* Ajuste mobile */
-                .match-column { gap: 12px; }
-                .card-btn { padding: 15px 5px; font-size: 1rem; border-radius: 15px; }
+                .match-area { gap: 12px; }
+                .match-column { gap: 10px; }
+                .card-btn { border-radius: 15px; font-size: 1rem; border-bottom-width: 4px; }
+                .category-label { margin-bottom: 10px; padding: 8px 20px; }
             }
         </style>
 
         <div class="game-wrapper" id="game-area">
             <div class="category-label">${config.nome}</div>
 
-            <div class="match-grid">
+            <div class="match-area">
                 <div class="match-column">
                     ${paresAtuais.numeros.map(item => `
                         <div class="card-btn" data-val="${item.val}" data-tipo="${item.tipo}" onclick="tentarMatch(this)">
@@ -195,8 +204,8 @@ function criarParticulas(x, y) {
     for (let i = 0; i < 8; i++) {
         const p = document.createElement('div');
         p.className = 'particle';
-        p.style.setProperty('--x', `${(Math.random() - 0.5) * 100}px`);
-        p.style.setProperty('--y', `${(Math.random() - 0.5) * 100}px`);
+        p.style.setProperty('--x', `${(Math.random() - 0.5) * 120}px`);
+        p.style.setProperty('--y', `${(Math.random() - 0.5) * 120}px`);
         p.style.left = `${x}px`; p.style.top = `${y}px`;
         area.appendChild(p);
         setTimeout(() => p.remove(), 700);
@@ -265,7 +274,7 @@ function finalizarJogo() {
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:110px; margin-bottom:15px; filter: drop-shadow(0 8px 15px rgba(43,168,134,0.3));">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px; filter: drop-shadow(0 8px 15px rgba(43,168,134,0.3));">
             <h2 style="color:#2BA886; font-weight:900; font-size:1.8rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
                 <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4;">
