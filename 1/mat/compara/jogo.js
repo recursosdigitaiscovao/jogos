@@ -21,7 +21,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Compara a quantidade de animais e escolhe o sinal correto!";
+    return "Compara a quantidade de animais e coloca o sinal correto na cerca!";
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -31,13 +31,15 @@ function criarAnimacaoTutorial() {
     if (!container) return;
     container.innerHTML = `
         <div class="tut-wrapper" style="display:flex; flex-direction:column; align-items:center; gap:10px;">
-            <h2 style="color:#15803d; font-weight:900; margin:0;">COMO JOGAR</h2>
-            <div style="display:flex; align-items:center; gap:10px; background:white; padding:15px; border-radius:20px; border:3px solid #45cfa8;">
-               <span style="font-size:1.5rem;">🐥🐥</span> <b style="font-size:2rem; color:#ef4444;">></b> <span style="font-size:1.5rem;">🐥</span>
+            <h2 style="color:#15803d; font-weight:900; margin:0; letter-spacing:1px;">COMO JOGAR</h2>
+            <div style="display:flex; align-items:center; gap:15px; background:white; padding:20px; border-radius:20px; border:4px solid #22c55e; box-shadow:0 8px 20px rgba(0,0,0,0.1);">
+               <span style="font-size:1.8rem;">🐥🐥</span> 
+               <b style="font-size:2.5rem; color:#ef4444; margin:0 10px;">></b> 
+               <span style="font-size:1.8rem;">🐥</span>
             </div>
-            <div id="tut-hand" style="font-size:35px; animation: tapH 2s infinite;">☝️</div>
+            <div id="tut-hand" style="font-size:40px; animation: tapH 2s infinite; margin-top:10px;">☝️</div>
         </div>
-        <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-10px); } } </style>
+        <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-15px); } } </style>
     `;
 }
 
@@ -87,90 +89,113 @@ function mostrarPergunta() {
                 align-items: center; justify-content: space-between; 
                 padding: 10px 5px; box-sizing: border-box;
                 background: linear-gradient(to bottom, #87CEEB 0%, #E0F2F1 100%);
-                position: relative; overflow: hidden;
+                position: relative; overflow: hidden; border-radius: 20px;
             }
 
-            .cloud-decor { position: absolute; opacity: 0.6; pointer-events: none; z-index: 1; animation: floatCloud 25s linear infinite; }
-            @keyframes floatCloud { from { left: -100px; } to { left: 110%; } }
+            /* NUVENS PASSANDO */
+            .cloud-anim { 
+                position: absolute; pointer-events: none; z-index: 1; 
+                animation: moveClouds 30s linear infinite; opacity: 0.7;
+            }
+            @keyframes moveClouds { 
+                from { transform: translateX(-150px); left: -10%; } 
+                to { transform: translateX(150px); left: 110%; } 
+            }
+
+            /* RELVA NO FUNDO */
+            .farm-grass {
+                position: absolute; bottom: 0; left: 0; width: 100%; height: 70px;
+                background: #4ade80; border-radius: 50% 50% 0 0 / 20px 20px 0 0;
+                z-index: 2;
+            }
 
             .comparison-container {
                 flex: 1; width: 100%; max-width: 900px;
                 display: grid; 
-                grid-template-columns: 1fr 60px 1fr; /* Lado a lado sempre */
+                grid-template-columns: 1fr 70px 1fr; 
                 align-items: center; gap: 8px; z-index: 5;
+                margin-top: 10px;
             }
 
             .animal-box {
-                height: 100%; background: rgba(255, 255, 255, 0.4);
-                border-radius: 20px; border: 2px dashed #ffffff;
+                height: 100%; min-height: 140px;
+                background: rgba(255, 255, 255, 0.45);
+                border: 3px solid white; border-radius: 25px;
                 display: flex; flex-wrap: wrap; justify-content: center;
-                align-content: center; gap: 4px; padding: 10px;
-                backdrop-filter: blur(2px);
+                align-content: center; gap: 4px; padding: 12px;
+                backdrop-filter: blur(4px); box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
             }
 
             .animal-img {
-                width: calc(33% - 6px); max-width: 45px; height: auto;
+                width: calc(33% - 6px); max-width: 48px; height: auto;
                 aspect-ratio: 1/1; object-fit: contain;
-                animation: popIn 0.3s forwards;
+                animation: popAnimal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             }
-            @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+            @keyframes popAnimal { from { transform: scale(0); } to { transform: scale(1); } }
 
             .slot-center {
-                font-size: clamp(2rem, 8vw, 3.5rem); font-weight: 950;
-                color: #15803d; text-align: center; background: white;
-                height: 55px; width: 55px; display: flex; align-items: center;
-                justify-content: center; border-radius: 12px;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 2px solid #ffffff;
+                font-size: clamp(2.2rem, 8vw, 3.5rem); font-weight: 950;
+                color: #15803d; text-align: center; background: rgba(255,255,255,0.9);
+                height: 65px; width: 65px; display: flex; align-items: center;
+                justify-content: center; border-radius: 18px;
+                box-shadow: 0 6px 15px rgba(0,0,0,0.15); border: 3px dashed #15803d;
+                flex-shrink: 0;
             }
 
             .options-row { 
-                display: flex; justify-content: center; gap: 12px; 
-                width: 100%; max-width: 500px; padding: 15px 0; z-index: 10;
+                display: flex; justify-content: center; gap: 15px; 
+                width: 100%; max-width: 500px; padding: 20px 0; z-index: 10;
             }
             
             .btn-symbol { 
-                flex: 1; background: white; border: 4px solid #e2e8f0; border-radius: 20px; 
-                height: 75px; font-size: 2.5rem; font-weight: 900; cursor: pointer; 
-                box-shadow: 0 6px 0 #cbd5e1; color: #15803d; transition: 0.1s;
+                flex: 1; background: white; border: 4px solid #e2e8f0; border-radius: 22px; 
+                height: 80px; font-size: 2.8rem; font-weight: 900; cursor: pointer; 
+                box-shadow: 0 8px 0 #cbd5e1; color: #15803d; transition: 0.1s;
                 display: flex; align-items: center; justify-content: center;
             }
-            .btn-symbol:active { transform: translateY(4px); box-shadow: 0 0 0 #cbd5e1; }
+            .btn-symbol:active { transform: translateY(4px); box-shadow: 0 2px 0 #cbd5e1; }
+            
             .btn-symbol.correct { background: #dcfce7; border-color: #22c55e; color: #166534; box-shadow: 0 4px 0 #166534; }
             .btn-symbol.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; box-shadow: 0 4px 0 #991b1b; }
 
             @media (max-width: 450px) {
-                .slot-center { width: 45px; height: 45px; font-size: 1.8rem; }
-                .animal-img { width: calc(50% - 4px); max-width: 35px; } 
-                .btn-symbol { height: 65px; font-size: 2rem; }
+                .slot-center { width: 50px; height: 50px; font-size: 2rem; border-radius: 12px; }
+                .animal-img { width: calc(50% - 4px); max-width: 38px; } 
+                .btn-symbol { height: 70px; font-size: 2.2rem; }
+                .farm-grass { height: 50px; }
             }
         </style>
 
         <div class="game-wrapper">
-            <img src="${pathNuvem}" class="cloud-decor" style="top:10%; width:80px; animation-delay:0s;">
-            <img src="${pathNuvem}" class="cloud-decor" style="top:25%; width:60px; animation-delay:-10s;">
+            <!-- NUVENS -->
+            <img src="${pathNuvem}" class="cloud-anim" style="top:5%; width:100px; animation-duration: 25s;">
+            <img src="${pathNuvem}" class="cloud-anim" style="top:20%; width:70px; animation-duration: 35s; animation-delay: -5s;">
+            
+            <!-- RELVA -->
+            <div class="farm-grass"></div>
 
             <div class="comparison-container">
                 <div class="animal-box">
-                    ${Array(numEsquerda).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img" style="animation-delay:${i*0.02}s">`).join('')}
+                    ${Array(numEsquerda).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img" style="animation-delay:${i*0.03}s">`).join('')}
                 </div>
 
                 <div class="slot-center" id="main-slot">?</div>
 
                 <div class="animal-box">
-                    ${Array(numDireita).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img" style="animation-delay:${i*0.02}s">`).join('')}
+                    ${Array(numDireita).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img" style="animation-delay:${i*0.03}s">`).join('')}
                 </div>
             </div>
             
             <div class="options-row">
-                <button class="btn-symbol" onclick="verificar(this, '<')"><</button>
-                <button class="btn-symbol" onclick="verificar(this, '=')">=</button>
-                <button class="btn-symbol" onclick="verificar(this, '>')">></button>
+                <button class="btn-symbol" onclick="verificarComparacao(this, '<')"><</button>
+                <button class="btn-symbol" onclick="verificarComparacao(this, '=')">=</button>
+                <button class="btn-symbol" onclick="verificarComparacao(this, '>')">></button>
             </div>
         </div>
     `;
 }
 
-function verificar(btn, escolha) {
+function verificarComparacao(btn, escolha) {
     const btns = document.querySelectorAll('.btn-symbol');
     btns.forEach(b => b.style.pointerEvents = 'none');
 
@@ -184,11 +209,13 @@ function verificar(btn, escolha) {
         somAcerto.play();
         btn.classList.add('correct');
         slot.innerText = correto;
-        slot.style.color = "#22c55e";
-        slot.style.borderColor = "#22c55e";
+        slot.style.color = "white";
+        slot.style.background = "#22c55e";
+        slot.style.borderStyle = "solid";
+        slot.style.borderColor = "#16a34a";
         acertos++;
         document.getElementById('hits-val').innerText = acertos;
-        setTimeout(() => { indicePergunta++; proximaRonda(); }, 1300);
+        setTimeout(() => { indicePergunta++; proximaRonda(); }, 1400);
     } else {
         somErro.play();
         btn.classList.add('wrong');
@@ -196,8 +223,9 @@ function verificar(btn, escolha) {
         document.getElementById('miss-val').innerText = erros;
         slot.innerText = correto;
         slot.style.color = "#ef4444";
+        slot.style.background = "#fee2e2";
         btns.forEach(b => { if (b.innerText === correto) b.classList.add('correct'); });
-        setTimeout(() => { indicePergunta++; proximaRonda(); }, 1700);
+        setTimeout(() => { indicePergunta++; proximaRonda(); }, 1800);
     }
 }
 
