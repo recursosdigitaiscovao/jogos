@@ -93,22 +93,21 @@ function mostrarPergunta() {
 
     container.innerHTML = `
         <style>
-            .game-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-between; padding: 10px 5px; box-sizing: border-box; }
-            
-            .category-label {
-                background: #ffffff; color: #0369a1; padding: 8px 25px; border-radius: 20px; 
-                font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px;
-                border: 4px solid #0369a1; margin-top: 5px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            .game-wrapper { 
+                display: flex; flex-direction: column; 
+                width: 100%; height: 100%; 
+                align-items: center; justify-content: space-between; 
+                padding: 10px 5px; box-sizing: border-box; 
             }
 
-            /* CONTAINER DE COMPARAÇÃO LADO A LADO */
+            /* CONTAINER DE COMPARAÇÃO - OCUPA TODO O ESPAÇO CENTRAL */
             .comparison-container {
-                flex: 1; width: 100%; max-width: 800px;
+                flex: 1; width: 100%; max-width: 900px;
                 display: grid;
-                grid-template-columns: 1fr 60px 1fr; /* 3 colunas fixas: Esq, Sinal, Dir */
+                grid-template-columns: 1fr 65px 1fr; 
                 align-items: center;
-                gap: 5px;
-                padding: 10px 0;
+                gap: 8px;
+                margin-bottom: 10px;
             }
 
             .fruit-zone {
@@ -120,14 +119,13 @@ function mostrarPergunta() {
                 flex-wrap: wrap;
                 align-content: center;
                 justify-content: center;
-                gap: 4px;
-                padding: 8px;
+                gap: 5px;
+                padding: 10px;
             }
 
             .fruit-img {
-                /* Tamanho adaptável para caber até 20 */
-                width: calc(33% - 6px); 
-                max-width: 40px; 
+                width: calc(33% - 8px); 
+                max-width: 50px; 
                 height: auto;
                 aspect-ratio: 1/1;
                 object-fit: contain;
@@ -137,7 +135,7 @@ function mostrarPergunta() {
             @keyframes popFruit { from { transform: scale(0); } to { transform: scale(1); } }
 
             .sign-spot {
-                font-size: clamp(2rem, 8vw, 3.5rem);
+                font-size: clamp(2.2rem, 9vw, 4rem);
                 font-weight: 950;
                 color: #0369a1;
                 text-align: center;
@@ -148,35 +146,35 @@ function mostrarPergunta() {
                 align-items: center;
                 justify-content: center;
                 border-radius: 50%;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.12);
                 border: 3px solid #e2e8f0;
+                flex-shrink: 0;
             }
 
             .options-row { 
-                display: flex; justify-content: center; gap: 12px; width: 100%; 
-                max-width: 450px; padding-bottom: 20px; 
+                display: flex; justify-content: center; gap: 15px; width: 100%; 
+                max-width: 500px; padding-bottom: 15px; flex-shrink: 0;
             }
             
             .opt-btn { 
-                flex: 1; background: white; border: 4px solid #cbd5e1; border-radius: 18px; 
-                height: 70px; font-size: 2.2rem; font-weight: 900; cursor: pointer; 
-                box-shadow: 0 5px 0 #cbd5e1; color: #1e293b; transition: 0.1s;
+                flex: 1; background: white; border: 4px solid #cbd5e1; border-radius: 20px; 
+                height: 75px; font-size: 2.5rem; font-weight: 900; cursor: pointer; 
+                box-shadow: 0 6px 0 #cbd5e1; color: #1e293b; transition: 0.1s;
                 display: flex; align-items: center; justify-content: center;
             }
             .opt-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #cbd5e1; }
             .opt-btn.correct { background: #dcfce7; border-color: #22c55e; color: #166534; box-shadow: 0 4px 0 #166534; }
             .opt-btn.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; box-shadow: 0 4px 0 #991b1b; }
 
-            @media (max-width: 400px) {
-                .sign-spot { width: 45px; height: 45px; font-size: 1.8rem; }
-                .comparison-container { grid-template-columns: 1fr 45px 1fr; }
-                .fruit-img { width: calc(50% - 4px); } /* 2 por linha em ecrãs minúsculos */
+            @media (max-width: 450px) {
+                .sign-spot { width: 50px; height: 50px; font-size: 2rem; }
+                .comparison-container { grid-template-columns: 1fr 50px 1fr; gap: 5px; }
+                .fruit-img { width: calc(50% - 6px); max-width: 35px; } 
+                .opt-btn { height: 65px; font-size: 2rem; }
             }
         </style>
 
         <div class="game-wrapper">
-            <div class="category-label">${config.nome}</div>
-
             <div class="comparison-container">
                 <!-- LADO ESQUERDO -->
                 <div class="fruit-zone">
@@ -226,7 +224,6 @@ function validar(btn, escolha) {
         erros++;
         document.getElementById('miss-val').innerText = erros;
         
-        // Mostrar o correto no círculo central
         displaySign.innerText = correto;
         displaySign.style.color = "#ef4444";
 
@@ -243,14 +240,14 @@ function finalizarJogo() {
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px;">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px; filter: drop-shadow(0 8px 15px rgba(43,168,134,0.3));">
             <h2 style="color:#2BA886; font-weight:900; font-size:1.8rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
-                <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4;">
+                <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
                     <span style="display:block; font-size:26px; font-weight:900; color:#2BA886;">${acertos}/10</span>
                     <span style="font-size:10px; color:#88a; text-transform:uppercase; font-weight:800;">Acertos</span>
                 </div>
-                <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4;">
+                <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
                     <span style="display:block; font-size:26px; font-weight:900; color:#2BA886;">${tempo}</span>
                     <span style="font-size:10px; color:#88a; text-transform:uppercase; font-weight:800;">Tempo</span>
                 </div>
