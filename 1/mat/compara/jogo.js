@@ -82,10 +82,6 @@ function mostrarPergunta() {
     const pathAnimais = JOGO_CONFIG.caminhoImg + config.pasta;
     const pathNuvem = JOGO_CONFIG.caminhoImg + "nuvem.png";
 
-    // Lógica de tamanho: se houver poucos, ficam maiores.
-    let sizeClass = numEsquerda > 6 || numDireita > 6 ? 'small-img' : 'big-img';
-    if (config.maxNum > 10) sizeClass = 'mini-img';
-
     container.innerHTML = `
         <style>
             .game-wrapper { 
@@ -96,45 +92,43 @@ function mostrarPergunta() {
                 position: relative; overflow: hidden; border-radius: 20px;
             }
 
-            .cloud-anim { position: absolute; opacity: 0.6; pointer-events: none; z-index: 1; animation: moveClouds 40s linear infinite; width: 120px; }
+            .cloud-anim { position: absolute; opacity: 0.6; pointer-events: none; z-index: 1; animation: moveClouds 45s linear infinite; width: 140px; }
             @keyframes moveClouds { from { left: -150px; } to { left: 110%; } }
 
             .farm-grass { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: #4ade80; border-radius: 50% 50% 0 0 / 20px 20px 0 0; z-index: 2; }
 
             .comparison-container {
-                flex: 1; width: 100%; max-width: 1000px;
-                display: flex; align-items: stretch; justify-content: center;
-                gap: 8px; z-index: 5; margin: 5px 0;
+                flex: 1; width: 100%; max-width: 1100px;
+                display: grid; grid-template-columns: 1fr 70px 1fr; 
+                align-items: stretch; justify-items: center;
+                gap: 10px; z-index: 5; margin: 10px 0;
             }
 
             .animal-box {
-                flex: 1; 
-                background: rgba(255, 255, 255, 0.5);
+                width: 100%; height: 100%;
+                background: rgba(255, 255, 255, 0.45);
                 border: 3px solid white; border-radius: 25px;
-                display: flex; flex-wrap: wrap; justify-content: center;
-                align-content: center; gap: 4px; padding: 10px;
+                display: grid;
+                /* PADRÃO DESKTOP: 4 colunas */
+                grid-template-columns: repeat(4, 1fr);
+                grid-auto-rows: min-content;
+                gap: 8px; padding: 15px;
                 backdrop-filter: blur(4px); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
-                min-width: 0;
+                overflow-y: auto; /* Caso haja muitos animais em ecrãs pequenos */
             }
 
-            /* TAMANHOS AJUSTÁVEIS */
             .animal-img {
-                height: auto; aspect-ratio: 1/1; object-fit: contain;
+                width: 100%; height: auto; aspect-ratio: 1/1; object-fit: contain;
                 animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             }
-            .big-img { width: 42%; }
-            .small-img { width: 28%; }
-            .mini-img { width: 22%; }
 
             @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
             .sign-slot {
-                width: clamp(55px, 10vw, 85px); 
-                align-self: center;
-                height: clamp(55px, 10vw, 85px);
-                background: white; border: 3px dashed #15803d; border-radius: 20px;
+                width: 65px; height: 65px; align-self: center;
+                background: white; border: 3px dashed #15803d; border-radius: 15px;
                 display: flex; align-items: center; justify-content: center;
-                font-size: clamp(2.2rem, 7vw, 3.8rem); font-weight: 950; color: #15803d;
+                font-size: 3rem; font-weight: 950; color: #15803d;
                 box-shadow: 0 8px 20px rgba(0,0,0,0.15); flex-shrink: 0;
             }
 
@@ -145,40 +139,44 @@ function mostrarPergunta() {
             
             .btn-symbol { 
                 flex: 1; background: white; border: 4px solid #e2e8f0; border-radius: 20px; 
-                height: clamp(70px, 12vh, 90px); font-size: 2.8rem; font-weight: 900; cursor: pointer; 
-                box-shadow: 0 6px 0 #cbd5e1; color: #15803d; transition: 0.1s;
+                height: 80px; font-size: 3rem; font-weight: 900; cursor: pointer; 
+                box-shadow: 0 8px 0 #cbd5e1; color: #15803d; transition: 0.1s;
                 display: flex; align-items: center; justify-content: center;
             }
             .btn-symbol:active { transform: translateY(4px); box-shadow: 0 2px 0 #cbd5e1; }
             .btn-symbol.correct { background: #dcfce7; border-color: #22c55e; color: #166534; box-shadow: 0 4px 0 #166534; }
             .btn-symbol.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; box-shadow: 0 4px 0 #991b1b; }
 
-            @media (max-width: 500px) {
-                .game-wrapper { padding: 5px; }
-                .comparison-container { gap: 4px; }
-                .animal-box { padding: 6px; border-radius: 15px; gap: 2px; }
-                .big-img { width: 45%; }
-                .small-img { width: 30%; }
-                .mini-img { width: 23%; }
-                .sign-slot { border-radius: 12px; }
-                .btn-symbol { height: 75px; font-size: 2.2rem; }
+            /* AJUSTE PARA ECRÃS VERTICAIS / MOBILE */
+            @media (max-width: 600px) {
+                .comparison-container { grid-template-columns: 1fr 55px 1fr; gap: 5px; }
+                
+                .animal-box { 
+                    /* FORÇA APENAS 2 COLUNAS PARA OS ANIMAIS FICAREM GRANDES */
+                    grid-template-columns: repeat(2, 1fr); 
+                    padding: 8px; 
+                    gap: 10px;
+                }
+                
+                .sign-slot { width: 50px; height: 50px; font-size: 2rem; }
+                .btn-symbol { height: 70px; font-size: 2.2rem; }
             }
         </style>
 
         <div class="game-wrapper">
             <img src="${pathNuvem}" class="cloud-anim" style="top:5%; animation-delay: 0s;">
-            <img src="${pathNuvem}" class="cloud-anim" style="top:18%; animation-delay: -10s; width:80px;">
+            <img src="${pathNuvem}" class="cloud-anim" style="top:18%; animation-delay: -15s; width:90px;">
             <div class="farm-grass"></div>
 
             <div class="comparison-container">
                 <div class="animal-box">
-                    ${Array(numEsquerda).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img ${sizeClass}" style="animation-delay:${i*0.02}s">`).join('')}
+                    ${Array(numEsquerda).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img" style="animation-delay:${i*0.02}s">`).join('')}
                 </div>
 
                 <div class="sign-slot" id="main-slot">?</div>
 
                 <div class="animal-box">
-                    ${Array(numDireita).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img ${sizeClass}" style="animation-delay:${i*0.02}s">`).join('')}
+                    ${Array(numDireita).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img" style="animation-delay:${i*0.02}s">`).join('')}
                 </div>
             </div>
             
