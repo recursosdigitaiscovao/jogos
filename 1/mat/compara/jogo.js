@@ -21,7 +21,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Qual lado tem mais animais? Escolhe o sinal correto!";
+    return "Qual lado tem mais animais? Escolhe o sinal correto para a cerca!";
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -34,9 +34,9 @@ function criarAnimacaoTutorial() {
     container.innerHTML = `
         <div class="tut-wrapper" style="display:flex; flex-direction:column; align-items:center; gap:10px;">
             <h2 style="color:#15803d; font-weight:900; margin:0;">COMO JOGAR</h2>
-            <div style="display:flex; align-items:center; gap:10px; background:white; padding:15px; border-radius:20px; border:4px solid #22c55e;">
+            <div style="display:flex; align-items:center; gap:15px; background:white; padding:20px; border-radius:20px; border:4px solid #22c55e;">
                <img src="${pathTut}" style="width:40px;">
-               <b style="font-size:2rem; color:#ef4444;">></b> 
+               <b style="font-size:2rem; color:#ef4444; margin:0 10px;">></b> 
                <img src="${pathTut}" style="width:25px; opacity:0.5;">
             </div>
             <div id="tut-hand" style="font-size:40px; animation: tapH 2s infinite;">☝️</div>
@@ -82,10 +82,13 @@ function mostrarPergunta() {
     const pathAnimais = JOGO_CONFIG.caminhoImg + config.pasta;
     const pathNuvem = JOGO_CONFIG.caminhoImg + "nuvem.png";
 
-    // Lógica de redução de tamanho para mobile (2 colunas)
-    // Se tivermos 20 animais em 2 colunas = 10 linhas. 
-    // Cada animal deve ter no máximo uns 8% da altura disponível.
-    const mobileImgSize = numEsquerda > 12 || numDireita > 12 ? '6.5vh' : (numEsquerda > 6 || numDireita > 6 ? '8vh' : '12vh');
+    // Cálculo dinâmico para evitar SCROLL e transbordo
+    // No mobile (2 colunas), se tivermos 20 animais, são 10 linhas.
+    // Cada linha pode ter no máximo 9% da altura da caixa.
+    const maiorQuantidade = Math.max(numEsquerda, numDireita);
+    let animalMaxHeight = "18%"; // Padrão para poucos animais
+    if (maiorQuantidade > 14) animalMaxHeight = "9%";
+    else if (maiorQuantidade > 8) animalMaxHeight = "13%";
 
     container.innerHTML = `
         <style>
@@ -104,12 +107,12 @@ function mostrarPergunta() {
 
             .comparison-container {
                 flex: 1; width: 100%; max-width: 1200px;
-                display: flex; align-items: center; justify-content: center;
-                gap: 8px; z-index: 5; margin: 5px 0; min-height: 0; /* Essencial para não transbordar */
+                display: flex; align-items: stretch; justify-content: center;
+                gap: 8px; z-index: 5; margin: 5px 0; min-height: 0;
             }
 
             .animal-box {
-                flex: 1; height: 100%; max-height: 100%;
+                flex: 1; height: 100%;
                 background: rgba(255, 255, 255, 0.45);
                 border: 3px solid white; border-radius: 25px;
                 display: grid;
@@ -117,13 +120,13 @@ function mostrarPergunta() {
                 align-content: center; justify-items: center;
                 gap: 4px; padding: 10px;
                 backdrop-filter: blur(4px); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
-                min-width: 0; overflow: hidden;
+                min-width: 0; overflow: hidden; /* BLOQUEIA SCROLL */
             }
 
             .animal-img {
                 width: auto; height: auto;
                 max-width: 90%; 
-                max-height: 15vh; /* Limita a altura no PC */
+                max-height: 18%; /* No PC garantimos que cabem 5 linhas */
                 aspect-ratio: 1/1; object-fit: contain;
                 animation: popIn 0.4s forwards;
             }
@@ -136,6 +139,7 @@ function mostrarPergunta() {
                 display: flex; align-items: center; justify-content: center;
                 font-size: clamp(1.8rem, 6vw, 3.5rem); font-weight: 950; color: #15803d;
                 box-shadow: 0 8px 20px rgba(0,0,0,0.15); flex-shrink: 0; z-index: 10;
+                align-self: center;
             }
 
             .buttons-row { 
@@ -158,17 +162,16 @@ function mostrarPergunta() {
             @media (max-width: 600px) {
                 .comparison-container { gap: 4px; }
                 .animal-box { 
-                    grid-template-columns: repeat(2, 1fr); /* Força 2 colunas */
+                    grid-template-columns: repeat(2, 1fr); /* FORÇA 2 COLUNAS */
                     padding: 5px; gap: 2px;
                 }
-                /* AQUI ESTÁ O AJUSTE PARA NÃO TER SCROLL: */
                 .animal-img { 
-                    max-height: ${mobileImgSize}; 
-                    max-width: 85%;
+                    /* AQUI A MÁGICA: Redimensiona para caber sem scroll */
+                    max-height: ${animalMaxHeight}; 
+                    max-width: 90%; 
                 } 
                 .sign-slot { width: 45px; height: 45px; font-size: 1.8rem; border-radius: 10px; }
                 .btn-symbol { height: 65px; font-size: 2rem; border-radius: 15px; }
-                .game-wrapper { padding: 5px; }
             }
         </style>
 
@@ -201,11 +204,9 @@ function mostrarPergunta() {
 function verificarComparacao(btn, escolha) {
     const btns = document.querySelectorAll('.btn-symbol');
     btns.forEach(b => b.style.pointerEvents = 'none');
-
     let correto = "=";
     if (numEsquerda > numDireita) correto = ">";
     if (numEsquerda < numDireita) correto = "<";
-
     const slot = document.getElementById('main-slot');
 
     if (escolha === correto) {
