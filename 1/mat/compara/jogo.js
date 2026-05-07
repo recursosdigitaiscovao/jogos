@@ -108,17 +108,18 @@ function mostrarPergunta() {
                 background: rgba(255, 255, 255, 0.45);
                 border: 3px solid white; border-radius: 25px;
                 display: grid;
-                /* 5 COLUNAS NO PC PARA CABER 20 MELHOR */
-                grid-template-columns: repeat(5, 1fr);
+                /* 2 COLUNAS PARA OS ANIMAIS FICAREM GRANDES */
+                grid-template-columns: repeat(2, 1fr);
                 align-content: center; justify-items: center;
-                gap: 4px; padding: 10px;
+                gap: 5px; padding: 12px;
                 backdrop-filter: blur(4px); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
                 min-width: 0;
+                overflow-y: auto; /* Permite scroll se os 20 animais excederem a altura */
             }
 
             .animal-img {
-                width: 100%; 
-                max-width: 60px; /* DIMINUÍDO PARA CABER 20 SEM SAIR DA CAIXA */
+                width: 90%; 
+                max-width: 85px; /* Tamanho confortável */
                 height: auto; aspect-ratio: 1/1; object-fit: contain;
                 animation: popIn 0.4s forwards;
             }
@@ -126,7 +127,7 @@ function mostrarPergunta() {
             @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
             .sign-slot {
-                width: clamp(50px, 10vw, 80px); height: clamp(50px, 10vw, 80px);
+                width: clamp(50px, 10vw, 85px); height: clamp(50px, 10vw, 85px);
                 background: white; border: 3px dashed #15803d; border-radius: 18px;
                 display: flex; align-items: center; justify-content: center;
                 font-size: clamp(2rem, 7vw, 3.5rem); font-weight: 950; color: #15803d;
@@ -149,23 +150,18 @@ function mostrarPergunta() {
             .btn-symbol.correct { background: #dcfce7; border-color: #22c55e; color: #166534; box-shadow: 0 4px 0 #166534; }
             .btn-symbol.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; box-shadow: 0 4px 0 #991b1b; }
 
-            /* AJUSTE PARA MOBILE / VERTICAL */
+            /* Ajustes Mobile específicos */
             @media (max-width: 600px) {
-                .comparison-container { gap: 5px; }
-                .animal-box { 
-                    /* 3 COLUNAS NO MOBILE PARA GARANTIR QUE 20 CABEM NA ALTURA */
-                    grid-template-columns: repeat(3, 1fr); 
-                    padding: 8px; gap: 3px;
-                }
-                .animal-img { max-width: 50px; } 
+                .animal-box { padding: 8px; gap: 5px; }
+                .animal-img { max-width: 80px; } 
                 .sign-slot { width: 50px; height: 50px; font-size: 2rem; border-radius: 12px; }
-                .btn-symbol { height: 70px; font-size: 2rem; }
+                .btn-symbol { height: 75px; font-size: 2rem; }
             }
         </style>
 
         <div class="game-wrapper">
             <img src="${pathNuvem}" class="cloud-anim" style="top:5%; animation-delay: 0s;">
-            <img src="${pathNuvem}" class="cloud-anim" style="top:18%; animation-delay: -15s; width:90px;">
+            <img src="${pathNuvem}" class="cloud-anim" style="top:18%; animation-delay: -10s; width:90px;">
             <div class="farm-grass"></div>
 
             <div class="comparison-container">
