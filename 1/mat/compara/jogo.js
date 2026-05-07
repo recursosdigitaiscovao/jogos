@@ -21,7 +21,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Qual lado tem mais animais? Escolhe o sinal correto para a cerca!";
+    return "Qual lado tem mais animais? Escolhe o sinal correto!";
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -33,15 +33,15 @@ function criarAnimacaoTutorial() {
     
     container.innerHTML = `
         <div class="tut-wrapper" style="display:flex; flex-direction:column; align-items:center; gap:10px;">
-            <h2 style="color:#15803d; font-weight:900; margin:0; letter-spacing:1px;">COMO JOGAR</h2>
-            <div style="display:flex; align-items:center; gap:15px; background:white; padding:20px; border-radius:20px; border:4px solid #22c55e; box-shadow:0 8px 20px rgba(0,0,0,0.1);">
-               <div style="display:flex;"><img src="${pathTut}" style="width:40px;"></div>
-               <b style="font-size:2rem; color:#ef4444; margin:0 10px;">></b> 
-               <div style="display:flex;"><img src="${pathTut}" style="width:25px; opacity:0.5;"></div>
+            <h2 style="color:#15803d; font-weight:900; margin:0;">COMO JOGAR</h2>
+            <div style="display:flex; align-items:center; gap:10px; background:white; padding:15px; border-radius:20px; border:4px solid #22c55e;">
+               <img src="${pathTut}" style="width:40px;">
+               <b style="font-size:2rem; color:#ef4444;">></b> 
+               <img src="${pathTut}" style="width:25px; opacity:0.5;">
             </div>
-            <div id="tut-hand" style="font-size:40px; animation: tapH 2s infinite; margin-top:10px;">☝️</div>
+            <div id="tut-hand" style="font-size:40px; animation: tapH 2s infinite;">☝️</div>
         </div>
-        <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-15px); } } </style>
+        <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-10px); } } </style>
     `;
 }
 
@@ -82,6 +82,11 @@ function mostrarPergunta() {
     const pathAnimais = JOGO_CONFIG.caminhoImg + config.pasta;
     const pathNuvem = JOGO_CONFIG.caminhoImg + "nuvem.png";
 
+    // Lógica de redução de tamanho para mobile (2 colunas)
+    // Se tivermos 20 animais em 2 colunas = 10 linhas. 
+    // Cada animal deve ter no máximo uns 8% da altura disponível.
+    const mobileImgSize = numEsquerda > 12 || numDireita > 12 ? '6.5vh' : (numEsquerda > 6 || numDireita > 6 ? '8vh' : '12vh');
+
     container.innerHTML = `
         <style>
             .game-wrapper { 
@@ -92,7 +97,7 @@ function mostrarPergunta() {
                 position: relative; overflow: hidden; border-radius: 20px;
             }
 
-            .cloud-anim { position: absolute; opacity: 0.6; pointer-events: none; z-index: 1; animation: moveClouds 45s linear infinite; width: 140px; }
+            .cloud-anim { position: absolute; opacity: 0.6; pointer-events: none; z-index: 1; animation: moveClouds 40s linear infinite; width: 120px; }
             @keyframes moveClouds { from { left: -150px; } to { left: 110%; } }
 
             .farm-grass { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: #4ade80; border-radius: 50% 50% 0 0 / 20px 20px 0 0; z-index: 2; }
@@ -100,73 +105,76 @@ function mostrarPergunta() {
             .comparison-container {
                 flex: 1; width: 100%; max-width: 1200px;
                 display: flex; align-items: center; justify-content: center;
-                gap: 10px; z-index: 5; margin: 5px 0; min-height: 0;
+                gap: 8px; z-index: 5; margin: 5px 0; min-height: 0; /* Essencial para não transbordar */
             }
 
             .animal-box {
-                flex: 1; height: 95%;
+                flex: 1; height: 100%; max-height: 100%;
                 background: rgba(255, 255, 255, 0.45);
                 border: 3px solid white; border-radius: 25px;
                 display: grid;
-                /* LANDSCAPE POR DEFEITO: 5 colunas */
-                grid-template-columns: repeat(5, 1fr);
+                grid-template-columns: repeat(5, 1fr); /* Desktop: 5 colunas */
                 align-content: center; justify-items: center;
-                gap: 5px; padding: 12px;
+                gap: 4px; padding: 10px;
                 backdrop-filter: blur(4px); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
-                min-width: 0;
-                overflow-y: auto; 
+                min-width: 0; overflow: hidden;
             }
 
             .animal-img {
-                width: 100%; 
-                max-width: 70px; 
-                height: auto; aspect-ratio: 1/1; object-fit: contain;
+                width: auto; height: auto;
+                max-width: 90%; 
+                max-height: 15vh; /* Limita a altura no PC */
+                aspect-ratio: 1/1; object-fit: contain;
                 animation: popIn 0.4s forwards;
             }
 
             @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
             .sign-slot {
-                width: clamp(55px, 10vw, 85px); height: clamp(55px, 10vw, 85px);
+                width: clamp(50px, 8vw, 80px); height: clamp(50px, 8vw, 80px);
                 background: white; border: 3px dashed #15803d; border-radius: 18px;
                 display: flex; align-items: center; justify-content: center;
-                font-size: clamp(2rem, 7vw, 3.5rem); font-weight: 950; color: #15803d;
+                font-size: clamp(1.8rem, 6vw, 3.5rem); font-weight: 950; color: #15803d;
                 box-shadow: 0 8px 20px rgba(0,0,0,0.15); flex-shrink: 0; z-index: 10;
             }
 
             .buttons-row { 
                 display: flex; justify-content: center; gap: 15px; 
-                width: 100%; max-width: 500px; padding: 10px 0 15px; 
+                width: 100%; max-width: 500px; padding: 10px 0 10px; 
                 z-index: 20; flex-shrink: 0;
             }
             
             .btn-symbol { 
                 flex: 1; background: white; border: 4px solid #e2e8f0; border-radius: 20px; 
-                height: clamp(65px, 11vh, 85px); font-size: 2.5rem; font-weight: 900; cursor: pointer; 
+                height: clamp(60px, 10vh, 85px); font-size: 2.5rem; font-weight: 900; cursor: pointer; 
                 box-shadow: 0 6px 0 #cbd5e1; color: #15803d; transition: 0.1s;
                 display: flex; align-items: center; justify-content: center;
             }
-            .btn-symbol:active { transform: translateY(4px); box-shadow: 0 2px 0 #cbd5e1; }
+            .btn-symbol:active { transform: translateY(4px); box-shadow: 0 0 0 #cbd5e1; }
             .btn-symbol.correct { background: #dcfce7; border-color: #22c55e; color: #166534; box-shadow: 0 4px 0 #166534; }
             .btn-symbol.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; box-shadow: 0 4px 0 #991b1b; }
 
-            /* AJUSTE PARA ECRÃS VERTICAIS (MOBILE PORTRAIT) */
+            /* AJUSTE PARA ECRÃS VERTICAIS / MOBILE */
             @media (max-width: 600px) {
-                .comparison-container { gap: 5px; }
+                .comparison-container { gap: 4px; }
                 .animal-box { 
-                    /* APENAS 2 COLUNAS PARA OS ANIMAIS FICAREM GRANDES NA VERTICAL */
-                    grid-template-columns: repeat(2, 1fr); 
-                    padding: 8px; gap: 6px;
+                    grid-template-columns: repeat(2, 1fr); /* Força 2 colunas */
+                    padding: 5px; gap: 2px;
                 }
-                .animal-img { max-width: 100px; width: 90%; } 
-                .sign-slot { width: 50px; height: 50px; font-size: 2.2rem; border-radius: 12px; }
-                .btn-symbol { height: 75px; font-size: 2.2rem; }
+                /* AQUI ESTÁ O AJUSTE PARA NÃO TER SCROLL: */
+                .animal-img { 
+                    max-height: ${mobileImgSize}; 
+                    max-width: 85%;
+                } 
+                .sign-slot { width: 45px; height: 45px; font-size: 1.8rem; border-radius: 10px; }
+                .btn-symbol { height: 65px; font-size: 2rem; border-radius: 15px; }
+                .game-wrapper { padding: 5px; }
             }
         </style>
 
         <div class="game-wrapper">
             <img src="${pathNuvem}" class="cloud-anim" style="top:5%; animation-delay: 0s;">
-            <img src="${pathNuvem}" class="cloud-anim" style="top:18%; animation-delay: -15s; width:90px;">
+            <img src="${pathNuvem}" class="cloud-anim" style="top:15%; animation-delay: -15s; width:80px;">
             <div class="farm-grass"></div>
 
             <div class="comparison-container">
