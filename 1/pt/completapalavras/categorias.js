@@ -1,47 +1,36 @@
 // === DEFINIÇÃO DAS CATEGORIAS: COMPLETAR PALAVRAS ===
 const JOGO_CATEGORIAS = {
     "Nível 1": {
-        nome: "Animais Simples",
+        nome: "Faltam as Vogais",
         imgCapa: "cnivel1.png",
-        pasta: "animaisdomesticos/",
+        tipoLacuna: "vogais", // Regra: Esconde A, E, I, O, U...
         palavras: [
-            { termo: "PATO", img: "pato.png" },
-            { termo: "VACA", img: "vaca.png" },
-            { termo: "GATO", img: "gato.png" },
-            { termo: "CÃO", img: "cao.png" }
+            { termo: "PATO", img: "animaisdomesticos/pato.png" },
+            { termo: "BOLA", img: "materialescolar/bola.png" }, // Exemplo, assume que existe
+            { termo: "GATO", img: "animaisdomesticos/gato.png" },
+            { termo: "MACA", img: "frutas/maca.png" }
         ]
     },
     "Nível 2": {
-        nome: "Animais da Quinta",
+        nome: "Faltam as Consoantes",
         imgCapa: "cnivel2.png",
-        pasta: "animaisdomesticos/",
+        tipoLacuna: "consoantes", // Regra: Esconde P, T, V, C...
         palavras: [
-            { termo: "PORCO", img: "porco.png" },
-            { termo: "OVELHA", img: "ovelha.png" },
-            { termo: "CAVALO", img: "cavalo.png" },
-            { termo: "COELHO", img: "coelho.png" }
+            { termo: "VACA", img: "animaisdomesticos/vaca.png" },
+            { termo: "COLA", img: "materialescolar/cola.png" },
+            { termo: "LIVRO", img: "materialescolar/livro.png" },
+            { termo: "PERA", img: "frutas/pera.png" }
         ]
     },
     "Nível 3": {
-        nome: "Material Escolar",
+        nome: "Vogais e Consoantes",
         imgCapa: "cnivel3.png",
-        pasta: "materialescolar/",
+        tipoLacuna: "mista", // Regra: Esconde letras alternadas
         palavras: [
-            { termo: "LIVRO", img: "livro.png" },
-            { termo: "COLA", img: "cola.png" },
-            { termo: "AFIA", img: "afia.png" },
-            { termo: "LAPIS", img: "lapis.png" }
-        ]
-    },
-    "Nível 4": {
-        nome: "Frutas",
-        imgCapa: "cnivel4.png",
-        pasta: "frutas/",
-        palavras: [
-            { termo: "MACA", img: "maca.png" },
-            { termo: "PERA", img: "pera.png" },
-            { termo: "BANANA", img: "banana.png" },
-            { termo: "UVA", img: "uvas.png" }
+            { termo: "CAVALO", img: "animaisdomesticos/cavalo.png" },
+            { termo: "ESTOJO", img: "materialescolar/estojo.png" },
+            { termo: "BANANA", img: "frutas/banana.png" },
+            { termo: "MOCHILA", img: "materialescolar/mochila.png" }
         ]
     }
 };
