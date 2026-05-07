@@ -21,7 +21,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Conta os animais de cada lado e escolhe o sinal correto!";
+    return "Qual lado tem mais animais? Escolhe o sinal correto para a cerca!";
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -34,8 +34,8 @@ function criarAnimacaoTutorial() {
     container.innerHTML = `
         <div class="tut-wrapper" style="display:flex; flex-direction:column; align-items:center; gap:10px;">
             <h2 style="color:#15803d; font-weight:900; margin:0; letter-spacing:1px;">COMO JOGAR</h2>
-            <div style="display:flex; align-items:center; gap:10px; background:white; padding:15px; border-radius:20px; border:4px solid #22c55e; box-shadow:0 8px 20px rgba(0,0,0,0.1);">
-               <div style="display:flex; gap:2px;"><img src="${pathTut}" style="width:40px;"></div>
+            <div style="display:flex; align-items:center; gap:15px; background:white; padding:20px; border-radius:20px; border:4px solid #22c55e; box-shadow:0 8px 20px rgba(0,0,0,0.1);">
+               <div style="display:flex;"><img src="${pathTut}" style="width:45px;"></div>
                <b style="font-size:2rem; color:#ef4444; margin:0 10px;">></b> 
                <div style="display:flex;"><img src="${pathTut}" style="width:30px; opacity:0.5;"></div>
             </div>
@@ -82,8 +82,9 @@ function mostrarPergunta() {
     const pathAnimais = JOGO_CONFIG.caminhoImg + config.pasta;
     const pathNuvem = JOGO_CONFIG.caminhoImg + "nuvem.png";
 
-    // Define o tamanho da imagem baseado na quantidade para não transbordar
-    const itemWidth = config.maxNum > 10 ? '18%' : '22%';
+    // Lógica de tamanho: se houver poucos, ficam maiores.
+    let sizeClass = numEsquerda > 6 || numDireita > 6 ? 'small-img' : 'big-img';
+    if (config.maxNum > 10) sizeClass = 'mini-img';
 
     container.innerHTML = `
         <style>
@@ -95,92 +96,102 @@ function mostrarPergunta() {
                 position: relative; overflow: hidden; border-radius: 20px;
             }
 
-            .cloud-anim { position: absolute; opacity: 0.6; pointer-events: none; z-index: 1; animation: moveClouds 35s linear infinite; width: 100px; }
-            @keyframes moveClouds { from { left: -120px; } to { left: 110%; } }
+            .cloud-anim { position: absolute; opacity: 0.6; pointer-events: none; z-index: 1; animation: moveClouds 40s linear infinite; width: 120px; }
+            @keyframes moveClouds { from { left: -150px; } to { left: 110%; } }
 
-            .farm-grass { position: absolute; bottom: 0; left: 0; width: 100%; height: 20%; background: #4ade80; border-radius: 50% 50% 0 0 / 20% 20% 0 0; z-index: 2; }
+            .farm-grass { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: #4ade80; border-radius: 50% 50% 0 0 / 20px 20px 0 0; z-index: 2; }
 
             .comparison-container {
                 flex: 1; width: 100%; max-width: 1000px;
-                display: flex; align-items: center; justify-content: center;
-                gap: 10px; z-index: 5; margin: 10px 0;
+                display: flex; align-items: stretch; justify-content: center;
+                gap: 8px; z-index: 5; margin: 5px 0;
             }
 
             .animal-box {
-                flex: 1; height: 100%;
+                flex: 1; 
                 background: rgba(255, 255, 255, 0.5);
                 border: 3px solid white; border-radius: 25px;
                 display: flex; flex-wrap: wrap; justify-content: center;
-                align-content: center; gap: 5px; padding: 10px;
+                align-content: center; gap: 4px; padding: 10px;
                 backdrop-filter: blur(4px); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
-                min-width: 0; /* Evita quebra de layout */
+                min-width: 0;
             }
 
+            /* TAMANHOS AJUSTÁVEIS */
             .animal-img {
-                width: ${itemWidth}; 
                 height: auto; aspect-ratio: 1/1; object-fit: contain;
                 animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             }
+            .big-img { width: 42%; }
+            .small-img { width: 28%; }
+            .mini-img { width: 22%; }
+
             @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
             .sign-slot {
-                width: clamp(55px, 12vw, 80px); height: clamp(55px, 12vw, 80px);
+                width: clamp(55px, 10vw, 85px); 
+                align-self: center;
+                height: clamp(55px, 10vw, 85px);
                 background: white; border: 3px dashed #15803d; border-radius: 20px;
                 display: flex; align-items: center; justify-content: center;
-                font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 950; color: #15803d;
+                font-size: clamp(2.2rem, 7vw, 3.8rem); font-weight: 950; color: #15803d;
                 box-shadow: 0 8px 20px rgba(0,0,0,0.15); flex-shrink: 0;
             }
 
             .buttons-row { 
                 display: flex; justify-content: center; gap: 15px; 
-                width: 100%; max-width: 500px; padding: 10px 0 20px; z-index: 10;
+                width: 100%; max-width: 500px; padding: 10px 0 15px; z-index: 10;
             }
             
             .btn-symbol { 
                 flex: 1; background: white; border: 4px solid #e2e8f0; border-radius: 20px; 
-                height: clamp(65px, 10vh, 85px); font-size: 2.5rem; font-weight: 900; cursor: pointer; 
+                height: clamp(70px, 12vh, 90px); font-size: 2.8rem; font-weight: 900; cursor: pointer; 
                 box-shadow: 0 6px 0 #cbd5e1; color: #15803d; transition: 0.1s;
                 display: flex; align-items: center; justify-content: center;
             }
-            .btn-symbol:active { transform: translateY(4px); box-shadow: 0 0 0 #cbd5e1; }
+            .btn-symbol:active { transform: translateY(4px); box-shadow: 0 2px 0 #cbd5e1; }
             .btn-symbol.correct { background: #dcfce7; border-color: #22c55e; color: #166534; box-shadow: 0 4px 0 #166534; }
             .btn-symbol.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; box-shadow: 0 4px 0 #991b1b; }
 
             @media (max-width: 500px) {
-                .animal-box { padding: 5px; gap: 3px; border-radius: 15px; }
-                .animal-img { width: ${config.maxNum > 10 ? '22%' : '28%'}; }
-                .comparison-container { gap: 5px; }
+                .game-wrapper { padding: 5px; }
+                .comparison-container { gap: 4px; }
+                .animal-box { padding: 6px; border-radius: 15px; gap: 2px; }
+                .big-img { width: 45%; }
+                .small-img { width: 30%; }
+                .mini-img { width: 23%; }
                 .sign-slot { border-radius: 12px; }
+                .btn-symbol { height: 75px; font-size: 2.2rem; }
             }
         </style>
 
         <div class="game-wrapper">
-            <img src="${pathNuvem}" class="cloud-anim" style="top:8%; animation-delay: 0s;">
-            <img src="${pathNuvem}" class="cloud-anim" style="top:22%; animation-delay: -15s; width:70px;">
+            <img src="${pathNuvem}" class="cloud-anim" style="top:5%; animation-delay: 0s;">
+            <img src="${pathNuvem}" class="cloud-anim" style="top:18%; animation-delay: -10s; width:80px;">
             <div class="farm-grass"></div>
 
             <div class="comparison-container">
                 <div class="animal-box">
-                    ${Array(numEsquerda).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img" style="animation-delay:${i*0.02}s">`).join('')}
+                    ${Array(numEsquerda).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img ${sizeClass}" style="animation-delay:${i*0.02}s">`).join('')}
                 </div>
 
                 <div class="sign-slot" id="main-slot">?</div>
 
                 <div class="animal-box">
-                    ${Array(numDireita).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img" style="animation-delay:${i*0.02}s">`).join('')}
+                    ${Array(numDireita).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img ${sizeClass}" style="animation-delay:${i*0.02}s">`).join('')}
                 </div>
             </div>
             
             <div class="buttons-row">
-                <button class="btn-symbol" onclick="verificar(this, '<')"><</button>
-                <button class="btn-symbol" onclick="verificar(this, '=')">=</button>
-                <button class="btn-symbol" onclick="verificar(this, '>')">></button>
+                <button class="btn-symbol" onclick="verificarComparacao(this, '<')"><</button>
+                <button class="btn-symbol" onclick="verificarComparacao(this, '=')">=</button>
+                <button class="btn-symbol" onclick="verificarComparacao(this, '>')">></button>
             </div>
         </div>
     `;
 }
 
-function verificar(btn, escolha) {
+function verificarComparacao(btn, escolha) {
     const btns = document.querySelectorAll('.btn-symbol');
     btns.forEach(b => b.style.pointerEvents = 'none');
 
@@ -218,7 +229,7 @@ function finalizarJogo() {
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px;">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:110px; margin-bottom:15px;">
             <h2 style="color:#15803d; font-weight:900; font-size:1.8rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
                 <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4;">
