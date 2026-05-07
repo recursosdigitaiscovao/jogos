@@ -97,50 +97,73 @@ function mostrarPergunta() {
 
             .farm-grass { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: #4ade80; border-radius: 50% 50% 0 0 / 20px 20px 0 0; z-index: 2; }
 
+            /* ÁREA CENTRAL DE COMPARAÇÃO - OCUPA O ESPAÇO DISPONÍVEL */
             .comparison-container {
-                flex: 1; width: 100%; max-width: 1100px;
-                display: grid; grid-template-columns: 1fr 70px 1fr; 
-                align-items: stretch; justify-items: center;
-                gap: 10px; z-index: 5; margin: 10px 0;
+                flex: 1; 
+                width: 100%; 
+                max-width: 1200px;
+                display: flex; 
+                align-items: center; 
+                justify-content: center;
+                gap: 10px; 
+                z-index: 5; 
+                margin: 5px 0;
+                min-height: 0; /* Permite que o flex encolha o container se necessário */
             }
 
             .animal-box {
-                width: 100%; height: 100%;
+                flex: 1; 
+                height: 90%;
                 background: rgba(255, 255, 255, 0.45);
                 border: 3px solid white; border-radius: 25px;
                 display: grid;
                 /* PADRÃO DESKTOP: 4 colunas */
                 grid-template-columns: repeat(4, 1fr);
-                grid-auto-rows: min-content;
-                gap: 8px; padding: 15px;
+                align-content: center;
+                justify-items: center;
+                gap: 5px; padding: 12px;
                 backdrop-filter: blur(4px); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
-                overflow-y: auto; /* Caso haja muitos animais em ecrãs pequenos */
+                min-width: 0;
             }
 
             .animal-img {
-                width: 100%; height: auto; aspect-ratio: 1/1; object-fit: contain;
+                width: 100%; 
+                max-width: 80px;
+                height: auto; 
+                aspect-ratio: 1/1; 
+                object-fit: contain;
                 animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             }
 
             @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
             .sign-slot {
-                width: 65px; height: 65px; align-self: center;
-                background: white; border: 3px dashed #15803d; border-radius: 15px;
+                width: clamp(55px, 12vw, 85px); 
+                height: clamp(55px, 12vw, 85px);
+                background: white; border: 3px dashed #15803d; border-radius: 20px;
                 display: flex; align-items: center; justify-content: center;
-                font-size: 3rem; font-weight: 950; color: #15803d;
+                font-size: clamp(2rem, 8vw, 3.5rem); font-weight: 950; color: #15803d;
                 box-shadow: 0 8px 20px rgba(0,0,0,0.15); flex-shrink: 0;
+                z-index: 10;
             }
 
+            /* BOTÕES SEMPRE VISÍVEIS NO FUNDO */
             .buttons-row { 
-                display: flex; justify-content: center; gap: 15px; 
-                width: 100%; max-width: 500px; padding: 10px 0 15px; z-index: 10;
+                display: flex; 
+                justify-content: center; 
+                gap: 15px; 
+                width: 100%; 
+                max-width: 500px; 
+                padding: 10px 0 15px; 
+                z-index: 20;
+                flex-shrink: 0; /* Impede que os botões encolham ou sumam */
             }
             
             .btn-symbol { 
                 flex: 1; background: white; border: 4px solid #e2e8f0; border-radius: 20px; 
-                height: 80px; font-size: 3rem; font-weight: 900; cursor: pointer; 
-                box-shadow: 0 8px 0 #cbd5e1; color: #15803d; transition: 0.1s;
+                height: clamp(65px, 10vh, 85px); 
+                font-size: 2.8rem; font-weight: 900; cursor: pointer; 
+                box-shadow: 0 6px 0 #cbd5e1; color: #15803d; transition: 0.1s;
                 display: flex; align-items: center; justify-content: center;
             }
             .btn-symbol:active { transform: translateY(4px); box-shadow: 0 2px 0 #cbd5e1; }
@@ -149,17 +172,22 @@ function mostrarPergunta() {
 
             /* AJUSTE PARA ECRÃS VERTICAIS / MOBILE */
             @media (max-width: 600px) {
-                .comparison-container { grid-template-columns: 1fr 55px 1fr; gap: 5px; }
-                
+                .comparison-container { gap: 5px; }
                 .animal-box { 
-                    /* FORÇA APENAS 2 COLUNAS PARA OS ANIMAIS FICAREM GRANDES */
+                    /* APENAS 2 COLUNAS PARA OS ANIMAIS FICAREM GRANDES */
                     grid-template-columns: repeat(2, 1fr); 
                     padding: 8px; 
-                    gap: 10px;
                 }
-                
-                .sign-slot { width: 50px; height: 50px; font-size: 2rem; }
-                .btn-symbol { height: 70px; font-size: 2.2rem; }
+                .animal-img { max-width: 100px; } /* Permite que cresçam mais no mobile */
+                .sign-slot { width: 55px; height: 55px; font-size: 2.2rem; }
+                .btn-symbol { height: 75px; font-size: 2.2rem; }
+            }
+
+            /* Caso o ecrã seja muito baixo (Landscape pequeno) */
+            @media (max-height: 500px) {
+                .animal-box { grid-template-columns: repeat(6, 1fr); }
+                .animal-img { max-width: 40px; }
+                .btn-symbol { height: 50px; font-size: 1.8rem; }
             }
         </style>
 
