@@ -14,38 +14,32 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// === 1. INICIALIZAÇÃO ===
 window.startLogic = function() {
     if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "Nível 1";
     setTimeout(criarAnimacaoTutorial, 100);
 };
 
-window.gerarIntroJogo = function() {
-    return "Qual lado tem mais animais? Escolhe o sinal correto!";
-};
-
+window.gerarIntroJogo = function() { return "Qual lado tem mais animais? Escolhe o sinal correto!"; };
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
 
 function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
     const pathTut = JOGO_CONFIG.caminhoImg + "animaisdomesticos/cao.png";
-    
     container.innerHTML = `
-        <div class="tut-wrapper" style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
             <h2 style="color:#15803d; font-weight:900; margin:0;">COMO JOGAR</h2>
-            <div style="display:flex; align-items:center; gap:10px; background:white; padding:20px; border-radius:20px; border:4px solid #22c55e;">
+            <div style="display:flex; align-items:center; gap:15px; background:white; padding:20px; border-radius:20px; border:4px solid #22c55e;">
                <img src="${pathTut}" style="width:40px;">
                <b style="font-size:2rem; color:#ef4444; margin:0 10px;">></b> 
                <img src="${pathTut}" style="width:25px; opacity:0.5;">
             </div>
-            <div id="tut-hand" style="font-size:40px; animation: tapH 2s infinite; margin-top:10px;">☝️</div>
+            <div style="font-size:40px; animation: tapH 2s infinite;">☝️</div>
         </div>
         <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-15px); } } </style>
     `;
 }
 
-// === 2. LÓGICA DO JOGO ===
 window.initGame = function() {
     indicePergunta = 0; acertos = 0; erros = 0;
     document.getElementById('hits-val').innerText = "0";
@@ -82,11 +76,12 @@ function mostrarPergunta() {
     const pathAnimais = JOGO_CONFIG.caminhoImg + config.pasta;
     const pathNuvem = JOGO_CONFIG.caminhoImg + "nuvem.png";
 
-    // Cálculos para o Grid dinâmico (Mobile: 2 colunas, PC: 5 colunas)
-    const rowsEsqMobile = Math.ceil(numEsquerda / 2);
-    const rowsDirMobile = Math.ceil(numDireita / 2);
-    const rowsEsqPC = Math.ceil(numEsquerda / 5);
-    const rowsDirPC = Math.ceil(numDireita / 5);
+    // LÓGICA DE DIMENSIONAMENTO PARA NÃO SAIR DO QUADRADO
+    const isPortrait = window.innerHeight > window.innerWidth;
+    const cols = isPortrait ? 2 : 5;
+    
+    // Calculamos o número de linhas necessárias para o grupo maior
+    const rowsNeeded = Math.ceil(Math.max(numEsquerda, numDireita) / cols);
 
     container.innerHTML = `
         <style>
@@ -97,96 +92,75 @@ function mostrarPergunta() {
                 background: linear-gradient(to bottom, #87CEEB 0%, #E0F2F1 100%);
                 position: relative; overflow: hidden; border-radius: 20px;
             }
-
-            .cloud-anim { position: absolute; opacity: 0.6; pointer-events: none; z-index: 1; animation: moveClouds 45s linear infinite; width: 140px; }
+            .cloud-anim { position: absolute; opacity: 0.6; pointer-events: none; z-index: 1; animation: moveClouds 40s linear infinite; width: 120px; }
             @keyframes moveClouds { from { left: -150px; } to { left: 110%; } }
-
-            .farm-grass { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: #4ade80; border-radius: 50% 50% 0 0 / 20px 20px 0 0; z-index: 2; }
+            .farm-grass { position: absolute; bottom: 0; left: 0; width: 100%; height: 50px; background: #4ade80; border-radius: 50% 50% 0 0 / 15px 15px 0 0; z-index: 2; }
 
             .comparison-container {
                 flex: 1; width: 100%; max-width: 1200px;
-                display: flex; align-items: center; justify-content: center;
-                gap: 10px; z-index: 5; margin: 5px 0; min-height: 0;
+                display: flex; align-items: stretch; justify-content: center;
+                gap: 10px; z-index: 5; margin-bottom: 5px; min-height: 0;
             }
 
             .animal-box {
-                flex: 1; height: 100%;
-                background: rgba(255, 255, 255, 0.45);
-                border: 3px solid white; border-radius: 25px;
+                flex: 1; height: 100%; background: rgba(255, 255, 255, 0.5);
+                border: 3px solid white; border-radius: 20px;
                 display: grid;
-                /* Configuração PC */
-                grid-template-columns: repeat(5, 1fr);
-                align-content: center; justify-items: center;
-                gap: 4px; padding: 12px;
+                /* Grelha Dinâmica */
+                grid-template-columns: repeat(${cols}, 1fr);
+                grid-template-rows: repeat(${rowsNeeded}, 1fr);
+                gap: 4px; padding: 10px;
                 backdrop-filter: blur(4px); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
-                min-width: 0; overflow: hidden; /* CRÍTICO: Bloqueia saída do espaço */
+                min-width: 0; overflow: hidden;
             }
 
             .animal-img {
-                width: 100%; height: 100%;
-                object-fit: contain; /* CRÍTICO: Faz a imagem encolher para caber na célula do grid */
+                width: 100%; height: 100%; object-fit: contain;
                 animation: popIn 0.4s forwards;
             }
-
             @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
             .sign-slot {
-                width: clamp(50px, 8vw, 85px); height: clamp(50px, 8vw, 85px);
-                background: white; border: 3px dashed #15803d; border-radius: 18px;
+                width: clamp(45px, 8vw, 80px); height: clamp(45px, 8vw, 80px);
+                background: white; border: 3px dashed #15803d; border-radius: 15px;
                 display: flex; align-items: center; justify-content: center;
-                font-size: clamp(2rem, 7vw, 3.5rem); font-weight: 950; color: #15803d;
-                box-shadow: 0 8px 20px rgba(0,0,0,0.15); flex-shrink: 0; z-index: 10;
+                font-size: clamp(1.8rem, 6vw, 3.5rem); font-weight: 950; color: #15803d;
+                box-shadow: 0 8px 20px rgba(0,0,0,0.15); flex-shrink: 0; align-self: center; z-index: 10;
             }
 
             .buttons-row { 
                 display: flex; justify-content: center; gap: 15px; 
-                width: 100%; max-width: 500px; padding: 10px 0 10px; 
+                width: 100%; max-width: 500px; padding: 5px 0 10px; 
                 z-index: 20; flex-shrink: 0;
             }
-            
             .btn-symbol { 
-                flex: 1; background: white; border: 4px solid #e2e8f0; border-radius: 20px; 
-                height: clamp(65px, 10vh, 85px); font-size: 2.8rem; font-weight: 900; cursor: pointer; 
-                box-shadow: 0 6px 0 #cbd5e1; color: #15803d; transition: 0.1s;
-                display: flex; align-items: center; justify-content: center;
+                flex: 1; background: white; border: 4px solid #e2e8f0; border-radius: 18px; 
+                height: 65px; font-size: 2.2rem; font-weight: 900; cursor: pointer; 
+                box-shadow: 0 5px 0 #cbd5e1; color: #15803d; display: flex; align-items: center; justify-content: center;
             }
-            .btn-symbol:active { transform: translateY(4px); box-shadow: 0 2px 0 #cbd5e1; }
+            .btn-symbol:active { transform: translateY(3px); box-shadow: none; }
             .btn-symbol.correct { background: #dcfce7; border-color: #22c55e; color: #166534; box-shadow: 0 4px 0 #166534; }
             .btn-symbol.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; box-shadow: 0 4px 0 #991b1b; }
 
-            /* AJUSTE PARA ECRÃS VERTICAIS / MOBILE */
             @media (max-width: 600px) {
-                .animal-box { grid-template-columns: repeat(2, 1fr); padding: 8px; }
-                
-                /* Força as linhas a dividirem a altura disponível igualmente */
-                #box-left { grid-template-rows: repeat(${rowsEsqMobile}, 1fr); }
-                #box-right { grid-template-rows: repeat(${rowsDirMobile}, 1fr); }
-
-                .sign-slot { width: 45px; height: 45px; font-size: 2rem; border-radius: 12px; }
-                .btn-symbol { height: 75px; font-size: 2.2rem; }
-            }
-
-            /* AJUSTE PARA PC */
-            @media (min-width: 601px) {
-                #box-left { grid-template-rows: repeat(${rowsEsqPC}, 1fr); }
-                #box-right { grid-template-rows: repeat(${rowsDirPC}, 1fr); }
+                .animal-box { padding: 6px; gap: 2px; }
+                .sign-slot { width: 45px; height: 45px; font-size: 1.8rem; }
+                .btn-symbol { height: 60px; font-size: 2rem; }
             }
         </style>
 
         <div class="game-wrapper">
             <img src="${pathNuvem}" class="cloud-anim" style="top:5%; animation-delay: 0s;">
-            <img src="${pathNuvem}" class="cloud-anim" style="top:18%; animation-delay: -10s; width:90px;">
+            <img src="${pathNuvem}" class="cloud-anim" style="top:15%; animation-delay: -15s; width:80px;">
             <div class="farm-grass"></div>
 
             <div class="comparison-container">
-                <div class="animal-box" id="box-left">
-                    ${Array(numEsquerda).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img">`).join('')}
+                <div class="animal-box">
+                    ${Array(numEsquerda).fill(0).map(() => `<img src="${pathAnimais}${animalSorteado}" class="animal-img">`).join('')}
                 </div>
-
                 <div class="sign-slot" id="main-slot">?</div>
-
-                <div class="animal-box" id="box-right">
-                    ${Array(numDireita).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img">`).join('')}
+                <div class="animal-box">
+                    ${Array(numDireita).fill(0).map(() => `<img src="${pathAnimais}${animalSorteado}" class="animal-img">`).join('')}
                 </div>
             </div>
             
@@ -210,9 +184,7 @@ function verificarComparacao(btn, escolha) {
     if (escolha === correto) {
         somAcerto.play();
         btn.classList.add('correct');
-        slot.innerText = correto;
-        slot.style.color = "white"; slot.style.background = "#22c55e";
-        slot.style.borderStyle = "solid"; slot.style.borderColor = "#16a34a";
+        slot.innerText = correto; slot.style.color = "white"; slot.style.background = "#22c55e"; slot.style.borderStyle = "solid";
         acertos++;
         document.getElementById('hits-val').innerText = acertos;
         setTimeout(() => { indicePergunta++; proximaRonda(); }, 1400);
@@ -235,7 +207,7 @@ function finalizarJogo() {
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:110px; margin-bottom:15px;">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px;">
             <h2 style="color:#15803d; font-weight:900; font-size:1.8rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
                 <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4;">
