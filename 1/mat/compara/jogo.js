@@ -35,9 +35,9 @@ function criarAnimacaoTutorial() {
         <div class="tut-wrapper" style="display:flex; flex-direction:column; align-items:center; gap:10px;">
             <h2 style="color:#15803d; font-weight:900; margin:0; letter-spacing:1px;">COMO JOGAR</h2>
             <div style="display:flex; align-items:center; gap:15px; background:white; padding:20px; border-radius:20px; border:4px solid #22c55e; box-shadow:0 8px 20px rgba(0,0,0,0.1);">
-               <div style="display:flex;"><img src="${pathTut}" style="width:45px;"></div>
+               <div style="display:flex;"><img src="${pathTut}" style="width:40px;"></div>
                <b style="font-size:2rem; color:#ef4444; margin:0 10px;">></b> 
-               <div style="display:flex;"><img src="${pathTut}" style="width:30px; opacity:0.5;"></div>
+               <div style="display:flex;"><img src="${pathTut}" style="width:25px; opacity:0.5;"></div>
             </div>
             <div id="tut-hand" style="font-size:40px; animation: tapH 2s infinite; margin-top:10px;">☝️</div>
         </div>
@@ -97,72 +97,51 @@ function mostrarPergunta() {
 
             .farm-grass { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: #4ade80; border-radius: 50% 50% 0 0 / 20px 20px 0 0; z-index: 2; }
 
-            /* ÁREA CENTRAL DE COMPARAÇÃO - OCUPA O ESPAÇO DISPONÍVEL */
             .comparison-container {
-                flex: 1; 
-                width: 100%; 
-                max-width: 1200px;
-                display: flex; 
-                align-items: center; 
-                justify-content: center;
-                gap: 10px; 
-                z-index: 5; 
-                margin: 5px 0;
-                min-height: 0; /* Permite que o flex encolha o container se necessário */
+                flex: 1; width: 100%; max-width: 1200px;
+                display: flex; align-items: center; justify-content: center;
+                gap: 10px; z-index: 5; margin: 5px 0; min-height: 0;
             }
 
             .animal-box {
-                flex: 1; 
-                height: 90%;
+                flex: 1; height: 95%;
                 background: rgba(255, 255, 255, 0.45);
                 border: 3px solid white; border-radius: 25px;
                 display: grid;
-                /* PADRÃO DESKTOP: 4 colunas */
-                grid-template-columns: repeat(4, 1fr);
-                align-content: center;
-                justify-items: center;
-                gap: 5px; padding: 12px;
+                /* 5 COLUNAS NO PC PARA CABER 20 MELHOR */
+                grid-template-columns: repeat(5, 1fr);
+                align-content: center; justify-items: center;
+                gap: 4px; padding: 10px;
                 backdrop-filter: blur(4px); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
                 min-width: 0;
             }
 
             .animal-img {
                 width: 100%; 
-                max-width: 80px;
-                height: auto; 
-                aspect-ratio: 1/1; 
-                object-fit: contain;
-                animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                max-width: 60px; /* DIMINUÍDO PARA CABER 20 SEM SAIR DA CAIXA */
+                height: auto; aspect-ratio: 1/1; object-fit: contain;
+                animation: popIn 0.4s forwards;
             }
 
             @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
             .sign-slot {
-                width: clamp(55px, 12vw, 85px); 
-                height: clamp(55px, 12vw, 85px);
-                background: white; border: 3px dashed #15803d; border-radius: 20px;
+                width: clamp(50px, 10vw, 80px); height: clamp(50px, 10vw, 80px);
+                background: white; border: 3px dashed #15803d; border-radius: 18px;
                 display: flex; align-items: center; justify-content: center;
-                font-size: clamp(2rem, 8vw, 3.5rem); font-weight: 950; color: #15803d;
-                box-shadow: 0 8px 20px rgba(0,0,0,0.15); flex-shrink: 0;
-                z-index: 10;
+                font-size: clamp(2rem, 7vw, 3.5rem); font-weight: 950; color: #15803d;
+                box-shadow: 0 8px 20px rgba(0,0,0,0.15); flex-shrink: 0; z-index: 10;
             }
 
-            /* BOTÕES SEMPRE VISÍVEIS NO FUNDO */
             .buttons-row { 
-                display: flex; 
-                justify-content: center; 
-                gap: 15px; 
-                width: 100%; 
-                max-width: 500px; 
-                padding: 10px 0 15px; 
-                z-index: 20;
-                flex-shrink: 0; /* Impede que os botões encolham ou sumam */
+                display: flex; justify-content: center; gap: 15px; 
+                width: 100%; max-width: 500px; padding: 10px 0 15px; 
+                z-index: 20; flex-shrink: 0;
             }
             
             .btn-symbol { 
                 flex: 1; background: white; border: 4px solid #e2e8f0; border-radius: 20px; 
-                height: clamp(65px, 10vh, 85px); 
-                font-size: 2.8rem; font-weight: 900; cursor: pointer; 
+                height: clamp(65px, 11vh, 85px); font-size: 2.5rem; font-weight: 900; cursor: pointer; 
                 box-shadow: 0 6px 0 #cbd5e1; color: #15803d; transition: 0.1s;
                 display: flex; align-items: center; justify-content: center;
             }
@@ -170,24 +149,17 @@ function mostrarPergunta() {
             .btn-symbol.correct { background: #dcfce7; border-color: #22c55e; color: #166534; box-shadow: 0 4px 0 #166534; }
             .btn-symbol.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; box-shadow: 0 4px 0 #991b1b; }
 
-            /* AJUSTE PARA ECRÃS VERTICAIS / MOBILE */
+            /* AJUSTE PARA MOBILE / VERTICAL */
             @media (max-width: 600px) {
                 .comparison-container { gap: 5px; }
                 .animal-box { 
-                    /* APENAS 2 COLUNAS PARA OS ANIMAIS FICAREM GRANDES */
-                    grid-template-columns: repeat(2, 1fr); 
-                    padding: 8px; 
+                    /* 3 COLUNAS NO MOBILE PARA GARANTIR QUE 20 CABEM NA ALTURA */
+                    grid-template-columns: repeat(3, 1fr); 
+                    padding: 8px; gap: 3px;
                 }
-                .animal-img { max-width: 100px; } /* Permite que cresçam mais no mobile */
-                .sign-slot { width: 55px; height: 55px; font-size: 2.2rem; }
-                .btn-symbol { height: 75px; font-size: 2.2rem; }
-            }
-
-            /* Caso o ecrã seja muito baixo (Landscape pequeno) */
-            @media (max-height: 500px) {
-                .animal-box { grid-template-columns: repeat(6, 1fr); }
-                .animal-img { max-width: 40px; }
-                .btn-symbol { height: 50px; font-size: 1.8rem; }
+                .animal-img { max-width: 50px; } 
+                .sign-slot { width: 50px; height: 50px; font-size: 2rem; border-radius: 12px; }
+                .btn-symbol { height: 70px; font-size: 2rem; }
             }
         </style>
 
