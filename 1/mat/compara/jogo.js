@@ -34,10 +34,10 @@ function criarAnimacaoTutorial() {
     container.innerHTML = `
         <div class="tut-wrapper" style="display:flex; flex-direction:column; align-items:center; gap:10px;">
             <h2 style="color:#15803d; font-weight:900; margin:0; letter-spacing:1px;">COMO JOGAR</h2>
-            <div style="display:flex; align-items:center; gap:15px; background:white; padding:15px; border-radius:20px; border:4px solid #22c55e; box-shadow:0 8px 20px rgba(0,0,0,0.1);">
-               <div style="display:flex; gap:2px;"><img src="${pathTut}" style="width:30px;"><img src="${pathTut}" style="width:30px;"></div>
-               <b style="font-size:2.5rem; color:#ef4444; margin:0 10px;">></b> 
-               <div style="display:flex;"><img src="${pathTut}" style="width:30px;"></div>
+            <div style="display:flex; align-items:center; gap:10px; background:white; padding:15px; border-radius:20px; border:4px solid #22c55e; box-shadow:0 8px 20px rgba(0,0,0,0.1);">
+               <div style="display:flex; gap:2px;"><img src="${pathTut}" style="width:40px;"></div>
+               <b style="font-size:2rem; color:#ef4444; margin:0 10px;">></b> 
+               <div style="display:flex;"><img src="${pathTut}" style="width:30px; opacity:0.5;"></div>
             </div>
             <div id="tut-hand" style="font-size:40px; animation: tapH 2s infinite; margin-top:10px;">☝️</div>
         </div>
@@ -68,11 +68,9 @@ function iniciarCronometro() {
 function proximaRonda() {
     if (indicePergunta >= 10) { finalizarJogo(); return; }
     const config = JOGO_CATEGORIAS[categoriaAtual];
-    
     numEsquerda = Math.floor(Math.random() * config.maxNum) + 1;
     numDireita = Math.floor(Math.random() * config.maxNum) + 1;
     animalSorteado = config.itens[Math.floor(Math.random() * config.itens.length)];
-
     mostrarPergunta();
 }
 
@@ -84,102 +82,106 @@ function mostrarPergunta() {
     const pathAnimais = JOGO_CONFIG.caminhoImg + config.pasta;
     const pathNuvem = JOGO_CONFIG.caminhoImg + "nuvem.png";
 
+    // Define o tamanho da imagem baseado na quantidade para não transbordar
+    const itemWidth = config.maxNum > 10 ? '18%' : '22%';
+
     container.innerHTML = `
         <style>
             .game-wrapper { 
                 display: flex; flex-direction: column; width: 100%; height: 100%; 
                 align-items: center; justify-content: space-between; 
-                padding: 10px 5px; box-sizing: border-box;
+                padding: 10px; box-sizing: border-box;
                 background: linear-gradient(to bottom, #87CEEB 0%, #E0F2F1 100%);
                 position: relative; overflow: hidden; border-radius: 20px;
             }
 
-            .cloud-anim { position: absolute; opacity: 0.6; pointer-events: none; z-index: 1; animation: moveClouds 30s linear infinite; }
-            @keyframes moveClouds { from { left: -150px; } to { left: 110%; } }
+            .cloud-anim { position: absolute; opacity: 0.6; pointer-events: none; z-index: 1; animation: moveClouds 35s linear infinite; width: 100px; }
+            @keyframes moveClouds { from { left: -120px; } to { left: 110%; } }
 
-            .farm-grass { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: #4ade80; border-radius: 50% 50% 0 0 / 20px 20px 0 0; z-index: 2; }
+            .farm-grass { position: absolute; bottom: 0; left: 0; width: 100%; height: 20%; background: #4ade80; border-radius: 50% 50% 0 0 / 20% 20% 0 0; z-index: 2; }
 
-            .comparison-grid {
-                flex: 1; width: 100%; max-width: 800px;
-                display: grid; grid-template-columns: 1fr 60px 1fr; 
-                align-items: center; gap: 10px; z-index: 5; margin-top: 5px;
+            .comparison-container {
+                flex: 1; width: 100%; max-width: 1000px;
+                display: flex; align-items: center; justify-content: center;
+                gap: 10px; z-index: 5; margin: 10px 0;
             }
 
-            /* CAIXA DOS ANIMAIS MAIS ORGANIZADA */
-            .animal-container {
-                height: auto; max-height: 220px;
+            .animal-box {
+                flex: 1; height: 100%;
                 background: rgba(255, 255, 255, 0.5);
-                border: 3px solid white; border-radius: 20px;
-                display: grid;
-                /* Organiza sempre em 5 colunas para parecer arrumado */
-                grid-template-columns: repeat(5, 1fr); 
-                gap: 4px; padding: 10px;
-                backdrop-filter: blur(4px);
-                box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+                border: 3px solid white; border-radius: 25px;
+                display: flex; flex-wrap: wrap; justify-content: center;
+                align-content: center; gap: 5px; padding: 10px;
+                backdrop-filter: blur(4px); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+                min-width: 0; /* Evita quebra de layout */
             }
 
             .animal-img {
-                width: 100%; height: auto; aspect-ratio: 1/1; object-fit: contain;
-                animation: popIn 0.4s forwards;
+                width: ${itemWidth}; 
+                height: auto; aspect-ratio: 1/1; object-fit: contain;
+                animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             }
             @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
             .sign-slot {
-                font-size: clamp(2rem, 8vw, 3.5rem); font-weight: 950;
-                color: #15803d; text-align: center; background: rgba(255,255,255,0.9);
-                height: 60px; width: 60px; display: flex; align-items: center;
-                justify-content: center; border-radius: 15px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 3px dashed #15803d;
+                width: clamp(55px, 12vw, 80px); height: clamp(55px, 12vw, 80px);
+                background: white; border: 3px dashed #15803d; border-radius: 20px;
+                display: flex; align-items: center; justify-content: center;
+                font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 950; color: #15803d;
+                box-shadow: 0 8px 20px rgba(0,0,0,0.15); flex-shrink: 0;
             }
 
-            .buttons-area { display: flex; justify-content: center; gap: 15px; width: 100%; max-width: 450px; padding: 15px 0; z-index: 10; }
+            .buttons-row { 
+                display: flex; justify-content: center; gap: 15px; 
+                width: 100%; max-width: 500px; padding: 10px 0 20px; z-index: 10;
+            }
             
-            .btn-action { 
+            .btn-symbol { 
                 flex: 1; background: white; border: 4px solid #e2e8f0; border-radius: 20px; 
-                height: 70px; font-size: 2.5rem; font-weight: 900; cursor: pointer; 
+                height: clamp(65px, 10vh, 85px); font-size: 2.5rem; font-weight: 900; cursor: pointer; 
                 box-shadow: 0 6px 0 #cbd5e1; color: #15803d; transition: 0.1s;
                 display: flex; align-items: center; justify-content: center;
             }
-            .btn-action:active { transform: translateY(4px); box-shadow: 0 0 0 #cbd5e1; }
-            .btn-action.correct { background: #dcfce7; border-color: #22c55e; color: #166534; box-shadow: 0 4px 0 #166534; }
-            .btn-action.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; box-shadow: 0 4px 0 #991b1b; }
+            .btn-symbol:active { transform: translateY(4px); box-shadow: 0 0 0 #cbd5e1; }
+            .btn-symbol.correct { background: #dcfce7; border-color: #22c55e; color: #166534; box-shadow: 0 4px 0 #166534; }
+            .btn-symbol.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; box-shadow: 0 4px 0 #991b1b; }
 
-            @media (max-width: 450px) {
-                /* No mobile muito pequeno usamos 4 colunas para não esmagar */
-                .animal-container { grid-template-columns: repeat(4, 1fr); padding: 5px; }
-                .sign-slot { width: 45px; height: 45px; font-size: 1.8rem; }
-                .btn-action { height: 60px; font-size: 2rem; }
+            @media (max-width: 500px) {
+                .animal-box { padding: 5px; gap: 3px; border-radius: 15px; }
+                .animal-img { width: ${config.maxNum > 10 ? '22%' : '28%'}; }
+                .comparison-container { gap: 5px; }
+                .sign-slot { border-radius: 12px; }
             }
         </style>
 
         <div class="game-wrapper">
-            <img src="${pathNuvem}" class="cloud-anim" style="top:5%; width:90px; animation-duration: 20s;">
-            <img src="${pathNuvem}" class="cloud-anim" style="top:15%; width:70px; animation-duration: 28s; animation-delay: -5s;">
+            <img src="${pathNuvem}" class="cloud-anim" style="top:8%; animation-delay: 0s;">
+            <img src="${pathNuvem}" class="cloud-anim" style="top:22%; animation-delay: -15s; width:70px;">
             <div class="farm-grass"></div>
 
-            <div class="comparison-grid">
-                <div class="animal-container">
+            <div class="comparison-container">
+                <div class="animal-box">
                     ${Array(numEsquerda).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img" style="animation-delay:${i*0.02}s">`).join('')}
                 </div>
 
                 <div class="sign-slot" id="main-slot">?</div>
 
-                <div class="animal-container">
+                <div class="animal-box">
                     ${Array(numDireita).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img" style="animation-delay:${i*0.02}s">`).join('')}
                 </div>
             </div>
             
-            <div class="buttons-area">
-                <button class="btn-action" onclick="verificar(this, '<')"><</button>
-                <button class="btn-action" onclick="verificar(this, '=')">=</button>
-                <button class="btn-action" onclick="verificar(this, '>')">></button>
+            <div class="buttons-row">
+                <button class="btn-symbol" onclick="verificar(this, '<')"><</button>
+                <button class="btn-symbol" onclick="verificar(this, '=')">=</button>
+                <button class="btn-symbol" onclick="verificar(this, '>')">></button>
             </div>
         </div>
     `;
 }
 
 function verificar(btn, escolha) {
-    const btns = document.querySelectorAll('.btn-action');
+    const btns = document.querySelectorAll('.btn-symbol');
     btns.forEach(b => b.style.pointerEvents = 'none');
 
     let correto = "=";
@@ -192,10 +194,8 @@ function verificar(btn, escolha) {
         somAcerto.play();
         btn.classList.add('correct');
         slot.innerText = correto;
-        slot.style.color = "white";
-        slot.style.background = "#22c55e";
-        slot.style.borderStyle = "solid";
-        slot.style.borderColor = "#16a34a";
+        slot.style.color = "white"; slot.style.background = "#22c55e";
+        slot.style.borderStyle = "solid"; slot.style.borderColor = "#16a34a";
         acertos++;
         document.getElementById('hits-val').innerText = acertos;
         setTimeout(() => { indicePergunta++; proximaRonda(); }, 1400);
@@ -204,8 +204,7 @@ function verificar(btn, escolha) {
         btn.classList.add('wrong');
         erros++;
         document.getElementById('miss-val').innerText = erros;
-        slot.innerText = correto;
-        slot.style.color = "#ef4444";
+        slot.innerText = correto; slot.style.color = "#ef4444"; slot.style.background = "#fee2e2";
         btns.forEach(b => { if (b.innerText === correto) b.classList.add('correct'); });
         setTimeout(() => { indicePergunta++; proximaRonda(); }, 1800);
     }
