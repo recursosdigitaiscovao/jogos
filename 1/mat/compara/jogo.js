@@ -21,7 +21,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Compara a quantidade de animais e coloca o sinal correto na cerca!";
+    return "Conta os animais de cada lado e escolhe o sinal correto!";
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -29,13 +29,15 @@ window.selecionarCategoria = function(key) { categoriaAtual = key; };
 function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
+    const pathTut = JOGO_CONFIG.caminhoImg + "animaisdomesticos/cao.png";
+    
     container.innerHTML = `
         <div class="tut-wrapper" style="display:flex; flex-direction:column; align-items:center; gap:10px;">
             <h2 style="color:#15803d; font-weight:900; margin:0; letter-spacing:1px;">COMO JOGAR</h2>
-            <div style="display:flex; align-items:center; gap:15px; background:white; padding:20px; border-radius:20px; border:4px solid #22c55e; box-shadow:0 8px 20px rgba(0,0,0,0.1);">
-               <span style="font-size:1.8rem;">🐥🐥</span> 
+            <div style="display:flex; align-items:center; gap:15px; background:white; padding:15px; border-radius:20px; border:4px solid #22c55e; box-shadow:0 8px 20px rgba(0,0,0,0.1);">
+               <div style="display:flex; gap:2px;"><img src="${pathTut}" style="width:30px;"><img src="${pathTut}" style="width:30px;"></div>
                <b style="font-size:2.5rem; color:#ef4444; margin:0 10px;">></b> 
-               <span style="font-size:1.8rem;">🐥</span>
+               <div style="display:flex;"><img src="${pathTut}" style="width:30px;"></div>
             </div>
             <div id="tut-hand" style="font-size:40px; animation: tapH 2s infinite; margin-top:10px;">☝️</div>
         </div>
@@ -92,111 +94,92 @@ function mostrarPergunta() {
                 position: relative; overflow: hidden; border-radius: 20px;
             }
 
-            /* NUVENS PASSANDO */
-            .cloud-anim { 
-                position: absolute; pointer-events: none; z-index: 1; 
-                animation: moveClouds 30s linear infinite; opacity: 0.7;
-            }
-            @keyframes moveClouds { 
-                from { transform: translateX(-150px); left: -10%; } 
-                to { transform: translateX(150px); left: 110%; } 
+            .cloud-anim { position: absolute; opacity: 0.6; pointer-events: none; z-index: 1; animation: moveClouds 30s linear infinite; }
+            @keyframes moveClouds { from { left: -150px; } to { left: 110%; } }
+
+            .farm-grass { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: #4ade80; border-radius: 50% 50% 0 0 / 20px 20px 0 0; z-index: 2; }
+
+            .comparison-grid {
+                flex: 1; width: 100%; max-width: 800px;
+                display: grid; grid-template-columns: 1fr 60px 1fr; 
+                align-items: center; gap: 10px; z-index: 5; margin-top: 5px;
             }
 
-            /* RELVA NO FUNDO */
-            .farm-grass {
-                position: absolute; bottom: 0; left: 0; width: 100%; height: 70px;
-                background: #4ade80; border-radius: 50% 50% 0 0 / 20px 20px 0 0;
-                z-index: 2;
-            }
-
-            .comparison-container {
-                flex: 1; width: 100%; max-width: 900px;
-                display: grid; 
-                grid-template-columns: 1fr 70px 1fr; 
-                align-items: center; gap: 8px; z-index: 5;
-                margin-top: 10px;
-            }
-
-            .animal-box {
-                height: 100%; min-height: 140px;
-                background: rgba(255, 255, 255, 0.45);
-                border: 3px solid white; border-radius: 25px;
-                display: flex; flex-wrap: wrap; justify-content: center;
-                align-content: center; gap: 4px; padding: 12px;
-                backdrop-filter: blur(4px); box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+            /* CAIXA DOS ANIMAIS MAIS ORGANIZADA */
+            .animal-container {
+                height: auto; max-height: 220px;
+                background: rgba(255, 255, 255, 0.5);
+                border: 3px solid white; border-radius: 20px;
+                display: grid;
+                /* Organiza sempre em 5 colunas para parecer arrumado */
+                grid-template-columns: repeat(5, 1fr); 
+                gap: 4px; padding: 10px;
+                backdrop-filter: blur(4px);
+                box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
             }
 
             .animal-img {
-                width: calc(33% - 6px); max-width: 48px; height: auto;
-                aspect-ratio: 1/1; object-fit: contain;
-                animation: popAnimal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                width: 100%; height: auto; aspect-ratio: 1/1; object-fit: contain;
+                animation: popIn 0.4s forwards;
             }
-            @keyframes popAnimal { from { transform: scale(0); } to { transform: scale(1); } }
+            @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
-            .slot-center {
-                font-size: clamp(2.2rem, 8vw, 3.5rem); font-weight: 950;
+            .sign-slot {
+                font-size: clamp(2rem, 8vw, 3.5rem); font-weight: 950;
                 color: #15803d; text-align: center; background: rgba(255,255,255,0.9);
-                height: 65px; width: 65px; display: flex; align-items: center;
-                justify-content: center; border-radius: 18px;
-                box-shadow: 0 6px 15px rgba(0,0,0,0.15); border: 3px dashed #15803d;
-                flex-shrink: 0;
+                height: 60px; width: 60px; display: flex; align-items: center;
+                justify-content: center; border-radius: 15px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 3px dashed #15803d;
             }
 
-            .options-row { 
-                display: flex; justify-content: center; gap: 15px; 
-                width: 100%; max-width: 500px; padding: 20px 0; z-index: 10;
-            }
+            .buttons-area { display: flex; justify-content: center; gap: 15px; width: 100%; max-width: 450px; padding: 15px 0; z-index: 10; }
             
-            .btn-symbol { 
-                flex: 1; background: white; border: 4px solid #e2e8f0; border-radius: 22px; 
-                height: 80px; font-size: 2.8rem; font-weight: 900; cursor: pointer; 
-                box-shadow: 0 8px 0 #cbd5e1; color: #15803d; transition: 0.1s;
+            .btn-action { 
+                flex: 1; background: white; border: 4px solid #e2e8f0; border-radius: 20px; 
+                height: 70px; font-size: 2.5rem; font-weight: 900; cursor: pointer; 
+                box-shadow: 0 6px 0 #cbd5e1; color: #15803d; transition: 0.1s;
                 display: flex; align-items: center; justify-content: center;
             }
-            .btn-symbol:active { transform: translateY(4px); box-shadow: 0 2px 0 #cbd5e1; }
-            
-            .btn-symbol.correct { background: #dcfce7; border-color: #22c55e; color: #166534; box-shadow: 0 4px 0 #166534; }
-            .btn-symbol.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; box-shadow: 0 4px 0 #991b1b; }
+            .btn-action:active { transform: translateY(4px); box-shadow: 0 0 0 #cbd5e1; }
+            .btn-action.correct { background: #dcfce7; border-color: #22c55e; color: #166534; box-shadow: 0 4px 0 #166534; }
+            .btn-action.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; box-shadow: 0 4px 0 #991b1b; }
 
             @media (max-width: 450px) {
-                .slot-center { width: 50px; height: 50px; font-size: 2rem; border-radius: 12px; }
-                .animal-img { width: calc(50% - 4px); max-width: 38px; } 
-                .btn-symbol { height: 70px; font-size: 2.2rem; }
-                .farm-grass { height: 50px; }
+                /* No mobile muito pequeno usamos 4 colunas para não esmagar */
+                .animal-container { grid-template-columns: repeat(4, 1fr); padding: 5px; }
+                .sign-slot { width: 45px; height: 45px; font-size: 1.8rem; }
+                .btn-action { height: 60px; font-size: 2rem; }
             }
         </style>
 
         <div class="game-wrapper">
-            <!-- NUVENS -->
-            <img src="${pathNuvem}" class="cloud-anim" style="top:5%; width:100px; animation-duration: 25s;">
-            <img src="${pathNuvem}" class="cloud-anim" style="top:20%; width:70px; animation-duration: 35s; animation-delay: -5s;">
-            
-            <!-- RELVA -->
+            <img src="${pathNuvem}" class="cloud-anim" style="top:5%; width:90px; animation-duration: 20s;">
+            <img src="${pathNuvem}" class="cloud-anim" style="top:15%; width:70px; animation-duration: 28s; animation-delay: -5s;">
             <div class="farm-grass"></div>
 
-            <div class="comparison-container">
-                <div class="animal-box">
-                    ${Array(numEsquerda).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img" style="animation-delay:${i*0.03}s">`).join('')}
+            <div class="comparison-grid">
+                <div class="animal-container">
+                    ${Array(numEsquerda).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img" style="animation-delay:${i*0.02}s">`).join('')}
                 </div>
 
-                <div class="slot-center" id="main-slot">?</div>
+                <div class="sign-slot" id="main-slot">?</div>
 
-                <div class="animal-box">
-                    ${Array(numDireita).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img" style="animation-delay:${i*0.03}s">`).join('')}
+                <div class="animal-container">
+                    ${Array(numDireita).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img" style="animation-delay:${i*0.02}s">`).join('')}
                 </div>
             </div>
             
-            <div class="options-row">
-                <button class="btn-symbol" onclick="verificarComparacao(this, '<')"><</button>
-                <button class="btn-symbol" onclick="verificarComparacao(this, '=')">=</button>
-                <button class="btn-symbol" onclick="verificarComparacao(this, '>')">></button>
+            <div class="buttons-area">
+                <button class="btn-action" onclick="verificar(this, '<')"><</button>
+                <button class="btn-action" onclick="verificar(this, '=')">=</button>
+                <button class="btn-action" onclick="verificar(this, '>')">></button>
             </div>
         </div>
     `;
 }
 
-function verificarComparacao(btn, escolha) {
-    const btns = document.querySelectorAll('.btn-symbol');
+function verificar(btn, escolha) {
+    const btns = document.querySelectorAll('.btn-action');
     btns.forEach(b => b.style.pointerEvents = 'none');
 
     let correto = "=";
@@ -223,7 +206,6 @@ function verificarComparacao(btn, escolha) {
         document.getElementById('miss-val').innerText = erros;
         slot.innerText = correto;
         slot.style.color = "#ef4444";
-        slot.style.background = "#fee2e2";
         btns.forEach(b => { if (b.innerText === correto) b.classList.add('correct'); });
         setTimeout(() => { indicePergunta++; proximaRonda(); }, 1800);
     }
