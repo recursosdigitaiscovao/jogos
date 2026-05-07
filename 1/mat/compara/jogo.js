@@ -19,7 +19,7 @@ window.startLogic = function() {
     setTimeout(criarAnimacaoTutorial, 100);
 };
 
-window.gerarIntroJogo = function() { return "Qual lado tem mais animais? Escolhe o sinal correto!"; };
+window.gerarIntroJogo = function() { return "Conta os animais e escolhe o sinal correto para a cerca!"; };
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
 
 function criarAnimacaoTutorial() {
@@ -28,13 +28,13 @@ function criarAnimacaoTutorial() {
     const pathTut = JOGO_CONFIG.caminhoImg + "animaisdomesticos/cao.png";
     container.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
-            <h2 style="color:#15803d; font-weight:900; margin:0;">COMO JOGAR</h2>
-            <div style="display:flex; align-items:center; gap:15px; background:white; padding:20px; border-radius:20px; border:4px solid #22c55e;">
+            <h2 style="color:#2BA886; font-weight:900; margin:0;">COMO JOGAR</h2>
+            <div style="display:flex; align-items:center; gap:10px; background:white; padding:15px; border-radius:20px; border:4px solid #2BA886;">
                <img src="${pathTut}" style="width:40px;">
                <b style="font-size:2rem; color:#ef4444; margin:0 10px;">></b> 
                <img src="${pathTut}" style="width:25px; opacity:0.5;">
             </div>
-            <div style="font-size:40px; animation: tapH 2s infinite;">☝️</div>
+            <div id="tut-hand" style="font-size:40px; animation: tapH 2s infinite;">☝️</div>
         </div>
         <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-15px); } } </style>
     `;
@@ -76,13 +76,9 @@ function mostrarPergunta() {
     const pathAnimais = JOGO_CONFIG.caminhoImg + config.pasta;
     const pathNuvem = JOGO_CONFIG.caminhoImg + "nuvem.png";
 
-    // LÓGICA DE DIMENSIONAMENTO PARA NÃO SAIR DO QUADRADO
-    const isPortrait = window.innerHeight > window.innerWidth;
-    const cols = isPortrait ? 2 : 5;
+    // Lógica para garantir que os animais caibam SEMPRE
+    const maxNoLado = Math.max(numEsquerda, numDireita);
     
-    // Calculamos o número de linhas necessárias para o grupo maior
-    const rowsNeeded = Math.ceil(Math.max(numEsquerda, numDireita) / cols);
-
     container.innerHTML = `
         <style>
             .game-wrapper { 
@@ -92,66 +88,80 @@ function mostrarPergunta() {
                 background: linear-gradient(to bottom, #87CEEB 0%, #E0F2F1 100%);
                 position: relative; overflow: hidden; border-radius: 20px;
             }
-            .cloud-anim { position: absolute; opacity: 0.6; pointer-events: none; z-index: 1; animation: moveClouds 40s linear infinite; width: 120px; }
-            @keyframes moveClouds { from { left: -150px; } to { left: 110%; } }
-            .farm-grass { position: absolute; bottom: 0; left: 0; width: 100%; height: 50px; background: #4ade80; border-radius: 50% 50% 0 0 / 15px 15px 0 0; z-index: 2; }
+            .cloud-bg { position: absolute; opacity: 0.5; pointer-events: none; z-index: 1; animation: floatCloud 30s linear infinite; width: 100px; }
+            @keyframes floatCloud { from { left: -120px; } to { left: 110%; } }
+            .farm-grass { position: absolute; bottom: 0; left: 0; width: 100%; height: 40px; background: #4ade80; border-radius: 50% 50% 0 0 / 15px 15px 0 0; z-index: 2; }
+
+            .category-label {
+                background: white; color: #2BA886; padding: 6px 20px; border-radius: 40px; 
+                font-weight: 900; font-size: 0.85rem; text-transform: uppercase;
+                border: 4px solid #2BA886; margin-bottom: 5px; z-index: 10;
+            }
 
             .comparison-container {
-                flex: 1; width: 100%; max-width: 1200px;
+                flex: 1; width: 100%; max-width: 1000px;
                 display: flex; align-items: stretch; justify-content: center;
-                gap: 10px; z-index: 5; margin-bottom: 5px; min-height: 0;
+                gap: 8px; z-index: 5; margin-bottom: 5px; min-height: 0;
             }
 
             .animal-box {
                 flex: 1; height: 100%; background: rgba(255, 255, 255, 0.5);
                 border: 3px solid white; border-radius: 20px;
-                display: grid;
-                /* Grelha Dinâmica */
-                grid-template-columns: repeat(${cols}, 1fr);
-                grid-template-rows: repeat(${rowsNeeded}, 1fr);
-                gap: 4px; padding: 10px;
+                display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+                align-content: center; gap: 4px; padding: 8px;
                 backdrop-filter: blur(4px); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
                 min-width: 0; overflow: hidden;
             }
 
             .animal-img {
-                width: 100%; height: 100%; object-fit: contain;
-                animation: popIn 0.4s forwards;
+                width: auto; height: auto;
+                object-fit: contain; animation: popIn 0.4s forwards;
             }
             @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
+            /* AJUSTE DE TAMANHO PARA MONITOR (LANDSCAPE) */
+            @media (min-width: 601px) {
+                .animal-img {
+                    width: 18%; /* 5 colunas */
+                    max-height: ${maxNoLado > 15 ? '20%' : (maxNoLado > 10 ? '24%' : '30%')};
+                }
+            }
+
+            /* AJUSTE PARA TELEMÓVEL (VERTICAL) - 2 COLUNAS */
+            @media (max-width: 600px) {
+                .animal-box { gap: 2px; padding: 5px; }
+                .animal-img {
+                    width: 45%; /* 2 colunas */
+                    /* Se tivermos 20 itens, são 10 linhas. Max-height = 100% / 10 = 10% */
+                    max-height: ${maxNoLado > 18 ? '9%' : (maxNoLado > 14 ? '12%' : (maxNoLado > 8 ? '15%' : '20%'))};
+                }
+                .sign-slot { width: 45px !important; height: 45px !important; font-size: 1.8rem !important; }
+            }
+
             .sign-slot {
-                width: clamp(45px, 8vw, 80px); height: clamp(45px, 8vw, 80px);
-                background: white; border: 3px dashed #15803d; border-radius: 15px;
+                width: 65px; height: 65px; background: white; border: 3px dashed #15803d; border-radius: 15px;
                 display: flex; align-items: center; justify-content: center;
-                font-size: clamp(1.8rem, 6vw, 3.5rem); font-weight: 950; color: #15803d;
+                font-size: 2.5rem; font-weight: 950; color: #15803d;
                 box-shadow: 0 8px 20px rgba(0,0,0,0.15); flex-shrink: 0; align-self: center; z-index: 10;
             }
 
             .buttons-row { 
-                display: flex; justify-content: center; gap: 15px; 
-                width: 100%; max-width: 500px; padding: 5px 0 10px; 
-                z-index: 20; flex-shrink: 0;
+                display: flex; justify-content: center; gap: 10px; 
+                width: 100%; max-width: 450px; padding: 5px 0 10px; z-index: 20; flex-shrink: 0;
             }
             .btn-symbol { 
                 flex: 1; background: white; border: 4px solid #e2e8f0; border-radius: 18px; 
                 height: 65px; font-size: 2.2rem; font-weight: 900; cursor: pointer; 
                 box-shadow: 0 5px 0 #cbd5e1; color: #15803d; display: flex; align-items: center; justify-content: center;
             }
-            .btn-symbol:active { transform: translateY(3px); box-shadow: none; }
+            .btn-symbol:active { transform: translateY(4px); box-shadow: none; }
             .btn-symbol.correct { background: #dcfce7; border-color: #22c55e; color: #166534; box-shadow: 0 4px 0 #166534; }
             .btn-symbol.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; box-shadow: 0 4px 0 #991b1b; }
-
-            @media (max-width: 600px) {
-                .animal-box { padding: 6px; gap: 2px; }
-                .sign-slot { width: 45px; height: 45px; font-size: 1.8rem; }
-                .btn-symbol { height: 60px; font-size: 2rem; }
-            }
         </style>
 
         <div class="game-wrapper">
-            <img src="${pathNuvem}" class="cloud-anim" style="top:5%; animation-delay: 0s;">
-            <img src="${pathNuvem}" class="cloud-anim" style="top:15%; animation-delay: -15s; width:80px;">
+            <img src="${pathNuvem}" class="cloud-bg" style="top:5%; animation-duration: 25s;">
+            <div class="category-label">${config.nome}</div>
             <div class="farm-grass"></div>
 
             <div class="comparison-container">
@@ -208,14 +218,14 @@ function finalizarJogo() {
     resScreen.innerHTML = `
         <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
             <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px;">
-            <h2 style="color:#15803d; font-weight:900; font-size:1.8rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
+            <h2 style="color:#2BA886; font-weight:900; font-size:1.8rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
                 <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4;">
-                    <span style="display:block; font-size:26px; font-weight:900; color:#15803d;">${acertos}/10</span>
+                    <span style="display:block; font-size:26px; font-weight:900; color:#2BA886;">${acertos}/10</span>
                     <span style="font-size:10px; color:#88a; text-transform:uppercase; font-weight:800;">Acertos</span>
                 </div>
                 <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4;">
-                    <span style="display:block; font-size:26px; font-weight:900; color:#15803d;">${tempo}</span>
+                    <span style="display:block; font-size:26px; font-weight:900; color:#2BA886;">${tempo}</span>
                     <span style="font-size:10px; color:#88a; text-transform:uppercase; font-weight:800;">Tempo</span>
                 </div>
             </div>
