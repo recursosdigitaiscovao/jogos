@@ -14,38 +14,32 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// === 1. INICIALIZAÇÃO ===
 window.startLogic = function() {
     if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "Nível 1";
     setTimeout(criarAnimacaoTutorial, 100);
 };
 
-window.gerarIntroJogo = function() {
-    return "Qual lado tem mais animais? Escolhe o sinal correto para a cerca!";
-};
-
+window.gerarIntroJogo = function() { return "Qual lado tem mais animais? Escolhe o sinal correto!"; };
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
 
 function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
     const pathTut = JOGO_CONFIG.caminhoImg + "animaisdomesticos/cao.png";
-    
     container.innerHTML = `
-        <div class="tut-wrapper" style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
             <h2 style="color:#15803d; font-weight:900; margin:0;">COMO JOGAR</h2>
             <div style="display:flex; align-items:center; gap:15px; background:white; padding:20px; border-radius:20px; border:4px solid #22c55e;">
-               <img src="${pathTut}" style="width:40px;">
-               <b style="font-size:2rem; color:#ef4444; margin:0 10px;">></b> 
-               <img src="${pathTut}" style="width:25px; opacity:0.5;">
+               <img src="${pathTut}" style="width:50px;">
+               <b style="font-size:2rem; color:#ef4444;">></b> 
+               <img src="${pathTut}" style="width:30px; opacity:0.5;">
             </div>
             <div id="tut-hand" style="font-size:40px; animation: tapH 2s infinite;">☝️</div>
         </div>
-        <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-10px); } } </style>
+        <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-15px); } } </style>
     `;
 }
 
-// === 2. LÓGICA DO JOGO ===
 window.initGame = function() {
     indicePergunta = 0; acertos = 0; erros = 0;
     document.getElementById('hits-val').innerText = "0";
@@ -82,14 +76,6 @@ function mostrarPergunta() {
     const pathAnimais = JOGO_CONFIG.caminhoImg + config.pasta;
     const pathNuvem = JOGO_CONFIG.caminhoImg + "nuvem.png";
 
-    // Cálculo dinâmico para evitar SCROLL e transbordo
-    // No mobile (2 colunas), se tivermos 20 animais, são 10 linhas.
-    // Cada linha pode ter no máximo 9% da altura da caixa.
-    const maiorQuantidade = Math.max(numEsquerda, numDireita);
-    let animalMaxHeight = "18%"; // Padrão para poucos animais
-    if (maiorQuantidade > 14) animalMaxHeight = "9%";
-    else if (maiorQuantidade > 8) animalMaxHeight = "13%";
-
     container.innerHTML = `
         <style>
             .game-wrapper { 
@@ -99,79 +85,73 @@ function mostrarPergunta() {
                 background: linear-gradient(to bottom, #87CEEB 0%, #E0F2F1 100%);
                 position: relative; overflow: hidden; border-radius: 20px;
             }
-
             .cloud-anim { position: absolute; opacity: 0.6; pointer-events: none; z-index: 1; animation: moveClouds 40s linear infinite; width: 120px; }
             @keyframes moveClouds { from { left: -150px; } to { left: 110%; } }
+            .farm-grass { position: absolute; bottom: 0; left: 0; width: 100%; height: 40px; background: #4ade80; border-radius: 50% 50% 0 0 / 15px 15px 0 0; z-index: 2; }
 
-            .farm-grass { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: #4ade80; border-radius: 50% 50% 0 0 / 20px 20px 0 0; z-index: 2; }
-
+            /* ÁREA DE COMPARAÇÃO */
             .comparison-container {
                 flex: 1; width: 100%; max-width: 1200px;
                 display: flex; align-items: stretch; justify-content: center;
-                gap: 8px; z-index: 5; margin: 5px 0; min-height: 0;
+                gap: 10px; z-index: 5; margin-bottom: 5px; min-height: 0;
             }
 
             .animal-box {
                 flex: 1; height: 100%;
-                background: rgba(255, 255, 255, 0.45);
-                border: 3px solid white; border-radius: 25px;
+                background: rgba(255, 255, 255, 0.5);
+                border: 3px solid white; border-radius: 20px;
                 display: grid;
-                grid-template-columns: repeat(5, 1fr); /* Desktop: 5 colunas */
-                align-content: center; justify-items: center;
-                gap: 4px; padding: 10px;
+                /* LANDSCAPE: 5 colunas */
+                grid-template-columns: repeat(5, 1fr);
+                grid-auto-rows: 1fr;
+                gap: 5px; padding: 10px;
                 backdrop-filter: blur(4px); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
-                min-width: 0; overflow: hidden; /* BLOQUEIA SCROLL */
+                min-width: 0;
             }
 
             .animal-img {
-                width: auto; height: auto;
-                max-width: 90%; 
-                max-height: 18%; /* No PC garantimos que cabem 5 linhas */
-                aspect-ratio: 1/1; object-fit: contain;
+                width: 100%; height: 100%; object-fit: contain;
                 animation: popIn 0.4s forwards;
             }
-
             @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
             .sign-slot {
                 width: clamp(50px, 8vw, 80px); height: clamp(50px, 8vw, 80px);
-                background: white; border: 3px dashed #15803d; border-radius: 18px;
+                background: white; border: 3px dashed #15803d; border-radius: 15px;
                 display: flex; align-items: center; justify-content: center;
                 font-size: clamp(1.8rem, 6vw, 3.5rem); font-weight: 950; color: #15803d;
-                box-shadow: 0 8px 20px rgba(0,0,0,0.15); flex-shrink: 0; z-index: 10;
-                align-self: center;
+                box-shadow: 0 8px 20px rgba(0,0,0,0.15); flex-shrink: 0; align-self: center; z-index: 10;
             }
 
             .buttons-row { 
                 display: flex; justify-content: center; gap: 15px; 
-                width: 100%; max-width: 500px; padding: 10px 0 10px; 
+                width: 100%; max-width: 500px; padding: 5px 0 15px; 
                 z-index: 20; flex-shrink: 0;
             }
-            
             .btn-symbol { 
                 flex: 1; background: white; border: 4px solid #e2e8f0; border-radius: 20px; 
-                height: clamp(60px, 10vh, 85px); font-size: 2.5rem; font-weight: 900; cursor: pointer; 
-                box-shadow: 0 6px 0 #cbd5e1; color: #15803d; transition: 0.1s;
-                display: flex; align-items: center; justify-content: center;
+                height: 70px; font-size: 2.5rem; font-weight: 900; cursor: pointer; 
+                box-shadow: 0 6px 0 #cbd5e1; color: #15803d; display: flex; align-items: center; justify-content: center;
             }
-            .btn-symbol:active { transform: translateY(4px); box-shadow: 0 0 0 #cbd5e1; }
+            .btn-symbol:active { transform: translateY(4px); box-shadow: none; }
             .btn-symbol.correct { background: #dcfce7; border-color: #22c55e; color: #166534; box-shadow: 0 4px 0 #166534; }
             .btn-symbol.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; box-shadow: 0 4px 0 #991b1b; }
 
-            /* AJUSTE PARA ECRÃS VERTICAIS / MOBILE */
+            /* AJUSTE PARA ECRÃS VERTICAIS (MOBILE) */
             @media (max-width: 600px) {
-                .comparison-container { gap: 4px; }
                 .animal-box { 
-                    grid-template-columns: repeat(2, 1fr); /* FORÇA 2 COLUNAS */
-                    padding: 5px; gap: 2px;
+                    /* 2 COLUNAS: Animais ficam muito maiores */
+                    grid-template-columns: repeat(2, 1fr); 
+                    padding: 8px; gap: 4px;
                 }
-                .animal-img { 
-                    /* AQUI A MÁGICA: Redimensiona para caber sem scroll */
-                    max-height: ${animalMaxHeight}; 
-                    max-width: 90%; 
-                } 
-                .sign-slot { width: 45px; height: 45px; font-size: 1.8rem; border-radius: 10px; }
-                .btn-symbol { height: 65px; font-size: 2rem; border-radius: 15px; }
+                .comparison-container { gap: 4px; }
+                .sign-slot { width: 50px; height: 50px; font-size: 2rem; }
+            }
+
+            /* AJUSTE PARA LANDSCAPE PEQUENO (ALTURA BAIXA) */
+            @media (max-height: 500px) {
+                .btn-symbol { height: 50px; font-size: 1.8rem; }
+                .animal-box { padding: 5px; }
             }
         </style>
 
@@ -182,13 +162,11 @@ function mostrarPergunta() {
 
             <div class="comparison-container">
                 <div class="animal-box">
-                    ${Array(numEsquerda).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img" style="animation-delay:${i*0.02}s">`).join('')}
+                    ${Array(numEsquerda).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img">`).join('')}
                 </div>
-
                 <div class="sign-slot" id="main-slot">?</div>
-
                 <div class="animal-box">
-                    ${Array(numDireita).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img" style="animation-delay:${i*0.02}s">`).join('')}
+                    ${Array(numDireita).fill(0).map((_, i) => `<img src="${pathAnimais}${animalSorteado}" class="animal-img">`).join('')}
                 </div>
             </div>
             
@@ -212,9 +190,7 @@ function verificarComparacao(btn, escolha) {
     if (escolha === correto) {
         somAcerto.play();
         btn.classList.add('correct');
-        slot.innerText = correto;
-        slot.style.color = "white"; slot.style.background = "#22c55e";
-        slot.style.borderStyle = "solid"; slot.style.borderColor = "#16a34a";
+        slot.innerText = correto; slot.style.color = "white"; slot.style.background = "#22c55e"; slot.style.borderStyle = "solid";
         acertos++;
         document.getElementById('hits-val').innerText = acertos;
         setTimeout(() => { indicePergunta++; proximaRonda(); }, 1400);
@@ -237,7 +213,7 @@ function finalizarJogo() {
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:110px; margin-bottom:15px;">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px;">
             <h2 style="color:#15803d; font-weight:900; font-size:1.8rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
                 <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4;">
