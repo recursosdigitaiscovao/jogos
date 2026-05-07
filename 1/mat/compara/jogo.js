@@ -14,12 +14,13 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
+// === 1. INICIALIZAÇÃO ===
 window.startLogic = function() {
     if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "Nível 1";
     setTimeout(criarAnimacaoTutorial, 100);
 };
 
-window.gerarIntroJogo = function() { return "Conta os animais e escolhe o sinal correto para a cerca!"; };
+window.gerarIntroJogo = function() { return "Compara as quantidades e escolhe o sinal correto!"; };
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
 
 function criarAnimacaoTutorial() {
@@ -28,13 +29,13 @@ function criarAnimacaoTutorial() {
     const pathTut = JOGO_CONFIG.caminhoImg + "animaisdomesticos/cao.png";
     container.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
-            <h2 style="color:#2BA886; font-weight:900; margin:0;">COMO JOGAR</h2>
-            <div style="display:flex; align-items:center; gap:10px; background:white; padding:15px; border-radius:20px; border:4px solid #2BA886;">
+            <h2 style="color:#15803d; font-weight:900; margin:0;">COMO JOGAR</h2>
+            <div style="display:flex; align-items:center; gap:15px; background:white; padding:20px; border-radius:20px; border:4px solid #22c55e;">
                <img src="${pathTut}" style="width:40px;">
                <b style="font-size:2rem; color:#ef4444; margin:0 10px;">></b> 
                <img src="${pathTut}" style="width:25px; opacity:0.5;">
             </div>
-            <div id="tut-hand" style="font-size:40px; animation: tapH 2s infinite;">☝️</div>
+            <div style="font-size:40px; animation: tapH 2s infinite;">☝️</div>
         </div>
         <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-15px); } } </style>
     `;
@@ -76,9 +77,17 @@ function mostrarPergunta() {
     const pathAnimais = JOGO_CONFIG.caminhoImg + config.pasta;
     const pathNuvem = JOGO_CONFIG.caminhoImg + "nuvem.png";
 
-    // Lógica para garantir que os animais caibam SEMPRE
+    // DETERMINAÇÃO DO TAMANHO (MAX-HEIGHT) PARA NÃO SAIR DO QUADRADO
     const maxNoLado = Math.max(numEsquerda, numDireita);
     
+    // Regra solicitada: Se > 14 animais (em 2 colunas = 10 linhas), cada um tem 7% da altura.
+    let alturaAnimalMobile = "18%"; 
+    if (maxNoLado > 14) {
+        alturaAnimalMobile = "7%"; // EXATAMENTE COMO PEDISTE
+    } else if (maxNoLado > 8) {
+        alturaAnimalMobile = "12%";
+    }
+
     container.innerHTML = `
         <style>
             .game-wrapper { 
@@ -92,23 +101,17 @@ function mostrarPergunta() {
             @keyframes floatCloud { from { left: -120px; } to { left: 110%; } }
             .farm-grass { position: absolute; bottom: 0; left: 0; width: 100%; height: 40px; background: #4ade80; border-radius: 50% 50% 0 0 / 15px 15px 0 0; z-index: 2; }
 
-            .category-label {
-                background: white; color: #2BA886; padding: 6px 20px; border-radius: 40px; 
-                font-weight: 900; font-size: 0.85rem; text-transform: uppercase;
-                border: 4px solid #2BA886; margin-bottom: 5px; z-index: 10;
-            }
-
             .comparison-container {
-                flex: 1; width: 100%; max-width: 1000px;
+                flex: 1; width: 100%; max-width: 1100px;
                 display: flex; align-items: stretch; justify-content: center;
-                gap: 8px; z-index: 5; margin-bottom: 5px; min-height: 0;
+                gap: 10px; z-index: 5; margin-bottom: 5px; min-height: 0;
             }
 
             .animal-box {
                 flex: 1; height: 100%; background: rgba(255, 255, 255, 0.5);
                 border: 3px solid white; border-radius: 20px;
                 display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
-                align-content: center; gap: 4px; padding: 8px;
+                align-content: center; gap: 4px; padding: 10px;
                 backdrop-filter: blur(4px); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
                 min-width: 0; overflow: hidden;
             }
@@ -119,21 +122,20 @@ function mostrarPergunta() {
             }
             @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
 
-            /* AJUSTE DE TAMANHO PARA MONITOR (LANDSCAPE) */
+            /* ESTILO PARA MONITOR (LANDSCAPE) - 5 COLUNAS */
             @media (min-width: 601px) {
                 .animal-img {
-                    width: 18%; /* 5 colunas */
-                    max-height: ${maxNoLado > 15 ? '20%' : (maxNoLado > 10 ? '24%' : '30%')};
+                    width: 18%; 
+                    max-height: ${maxNoLado > 15 ? '20%' : '28%'};
                 }
             }
 
-            /* AJUSTE PARA TELEMÓVEL (VERTICAL) - 2 COLUNAS */
+            /* ESTILO PARA TELEMÓVEL (VERTICAL) - 2 COLUNAS */
             @media (max-width: 600px) {
                 .animal-box { gap: 2px; padding: 5px; }
                 .animal-img {
-                    width: 45%; /* 2 colunas */
-                    /* Se tivermos 20 itens, são 10 linhas. Max-height = 100% / 10 = 10% */
-                    max-height: ${maxNoLado > 18 ? '9%' : (maxNoLado > 14 ? '12%' : (maxNoLado > 8 ? '15%' : '20%'))};
+                    width: 45%; 
+                    max-height: ${alturaAnimalMobile}; /* APLICA OS 7% SE > 14 ANIMAIS */
                 }
                 .sign-slot { width: 45px !important; height: 45px !important; font-size: 1.8rem !important; }
             }
@@ -161,7 +163,6 @@ function mostrarPergunta() {
 
         <div class="game-wrapper">
             <img src="${pathNuvem}" class="cloud-bg" style="top:5%; animation-duration: 25s;">
-            <div class="category-label">${config.nome}</div>
             <div class="farm-grass"></div>
 
             <div class="comparison-container">
@@ -218,14 +219,14 @@ function finalizarJogo() {
     resScreen.innerHTML = `
         <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
             <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px;">
-            <h2 style="color:#2BA886; font-weight:900; font-size:1.8rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
+            <h2 style="color:#15803d; font-weight:900; font-size:1.8rem; margin-bottom:15px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
                 <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4;">
-                    <span style="display:block; font-size:26px; font-weight:900; color:#2BA886;">${acertos}/10</span>
+                    <span style="display:block; font-size:26px; font-weight:900; color:#15803d;">${acertos}/10</span>
                     <span style="font-size:10px; color:#88a; text-transform:uppercase; font-weight:800;">Acertos</span>
                 </div>
                 <div style="background:white; border-radius:20px; padding:15px; flex:1; text-align:center; border:2px solid #e8f9f4;">
-                    <span style="display:block; font-size:26px; font-weight:900; color:#2BA886;">${tempo}</span>
+                    <span style="display:block; font-size:26px; font-weight:900; color:#15803d;">${tempo}</span>
                     <span style="font-size:10px; color:#88a; text-transform:uppercase; font-weight:800;">Tempo</span>
                 </div>
             </div>
