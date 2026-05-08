@@ -1,7 +1,7 @@
 // === DEFINIÇÃO DAS CATEGORIAS: COMPLETAR PALAVRAS ===
 const JOGO_CATEGORIAS = {
     "Nível 1": {
-        nome: "Faltam as Vogais",
+        nome: "Vogais",
         imgCapa: "cnivel1.png",
         tipoLacuna: "vogais", // Regra: Esconde A, E, I, O, U...
         palavras: [
@@ -12,7 +12,7 @@ const JOGO_CATEGORIAS = {
         ]
     },
     "Nível 2": {
-        nome: "Faltam as Consoantes",
+        nome: "Consoantes",
         imgCapa: "cnivel2.png",
         tipoLacuna: "consoantes", // Regra: Esconde P, T, V, C...
         palavras: [
