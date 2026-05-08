@@ -2,7 +2,7 @@
 const CONFIG_MESTRE = {
     ano: "ano1",        
     area: "portugues",  
-    nomeJogo: "Comparar Quantidades"
+    nomeJogo: "Completa Palavras"
 };
 
 // === BIBLIOTECA DE TEMAS (CORES PADRÃO POR ÁREA) ===
