@@ -1,37 +1,24 @@
-// === DEFINIÇÃO DAS CATEGORIAS: A FÁBRICA DAS PALAVRAS ===
+// === DEFINIÇÃO DAS CATEGORIAS: A FÁBRICA DE PALAVRAS ===
 const JOGO_CATEGORIAS = {
     "Nível 1": {
-        nome: "2 Sílabas",
+        nome: "Estação de 2 Sílabas",
         imgCapa: "cnivel1.png",
-        palavras: [
-            { silabas: ["BA", "LA"] },
-            { silabas: ["CA", "SA"] },
-            { silabas: ["DO", "CE"] },
-            { silabas: ["FO", "CO"] },
-            { silabas: ["GA", "TO"] },
-            { silabas: ["LA", "TA"] },
-            { silabas: ["MA", "LA"] },
-            { silabas: ["PA", "TO"] },
-            { silabas: ["RA", "TO"] },
-            { silabas: ["SA", "PO"] },
-            { silabas: ["LU", "A"] },
-            { silabas: ["PI", "PA"] }
-        ]
+        target: 5, // Meta de palavras para vencer
+        bank: ["GA", "TO", "LO", "BO", "CA", "MA", "VA", "PA", "LA", "ME"],
+        valid: ["GATO", "LOBO", "GALO", "BOLO", "VACA", "PAPA", "PATO", "CAMA", "BOCA", "MALA", "MACA", "LAMA", "BOTA", "VALA", "VAGA", "MESA"]
     },
     "Nível 2": {
-        nome: "3 Sílabas",
+        nome: "Estação Mista",
         imgCapa: "cnivel2.png",
-        palavras: [
-            { silabas: ["BO", "NE", "CA"] },
-            { silabas: ["CA", "VA", "LO"] },
-            { silabas: ["CA", "DER", "NO"] },
-            { silabas: ["JA", "NE", "LA"] },
-            { silabas: ["MA", "CA", "CO"] },
-            { silabas: ["PI", "PO", "CA"] },
-            { silabas: ["SA", "PA", "TO"] },
-            { silabas: ["TA", "PE", "TE"] },
-            { silabas: ["CA", "RE", "CA"] },
-            { silabas: ["CO", "MI", "DA"] }
-        ]
+        target: 5,
+        bank: ["PI", "CO", "NE", "LA", "JA", "SA", "BA", "TA", "RE", "CA", "PA"],
+        valid: ["PIPA", "COLA", "NELA", "SALA", "BALA", "TELA", "RETA", "PICO", "COPO", "BATA", "SACO", "BICO", "JANELA", "PANELA", "CANETA", "SAPATO", "BONECA", "CANECA", "PATA"]
+    },
+    "Nível 3": {
+        nome: "Engenharia de Palavras",
+        imgCapa: "cnivel3.png",
+        target: 6,
+        bank: ["DE", "DO", "FA", "DA", "ME", "SA", "RA", "TO", "LI", "XO", "PE", "TE"],
+        valid: ["DEDO", "FADA", "MESA", "RATO", "LIXO", "DADO", "MEDO", "FAMA", "RETA", "DATA", "RETE", "TELA", "TAPETE", "SAPATO", "DOCE"]
     }
 };
