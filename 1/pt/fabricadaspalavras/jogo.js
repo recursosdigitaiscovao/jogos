@@ -1,5 +1,5 @@
 let selectedSyllables = [];
-let historicoPalavras = []; // NOVA: Guarda as palavras produzidas
+let historicoPalavras = []; 
 let roundAtual = 0;
 let acertos = 0;
 let erros = 0;
@@ -19,7 +19,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return `Bem-vindo! Tens 10 rondas para produzir palavras. As peças mudam sempre!`;
+    return `Fábrica de Palavras: Produz 10 palavras diferentes. Não vale repetir!`;
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -29,9 +29,9 @@ function criarAnimacaoTutorial() {
     if (!container) return;
     container.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; gap:15px; position:relative;">
-            <div style="font-weight:900; color:var(--primary-blue); font-size:1.2rem;">COMO JOGAR</div>
+            <div style="font-weight:900; color:var(--primary-blue); font-size:1.2rem; text-transform:uppercase;">COMO JOGAR</div>
             <div style="display:flex; gap:10px; background:white; padding:20px; border-radius:20px; border:4px solid #0891b2;">
-                <div style="width:50px; height:50px; background:#f0f9ff; border:2px solid #0891b2; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#164e63;">BA</div>
+                <div style="width:50px; height:50px; background:#f0f9ff; border:2px solid #0891b2; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#164e63;">CA</div>
                 <div style="width:50px; height:50px; border:3px dashed #cbd5e1; border-radius:10px;"></div>
             </div>
             <div id="tut-hand" style="font-size:45px; animation: tapH 2s infinite;">☝️</div>
@@ -41,7 +41,7 @@ function criarAnimacaoTutorial() {
 }
 
 window.initGame = function() {
-    historicoPalavras = []; // Limpa no início do jogo
+    historicoPalavras = [];
     roundAtual = 0; acertos = 0; erros = 0;
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
@@ -75,7 +75,8 @@ function gerarBancoDeSilabas() {
     const semente = config.pool[Math.floor(Math.random() * config.pool.length)];
     let silabasSemente = [];
     if (config.slots === 2) {
-        silabasSemente = [semente.substring(0, semente.length/2), semente.substring(semente.length/2)];
+        const meio = Math.floor(semente.length / 2);
+        silabasSemente = [semente.substring(0, meio), semente.substring(meio)];
     } else {
         silabasSemente = [semente.substring(0, 2), semente.substring(2, 4), semente.substring(4, 6)];
     }
@@ -103,7 +104,7 @@ function renderizarEcraFabrica() {
                 width: clamp(50px, 14vw, 75px); height: clamp(50px, 14vw, 75px);
                 background: white; border: 3px dashed #cbd5e1; border-radius: 15px;
                 display: flex; align-items: center; justify-content: center;
-                font-size: clamp(1.2rem, 5vw, 1.8rem); font-weight: 950; color: #0891b2;
+                font-size: clamp(1.1rem, 5vw, 1.8rem); font-weight: 950; color: #0891b2;
             }
             .mold.filled { border: 3px solid #0891b2; border-bottom-width: 6px; animation: popIn 0.3s; }
             .btn-row { display: flex; gap: 15px; margin-bottom: 5px; }
@@ -118,8 +119,6 @@ function renderizarEcraFabrica() {
                 font-size: clamp(0.95rem, 4vw, 1.3rem); font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #0e7490;
             }
             .pill:active { transform: translateY(2px); box-shadow: 0 1px 0 #0e7490; }
-            
-            /* ARMAZÉM COM ALTURA FIXA E WRAP PARA NÃO TER SCROLL */
             .warehouse { width: 100%; max-width: 600px; background: rgba(255,255,255,0.7); border-radius: 20px; padding: 10px; border: 2px solid #e2e8f0; height: 85px; }
             .tag { background: #0891b2; color: white; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; animation: popIn 0.3s; }
             @keyframes popIn { from { transform: scale(0.5); opacity:0; } to { transform: scale(1); opacity:1; } }
@@ -138,7 +137,6 @@ function renderizarEcraFabrica() {
             <div class="warehouse">
                 <div style="font-size:0.55rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:5px;">Armazém de Palavras:</div>
                 <div id="history-list" style="display:flex; flex-wrap:wrap; gap:5px;">
-                    <!-- AQUI AS PALAVRAS PERSISTEM -->
                     ${historicoPalavras.map(p => `<div class="tag">${p}</div>`).join('')}
                 </div>
             </div>
@@ -176,16 +174,21 @@ window.validarProducao = function() {
     const config = JOGO_CATEGORIAS[categoriaAtual];
     if (selectedSyllables.length < config.slots) return;
     const palavra = selectedSyllables.join('');
-    const dicionario = config.slots === 2 ? DICIONARIO_GLOBAL.dissilabos : DICIONARIO_GLOBAL.trissilabos;
 
-    if (dicionario.includes(palavra)) {
+    // 1. VERIFICA SE JÁ FOI ESCRITA
+    if (historicoPalavras.includes(palavra)) {
+        somErro.play();
+        feedbackEstacao("#f59e0b", "REPETIDA!");
+        setTimeout(proximaRondaFabrica, 1200);
+        return;
+    }
+
+    // 2. VERIFICAÇÃO NO DICIONÁRIO
+    if (DICIONARIO_MESTRE.includes(palavra)) {
         somAcerto.play();
         acertos++;
         document.getElementById('hits-val').innerText = acertos;
-        
-        // ADICIONA AO HISTÓRICO PERSISTENTE
-        if(!historicoPalavras.includes(palavra)) historicoPalavras.push(palavra);
-        
+        historicoPalavras.push(palavra);
         feedbackEstacao("#10b981", "CERTO!");
     } else {
         somErro.play();
