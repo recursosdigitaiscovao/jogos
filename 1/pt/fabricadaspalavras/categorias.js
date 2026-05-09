@@ -1,7 +1,24 @@
-// === DICIONÁRIO MESTRE DA FÁBRICA ===
+// === DICIONÁRIO MESTRE DA FÁBRICA (PT-PT) ===
 const DICIONARIO_GLOBAL = {
-    dissilabos: ["BOLA","BOLO","BOTA","BOCA","BODE","CASA","CAMA","CADA","CABO","COLA","COPA","COMA","DADO","DATA","DAMA","DEDO","DOCE","FADA","FACA","FAMA","FOGO","FOTO","GATO","GALA","GALO","GOLA","GOTA","LAMA","LATA","LADO","LOBO","LOTO","LUAR","MALA","MANA","MANO","MAPA","MATA","MATO","MEDO","MESA","MIMO","MOTA","MOTO","PATA","PATO","PAPA","PARA","PERA","PENA","PICO","PIPA","RALA","RATA","RATO","RODA","RODO","ROCA","ROMA","ROSA","ROTA","SACA","SALA","SAPO","SETA","SELO","SOPA","TACA","TALA","TATO","TELA","TIME","TOGA","TOMA","VACA","VALA","VAGA","VELA","VILA","VOTO"],
-    trissilabos: ["MACACO","BATATA","BANANA","JANELA","PANELA","CANELA","CANETA","CAJADO","CAMADA","COMIDA","COMETA","CORADA","BALADA","CAVALO","BONECA","PIPOCA","SALADA","SAPATO","SACADA","PELADA","PETECA","AMADO","APARADA","FALADA","MAMADA","MANADA","PIRATA","RECADA","RECOMA","TAMPADA","TAPADA"]
+    // Palavras reais de 2 sílabas (Estrutura CV-CV)
+    dissilabos: [
+        "BOLA", "BOLO", "BOTA", "BOCA", "BODE", "CASA", "CAMA", "CADA", "CABO", "COLA", 
+        "COPA", "COMA", "DADO", "DATA", "DAMA", "DEDO", "DOCE", "FADA", "FACA", "FAMA", 
+        "FOGO", "FOTO", "GATO", "GALA", "GALO", "GOLA", "GOTA", "LAMA", "LATA", "LADO", 
+        "LOBO", "LUAR", "MALA", "MANA", "MANO", "MAPA", "MATA", "MATO", "MEDO", "MESA", 
+        "MIMO", "MOTA", "PATA", "PATO", "PAPA", "PARA", "PERA", "PENA", "PICO", "PIPA", 
+        "RALA", "RATA", "RATO", "RODA", "RODO", "ROCA", "ROMA", "ROSA", "ROTA", "SACA", 
+        "SACO", "SALA", "SAPO", "SETA", "SELO", "SOPA", "SORO", "TACA", "TACO", "TALA", 
+        "TALO", "TAMA", "TAPA", "TARA", "TATO", "TOCA", "TODO", "TODA", "TOMA", "VACA", 
+        "VALA", "VAGA", "VELA", "VILA", "VOTO"
+    ],
+    // Palavras reais de 3 sílabas simples
+    trissilabos: [
+        "MACACO", "BATATA", "BANANA", "JANELA", "PANELA", "CANELA", "CANETA", "CAJADO", 
+        "CAMADA", "COMIDA", "COMETA", "CORADA", "BALADA", "CAVALO", "BONECA", "PIPOCA", 
+        "SALADA", "SAPATO", "SACADA", "PELADA", "PETECA", "AMADO", "APARADA", "FALADA", 
+        "MAMADA", "MANADA", "PIRATA", "RECADA", "TAMPADA", "TAPADA", "GELADO", "COCOLO"
+    ]
 };
 
 const JOGO_CATEGORIAS = {
