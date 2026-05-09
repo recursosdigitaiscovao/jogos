@@ -1,4 +1,4 @@
-// === DEFINIÇÃO DAS CATEGORIAS: COMPLETAR SÍLABAS ===
+// === DEFINIÇÃO DAS CATEGORIAS: A FÁBRICA DAS PALAVRAS ===
 const JOGO_CATEGORIAS = {
     "Nível 1": {
         nome: "2 Sílabas",
@@ -13,7 +13,9 @@ const JOGO_CATEGORIAS = {
             { silabas: ["MA", "LA"] },
             { silabas: ["PA", "TO"] },
             { silabas: ["RA", "TO"] },
-            { silabas: ["SA", "PO"] }
+            { silabas: ["SA", "PO"] },
+            { silabas: ["LU", "A"] },
+            { silabas: ["PI", "PA"] }
         ]
     },
     "Nível 2": {
@@ -27,7 +29,9 @@ const JOGO_CATEGORIAS = {
             { silabas: ["MA", "CA", "CO"] },
             { silabas: ["PI", "PO", "CA"] },
             { silabas: ["SA", "PA", "TO"] },
-            { silabas: ["TA", "PE", "TE"] }
+            { silabas: ["TA", "PE", "TE"] },
+            { silabas: ["CA", "RE", "CA"] },
+            { silabas: ["CO", "MI", "DA"] }
         ]
     }
 };
