@@ -1,13 +1,11 @@
-let listaPalavrasRonda = [];
-let indicePalavraAtiva = 0;
+let selectedSyllables = [];
+let discoveredWords = new Set();
 let acertos = 0;
 let erros = 0;
 let tempoInicio;
 let intervaloTempo;
 
 let categoriaAtual = "Nível 1"; 
-let silabaCorreta = "";
-let indiceSilabaFaltante = 0;
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
@@ -20,7 +18,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Bem-vindo à Fábrica! Lê a palavra e descobre qual é a sílaba que falta.";
+    return "Bem-vindo à Fábrica! Escolhe as peças (sílabas) e carrega em 'Montar' para produzir palavras.";
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -29,14 +27,12 @@ function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:20px; width:100%;">
-            <div style="font-weight:900; color:var(--primary-blue); font-size:1.2rem; text-transform:uppercase;">Como Jogar</div>
-            <div style="border:4px solid var(--primary-blue); border-radius:25px; padding:30px; background:white; text-align:center; box-shadow:0 10px 20px rgba(0,0,0,0.1); width:220px;">
-                <div style="font-size:1.8rem; font-weight:900; letter-spacing:5px; color:var(--text-grey);">
-                    PA - <span style="border-bottom:4px solid var(--primary-blue); color:transparent;">TO</span>
-                </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:15px; position:relative;">
+            <div style="display:flex; gap:10px;">
+                <div style="background:white; border:3px solid #0891b2; border-radius:15px; padding:15px; font-weight:900; color:#164e63; font-size:1.5rem;">GA</div>
+                <div style="background:white; border:3px solid #0891b2; border-radius:15px; padding:15px; font-weight:900; color:#164e63; font-size:1.5rem;">TO</div>
             </div>
-            <div id="tut-hand" style="font-size:45px; animation: tapH 2s infinite;">☝️</div>
+            <div id="tut-hand" style="position:absolute; font-size:45px; bottom:-30px; right:-20px; animation: tapH 2s infinite;">☝️</div>
         </div>
         <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-15px) scale(0.9); } } </style>
     `;
@@ -44,17 +40,15 @@ function criarAnimacaoTutorial() {
 
 // === 2. LÓGICA DO JOGO ===
 window.initGame = function() {
-    const config = JOGO_CATEGORIAS[categoriaAtual];
-    listaPalavrasRonda = [...config.palavras].sort(() => Math.random() - 0.5).slice(0, 10);
-    
-    indicePalavraAtiva = 0;
+    discoveredWords.clear();
+    selectedSyllables = [];
     acertos = 0;
     erros = 0;
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
     
     iniciarCronometro();
-    mostrarPalavra();
+    montarFabrica();
 };
 
 function iniciarCronometro() {
@@ -68,139 +62,149 @@ function iniciarCronometro() {
     }, 1000);
 }
 
-function mostrarPalavra() {
+function montarFabrica() {
     const container = document.getElementById('game-main-content');
     const config = JOGO_CATEGORIAS[categoriaAtual];
-    const palavraObj = listaPalavrasRonda[indicePalavraAtiva];
-    
-    document.getElementById('round-val').innerText = `${indicePalavraAtiva + 1} / ${listaPalavrasRonda.length}`;
-
-    // Escolher aleatoriamente qual sílaba vai faltar
-    indiceSilabaFaltante = Math.floor(Math.random() * palavraObj.silabas.length);
-    silabaCorreta = palavraObj.silabas[indiceSilabaFaltante];
-
-    let htmlPalavra = "";
-    palavraObj.silabas.forEach((s, i) => {
-        if (i === indiceSilabaFaltante) {
-            htmlPalavra += `<span class="syl-slot" id="target-slot"></span>`;
-        } else {
-            htmlPalavra += `<span class="syl-text">${s}</span>`;
-        }
-        if (i < palavraObj.silabas.length - 1) htmlPalavra += " - ";
-    });
-
-    // Gerar opções de sílabas
-    const todasSilabas = ["BA", "CA", "PA", "TO", "SA", "LA", "ME", "BO", "NE", "DA", "RE", "VA", "CO", "MA", "LI"];
-    let opcoes = [silabaCorreta];
-    while(opcoes.length < 6) {
-        let r = todasSilabas[Math.floor(Math.random() * todasSilabas.length)];
-        if(!opcoes.includes(r)) opcoes.push(r);
-    }
-    opcoes.sort(() => Math.random() - 0.5);
+    document.getElementById('round-val').innerText = `Produção: 0 / ${config.target}`;
 
     container.innerHTML = `
         <style>
-            .game-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; padding:15px; box-sizing:border-box; gap:20px; }
+            .factory-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; padding:10px; box-sizing:border-box; position:relative; overflow:hidden; }
             
-            .factory-card { 
-                background:white; border:4px solid var(--primary-blue); border-radius:30px; 
-                width:100%; max-width:500px; padding: 60px 20px;
-                display:flex; align-items:center; justify-content:center;
-                box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-                animation: popCard 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            }
-            
-            .word-display { 
-                font-weight:900; font-size: 2.8rem; font-family: 'Fredoka', sans-serif; 
-                color: var(--text-grey); display:flex; align-items:center; gap:10px;
-            }
-            
-            .syl-slot { 
-                display:inline-block; min-width:90px; height: 65px;
-                border-bottom: 6px solid var(--primary-blue); 
-                color: var(--primary-blue); margin: 0 5px; text-align:center;
-            }
+            /* Engrenagens Decorativas */
+            .gear { animation: spin 4s linear infinite; color: #0891b2; position: absolute; opacity: 0.1; z-index: 0; }
+            @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-            .keyboard-grid { 
-                display:grid; grid-template-columns: repeat(3, 1fr); 
-                gap:12px; width:100%; max-width:500px; margin-top:auto; padding-bottom:20px; 
+            .work-station { 
+                width: 100%; max-width: 500px; background: #f0f9ff; border: 4px dashed #0891b2; 
+                border-radius: 25px; min-height: 100px; display: flex; align-items: center; 
+                justify-content: center; margin: 15px 0; position: relative; z-index: 10;
             }
-            
-            .syl-key { 
-                background:white; border:2px solid #e2e8f0; border-radius:15px; padding:18px; 
-                font-weight:900; font-size:1.4rem; cursor:pointer; box-shadow:0 6px 0 #cbd5e1; 
-                text-align:center; transition:0.1s; color: var(--text-grey);
-            }
-            .syl-key:active { transform:translateY(3px); box-shadow:0 2px 0 #cbd5e1; }
-            
-            @keyframes popCard { from { transform: scale(0.9); opacity:0; } to { transform: scale(1); opacity:1; } }
-            @keyframes shake { 0%, 100% { transform:translateX(0); } 25% { transform:translateX(-10px); } 75% { transform:translateX(10px); } }
+            .assembled-text { font-size: 2.5rem; font-weight: 900; color: #0891b2; text-shadow: 2px 2px 0px rgba(0,0,0,0.05); }
 
-            @media (max-width: 480px) {
-                .factory-card { padding: 40px 10px; }
-                .word-display { font-size: 1.8rem; }
-                .syl-slot { min-width: 65px; height: 45px; border-bottom-width: 4px; }
-                .syl-key { padding: 15px; font-size: 1.2rem; }
+            .factory-buttons { display: flex; gap: 10px; margin-bottom: 20px; z-index: 10; }
+            .btn-mount { background: #0ea5e9; color: white; padding: 12px 25px; border-radius: 15px; font-weight: 800; box-shadow: 0 5px 0 #0369a1; cursor:pointer; border:none; }
+            .btn-clear { background: #94a3b8; color: white; padding: 12px 25px; border-radius: 15px; font-weight: 800; box-shadow: 0 5px 0 #64748b; cursor:pointer; border:none; }
+            .btn-mount:active, .btn-clear:active { transform: translateY(3px); box-shadow: none; }
+
+            .syllable-bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 600px; z-index: 10; }
+            .syl-pill { 
+                background: white; border: 3px solid #0891b2; color: #164e63; border-radius: 18px; 
+                padding: 12px 20px; font-size: 1.3rem; font-weight: 900; cursor: pointer; 
+                box-shadow: 0 5px 0 #0e7490; transition: 0.1s;
             }
+            .syl-pill:active { transform: translateY(3px); box-shadow: 0 2px 0 #0e7490; }
+
+            .warehouse { 
+                width: 100%; background: #f8fafc; border-radius: 20px; padding: 15px; margin-top: auto;
+                border: 2px solid #e2e8f0; z-index: 10;
+            }
+            .word-tag { background: #0891b2; color: white; padding: 5px 12px; border-radius: 10px; font-weight: bold; font-size: 0.9rem; animation: popWord 0.3s ease-out; }
+            @keyframes popWord { from { transform: scale(0.8); } to { transform: scale(1); } }
+            
+            .progress-bg { width: 100%; height: 12px; background: #e2e8f0; border-radius: 10px; margin: 10px 0; overflow: hidden; border: 2px solid #cbd5e1; }
+            .progress-fill { height: 100%; background: linear-gradient(90deg, #06b6d4, #22d3ee); width: 0%; transition: width 0.5s; }
         </style>
 
-        <div class="game-wrapper">
-            <div style="background:var(--primary-blue); color:white; padding:5px 20px; border-radius:20px; font-weight:900; font-size:0.8rem; text-transform:uppercase;">${config.nome}</div>
+        <div class="factory-wrapper">
+            <i class="fas fa-cog gear" style="top:5%; left:5%; font-size:80px;"></i>
+            <i class="fas fa-cog gear" style="bottom:-5%; right:-5%; font-size:120px;"></i>
 
-            <div class="factory-card" id="active-card">
-                <div class="word-display">${htmlPalavra}</div>
+            <div style="text-align:center; z-index:10;">
+                <div class="progress-bg"><div id="fab-bar" class="progress-fill"></div></div>
             </div>
 
-            <div class="keyboard-grid">
-                ${opcoes.map(s => `<button class="syl-key" onclick="verificarSílaba('${s}', this)">${s}</button>`).join('')}
+            <div class="work-station" id="working-area">
+                <span style="color:#cbd5e1; font-style:italic; font-weight:bold;">Escolhe as peças...</span>
+            </div>
+
+            <div class="factory-buttons">
+                <button class="btn-mount" onclick="checkFactoryWord()">MONTAR</button>
+                <button class="btn-clear" onclick="clearFactoryWord()">LIMPAR</button>
+            </div>
+
+            <div class="syllable-bank">
+                ${config.bank.map(s => `<button class="syl-pill" onclick="addSyl('${s}')">${s}</button>`).join('')}
+            </div>
+
+            <div class="warehouse">
+                <div style="font-size:0.7rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:10px;">Armazém de Palavras:</div>
+                <div id="warehouse-list" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
             </div>
         </div>
     `;
 }
 
-function verificarSílaba(escolha, btn) {
-    const card = document.getElementById('active-card');
-    const slot = document.getElementById('target-slot');
+window.addSyl = function(syl) {
+    selectedSyllables.push(syl);
+    updateWorkDisplay();
+};
 
-    if (escolha === silabaCorreta) {
-        somAcerto.play();
-        slot.innerText = escolha;
-        slot.style.borderBottomColor = "#10b981";
-        slot.style.color = "#10b981";
-        
-        acertos++;
-        document.getElementById('hits-val').innerText = acertos;
-        
-        document.querySelectorAll('.syl-key').forEach(b => b.style.pointerEvents = 'none');
+window.clearFactoryWord = function() {
+    selectedSyllables = [];
+    updateWorkDisplay();
+};
 
-        setTimeout(() => {
-            if (indicePalavraAtiva < listaPalavrasRonda.length - 1) {
-                indicePalavraAtiva++;
-                mostrarPalavra();
-            } else {
-                finalizarJogo();
-            }
-        }, 1000);
-    } else {
-        erros++;
-        document.getElementById('miss-val').innerText = erros;
-        somErro.play();
-        btn.style.borderColor = "#ef4444";
-        btn.style.color = "#ef4444";
-        card.style.animation = "none";
-        setTimeout(() => card.style.animation = "shake 0.3s", 10);
-        setTimeout(() => {
-            btn.style.borderColor = "#e2e8f0";
-            btn.style.color = "var(--text-grey)";
-        }, 600);
+function updateWorkDisplay() {
+    const area = document.getElementById('working-area');
+    if (selectedSyllables.length === 0) {
+        area.innerHTML = `<span style="color:#cbd5e1; font-style:italic; font-weight:bold;">Escolhe as peças...</span>`;
+        return;
     }
+    area.innerHTML = `<span class="assembled-text">${selectedSyllables.join('')}</span>`;
 }
 
-function finalizarJogo() {
+window.checkFactoryWord = function() {
+    const word = selectedSyllables.join('');
+    const config = JOGO_CATEGORIAS[categoriaAtual];
+
+    if (discoveredWords.has(word)) {
+        flashArea("#f59e0b", "PEÇA REPETIDA!");
+        return;
+    }
+
+    if (config.valid.includes(word)) {
+        somAcerto.play();
+        discoveredWords.add(word);
+        acertos++;
+        
+        // Adiciona à lista visual
+        const list = document.getElementById('warehouse-list');
+        const tag = document.createElement('div');
+        tag.className = "word-tag";
+        tag.innerText = word;
+        list.appendChild(tag);
+
+        // Atualiza Progresso
+        const perc = (discoveredWords.size / config.target) * 100;
+        document.getElementById('fab-bar').style.width = `${perc}%`;
+        document.getElementById('round-val').innerText = `Produção: ${discoveredWords.size} / ${config.target}`;
+        
+        flashArea("#10b981", "PALAVRA MONTADA!");
+
+        if (discoveredWords.size >= config.target) {
+            setTimeout(finalizar, 1000);
+        }
+    } else {
+        somErro.play();
+        erros++;
+        document.getElementById('miss-val').innerText = erros;
+        flashArea("#ef4444", "PEÇA DEFEITUOSA!");
+    }
+    selectedSyllables = [];
+};
+
+function flashArea(color, text) {
+    const area = document.getElementById('working-area');
+    area.innerHTML = `<span style="color:${color}; font-weight:900; font-size:1.5rem; animation: popIn 0.3s;">${text}</span>`;
+    setTimeout(() => { if (selectedSyllables.length === 0) updateWorkDisplay(); }, 1000);
+}
+
+function finalizar() {
     clearInterval(intervaloTempo);
     somVitoria.play();
-    const perc = (acertos / listaPalavrasRonda.length) * 100;
-    const rel = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
+    const config = JOGO_CATEGORIAS[categoriaAtual];
+    const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
     const tempo = document.getElementById('timer-val').innerText;
     const resScreen = document.getElementById('scr-result');
     
@@ -208,20 +212,20 @@ function finalizarJogo() {
     resScreen.innerHTML = `
         <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
             <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px; object-fit:contain;">
-            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.8rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
+            <h2 style="color:#0891b2; font-weight:900; font-size:1.8rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
-                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
-                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos}</span>
-                    <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Acertos</span>
+                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0;">
+                    <span style="display:block; font-size:24px; font-weight:900; color:#0891b2;">${discoveredWords.size}</span>
+                    <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Palavras</span>
                 </div>
-                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
-                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${tempo}</span>
+                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0;">
+                    <span style="display:block; font-size:24px; font-weight:900; color:#0891b2;">${tempo}</span>
                     <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Tempo</span>
                 </div>
             </div>
             <div style="display:flex; flex-direction:column; gap:10px; width:100%; max-width:280px;">
-                <button style="padding:16px; border-radius:20px; font-weight:900; font-size:16px; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark); text-transform:uppercase;" onclick="location.reload()">Jogar de Novo</button>
-                <button style="padding:14px; border-radius:20px; font-weight:900; font-size:16px; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer; box-shadow:0 6px 0 var(--primary-blue); text-transform:uppercase;" onclick="openRDMenu()">Outro Nível</button>
+                <button style="padding:16px; border-radius:20px; font-weight:900; font-size:16px; background:#0ea5e9; color:white; border:none; cursor:pointer; box-shadow:0 6px 0 #0891b2; text-transform:uppercase;" onclick="location.reload()">Jogar de Novo</button>
+                <button style="padding:14px; border-radius:20px; font-weight:900; font-size:16px; background:white; color:#0891b2; border:3px solid #0891b2; cursor:pointer; box-shadow:0 6px 0 #0891b2; text-transform:uppercase;" onclick="openRDMenu()">Outra Máquina</button>
                 <a href="${JOGO_CONFIG.linkVoltar}" style="padding:16px; border-radius:20px; font-weight:900; font-size:16px; background:#dce4ee; color:#5d7082; border:none; text-align:center; text-decoration:none; box-shadow:0 6px 0 #b8c5d4; text-transform:uppercase;">Sair</a>
             </div>
         </div>
