@@ -20,7 +20,7 @@ window.startLogic = function() {
 };
 
 window.gerarIntroJogo = function() {
-    return "Lê a palavra e descobre qual é a sílaba que falta!";
+    return "Bem-vindo à Fábrica! Lê a palavra e descobre qual é a sílaba que falta.";
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -30,9 +30,9 @@ function criarAnimacaoTutorial() {
     if (!container) return;
     container.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; gap:20px; width:100%;">
-            <div style="font-weight:900; color:var(--primary-blue); font-size:1.2rem;">COMO JOGAR</div>
+            <div style="font-weight:900; color:var(--primary-blue); font-size:1.2rem; text-transform:uppercase;">Como Jogar</div>
             <div style="border:4px solid var(--primary-blue); border-radius:25px; padding:30px; background:white; text-align:center; box-shadow:0 10px 20px rgba(0,0,0,0.1); width:220px;">
-                <div style="font-size:2rem; font-weight:900; letter-spacing:5px; color:var(--text-grey);">
+                <div style="font-size:1.8rem; font-weight:900; letter-spacing:5px; color:var(--text-grey);">
                     PA - <span style="border-bottom:4px solid var(--primary-blue); color:transparent;">TO</span>
                 </div>
             </div>
@@ -79,7 +79,6 @@ function mostrarPalavra() {
     indiceSilabaFaltante = Math.floor(Math.random() * palavraObj.silabas.length);
     silabaCorreta = palavraObj.silabas[indiceSilabaFaltante];
 
-    // Construir o display da palavra (idêntico ao layout de letras)
     let htmlPalavra = "";
     palavraObj.silabas.forEach((s, i) => {
         if (i === indiceSilabaFaltante) {
@@ -90,8 +89,8 @@ function mostrarPalavra() {
         if (i < palavraObj.silabas.length - 1) htmlPalavra += " - ";
     });
 
-    // Gerar opções de sílabas (Teclado)
-    const todasSilabas = ["BA", "CA", "PA", "TO", "SA", "LA", "ME", "BO", "NE", "DA", "RE", "VA"];
+    // Gerar opções de sílabas
+    const todasSilabas = ["BA", "CA", "PA", "TO", "SA", "LA", "ME", "BO", "NE", "DA", "RE", "VA", "CO", "MA", "LI"];
     let opcoes = [silabaCorreta];
     while(opcoes.length < 6) {
         let r = todasSilabas[Math.floor(Math.random() * todasSilabas.length)];
@@ -103,63 +102,63 @@ function mostrarPalavra() {
         <style>
             .game-wrapper { display:flex; flex-direction:column; width:100%; height:100%; align-items:center; padding:15px; box-sizing:border-box; gap:20px; }
             
-            .word-card-solo { 
+            .factory-card { 
                 background:white; border:4px solid var(--primary-blue); border-radius:30px; 
                 width:100%; max-width:500px; padding: 60px 20px;
                 display:flex; align-items:center; justify-content:center;
-                box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+                box-shadow: 0 15px 35px rgba(0,0,0,0.08);
                 animation: popCard 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             }
             
-            .card-txt-solo { 
+            .word-display { 
                 font-weight:900; font-size: 2.8rem; font-family: 'Fredoka', sans-serif; 
                 color: var(--text-grey); display:flex; align-items:center; gap:10px;
             }
             
             .syl-slot { 
-                display:inline-block; min-width:80px; height: 60px;
+                display:inline-block; min-width:90px; height: 65px;
                 border-bottom: 6px solid var(--primary-blue); 
                 color: var(--primary-blue); margin: 0 5px; text-align:center;
             }
 
-            .keyboard-area { 
+            .keyboard-grid { 
                 display:grid; grid-template-columns: repeat(3, 1fr); 
                 gap:12px; width:100%; max-width:500px; margin-top:auto; padding-bottom:20px; 
             }
             
-            .key-btn { 
-                background:white; border:2px solid #e2e8f0; border-radius:15px; padding:20px; 
-                font-weight:900; font-size:1.5rem; cursor:pointer; box-shadow:0 6px 0 #cbd5e1; 
+            .syl-key { 
+                background:white; border:2px solid #e2e8f0; border-radius:15px; padding:18px; 
+                font-weight:900; font-size:1.4rem; cursor:pointer; box-shadow:0 6px 0 #cbd5e1; 
                 text-align:center; transition:0.1s; color: var(--text-grey);
             }
-            .key-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #cbd5e1; }
+            .syl-key:active { transform:translateY(3px); box-shadow:0 2px 0 #cbd5e1; }
             
             @keyframes popCard { from { transform: scale(0.9); opacity:0; } to { transform: scale(1); opacity:1; } }
             @keyframes shake { 0%, 100% { transform:translateX(0); } 25% { transform:translateX(-10px); } 75% { transform:translateX(10px); } }
 
             @media (max-width: 480px) {
-                .word-card-solo { padding: 40px 10px; }
-                .card-txt-solo { font-size: 1.8rem; }
-                .syl-slot { min-width: 60px; height: 45px; border-bottom-width: 4px; }
-                .key-btn { padding: 15px; font-size: 1.2rem; }
+                .factory-card { padding: 40px 10px; }
+                .word-display { font-size: 1.8rem; }
+                .syl-slot { min-width: 65px; height: 45px; border-bottom-width: 4px; }
+                .syl-key { padding: 15px; font-size: 1.2rem; }
             }
         </style>
 
         <div class="game-wrapper">
             <div style="background:var(--primary-blue); color:white; padding:5px 20px; border-radius:20px; font-weight:900; font-size:0.8rem; text-transform:uppercase;">${config.nome}</div>
 
-            <div class="word-card-solo" id="active-card">
-                <div class="card-txt-solo">${htmlPalavra}</div>
+            <div class="factory-card" id="active-card">
+                <div class="word-display">${htmlPalavra}</div>
             </div>
 
-            <div class="keyboard-area">
-                ${opcoes.map(s => `<button class="key-btn" onclick="verificar('${s}', this)">${s}</button>`).join('')}
+            <div class="keyboard-grid">
+                ${opcoes.map(s => `<button class="syl-key" onclick="verificarSílaba('${s}', this)">${s}</button>`).join('')}
             </div>
         </div>
     `;
 }
 
-function verificar(escolha, btn) {
+function verificarSílaba(escolha, btn) {
     const card = document.getElementById('active-card');
     const slot = document.getElementById('target-slot');
 
@@ -172,8 +171,7 @@ function verificar(escolha, btn) {
         acertos++;
         document.getElementById('hits-val').innerText = acertos;
         
-        // Bloquear botões para evitar duplo clique
-        document.querySelectorAll('.key-btn').forEach(b => b.style.pointerEvents = 'none');
+        document.querySelectorAll('.syl-key').forEach(b => b.style.pointerEvents = 'none');
 
         setTimeout(() => {
             if (indicePalavraAtiva < listaPalavrasRonda.length - 1) {
