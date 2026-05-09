@@ -1,38 +1,22 @@
-// === DEFINIÇÃO DAS CATEGORIAS: A FÁBRICA DE PALAVRAS (DICIONÁRIO AMPLIADO) ===
+// === DICIONÁRIO MESTRE DA FÁBRICA ===
+const DICIONARIO_GLOBAL = {
+    dissilabos: ["BOLA","BOLO","BOTA","BOCA","BODE","CASA","CAMA","CADA","CABO","COLA","COPA","COMA","DADO","DATA","DAMA","DEDO","DOCE","FADA","FACA","FAMA","FOGO","FOTO","GATO","GALA","GALO","GOLA","GOTA","LAMA","LATA","LADO","LOBO","LOTO","LUAR","MALA","MANA","MANO","MAPA","MATA","MATO","MEDO","MESA","MIMO","MOTA","MOTO","PATA","PATO","PAPA","PARA","PERA","PENA","PICO","PIPA","RALA","RATA","RATO","RODA","RODO","ROCA","ROMA","ROSA","ROTA","SACA","SALA","SAPO","SETA","SELO","SOPA","TACA","TALA","TATO","TELA","TIME","TOGA","TOMA","VACA","VALA","VAGA","VELA","VILA","VOTO"],
+    trissilabos: ["MACACO","BATATA","BANANA","JANELA","PANELA","CANELA","CANETA","CAJADO","CAMADA","COMIDA","COMETA","CORADA","BALADA","CAVALO","BONECA","PIPOCA","SALADA","SAPATO","SACADA","PELADA","PETECA","AMADO","APARADA","FALADA","MAMADA","MANADA","PIRATA","RECADA","RECOMA","TAMPADA","TAPADA"]
+};
+
 const JOGO_CATEGORIAS = {
     "Nível 1": {
-        nome: "Estação: 2 Sílabas",
-        slots: 2, 
-        target: 5, 
-        imgCapa: "cnivel1.png",
-        // 12 Sílabas de Alta Frequência
-        bank: ["BA", "CA", "DA", "LA", "MA", "PA", "RA", "SA", "TA", "BO", "CO", "DO"],
-        // Dicionário de Reconhecimento (Todas as combinações válidas em PT)
-        valid: [
-            "BALA", "BALO", "BANA", "BATA", "BOBA", "BOBO", "BOCA", "BODA", "BODE", "BODO", "BOLA", "BOLO", "BORA", "BOTA", "BOTO",
-            "CABO", "CACA", "CACO", "CADA", "CALA", "CALO", "CAMA", "CANA", "CAPA", "CAPO", "CARA", "CARO", "CASA", "CASO", "CATA", "CATO", "COCA", "COCO", "COLA", "COLO", "COMA", "COMO", "COPA", "COPO", "CORA", "CORO", "COTA", "COTO",
-            "DADA", "DADO", "DALA", "DAMA", "DANA", "DANO", "DATA", "DOCA", "DOMA", "DOMO", "DONA", "DONO", "DORA", "DOSA", "DOTA",
-            "LAMA", "LATA", "LADO", "LOBO", "LOCA", "LOCO", "LODO", "LONA", "LOTA", "LOTO",
-            "MALA", "MANA", "MANO", "MAPA", "MATA", "MATO", "MOCA", "MOCO", "MODA", "MODO", "MOLA", "MORA", "MORO", "MOTA", "MOTO",
-            "PACA", "PACO", "PALA", "PANA", "PANO", "PAPA", "PAPO", "PARA", "PARO", "PATA", "PATO", "PODA", "POLA", "POLO", "POMA", "POMO", "POPA", "PORA", "POSA", "POTA",
-            "RACA", "RADA", "RALA", "RALO", "RAMA", "RAMO", "RAPA", "RAPO", "RARA", "RARO", "RASA", "RASO", "RATA", "RATO", "ROCA", "RODA", "RODO", "ROLA", "ROLO", "ROMA", "ROSA", "ROTA", "ROTO",
-            "SACA", "SACO", "SADA", "SALA", "SANA", "SAPA", "SAPO", "SARA", "SOCA", "SOCO", "SODA", "SOLA", "SOLO", "SOMA", "SONO", "SOPA", "SORO", "SOTA",
-            "TACA", "TACO", "TALA", "TALO", "TAMA", "TAPA", "TAPO", "TARA", "TATO", "TOCA", "TOCO", "TODA", "TODO", "TOLA", "TOLO", "TOMA", "TOMO", "TONA", "TOPA", "TOPO", "TORA", "TORO", "TOSA", "TOTA"
-        ]
+        nome: "Fábrica: 2 Sílabas",
+        slots: 2,
+        target: 10,
+        pool: DICIONARIO_GLOBAL.dissilabos,
+        extras: ["BA","CA","DA","LA","MA","PA","RA","SA","TA","VA","BO","CO","DO","FO","GO","MO","NO","PO","RO","SO","TO"]
     },
     "Nível 2": {
-        nome: "Estação: 3 Sílabas",
+        nome: "Fábrica: 3 Sílabas",
         slots: 3,
-        target: 5,
-        imgCapa: "cnivel2.png",
-        // 12 Sílabas estratégicas para 3 sílabas
-        bank: ["BA", "CA", "DA", "LA", "MA", "PA", "RA", "TA", "NE", "JA", "MI", "CO"],
-        // Palavras de 3 sílabas possíveis com este banco
-        valid: [
-            "ABADA", "ABADE", "ABAFADA", "ACALADA", "ALADA", "ALADO", "AMADA", "AMADO", "APARADA", "ARADA", "ARADO",
-            "BABADA", "BABADO", "BACADA", "BALADA", "BANANA", "BARADA", "BATATA", "BICADA", "BOCADA", "CABANA", "CAJADO", "CALADA", "CALADO", "CAMADA", "CANELA", "CANETA", "CARADA", "CASACA", "CATADA", "CATADO", "CAVALO", "COMIDA", "COMETA", "CORADA", "CORADO",
-            "DAMADA", "DANADA", "DANADO", "DATADA", "DATADO", "ERRADA", "ERRADO", "FALADA", "FALADO", "JACADA", "JANELA", "JOGADA", "MAMADA", "MAMADO", "MANADA", "MIMADA", "MIMADO", "MORADA", "MORADO",
-            "PACATA", "PACATO", "PACADA", "PALADA", "PANELA", "PARADA", "PARADO", "PATATA", "PECADA", "PENADA", "PENADO", "PIRATA", "PIPOCA", "RECOMA", "RETA-DA", "SACADA", "SALADA", "SALATA", "SAPATO", "TAMPADA", "TAPADA", "TAPADO"
-        ]
+        target: 10,
+        pool: DICIONARIO_GLOBAL.trissilabos,
+        extras: ["BA","CA","DA","LA","MA","PA","RA","TA","VA","NE","JA","MI","CO","PI","PO","RE","TE","DE","BO","LI"]
     }
 };
