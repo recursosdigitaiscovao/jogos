@@ -1,16 +1,16 @@
 // === CONFIGURAÇÃO DE DESAFIOS (SETS DE SÍLABAS) ===
 const DESAFIOS_FABRICA = {
     nivel1: [
-        { bank: ["MA", "CA", "RA", "TO"], slots: 2 }, // Ex: MACA, CAMA, RATO, TOCA, MATO, CATO
-        { bank: ["PA", "TA", "LA", "BA"], slots: 2 }, // Ex: PATA, PALA, TALA, BALA, BATA, TAPA
-        { bank: ["SA", "LA", "MA", "DA"], slots: 2 }, // Ex: SALA, MALA, DAMA, LAMA, DATA, SADA
-        { bank: ["BO", "CO", "LO", "TA"], slots: 2 }, // Ex: BOLO, BOTA, COLO, COTA, TOLO, TOTA
-        { bank: ["CA", "SA", "PA", "DA"], slots: 2 }, // Ex: CASA, CAPA, CADA, SAPA, PADA
-        { bank: ["VA", "CA", "LA", "TA"], slots: 2 }, // Ex: VACA, VALA, LATA, TACA, TALA
-        { bank: ["RO", "DA", "MA", "TA"], slots: 2 }, // Ex: RODA, ROMA, MATA, MATO, DATA
-        { bank: ["FA", "DA", "CA", "PA"], slots: 2 }, // Ex: FADA, FACA, CAPA, DADA, PACA
-        { bank: ["GA", "TO", "LO", "RO"], slots: 2 }, // Ex: GATO, GALO, RATO, ROLO, GOLA
-        { bank: ["PI", "PA", "CO", "LO"], slots: 2 }  // Ex: PIPA, PICO, COLO, POLO
+        { bank: ["MA", "CA", "RA", "TO"], slots: 2 }, // Ex: MACA, CAMA, RATO, TOCA, MATO, CATO, CARA, TOMA
+        { bank: ["PA", "TA", "LA", "BA"], slots: 2 }, // Ex: PATA, PALA, TAPA, TALA, LAPA, LATA, BALA, BATA
+        { bank: ["SA", "LA", "MA", "DA"], slots: 2 }, // Ex: SALA, LAMA, MALA, MAMA, DAMA
+        { bank: ["BO", "CO", "LO", "TA"], slots: 2 }, // Ex: BOLO, BOTA, COLO, COTA, LOBO, TOLO, TOTA
+        { bank: ["CA", "SA", "PA", "DA"], slots: 2 }, // Ex: CASA, CAPA, CADA, SACA
+        { bank: ["VA", "CA", "LA", "TA"], slots: 2 }, // Ex: VACA, VALA, CAVA, CATA, LAVA, LACA, LATA, TACA, TALA
+        { bank: ["RO", "DA", "MA", "TA"], slots: 2 }, // Ex: RODA, ROMA, ROTA, DAMA, DATA, MATA
+        { bank: ["FA", "DA", "CA", "PA"], slots: 2 }, // Ex: FADA, FACA, CADA, CAPA, DADA
+        { bank: ["GA", "TO", "LO", "RO"], slots: 2 }, // Ex: GATO, GALO, TOLO, LOTO, RATO, ROLO
+        { bank: ["PI", "PA", "CO", "LO"], slots: 2 }  // Ex: PIPA, PICO, COPA, COLO
     ],
     nivel2: [
         { bank: ["CA", "NE", "TA", "LA", "JA"], slots: 3 }, // Ex: CANETA, CANELA, JANELA
