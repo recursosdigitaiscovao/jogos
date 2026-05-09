@@ -5,6 +5,7 @@ let acertos = 0;
 let erros = 0;
 let tempoInicio;
 let intervaloTempo;
+let bancoDaRonda = [];
 
 let categoriaAtual = "Nível 1"; 
 
@@ -12,6 +13,7 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
+// === 1. INICIALIZAÇÃO ===
 window.startLogic = function() {
     if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "Nível 1";
     setTimeout(criarAnimacaoTutorial, 100);
@@ -28,8 +30,8 @@ function criarAnimacaoTutorial() {
     if (!container) return;
     container.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; gap:15px; position:relative;">
-            <div style="font-weight:900; color:var(--primary-blue); font-size:1.2rem;">COMO JOGAR</div>
-            <div style="display:flex; gap:10px; background:white; padding:20px; border-radius:20px; border:4px solid #0891b2;">
+            <div style="font-weight:900; color:var(--primary-blue); font-size:1.2rem; text-transform:uppercase;">COMO JOGAR</div>
+            <div style="display:flex; gap:10px; background:white; padding:20px; border-radius:20px; border:4px solid #0891b2; box-shadow:0 10px 20px rgba(0,0,0,0.1);">
                 <div style="width:50px; height:50px; background:#f0f9ff; border:2px solid #0891b2; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#164e63;">MA</div>
                 <div style="width:50px; height:50px; border:3px dashed #cbd5e1; border-radius:10px;"></div>
             </div>
@@ -39,6 +41,7 @@ function criarAnimacaoTutorial() {
     `;
 }
 
+// === 2. LÓGICA DO JOGO ===
 window.initGame = function() {
     discoveredWords = [];
     roundAtual = 0; acertos = 0; erros = 0;
@@ -93,19 +96,17 @@ function renderizarEcraFabrica() {
             .btn-mount { background: #0ea5e9; color: white; box-shadow: 0 5px 0 #0369a1; }
             .btn-clear { background: #94a3b8; color: white; box-shadow: 0 5px 0 #64748b; }
             .btn-f:active { transform: translateY(3px); box-shadow: none; }
-            
-            .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; max-width: 500px; padding: 10px 0; }
+            .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; max-width: 600px; padding: 10px 0; }
             .pill { 
                 background: white; border: 3px solid #0891b2; color: #164e63; border-radius: 18px; 
                 padding: clamp(10px, 2vh, 18px); min-width: clamp(65px, 20vw, 90px);
                 font-size: clamp(1.1rem, 5vw, 1.6rem); font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #0e7490;
             }
             .pill:active { transform: translateY(2px); box-shadow: 0 1px 0 #0e7490; }
-            
             .warehouse { width: 100%; max-width: 600px; background: rgba(255,255,255,0.7); border-radius: 20px; padding: 10px; border: 2px solid #e2e8f0; height: 90px; overflow: hidden; }
             .tag { background: #0891b2; color: white; padding: 4px 12px; border-radius: 8px; font-weight: 800; font-size: 0.8rem; animation: popIn 0.3s; }
             @keyframes popIn { from { transform: scale(0.5); opacity:0; } to { transform: scale(1); opacity:1; } }
-            @media (max-width: 480px) { .station { min-height: 80px; } .warehouse { height: 80px; } }
+            @media (max-width: 480px) { .station { min-height: 80px; } .warehouse { height: 80px; } .pill { min-width: 60px; font-size: 1rem; } }
         </style>
         <div class="factory-wrapper">
             <div style="font-size:0.65rem; font-weight:900; color:var(--primary-blue); text-transform:uppercase;">${config.nome}</div>
@@ -186,26 +187,41 @@ function feedbackEstacao(color, txt) {
 }
 
 function finalizarFabrica() {
-    clearInterval(intervaloTempo); somVitoria.play();
+    clearInterval(intervaloTempo);
+    somVitoria.play();
+    
     const tempo = document.getElementById('timer-val').innerText;
     const resScreen = document.getElementById('scr-result');
+    const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
+    
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
-        <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px;">
-            <img src="${JOGO_CONFIG.caminhoIcons}taca_1.png" style="height:100px; margin-bottom:15px;">
-            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.8rem; text-align:center;">Produção Finalizada!</h2>
+        <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
+            
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px; object-fit:contain;">
+            
+            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.8rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
+            
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
-                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0;">
-                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos}</span>
-                    <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Palavras</span>
+                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span>
+                    <span style="font-size:11px; font-weight:800; color:#88a; text-transform:uppercase;">Acertos</span>
                 </div>
-                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0;">
+                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
                     <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${tempo}</span>
-                    <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Tempo</span>
+                    <span style="font-size:11px; font-weight:800; color:#88a; text-transform:uppercase;">Tempo</span>
                 </div>
             </div>
-            <button class="btn-f btn-mount" style="width:280px; padding:15px; margin-bottom:10px;" onclick="location.reload()">Jogar de Novo</button>
-            <a href="${JOGO_CONFIG.linkVoltar}" style="color:#88a; text-decoration:none; font-weight:bold; font-size:0.9rem;">Sair do Jogo</a>
+
+            <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:280px;">
+                <button style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark); text-transform:uppercase;" 
+                    onclick="location.reload()">Jogar de Novo</button>
+                
+                <button style="padding:14px; border-radius:22px; font-weight:900; font-size:16px; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer; box-shadow:0 6px 0 var(--primary-blue); text-transform:uppercase;" 
+                    onclick="openRDMenu()">Outro Nível</button>
+                
+                <a href="${JOGO_CONFIG.linkVoltar}" style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:#dce4ee; color:#5d7082; border:none; text-align:center; text-decoration:none; box-shadow:0 6px 0 #b8c5d4; text-transform:uppercase;">Sair</a>
+            </div>
         </div>
     `;
     document.querySelectorAll('.screen').forEach(s => { if(s.id !== 'scr-result') s.classList.remove('active'); });
