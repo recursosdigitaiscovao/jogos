@@ -1,35 +1,59 @@
 // === CONFIGURAÇÃO DE DESAFIOS (SETS DE SÍLABAS) ===
 const DESAFIOS_FABRICA = {
     nivel1: [
-        { bank: ["MA", "CA", "RA", "TO"], slots: 2 }, // Ex: MACA, CAMA, RATO, TOCA, MATO, CATO, CARA, TOMA
-        { bank: ["PA", "TA", "LA", "BA"], slots: 2 }, // Ex: PATA, PALA, TAPA, TALA, LAPA, LATA, BALA, BATA
-        { bank: ["SA", "LA", "MA", "DA"], slots: 2 }, // Ex: SALA, LAMA, MALA, MAMA, DAMA
-        { bank: ["BO", "CO", "LO", "TA"], slots: 2 }, // Ex: BOLO, BOTA, COLO, COTA, LOBO, TOLO, TOTA
-        { bank: ["CA", "SA", "PA", "DA"], slots: 2 }, // Ex: CASA, CAPA, CADA, SACA
-        { bank: ["VA", "CA", "LA", "TA"], slots: 2 }, // Ex: VACA, VALA, CAVA, CATA, LAVA, LACA, LATA, TACA, TALA
-        { bank: ["RO", "DA", "MA", "TA"], slots: 2 }, // Ex: RODA, ROMA, ROTA, DAMA, DATA, MATA
-        { bank: ["FA", "DA", "CA", "PA"], slots: 2 }, // Ex: FADA, FACA, CADA, CAPA, DADA
-        { bank: ["GA", "TO", "LO", "RO"], slots: 2 }, // Ex: GATO, GALO, TOLO, LOTO, RATO, ROLO
-        { bank: ["PI", "PA", "CO", "LO"], slots: 2 }  // Ex: PIPA, PICO, COPA, COLO
+        { bank: ["TO", "MA", "RA", "CA"], slots: 2 }, // Ex: MACA, CAMA, RATO, TOCA, MATO, CATO, CARA, TOMA
+        { bank: ["LA", "PA", "TA", "BA"], slots: 2 }, // Ex: PATA, PALA, TAPA, TALA, LAPA, LATA, BALA, BATA
+        { bank: ["DA", "LA", "SA", "MA"], slots: 2 }, // Ex: SALA, LAMA, MALA, MAMA, DAMA
+        { bank: ["CO", "TA", "LO", "BO"], slots: 2 }, // Ex: BOLO, BOTA, COLO, COTA, LOBO, TOLO, TOTA
+        { bank: ["PA", "DA", "SA", "CA"], slots: 2 }, // Ex: CASA, CAPA, CADA, SACA
+        { bank: ["LA", "VA", "TA", "CA"], slots: 2 }, // Ex: VACA, VALA, CAVA, CATA, LAVA, LACA, LATA, TACA, TALA
+        { bank: ["TA", "RO", "MA", "DA"], slots: 2 }, // Ex: RODA, ROMA, ROTA, DAMA, DATA, MATA
+        { bank: ["CA", "DA", "PA", "FA"], slots: 2 }, // Ex: FADA, FACA, CADA, CAPA, DADA
+        { bank: ["LO", "GA", "RO", "TO"], slots: 2 }, // Ex: GATO, GALO, TOLO, LOTO, RATO, ROLO
+        { bank: ["CO", "PI", "LO", "PA"], slots: 2 }  // Ex: PIPA, PICO, COPA, COLO
     ],
     nivel2: [
-        { bank: ["CA", "NE", "TA", "LA", "JA"], slots: 3 }, // Ex: CANETA, CANELA, JANELA
-        { bank: ["BA", "TA", "DA", "NA", "MA"], slots: 3 }, // Ex: BATATA, BANANA, CAMADA
-        { bank: ["PI", "PO", "CA", "MA", "DA"], slots: 3 }, // Ex: PIPOCA, CAMADA, PACADA
-        { bank: ["SA", "PA", "TO", "LA", "DA"], slots: 3 }, // Ex: SAPATO, SALADA, SACADA
-        { bank: ["CO", "MI", "DA", "RE", "TA"], slots: 3 }, // Ex: COMIDA, COMETA, RECADA
-        { bank: ["MA", "CA", "CO", "LA", "DO"], slots: 3 }, // Ex: MACACO, CALADO, MELADO
-        { bank: ["CA", "VA", "LO", "PA", "TA"], slots: 3 }, // Ex: CAVALO, PATATA, PACATA
-        { bank: ["BO", "NE", "CA", "LA", "RE"], slots: 3 }, // Ex: BONECA, CANELA, RECOMA
-        { bank: ["ES", "TO", "JO", "DA", "DO"], slots: 3 }, // Ex: ESTOJO, DITADO, DATADA
-        { bank: ["GA", "LA", "DO", "GE", "RE"], slots: 3 }  // Ex: GELADO, GALADO, REGADA
+        { bank: ["LA", "CA", "JA", "NE", "TA"], slots: 3 }, // CANETA, CANELA, JANELA
+        { bank: ["DA", "BA", "MA", "TA", "NA"], slots: 3 }, // BATATA, BANANA, CAMADA
+        { bank: ["CA", "PO", "DA", "PI", "MA"], slots: 3 }, // PIPOCA, CAMADA, PACADA
+        { bank: ["TO", "SA", "DA", "PA", "LA"], slots: 3 }, // SAPATO, SALADA, SACADA
+        { bank: ["RE", "DA", "CO", "TA", "MI"], slots: 3 }, // COMIDA, COMETA, RECADA
+        { bank: ["DO", "MA", "LA", "CO", "CA"], slots: 3 }, // MACACO, CALADO, MELADO
+        { bank: ["LO", "CA", "TA", "VA", "PA"], slots: 3 }, // CAVALO, PATATA, PACATA
+        { bank: ["CA", "BO", "RE", "NE", "LA"], slots: 3 }, // BONECA, CANELA, RECOMA
+        { bank: ["TO", "DO", "ES", "DA", "JO"], slots: 3 }, // ESTOJO, DITADO, DATADA
+        { bank: ["RE", "LA", "GE", "DO", "GA"], slots: 3 }  // GELADO, GALADO, REGADA
     ]
 };
 
 const JOGO_CATEGORIAS = {
-    "Nível 1": { nome: "Puzzle: 2 Sílabas", target: 10, desafios: DESAFIOS_FABRICA.nivel1 },
-    "Nível 2": { nome: "Puzzle: 3 Sílabas", target: 10, desafios: DESAFIOS_FABRICA.nivel2 }
+    "Nível 1": { nome: "Puzzle: 2 Sílabas", target: 5, desafios: DESAFIOS_FABRICA.nivel1 },
+    "Nível 2": { nome: "Puzzle: 3 Sílabas", target: 5, desafios: DESAFIOS_FABRICA.nivel2 }
 };
 
-// Dicionário de validação PT-PT
-const DICIONARIO_MESTRE = ["BOLA","BOLO","BOTA","BOCA","BODE","CASA","CAMA","CADA","CABO","COLA","COPA","COMA","DADO","DATA","DAMA","DEDO","DOCE","FADA","FACA","FAMA","FOGO","FOTO","GATO","GALA","GALO","GOLA","GOTA","LAMA","LATA","LADO","LOBO","MALA","MANA","MANO","MAPA","MATA","MATO","MEDO","MESA","MIMO","MOTA","PATA","PATO","PAPA","PARA","PERA","PENA","PICO","PIPA","RALA","RATA","RATO","RODA","RODO","ROCA","ROMA","ROSA","ROTA","SACA","SACO","SALA","SAPO","SETA","SELO","SOPA","SORO","TACA","TACO","TALA","TALO","TAMA","TAPA","TAPO","TARA","TATO","TOCA","TODO","TODA","TOMA","VACA","VALA","VAGA","VELA","VILA","VOTO","BIFE","BULE","CAFÉ","COPO","FIGO","GELO","JOGO","JACA","LIXO","LUXO","MODA","NOVE","REDE","RETA","TELA","SUMO","MACACO","BATATA","BANANA","JANELA","PANELA","CANELA","CANETA","CAJADO","CAMADA","COMIDA","COMETA","CORADA","BALADA","CAVALO","BONECA","PIPOCA","SALADA","SAPATO","SACADA","PELADA","PETECA","AMADO","APARADA","FALADA","MAMADA","MANADA","PIRATA","RECADA","TAMPADA","TAPADA","GELADO","FIVELA","TOMADA","VACADA","LAVADA","MELADO","PACATO","PAGODE","CATO","TOTA","RECA","PACA"];
+// Dicionário de validação PT-PT (Baseado nos teus exemplos)
+const DICIONARIO_MESTRE = [
+    // Palavras Nível 1
+    "MACA", "CAMA", "RATO", "TOCA", "MATO", "CATO", "CARA", "TOMA",
+    "PATA", "PALA", "TAPA", "TALA", "LAPA", "LATA", "BALA", "BATA",
+    "SALA", "LAMA", "MALA", "MAMA", "DAMA",
+    "BOLO", "BOTA", "COLO", "COTA", "LOBO", "TOLO", "TOTA",
+    "CASA", "CAPA", "CADA", "SACA",
+    "VACA", "VALA", "CAVA", "CATA", "LAVA", "LACA", "TACA",
+    "RODA", "ROMA", "ROTA", "DATA", "MATA",
+    "FADA", "FACA", "DADA", "PACA",
+    "GATO", "GALO", "LOTO", "ROLO",
+    "PIPA", "PICO", "COPA", "COLO",
+    
+    // Palavras Nível 2
+    "CANETA", "CANELA", "JANELA",
+    "BATATA", "BANANA", "CAMADA",
+    "PIPOCA", "PACADA",
+    "SAPATO", "SALADA", "SACADA",
+    "COMIDA", "COMETA", "RECADA",
+    "MACACO", "CALADO", "MELADO",
+    "CAVALO", "PATATA", "PACATA",
+    "BONECA", "RECOMA",
+    "ESTOJO", "DITADO", "DATADA",
+    "GELADO", "GALADO", "REGADA"
+];
