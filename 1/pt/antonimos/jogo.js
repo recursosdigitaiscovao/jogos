@@ -42,7 +42,6 @@ window.initGame = function() {
     discoveredWords = [];
     roundAtual = 0; acertos = 0; erros = 0;
     document.getElementById('hits-val').innerText = "0";
-    document.getElementById('miss-val').innerText = "0";
     iniciarCronometro();
     proximaRondaFabrica();
 };
@@ -64,6 +63,43 @@ function proximaRondaFabrica() {
     document.getElementById('round-val').innerText = `${roundAtual} / 10`;
     selectedSyllables = [];
     renderizarEcraFabrica();
+}
+
+// === FUNÇÃO DE AJUDA ===
+window.darAjuda = function() {
+    const config = JOGO_CATEGORIAS[categoriaAtual];
+    const desafio = config.desafios[roundAtual - 1];
+    
+    // 1. Procurar no dicionário palavras que usem APENAS as sílabas do banco atual e tenham o tamanho certo
+    const palavrasPossiveis = DICIONARIO_MESTRE.filter(palavra => {
+        if (palavra.length !== desafio.slots * 2 && desafio.slots > 0) {
+            // Verificação simples por número de sílabas (assumindo que cada sílaba tem 2 letras nos exemplos)
+            // Se as tuas sílabas variarem de tamanho, esta lógica precisará de um ajuste fino.
+        }
+        
+        // Verifica se a palavra pode ser construída com o banco desta ronda
+        let silabasDaPalavra = [];
+        for(let i=0; i<palavra.length; i+=2) silabasDaPalavra.push(palavra.substr(i,2));
+        
+        return silabasDaPalavra.every(s => desafio.bank.includes(s)) && 
+               silabasDaPalavra.length === desafio.slots &&
+               !discoveredWords.includes(palavra);
+    });
+
+    if (palavrasPossiveis.length > 0) {
+        // Escolhe a primeira palavra da lista de sugestões
+        const sugestao = palavrasPossiveis[0];
+        const primeiraSilaba = sugestao.substr(0, 2);
+        
+        // Limpa o que o user fez e coloca a primeira peça
+        selectedSyllables = [primeiraSilaba];
+        atualizarMoldes();
+        
+        // Efeito visual de brilho na lâmpada
+        const btn = document.getElementById('help-btn');
+        btn.style.transform = "scale(1.3)";
+        setTimeout(() => btn.style.transform = "scale(1)", 300);
+    }
 }
 
 function renderizarEcraFabrica() {
@@ -96,7 +132,7 @@ function renderizarEcraFabrica() {
             .warehouse { width: 100%; max-width: 500px; background: rgba(255,255,255,0.7); border-radius: 20px; padding: 10px; border: 1px solid #eee; min-height: 60px; }
             
             /* PALAVRAS DESCOBERTAS - PEQUENAS E SEM FUNDO AZUL */
-            .tag { color: #5d7082; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; border-bottom: 2px solid #ddd; padding: 2px 5px; }
+            .tag { color: #5d7082; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; border-bottom: 2px solid #ddd; padding: 2px 5px; }
 
             @media screen and (max-height: 500px) {
                 .factory-wrapper { height: auto; gap: 15px; padding: 10px; }
@@ -167,8 +203,6 @@ window.validarProducao = function() {
         feedbackEstacao("#10b981", "CERTO!");
     } else {
         somErro.play();
-        erros++;
-        document.getElementById('miss-val').innerText = erros;
         feedbackEstacao("#ef4444", "ERRO!");
     }
     setTimeout(proximaRondaFabrica, 1200);
@@ -191,9 +225,7 @@ function finalizarFabrica() {
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; padding:20px; text-align:center;">
-            
             <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px; object-fit:contain;">
-            
             <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.8rem; margin-bottom:10px;">${rel.titulo}</h2>
             
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
@@ -211,7 +243,7 @@ function finalizarFabrica() {
                 <button style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark);" 
                     onclick="location.reload()">JOGAR DE NOVO</button>
                 
-                <button style="padding:14px; border-radius:22px; font-weight:900; font-size:16px; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer;" 
+                <button style="padding:14px; border-radius:22px; font-weight:900; font-size:16px; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer; box-shadow:0 4px 0 var(--primary-blue);" 
                     onclick="openRDMenu()">OUTRO NÍVEL</button>
                 
                 <a href="${JOGO_CONFIG.linkVoltar}" style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:#dce4ee; color:#5d7082; text-align:center; text-decoration:none; box-shadow:0 6px 0 #b8c5d4;">SAIR</a>
