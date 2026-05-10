@@ -21,15 +21,14 @@ function shuffleArray(array) {
     return array;
 }
 
-// === 1. INICIALIZAÇÃO E RESET DE INTERFACE ===
+// === 1. INICIALIZAÇÃO E AJUSTES DE INTERFACE ===
 window.startLogic = function() {
-    // Garante que a categoria está definida
     if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "Nível 1";
     
-    // Reset de variáveis de estado para nova escolha
     roundAtual = 0;
     discoveredWords = [];
     
+    // 1. Trocar o Timer pelo Botão de Ajuda
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.id = "btn-ajuda";
@@ -39,10 +38,22 @@ window.startLogic = function() {
         timerBadge.style.padding = "0";
         timerBadge.style.display = "flex";
         timerBadge.style.alignItems = "center";
-        
         timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:35px; width:auto; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">`;
         timerBadge.onclick = darAjuda;
     }
+
+    // 2. Ajustar a altura da Ronda Azul para igualar Acertos/Erros
+    const roundBadge = document.querySelector('.badge-round');
+    if (roundBadge) {
+        roundBadge.style.height = "25px"; // Altura padrão dos badges de acerto/erro
+        roundBadge.style.display = "flex";
+        roundBadge.style.alignItems = "center";
+        roundBadge.style.justifyContent = "center";
+        roundBadge.style.padding = "0 12px";
+        roundBadge.style.fontSize = "11px";
+        roundBadge.style.lineHeight = "1";
+    }
+
     setTimeout(criarAnimacaoTutorial, 100);
 };
 
@@ -52,7 +63,6 @@ window.gerarIntroJogo = function() {
 
 window.selecionarCategoria = function(key) { 
     categoriaAtual = key; 
-    // Forçar reset visual e lógico ao trocar pelo RD menu
     roundAtual = 0;
     discoveredWords = [];
 };
@@ -75,19 +85,15 @@ function criarAnimacaoTutorial() {
 
 // === 2. LÓGICA DO JOGO ===
 window.initGame = function() {
-    // Reset total ao carregar o ecrã de jogo
     discoveredWords = [];
     roundAtual = 0; 
     acertos = 0; 
     erros = 0; 
     contadorAjudas = 0;
-    
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
-
     const config = JOGO_CATEGORIAS[categoriaAtual];
     desafiosEmbaralhados = shuffleArray([...config.desafios]); 
-    
     proximaRondaFabrica();
 };
 
@@ -108,11 +114,7 @@ function definirSugestaoRonda() {
 
 function proximaRondaFabrica() {
     roundAtual++;
-    if (roundAtual > 10 || roundAtual > desafiosEmbaralhados.length) { 
-        finalizarFabrica(); 
-        return; 
-    }
-    
+    if (roundAtual > 10 || roundAtual > desafiosEmbaralhados.length) { finalizarFabrica(); return; }
     document.getElementById('round-val').innerText = `${roundAtual} / 10`;
     selectedSyllables = [];
     definirSugestaoRonda();
@@ -127,74 +129,35 @@ function renderizarEcraFabrica() {
 
     container.innerHTML = `
         <style>
-            .factory-wrapper { 
-                display: flex; flex-direction: column; width: 100%; height: 100%; 
-                padding: 10px 10px 5px 10px; box-sizing: border-box; overflow: hidden;
-            }
-            
+            .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; padding: 10px 10px 5px 10px; box-sizing: border-box; overflow: hidden; }
             .row-title { height: 5%; display: flex; align-items: center; justify-content: center; }
             .row-station { height: 30%; display: flex; align-items: center; justify-content: center; }
             .row-btns { height: 12%; display: flex; align-items: center; justify-content: center; }
             .row-bank { height: 28%; display: flex; align-items: center; justify-content: center; }
-            .row-warehouse { flex: 1; display: flex; flex-direction: column; padding-bottom: 5px; } /* Padding de 5px do fundo */
-
+            .row-warehouse { flex: 1; display: flex; flex-direction: column; padding-bottom: 5px; }
             .game-title { font-size: 0.75rem; font-weight: 900; color: var(--primary-blue); text-transform: uppercase; }
-            
-            .station { 
-                display: flex; gap: 10px; justify-content: center; align-items: center; 
-                background: #f0f9ff; border: 3px dashed #0891b2; padding: 15px; border-radius: 20px;
-                width: 95%; max-width: 450px; height: 90%;
-            }
-            .mold {
-                width: clamp(55px, 15vw, 75px); height: clamp(55px, 15vw, 75px);
-                background: white; border: 3px dashed #cbd5e1; border-radius: 12px;
-                display: flex; align-items: center; justify-content: center;
-                font-size: clamp(1.3rem, 6vw, 1.8rem); font-weight: 950; color: #0891b2;
-            }
+            .station { display: flex; gap: 10px; justify-content: center; align-items: center; background: #f0f9ff; border: 3px dashed #0891b2; padding: 15px; border-radius: 20px; width: 95%; max-width: 450px; height: 90%; }
+            .mold { width: clamp(55px, 15vw, 75px); height: clamp(55px, 15vw, 75px); background: white; border: 3px dashed #cbd5e1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: clamp(1.3rem, 6vw, 1.8rem); font-weight: 950; color: #0891b2; }
             .mold.filled { border: 3px solid #0891b2; border-bottom-width: 6px; animation: popIn 0.3s; }
-            
             .btn-f { padding: 10px 25px; border-radius: 12px; font-weight: 900; border: none; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; margin: 0 5px; }
             .btn-mount { background: #0ea5e9; color: white; box-shadow: 0 4px 0 #0369a1; }
             .btn-clear { background: #94a3b8; color: white; box-shadow: 0 4px 0 #64748b; }
             .btn-f:active { transform: translateY(3px); box-shadow: none; }
-
             .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; max-width: 450px; }
-            .pill { 
-                background: white; border: 3px solid #0891b2; color: #164e63; border-radius: 18px; 
-                padding: 10px 5px; width: clamp(75px, 22vw, 85px); text-align: center;
-                font-size: 1.1rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #0e7490;
-            }
+            .pill { background: white; border: 3px solid #0891b2; color: #164e63; border-radius: 18px; padding: 10px 5px; width: clamp(75px, 22vw, 85px); text-align: center; font-size: 1.1rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #0e7490; }
             .pill:active { transform: translateY(2px); box-shadow: 0 1px 0 #0e7490; }
             .pill-hint { animation: blinkHelp 0.6s infinite alternate; border-color: #f59e0b !important; background: #fef3c7 !important; }
             @keyframes blinkHelp { from { transform: scale(1); } to { transform: scale(1.05); } }
-
-            .warehouse { 
-                width: 100%; max-width: 500px; background: white; border-radius: 15px; 
-                padding: 10px; border: 2px solid #e2e8f0; 
-                flex: 1; overflow-y: auto; text-align: left; align-self: center;
-            }
+            .warehouse { width: 100%; max-width: 500px; background: white; border-radius: 15px; padding: 10px; border: 2px solid #e2e8f0; flex: 1; overflow-y: auto; text-align: left; align-self: center; }
             .tag { display: inline-block; color: #5d7082; padding: 2px 5px; margin: 2px; font-weight: 800; font-size: 0.7rem; border-bottom: 2px solid var(--primary-blue); text-transform: uppercase; }
             @keyframes popIn { from { transform: scale(0.5); opacity:0; } to { transform: scale(1); opacity:1; } }
         </style>
-
         <div class="factory-wrapper">
             <div class="row-title"><div class="game-title">${config.nome}</div></div>
             <div class="row-station"><div class="station" id="molds-area"></div></div>
-            <div class="row-btns">
-                <button class="btn-f btn-mount" onclick="validarProducao()">MONTAR</button>
-                <button class="btn-f btn-clear" onclick="limparProducao()">LIMPAR</button>
-            </div>
-            <div class="row-bank">
-                <div class="bank">
-                    ${silabasParaExibir.map(s => `<button class="pill" onclick="clicarSilaba('${s}')">${s}</button>`).join('')}
-                </div>
-            </div>
-            <div class="row-warehouse">
-                <div class="warehouse">
-                    <div style="font-size:0.55rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:5px;">Armazém de Palavras:</div>
-                    <div id="history-list">${discoveredWords.map(p => `<span class="tag">${p}</span>`).join('')}</div>
-                </div>
-            </div>
+            <div class="row-btns"><button class="btn-f btn-mount" onclick="validarProducao()">MONTAR</button><button class="btn-f btn-clear" onclick="limparProducao()">LIMPAR</button></div>
+            <div class="row-bank"><div class="bank">${silabasParaExibir.map(s => `<button class="pill" onclick="clicarSilaba('${s}')">${s}</button>`).join('')}</div></div>
+            <div class="row-warehouse"><div class="warehouse"><div style="font-size:0.55rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:5px;">Armazém de Palavras:</div><div id="history-list">${discoveredWords.map(p => `<span class="tag">${p}</span>`).join('')}</div></div></div>
         </div>
     `;
     atualizarMoldes();
@@ -249,7 +212,6 @@ window.validarProducao = function() {
     if (selectedSyllables.length < desafio.slots) return;
     const palavra = selectedSyllables.join('');
     const molds = document.querySelectorAll('.mold');
-
     if (discoveredWords.includes(palavra)) {
         somErro.play();
         molds.forEach(m => m.style.background = "#fef3c7"); 
@@ -273,10 +235,8 @@ function finalizarFabrica() {
     somVitoria.play();
     const resScreen = document.getElementById('scr-result');
     const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
-    
     document.getElementById('scr-game').classList.remove('active');
     document.getElementById('scr-game').innerHTML = ""; 
-
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <style>
