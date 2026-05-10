@@ -73,7 +73,7 @@ function renderizarEcraFabrica() {
 
     container.innerHTML = `
         <style>
-            .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-between; padding: 15px; box-sizing: border-box; }
+            .factory-wrapper { display: flex; flex-direction: column; width: 100%; min-height: 100%; align-items: center; justify-content: space-between; padding: 15px; box-sizing: border-box; }
             .station { 
                 display: flex; gap: 10px; justify-content: center; align-items: center; 
                 background: #f0f9ff; border: 3px dashed #0891b2; padding: 15px; border-radius: 25px;
@@ -84,22 +84,25 @@ function renderizarEcraFabrica() {
                 display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 950; color: #0891b2;
             }
             .mold.filled { border: 3px solid #0891b2; animation: popIn 0.3s; }
-            .btn-row { display: flex; gap: 12px; }
-            .btn-f { padding: 12px 25px; border-radius: 15px; font-weight: 800; border: none; cursor: pointer; }
+            .btn-row { display: flex; gap: 12px; margin-top: 10px; }
+            .btn-f { padding: 12px 25px; border-radius: 15px; font-weight: 800; border: none; cursor: pointer; font-size: 0.9rem; }
             .btn-mount { background: #0ea5e9; color: white; box-shadow: 0 5px 0 #0369a1; }
             .btn-clear { background: #94a3b8; color: white; box-shadow: 0 5px 0 #64748b; }
-            .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 15px 0; }
+            .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 15px 0; width: 100%; }
             .pill { 
                 background: white; border: 3px solid #0891b2; color: #164e63; border-radius: 18px; 
                 padding: 12px; min-width: 80px; font-size: 1.2rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #0e7490;
             }
-            .warehouse { width: 100%; max-width: 500px; background: rgba(255,255,255,0.7); border-radius: 20px; padding: 10px; border: 2px solid #e2e8f0; min-height: 70px; }
-            .tag { background: #0891b2; color: white; padding: 4px 12px; border-radius: 8px; font-weight: 800; font-size: 0.8rem; }
+            .warehouse { width: 100%; max-width: 500px; background: rgba(255,255,255,0.7); border-radius: 20px; padding: 10px; border: 1px solid #eee; min-height: 60px; }
+            
+            /* PALAVRAS DESCOBERTAS - PEQUENAS E SEM FUNDO AZUL */
+            .tag { color: #5d7082; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; border-bottom: 2px solid #ddd; padding: 2px 5px; }
 
             @media screen and (max-height: 500px) {
-                .factory-wrapper { height: auto; min-height: 100%; gap: 15px; padding: 10px; }
+                .factory-wrapper { height: auto; gap: 15px; padding: 10px; }
                 .station { min-height: 80px; }
-                .mold { width: 60px; height: 60px; font-size: 1.2rem; }
+                .mold { width: 55px; height: 55px; font-size: 1.2rem; }
+                .pill { padding: 8px; min-width: 65px; font-size: 1rem; }
             }
             @keyframes popIn { from { transform: scale(0.5); } to { transform: scale(1); } }
         </style>
@@ -113,9 +116,9 @@ function renderizarEcraFabrica() {
                 ${desafio.bank.map(s => `<button class="pill" onclick="clicarSilaba('${s}')">${s}</button>`).join('')}
             </div>
             <div class="warehouse">
-                <div style="font-size:0.6rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:5px;">Palavras:</div>
-                <div id="history-list" style="display:flex; flex-wrap:wrap; gap:6px;">
-                    ${discoveredWords.map(p => `<div class="tag">${p}</div>`).join('')}
+                <div style="font-size:0.55rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:5px;">Palavras Criadas:</div>
+                <div id="history-list" style="display:flex; flex-wrap:wrap; gap:10px;">
+                    ${discoveredWords.map(p => `<span class="tag">${p}</span>`).join('')}
                 </div>
             </div>
         </div>
@@ -180,18 +183,41 @@ function feedbackEstacao(color, txt) {
 function finalizarFabrica() {
     clearInterval(intervaloTempo);
     somVitoria.play();
+    
     const tempo = document.getElementById('timer-val').innerText;
     const resScreen = document.getElementById('scr-result');
     const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
     
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:30px; text-align:center;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px;">
-            <h2 style="color:var(--primary-blue); font-weight:900; margin-bottom:20px;">${rel.titulo}</h2>
-            <p style="font-weight:800; color:#5d7082; margin-bottom:20px;">Fizeste ${acertos} acertos em ${tempo}!</p>
-            <button style="padding:15px 30px; border-radius:20px; background:var(--primary-blue); color:white; border:none; font-weight:900; cursor:pointer;" onclick="location.reload()">JOGAR DE NOVO</button>
+        <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; padding:20px; text-align:center;">
+            
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px; object-fit:contain;">
+            
+            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.8rem; margin-bottom:10px;">${rel.titulo}</h2>
+            
+            <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
+                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span>
+                    <span style="font-size:11px; font-weight:800; color:#88a;">ACERTOS</span>
+                </div>
+                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${tempo}</span>
+                    <span style="font-size:11px; font-weight:800; color:#88a;">TEMPO</span>
+                </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:280px;">
+                <button style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark);" 
+                    onclick="location.reload()">JOGAR DE NOVO</button>
+                
+                <button style="padding:14px; border-radius:22px; font-weight:900; font-size:16px; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer;" 
+                    onclick="openRDMenu()">OUTRO NÍVEL</button>
+                
+                <a href="${JOGO_CONFIG.linkVoltar}" style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:#dce4ee; color:#5d7082; text-align:center; text-decoration:none; box-shadow:0 6px 0 #b8c5d4;">SAIR</a>
+            </div>
         </div>
     `;
     document.querySelectorAll('.screen').forEach(s => { if(s.id !== 'scr-result') s.classList.remove('active'); });
+    document.getElementById('status-bar').style.display = 'none';
 }
