@@ -3,8 +3,6 @@ let discoveredWords = [];
 let roundAtual = 0;
 let acertos = 0;
 let erros = 0;
-let tempoInicio;
-let intervaloTempo;
 let categoriaAtual = "Nível 1"; 
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
@@ -42,42 +40,15 @@ window.initGame = function() {
     discoveredWords = [];
     roundAtual = 0; acertos = 0; erros = 0;
     document.getElementById('hits-val').innerText = "0";
-    iniciarCronometro();
+    document.getElementById('miss-val').innerText = "0";
     proximaRondaFabrica();
 };
 
-function iniciarCronometro() {
-    tempoInicio = Date.now();
-    clearInterval(intervaloTempo);
-    intervaloTempo = setInterval(() => {
-        const decorrido = Math.floor((Date.now() - tempoInicio) / 1000);
-        const min = Math.floor(decorrido / 60).toString().padStart(2, '0');
-        const seg = (decorrido % 60).toString().padStart(2, '0');
-        document.getElementById('timer-val').innerText = `${min}:${seg}`;
-    }, 1000);
-}
-
-function proximaRondaFabrica() {
-    roundAtual++;
-    if (roundAtual > 10) { finalizarFabrica(); return; }
-    document.getElementById('round-val').innerText = `${roundAtual} / 10`;
-    selectedSyllables = [];
-    renderizarEcraFabrica();
-}
-
-// === FUNÇÃO DE AJUDA ===
 window.darAjuda = function() {
     const config = JOGO_CATEGORIAS[categoriaAtual];
     const desafio = config.desafios[roundAtual - 1];
     
-    // 1. Procurar no dicionário palavras que usem APENAS as sílabas do banco atual e tenham o tamanho certo
     const palavrasPossiveis = DICIONARIO_MESTRE.filter(palavra => {
-        if (palavra.length !== desafio.slots * 2 && desafio.slots > 0) {
-            // Verificação simples por número de sílabas (assumindo que cada sílaba tem 2 letras nos exemplos)
-            // Se as tuas sílabas variarem de tamanho, esta lógica precisará de um ajuste fino.
-        }
-        
-        // Verifica se a palavra pode ser construída com o banco desta ronda
         let silabasDaPalavra = [];
         for(let i=0; i<palavra.length; i+=2) silabasDaPalavra.push(palavra.substr(i,2));
         
@@ -87,19 +58,23 @@ window.darAjuda = function() {
     });
 
     if (palavrasPossiveis.length > 0) {
-        // Escolhe a primeira palavra da lista de sugestões
         const sugestao = palavrasPossiveis[0];
         const primeiraSilaba = sugestao.substr(0, 2);
-        
-        // Limpa o que o user fez e coloca a primeira peça
         selectedSyllables = [primeiraSilaba];
         atualizarMoldes();
         
-        // Efeito visual de brilho na lâmpada
         const btn = document.getElementById('help-btn');
-        btn.style.transform = "scale(1.3)";
-        setTimeout(() => btn.style.transform = "scale(1)", 300);
+        btn.style.transform = "scale(1.3) rotate(15deg)";
+        setTimeout(() => btn.style.transform = "scale(1) rotate(0deg)", 300);
     }
+}
+
+function proximaRondaFabrica() {
+    roundAtual++;
+    if (roundAtual > 10) { finalizarFabrica(); return; }
+    document.getElementById('round-val').innerText = `${roundAtual} / 10`;
+    selectedSyllables = [];
+    renderizarEcraFabrica();
 }
 
 function renderizarEcraFabrica() {
@@ -130,8 +105,6 @@ function renderizarEcraFabrica() {
                 padding: 12px; min-width: 80px; font-size: 1.2rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #0e7490;
             }
             .warehouse { width: 100%; max-width: 500px; background: rgba(255,255,255,0.7); border-radius: 20px; padding: 10px; border: 1px solid #eee; min-height: 60px; }
-            
-            /* PALAVRAS DESCOBERTAS - PEQUENAS E SEM FUNDO AZUL */
             .tag { color: #5d7082; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; border-bottom: 2px solid #ddd; padding: 2px 5px; }
 
             @media screen and (max-height: 500px) {
@@ -203,6 +176,8 @@ window.validarProducao = function() {
         feedbackEstacao("#10b981", "CERTO!");
     } else {
         somErro.play();
+        erros++;
+        document.getElementById('miss-val').innerText = erros;
         feedbackEstacao("#ef4444", "ERRO!");
     }
     setTimeout(proximaRondaFabrica, 1200);
@@ -215,10 +190,7 @@ function feedbackEstacao(color, txt) {
 }
 
 function finalizarFabrica() {
-    clearInterval(intervaloTempo);
     somVitoria.play();
-    
-    const tempo = document.getElementById('timer-val').innerText;
     const resScreen = document.getElementById('scr-result');
     const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
     
@@ -230,22 +202,18 @@ function finalizarFabrica() {
             
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
                 <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
-                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span>
+                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos}</span>
                     <span style="font-size:11px; font-weight:800; color:#88a;">ACERTOS</span>
                 </div>
                 <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
-                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${tempo}</span>
-                    <span style="font-size:11px; font-weight:800; color:#88a;">TEMPO</span>
+                    <span style="display:block; font-size:24px; font-weight:900; color:#ff5e5e;">${erros}</span>
+                    <span style="font-size:11px; font-weight:800; color:#88a;">ERROS</span>
                 </div>
             </div>
 
             <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:280px;">
-                <button style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark);" 
-                    onclick="location.reload()">JOGAR DE NOVO</button>
-                
-                <button style="padding:14px; border-radius:22px; font-weight:900; font-size:16px; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer; box-shadow:0 4px 0 var(--primary-blue);" 
-                    onclick="openRDMenu()">OUTRO NÍVEL</button>
-                
+                <button style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark);" onclick="location.reload()">JOGAR DE NOVO</button>
+                <button style="padding:14px; border-radius:22px; font-weight:900; font-size:16px; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer;" onclick="openRDMenu()">OUTRO NÍVEL</button>
                 <a href="${JOGO_CONFIG.linkVoltar}" style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:#dce4ee; color:#5d7082; text-align:center; text-decoration:none; box-shadow:0 6px 0 #b8c5d4;">SAIR</a>
             </div>
         </div>
