@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fábrica de Palavras</title>
+    <title>Carregando...</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -24,44 +24,68 @@
         .logo-text h1 { font-size: 16px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         .logo-text p { font-size: 8px; color: #88a; font-weight: 700; text-transform: uppercase; }
 
-        /* MENU HAMBURGUER UNIFORME */
+        /* MENU HAMBURGUER */
         .hamburger-btn { font-size: 26px; color: var(--primary-blue); cursor: pointer; padding: 5px; z-index: 3001; }
         .menu-dropdown { position: absolute; top: 65px; left: 15px; display: none; flex-direction: column; gap: 8px; z-index: 3000; width: 220px; }
-        .menu-item { 
-            display: flex; align-items: center; gap: 12px; padding: 0 15px; 
-            background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); 
-            text-decoration: none; color: var(--text-grey); font-weight: 700; 
-            font-size: 0.9rem; border: 1px solid #eee; height: 50px; width: 100%;
-        }
+        .menu-item { display: flex; align-items: center; gap: 12px; height: 50px; padding: 0 15px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 0.9rem; border: 1px solid #eee; }
         .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
         .menu-divider { height: 1px; background: #eee; margin: 2px 0; }
 
-        .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 15px; background-color: var(--bg-container); overflow: hidden; }
-        .game-card { background: var(--bg-card); width: 100%; max-width: 1100px; height: 100%; border-radius: 35px; box-shadow: var(--sombra-card); display: flex; flex-direction: column; padding: 15px; position: relative; overflow: hidden; }
+        .btn-voltar-header { display: none !important; } /* Oculto conforme pedido anterior */
+        .btn-voltar-mobile { display: flex; align-items: center; text-decoration: none; padding: 5px; z-index: 3001; }
 
-        .screen-box { flex: 1; width: 100%; background: var(--bg-espaco-jogo); border: var(--borda-espaco-jogo); border-radius: 30px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+        .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; background-color: var(--bg-container); overflow: hidden; }
+        .game-card { background: var(--bg-card); width: 100%; max-width: 1000px; height: 100%; border-radius: 35px; box-shadow: var(--sombra-card); display: flex; flex-direction: column; padding: 12px; position: relative; overflow: hidden; }
 
-        /* BARRA DE STATUS */
-        .status-bar { display: none; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-shrink: 0; padding: 0 5px; }
-        .status-left, .status-right { display: flex; align-items: center; gap: 10px; }
-        .badge { display: flex; align-items: center; justify-content: center; gap: 5px; padding: 6px 14px; border-radius: 12px; font-weight: 900; font-size: 13px; color: white; }
+        .screen-box { flex: 1; width: 100%; background: var(--bg-espaco-jogo); border: var(--borda-espaco-jogo); border-radius: 25px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+
+        .status-bar { display: none; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; padding: 0 10px; }
+        .badge { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 12px; border-radius: 12px; font-weight: 900; font-size: 11px; color: white; }
         .badge-round { background: var(--primary-blue); }
-        .badge-hits { background: var(--cor-acerto); }
-        .badge-miss { background: var(--cor-erro); }
 
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; }
         .screen.active { display: flex !important; }
 
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 2000; }
-        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 4000; padding: 25px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); max-height: 80vh; overflow-y: auto; }
-        .rd-panel.active { bottom: 0; }
-        #rd-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .rd-item { background: #f8f9fa; border-radius: 20px; padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; font-weight: 800; border: 2px solid #eee; }
-
-        @media screen and (max-height: 550px) and (orientation: landscape) {
-            header { display: none !important; }
-            .game-card { border-radius: 15px; }
+        /* BOTÃO JOGAR EXPANSÍVEL (100%) */
+        .btn-jogar-stretch { 
+            background: var(--primary-blue); color: white; border: none; border-radius: 20px; 
+            padding: 20px; font-size: 22px; font-weight: 950; cursor: pointer; 
+            box-shadow: 0 6px 0 var(--primary-dark); width: 100%; transition: 0.1s;
         }
+        .btn-jogar-stretch:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
+
+        /* AJUSTES LANDSCAPE */
+        @media screen and (max-height: 550px) and (orientation: landscape) {
+            body { overflow-y: auto !important; height: auto !important; min-height: 100vh; }
+            header { display: none !important; }
+            .game-container { padding: 5px; height: auto !important; min-height: 100vh; overflow: visible; }
+            .game-card { border-radius: 15px; padding: 10px; height: auto !important; min-height: 95vh; overflow: visible; }
+            .screen-box { height: auto !important; min-height: 400px; overflow: visible; border-radius: 20px; }
+            .screen { height: auto !important; overflow: visible; }
+        }
+
+        /* ECRÃ RESULTADOS */
+        .res-inner { display: flex; flex-direction: column; align-items: center; justify-content: space-around; width: 100%; height: 100%; padding: 20px; text-align: center; }
+        .res-trophy { height: clamp(90px, 20vh, 130px); filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1)); }
+        .res-title { color: var(--primary-blue); font-weight: 900; font-size: 1.8rem; margin: 5px 0; }
+        .res-grid { display: flex; gap: 12px; width: 100%; max-width: 500px; }
+        .res-card { background: white; flex: 1; border-radius: 22px; padding: 15px 5px; box-shadow: 0 8px 25px rgba(0,0,0,0.06); display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(0,0,0,0.03); }
+        .res-card .num { font-size: 2rem; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+        .res-card .label { font-size: 0.65rem; font-weight: 800; color: #88a; text-transform: uppercase; }
+        .res-card i { font-size: 1.2rem; margin-top: 8px; opacity: 0.4; }
+
+        .btn-res { display: flex; align-items: center; justify-content: center; gap: 15px; padding: 16px; border-radius: 22px; font-weight: 900; font-size: 1.1rem; text-transform: uppercase; cursor: pointer; border: none; text-decoration: none; transition: 0.1s; width: 100%; }
+        .btn-res-play { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
+        .btn-res-levels { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); box-shadow: 0 6px 0 var(--primary-blue); }
+        .btn-res-exit { background: #dce4ee; color: #5d7082; box-shadow: 0 6px 0 #b8c5d4; }
+        .btn-res:active { transform: translateY(3px); box-shadow: none; }
+
+        /* RD PANEL LADO A LADO */
+        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 4000; padding: 20px; border-radius: 25px 25px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); max-height: 80vh; overflow-y: auto; }
+        .rd-panel.active { bottom: 0; }
+        #rd-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .rd-item { background: #f8f9fa; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; font-weight: 700; color: var(--text-grey); font-size: 0.85rem; border: 1px solid #eee; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 2000; }
     </style>
 </head>
 <body>
@@ -75,28 +99,24 @@
     <main class="game-container">
         <div class="game-card">
             <div class="status-bar" id="status-bar">
-                <div class="status-left">
-                    <img id="help-btn" src="" onclick="darAjuda()" style="height:45px; width:45px; cursor:pointer;">
+                <div class="status-left" style="display:flex; align-items:center; gap:10px;">
+                    <img id="help-btn" src="" onclick="darAjuda()" style="height:42px; width:42px; cursor:pointer;">
                     <div class="badge badge-round"><span id="round-val">1 / 10</span></div>
                 </div>
-                <div class="status-right">
-                    <div class="badge badge-hits">✓ <span id="hits-val">0</span></div>
-                    <div class="badge badge-miss">✗ <span id="miss-val">0</span></div>
-                    <!-- ÍCONE RD NO JOGO -->
-                    <img id="rd-game-btn" src="" style="height:35px; width:35px; cursor:pointer;" onclick="openRDMenu(event)">
+                <div class="status-right" style="display:flex; align-items:center; gap:8px;">
+                    <div class="badge" style="background:var(--cor-acerto);">✓ <span id="hits-val">0</span></div>
+                    <div class="badge" style="background:var(--cor-erro);">✗ <span id="miss-val">0</span></div>
+                    <img id="rd-game-btn" src="" style="height:32px; width:32px; cursor:pointer;" onclick="openRDMenu(event)">
                 </div>
             </div>
 
             <section class="screen active" id="scr-intro">
-                <div class="screen-box" style="justify-content: space-around; align-items: center; padding: 30px;">
+                <div class="screen-box" style="justify-content: space-around; align-items: center; padding: 25px;">
                     <div id="intro-animation-container" style="flex: 1; display: flex; align-items: center; justify-content: center; width: 100%;"></div>
-                    <p id="intro-instr" style="font-weight: 800; color: var(--text-grey); text-align: center; font-size: 1.2rem; margin-bottom: 20px;"></p>
-                    
-                    <div style="display: flex; width: 100%; gap: 15px; align-items: center; max-width: 450px;">
-                        <!-- BOTÃO JOGAR OCUPANDO ESPAÇO -->
-                        <button style="background: var(--primary-blue); color: white; border: none; border-radius: 20px; padding: 18px; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); flex: 1;" onclick="goToGame()">JOGAR</button>
-                        <!-- BOTÃO RD NA INTRO -->
-                        <img id="rd-intro-btn" src="" onclick="openRDMenu(event)" style="height:60px; width:60px; cursor:pointer; flex-shrink: 0; object-fit: contain;">
+                    <p id="intro-instr" style="font-weight: 800; color: var(--text-grey); text-align: center; margin-bottom: 20px; font-size: 1.1rem; width: 100%; padding: 0 10px;"></p>
+                    <div style="display: flex; width: 100%; gap: 15px; align-items: center; padding: 0 15px 15px;">
+                        <button class="btn-jogar-stretch" onclick="goToGame()">JOGAR</button>
+                        <img id="rd-intro-btn" src="" onclick="openRDMenu(event)" style="height:60px; width:60px; cursor:pointer; flex-shrink: 0;">
                     </div>
                 </div>
             </section>
@@ -107,7 +127,7 @@
     </main>
 
     <div id="rdMenu" class="rd-panel">
-        <h3 style="text-align:center; color:var(--primary-blue); margin-bottom:20px; font-weight: 900;">Escolher Tema</h3>
+        <h3 style="text-align:center; color:var(--primary-blue); margin-bottom:15px; font-weight: 900;">Escolher Tema</h3>
         <div id="rd-list"></div>
     </div>
 
@@ -118,30 +138,41 @@
         const setup = CONFIG_MESTRE; const tema = BIBLIOTECA_TEMAS[setup.area]; const conf = JOGO_CONFIG;
         const cont = (BIBLIOTECA_CONTEUDO[setup.ano] && BIBLIOTECA_CONTEUDO[setup.ano][setup.area]) ? BIBLIOTECA_CONTEUDO[setup.ano][setup.area] : {};
         const root = document.documentElement;
-        root.style.setProperty('--primary-blue', tema.corPrimaria); root.style.setProperty('--primary-dark', tema.corEscura); root.style.setProperty('--bg-page', tema.corPagina);
+        root.style.setProperty('--primary-blue', tema.corPrimaria); 
+        root.style.setProperty('--primary-dark', tema.corEscura); 
+        root.style.setProperty('--bg-page', tema.corPagina);
         root.style.setProperty('--borda-espaco-jogo', `3px dashed ${tema.corPrimaria}`);
+
         document.body.style.opacity = '1';
-        document.getElementById('tit-l1').innerText = cont.t1 || ""; document.getElementById('tit-l2').innerText = cont.t2 || ""; document.getElementById('sub-tit').innerText = cont.sub || ""; 
+        document.getElementById('tit-l1').innerText = cont.t1 || ""; 
+        document.getElementById('tit-l2').innerText = cont.t2 || ""; 
+        document.getElementById('sub-tit').innerText = cont.sub || ""; 
         document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu[setup.ano];
-        document.getElementById('header-back-mobile').src = conf.caminhoIcons + tema.voltarMobile;
-        document.getElementById('help-btn').src = conf.caminhoImg + "lampada.png";
         
-        // RESTAURANDO ÍCONES RD
+        // CORREÇÃO BOTÃO VOLTAR
+        document.getElementById('link-voltar-mobile').href = conf.linkVoltar;
+        document.getElementById('header-back-mobile').src = conf.caminhoIcons + tema.voltarMobile;
+        
         document.getElementById('rd-intro-btn').src = conf.caminhoImg + "rd.png";
         document.getElementById('rd-game-btn').src = conf.caminhoImg + "rd.png";
+        document.getElementById('help-btn').src = conf.caminhoImg + "lampada.png";
 
+        if(window.gerarIntroJogo) document.getElementById('intro-instr').innerText = window.gerarIntroJogo();
+        
+        // MENU HAMBURGUER UNIFORME
         const menuBox = document.getElementById('dropdownMenu'); menuBox.innerHTML = '';
         const labels = { home: "Início", pre: "Pré-Escolar", ano1: "1º Ano", ano2: "2º Ano", ano3: "3º Ano", ano4: "4º Ano" };
         ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
             const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
-            a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}" width="24"><span>${labels[k]}</span>`;
+            a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}" width="22"><span>${labels[k]}</span>`;
             menuBox.appendChild(a);
         });
         const divider = document.createElement('div'); divider.className = 'menu-divider'; menuBox.appendChild(divider);
         const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = conf.linkVoltar;
-        btnV.innerHTML = `<img src="${conf.caminhoIcons}voltar.png" width="24" style="filter:brightness(0) invert(1)"><span>${conf.textoVoltar}</span>`;
+        btnV.innerHTML = `<img src="${conf.caminhoIcons}voltar.png" width="22" style="filter:brightness(0) invert(1)"><span>${conf.textoVoltar}</span>`;
         menuBox.appendChild(btnV);
 
+        // RD MENU LADO A LADO
         const rdBox = document.getElementById('rd-list'); rdBox.innerHTML = '';
         Object.keys(conf.categorias).forEach(key => {
             const c = conf.categorias[key]; const div = document.createElement('div'); div.className = 'rd-item';
