@@ -108,43 +108,46 @@ function renderizarEcraFabrica() {
         <style>
             .factory-wrapper { 
                 display: flex; flex-direction: column; width: 100%; height: 100%; 
-                align-items: center; justify-content: space-evenly; /* DISTRIBUIÇÃO 100% VERTICAL */
-                padding: 10px; box-sizing: border-box; 
+                align-items: center; justify-content: flex-start; 
+                padding: 10px 10px 0 10px; box-sizing: border-box; 
             }
-            .game-title { font-size: 0.75rem; font-weight: 900; color: var(--primary-blue); text-transform: uppercase; margin: 0; }
+            .game-title { font-size: 0.75rem; font-weight: 900; color: var(--primary-blue); text-transform: uppercase; margin: 5px 0; }
             
             .station { 
                 display: flex; gap: 10px; justify-content: center; align-items: center; 
-                background: #f0f9ff; border: 3px dashed #0891b2; padding: 20px; border-radius: 25px;
-                width: 95%; max-width: 450px; 
+                background: #f0f9ff; border: 3px dashed #0891b2; padding: clamp(10px, 2vh, 18px); border-radius: 25px;
+                width: 95%; max-width: 450px; margin-bottom: 10px;
             }
             .mold {
-                width: clamp(60px, 18vw, 85px); height: clamp(60px, 18vw, 85px);
+                width: clamp(55px, 15vw, 80px); height: clamp(55px, 15vw, 80px);
                 background: white; border: 3px dashed #cbd5e1; border-radius: 15px;
                 display: flex; align-items: center; justify-content: center;
-                font-size: clamp(1.4rem, 6vw, 2.2rem); font-weight: 950; color: #0891b2;
+                font-size: clamp(1.3rem, 6vw, 2rem); font-weight: 950; color: #0891b2;
             }
             .mold.filled { border: 3px solid #0891b2; border-bottom-width: 6px; animation: popIn 0.3s; }
             
-            .btn-row { display: flex; gap: 15px; }
-            .btn-f { padding: 12px 30px; border-radius: 15px; font-weight: 900; border: none; cursor: pointer; font-size: 0.9rem; text-transform: uppercase; }
-            .btn-mount { background: #0ea5e9; color: white; box-shadow: 0 5px 0 #0369a1; }
-            .btn-clear { background: #94a3b8; color: white; box-shadow: 0 5px 0 #64748b; }
+            .btn-row { display: flex; gap: 15px; margin-bottom: 10px; }
+            .btn-f { padding: 10px 25px; border-radius: 12px; font-weight: 900; border: none; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; }
+            .btn-mount { background: #0ea5e9; color: white; box-shadow: 0 4px 0 #0369a1; }
+            .btn-clear { background: #94a3b8; color: white; box-shadow: 0 4px 0 #64748b; }
             .btn-f:active { transform: translateY(3px); box-shadow: none; }
 
-            .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; max-width: 500px; }
+            .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; max-width: 450px; margin-bottom: 15px; }
             .pill { 
                 background: white; border: 3px solid #0891b2; color: #164e63; border-radius: 18px; 
-                padding: 15px 5px; width: clamp(75px, 22vw, 95px); text-align: center;
-                font-size: 1.3rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #0e7490;
+                padding: 12px 5px; width: clamp(75px, 22vw, 90px); text-align: center;
+                font-size: 1.2rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #0e7490;
             }
             .pill:active { transform: translateY(2px); box-shadow: 0 1px 0 #0e7490; }
             .pill-hint { animation: blinkHelp 0.6s infinite alternate; border-color: #f59e0b !important; background: #fef3c7 !important; }
             @keyframes blinkHelp { from { transform: scale(1); } to { transform: scale(1.05); } }
 
+            /* ARMAZÉM QUE CRESCE ATÉ AO FUNDO */
             .warehouse { 
-                width: 95%; max-width: 500px; background: white; border-radius: 20px; 
-                padding: 12px; border: 2px solid #e2e8f0; height: 60px;
+                width: 100%; max-width: 500px; background: white; border-radius: 20px 20px 0 0; 
+                padding: 12px; border: 2px solid #e2e8f0; border-bottom: none;
+                flex: 1; /* Ocupa o resto do espaço */
+                margin-bottom: 5px; /* Padding de 5px do fundo */
                 overflow-y: auto; text-align: left;
             }
             .tag { display: inline-block; color: #5d7082; padding: 2px 6px; margin: 3px; font-weight: 800; font-size: 0.75rem; border-bottom: 2px solid var(--primary-blue); text-transform: uppercase; }
@@ -161,7 +164,7 @@ function renderizarEcraFabrica() {
                 ${silabasParaExibir.map(s => `<button class="pill" onclick="clicarSilaba('${s}')">${s}</button>`).join('')}
             </div>
             <div class="warehouse">
-                <div style="font-size:0.55rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:4px;">Armazém de Palavras:</div>
+                <div style="font-size:0.55rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:5px;">Armazém de Palavras:</div>
                 <div id="history-list">${discoveredWords.map(p => `<span class="tag">${p}</span>`).join('')}</div>
             </div>
         </div>
