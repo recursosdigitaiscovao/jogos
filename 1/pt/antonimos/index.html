@@ -34,13 +34,14 @@
             font-size: 0.9rem; border: 1px solid #eee; height: 50px; width: 100%;
         }
         .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
+        .menu-divider { height: 1px; background: #eee; margin: 2px 0; }
 
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 15px; background-color: var(--bg-container); overflow: hidden; }
         .game-card { background: var(--bg-card); width: 100%; max-width: 1100px; height: 100%; border-radius: 35px; box-shadow: var(--sombra-card); display: flex; flex-direction: column; padding: 15px; position: relative; overflow: hidden; }
 
         .screen-box { flex: 1; width: 100%; background: var(--bg-espaco-jogo); border: var(--borda-espaco-jogo); border-radius: 30px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
 
-        /* BARRA DE STATUS (IGUAL À IMAGEM) */
+        /* BARRA DE STATUS */
         .status-bar { display: none; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-shrink: 0; padding: 0 5px; }
         .status-left, .status-right { display: flex; align-items: center; gap: 10px; }
         .badge { display: flex; align-items: center; justify-content: center; gap: 5px; padding: 6px 14px; border-radius: 12px; font-weight: 900; font-size: 13px; color: white; }
@@ -52,7 +53,7 @@
         .screen.active { display: flex !important; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 2000; }
-        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 4000; padding: 25px; border-radius: 30px 30px 0 0; transition: 0.4s; }
+        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 4000; padding: 25px; border-radius: 30px 30px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); max-height: 80vh; overflow-y: auto; }
         .rd-panel.active { bottom: 0; }
         #rd-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .rd-item { background: #f8f9fa; border-radius: 20px; padding: 15px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; font-weight: 800; border: 2px solid #eee; }
@@ -81,15 +82,22 @@
                 <div class="status-right">
                     <div class="badge badge-hits">✓ <span id="hits-val">0</span></div>
                     <div class="badge badge-miss">✗ <span id="miss-val">0</span></div>
+                    <!-- ÍCONE RD NO JOGO -->
                     <img id="rd-game-btn" src="" style="height:35px; width:35px; cursor:pointer;" onclick="openRDMenu(event)">
                 </div>
             </div>
 
             <section class="screen active" id="scr-intro">
                 <div class="screen-box" style="justify-content: space-around; align-items: center; padding: 30px;">
-                    <div id="intro-animation-container" style="flex: 1; display: flex; align-items: center; justify-content: center;"></div>
-                    <p id="intro-instr" style="font-weight: 800; color: var(--text-grey); text-align: center; font-size: 1.2rem;"></p>
-                    <button style="background: var(--primary-blue); color: white; border: none; border-radius: 20px; padding: 20px; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); width: 80%; max-width: 400px;" onclick="goToGame()">JOGAR</button>
+                    <div id="intro-animation-container" style="flex: 1; display: flex; align-items: center; justify-content: center; width: 100%;"></div>
+                    <p id="intro-instr" style="font-weight: 800; color: var(--text-grey); text-align: center; font-size: 1.2rem; margin-bottom: 20px;"></p>
+                    
+                    <div style="display: flex; width: 100%; gap: 15px; align-items: center; max-width: 450px;">
+                        <!-- BOTÃO JOGAR OCUPANDO ESPAÇO -->
+                        <button style="background: var(--primary-blue); color: white; border: none; border-radius: 20px; padding: 18px; font-size: 22px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); flex: 1;" onclick="goToGame()">JOGAR</button>
+                        <!-- BOTÃO RD NA INTRO -->
+                        <img id="rd-intro-btn" src="" onclick="openRDMenu(event)" style="height:60px; width:60px; cursor:pointer; flex-shrink: 0; object-fit: contain;">
+                    </div>
                 </div>
             </section>
 
@@ -116,9 +124,11 @@
         document.getElementById('tit-l1').innerText = cont.t1 || ""; document.getElementById('tit-l2').innerText = cont.t2 || ""; document.getElementById('sub-tit').innerText = cont.sub || ""; 
         document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu[setup.ano];
         document.getElementById('header-back-mobile').src = conf.caminhoIcons + tema.voltarMobile;
-        document.getElementById('rd-intro-btn')?.remove(); // Limpeza de versões antigas
         document.getElementById('help-btn').src = conf.caminhoImg + "lampada.png";
-        document.getElementById('rd-game-btn').src = conf.caminhoIcons + "engrenagem.png"; // Usando ícone de engrenagem da imagem
+        
+        // RESTAURANDO ÍCONES RD
+        document.getElementById('rd-intro-btn').src = conf.caminhoImg + "rd.png";
+        document.getElementById('rd-game-btn').src = conf.caminhoImg + "rd.png";
 
         const menuBox = document.getElementById('dropdownMenu'); menuBox.innerHTML = '';
         const labels = { home: "Início", pre: "Pré-Escolar", ano1: "1º Ano", ano2: "2º Ano", ano3: "3º Ano", ano4: "4º Ano" };
@@ -127,6 +137,10 @@
             a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}" width="24"><span>${labels[k]}</span>`;
             menuBox.appendChild(a);
         });
+        const divider = document.createElement('div'); divider.className = 'menu-divider'; menuBox.appendChild(divider);
+        const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = conf.linkVoltar;
+        btnV.innerHTML = `<img src="${conf.caminhoIcons}voltar.png" width="24" style="filter:brightness(0) invert(1)"><span>${conf.textoVoltar}</span>`;
+        menuBox.appendChild(btnV);
 
         const rdBox = document.getElementById('rd-list'); rdBox.innerHTML = '';
         Object.keys(conf.categorias).forEach(key => {
