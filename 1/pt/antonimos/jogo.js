@@ -15,19 +15,18 @@ const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 window.startLogic = function() {
     if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "Nível 1";
     
-    // Trocar o Timer pelo Botão de Ajuda (Apenas a imagem)
+    // Trocar o Timer pelo Botão de Ajuda (Apenas a imagem da lâmpada)
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.id = "btn-ajuda";
         timerBadge.style.cursor = "pointer";
-        timerBadge.style.background = "transparent"; // Remove o fundo
-        timerBadge.style.boxShadow = "none";         // Remove sombras
-        timerBadge.style.padding = "0";              // Remove o enchimento
+        timerBadge.style.background = "transparent";
+        timerBadge.style.boxShadow = "none";
+        timerBadge.style.padding = "0";
         timerBadge.style.display = "flex";
         timerBadge.style.alignItems = "center";
         timerBadge.style.justifyContent = "center";
         
-        // Colocamos apenas a imagem, sem o texto "AJUDA"
         timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:35px; width:auto; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">`;
         timerBadge.onclick = darAjuda;
     }
@@ -110,7 +109,6 @@ function renderizarEcraFabrica() {
                 display: flex; gap: 10px; justify-content: center; align-items: center; 
                 background: #f0f9ff; border: 4px dashed #0891b2; padding: 12px; border-radius: 25px;
                 min-height: clamp(75px, 15vh, 110px); width: 100%; max-width: 450px; margin: 5px 0;
-                transition: background 0.3s;
             }
             .mold {
                 width: clamp(55px, 15vw, 85px); height: clamp(55px, 15vw, 85px);
@@ -138,7 +136,6 @@ function renderizarEcraFabrica() {
                 animation: blinkHelp 0.6s infinite alternate; 
                 border-color: #f59e0b !important; 
                 background: #fef3c7 !important;
-                z-index: 10;
             }
             @keyframes blinkHelp { 
                 from { transform: scale(1); box-shadow: 0 5px 0 #0e7490; } 
@@ -146,7 +143,19 @@ function renderizarEcraFabrica() {
             }
 
             .warehouse { width: 100%; max-width: 600px; background: rgba(255,255,255,0.7); border-radius: 20px; padding: 10px; border: 2px solid #e2e8f0; height: 90px; overflow: hidden; }
-            .tag { background: #0891b2; color: white; padding: 4px 12px; border-radius: 8px; font-weight: 800; font-size: 0.8rem; animation: popIn 0.3s; }
+            
+            /* ESTILO DAS PALAVRAS NO ARMAZÉM */
+            .tag { 
+                background: transparent; 
+                color: #5d7082; 
+                padding: 2px 4px; 
+                font-weight: 800; 
+                font-size: 0.7rem; 
+                border-bottom: 2px solid var(--primary-blue); 
+                animation: popIn 0.3s; 
+                text-transform: uppercase;
+            }
+
             @keyframes popIn { from { transform: scale(0.5); opacity:0; } to { transform: scale(1); opacity:1; } }
             @media (max-width: 480px) { .station { min-height: 80px; } .warehouse { height: 80px; } .pill { min-width: 60px; font-size: 1rem; } }
         </style>
@@ -162,7 +171,7 @@ function renderizarEcraFabrica() {
             </div>
             <div class="warehouse">
                 <div style="font-size:0.55rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:5px;">Armazém de Palavras:</div>
-                <div id="history-list" style="display:flex; flex-wrap:wrap; gap:6px;">
+                <div id="history-list" style="display:flex; flex-wrap:wrap; gap:10px;">
                     ${discoveredWords.map(p => `<div class="tag">${p}</div>`).join('')}
                 </div>
             </div>
