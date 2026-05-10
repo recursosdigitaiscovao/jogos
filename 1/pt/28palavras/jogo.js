@@ -13,15 +13,13 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// === 1. INICIALIZAÇÃO ===
 window.startLogic = function() {
     if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "Nível 1";
     setTimeout(criarAnimacaoTutorial, 100);
 };
 
 window.gerarIntroJogo = function() {
-    const config = JOGO_CATEGORIAS[categoriaAtual];
-    return `Fábrica de Palavras: Tens 10 rondas para produzir palavras de ${config.slots} sílabas sem repetir!`;
+    return "Fábrica de Palavras: Com apenas 4 peças, quantas palavras consegues inventar?";
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -31,18 +29,17 @@ function criarAnimacaoTutorial() {
     if (!container) return;
     container.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; gap:15px; position:relative;">
-            <div style="font-weight:900; color:var(--primary-blue); font-size:1.2rem; text-transform:uppercase;">COMO JOGAR</div>
-            <div style="display:flex; gap:10px; background:white; padding:20px; border-radius:20px; border:4px solid #0891b2; box-shadow:0 10px 20px rgba(0,0,0,0.1);">
-                <div style="width:50px; height:50px; background:#f0f9ff; border:2px solid #0891b2; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#164e63;">MA</div>
-                <div style="width:50px; height:50px; border:3px dashed #cbd5e1; border-radius:10px;"></div>
+            <div style="font-weight:900; color:var(--primary-blue); font-size:1.2rem;">COMO JOGAR</div>
+            <div style="display:flex; gap:8px; background:white; padding:15px; border-radius:15px; border:3px solid #0891b2;">
+                <div style="width:45px; height:45px; background:#f0f9ff; border:2px solid #0891b2; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#164e63;">CA</div>
+                <div style="width:45px; height:45px; border:2px dashed #cbd5e1; border-radius:8px;"></div>
             </div>
-            <div id="tut-hand" style="font-size:45px; animation: tapH 2s infinite;">☝️</div>
+            <div id="tut-hand" style="font-size:35px; animation: tapH 2s infinite;">☝️</div>
         </div>
-        <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-15px) scale(0.9); } } </style>
+        <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-12px); } } </style>
     `;
 }
 
-// === 2. LÓGICA DO JOGO ===
 window.initGame = function() {
     historicoPalavras = [];
     roundAtual = 0; acertos = 0; erros = 0;
@@ -69,32 +66,34 @@ function proximaRondaFabrica() {
     
     document.getElementById('round-val').innerText = `${roundAtual} / 10`;
     selectedSyllables = [];
-    gerarBancoDeSilabas();
+    gerarBancoReduzido();
     renderizarEcraFabrica();
 }
 
-function gerarBancoDeSilabas() {
+function gerarBancoReduzido() {
     const config = JOGO_CATEGORIAS[categoriaAtual];
-    // Escolhe uma palavra aleatória do pool do nível para garantir que as sílabas certas aparecem
-    const semente = config.pool[Math.floor(Math.random() * config.pool.length)];
     
-    let silabasSemente = [];
-    if (config.slots === 2) {
-        // Divide a palavra de 4 letras em 2 sílabas (Ex: CA-SA)
-        const meio = Math.floor(semente.length / 2);
-        silabasSemente = [semente.substring(0, meio), semente.substring(meio)];
-    } else {
-        // Divide a palavra de 6 letras em 3 sílabas (Ex: MA-CA-CO)
-        silabasSemente = [semente.substring(0, 2), semente.substring(2, 4), semente.substring(4, 6)];
+    // 1. Pega uma palavra aleatória que caiba no nível
+    const possiveis = DICIONARIO_GLOBAL.filter(w => config.slots === 2 ? w.length <= 5 : w.length > 5);
+    const semente = possiveis[Math.floor(Math.random() * possiveis.length)];
+    
+    // 2. Extrai as sílabas da semente (lógica simplificada de 2 em 2 letras)
+    let silabas = [];
+    for(let i=0; i<semente.length; i+=2) {
+        let s = semente.substring(i, i+2);
+        if(s.length === 1 && i > 0) silabas[silabas.length-1] += s; // Ajuste para ÃO, etc
+        else silabas.push(s);
     }
 
-    let banco = [...silabasSemente];
-    // Preenche com sílabas extras até completar 10 peças no banco
-    while(banco.length < 10) {
+    // 3. Completa até ter exatamente 4 sílabas no banco
+    let banco = [...new Set(silabas)]; // Remove duplicadas da semente
+    while(banco.length < 4) {
         let extra = config.extras[Math.floor(Math.random() * config.extras.length)];
         if(!banco.includes(extra)) banco.push(extra);
     }
-    bancoDaRonda = banco.sort(() => Math.random() - 0.5);
+    
+    // Se a palavra semente tiver mais de 4 sílabas (raro), cortamos para 4
+    bancoDaRonda = banco.slice(0, 4).sort(() => Math.random() - 0.5);
 }
 
 function renderizarEcraFabrica() {
@@ -103,63 +102,54 @@ function renderizarEcraFabrica() {
 
     container.innerHTML = `
         <style>
-            .factory-wrapper { 
-                display: flex; flex-direction: column; 
-                width: 100%; height: 100%; 
-                align-items: center; padding: 10px; box-sizing: border-box; 
-            }
+            .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-between; padding: 10px; box-sizing: border-box; }
             
-            /* Estação de Montagem Central */
             .station { 
                 display: flex; gap: 10px; justify-content: center; align-items: center; 
-                background: #f0f9ff; border: 4px dashed #0891b2; padding: 12px; 
-                border-radius: 25px; width: 100%; max-width: 450px;
-                min-height: clamp(75px, 14vh, 100px); margin: 5px 0; flex-shrink: 0;
+                background: #f0f9ff; border: 3px dashed #0891b2; padding: 10px; border-radius: 20px;
+                min-height: clamp(70px, 12vh, 100px); width: 100%; max-width: 400px; margin: 5px 0;
             }
             .mold {
-                width: clamp(50px, 14vw, 75px); height: clamp(50px, 14vw, 75px);
-                background: white; border: 3px dashed #cbd5e1; border-radius: 15px;
+                width: clamp(50px, 12vw, 70px); height: clamp(50px, 12vw, 70px);
+                background: white; border: 2px dashed #cbd5e1; border-radius: 12px;
                 display: flex; align-items: center; justify-content: center;
-                font-size: clamp(1.2rem, 5vw, 1.8rem); font-weight: 950; color: #0891b2;
+                font-size: clamp(1.1rem, 5vw, 1.8rem); font-weight: 900; color: #0891b2;
             }
-            .mold.filled { border: 3px solid #0891b2; border-bottom-width: 6px; animation: popIn 0.3s; }
+            .mold.filled { border: 3px solid #0891b2; border-bottom-width: 5px; animation: popIn 0.3s; }
 
-            .btn-row { display: flex; gap: 15px; margin-bottom: 5px; flex-shrink: 0; }
-            .btn-f { padding: 10px 25px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; font-size: 0.9rem; transition: 0.1s; }
+            .btn-row { display: flex; gap: 12px; margin-bottom: 5px; }
+            .btn-f { padding: 8px 20px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; font-size: 0.85rem; transition: 0.1s; }
             .btn-mount { background: #0ea5e9; color: white; box-shadow: 0 4px 0 #0369a1; }
             .btn-clear { background: #94a3b8; color: white; box-shadow: 0 4px 0 #64748b; }
             .btn-f:active { transform: translateY(2px); box-shadow: none; }
 
-            /* Banco de Sílabas (Peças) */
-            .bank { 
-                display: flex; flex-wrap: wrap; justify-content: center; 
-                gap: 6px; width: 100%; max-width: 600px; padding: 5px 0; flex-shrink: 0;
-            }
+            .bank { display: flex; justify-content: center; gap: 12px; width: 100%; max-width: 500px; padding: 10px 0; }
             .pill { 
                 background: white; border: 3px solid #0891b2; color: #164e63; border-radius: 15px; 
-                padding: clamp(8px, 1.5vh, 12px); min-width: clamp(50px, 14vw, 65px);
-                font-size: clamp(0.95rem, 4vw, 1.3rem); font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #0e7490;
+                padding: 12px; min-width: clamp(60px, 18vw, 80px);
+                font-size: clamp(1.2rem, 5vw, 1.8rem); font-weight: 900; 
+                cursor: pointer; box-shadow: 0 5px 0 #0e7490; transition: 0.1s;
             }
-            .pill:active { transform: translateY(2px); box-shadow: 0 1px 0 #0e7490; }
-            
-            /* ARMAZÉM FLEXÍVEL: Cresce quando o jogo é maximizado */
+            .pill:active { transform: translateY(3px); box-shadow: 0 1px 0 #0e7490; }
+
+            /* ARMAZÉM COM PALAVRAS PEQUENAS (TAGS) */
             .warehouse { 
-                flex: 1; width: 100%; max-width: 600px; 
-                background: rgba(255,255,255,0.7); border-radius: 20px; 
-                padding: 10px; border: 2px solid #e2e8f0; margin-top: 10px;
-                display: flex; flex-direction: column; overflow: hidden;
+                width: 100%; max-width: 600px; background: rgba(255,255,255,0.6); 
+                border-radius: 15px; padding: 8px; border: 1px solid #e2e8f0; 
+                flex: 1; margin-top: 10px; overflow: hidden;
             }
-            #history-list { 
-                display: flex; flex-wrap: wrap; gap: 5px; 
-                overflow-y: auto; align-content: flex-start;
+            #history-list { display: flex; flex-wrap: wrap; gap: 5px; overflow-y: auto; height: 100%; align-content: flex-start; }
+            .tag { 
+                background: #e0f2f1; color: #0891b2; padding: 2px 8px; border-radius: 5px; 
+                font-weight: 700; font-size: 0.7rem; border: 1px solid #b2dfdb; 
+                text-transform: uppercase;
             }
-            .tag { background: #0891b2; color: white; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; animation: popIn 0.3s; }
             
             @keyframes popIn { from { transform: scale(0.5); opacity:0; } to { transform: scale(1); opacity:1; } }
-            @media (max-width: 480px) { .station { min-height: 70px; } .bank { gap: 4px; } }
+            @media (max-width: 480px) { .pill { min-width: 55px; padding: 10px; } .station { min-height: 70px; } }
         </style>
         <div class="factory-wrapper">
-            <div style="font-size:0.65rem; font-weight:900; color:var(--primary-blue); text-transform:uppercase;">${config.nome}</div>
+            <div style="font-size:0.6rem; font-weight:900; color:var(--primary-blue); text-transform:uppercase;">${config.nome}</div>
             
             <div class="station" id="molds-area"></div>
             
@@ -173,7 +163,6 @@ function renderizarEcraFabrica() {
             </div>
             
             <div class="warehouse">
-                <div style="font-size:0.55rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:5px;">Armazém de Palavras:</div>
                 <div id="history-list">
                     ${historicoPalavras.map(p => `<div class="tag">${p}</div>`).join('')}
                 </div>
@@ -213,16 +202,10 @@ window.validarProducao = function() {
     if (selectedSyllables.length < config.slots) return;
     const palavra = selectedSyllables.join('');
 
-    // 1. VERIFICA SE JÁ FOI PRODUZIDA
     if (historicoPalavras.includes(palavra)) {
         somErro.play();
         feedbackEstacao("#f59e0b", "REPETIDA!");
-        setTimeout(proximaRondaFabrica, 1200);
-        return;
-    }
-
-    // 2. VERIFICA NO DICIONÁRIO MESTRE PT-PT
-    if (DICIONARIO_MESTRE.includes(palavra)) {
+    } else if (DICIONARIO_GLOBAL.includes(palavra)) {
         somAcerto.play();
         acertos++;
         document.getElementById('hits-val').innerText = acertos;
@@ -255,19 +238,19 @@ function finalizarFabrica() {
             <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px; object-fit:contain;">
             <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.8rem; text-align:center;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
-                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
-                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span>
-                    <span style="font-size:11px; font-weight:800; color:#88a; text-transform:uppercase;">Acertos</span>
+                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0;">
+                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos}</span>
+                    <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Acertos</span>
                 </div>
-                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0;">
                     <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${tempo}</span>
-                    <span style="font-size:11px; font-weight:800; color:#88a; text-transform:uppercase;">Tempo</span>
+                    <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Tempo</span>
                 </div>
             </div>
-            <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:280px;">
-                <button style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark); text-transform:uppercase;" onclick="location.reload()">Jogar de Novo</button>
-                <button style="padding:14px; border-radius:22px; font-weight:900; font-size:16px; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer; box-shadow:0 6px 0 var(--primary-blue); text-transform:uppercase;" onclick="openRDMenu()">Outra Máquina</button>
-                <a href="${JOGO_CONFIG.linkVoltar}" style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:#dce4ee; color:#5d7082; border:none; text-align:center; text-decoration:none; box-shadow:0 6px 0 #b8c5d4; text-transform:uppercase;">Sair</a>
+            <div style="display:flex; flex-direction:column; gap:10px; width:100%; max-width:280px;">
+                <button style="padding:16px; border-radius:22px; font-weight:900; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark); text-transform:uppercase;" onclick="location.reload()">Jogar de Novo</button>
+                <button style="padding:14px; border-radius:22px; font-weight:900; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer; box-shadow:0 6px 0 var(--primary-blue); text-transform:uppercase;" onclick="openRDMenu()">Outro Nível</button>
+                <a href="${JOGO_CONFIG.linkVoltar}" style="padding:16px; border-radius:22px; font-weight:900; background:#dce4ee; color:#5d7082; text-align:center; text-decoration:none; box-shadow:0 6px 0 #b8c5d4; text-transform:uppercase;">Sair</a>
             </div>
         </div>
     `;
