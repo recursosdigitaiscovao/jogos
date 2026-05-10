@@ -21,9 +21,14 @@ function shuffleArray(array) {
     return array;
 }
 
-// === 1. INICIALIZAÇÃO ===
+// === 1. INICIALIZAÇÃO E RESET DE INTERFACE ===
 window.startLogic = function() {
+    // Garante que a categoria está definida
     if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "Nível 1";
+    
+    // Reset de variáveis de estado para nova escolha
+    roundAtual = 0;
+    discoveredWords = [];
     
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
@@ -45,7 +50,12 @@ window.gerarIntroJogo = function() {
     return "Puzzle de Sílabas: Quantas palavras consegues formar com estas peças?";
 };
 
-window.selecionarCategoria = function(key) { categoriaAtual = key; };
+window.selecionarCategoria = function(key) { 
+    categoriaAtual = key; 
+    // Forçar reset visual e lógico ao trocar pelo RD menu
+    roundAtual = 0;
+    discoveredWords = [];
+};
 
 function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
@@ -65,18 +75,25 @@ function criarAnimacaoTutorial() {
 
 // === 2. LÓGICA DO JOGO ===
 window.initGame = function() {
+    // Reset total ao carregar o ecrã de jogo
     discoveredWords = [];
-    roundAtual = 0; acertos = 0; erros = 0; contadorAjudas = 0;
+    roundAtual = 0; 
+    acertos = 0; 
+    erros = 0; 
+    contadorAjudas = 0;
+    
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
 
     const config = JOGO_CATEGORIAS[categoriaAtual];
     desafiosEmbaralhados = shuffleArray([...config.desafios]); 
+    
     proximaRondaFabrica();
 };
 
 function definirSugestaoRonda() {
     const desafio = desafiosEmbaralhados[roundAtual - 1];
+    if (!desafio) return;
     const bank = desafio.bank;
     palavraSugestao = DICIONARIO_MESTRE.find(p => {
         let tempP = p;
@@ -91,7 +108,11 @@ function definirSugestaoRonda() {
 
 function proximaRondaFabrica() {
     roundAtual++;
-    if (roundAtual > 10 || roundAtual > desafiosEmbaralhados.length) { finalizarFabrica(); return; }
+    if (roundAtual > 10 || roundAtual > desafiosEmbaralhados.length) { 
+        finalizarFabrica(); 
+        return; 
+    }
+    
     document.getElementById('round-val').innerText = `${roundAtual} / 10`;
     selectedSyllables = [];
     definirSugestaoRonda();
@@ -108,15 +129,14 @@ function renderizarEcraFabrica() {
         <style>
             .factory-wrapper { 
                 display: flex; flex-direction: column; width: 100%; height: 100%; 
-                padding: 10px 10px 0 10px; box-sizing: border-box; overflow: hidden;
+                padding: 10px 10px 5px 10px; box-sizing: border-box; overflow: hidden;
             }
             
-            /* DIVISÃO POR LINHAS EM PERCENTAGEM */
             .row-title { height: 5%; display: flex; align-items: center; justify-content: center; }
             .row-station { height: 30%; display: flex; align-items: center; justify-content: center; }
             .row-btns { height: 12%; display: flex; align-items: center; justify-content: center; }
             .row-bank { height: 28%; display: flex; align-items: center; justify-content: center; }
-            .row-warehouse { flex: 1; display: flex; flex-direction: column; margin-bottom: 5px; }
+            .row-warehouse { flex: 1; display: flex; flex-direction: column; padding-bottom: 5px; } /* Padding de 5px do fundo */
 
             .game-title { font-size: 0.75rem; font-weight: 900; color: var(--primary-blue); text-transform: uppercase; }
             
@@ -149,8 +169,8 @@ function renderizarEcraFabrica() {
             @keyframes blinkHelp { from { transform: scale(1); } to { transform: scale(1.05); } }
 
             .warehouse { 
-                width: 100%; max-width: 500px; background: white; border-radius: 20px 20px 0 0; 
-                padding: 10px; border: 2px solid #e2e8f0; border-bottom: none;
+                width: 100%; max-width: 500px; background: white; border-radius: 15px; 
+                padding: 10px; border: 2px solid #e2e8f0; 
                 flex: 1; overflow-y: auto; text-align: left; align-self: center;
             }
             .tag { display: inline-block; color: #5d7082; padding: 2px 5px; margin: 2px; font-weight: 800; font-size: 0.7rem; border-bottom: 2px solid var(--primary-blue); text-transform: uppercase; }
@@ -158,30 +178,17 @@ function renderizarEcraFabrica() {
         </style>
 
         <div class="factory-wrapper">
-            <!-- LINHA 1: TÍTULO -->
-            <div class="row-title">
-                <div class="game-title">${config.nome}</div>
-            </div>
-
-            <!-- LINHA 2: ESTAÇÃO -->
-            <div class="row-station">
-                <div class="station" id="molds-area"></div>
-            </div>
-
-            <!-- LINHA 3: BOTÕES -->
+            <div class="row-title"><div class="game-title">${config.nome}</div></div>
+            <div class="row-station"><div class="station" id="molds-area"></div></div>
             <div class="row-btns">
                 <button class="btn-f btn-mount" onclick="validarProducao()">MONTAR</button>
                 <button class="btn-f btn-clear" onclick="limparProducao()">LIMPAR</button>
             </div>
-
-            <!-- LINHA 4: BANCO SÍLABAS -->
             <div class="row-bank">
                 <div class="bank">
                     ${silabasParaExibir.map(s => `<button class="pill" onclick="clicarSilaba('${s}')">${s}</button>`).join('')}
                 </div>
             </div>
-
-            <!-- LINHA 5: ARMAZÉM -->
             <div class="row-warehouse">
                 <div class="warehouse">
                     <div style="font-size:0.55rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:5px;">Armazém de Palavras:</div>
@@ -195,6 +202,7 @@ function renderizarEcraFabrica() {
 
 function atualizarMoldes() {
     const desafio = desafiosEmbaralhados[roundAtual - 1];
+    if (!desafio) return;
     const area = document.getElementById('molds-area');
     area.innerHTML = "";
     for (let i = 0; i < desafio.slots; i++) {
