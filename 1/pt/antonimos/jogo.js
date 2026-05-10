@@ -3,7 +3,8 @@ let discoveredWords = [];
 let roundAtual = 0;
 let acertos = 0;
 let erros = 0;
-let palavraSugestao = ""; // Guarda a palavra que servirá de guia para a ajuda
+let contadorAjudas = 0; // Novo contador de ajudas
+let palavraSugestao = ""; 
 
 let categoriaAtual = "Nível 1"; 
 
@@ -15,7 +16,6 @@ const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 window.startLogic = function() {
     if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "Nível 1";
     
-    // Trocar o Timer pelo Botão de Ajuda (Apenas a imagem da lâmpada)
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.id = "btn-ajuda";
@@ -61,7 +61,7 @@ function criarAnimacaoTutorial() {
 // === 2. LÓGICA DO JOGO ===
 window.initGame = function() {
     discoveredWords = [];
-    roundAtual = 0; acertos = 0; erros = 0;
+    roundAtual = 0; acertos = 0; erros = 0; contadorAjudas = 0;
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
     proximaRondaFabrica();
@@ -132,29 +132,11 @@ function renderizarEcraFabrica() {
             }
             .pill:active { transform: translateY(2px); box-shadow: 0 1px 0 #0e7490; }
             
-            .pill-hint { 
-                animation: blinkHelp 0.6s infinite alternate; 
-                border-color: #f59e0b !important; 
-                background: #fef3c7 !important;
-            }
-            @keyframes blinkHelp { 
-                from { transform: scale(1); box-shadow: 0 5px 0 #0e7490; } 
-                to { transform: scale(1.1); box-shadow: 0 0 15px #f59e0b; } 
-            }
+            .pill-hint { animation: blinkHelp 0.6s infinite alternate; border-color: #f59e0b !important; background: #fef3c7 !important; }
+            @keyframes blinkHelp { from { transform: scale(1); box-shadow: 0 5px 0 #0e7490; } to { transform: scale(1.1); box-shadow: 0 0 15px #f59e0b; } }
 
             .warehouse { width: 100%; max-width: 600px; background: rgba(255,255,255,0.7); border-radius: 20px; padding: 10px; border: 2px solid #e2e8f0; height: 90px; overflow: hidden; }
-            
-            /* ESTILO DAS PALAVRAS NO ARMAZÉM */
-            .tag { 
-                background: transparent; 
-                color: #5d7082; 
-                padding: 2px 4px; 
-                font-weight: 800; 
-                font-size: 0.7rem; 
-                border-bottom: 2px solid var(--primary-blue); 
-                animation: popIn 0.3s; 
-                text-transform: uppercase;
-            }
+            .tag { background: transparent; color: #5d7082; padding: 2px 4px; font-weight: 800; font-size: 0.7rem; border-bottom: 2px solid var(--primary-blue); animation: popIn 0.3s; text-transform: uppercase; }
 
             @keyframes popIn { from { transform: scale(0.5); opacity:0; } to { transform: scale(1); opacity:1; } }
             @media (max-width: 480px) { .station { min-height: 80px; } .warehouse { height: 80px; } .pill { min-width: 60px; font-size: 1rem; } }
@@ -211,8 +193,9 @@ window.limparProducao = function() {
 window.darAjuda = function() {
     const desafio = JOGO_CATEGORIAS[categoriaAtual].desafios[roundAtual - 1];
     const idx = selectedSyllables.length;
-    
     if (idx >= desafio.slots) return;
+
+    contadorAjudas++; // Incrementa o uso de ajudas
 
     let silabasDaSugestao = [];
     let tempP = palavraSugestao;
@@ -225,7 +208,6 @@ window.darAjuda = function() {
     }
 
     const silabaAlvo = silabasDaSugestao[idx];
-    
     const pills = document.querySelectorAll('.pill');
     pills.forEach(p => {
         p.classList.remove('pill-hint');
@@ -279,23 +261,61 @@ function finalizarFabrica() {
     
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
-        <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px; object-fit:contain;">
-            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.8rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
-            <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
-                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
-                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span>
-                    <span style="font-size:11px; font-weight:800; color:#88a; text-transform:uppercase;">Acertos</span>
+        <style>
+            .res-inner { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box; }
+            .res-stats { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; width:100%; max-width:400px; margin:15px 0; }
+            .stat-box { background:white; border-radius:18px; padding:12px 5px; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.06); }
+            .stat-val { display:block; font-size:20px; font-weight:900; color:var(--primary-blue); }
+            .stat-label { font-size:9px; font-weight:800; color:#88a; text-transform:uppercase; }
+            
+            .btn-res-container { display:flex; flex-direction:column; gap:15px; width:100%; max-width:320px; }
+            .btn-res { 
+                display: flex; align-items: center; justify-content: flex-start;
+                padding: 14px 25px; border-radius: 50px; font-weight: 900; font-size: 17px; 
+                text-transform: uppercase; cursor: pointer; border: none; text-decoration: none; 
+                width: 100%; transition: 0.1s; position: relative; gap: 20px;
+            }
+            .btn-res i { font-size: 24px; width: 30px; }
+            .btn-res span { flex: 1; text-align: center; margin-right: 30px; } /* Ajuste para centralizar o texto ignorando o ícone */
+
+            .btn-novo { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
+            .btn-outro { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); box-shadow: 0 6px 0 var(--primary-blue); }
+            .btn-sair { background: #dce4ee; color: #5d7082; box-shadow: 0 6px 0 #b8c5d4; }
+            
+            .btn-res:active { transform: translateY(3px); box-shadow: none; }
+        </style>
+
+        <div class="res-inner">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:10px; object-fit:contain;">
+            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.8rem; margin-bottom:5px; text-align:center;">${rel.titulo}</h2>
+            
+            <div class="res-stats">
+                <div class="stat-box">
+                    <span class="stat-val" style="color:#7ed321;">${acertos}</span>
+                    <span class="stat-label">Certos</span>
                 </div>
-                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
-                    <span style="display:block; font-size:24px; font-weight:900; color:#ff5e5e;">${erros}</span>
-                    <span style="font-size:11px; font-weight:800; color:#88a; text-transform:uppercase;">Erros</span>
+                <div class="stat-box">
+                    <span class="stat-val" style="color:#ff5e5e;">${erros}</span>
+                    <span class="stat-label">Errados</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val" style="color:#f59e0b;">${contadorAjudas}</span>
+                    <span class="stat-label">Ajudas</span>
                 </div>
             </div>
-            <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:280px;">
-                <button style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark); text-transform:uppercase;" onclick="location.reload()">Jogar de Novo</button>
-                <button style="padding:14px; border-radius:22px; font-weight:900; font-size:16px; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer; box-shadow:0 6px 0 var(--primary-blue); text-transform:uppercase;" onclick="openRDMenu()">Outro Nível</button>
-                <a href="${JOGO_CONFIG.linkVoltar}" style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:#dce4ee; color:#5d7082; border:none; text-align:center; text-decoration:none; box-shadow:0 6px 0 #b8c5d4; text-transform:uppercase;">Sair</a>
+
+            <div class="btn-res-container">
+                <button class="btn-res btn-novo" onclick="location.reload()">
+                    <i class="fas fa-rotate-right"></i> <span>Jogar de Novo</span>
+                </button>
+                
+                <button class="btn-res btn-outro" onclick="openRDMenu()">
+                    <i class="fas fa-chart-line"></i> <span>Outro Nível</span>
+                </button>
+                
+                <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-sair">
+                    <i class="fas fa-right-from-bracket"></i> <span>Sair</span>
+                </a>
             </div>
         </div>
     `;
