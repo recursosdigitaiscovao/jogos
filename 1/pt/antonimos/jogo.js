@@ -3,6 +3,7 @@ let discoveredWords = [];
 let roundAtual = 0;
 let acertos = 0;
 let erros = 0;
+let ajudasUsadas = 0;
 let categoriaAtual = "Nível 1"; 
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
@@ -14,30 +15,27 @@ window.startLogic = function() {
     setTimeout(criarAnimacaoTutorial, 100);
 };
 
-window.gerarIntroJogo = function() {
-    return "Puzzle de Sílabas: Quantas palavras consegues formar?";
-};
-
-window.selecionarCategoria = function(key) { categoriaAtual = key; };
+window.gerarIntroJogo = () => "Puzzle de Sílabas: Quantas palavras consegues formar?";
+window.selecionarCategoria = (key) => { categoriaAtual = key; };
 
 function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:15px;">
-            <div style="font-weight:900; color:var(--primary-blue); font-size:1.2rem;">COMO JOGAR</div>
-            <div style="display:flex; gap:10px; background:white; padding:20px; border-radius:20px; border:4px solid #0891b2;">
-                <div style="width:50px; height:50px; background:#f0f9ff; border:2px solid #0891b2; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900;">MA</div>
-                <div style="width:50px; height:50px; border:3px dashed #cbd5e1; border-radius:10px;"></div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+            <div style="font-weight:900; color:var(--primary-blue); font-size:1.1rem;">COMO JOGAR</div>
+            <div style="display:flex; gap:10px; background:white; padding:15px; border-radius:20px; border:4px solid var(--primary-blue);">
+                <div style="width:45px; height:45px; background:#f0f9ff; border:2px solid var(--primary-blue); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue);">MA</div>
+                <div style="width:45px; height:45px; border:3px dashed #cbd5e1; border-radius:10px;"></div>
             </div>
-            <div style="font-size:40px; animation: tapH 2s infinite;">☝️</div>
+            <div style="font-size:35px; animation: tapH 2s infinite;">☝️</div>
         </div>
-        <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-15px); } } </style>
+        <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-12px); } } </style>
     `;
 }
 
 window.initGame = function() {
-    discoveredWords = []; roundAtual = 0; acertos = 0; erros = 0;
+    discoveredWords = []; roundAtual = 0; acertos = 0; erros = 0; ajudasUsadas = 0;
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
     proximaRondaFabrica();
@@ -51,6 +49,7 @@ window.darAjuda = function() {
         return sPalavra.every(s => desafio.bank.includes(s)) && sPalavra.length === desafio.slots && !discoveredWords.includes(palavra);
     });
     if (palavrasPossiveis.length > 0) {
+        ajudasUsadas++;
         selectedSyllables = [palavrasPossiveis[0].substr(0, 2)];
         atualizarMoldes();
         const btn = document.getElementById('help-btn'); btn.style.transform = "scale(1.3) rotate(15deg)";
@@ -71,26 +70,26 @@ function renderizarEcraFabrica() {
     const desafio = JOGO_CATEGORIAS[categoriaAtual].desafios[roundAtual - 1];
     container.innerHTML = `
         <style>
-            .factory-wrapper { display: flex; flex-direction: column; width: 100%; min-height: 100%; align-items: center; justify-content: space-between; padding: 15px; box-sizing: border-box; }
-            .station { display: flex; gap: 10px; justify-content: center; align-items: center; background: #f0f9ff; border: 3px dashed var(--primary-blue); padding: 15px; border-radius: 25px; min-height: 100px; width: 100%; max-width: 400px; }
-            .mold { width: 70px; height: 70px; background: white; border: 3px dashed #cbd5e1; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 950; color: var(--primary-blue); }
+            .factory-wrapper { display: flex; flex-direction: column; width: 100%; min-height: 100%; align-items: center; justify-content: space-between; padding: 10px; box-sizing: border-box; }
+            .station { display: flex; gap: 8px; justify-content: center; align-items: center; background: #f0f9ff; border: 3px dashed var(--primary-blue); padding: 12px; border-radius: 20px; min-height: 90px; width: 100%; max-width: 400px; }
+            .mold { width: 65px; height: 65px; background: white; border: 2px dashed #cbd5e1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 950; color: var(--primary-blue); }
             .mold.filled { border: 3px solid var(--primary-blue); animation: popIn 0.3s; }
-            .btn-row { display: flex; gap: 12px; margin-top: 10px; }
-            .btn-f { padding: 12px 25px; border-radius: 15px; font-weight: 800; border: none; cursor: pointer; font-size: 0.9rem; }
-            .btn-mount { background: #0ea5e9; color: white; box-shadow: 0 5px 0 #0369a1; }
-            .btn-clear { background: #94a3b8; color: white; box-shadow: 0 5px 0 #64748b; }
-            .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 15px 0; width: 100%; }
-            .pill { background: white; border: 3px solid var(--primary-blue); color: var(--text-grey); border-radius: 18px; padding: 12px; min-width: 80px; font-size: 1.2rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-blue); }
-            .warehouse { width: 100%; max-width: 500px; background: rgba(255,255,255,0.7); border-radius: 20px; padding: 10px; border: 1px solid #eee; min-height: 60px; }
+            .btn-row { display: flex; gap: 10px; margin-top: 5px; }
+            .btn-f { padding: 10px 20px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; font-size: 0.85rem; }
+            .btn-mount { background: var(--primary-blue); color: white; box-shadow: 0 4px 0 var(--primary-dark); }
+            .btn-clear { background: #94a3b8; color: white; box-shadow: 0 4px 0 #64748b; }
+            .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 10px 0; width: 100%; }
+            .pill { background: white; border: 2px solid var(--primary-blue); color: var(--text-grey); border-radius: 15px; padding: 10px; min-width: 75px; font-size: 1.1rem; font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 var(--primary-blue); }
+            .warehouse { width: 100%; max-width: 500px; background: rgba(255,255,255,0.7); border-radius: 15px; padding: 8px; border: 1px solid #eee; min-height: 50px; }
             .tag { color: #5d7082; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; border-bottom: 2px solid #ddd; padding: 2px 5px; }
-            @media screen and (max-height: 500px) {
-                .factory-wrapper { flex-direction: row; flex-wrap: wrap; height: auto; gap: 10px; padding: 10px; }
-                .station { width: 45%; min-height: 80px; }
-                .bank { width: 50%; padding: 0; }
+            @media screen and (max-height: 550px) {
+                .factory-wrapper { flex-direction: row; flex-wrap: wrap; height: auto; gap: 8px; padding: 5px; }
+                .station { width: 45%; min-height: 75px; }
+                .bank { width: 50%; }
                 .btn-row { width: 100%; order: 3; justify-content: center; }
                 .warehouse { width: 100%; order: 4; }
                 .mold { width: 55px; height: 55px; font-size: 1.2rem; }
-                .pill { padding: 8px; min-width: 65px; font-size: 1rem; }
+                .pill { padding: 8px; min-width: 65px; font-size: 0.95rem; }
             }
             @keyframes popIn { from { transform: scale(0.5); } to { transform: scale(1); } }
         </style>
@@ -102,7 +101,7 @@ function renderizarEcraFabrica() {
             </div>
             <div class="bank">${desafio.bank.map(s => `<button class="pill" onclick="clicarSilaba('${s}')">${s}</button>`).join('')}</div>
             <div class="warehouse">
-                <div style="font-size:0.55rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:5px;">Palavras Criadas:</div>
+                <div style="font-size:0.5rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:3px;">Palavras Criadas:</div>
                 <div id="history-list" style="display:flex; flex-wrap:wrap; gap:10px;">${discoveredWords.map(p => `<span class="tag">${p}</span>`).join('')}</div>
             </div>
         </div>
@@ -133,13 +132,12 @@ window.validarProducao = function() {
 };
 
 function feedbackEstacao(color, txt) {
-    const area = document.getElementById('molds-area'); area.innerHTML = `<span style="color:${color}; font-weight:950; font-size:1.5rem; animation: popIn 0.3s;">${txt}</span>`;
+    const area = document.getElementById('molds-area'); area.innerHTML = `<span style="color:${color}; font-weight:950; font-size:1.4rem; animation: popIn 0.3s;">${txt}</span>`;
     document.querySelectorAll('.pill').forEach(b => b.style.pointerEvents = 'none');
 }
 
 function finalizarFabrica() {
-    somVitoria.play();
-    const resScreen = document.getElementById('scr-result');
+    somVitoria.play(); const resScreen = document.getElementById('scr-result');
     const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
@@ -150,12 +148,17 @@ function finalizarFabrica() {
                 <div class="res-card">
                     <span class="num" style="color: var(--primary-blue);">${acertos}</span>
                     <span class="label">ACERTOS</span>
-                    <i class="fas fa-check-double" style="color: var(--primary-blue); margin-top:8px; opacity:0.5;"></i>
+                    <i class="fas fa-check-double" style="color: var(--primary-blue); margin-top:5px; opacity:0.4;"></i>
                 </div>
                 <div class="res-card">
                     <span class="num" style="color: #ff5e5e;">${erros}</span>
                     <span class="label">ERROS</span>
-                    <i class="fas fa-times-circle" style="color: #ff5e5e; margin-top:8px; opacity:0.5;"></i>
+                    <i class="fas fa-times-circle" style="color: #ff5e5e; margin-top:5px; opacity:0.4;"></i>
+                </div>
+                <div class="res-card">
+                    <span class="num" style="color: #f59e0b;">${ajudasUsadas}</span>
+                    <span class="label">AJUDAS</span>
+                    <i class="fas fa-lightbulb" style="color: #f59e0b; margin-top:5px; opacity:0.4;"></i>
                 </div>
             </div>
             <div class="res-actions">
