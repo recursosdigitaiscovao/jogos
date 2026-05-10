@@ -21,14 +21,15 @@ function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:15px;">
-            <div style="font-weight:950; color:var(--primary-blue); font-size:1.4rem; text-transform:uppercase; letter-spacing:1px;">Como Jogar</div>
-            <div style="display:flex; gap:12px; background:white; padding:25px; border-radius:25px; border:4px solid var(--primary-blue); box-shadow:0 10px 20px rgba(0,0,0,0.05);">
-                <div style="width:60px; height:60px; background:#f0f9ff; border:3px solid var(--primary-blue); border-radius:15px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); font-size:1.5rem;">MA</div>
-                <div style="width:60px; height:60px; border:3px dashed #cbd5e1; border-radius:15px;"></div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+            <div style="font-weight:950; color:var(--primary-blue); font-size:1.3rem; text-transform:uppercase;">Como Jogar</div>
+            <div style="display:flex; gap:10px; background:white; padding:20px; border-radius:20px; border:4px solid var(--primary-blue);">
+                <div style="width:55px; height:55px; background:#f0f9ff; border:3px solid var(--primary-blue); border-radius:15px; display:flex; align-items:center; justify-content:center; font-weight:900; color:var(--primary-blue); font-size:1.4rem;">MA</div>
+                <div style="width:55px; height:55px; border:3px dashed #cbd5e1; border-radius:15px;"></div>
             </div>
-            <div style="font-size:45px; animation: tapH 2s infinite;">☝️</div>
+            <div style="font-size:40px; animation: tapH 2s infinite;">☝️</div>
         </div>
+        <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-15px); } } </style>
     `;
 }
 
@@ -68,19 +69,18 @@ function renderizarEcraFabrica() {
     const desafio = JOGO_CATEGORIAS[categoriaAtual].desafios[roundAtual - 1];
     container.innerHTML = `
         <style>
-            .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-around; padding: 15px; box-sizing: border-box; }
-            .station { flex-shrink: 0; display: flex; gap: 12px; justify-content: center; align-items: center; background: #f8fcff; border: 3px dashed var(--primary-blue); padding: 20px; border-radius: 25px; width: 100%; max-width: 450px; }
-            .mold { width: 75px; height: 75px; background: white; border: 3px dashed #cbd5e1; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 950; color: var(--primary-blue); }
-            .mold.filled { border: 4px solid var(--primary-blue); border-bottom-width: 7px; animation: popIn 0.3s; }
-            .btn-row { display: flex; gap: 15px; margin: 5px 0; }
-            .btn-f { padding: 14px 30px; border-radius: 18px; font-weight: 900; border: none; cursor: pointer; font-size: 1rem; text-transform: uppercase; }
-            .btn-mount { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
-            .btn-clear { background: #94a3b8; color: white; box-shadow: 0 6px 0 #64748b; }
-            .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; padding: 15px 0; width: 100%; max-width: 550px; flex-grow: 1; align-content: center; }
-            .pill { background: white; border: 3px solid var(--primary-blue); color: var(--text-grey); border-radius: 20px; padding: 14px; min-width: 85px; font-size: 1.4rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-blue); transition: 0.1s; }
-            .pill:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--primary-blue); }
-            .warehouse { width: 100%; max-width: 550px; background: rgba(255,255,255,0.8); border-radius: 22px; padding: 12px; border: 1px solid #eef2f6; min-height: 70px; }
-            .tag { color: var(--text-grey); font-weight: 900; font-size: 0.85rem; text-transform: uppercase; border-bottom: 3px solid var(--primary-blue); padding: 2px 6px; margin: 2px; }
+            .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-around; padding: 10px; box-sizing: border-box; }
+            .station { flex-shrink: 0; display: flex; gap: 10px; justify-content: center; align-items: center; background: #f8fcff; border: 3px dashed var(--primary-blue); padding: 15px; border-radius: 20px; width: 100%; max-width: 450px; }
+            .mold { width: 70px; height: 70px; background: white; border: 3px dashed #cbd5e1; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 950; color: var(--primary-blue); }
+            .mold.filled { border: 4px solid var(--primary-blue); animation: popIn 0.3s; }
+            .btn-row { display: flex; gap: 12px; }
+            .btn-f { padding: 12px 25px; border-radius: 15px; font-weight: 900; border: none; cursor: pointer; font-size: 0.9rem; text-transform: uppercase; }
+            .btn-mount { background: var(--primary-blue); color: white; box-shadow: 0 5px 0 var(--primary-dark); }
+            .btn-clear { background: #94a3b8; color: white; box-shadow: 0 5px 0 #64748b; }
+            .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 10px 0; width: 100%; flex-grow: 1; align-content: center; }
+            .pill { background: white; border: 3px solid var(--primary-blue); color: var(--text-grey); border-radius: 18px; padding: 12px; min-width: 80px; font-size: 1.3rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-blue); }
+            .warehouse { width: 100%; max-width: 500px; background: rgba(255,255,255,0.8); border-radius: 20px; padding: 10px; border: 1px solid #eef2f6; min-height: 60px; }
+            .tag { color: var(--text-grey); font-weight: 900; font-size: 0.8rem; text-transform: uppercase; border-bottom: 3px solid var(--primary-blue); padding: 2px 4px; margin: 2px; }
             @keyframes popIn { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         </style>
         <div class="factory-wrapper">
@@ -91,8 +91,8 @@ function renderizarEcraFabrica() {
             </div>
             <div class="bank">${desafio.bank.map(s => `<button class="pill" onclick="clicarSilaba('${s}')">${s}</button>`).join('')}</div>
             <div class="warehouse">
-                <div style="font-size:0.6rem; font-weight:900; color:#b0bac5; text-transform:uppercase; margin-bottom:6px;">Palavras Criadas:</div>
-                <div id="history-list" style="display:flex; flex-wrap:wrap; gap:10px;">${discoveredWords.map(p => `<span class="tag">${p}</span>`).join('')}</div>
+                <div style="font-size:0.55rem; font-weight:900; color:#b0bac5; text-transform:uppercase; margin-bottom:5px;">Palavras Criadas:</div>
+                <div id="history-list" style="display:flex; flex-wrap:wrap; gap:8px;">${discoveredWords.map(p => `<span class="tag">${p}</span>`).join('')}</div>
             </div>
         </div>
     `;
@@ -122,7 +122,7 @@ window.validarProducao = function() {
 };
 
 function feedbackEstacao(color, txt) {
-    const area = document.getElementById('molds-area'); area.innerHTML = `<span style="color:${color}; font-weight:950; font-size:1.8rem; animation: popIn 0.3s; text-transform:uppercase;">${txt}</span>`;
+    const area = document.getElementById('molds-area'); area.innerHTML = `<span style="color:${color}; font-weight:950; font-size:1.6rem; animation: popIn 0.3s; text-transform:uppercase;">${txt}</span>`;
     document.querySelectorAll('.pill').forEach(b => b.style.pointerEvents = 'none');
 }
 
