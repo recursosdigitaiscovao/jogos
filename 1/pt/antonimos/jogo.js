@@ -108,44 +108,46 @@ function renderizarEcraFabrica() {
         <style>
             .factory-wrapper { 
                 display: flex; flex-direction: column; width: 100%; height: 100%; 
-                align-items: center; justify-content: flex-start; 
+                align-items: center; justify-content: space-evenly; /* DISTRIBUIÇÃO 100% VERTICAL */
                 padding: 10px; box-sizing: border-box; 
             }
-            .game-title { font-size: 0.7rem; font-weight: 900; color: var(--primary-blue); text-transform: uppercase; margin-bottom: 5px; }
+            .game-title { font-size: 0.75rem; font-weight: 900; color: var(--primary-blue); text-transform: uppercase; margin: 0; }
+            
             .station { 
                 display: flex; gap: 10px; justify-content: center; align-items: center; 
-                background: #f0f9ff; border: 3px dashed #0891b2; padding: 12px; border-radius: 20px;
-                width: 90%; max-width: 400px; margin-bottom: 8px;
+                background: #f0f9ff; border: 3px dashed #0891b2; padding: 20px; border-radius: 25px;
+                width: 95%; max-width: 450px; 
             }
             .mold {
-                width: clamp(55px, 15vw, 75px); height: clamp(55px, 15vw, 75px);
-                background: white; border: 3px dashed #cbd5e1; border-radius: 12px;
+                width: clamp(60px, 18vw, 85px); height: clamp(60px, 18vw, 85px);
+                background: white; border: 3px dashed #cbd5e1; border-radius: 15px;
                 display: flex; align-items: center; justify-content: center;
-                font-size: clamp(1.2rem, 5vw, 1.8rem); font-weight: 950; color: #0891b2;
+                font-size: clamp(1.4rem, 6vw, 2.2rem); font-weight: 950; color: #0891b2;
             }
             .mold.filled { border: 3px solid #0891b2; border-bottom-width: 6px; animation: popIn 0.3s; }
-            .btn-row { display: flex; gap: 10px; margin-bottom: 8px; }
-            .btn-f { padding: 10px 25px; border-radius: 12px; font-weight: 900; border: none; cursor: pointer; font-size: 0.85rem; text-transform: uppercase; }
-            .btn-mount { background: #0ea5e9; color: white; box-shadow: 0 4px 0 #0369a1; }
-            .btn-clear { background: #94a3b8; color: white; box-shadow: 0 4px 0 #64748b; }
-            .btn-f:active { transform: translateY(2px); box-shadow: none; }
-            .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; max-width: 450px; margin-bottom: 8px; }
+            
+            .btn-row { display: flex; gap: 15px; }
+            .btn-f { padding: 12px 30px; border-radius: 15px; font-weight: 900; border: none; cursor: pointer; font-size: 0.9rem; text-transform: uppercase; }
+            .btn-mount { background: #0ea5e9; color: white; box-shadow: 0 5px 0 #0369a1; }
+            .btn-clear { background: #94a3b8; color: white; box-shadow: 0 5px 0 #64748b; }
+            .btn-f:active { transform: translateY(3px); box-shadow: none; }
+
+            .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; max-width: 500px; }
             .pill { 
-                background: white; border: 3px solid #0891b2; color: #164e63; border-radius: 15px; 
-                padding: 10px 5px; width: clamp(70px, 20vw, 85px); text-align: center;
-                font-size: 1.1rem; font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #0e7490;
+                background: white; border: 3px solid #0891b2; color: #164e63; border-radius: 18px; 
+                padding: 15px 5px; width: clamp(75px, 22vw, 95px); text-align: center;
+                font-size: 1.3rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #0e7490;
             }
             .pill:active { transform: translateY(2px); box-shadow: 0 1px 0 #0e7490; }
             .pill-hint { animation: blinkHelp 0.6s infinite alternate; border-color: #f59e0b !important; background: #fef3c7 !important; }
             @keyframes blinkHelp { from { transform: scale(1); } to { transform: scale(1.05); } }
 
-            /* ARMAZÉM REDUZIDO EM TAMANHO */
             .warehouse { 
-                width: 100%; max-width: 500px; background: white; border-radius: 15px; 
-                padding: 8px; border: 2px solid #e2e8f0; height: 50px; /* Reduzido de 70/90 para 50 */
+                width: 95%; max-width: 500px; background: white; border-radius: 20px; 
+                padding: 12px; border: 2px solid #e2e8f0; height: 60px;
                 overflow-y: auto; text-align: left;
             }
-            .tag { display: inline-block; color: #5d7082; padding: 1px 4px; margin: 2px; font-weight: 800; font-size: 0.65rem; border-bottom: 2px solid var(--primary-blue); text-transform: uppercase; }
+            .tag { display: inline-block; color: #5d7082; padding: 2px 6px; margin: 3px; font-weight: 800; font-size: 0.75rem; border-bottom: 2px solid var(--primary-blue); text-transform: uppercase; }
             @keyframes popIn { from { transform: scale(0.5); opacity:0; } to { transform: scale(1); opacity:1; } }
         </style>
         <div class="factory-wrapper">
@@ -159,7 +161,7 @@ function renderizarEcraFabrica() {
                 ${silabasParaExibir.map(s => `<button class="pill" onclick="clicarSilaba('${s}')">${s}</button>`).join('')}
             </div>
             <div class="warehouse">
-                <div style="font-size:0.5rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:3px;">Armazém:</div>
+                <div style="font-size:0.55rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:4px;">Armazém de Palavras:</div>
                 <div id="history-list">${discoveredWords.map(p => `<span class="tag">${p}</span>`).join('')}</div>
             </div>
         </div>
@@ -240,30 +242,29 @@ function finalizarFabrica() {
     const resScreen = document.getElementById('scr-result');
     const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
     
-    // Resetar o ecrã de jogo para garantir que o resultado ocupa tudo
     document.getElementById('scr-game').classList.remove('active');
     document.getElementById('scr-game').innerHTML = ""; 
 
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <style>
-            .res-inner { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:10px; box-sizing: border-box; }
-            .res-stats { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; width:100%; max-width:400px; margin:15px 0; }
-            .stat-box { background:white; border-radius:18px; padding:10px 5px; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.06); }
-            .stat-val { display:block; font-size:22px; font-weight:900; color:var(--primary-blue); }
+            .res-inner { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; }
+            .res-stats { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; width:100%; max-width:400px; margin:20px 0; }
+            .stat-box { background:white; border-radius:20px; padding:15px 5px; text-align:center; border:1px solid #f0f0f0; box-shadow:0 6px 15px rgba(0,0,0,0.05); }
+            .stat-val { display:block; font-size:24px; font-weight:900; color:var(--primary-blue); }
             .stat-label { font-size:10px; font-weight:800; color:#88a; text-transform:uppercase; }
-            .btn-res-container { display:flex; flex-direction:column; gap:12px; width:100%; max-width:320px; }
-            .btn-res { display: flex; align-items: center; padding: 14px 25px; border-radius: 50px; font-weight: 900; font-size: 16px; text-transform: uppercase; cursor: pointer; border: none; text-decoration: none; transition: 0.1s; gap: 15px; }
-            .btn-res i { font-size: 20px; }
-            .btn-res span { flex: 1; text-align: center; margin-right: 20px; }
+            .btn-res-container { display:flex; flex-direction:column; gap:15px; width:100%; max-width:320px; }
+            .btn-res { display: flex; align-items: center; padding: 16px 25px; border-radius: 50px; font-weight: 900; font-size: 17px; text-transform: uppercase; cursor: pointer; border: none; text-decoration: none; transition: 0.1s; gap: 20px; }
+            .btn-res i { font-size: 22px; }
+            .btn-res span { flex: 1; text-align: center; margin-right: 30px; }
             .btn-novo { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
             .btn-outro { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); box-shadow: 0 6px 0 var(--primary-blue); }
             .btn-sair { background: #dce4ee; color: #5d7082; box-shadow: 0 6px 0 #b8c5d4; }
             .btn-res:active { transform: translateY(3px); box-shadow: none; }
         </style>
         <div class="res-inner">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:10px;">
-            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.8rem; margin-bottom:5px;">${rel.titulo}</h2>
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:110px; margin-bottom:15px;">
+            <h2 style="color:var(--primary-blue); font-weight:900; font-size:2rem; margin-bottom:10px;">${rel.titulo}</h2>
             <div class="res-stats">
                 <div class="stat-box"><span class="stat-val" style="color:#7ed321;">${acertos}</span><span class="stat-label">Certos</span></div>
                 <div class="stat-box"><span class="stat-val" style="color:#ff5e5e;">${erros}</span><span class="stat-label">Errados</span></div>
