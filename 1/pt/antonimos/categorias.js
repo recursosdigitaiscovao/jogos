@@ -30,18 +30,16 @@ const JOGO_CATEGORIAS = {
     "Nível 1": { 
         nome: "Puzzle: 2 Sílabas", 
         target: 10, 
-        desafios: DESAFIOS_FABRICA.nivel1,
-        imgCapa: "cnivel1.png" // Ícone para o Nível 1
+        desafios: DESAFIOS_FABRICA.nivel1 
     },
     "Nível 2": { 
         nome: "Puzzle: 3 Sílabas", 
         target: 10, 
-        desafios: DESAFIOS_FABRICA.nivel2,
-        imgCapa: "cnivel2.png" // Ícone para o Nível 2
+        desafios: DESAFIOS_FABRICA.nivel2 
     }
 };
 
-// Dicionário de validação PT-PT
+// Dicionário de validação PT-PT (Focado nos teus exemplos e variações possíveis)
 const DICIONARIO_MESTRE = [
     // --- Nível 1 ---
     "PATA", "SOPA", "SOMA", "MAPA", "MATA", "TAPA",
