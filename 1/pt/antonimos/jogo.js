@@ -5,7 +5,7 @@ let acertos = 0;
 let erros = 0;
 let contadorAjudas = 0; 
 let palavraSugestao = ""; 
-let desafiosEmbaralhados = []; // Guarda a lista de desafios da sessão atual
+let desafiosEmbaralhados = []; 
 
 let categoriaAtual = "Nível 1"; 
 
@@ -13,7 +13,6 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// Função utilitária para embaralhar arrays (Fisher-Yates)
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -75,7 +74,6 @@ window.initGame = function() {
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
 
-    // EMBARALHAR OS DESAFIOS DO NÍVEL (Rondas aleatórias)
     const config = JOGO_CATEGORIAS[categoriaAtual];
     desafiosEmbaralhados = shuffleArray([...config.desafios]); 
 
@@ -116,39 +114,44 @@ function renderizarEcraFabrica() {
     const container = document.getElementById('game-main-content');
     const config = JOGO_CATEGORIAS[categoriaAtual];
     const desafio = desafiosEmbaralhados[roundAtual - 1];
-
-    // EMBARALHAR AS SÍLABAS DO BANCO (Posições aleatórias)
     const silabasParaExibir = shuffleArray([...desafio.bank]);
 
     container.innerHTML = `
         <style>
-            .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-between; padding: 5px; box-sizing: border-box; }
+            .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: flex-start; padding: 5px; box-sizing: border-box; }
+            
+            /* ESTAÇÃO SUBIDA EM 2% (Margem negativa para elevar) */
             .station { 
                 display: flex; gap: 8px; justify-content: center; align-items: center; 
                 background: #f0f9ff; border: 3px dashed #0891b2; padding: 10px; border-radius: 20px;
-                min-height: 80px; width: 100%; max-width: 400px; margin-bottom: 5px;
+                min-height: 75px; width: 100%; max-width: 400px; 
+                margin-top: -10px; margin-bottom: 10px;
             }
             .mold {
-                width: clamp(50px, 14vw, 75px); height: clamp(50px, 14vw, 75px);
+                width: clamp(50px, 14vw, 70px); height: clamp(50px, 14vw, 70px);
                 background: white; border: 3px dashed #cbd5e1; border-radius: 12px;
                 display: flex; align-items: center; justify-content: center;
-                font-size: clamp(1.1rem, 5vw, 1.8rem); font-weight: 950; color: #0891b2;
+                font-size: clamp(1.1rem, 5vw, 1.7rem); font-weight: 950; color: #0891b2;
                 transition: all 0.3s;
             }
             .mold.filled { border: 3px solid #0891b2; border-bottom-width: 6px; animation: popIn 0.3s; }
             
-            .btn-row { display: flex; gap: 12px; margin-bottom: 8px; }
+            .btn-row { display: flex; gap: 12px; margin-bottom: 10px; }
             .btn-f { padding: 10px 20px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; font-size: 0.85rem; transition: 0.1s; }
             .btn-mount { background: #0ea5e9; color: white; box-shadow: 0 4px 0 #0369a1; }
             .btn-clear { background: #94a3b8; color: white; box-shadow: 0 4px 0 #64748b; }
             .btn-f:active { transform: translateY(2px); box-shadow: none; }
 
-            .bank { display: flex; flex-wrap: nowrap; justify-content: center; gap: 6px; width: 100%; max-width: 600px; padding: 5px 0; overflow-x: auto; }
+            /* BANCO ALTERADO PARA WRAP (Duas filas se necessário) */
+            .bank { 
+                display: flex; flex-wrap: wrap; justify-content: center; align-content: center;
+                gap: 8px; width: 100%; max-width: 500px; padding: 5px 0; margin-bottom: 10px;
+            }
             .pill { 
                 background: white; border: 2px solid #0891b2; color: #164e63; border-radius: 15px; 
-                padding: 8px 12px; min-width: 60px; flex-shrink: 1;
-                font-size: clamp(0.9rem, 4vw, 1.3rem); font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #0e7490;
-                white-space: nowrap; transition: 0.2s;
+                padding: 10px 5px; min-width: clamp(65px, 18vw, 85px);
+                font-size: clamp(0.9rem, 4vw, 1.2rem); font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #0e7490;
+                transition: 0.2s;
             }
             .pill:active { transform: translateY(2px); box-shadow: 0 1px 0 #0e7490; }
             
@@ -158,7 +161,7 @@ function renderizarEcraFabrica() {
             .warehouse { 
                 width: 100%; max-width: 600px; background: rgba(255,255,255,0.7); border-radius: 15px; 
                 padding: 8px; border: 2px solid #e2e8f0; 
-                height: 75px; overflow-y: auto; 
+                flex: 1; min-height: 60px; max-height: 90px; overflow-y: auto; 
             }
             .tag { 
                 background: transparent; color: #5d7082; padding: 1px 3px; 
@@ -169,7 +172,7 @@ function renderizarEcraFabrica() {
             @keyframes popIn { from { transform: scale(0.5); opacity:0; } to { transform: scale(1); opacity:1; } }
         </style>
         <div class="factory-wrapper">
-            <div style="font-size:0.6rem; font-weight:900; color:var(--primary-blue); text-transform:uppercase;">${config.nome}</div>
+            <div style="font-size:0.6rem; font-weight:900; color:var(--primary-blue); text-transform:uppercase; margin-bottom:5px;">${config.nome}</div>
             <div class="station" id="molds-area"></div>
             <div class="btn-row">
                 <button class="btn-f btn-mount" onclick="validarProducao()">MONTAR</button>
