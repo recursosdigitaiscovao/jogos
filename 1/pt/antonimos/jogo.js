@@ -70,30 +70,17 @@ function renderizarEcraFabrica() {
         <style>
             .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-around; padding: 15px; box-sizing: border-box; }
             .station { flex-shrink: 0; display: flex; gap: 12px; justify-content: center; align-items: center; background: #f8fcff; border: 3px dashed var(--primary-blue); padding: 20px; border-radius: 25px; width: 100%; max-width: 450px; }
-            .mold { width: 75px; height: 75px; background: white; border: 3px dashed #cbd5e1; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 950; color: var(--primary-blue); box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); }
+            .mold { width: 75px; height: 75px; background: white; border: 3px dashed #cbd5e1; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 950; color: var(--primary-blue); }
             .mold.filled { border: 4px solid var(--primary-blue); border-bottom-width: 7px; animation: popIn 0.3s; }
-            
             .btn-row { display: flex; gap: 15px; margin: 5px 0; }
-            .btn-f { padding: 14px 30px; border-radius: 18px; font-weight: 900; border: none; cursor: pointer; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; }
+            .btn-f { padding: 14px 30px; border-radius: 18px; font-weight: 900; border: none; cursor: pointer; font-size: 1rem; text-transform: uppercase; }
             .btn-mount { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
             .btn-clear { background: #94a3b8; color: white; box-shadow: 0 6px 0 #64748b; }
-            
             .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; padding: 15px 0; width: 100%; max-width: 550px; flex-grow: 1; align-content: center; }
             .pill { background: white; border: 3px solid var(--primary-blue); color: var(--text-grey); border-radius: 20px; padding: 14px; min-width: 85px; font-size: 1.4rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 var(--primary-blue); transition: 0.1s; }
             .pill:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--primary-blue); }
-            
-            .warehouse { width: 100%; max-width: 550px; background: rgba(255,255,255,0.8); border-radius: 22px; padding: 12px; border: 1px solid #eef2f6; min-height: 70px; margin-top: 5px; }
+            .warehouse { width: 100%; max-width: 550px; background: rgba(255,255,255,0.8); border-radius: 22px; padding: 12px; border: 1px solid #eef2f6; min-height: 70px; }
             .tag { color: var(--text-grey); font-weight: 900; font-size: 0.85rem; text-transform: uppercase; border-bottom: 3px solid var(--primary-blue); padding: 2px 6px; margin: 2px; }
-
-            @media screen and (max-height: 550px) {
-                .factory-wrapper { flex-direction: row; flex-wrap: wrap; justify-content: center; align-content: center; gap: 15px; }
-                .station { width: 45%; padding: 12px; }
-                .bank { width: 50%; padding: 0; }
-                .btn-row { width: 100%; order: 3; justify-content: center; margin: 5px 0; }
-                .warehouse { width: 100%; order: 4; min-height: 50px; padding: 8px; }
-                .mold { width: 60px; height: 60px; font-size: 1.3rem; }
-                .pill { padding: 10px; min-width: 70px; font-size: 1.1rem; }
-            }
             @keyframes popIn { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         </style>
         <div class="factory-wrapper">
@@ -104,7 +91,7 @@ function renderizarEcraFabrica() {
             </div>
             <div class="bank">${desafio.bank.map(s => `<button class="pill" onclick="clicarSilaba('${s}')">${s}</button>`).join('')}</div>
             <div class="warehouse">
-                <div style="font-size:0.6rem; font-weight:900; color:#b0bac5; text-transform:uppercase; margin-bottom:6px; letter-spacing:1px;">Palavras Criadas:</div>
+                <div style="font-size:0.6rem; font-weight:900; color:#b0bac5; text-transform:uppercase; margin-bottom:6px;">Palavras Criadas:</div>
                 <div id="history-list" style="display:flex; flex-wrap:wrap; gap:10px;">${discoveredWords.map(p => `<span class="tag">${p}</span>`).join('')}</div>
             </div>
         </div>
