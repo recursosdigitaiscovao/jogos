@@ -71,25 +71,17 @@ function renderizarEcraFabrica() {
         <style>
             .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-around; padding: 20px; box-sizing: border-box; }
             .station { display: flex; gap: 15px; justify-content: center; align-items: center; background: #f8fcff; border: 3px dashed var(--primary-blue); padding: 25px; border-radius: 30px; width: 100%; max-width: 500px; }
-            .mold { 
-                width: 85px; height: 85px; background: white; border: 3px dashed #cbd5e1; border-radius: 20px; 
-                display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 950; color: var(--primary-blue); 
-                transition: 0.3s;
-            }
+            .mold { width: 85px; height: 85px; background: white; border: 3px dashed #cbd5e1; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 950; color: var(--primary-blue); transition: 0.3s; }
             .mold.filled { border: 4px solid var(--primary-blue); animation: popIn 0.3s; }
-            /* FEEDBACK CORES */
             .mold.correct { background: var(--cor-acerto) !important; border-color: #5ba421 !important; color: white !important; }
             .mold.incorrect { background: var(--cor-erro) !important; border-color: #d03a3a !important; color: white !important; }
-            
             .btn-row { display: flex; gap: 15px; }
             .btn-f { padding: 15px 35px; border-radius: 20px; font-weight: 900; border: none; cursor: pointer; font-size: 1.1rem; text-transform: uppercase; }
             .btn-mount { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
             .btn-clear { background: #94a3b8; color: white; box-shadow: 0 6px 0 #64748b; }
-            
             .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 20px 0; width: 100%; flex-grow: 1; align-content: center; }
             .pill { background: white; border: 4px solid var(--primary-blue); color: var(--text-grey); border-radius: 22px; padding: 15px; min-width: 95px; font-size: 1.6rem; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-blue); }
             .pill:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--primary-blue); }
-            
             .warehouse { width: 100%; max-width: 600px; background: #f8fcff; border-radius: 25px; padding: 15px; border: 2px solid #eef2f6; min-height: 80px; }
             .tag { color: var(--text-grey); font-weight: 900; font-size: 1rem; text-transform: uppercase; border-bottom: 3px solid var(--primary-blue); padding: 2px 6px; margin: 4px; }
             @keyframes popIn { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -102,7 +94,7 @@ function renderizarEcraFabrica() {
             </div>
             <div class="bank">${desafio.bank.map(s => `<button class="pill" onclick="clicarSilaba('${s}')">${s}</button>`).join('')}</div>
             <div class="warehouse">
-                <div style="font-size:0.7rem; font-weight:900; color:#b0bac5; text-transform:uppercase; margin-bottom:8px; letter-spacing:1px;">Palavras Criadas:</div>
+                <div style="font-size:0.7rem; font-weight:900; color:#b0bac5; text-transform:uppercase; margin-bottom:8px;">Palavras Criadas:</div>
                 <div id="history-list" style="display:flex; flex-wrap:wrap; gap:10px;">${discoveredWords.map(p => `<span class="tag">${p}</span>`).join('')}</div>
             </div>
         </div>
@@ -115,44 +107,32 @@ function atualizarMoldes() {
     const area = document.getElementById('molds-area'); area.innerHTML = "";
     for (let i = 0; i < desafio.slots; i++) {
         const m = document.createElement('div'); m.className = "mold " + (selectedSyllables[i] ? "filled" : "");
-        m.id = "mold-" + i;
         m.innerText = selectedSyllables[i] || ""; area.appendChild(m);
     }
 }
 
 window.clicarSilaba = (s) => { 
     if (selectedSyllables.length < JOGO_CATEGORIAS[categoriaAtual].desafios[roundAtual-1].slots) { 
-        selectedSyllables.push(s); 
-        atualizarMoldes(); 
+        selectedSyllables.push(s); atualizarMoldes(); 
     }
 };
-
 window.limparProducao = () => { selectedSyllables = []; atualizarMoldes(); };
 
 window.validarProducao = function() {
     const desafio = JOGO_CATEGORIAS[categoriaAtual].desafios[roundAtual - 1];
     if (selectedSyllables.length < desafio.slots) return;
     const palavra = selectedSyllables.join('');
-    
     const molds = document.querySelectorAll('.mold');
     
     if (discoveredWords.includes(palavra)) {
-        somErro.play();
-        molds.forEach(m => m.classList.add('incorrect'));
+        somErro.play(); molds.forEach(m => m.classList.add('incorrect'));
     } else if (DICIONARIO_MESTRE.includes(palavra)) {
-        somAcerto.play();
-        acertos++; 
-        document.getElementById('hits-val').innerText = acertos;
-        discoveredWords.push(palavra);
-        molds.forEach(m => m.classList.add('correct'));
+        somAcerto.play(); acertos++; document.getElementById('hits-val').innerText = acertos;
+        discoveredWords.push(palavra); molds.forEach(m => m.classList.add('correct'));
     } else {
-        somErro.play();
-        erros++; 
-        document.getElementById('miss-val').innerText = erros;
+        somErro.play(); erros++; document.getElementById('miss-val').innerText = erros;
         molds.forEach(m => m.classList.add('incorrect'));
     }
-    
-    // Pequena pausa antes da próxima ronda para ver a cor
     setTimeout(proximaRondaFabrica, 1000);
 };
 
@@ -179,7 +159,7 @@ function finalizarFabrica() {
                 </div>
             </div>
             <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:350px;">
-                <button class="btn-res btn-res-play" style="padding:18px; border-radius:22px; font-weight:900; font-size:1.2rem; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark);" onclick="location.reload()">Jogar de Novo</button>
+                <button style="padding:18px; border-radius:22px; font-weight:900; font-size:1.2rem; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark);" onclick="location.reload()">Jogar de Novo</button>
                 <button style="padding:15px; border-radius:22px; font-weight:900; font-size:1.1rem; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer;" onclick="openRDMenu()">Outro Nível</button>
             </div>
         </div>
