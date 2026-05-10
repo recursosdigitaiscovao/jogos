@@ -1,146 +1,229 @@
-let hits = 0;
-let miss = 0;
-let timer = 0;
-let timerInterval;
-let selectedA = null;
-let selectedB = null;
-let totalPairs = 5; // Quantos pares aparecem por jogo
+let selectedSyllables = [];
+let discoveredWords = []; 
+let roundAtual = 0;
+let acertos = 0;
+let erros = 0;
+let tempoInicio;
+let intervaloTempo;
+let bancoDaRonda = [];
 
-window.onload = function() {
-    initUI();
+let categoriaAtual = "Nível 1"; 
+
+const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
+const somErro = new Audio(JOGO_CONFIG.sons.erro);
+const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
+
+// === 1. INICIALIZAÇÃO ===
+window.startLogic = function() {
+    if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "Nível 1";
+    setTimeout(criarAnimacaoTutorial, 100);
 };
 
-function initUI() {
-    const setup = CONFIG_MESTRE;
-    const tema = BIBLIOTECA_TEMAS[setup.area];
-    const cont = BIBLIOTECA_CONTEUDO[setup.ano][setup.area];
-    const conf = JOGO_CONFIG;
+window.gerarIntroJogo = function() {
+    return "Puzzle de Sílabas: Quantas palavras consegues formar com estas peças?";
+};
 
-    // Aplicar Cores Dinâmicas
-    const root = document.documentElement;
-    root.style.setProperty('--primary-blue', tema.corPrimaria);
-    root.style.setProperty('--primary-dark', tema.corEscura);
-    root.style.setProperty('--bg-page', tema.corPagina);
-    root.style.setProperty('--bg-header', tema.corHeader);
-    root.style.setProperty('--bg-container', tema.corContainer);
-    root.style.setProperty('--bg-card', tema.corCard);
-    root.style.setProperty('--bg-espaco-jogo', tema.corEspacoJogo);
-    root.style.setProperty('--borda-espaco-jogo', tema.bordaEspacoJogo);
+window.selecionarCategoria = function(key) { categoriaAtual = key; };
 
-    document.body.style.opacity = '1';
-
-    // Textos e Logos
-    document.getElementById('tit-l1').innerText = cont.t1;
-    document.getElementById('tit-l2').innerText = cont.t2;
-    document.getElementById('sub-tit').innerText = cont.sub;
-    document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu[setup.ano];
-    document.getElementById('header-back-mobile').src = conf.caminhoIcons + tema.voltarMobile;
-    document.getElementById('link-voltar-mobile').href = conf.linkVoltar;
-    document.getElementById('intro-instr').innerText = "Clica numa palavra e depois no seu antónimo (o seu contrário).";
-
-    // Menu dropdown
-    const menuBox = document.getElementById('dropdownMenu');
-    ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
-        const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
-        a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}" width="20"><span>${k.toUpperCase()}</span>`;
-        menuBox.appendChild(a);
-    });
+function criarAnimacaoTutorial() {
+    const container = document.getElementById('intro-animation-container');
+    if (!container) return;
+    container.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; gap:15px; position:relative;">
+            <div style="font-weight:900; color:var(--primary-blue); font-size:1.2rem; text-transform:uppercase;">COMO JOGAR</div>
+            <div style="display:flex; gap:10px; background:white; padding:20px; border-radius:20px; border:4px solid #0891b2; box-shadow:0 10px 20px rgba(0,0,0,0.1);">
+                <div style="width:50px; height:50px; background:#f0f9ff; border:2px solid #0891b2; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#164e63;">MA</div>
+                <div style="width:50px; height:50px; border:3px dashed #cbd5e1; border-radius:10px;"></div>
+            </div>
+            <div id="tut-hand" style="font-size:45px; animation: tapH 2s infinite;">☝️</div>
+        </div>
+        <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-15px) scale(0.9); } } </style>
+    `;
 }
 
-function goToGame() {
-    document.getElementById('scr-intro').classList.remove('active');
-    document.getElementById('scr-game').classList.add('active');
-    document.getElementById('status-bar').style.display = 'flex';
-    initGame();
-}
+// === 2. LÓGICA DO JOGO ===
+window.initGame = function() {
+    discoveredWords = [];
+    roundAtual = 0; acertos = 0; erros = 0;
+    document.getElementById('hits-val').innerText = "0";
+    document.getElementById('miss-val').innerText = "0";
+    iniciarCronometro();
+    proximaRondaFabrica();
+};
 
-function initGame() {
-    const cat = JOGO_CATEGORIAS["antonimos_1"];
-    const grid = document.getElementById('matching-grid');
-    grid.innerHTML = '';
-    
-    // Sorteia 5 pares
-    let embaralhado = [...cat.pares].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
-    
-    let colA = embaralhado.map(p => ({txt: p.a, id: p.a}));
-    let colB = embaralhado.map(p => ({txt: p.b, id: p.a}));
-
-    colA.sort(() => 0.5 - Math.random());
-    colB.sort(() => 0.5 - Math.random());
-
-    const divA = document.createElement('div'); divA.className = 'column';
-    const divB = document.createElement('div'); divB.className = 'column';
-
-    colA.forEach(item => divA.appendChild(createWordBtn(item, 'A')));
-    colB.forEach(item => divB.appendChild(createWordBtn(item, 'B')));
-
-    grid.appendChild(divA);
-    grid.appendChild(divB);
-    startTimer();
-}
-
-function createWordBtn(item, col) {
-    const div = document.createElement('div');
-    div.className = 'word-item';
-    div.innerText = item.txt;
-    div.onclick = () => selectWord(div, col, item.id);
-    return div;
-}
-
-function selectWord(el, col, id) {
-    if(el.classList.contains('correct')) return;
-
-    if(col === 'A') {
-        document.querySelectorAll('.column:first-child .word-item').forEach(b => b.classList.remove('selected'));
-        selectedA = { el, id };
-    } else {
-        document.querySelectorAll('.column:last-child .word-item').forEach(b => b.classList.remove('selected'));
-        selectedB = { el, id };
-    }
-    el.classList.add('selected');
-
-    if(selectedA && selectedB) {
-        if(selectedA.id === selectedB.id) {
-            selectedA.el.classList.add('correct');
-            selectedB.el.classList.add('correct');
-            hits++;
-            document.getElementById('hits-val').innerText = hits;
-            selectedA = null; selectedB = null;
-            if(hits === totalPairs) finishGame();
-        } else {
-            const a = selectedA.el; const b = selectedB.el;
-            a.classList.add('wrong'); b.classList.add('wrong');
-            miss++;
-            document.getElementById('miss-val').innerText = miss;
-            setTimeout(() => { 
-                a.classList.remove('wrong', 'selected'); 
-                b.classList.remove('wrong', 'selected');
-            }, 500);
-            selectedA = null; selectedB = null;
-        }
-    }
-}
-
-function startTimer() {
-    timerInterval = setInterval(() => {
-        timer++;
-        let m = Math.floor(timer/60).toString().padStart(2,'0');
-        let s = (timer%60).toString().padStart(2,'0');
-        document.getElementById('timer-val').innerText = `${m}:${s}`;
+function iniciarCronometro() {
+    tempoInicio = Date.now();
+    clearInterval(intervaloTempo);
+    intervaloTempo = setInterval(() => {
+        const decorrido = Math.floor((Date.now() - tempoInicio) / 1000);
+        const min = Math.floor(decorrido / 60).toString().padStart(2, '0');
+        const seg = (decorrido % 60).toString().padStart(2, '0');
+        document.getElementById('timer-val').innerText = `${min}:${seg}`;
     }, 1000);
 }
 
-function finishGame() {
-    clearInterval(timerInterval);
-    const score = Math.round((hits / (hits + miss)) * 100);
-    const rel = JOGO_CONFIG.relatorios.find(r => score >= r.min && score <= r.max);
+function proximaRondaFabrica() {
+    roundAtual++;
+    if (roundAtual > 10) { finalizarFabrica(); return; }
     
-    document.getElementById('scr-game').classList.remove('active');
-    document.getElementById('scr-result').classList.add('active');
-    document.getElementById('res-titulo').innerText = rel.titulo;
-    document.getElementById('res-img').src = JOGO_CONFIG.caminhoImg + rel.img;
-    document.getElementById('res-stats').innerText = `Acertos: ${hits} | Erros: ${miss} | Tempo: ${document.getElementById('timer-val').innerText}`;
+    document.getElementById('round-val').innerText = `${roundAtual} / 10`;
+    selectedSyllables = [];
+    renderizarEcraFabrica();
 }
 
-function toggleHamburger(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); m.style.display = m.style.display === 'flex' ? 'none' : 'flex'; document.getElementById('overlay').style.display = m.style.display; }
-function closeMenus() { document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; }
+function renderizarEcraFabrica() {
+    const container = document.getElementById('game-main-content');
+    const config = JOGO_CATEGORIAS[categoriaAtual];
+    const desafio = config.desafios[roundAtual - 1];
+
+    container.innerHTML = `
+        <style>
+            .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-between; padding: 10px; box-sizing: border-box; }
+            .station { 
+                display: flex; gap: 10px; justify-content: center; align-items: center; 
+                background: #f0f9ff; border: 4px dashed #0891b2; padding: 12px; border-radius: 25px;
+                min-height: clamp(75px, 15vh, 110px); width: 100%; max-width: 450px; margin: 5px 0;
+            }
+            .mold {
+                width: clamp(55px, 15vw, 85px); height: clamp(55px, 15vw, 85px);
+                background: white; border: 3px dashed #cbd5e1; border-radius: 15px;
+                display: flex; align-items: center; justify-content: center;
+                font-size: clamp(1.2rem, 6vw, 2rem); font-weight: 950; color: #0891b2;
+            }
+            .mold.filled { border: 3px solid #0891b2; border-bottom-width: 6px; animation: popIn 0.3s; }
+            .btn-row { display: flex; gap: 15px; margin-bottom: 5px; }
+            .btn-f { padding: 12px 25px; border-radius: 15px; font-weight: 800; border: none; cursor: pointer; font-size: 0.95rem; transition: 0.1s; }
+            .btn-mount { background: #0ea5e9; color: white; box-shadow: 0 5px 0 #0369a1; }
+            .btn-clear { background: #94a3b8; color: white; box-shadow: 0 5px 0 #64748b; }
+            .btn-f:active { transform: translateY(3px); box-shadow: none; }
+            .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; max-width: 600px; padding: 10px 0; }
+            .pill { 
+                background: white; border: 3px solid #0891b2; color: #164e63; border-radius: 18px; 
+                padding: clamp(10px, 2vh, 18px); min-width: clamp(65px, 20vw, 90px);
+                font-size: clamp(1.1rem, 5vw, 1.6rem); font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #0e7490;
+            }
+            .pill:active { transform: translateY(2px); box-shadow: 0 1px 0 #0e7490; }
+            .warehouse { width: 100%; max-width: 600px; background: rgba(255,255,255,0.7); border-radius: 20px; padding: 10px; border: 2px solid #e2e8f0; height: 90px; overflow: hidden; }
+            .tag { background: #0891b2; color: white; padding: 4px 12px; border-radius: 8px; font-weight: 800; font-size: 0.8rem; animation: popIn 0.3s; }
+            @keyframes popIn { from { transform: scale(0.5); opacity:0; } to { transform: scale(1); opacity:1; } }
+            @media (max-width: 480px) { .station { min-height: 80px; } .warehouse { height: 80px; } .pill { min-width: 60px; font-size: 1rem; } }
+        </style>
+        <div class="factory-wrapper">
+            <div style="font-size:0.65rem; font-weight:900; color:var(--primary-blue); text-transform:uppercase;">${config.nome}</div>
+            <div class="station" id="molds-area"></div>
+            <div class="btn-row">
+                <button class="btn-f btn-mount" onclick="validarProducao()">MONTAR</button>
+                <button class="btn-f btn-clear" onclick="limparProducao()">LIMPAR</button>
+            </div>
+            <div class="bank">
+                ${desafio.bank.map(s => `<button class="pill" onclick="clicarSilaba('${s}')">${s}</button>`).join('')}
+            </div>
+            <div class="warehouse">
+                <div style="font-size:0.55rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:5px;">Armazém de Palavras:</div>
+                <div id="history-list" style="display:flex; flex-wrap:wrap; gap:6px;">
+                    ${discoveredWords.map(p => `<div class="tag">${p}</div>`).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+    atualizarMoldes();
+}
+
+function atualizarMoldes() {
+    const config = JOGO_CATEGORIAS[categoriaAtual];
+    const desafio = config.desafios[roundAtual - 1];
+    const area = document.getElementById('molds-area');
+    area.innerHTML = "";
+    for (let i = 0; i < desafio.slots; i++) {
+        const m = document.createElement('div');
+        m.className = "mold " + (selectedSyllables[i] ? "filled" : "");
+        m.innerText = selectedSyllables[i] || "";
+        area.appendChild(m);
+    }
+}
+
+window.clicarSilaba = function(s) {
+    const config = JOGO_CATEGORIAS[categoriaAtual];
+    const desafio = config.desafios[roundAtual - 1];
+    if (selectedSyllables.length < desafio.slots) {
+        selectedSyllables.push(s);
+        atualizarMoldes();
+    }
+};
+
+window.limparProducao = function() {
+    selectedSyllables = [];
+    atualizarMoldes();
+};
+
+window.validarProducao = function() {
+    const config = JOGO_CATEGORIAS[categoriaAtual];
+    const desafio = config.desafios[roundAtual - 1];
+    if (selectedSyllables.length < desafio.slots) return;
+    const palavra = selectedSyllables.join('');
+
+    if (discoveredWords.includes(palavra)) {
+        somErro.play();
+        feedbackEstacao("#f59e0b", "REPETIDA!");
+    } else if (DICIONARIO_MESTRE.includes(palavra)) {
+        somAcerto.play();
+        acertos++;
+        document.getElementById('hits-val').innerText = acertos;
+        discoveredWords.push(palavra);
+        feedbackEstacao("#10b981", "CERTO!");
+    } else {
+        somErro.play();
+        erros++;
+        document.getElementById('miss-val').innerText = erros;
+        feedbackEstacao("#ef4444", "ERRO!");
+    }
+    setTimeout(proximaRondaFabrica, 1200);
+};
+
+function feedbackEstacao(color, txt) {
+    const area = document.getElementById('molds-area');
+    area.innerHTML = `<span style="color:${color}; font-weight:950; font-size:1.8rem; animation: popIn 0.3s;">${txt}</span>`;
+    document.querySelectorAll('.pill').forEach(b => b.style.pointerEvents = 'none');
+}
+
+function finalizarFabrica() {
+    clearInterval(intervaloTempo);
+    somVitoria.play();
+    
+    const tempo = document.getElementById('timer-val').innerText;
+    const resScreen = document.getElementById('scr-result');
+    const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
+    
+    resScreen.className = "screen screen-box active"; 
+    resScreen.innerHTML = `
+        <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
+            
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px; object-fit:contain;">
+            
+            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.8rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
+            
+            <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
+                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span>
+                    <span style="font-size:11px; font-weight:800; color:#88a; text-transform:uppercase;">Acertos</span>
+                </div>
+                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${tempo}</span>
+                    <span style="font-size:11px; font-weight:800; color:#88a; text-transform:uppercase;">Tempo</span>
+                </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:280px;">
+                <button style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark); text-transform:uppercase;" 
+                    onclick="location.reload()">Jogar de Novo</button>
+                
+                <button style="padding:14px; border-radius:22px; font-weight:900; font-size:16px; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer; box-shadow:0 6px 0 var(--primary-blue); text-transform:uppercase;" 
+                    onclick="openRDMenu()">Outro Nível</button>
+                
+                <a href="${JOGO_CONFIG.linkVoltar}" style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:#dce4ee; color:#5d7082; border:none; text-align:center; text-decoration:none; box-shadow:0 6px 0 #b8c5d4; text-transform:uppercase;">Sair</a>
+            </div>
+        </div>
+    `;
+    document.querySelectorAll('.screen').forEach(s => { if(s.id !== 'scr-result') s.classList.remove('active'); });
+    document.getElementById('status-bar').style.display = 'none';
+}
