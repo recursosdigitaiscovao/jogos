@@ -3,14 +3,24 @@ let discoveredWords = [];
 let roundAtual = 0;
 let acertos = 0;
 let erros = 0;
-let contadorAjudas = 0; // Novo contador de ajudas
+let contadorAjudas = 0; 
 let palavraSugestao = ""; 
+let desafiosEmbaralhados = []; // Guarda a lista de desafios da sessão atual
 
 let categoriaAtual = "Nível 1"; 
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
+
+// Função utilitária para embaralhar arrays (Fisher-Yates)
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
 
 // === 1. INICIALIZAÇÃO ===
 window.startLogic = function() {
@@ -64,11 +74,16 @@ window.initGame = function() {
     roundAtual = 0; acertos = 0; erros = 0; contadorAjudas = 0;
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
+
+    // EMBARALHAR OS DESAFIOS DO NÍVEL (Rondas aleatórias)
+    const config = JOGO_CATEGORIAS[categoriaAtual];
+    desafiosEmbaralhados = shuffleArray([...config.desafios]); 
+
     proximaRondaFabrica();
 };
 
 function definirSugestaoRonda() {
-    const desafio = JOGO_CATEGORIAS[categoriaAtual].desafios[roundAtual - 1];
+    const desafio = desafiosEmbaralhados[roundAtual - 1];
     const bank = desafio.bank;
     
     palavraSugestao = DICIONARIO_MESTRE.find(p => {
@@ -89,7 +104,7 @@ function definirSugestaoRonda() {
 
 function proximaRondaFabrica() {
     roundAtual++;
-    if (roundAtual > 10) { finalizarFabrica(); return; }
+    if (roundAtual > 10 || roundAtual > desafiosEmbaralhados.length) { finalizarFabrica(); return; }
     
     document.getElementById('round-val').innerText = `${roundAtual} / 10`;
     selectedSyllables = [];
@@ -100,60 +115,72 @@ function proximaRondaFabrica() {
 function renderizarEcraFabrica() {
     const container = document.getElementById('game-main-content');
     const config = JOGO_CATEGORIAS[categoriaAtual];
-    const desafio = config.desafios[roundAtual - 1];
+    const desafio = desafiosEmbaralhados[roundAtual - 1];
+
+    // EMBARALHAR AS SÍLABAS DO BANCO (Posições aleatórias)
+    const silabasParaExibir = shuffleArray([...desafio.bank]);
 
     container.innerHTML = `
         <style>
-            .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-between; padding: 10px; box-sizing: border-box; }
+            .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-between; padding: 5px; box-sizing: border-box; }
             .station { 
-                display: flex; gap: 10px; justify-content: center; align-items: center; 
-                background: #f0f9ff; border: 4px dashed #0891b2; padding: 12px; border-radius: 25px;
-                min-height: clamp(75px, 15vh, 110px); width: 100%; max-width: 450px; margin: 5px 0;
+                display: flex; gap: 8px; justify-content: center; align-items: center; 
+                background: #f0f9ff; border: 3px dashed #0891b2; padding: 10px; border-radius: 20px;
+                min-height: 80px; width: 100%; max-width: 400px; margin-bottom: 5px;
             }
             .mold {
-                width: clamp(55px, 15vw, 85px); height: clamp(55px, 15vw, 85px);
-                background: white; border: 3px dashed #cbd5e1; border-radius: 15px;
+                width: clamp(50px, 14vw, 75px); height: clamp(50px, 14vw, 75px);
+                background: white; border: 3px dashed #cbd5e1; border-radius: 12px;
                 display: flex; align-items: center; justify-content: center;
-                font-size: clamp(1.2rem, 6vw, 2rem); font-weight: 950; color: #0891b2;
+                font-size: clamp(1.1rem, 5vw, 1.8rem); font-weight: 950; color: #0891b2;
                 transition: all 0.3s;
             }
             .mold.filled { border: 3px solid #0891b2; border-bottom-width: 6px; animation: popIn 0.3s; }
-            .btn-row { display: flex; gap: 15px; margin-bottom: 5px; }
-            .btn-f { padding: 12px 25px; border-radius: 15px; font-weight: 800; border: none; cursor: pointer; font-size: 0.95rem; transition: 0.1s; }
-            .btn-mount { background: #0ea5e9; color: white; box-shadow: 0 5px 0 #0369a1; }
-            .btn-clear { background: #94a3b8; color: white; box-shadow: 0 5px 0 #64748b; }
-            .btn-f:active { transform: translateY(3px); box-shadow: none; }
-            .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; max-width: 600px; padding: 10px 0; }
+            
+            .btn-row { display: flex; gap: 12px; margin-bottom: 8px; }
+            .btn-f { padding: 10px 20px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; font-size: 0.85rem; transition: 0.1s; }
+            .btn-mount { background: #0ea5e9; color: white; box-shadow: 0 4px 0 #0369a1; }
+            .btn-clear { background: #94a3b8; color: white; box-shadow: 0 4px 0 #64748b; }
+            .btn-f:active { transform: translateY(2px); box-shadow: none; }
+
+            .bank { display: flex; flex-wrap: nowrap; justify-content: center; gap: 6px; width: 100%; max-width: 600px; padding: 5px 0; overflow-x: auto; }
             .pill { 
-                background: white; border: 3px solid #0891b2; color: #164e63; border-radius: 18px; 
-                padding: clamp(10px, 2vh, 18px); min-width: clamp(65px, 20vw, 90px);
-                font-size: clamp(1.1rem, 5vw, 1.6rem); font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #0e7490;
-                transition: 0.2s;
+                background: white; border: 2px solid #0891b2; color: #164e63; border-radius: 15px; 
+                padding: 8px 12px; min-width: 60px; flex-shrink: 1;
+                font-size: clamp(0.9rem, 4vw, 1.3rem); font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #0e7490;
+                white-space: nowrap; transition: 0.2s;
             }
             .pill:active { transform: translateY(2px); box-shadow: 0 1px 0 #0e7490; }
             
             .pill-hint { animation: blinkHelp 0.6s infinite alternate; border-color: #f59e0b !important; background: #fef3c7 !important; }
-            @keyframes blinkHelp { from { transform: scale(1); box-shadow: 0 5px 0 #0e7490; } to { transform: scale(1.1); box-shadow: 0 0 15px #f59e0b; } }
+            @keyframes blinkHelp { from { transform: scale(1); } to { transform: scale(1.05); box-shadow: 0 0 10px #f59e0b; } }
 
-            .warehouse { width: 100%; max-width: 600px; background: rgba(255,255,255,0.7); border-radius: 20px; padding: 10px; border: 2px solid #e2e8f0; height: 90px; overflow: hidden; }
-            .tag { background: transparent; color: #5d7082; padding: 2px 4px; font-weight: 800; font-size: 0.7rem; border-bottom: 2px solid var(--primary-blue); animation: popIn 0.3s; text-transform: uppercase; }
+            .warehouse { 
+                width: 100%; max-width: 600px; background: rgba(255,255,255,0.7); border-radius: 15px; 
+                padding: 8px; border: 2px solid #e2e8f0; 
+                height: 75px; overflow-y: auto; 
+            }
+            .tag { 
+                background: transparent; color: #5d7082; padding: 1px 3px; 
+                font-weight: 800; font-size: 0.65rem; border-bottom: 2px solid var(--primary-blue); 
+                animation: popIn 0.3s; text-transform: uppercase; 
+            }
 
             @keyframes popIn { from { transform: scale(0.5); opacity:0; } to { transform: scale(1); opacity:1; } }
-            @media (max-width: 480px) { .station { min-height: 80px; } .warehouse { height: 80px; } .pill { min-width: 60px; font-size: 1rem; } }
         </style>
         <div class="factory-wrapper">
-            <div style="font-size:0.65rem; font-weight:900; color:var(--primary-blue); text-transform:uppercase;">${config.nome}</div>
+            <div style="font-size:0.6rem; font-weight:900; color:var(--primary-blue); text-transform:uppercase;">${config.nome}</div>
             <div class="station" id="molds-area"></div>
             <div class="btn-row">
                 <button class="btn-f btn-mount" onclick="validarProducao()">MONTAR</button>
                 <button class="btn-f btn-clear" onclick="limparProducao()">LIMPAR</button>
             </div>
             <div class="bank">
-                ${desafio.bank.map(s => `<button class="pill" onclick="clicarSilaba('${s}')">${s}</button>`).join('')}
+                ${silabasParaExibir.map(s => `<button class="pill" onclick="clicarSilaba('${s}')">${s}</button>`).join('')}
             </div>
             <div class="warehouse">
-                <div style="font-size:0.55rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:5px;">Armazém de Palavras:</div>
-                <div id="history-list" style="display:flex; flex-wrap:wrap; gap:10px;">
+                <div style="font-size:0.5rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:4px;">Armazém de Palavras:</div>
+                <div id="history-list" style="display:flex; flex-wrap:wrap; gap:8px;">
                     ${discoveredWords.map(p => `<div class="tag">${p}</div>`).join('')}
                 </div>
             </div>
@@ -163,8 +190,7 @@ function renderizarEcraFabrica() {
 }
 
 function atualizarMoldes() {
-    const config = JOGO_CATEGORIAS[categoriaAtual];
-    const desafio = config.desafios[roundAtual - 1];
+    const desafio = desafiosEmbaralhados[roundAtual - 1];
     const area = document.getElementById('molds-area');
     area.innerHTML = "";
     for (let i = 0; i < desafio.slots; i++) {
@@ -176,8 +202,7 @@ function atualizarMoldes() {
 }
 
 window.clicarSilaba = function(s) {
-    const config = JOGO_CATEGORIAS[categoriaAtual];
-    const desafio = config.desafios[roundAtual - 1];
+    const desafio = desafiosEmbaralhados[roundAtual - 1];
     if (selectedSyllables.length < desafio.slots) {
         selectedSyllables.push(s);
         atualizarMoldes();
@@ -191,11 +216,11 @@ window.limparProducao = function() {
 };
 
 window.darAjuda = function() {
-    const desafio = JOGO_CATEGORIAS[categoriaAtual].desafios[roundAtual - 1];
+    const desafio = desafiosEmbaralhados[roundAtual - 1];
     const idx = selectedSyllables.length;
     if (idx >= desafio.slots) return;
 
-    contadorAjudas++; // Incrementa o uso de ajudas
+    contadorAjudas++; 
 
     let silabasDaSugestao = [];
     let tempP = palavraSugestao;
@@ -219,8 +244,7 @@ window.darAjuda = function() {
 };
 
 window.validarProducao = function() {
-    const config = JOGO_CATEGORIAS[categoriaAtual];
-    const desafio = config.desafios[roundAtual - 1];
+    const desafio = desafiosEmbaralhados[roundAtual - 1];
     if (selectedSyllables.length < desafio.slots) return;
     
     const palavra = selectedSyllables.join('');
@@ -276,7 +300,7 @@ function finalizarFabrica() {
                 width: 100%; transition: 0.1s; position: relative; gap: 20px;
             }
             .btn-res i { font-size: 24px; width: 30px; }
-            .btn-res span { flex: 1; text-align: center; margin-right: 30px; } /* Ajuste para centralizar o texto ignorando o ícone */
+            .btn-res span { flex: 1; text-align: center; margin-right: 30px; } 
 
             .btn-novo { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
             .btn-outro { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); box-shadow: 0 6px 0 var(--primary-blue); }
