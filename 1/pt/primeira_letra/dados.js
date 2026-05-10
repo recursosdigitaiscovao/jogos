@@ -39,7 +39,7 @@ const JOGO_CONFIG = {
                 { nome: "ARANHA", silabas: ["A", "RA", "NHA"], img: "animaisselvagens/aranha.png" },
                 { nome: "BALEIA", silabas: ["BA", "LEI", "A"], img: "animaisselvagens/baleia.png" },
                 { nome: "CANGURU", silabas: ["CAN", "GU", "RU"], img: "animaisselvagens/canguru.png" },
-                { nome: "CARANGUEIJO", silabas: ["CA", "RAN", "GUEI", "JO"], img: "animaisselvagens/carangueijo.png" },
+                { nome: "CARANGUEJO", silabas: ["CA", "RAN", "GUE", "JO"], img: "animaisselvagens/carangueijo.png" },
                 { nome: "COALA", silabas: ["CO", "A", "LA"], img: "animaisselvagens/coala.png" },
                 { nome: "CROCODILO", silabas: ["CRO", "CO", "DI", "LO"], img: "animaisselvagens/crocodilo.png" },
                 { nome: "ELEFANTE", silabas: ["E", "LE", "FAN", "TE"], img: "animaisselvagens/elefante.png" },
