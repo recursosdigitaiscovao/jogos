@@ -1,182 +1,223 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Carregando...</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root { 
-            --bg-page: #e9f0f8; --bg-header: #ffffff; --bg-container: #e9f0f8; 
-            --bg-card: #ffffff; --cor-borda-card: transparent; --sombra-card: 0 15px 35px rgba(0,0,0,0.1);
-            --bg-espaco-jogo: #ffffff; --borda-espaco-jogo: 3px dashed #ccc;
-            --primary-blue: #5ba4e5; --primary-dark: #3d7db8; --white: #ffffff; --text-grey: #5d7082; --header-h: 70px; 
-        }
+let selectedSyllables = [];
+let discoveredWords = []; 
+let roundAtual = 0;
+let acertos = 0;
+let erros = 0;
+let categoriaAtual = "Nível 1"; 
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; opacity: 0; transition: opacity 0.15s ease-in; }
-        
-        header { height: var(--header-h); background: var(--bg-header); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 2500; flex-shrink: 0; box-shadow: 0px 4px 15px rgba(0,0,0,0.05); position: relative; }
-        .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; pointer-events: none; white-space: nowrap; }
-        .logo-center img { height: 45px; width: auto; }
-        .logo-text h1 { font-size: 16px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
-        .logo-text p { font-size: 8px; color: #88a; font-weight: 700; text-transform: uppercase; }
+const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
+const somErro = new Audio(JOGO_CONFIG.sons.erro);
+const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-        .btn-voltar-mobile { display: flex; align-items: center; text-decoration: none; padding: 5px; z-index: 3001; }
-        .hamburger-btn { font-size: 26px; color: var(--primary-blue); cursor: pointer; padding: 5px; }
+window.startLogic = function() {
+    if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "Nível 1";
+    setTimeout(criarAnimacaoTutorial, 100);
+};
 
-        .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 15px; background-color: var(--bg-container); overflow: hidden; }
-        .game-card { background: var(--bg-card); width: 100%; max-width: 1000px; height: 100%; border-radius: 40px; box-shadow: var(--sombra-card); border: 4px solid var(--cor-borda-card); display: flex; flex-direction: column; padding: 15px; position: relative; overflow: hidden; }
+window.gerarIntroJogo = function() {
+    return "Puzzle de Sílabas: Quantas palavras consegues formar?";
+};
 
-        .screen-box { flex: 1; width: 100%; background: var(--bg-espaco-jogo); border: var(--borda-espaco-jogo); border-radius: 30px; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+window.selecionarCategoria = function(key) { categoriaAtual = key; };
 
-        .status-bar { display: none; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0; padding: 0 10px; }
-        .badge { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 12px; border-radius: 10px; font-weight: 900; font-size: 11px; color: white; }
-        .badge-timer { background: #cbd9e6; color: var(--text-grey); }
-        .badge-round { background: var(--primary-blue); }
+function criarAnimacaoTutorial() {
+    const container = document.getElementById('intro-animation-container');
+    if (!container) return;
+    container.innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; gap:15px;">
+            <div style="font-weight:900; color:var(--primary-blue); font-size:1.2rem;">COMO JOGAR</div>
+            <div style="display:flex; gap:10px; background:white; padding:20px; border-radius:20px; border:4px solid #0891b2;">
+                <div style="width:50px; height:50px; background:#f0f9ff; border:2px solid #0891b2; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900;">MA</div>
+                <div style="width:50px; height:50px; border:3px dashed #cbd5e1; border-radius:10px;"></div>
+            </div>
+            <div style="font-size:40px; animation: tapH 2s infinite;">☝️</div>
+        </div>
+        <style> @keyframes tapH { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-15px); } } </style>
+    `;
+}
 
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; }
-        .screen.active { display: flex !important; }
+window.initGame = function() {
+    discoveredWords = [];
+    roundAtual = 0; acertos = 0; erros = 0;
+    document.getElementById('hits-val').innerText = "0";
+    document.getElementById('miss-val').innerText = "0";
+    proximaRondaFabrica();
+};
 
-        .btn-jogar-stretch { background: var(--primary-blue); color: white; border: none; border-radius: 15px; padding: 16px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); display: flex; justify-content: center; align-items: center; text-decoration: none; width: 100%; }
-
-        @media screen and (max-height: 500px) and (orientation: landscape) {
-            body { overflow-y: auto !important; height: auto !important; min-height: 100vh; }
-            header { display: none !important; }
-            .game-container { padding: 5px; height: auto !important; min-height: 100vh; overflow: visible; }
-            .game-card { border-radius: 15px; padding: 10px; height: auto !important; min-height: 95vh; max-width: none; overflow: visible; }
-            .screen-box { border-radius: 20px; height: auto !important; min-height: 400px; overflow: visible; }
-            .screen { height: auto !important; overflow: visible; }
-        }
-
-        .menu-dropdown { position: absolute; top: 65px; left: 15px; display: none; flex-direction: column; gap: 6px; z-index: 3000; width: 200px; }
-        .menu-item { display: flex; align-items: center; gap: 12px; padding: 10px 15px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 0.85rem; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 2000; }
-        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 4000; padding: 20px; border-radius: 25px 25px 0 0; transition: 0.4s; max-height: 80vh; overflow-y: auto; }
-        .rd-panel.active { bottom: 0; }
-        #rd-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .rd-item { background: #f8f9fa; border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; font-weight: 700; font-size: 0.8rem; color: var(--text-grey); }
-        .rd-item img { width: 40px; height: 40px; margin-bottom: 5px; }
-    </style>
-</head>
-<body>
-    <div class="overlay" id="overlay" onclick="closeMenus()"></div>
+window.darAjuda = function() {
+    const config = JOGO_CATEGORIAS[categoriaAtual];
+    const desafio = config.desafios[roundAtual - 1];
     
-    <header>
-        <div class="header-left">
-            <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
-            <div id="dropdownMenu" class="menu-dropdown"></div>
-        </div>
-        <div class="logo-center">
-            <img id="head-logo" src="">
-            <div class="logo-text"><h1 id="tit-l1"></h1><h1 id="tit-l2"></h1><p id="sub-tit"></p></div>
-        </div>
-        <div class="header-right">
-            <a href="#" id="link-voltar-mobile" class="btn-voltar-mobile"><img id="header-back-mobile" src="" alt="Voltar" style="height:30px;"></a>
-        </div>
-    </header>
+    const palavrasPossiveis = DICIONARIO_MESTRE.filter(palavra => {
+        let silabasDaPalavra = [];
+        for(let i=0; i<palavra.length; i+=2) silabasDaPalavra.push(palavra.substr(i,2));
+        
+        return silabasDaPalavra.every(s => desafio.bank.includes(s)) && 
+               silabasDaPalavra.length === desafio.slots &&
+               !discoveredWords.includes(palavra);
+    });
 
-    <main class="game-container">
-        <div class="game-card">
-            <div class="status-bar" id="status-bar">
-                <div class="status-group" style="display:flex; gap:8px;">
-                    <div class="badge badge-timer">⏳ <span id="timer-val">00:00</span></div>
-                    <div class="badge badge-round"><span id="round-val">1 / 10</span></div>
+    if (palavrasPossiveis.length > 0) {
+        const sugestao = palavrasPossiveis[0];
+        const primeiraSilaba = sugestao.substr(0, 2);
+        selectedSyllables = [primeiraSilaba];
+        atualizarMoldes();
+        
+        const btn = document.getElementById('help-btn');
+        btn.style.transform = "scale(1.3) rotate(15deg)";
+        setTimeout(() => btn.style.transform = "scale(1) rotate(0deg)", 300);
+    }
+}
+
+function proximaRondaFabrica() {
+    roundAtual++;
+    if (roundAtual > 10) { finalizarFabrica(); return; }
+    document.getElementById('round-val').innerText = `${roundAtual} / 10`;
+    selectedSyllables = [];
+    renderizarEcraFabrica();
+}
+
+function renderizarEcraFabrica() {
+    const container = document.getElementById('game-main-content');
+    const config = JOGO_CATEGORIAS[categoriaAtual];
+    const desafio = config.desafios[roundAtual - 1];
+
+    container.innerHTML = `
+        <style>
+            .factory-wrapper { display: flex; flex-direction: column; width: 100%; min-height: 100%; align-items: center; justify-content: space-between; padding: 15px; box-sizing: border-box; }
+            .station { 
+                display: flex; gap: 10px; justify-content: center; align-items: center; 
+                background: #f0f9ff; border: 3px dashed #0891b2; padding: 15px; border-radius: 25px;
+                min-height: 100px; width: 100%; max-width: 400px;
+            }
+            .mold {
+                width: 70px; height: 70px; background: white; border: 3px dashed #cbd5e1; border-radius: 15px;
+                display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 950; color: #0891b2;
+            }
+            .mold.filled { border: 3px solid #0891b2; animation: popIn 0.3s; }
+            .btn-row { display: flex; gap: 12px; margin-top: 10px; }
+            .btn-f { padding: 12px 25px; border-radius: 15px; font-weight: 800; border: none; cursor: pointer; font-size: 0.9rem; }
+            .btn-mount { background: #0ea5e9; color: white; box-shadow: 0 5px 0 #0369a1; }
+            .btn-clear { background: #94a3b8; color: white; box-shadow: 0 5px 0 #64748b; }
+            .bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 15px 0; width: 100%; }
+            .pill { 
+                background: white; border: 3px solid #0891b2; color: #164e63; border-radius: 18px; 
+                padding: 12px; min-width: 80px; font-size: 1.2rem; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #0e7490;
+            }
+            .warehouse { width: 100%; max-width: 500px; background: rgba(255,255,255,0.7); border-radius: 20px; padding: 10px; border: 1px solid #eee; min-height: 60px; }
+            .tag { color: #5d7082; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; border-bottom: 2px solid #ddd; padding: 2px 5px; }
+
+            @media screen and (max-height: 500px) {
+                .factory-wrapper { height: auto; gap: 15px; padding: 10px; }
+                .station { min-height: 80px; }
+                .mold { width: 55px; height: 55px; font-size: 1.2rem; }
+                .pill { padding: 8px; min-width: 65px; font-size: 1rem; }
+            }
+            @keyframes popIn { from { transform: scale(0.5); } to { transform: scale(1); } }
+        </style>
+        <div class="factory-wrapper">
+            <div class="station" id="molds-area"></div>
+            <div class="btn-row">
+                <button class="btn-f btn-mount" onclick="validarProducao()">MONTAR</button>
+                <button class="btn-f btn-clear" onclick="limparProducao()">LIMPAR</button>
+            </div>
+            <div class="bank">
+                ${desafio.bank.map(s => `<button class="pill" onclick="clicarSilaba('${s}')">${s}</button>`).join('')}
+            </div>
+            <div class="warehouse">
+                <div style="font-size:0.55rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:5px;">Palavras Criadas:</div>
+                <div id="history-list" style="display:flex; flex-wrap:wrap; gap:10px;">
+                    ${discoveredWords.map(p => `<span class="tag">${p}</span>`).join('')}
                 </div>
-                <div class="status-group" style="display:flex; gap:10px; align-items:center;">
-                    <div class="badge" style="background:#7ed321;">✓ <span id="hits-val">0</span></div>
-                    <!-- AJUDA LÂMPADA -->
-                    <img id="help-btn" src="" onclick="darAjuda()" style="height:32px; width:32px; cursor:pointer; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">
-                    <img id="rd-game-btn" src="" style="height:30px; width:30px; cursor:pointer;" onclick="openRDMenu(event)">
+            </div>
+        </div>
+    `;
+    atualizarMoldes();
+}
+
+function atualizarMoldes() {
+    const desafio = JOGO_CATEGORIAS[categoriaAtual].desafios[roundAtual - 1];
+    const area = document.getElementById('molds-area');
+    area.innerHTML = "";
+    for (let i = 0; i < desafio.slots; i++) {
+        const m = document.createElement('div');
+        m.className = "mold " + (selectedSyllables[i] ? "filled" : "");
+        m.innerText = selectedSyllables[i] || "";
+        area.appendChild(m);
+    }
+}
+
+window.clicarSilaba = function(s) {
+    const desafio = JOGO_CATEGORIAS[categoriaAtual].desafios[roundAtual - 1];
+    if (selectedSyllables.length < desafio.slots) {
+        selectedSyllables.push(s);
+        atualizarMoldes();
+    }
+};
+
+window.limparProducao = function() {
+    selectedSyllables = [];
+    atualizarMoldes();
+};
+
+window.validarProducao = function() {
+    const desafio = JOGO_CATEGORIAS[categoriaAtual].desafios[roundAtual - 1];
+    if (selectedSyllables.length < desafio.slots) return;
+    const palavra = selectedSyllables.join('');
+
+    if (discoveredWords.includes(palavra)) {
+        somErro.play();
+        feedbackEstacao("#f59e0b", "REPETIDA!");
+    } else if (DICIONARIO_MESTRE.includes(palavra)) {
+        somAcerto.play();
+        acertos++;
+        document.getElementById('hits-val').innerText = acertos;
+        discoveredWords.push(palavra);
+        feedbackEstacao("#10b981", "CERTO!");
+    } else {
+        somErro.play();
+        erros++;
+        document.getElementById('miss-val').innerText = erros;
+        feedbackEstacao("#ef4444", "ERRO!");
+    }
+    setTimeout(proximaRondaFabrica, 1200);
+};
+
+function feedbackEstacao(color, txt) {
+    const area = document.getElementById('molds-area');
+    area.innerHTML = `<span style="color:${color}; font-weight:950; font-size:1.5rem; animation: popIn 0.3s;">${txt}</span>`;
+    document.querySelectorAll('.pill').forEach(b => b.style.pointerEvents = 'none');
+}
+
+function finalizarFabrica() {
+    somVitoria.play();
+    const resScreen = document.getElementById('scr-result');
+    const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
+    
+    resScreen.className = "screen screen-box active"; 
+    resScreen.innerHTML = `
+        <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; padding:20px; text-align:center;">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px; object-fit:contain;">
+            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.8rem; margin-bottom:10px;">${rel.titulo}</h2>
+            
+            <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
+                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+                    <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos}</span>
+                    <span style="font-size:11px; font-weight:800; color:#88a;">ACERTOS</span>
+                </div>
+                <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+                    <span style="display:block; font-size:24px; font-weight:900; color:#ff5e5e;">${erros}</span>
+                    <span style="font-size:11px; font-weight:800; color:#88a;">ERROS</span>
                 </div>
             </div>
 
-            <section class="screen active" id="scr-intro">
-                <div class="screen-box" style="justify-content:center; align-items:center; padding: 20px;">
-                    <div id="intro-animation-container" style="width:100%; flex:1; display:flex; align-items:center; justify-content:center; min-height: 150px;"></div>
-                    <p id="intro-instr" style="font-weight: 800; color: var(--text-grey); text-align: center; margin-bottom: 15px;"></p>
-                    <div style="display:flex; width:100%; gap:15px; align-items:center;">
-                        <button class="btn-jogar-stretch" onclick="goToGame()">JOGAR</button>
-                        <img id="rd-intro-btn" src="" onclick="openRDMenu(event)" style="height:55px; width:55px; cursor:pointer; flex-shrink: 0;">
-                    </div>
-                </div>
-            </section>
-
-            <section class="screen" id="scr-game">
-                <div class="screen-box" id="game-main-content"></div>
-            </section>
-
-            <section class="screen" id="scr-result"></section>
+            <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:280px;">
+                <button style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark);" onclick="location.reload()">JOGAR DE NOVO</button>
+                <button style="padding:14px; border-radius:22px; font-weight:900; font-size:16px; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer;" onclick="openRDMenu()">OUTRO NÍVEL</button>
+                <a href="${JOGO_CONFIG.linkVoltar}" style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:#dce4ee; color:#5d7082; text-align:center; text-decoration:none; box-shadow:0 6px 0 #b8c5d4;">SAIR</a>
+            </div>
         </div>
-    </main>
-
-    <div id="rdMenu" class="rd-panel">
-        <h3 style="text-align:center; color:var(--primary-blue); margin-bottom:15px; font-weight: 900;">Escolher Tema</h3>
-        <div id="rd-list"></div>
-    </div>
-
-    <script src="categorias.js"></script>
-    <script src="dados.js"></script>
-    <script src="jogo.js"></script>
-
-    <script>
-    function initUI() {
-        const setup = CONFIG_MESTRE; 
-        const tema = BIBLIOTECA_TEMAS[setup.area]; 
-        const cont = (BIBLIOTECA_CONTEUDO[setup.ano] && BIBLIOTECA_CONTEUDO[setup.ano][setup.area]) ? BIBLIOTECA_CONTEUDO[setup.ano][setup.area] : {};
-        const conf = JOGO_CONFIG;
-
-        document.title = setup.nomeJogo;
-        const root = document.documentElement;
-        root.style.setProperty('--primary-blue', tema.corPrimaria); 
-        root.style.setProperty('--primary-dark', tema.corEscura); 
-        root.style.setProperty('--bg-page', tema.corPagina);
-        root.style.setProperty('--bg-header', cont.corHeader || tema.corHeader || '#ffffff');
-        root.style.setProperty('--bg-container', cont.corContainer || tema.corContainer || tema.corPagina);
-        root.style.setProperty('--bg-card', cont.corCard || tema.corCard || '#ffffff');
-        root.style.setProperty('--cor-borda-card', cont.bordaCard || tema.bordaCard || 'transparent');
-        root.style.setProperty('--bg-espaco-jogo', cont.corEspacoJogo || tema.corEspacoJogo || '#ffffff');
-        root.style.setProperty('--borda-espaco-jogo', cont.bordaEspacoJogo || tema.bordaEspacoJogo || '3px dashed #ccc');
-
-        document.body.style.opacity = '1';
-        document.getElementById('tit-l1').innerText = cont.t1 || ""; 
-        document.getElementById('tit-l2').innerText = cont.t2 || ""; 
-        document.getElementById('sub-tit').innerText = cont.sub || ""; 
-        document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu[setup.ano];
-        document.getElementById('link-voltar-mobile').href = conf.linkVoltar;
-        document.getElementById('header-back-mobile').src = conf.caminhoIcons + tema.voltarMobile;
-        document.getElementById('rd-intro-btn').src = conf.caminhoImg + "rd.png";
-        document.getElementById('rd-game-btn').src = conf.caminhoImg + "rd.png";
-        document.getElementById('help-btn').src = conf.caminhoImg + "lampada.png";
-
-        if(window.gerarIntroJogo) document.getElementById('intro-instr').innerText = window.gerarIntroJogo();
-
-        const menuBox = document.getElementById('dropdownMenu'); menuBox.innerHTML = '';
-        ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
-            const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
-            a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}" width="20"><span>${k}</span>`;
-            menuBox.appendChild(a);
-        });
-
-        const rdBox = document.getElementById('rd-list'); rdBox.innerHTML = '';
-        Object.keys(conf.categorias).forEach(key => {
-            const c = conf.categorias[key]; 
-            const div = document.createElement('div'); div.className = 'rd-item';
-            div.innerHTML = `<img src="${conf.caminhoImg}${c.imgCapa}"><span>${c.nome}</span>`;
-            div.onclick = () => { selecionarCategoria(key); closeMenus(); goToIntro(); }; 
-            rdBox.appendChild(div);
-        });
-
-        if(window.startLogic) window.startLogic();
-    }
-
-    function toggleHamburger(e) { e.stopPropagation(); const m = document.getElementById('dropdownMenu'); const ov = document.getElementById('overlay'); const isOpen = m.style.display === 'flex'; m.style.display = isOpen ? 'none' : 'flex'; ov.style.display = isOpen ? 'none' : 'block'; }
-    function openRDMenu(e) { if(e) e.stopPropagation(); document.getElementById('rdMenu').classList.add('active'); document.getElementById('overlay').style.display = 'block'; }
-    function closeMenus() { document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('rdMenu').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; }
-    function goToIntro() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-intro').classList.add('active'); document.getElementById('status-bar').style.display = 'none'; if(window.startLogic) window.startLogic(); }
-    function goToGame() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-game').classList.add('active'); document.getElementById('status-bar').style.display = 'flex'; if(window.initGame) window.initGame(); }
-    window.onload = initUI;
-    </script>
-</body>
-</html>
+    `;
+    document.querySelectorAll('.screen').forEach(s => { if(s.id !== 'scr-result') s.classList.remove('active'); });
+    document.getElementById('status-bar').style.display = 'none';
+}
