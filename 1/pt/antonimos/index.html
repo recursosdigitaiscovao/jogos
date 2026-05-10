@@ -31,7 +31,6 @@
         .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
         .menu-item-voltar img { filter: brightness(0) invert(1); }
 
-        .btn-voltar-header { display: none !important; }
         .btn-voltar-mobile { display: flex; align-items: center; text-decoration: none; padding: 5px; z-index: 3001; }
 
         .game-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 15px; background-color: var(--bg-container); overflow: hidden; }
@@ -39,34 +38,21 @@
 
         .screen-box { flex: 1; width: 100%; background: var(--bg-espaco-jogo); border: var(--borda-espaco-jogo); border-radius: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0; position: relative; overflow: hidden; }
 
-        .btn-jogar-stretch { background: var(--primary-blue); color: white; border: none; border-radius: 15px; padding: 16px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); display: flex; justify-content: center; align-items: center; text-decoration: none; flex: 1; }
-        .btn-jogar-stretch:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
-
         .status-bar { display: none; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0; padding: 0 10px; }
         .badge { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 12px; border-radius: 10px; font-weight: 900; font-size: 11px; color: white; }
         .badge-timer { background: #cbd9e6; color: var(--text-grey); }
         .badge-round { background: var(--primary-blue); }
 
-        .rd-panel { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 4000; padding: 20px; border-radius: 25px 25px 0 0; transition: 0.4s; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); max-height: 70vh; overflow-y: auto; }
-        .rd-panel.active { bottom: 0; }
-        #rd-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .rd-item { background: #f8f9fa; border: 1px solid #eee; border-radius: 15px; padding: 12px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; font-weight: 700; color: var(--text-grey); font-size: 0.8rem; }
-        .rd-item img { width: 50px; height: 50px; object-fit: contain; }
+        .btn-jogar-stretch { background: var(--primary-blue); color: white; border: none; border-radius: 15px; padding: 16px; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 0 var(--primary-dark); display: flex; justify-content: center; align-items: center; text-decoration: none; flex: 1; }
 
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); display: none; z-index: 2000; }
-        .screen { display: none; width: 100%; height: 100%; flex-direction: column; flex: 1; overflow: hidden; }
-        .screen.active { display: flex !important; }
-
-        /* AJUSTES PARA MODO LANDSCAPE (DEITADO) */
+        /* AJUSTES PARA MODO LANDSCAPE COM SCROLL */
         @media screen and (max-height: 500px) and (orientation: landscape) {
+            body { overflow-y: auto !important; height: auto !important; min-height: 100vh; }
             header { display: none !important; }
-            .game-container { padding: 5px; height: 100vh; }
-            .game-card { border-radius: 15px; padding: 8px; height: 100%; max-width: none; }
-            .screen-box { border-radius: 15px; }
-            .status-bar { margin-bottom: 5px; padding: 0 5px; }
-            #intro-instr { font-size: 0.85rem !important; margin-bottom: 10px !important; }
-            .btn-jogar-stretch { padding: 10px !important; font-size: 16px !important; }
-            #rd-intro-btn { height: 45px !important; width: 45px !important; }
+            .game-container { padding: 5px; height: auto !important; min-height: 100vh; overflow: visible !important; }
+            .game-card { border-radius: 15px; padding: 8px; height: auto !important; min-height: 95vh; max-width: none; overflow: visible !important; }
+            .screen-box { border-radius: 15px; height: auto !important; min-height: 350px; overflow: visible !important; }
+            .status-bar { margin-bottom: 5px; }
         }
     </style>
 </head>
@@ -83,7 +69,6 @@
             <div class="logo-text"><h1 id="tit-l1"></h1><h1 id="tit-l2"></h1><p id="sub-tit"></p></div>
         </div>
         <div class="header-right">
-            <a href="#" id="link-voltar-header" class="btn-voltar-header"><img id="header-back-icon" src="" width="14"> <span id="txt-voltar-header"></span></a>
             <a href="#" id="link-voltar-mobile" class="btn-voltar-mobile"><img id="header-back-mobile" src="" alt="Voltar" style="height:30px;"></a>
         </div>
     </header>
@@ -104,12 +89,11 @@
 
             <section class="screen active" id="scr-intro">
                 <div class="screen-box">
-                    <div id="intro-animation-container" style="flex:1; display:flex; align-items:center; justify-content:center; width:100%; min-height: 0;"></div>
+                    <div id="intro-animation-container" style="flex:1; display:flex; align-items:center; justify-content:center; width:100%; min-height: 200px;"></div>
                     <p id="intro-instr" style="font-weight: 800; color: var(--text-grey); text-align: center; margin-bottom: 20px; font-size: 1rem; width: 100%; padding: 0 20px;"></p>
-                    
                     <div style="display:flex; width:100%; gap:15px; align-items:center; padding: 0 20px 20px;">
                         <button class="btn-jogar-stretch" onclick="goToGame()">JOGAR</button>
-                        <img id="rd-intro-btn" src="" onclick="openRDMenu(event)" style="height:55px; width:55px; cursor:pointer; flex-shrink: 0; object-fit: contain;">
+                        <img id="rd-intro-btn" src="" onclick="openRDMenu(event)" style="height:55px; width:55px; cursor:pointer; flex-shrink: 0;">
                     </div>
                 </div>
             </section>
@@ -123,8 +107,6 @@
     </main>
 
     <div id="rdMenu" class="rd-panel">
-        <div style="width:40px; height:4px; background:#eee; border-radius:10px; margin: 0 auto 15px;" onclick="closeMenus()"></div>
-        <h3 style="text-align:center; color:var(--primary-blue); margin-bottom:15px; font-weight: 900; font-size: 1.1rem;">Escolher Tema</h3>
         <div id="rd-list"></div>
     </div>
 
@@ -153,16 +135,11 @@
         root.style.setProperty('--borda-espaco-jogo', cont.bordaEspacoJogo || tema.bordaEspacoJogo || '3px dashed #ccc');
 
         document.body.style.opacity = '1';
-
         document.getElementById('tit-l1').innerText = cont.t1 || ""; 
         document.getElementById('tit-l2').innerText = cont.t2 || ""; 
         document.getElementById('sub-tit').innerText = cont.sub || ""; 
         document.getElementById('head-logo').src = conf.caminhoIcons + conf.iconesMenu[setup.ano];
-        
-        document.getElementById('link-voltar-header').href = conf.linkVoltar;
         document.getElementById('link-voltar-mobile').href = conf.linkVoltar;
-        document.getElementById('txt-voltar-header').innerText = conf.textoVoltar;
-        document.getElementById('header-back-icon').src = conf.caminhoIcons + "voltar.png";
         document.getElementById('header-back-mobile').src = conf.caminhoIcons + tema.voltarMobile;
         document.getElementById('rd-intro-btn').src = conf.caminhoImg + "rd.png";
         document.getElementById('rd-game-btn').src = conf.caminhoImg + "rd.png";
@@ -170,16 +147,11 @@
         if(window.gerarIntroJogo) document.getElementById('intro-instr').innerText = window.gerarIntroJogo();
 
         const menuBox = document.getElementById('dropdownMenu'); menuBox.innerHTML = '';
-        const labels = { home: "Início", pre: "Pré-Escolar", ano1: "1º Ano", ano2: "2º Ano", ano3: "3º Ano", ano4: "4º Ano" };
         ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
             const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
-            a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}" width="20"><span>${labels[k]}</span>`;
+            a.innerHTML = `<img src="${conf.caminhoIcons}${conf.iconesMenu[k]}" width="20"><span>${k}</span>`;
             menuBox.appendChild(a);
         });
-        const divider = document.createElement('div'); divider.className = 'menu-divider'; menuBox.appendChild(divider);
-        const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = conf.linkVoltar;
-        btnV.innerHTML = `<img src="${conf.caminhoIcons}voltar.png" width="20"> <span>${conf.textoVoltar}</span>`;
-        menuBox.appendChild(btnV);
 
         const rdBox = document.getElementById('rd-list'); rdBox.innerHTML = '';
         Object.keys(conf.categorias).forEach(key => {
@@ -198,7 +170,6 @@
     function closeMenus() { document.getElementById('dropdownMenu').style.display = 'none'; document.getElementById('rdMenu').classList.remove('active'); document.getElementById('overlay').style.display = 'none'; }
     function goToIntro() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-intro').classList.add('active'); document.getElementById('status-bar').style.display = 'none'; if(window.startLogic) window.startLogic(); }
     function goToGame() { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('scr-game').classList.add('active'); document.getElementById('status-bar').style.display = 'flex'; if(window.initGame) window.initGame(); }
-    
     window.onload = initUI;
     </script>
 </body>
