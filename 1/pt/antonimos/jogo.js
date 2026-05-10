@@ -15,14 +15,20 @@ const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 window.startLogic = function() {
     if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "Nível 1";
     
-    // Trocar o Timer pelo Botão de Ajuda (Manipulando o DOM do index)
+    // Trocar o Timer pelo Botão de Ajuda (Apenas a imagem)
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.id = "btn-ajuda";
         timerBadge.style.cursor = "pointer";
-        timerBadge.style.background = "#f59e0b";
-        timerBadge.style.transition = "0.2s";
-        timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:18px; margin-right:5px;"> <span id="txt-ajuda">AJUDA</span>`;
+        timerBadge.style.background = "transparent"; // Remove o fundo
+        timerBadge.style.boxShadow = "none";         // Remove sombras
+        timerBadge.style.padding = "0";              // Remove o enchimento
+        timerBadge.style.display = "flex";
+        timerBadge.style.alignItems = "center";
+        timerBadge.style.justifyContent = "center";
+        
+        // Colocamos apenas a imagem, sem o texto "AJUDA"
+        timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:35px; width:auto; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">`;
         timerBadge.onclick = darAjuda;
     }
 
@@ -66,7 +72,6 @@ function definirSugestaoRonda() {
     const desafio = JOGO_CATEGORIAS[categoriaAtual].desafios[roundAtual - 1];
     const bank = desafio.bank;
     
-    // Procura no dicionário a primeira palavra que pode ser formada com este banco
     palavraSugestao = DICIONARIO_MESTRE.find(p => {
         let tempP = p;
         for(let i=0; i < desafio.slots; i++) {
@@ -129,7 +134,6 @@ function renderizarEcraFabrica() {
             }
             .pill:active { transform: translateY(2px); box-shadow: 0 1px 0 #0e7490; }
             
-            /* ANIMAÇÃO DA AJUDA */
             .pill-hint { 
                 animation: blinkHelp 0.6s infinite alternate; 
                 border-color: #f59e0b !important; 
@@ -186,7 +190,6 @@ window.clicarSilaba = function(s) {
     if (selectedSyllables.length < desafio.slots) {
         selectedSyllables.push(s);
         atualizarMoldes();
-        // Remove hint se o utilizador clicar
         document.querySelectorAll('.pill').forEach(p => p.classList.remove('pill-hint'));
     }
 };
@@ -202,7 +205,6 @@ window.darAjuda = function() {
     
     if (idx >= desafio.slots) return;
 
-    // Isolar a sílaba correta da palavra sugestão
     let silabasDaSugestao = [];
     let tempP = palavraSugestao;
     while(tempP.length > 0) {
@@ -235,13 +237,12 @@ window.validarProducao = function() {
 
     if (discoveredWords.includes(palavra)) {
         somErro.play();
-        molds.forEach(m => m.style.background = "#fef3c7"); // Amarelo suave
+        molds.forEach(m => m.style.background = "#fef3c7"); 
     } else if (DICIONARIO_MESTRE.includes(palavra)) {
         somAcerto.play();
         acertos++;
         document.getElementById('hits-val').innerText = acertos;
         discoveredWords.push(palavra);
-        // Feedback Verde Claro
         molds.forEach(m => {
             m.style.background = "#dcfce7"; 
             m.style.borderColor = "#22c55e";
@@ -251,7 +252,6 @@ window.validarProducao = function() {
         somErro.play();
         erros++;
         document.getElementById('miss-val').innerText = erros;
-        // Feedback Vermelho Claro
         molds.forEach(m => {
             m.style.background = "#fee2e2";
             m.style.borderColor = "#ef4444";
@@ -265,18 +265,14 @@ window.validarProducao = function() {
 
 function finalizarFabrica() {
     somVitoria.play();
-    
     const resScreen = document.getElementById('scr-result');
     const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
     
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
-            
             <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:15px; object-fit:contain;">
-            
             <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.8rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
-            
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:15px 0;">
                 <div style="background:white; border-radius:18px; padding:15px; flex:1; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
                     <span style="display:block; font-size:24px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span>
@@ -287,14 +283,9 @@ function finalizarFabrica() {
                     <span style="font-size:11px; font-weight:800; color:#88a; text-transform:uppercase;">Erros</span>
                 </div>
             </div>
-
             <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:280px;">
-                <button style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark); text-transform:uppercase;" 
-                    onclick="location.reload()">Jogar de Novo</button>
-                
-                <button style="padding:14px; border-radius:22px; font-weight:900; font-size:16px; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer; box-shadow:0 6px 0 var(--primary-blue); text-transform:uppercase;" 
-                    onclick="openRDMenu()">Outro Nível</button>
-                
+                <button style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 6px 0 var(--primary-dark); text-transform:uppercase;" onclick="location.reload()">Jogar de Novo</button>
+                <button style="padding:14px; border-radius:22px; font-weight:900; font-size:16px; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); cursor:pointer; box-shadow:0 6px 0 var(--primary-blue); text-transform:uppercase;" onclick="openRDMenu()">Outro Nível</button>
                 <a href="${JOGO_CONFIG.linkVoltar}" style="padding:16px; border-radius:22px; font-weight:900; font-size:16px; background:#dce4ee; color:#5d7082; border:none; text-align:center; text-decoration:none; box-shadow:0 6px 0 #b8c5d4; text-transform:uppercase;">Sair</a>
             </div>
         </div>
