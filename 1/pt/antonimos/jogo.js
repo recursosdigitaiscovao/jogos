@@ -5,8 +5,6 @@ let acertos = 0;
 let erros = 0;
 let tempoInicio;
 let intervaloTempo;
-let bancoDaRonda = [];
-
 let categoriaAtual = "Nível 1"; 
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
@@ -101,16 +99,13 @@ function renderizarEcraFabrica() {
             .warehouse { width: 100%; max-width: 600px; background: rgba(255,255,255,0.7); border-radius: 20px; padding: 10px; border: 2px solid #e2e8f0; height: 85px; overflow: hidden; }
             .tag { background: #0891b2; color: white; padding: 4px 12px; border-radius: 8px; font-weight: 800; font-size: 0.8rem; animation: popIn 0.3s; }
 
-            /* MEDIA QUERY PARA MODO LANDSCAPE */
+            /* MEDIA QUERY PARA MODO LANDSCAPE COM PERMISSÃO DE SCROLL */
             @media screen and (max-height: 500px) {
-                .factory-wrapper { flex-direction: row; flex-wrap: wrap; justify-content: center; align-content: center; gap: 10px; padding: 5px; }
-                .station { width: 42%; min-height: 70px; margin: 0; }
-                .bank { width: 52%; padding: 0; }
-                .btn-row { width: 100%; order: 3; justify-content: center; margin: 2px 0; }
-                .warehouse { width: 100%; order: 4; height: 50px; padding: 5px; }
-                .mold { width: 55px; height: 55px; font-size: 1.2rem; }
-                .pill { padding: 8px; min-width: 65px; font-size: 1rem; }
-                .tag { font-size: 0.7rem; padding: 2px 8px; }
+                .factory-wrapper { height: auto !important; min-height: 100%; flex-direction: row; flex-wrap: wrap; justify-content: center; align-content: flex-start; gap: 15px; padding: 10px 5px; }
+                .station { width: 45%; min-height: 80px; margin: 0; }
+                .bank { width: 50%; padding: 0; }
+                .btn-row { width: 100%; order: 3; justify-content: center; margin: 5px 0; }
+                .warehouse { width: 100%; order: 4; height: auto; min-height: 60px; padding: 8px; }
             }
             @keyframes popIn { from { transform: scale(0.5); opacity:0; } to { transform: scale(1); opacity:1; } }
         </style>
@@ -194,32 +189,30 @@ function feedbackEstacao(color, txt) {
 function finalizarFabrica() {
     clearInterval(intervaloTempo);
     somVitoria.play();
-    
     const tempo = document.getElementById('timer-val').innerText;
     const resScreen = document.getElementById('scr-result');
     const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
     
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
-        <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box;">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:80px; margin-bottom:10px; object-fit:contain;">
-            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.5rem; margin-bottom:10px; text-align:center;">${rel.titulo}</h2>
+        <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; padding:20px;">
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:80px; margin-bottom:10px;">
+            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.5rem; margin-bottom:10px;">${rel.titulo}</h2>
             <div class="res-stats" style="display:flex; gap:12px; width:100%; max-width:320px; margin:10px 0;">
-                <div style="background:white; border-radius:18px; padding:10px; flex:1; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+                <div style="background:white; border-radius:18px; padding:10px; flex:1; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
                     <span style="display:block; font-size:20px; font-weight:900; color:var(--primary-blue);">${acertos} / 10</span>
-                    <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Acertos</span>
+                    <span style="font-size:10px; font-weight:800; color:#88a;">Acertos</span>
                 </div>
-                <div style="background:white; border-radius:18px; padding:10px; flex:1; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+                <div style="background:white; border-radius:18px; padding:10px; flex:1; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
                     <span style="display:block; font-size:20px; font-weight:900; color:var(--primary-blue);">${tempo}</span>
-                    <span style="font-size:10px; font-weight:800; color:#88a; text-transform:uppercase;">Tempo</span>
+                    <span style="font-size:10px; font-weight:800; color:#88a;">Tempo</span>
                 </div>
             </div>
             <div style="display:flex; flex-direction:column; gap:10px; width:100%; max-width:280px;">
-                <button style="padding:12px; border-radius:18px; font-weight:900; font-size:14px; background:var(--primary-blue); color:white; border:none; cursor:pointer; box-shadow:0 5px 0 var(--primary-dark); text-transform:uppercase;" onclick="location.reload()">Jogar de Novo</button>
-                <a href="${JOGO_CONFIG.linkVoltar}" style="padding:12px; border-radius:18px; font-weight:900; font-size:14px; background:#dce4ee; color:#5d7082; border:none; text-align:center; text-decoration:none; box-shadow:0 5px 0 #b8c5d4; text-transform:uppercase;">Sair</a>
+                <button style="padding:12px; border-radius:18px; font-weight:900; background:var(--primary-blue); color:white; border:none; box-shadow:0 5px 0 var(--primary-dark);" onclick="location.reload()">Jogar de Novo</button>
+                <a href="${JOGO_CONFIG.linkVoltar}" style="padding:12px; border-radius:18px; font-weight:900; background:#dce4ee; color:#5d7082; text-align:center; text-decoration:none; box-shadow:0 5px 0 #b8c5d4;">Sair</a>
             </div>
         </div>
     `;
     document.querySelectorAll('.screen').forEach(s => { if(s.id !== 'scr-result') s.classList.remove('active'); });
-    document.getElementById('status-bar').style.display = 'none';
 }
