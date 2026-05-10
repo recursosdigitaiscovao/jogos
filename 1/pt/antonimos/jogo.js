@@ -42,16 +42,22 @@ window.startLogic = function() {
         timerBadge.onclick = darAjuda;
     }
 
-    // 2. Ajustar a altura da Ronda Azul para igualar Acertos/Erros
-    const roundBadge = document.querySelector('.badge-round');
-    if (roundBadge) {
-        roundBadge.style.height = "25px"; // Altura padrão dos badges de acerto/erro
-        roundBadge.style.display = "flex";
-        roundBadge.style.alignItems = "center";
-        roundBadge.style.justifyContent = "center";
-        roundBadge.style.padding = "0 12px";
-        roundBadge.style.fontSize = "11px";
-        roundBadge.style.lineHeight = "1";
+    // 2. Padronizar TODOS os badges (Ronda, Acertos, Erros) para terem a mesma altura e alinhamento
+    const badges = document.querySelectorAll('.badge');
+    badges.forEach(b => {
+        b.style.height = "28px";        // Altura fixa para todos
+        b.style.display = "flex";       // Alinhamento flex
+        b.style.alignItems = "center";  // Centralizar texto verticalmente
+        b.style.justifyContent = "center";
+        b.style.boxSizing = "border-box";
+        b.style.margin = "0";           // Remover margens estranhas
+        b.style.lineHeight = "1";
+    });
+
+    // Ajuste extra para a barra de estado
+    const statusBar = document.getElementById('status-bar');
+    if(statusBar) {
+        statusBar.style.alignItems = "center";
     }
 
     setTimeout(criarAnimacaoTutorial, 100);
