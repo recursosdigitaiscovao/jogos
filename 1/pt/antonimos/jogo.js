@@ -34,12 +34,10 @@ window.startLogic = function() {
         timerBadge.style.padding = "0";
         timerBadge.style.display = "flex";
         timerBadge.style.alignItems = "center";
-        timerBadge.style.justifyContent = "center";
         
         timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:35px; width:auto; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">`;
         timerBadge.onclick = darAjuda;
     }
-
     setTimeout(criarAnimacaoTutorial, 100);
 };
 
@@ -47,15 +45,13 @@ window.gerarIntroJogo = function() {
     return "Puzzle de Sílabas: Quantas palavras consegues formar com estas peças?";
 };
 
-window.selecionarCategoria = function(key) { 
-    categoriaAtual = key; 
-};
+window.selecionarCategoria = function(key) { categoriaAtual = key; };
 
 function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; gap:15px; position:relative;">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:15px;">
             <div style="font-weight:900; color:var(--primary-blue); font-size:1.2rem; text-transform:uppercase;">COMO JOGAR</div>
             <div style="display:flex; gap:10px; background:white; padding:20px; border-radius:20px; border:4px solid #0891b2; box-shadow:0 10px 20px rgba(0,0,0,0.1);">
                 <div style="width:50px; height:50px; background:#f0f9ff; border:2px solid #0891b2; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; color:#164e63;">MA</div>
@@ -76,24 +72,17 @@ window.initGame = function() {
 
     const config = JOGO_CATEGORIAS[categoriaAtual];
     desafiosEmbaralhados = shuffleArray([...config.desafios]); 
-
     proximaRondaFabrica();
 };
 
 function definirSugestaoRonda() {
     const desafio = desafiosEmbaralhados[roundAtual - 1];
     const bank = desafio.bank;
-    
     palavraSugestao = DICIONARIO_MESTRE.find(p => {
         let tempP = p;
         for(let i=0; i < desafio.slots; i++) {
             let encontrou = false;
-            bank.forEach(sil => {
-                if(tempP.startsWith(sil)) {
-                    tempP = tempP.substring(sil.length);
-                    encontrou = true;
-                }
-            });
+            bank.forEach(sil => { if(tempP.startsWith(sil)) { tempP = tempP.substring(sil.length); encontrou = true; } });
             if(!encontrou) return false;
         }
         return tempP === "";
@@ -103,7 +92,6 @@ function definirSugestaoRonda() {
 function proximaRondaFabrica() {
     roundAtual++;
     if (roundAtual > 10 || roundAtual > desafiosEmbaralhados.length) { finalizarFabrica(); return; }
-    
     document.getElementById('round-val').innerText = `${roundAtual} / 10`;
     selectedSyllables = [];
     definirSugestaoRonda();
@@ -118,61 +106,69 @@ function renderizarEcraFabrica() {
 
     container.innerHTML = `
         <style>
-            .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: flex-start; padding: 5px; box-sizing: border-box; }
-            
-            /* ESTAÇÃO SUBIDA EM 2% (Margem negativa para elevar) */
-            .station { 
-                display: flex; gap: 8px; justify-content: center; align-items: center; 
-                background: #f0f9ff; border: 3px dashed #0891b2; padding: 10px; border-radius: 20px;
-                min-height: 75px; width: 100%; max-width: 400px; 
-                margin-top: -10px; margin-bottom: 10px;
+            .factory-wrapper { 
+                display: flex; flex-direction: column; width: 100%; height: 100%; 
+                align-items: center; justify-content: flex-start; 
+                padding: 10px; box-sizing: border-box; 
             }
+            
+            .game-title { 
+                font-size: 0.7rem; font-weight: 900; color: var(--primary-blue); 
+                text-transform: uppercase; margin-bottom: 5px; z-index: 5;
+            }
+
+            .station { 
+                display: flex; gap: 10px; justify-content: center; align-items: center; 
+                background: #f0f9ff; border: 3px dashed #0891b2; padding: 15px; border-radius: 20px;
+                width: 90%; max-width: 400px; margin-bottom: 10px;
+            }
+
             .mold {
-                width: clamp(50px, 14vw, 70px); height: clamp(50px, 14vw, 70px);
+                width: clamp(55px, 15vw, 75px); height: clamp(55px, 15vw, 75px);
                 background: white; border: 3px dashed #cbd5e1; border-radius: 12px;
                 display: flex; align-items: center; justify-content: center;
-                font-size: clamp(1.1rem, 5vw, 1.7rem); font-weight: 950; color: #0891b2;
-                transition: all 0.3s;
+                font-size: clamp(1.2rem, 5vw, 1.8rem); font-weight: 950; color: #0891b2;
             }
             .mold.filled { border: 3px solid #0891b2; border-bottom-width: 6px; animation: popIn 0.3s; }
             
-            .btn-row { display: flex; gap: 12px; margin-bottom: 10px; }
-            .btn-f { padding: 10px 20px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; font-size: 0.85rem; transition: 0.1s; }
+            .btn-row { display: flex; gap: 10px; margin-bottom: 10px; }
+            .btn-f { 
+                padding: 10px 25px; border-radius: 12px; font-weight: 900; border: none; 
+                cursor: pointer; font-size: 0.85rem; text-transform: uppercase; 
+            }
             .btn-mount { background: #0ea5e9; color: white; box-shadow: 0 4px 0 #0369a1; }
             .btn-clear { background: #94a3b8; color: white; box-shadow: 0 4px 0 #64748b; }
             .btn-f:active { transform: translateY(2px); box-shadow: none; }
 
-            /* BANCO ALTERADO PARA WRAP (Duas filas se necessário) */
             .bank { 
-                display: flex; flex-wrap: wrap; justify-content: center; align-content: center;
-                gap: 8px; width: 100%; max-width: 500px; padding: 5px 0; margin-bottom: 10px;
+                display: flex; flex-wrap: wrap; justify-content: center; 
+                gap: 8px; width: 100%; max-width: 450px; margin-bottom: 10px;
             }
             .pill { 
-                background: white; border: 2px solid #0891b2; color: #164e63; border-radius: 15px; 
-                padding: 10px 5px; min-width: clamp(65px, 18vw, 85px);
-                font-size: clamp(0.9rem, 4vw, 1.2rem); font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #0e7490;
-                transition: 0.2s;
+                background: white; border: 3px solid #0891b2; color: #164e63; border-radius: 15px; 
+                padding: 12px 5px; width: 80px; text-align: center;
+                font-size: 1.2rem; font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 #0e7490;
             }
             .pill:active { transform: translateY(2px); box-shadow: 0 1px 0 #0e7490; }
             
             .pill-hint { animation: blinkHelp 0.6s infinite alternate; border-color: #f59e0b !important; background: #fef3c7 !important; }
-            @keyframes blinkHelp { from { transform: scale(1); } to { transform: scale(1.05); box-shadow: 0 0 10px #f59e0b; } }
+            @keyframes blinkHelp { from { transform: scale(1); } to { transform: scale(1.05); } }
 
             .warehouse { 
-                width: 100%; max-width: 600px; background: rgba(255,255,255,0.7); border-radius: 15px; 
-                padding: 8px; border: 2px solid #e2e8f0; 
-                flex: 1; min-height: 60px; max-height: 90px; overflow-y: auto; 
+                width: 100%; max-width: 500px; background: white; border-radius: 15px; 
+                padding: 10px; border: 2px solid #e2e8f0; flex: 1; min-height: 70px;
+                overflow-y: auto; text-align: left;
             }
             .tag { 
-                background: transparent; color: #5d7082; padding: 1px 3px; 
-                font-weight: 800; font-size: 0.65rem; border-bottom: 2px solid var(--primary-blue); 
-                animation: popIn 0.3s; text-transform: uppercase; 
+                display: inline-block; color: #5d7082; padding: 2px 5px; margin: 3px;
+                font-weight: 800; font-size: 0.7rem; border-bottom: 2px solid var(--primary-blue); 
+                text-transform: uppercase; 
             }
-
             @keyframes popIn { from { transform: scale(0.5); opacity:0; } to { transform: scale(1); opacity:1; } }
         </style>
+
         <div class="factory-wrapper">
-            <div style="font-size:0.6rem; font-weight:900; color:var(--primary-blue); text-transform:uppercase; margin-bottom:5px;">${config.nome}</div>
+            <div class="game-title">${config.nome}</div>
             <div class="station" id="molds-area"></div>
             <div class="btn-row">
                 <button class="btn-f btn-mount" onclick="validarProducao()">MONTAR</button>
@@ -182,9 +178,9 @@ function renderizarEcraFabrica() {
                 ${silabasParaExibir.map(s => `<button class="pill" onclick="clicarSilaba('${s}')">${s}</button>`).join('')}
             </div>
             <div class="warehouse">
-                <div style="font-size:0.5rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:4px;">Armazém de Palavras:</div>
-                <div id="history-list" style="display:flex; flex-wrap:wrap; gap:8px;">
-                    ${discoveredWords.map(p => `<div class="tag">${p}</div>`).join('')}
+                <div style="font-size:0.55rem; font-weight:900; color:#94a3b8; text-transform:uppercase; margin-bottom:5px;">Armazém de Palavras:</div>
+                <div id="history-list">
+                    ${discoveredWords.map(p => `<span class="tag">${p}</span>`).join('')}
                 </div>
             </div>
         </div>
@@ -222,34 +218,22 @@ window.darAjuda = function() {
     const desafio = desafiosEmbaralhados[roundAtual - 1];
     const idx = selectedSyllables.length;
     if (idx >= desafio.slots) return;
-
     contadorAjudas++; 
-
     let silabasDaSugestao = [];
     let tempP = palavraSugestao;
     while(tempP.length > 0) {
         let encontrada = desafio.bank.find(s => tempP.startsWith(s));
-        if(encontrada) {
-            silabasDaSugestao.push(encontrada);
-            tempP = tempP.substring(encontrada.length);
-        } else break;
+        if(encontrada) { silabasDaSugestao.push(encontrada); tempP = tempP.substring(encontrada.length); } else break;
     }
-
     const silabaAlvo = silabasDaSugestao[idx];
-    const pills = document.querySelectorAll('.pill');
-    pills.forEach(p => {
-        p.classList.remove('pill-hint');
-        if(p.innerText === silabaAlvo) {
-            p.classList.add('pill-hint');
-            setTimeout(() => p.classList.remove('pill-hint'), 2500);
-        }
+    document.querySelectorAll('.pill').forEach(p => {
+        if(p.innerText === silabaAlvo) { p.classList.add('pill-hint'); setTimeout(() => p.classList.remove('pill-hint'), 2500); }
     });
 };
 
 window.validarProducao = function() {
     const desafio = desafiosEmbaralhados[roundAtual - 1];
     if (selectedSyllables.length < desafio.slots) return;
-    
     const palavra = selectedSyllables.join('');
     const molds = document.querySelectorAll('.mold');
 
@@ -261,22 +245,13 @@ window.validarProducao = function() {
         acertos++;
         document.getElementById('hits-val').innerText = acertos;
         discoveredWords.push(palavra);
-        molds.forEach(m => {
-            m.style.background = "#dcfce7"; 
-            m.style.borderColor = "#22c55e";
-            m.style.color = "#166534";
-        });
+        molds.forEach(m => { m.style.background = "#dcfce7"; m.style.borderColor = "#22c55e"; m.style.color = "#166534"; });
     } else {
         somErro.play();
         erros++;
         document.getElementById('miss-val').innerText = erros;
-        molds.forEach(m => {
-            m.style.background = "#fee2e2";
-            m.style.borderColor = "#ef4444";
-            m.style.color = "#991b1b";
-        });
+        molds.forEach(m => { m.style.background = "#fee2e2"; m.style.borderColor = "#ef4444"; m.style.color = "#991b1b"; });
     }
-
     document.querySelectorAll('.pill').forEach(b => b.style.pointerEvents = 'none');
     setTimeout(proximaRondaFabrica, 1200);
 };
@@ -285,67 +260,37 @@ function finalizarFabrica() {
     somVitoria.play();
     const resScreen = document.getElementById('scr-result');
     const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
-    
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <style>
-            .res-inner { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box; }
+            .res-inner { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; }
             .res-stats { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; width:100%; max-width:400px; margin:15px 0; }
             .stat-box { background:white; border-radius:18px; padding:12px 5px; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.06); }
             .stat-val { display:block; font-size:20px; font-weight:900; color:var(--primary-blue); }
             .stat-label { font-size:9px; font-weight:800; color:#88a; text-transform:uppercase; }
-            
-            .btn-res-container { display:flex; flex-direction:column; gap:15px; width:100%; max-width:320px; }
-            .btn-res { 
-                display: flex; align-items: center; justify-content: flex-start;
-                padding: 14px 25px; border-radius: 50px; font-weight: 900; font-size: 17px; 
-                text-transform: uppercase; cursor: pointer; border: none; text-decoration: none; 
-                width: 100%; transition: 0.1s; position: relative; gap: 20px;
-            }
-            .btn-res i { font-size: 24px; width: 30px; }
-            .btn-res span { flex: 1; text-align: center; margin-right: 30px; } 
-
+            .btn-res-container { display:flex; flex-direction:column; gap:12px; width:100%; max-width:320px; }
+            .btn-res { display: flex; align-items: center; padding: 14px 25px; border-radius: 50px; font-weight: 900; font-size: 16px; text-transform: uppercase; cursor: pointer; border: none; text-decoration: none; transition: 0.1s; gap: 15px; }
+            .btn-res i { font-size: 20px; }
+            .btn-res span { flex: 1; text-align: center; margin-right: 20px; }
             .btn-novo { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
             .btn-outro { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); box-shadow: 0 6px 0 var(--primary-blue); }
             .btn-sair { background: #dce4ee; color: #5d7082; box-shadow: 0 6px 0 #b8c5d4; }
-            
             .btn-res:active { transform: translateY(3px); box-shadow: none; }
         </style>
-
         <div class="res-inner">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:10px; object-fit:contain;">
-            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.8rem; margin-bottom:5px; text-align:center;">${rel.titulo}</h2>
-            
+            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:10px;">
+            <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.6rem; margin-bottom:5px;">${rel.titulo}</h2>
             <div class="res-stats">
-                <div class="stat-box">
-                    <span class="stat-val" style="color:#7ed321;">${acertos}</span>
-                    <span class="stat-label">Certos</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-val" style="color:#ff5e5e;">${erros}</span>
-                    <span class="stat-label">Errados</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-val" style="color:#f59e0b;">${contadorAjudas}</span>
-                    <span class="stat-label">Ajudas</span>
-                </div>
+                <div class="stat-box"><span class="stat-val" style="color:#7ed321;">${acertos}</span><span class="stat-label">Certos</span></div>
+                <div class="stat-box"><span class="stat-val" style="color:#ff5e5e;">${erros}</span><span class="stat-label">Errados</span></div>
+                <div class="stat-box"><span class="stat-val" style="color:#f59e0b;">${contadorAjudas}</span><span class="stat-label">Ajudas</span></div>
             </div>
-
             <div class="btn-res-container">
-                <button class="btn-res btn-novo" onclick="location.reload()">
-                    <i class="fas fa-rotate-right"></i> <span>Jogar de Novo</span>
-                </button>
-                
-                <button class="btn-res btn-outro" onclick="openRDMenu()">
-                    <i class="fas fa-chart-line"></i> <span>Outro Nível</span>
-                </button>
-                
-                <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-sair">
-                    <i class="fas fa-right-from-bracket"></i> <span>Sair</span>
-                </a>
+                <button class="btn-res btn-novo" onclick="location.reload()"><i class="fas fa-rotate-right"></i><span>Jogar de Novo</span></button>
+                <button class="btn-res btn-outro" onclick="openRDMenu()"><i class="fas fa-chart-line"></i><span>Outro Nível</span></button>
+                <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-sair"><i class="fas fa-right-from-bracket"></i><span>Sair</span></a>
             </div>
         </div>
     `;
-    document.querySelectorAll('.screen').forEach(s => { if(s.id !== 'scr-result') s.classList.remove('active'); });
     document.getElementById('status-bar').style.display = 'none';
 }
