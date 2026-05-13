@@ -12,30 +12,32 @@ const DESAFIOS_ANTONIMOS = {
         { pergunta: "RÁPIDO", opcoes: ["LENTO", "FORTE", "MAGRO", "ALTO"], resposta: "LENTO" },
         { pergunta: "BONITO", opcoes: ["FEIO", "VELHO", "MAU", "TRISTE"], resposta: "FEIO" }
     ],
+    // NÍVEL 2: VERDADEIRO OU FALSO
     nivel2: [
-        { pergunta: "PESADO", opcoes: ["LEVE", "CURTO", "FRACO", "MOLE"], resposta: "LEVE" },
-        { pergunta: "CHEIO", opcoes: ["VAZIO", "POUCO", "NADA", "CURTO"], resposta: "VAZIO" },
-        { pergunta: "MAGRO", opcoes: ["GORDO", "ALTO", "FORTE", "BAIXO"], resposta: "GORDO" },
-        { pergunta: "MUITO", opcoes: ["POUCO", "NADA", "BASTANTE", "MUITO"], resposta: "POUCO" },
-        { pergunta: "CLARO", opcoes: ["ESCURO", "BRANCO", "PRETO", "AZUL"], resposta: "ESCURO" },
-        { pergunta: "COMPRIDO", opcoes: ["CURTO", "PEQUENO", "BAIXO", "MAGRO"], resposta: "CURTO" },
-        { pergunta: "MOLE", opcoes: ["DURO", "FORTE", "SECO", "QUENTE"], resposta: "DURO" },
-        { pergunta: "NOVO", opcoes: ["VELHO", "USADO", "ANTIGO", "BOM"], resposta: "VELHO" },
-        { pergunta: "FÁCIL", opcoes: ["DIFÍCIL", "LENTO", "MAU", "COMPRIDO"], resposta: "DIFÍCIL" },
-        { pergunta: "SECO", opcoes: ["MOLHADO", "FRIO", "LIMPO", "MOLE"], resposta: "MOLHADO" }
+        { par: ["PESADO", "LEVE"], resposta: true },    // Certo
+        { par: ["PESADO", "GRANDE"], resposta: false }, // Errado
+        { par: ["MAGRO", "GORDO"], resposta: true },     // Certo
+        { par: ["MAGRO", "ALTO"], resposta: false },    // Errado
+        { par: ["CHEIO", "VAZIO"], resposta: true },     // Certo
+        { par: ["CHEIO", "MUITO"], resposta: false },    // Errado
+        { par: ["COMPRIDO", "CURTO"], resposta: true },  // Certo
+        { par: ["COMPRIDO", "LARGO"], resposta: false }, // Errado
+        { par: ["SECO", "MOLHADO"], resposta: true },    // Certo
+        { par: ["SECO", "LIMPO"], resposta: false }     // Errado
     ]
 };
 
-// === DEFINIÇÃO DAS CATEGORIAS PARA O MENU RD ===
 const JOGO_CATEGORIAS = {
     "Nível 1": { 
-        nome: "Antónimos Simples", 
+        nome: "Escolha Múltipla", 
+        tipo: "multipla",
         target: 10, 
         desafios: DESAFIOS_ANTONIMOS.nivel1,
         imgCapa: "cnivel1.png" 
     },
     "Nível 2": { 
-        nome: "Mais Opostos!", 
+        nome: "Certo ou Errado?", 
+        tipo: "v_f",
         target: 10, 
         desafios: DESAFIOS_ANTONIMOS.nivel2,
         imgCapa: "cnivel2.png" 
