@@ -1,3 +1,4 @@
+// === CONFIGURAÇÃO DE DESAFIOS (ANTÓNIMOS) ===
 const DESAFIOS_ANTONIMOS = {
     nivel1: [
         { pergunta: "ALTO", opcoes: ["BAIXO", "GRANDE", "LARGO", "PESADO"], resposta: "BAIXO" },
@@ -23,4 +24,20 @@ const DESAFIOS_ANTONIMOS = {
         { pergunta: "FÁCIL", opcoes: ["DIFÍCIL", "LENTO", "MAU", "COMPRIDO"], resposta: "DIFÍCIL" },
         { pergunta: "SECO", opcoes: ["MOLHADO", "FRIO", "LIMPO", "MOLE"], resposta: "MOLHADO" }
     ]
+};
+
+// === DEFINIÇÃO DAS CATEGORIAS PARA O MENU RD ===
+const JOGO_CATEGORIAS = {
+    "Nível 1": { 
+        nome: "Antónimos Simples", 
+        target: 10, 
+        desafios: DESAFIOS_ANTONIMOS.nivel1,
+        imgCapa: "cnivel1.png" 
+    },
+    "Nível 2": { 
+        nome: "Mais Opostos!", 
+        target: 10, 
+        desafios: DESAFIOS_ANTONIMOS.nivel2,
+        imgCapa: "cnivel2.png" 
+    }
 };
