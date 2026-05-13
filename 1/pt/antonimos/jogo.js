@@ -5,12 +5,14 @@ let contadorAjudas = 0;
 let desafiosEmbaralhados = [];
 let jogoAtivo = false;
 
+// Garante que a categoria inicial existe
 let categoriaAtual = "Nível 1"; 
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
+// Função para baralhar arrays
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -19,11 +21,14 @@ function shuffleArray(array) {
     return array;
 }
 
-// === 1. INICIALIZAÇÃO ===
+// === 1. INICIALIZAÇÃO (Chamada pelo index.html) ===
 window.startLogic = function() {
-    if (!categoriaAtual || !JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = "Nível 1";
-    
-    // Configura o Botão de Ajuda (Lâmpada)
+    // Sincronizar a categoria atual com o que existe no JOGO_CONFIG
+    if (!JOGO_CONFIG.categorias[categoriaAtual]) {
+        categoriaAtual = Object.keys(JOGO_CONFIG.categorias)[0];
+    }
+
+    // Configura o Botão de Ajuda (Lâmpada) no lugar do timer
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.id = "btn-ajuda";
@@ -33,11 +38,11 @@ window.startLogic = function() {
         timerBadge.style.padding = "0";
         timerBadge.style.display = "flex";
         timerBadge.style.alignItems = "center";
-        timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:35px; width:auto;">`;
+        timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:35px; width:auto; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">`;
         timerBadge.onclick = darAjuda;
     }
 
-    // Padronizar badges da barra de estado
+    // Padronizar badges (Ronda, Acertos, Erros)
     const badges = document.querySelectorAll('.badge');
     badges.forEach(b => {
         b.style.height = "28px";
@@ -49,28 +54,37 @@ window.startLogic = function() {
     });
 
     const introContainer = document.getElementById('intro-animation-container');
-    introContainer.innerHTML = `
-        <div style="text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px;">
-            <div style="font-size: clamp(50px, 10vh, 80px);">🤔 ↔️ 😄</div>
-            <h2 style="color: var(--primary-blue); font-size: 22px; font-weight:900;">ANTÓNIMOS</h2>
-            <p style="color: var(--text-grey); font-weight:700;">Encontra os opostos!</p>
-        </div>
-    `;
+    if (introContainer) {
+        introContainer.innerHTML = `
+            <div style="text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px;">
+                <div style="font-size: clamp(50px, 10vh, 80px);">🤔 ↔️ 😄</div>
+                <h2 style="color: var(--primary-blue); font-size: 22px; font-weight:900; text-transform:uppercase;">Antónimos</h2>
+                <p style="color: var(--text-grey); font-weight:700;">Encontra os opostos!</p>
+            </div>
+        `;
+    }
 };
 
 window.gerarIntroJogo = function() {
     return "Clica na palavra que significa o contrário!";
 };
 
-window.selecionarCategoria = function(key) { categoriaAtual = key; };
+window.selecionarCategoria = function(key) { 
+    categoriaAtual = key; 
+};
 
 // === 2. LÓGICA DO JOGO ===
 window.initGame = function() {
-    acertos = 0; erros = 0; contadorAjudas = 0; roundAtual = 0;
+    acertos = 0; 
+    erros = 0; 
+    contadorAjudas = 0; 
+    roundAtual = 0;
+    
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
 
-    const config = JOGO_CATEGORIAS[categoriaAtual];
+    // Puxa os desafios da categoria selecionada no JOGO_CONFIG
+    const config = JOGO_CONFIG.categorias[categoriaAtual];
     desafiosEmbaralhados = shuffleArray([...config.desafios]); 
     
     proximaRonda();
@@ -78,6 +92,7 @@ window.initGame = function() {
 
 function proximaRonda() {
     roundAtual++;
+    // O jogo termina em 10 rondas ou quando acabarem os desafios
     if (roundAtual > 10 || roundAtual > desafiosEmbaralhados.length) {
         finalizarJogo();
         return;
@@ -92,7 +107,7 @@ function renderizarDesafio() {
     const container = document.getElementById('game-main-content');
     const desafio = desafiosEmbaralhados[roundAtual - 1];
     
-    // Embaralha as 4 opções para não estarem sempre na mesma ordem
+    // Embaralha as 4 opções para que a correta não esteja sempre no mesmo sítio
     const opcoesAleatorias = shuffleArray([...desafio.opcoes]);
 
     container.innerHTML = `
@@ -106,37 +121,34 @@ function renderizarDesafio() {
                 background: #f0f9ff; border: 3px dashed var(--primary-blue); border-radius: 25px;
                 padding: 20px; width: 90%; max-width: 450px; text-align: center;
             }
-            .question-text { font-size: clamp(1.8rem, 5vh, 2.5rem); font-weight: 900; color: var(--primary-dark); text-transform: uppercase; }
+            .question-text { font-size: clamp(1.8rem, 5vh, 2.4rem); font-weight: 900; color: var(--primary-dark); text-transform: uppercase; }
             
-            .options-grid { 
-                display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 95%; max-width: 450px; 
-            }
+            .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 95%; max-width: 450px; }
             .btn-option { 
                 background: white; border: 3px solid #eee; border-radius: 18px; 
-                padding: 15px 5px; font-size: 1.1rem; font-weight: 900; color: var(--text-grey);
+                padding: 15px 5px; font-size: 1rem; font-weight: 900; color: var(--text-grey);
                 cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 #ddd; text-transform: uppercase;
             }
             .btn-option:active { transform: translateY(2px); box-shadow: none; }
-            
             .btn-option.correct-hint { animation: blinkHelp 0.6s infinite alternate; border-color: #f59e0b !important; background: #fef3c7 !important; }
             @keyframes blinkHelp { from { transform: scale(1); } to { transform: scale(1.05); } }
         </style>
 
         <div class="factory-wrapper">
-            <div class="row-title"><div style="font-size:0.75rem; font-weight:900; color:var(--primary-blue); text-transform:uppercase;">${JOGO_CATEGORIAS[categoriaAtual].nome}</div></div>
+            <div class="row-title">
+                <div style="font-size:0.75rem; font-weight:900; color:var(--primary-blue); text-transform:uppercase;">${JOGO_CONFIG.categorias[categoriaAtual].nome}</div>
+            </div>
             
             <div class="row-question">
                 <div class="question-box">
-                    <div style="font-size:0.7rem; font-weight:800; color:var(--text-grey); margin-bottom:5px;">O CONTRÁRIO DE:</div>
+                    <div style="font-size:0.7rem; font-weight:800; color:#88a; margin-bottom:5px;">QUAL É O OPOSTO DE:</div>
                     <div class="question-text">${desafio.pergunta}</div>
                 </div>
             </div>
 
             <div class="row-options">
                 <div class="options-grid">
-                    ${opcoesAleatorias.map(opt => `
-                        <button class="btn-option" onclick="validarResposta(this, '${opt}')">${opt}</button>
-                    `).join('')}
+                    ${opcoesAleatorias.map(opt => `<button class="btn-option" onclick="validarResposta(this, '${opt}')">${opt}</button>`).join('')}
                 </div>
             </div>
         </div>
@@ -154,18 +166,18 @@ window.validarResposta = function(btn, escolha) {
         somAcerto.play();
         acertos++;
         document.getElementById('hits-val').innerText = acertos;
-        btn.style.background = "#dcfce7"; // Verde Claro
+        btn.style.background = "#dcfce7"; 
         btn.style.borderColor = "#22c55e";
         btn.style.color = "#166534";
     } else {
         somErro.play();
         erros++;
         document.getElementById('miss-val').innerText = erros;
-        btn.style.background = "#fee2e2"; // Vermelho Claro
+        btn.style.background = "#fee2e2"; 
         btn.style.borderColor = "#ef4444";
         btn.style.color = "#991b1b";
         
-        // Mostrar a correta
+        // Mostrar a correta para feedback
         botoes.forEach(b => {
             if (b.innerText.trim() === desafio.resposta) {
                 b.style.background = "#dcfce7";
@@ -205,11 +217,11 @@ function finalizarJogo() {
         <style>
             .res-inner { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing: border-box; }
             .res-stats { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; width:100%; max-width:400px; margin:15px 0; }
-            .stat-box { background:white; border-radius:20px; padding:15px 5px; text-align:center; border:1px solid #f0f0f0; box-shadow:0 6px 15px rgba(0,0,0,0.05); }
+            .stat-box { background:white; border-radius:20px; padding:12px 5px; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 12px rgba(0,0,0,0.08); }
             .stat-val { display:block; font-size:24px; font-weight:900; color:var(--primary-blue); }
             .stat-label { font-size:10px; font-weight:800; color:#88a; text-transform:uppercase; }
             .btn-res-container { display:flex; flex-direction:column; gap:15px; width:100%; max-width:320px; }
-            .btn-res { display: flex; align-items: center; padding: 16px 25px; border-radius: 50px; font-weight: 900; font-size: 17px; text-transform: uppercase; cursor: pointer; border: none; text-decoration: none; transition: 0.1s; gap: 20px; }
+            .btn-res { display: flex; align-items: center; padding: 14px 25px; border-radius: 50px; font-weight: 900; font-size: 17px; text-transform: uppercase; cursor: pointer; border: none; text-decoration: none; transition: 0.1s; gap: 20px; }
             .btn-res i { font-size: 22px; }
             .btn-res span { flex: 1; text-align: center; margin-right: 30px; }
             .btn-novo { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
