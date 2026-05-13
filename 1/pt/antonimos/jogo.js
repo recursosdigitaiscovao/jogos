@@ -53,24 +53,36 @@ window.startLogic = function() {
         timerBadge.onclick = darAjuda;
     }
 
-    // --- ANIMAÇÃO EXPLICATIVA ---
+    // --- ANIMAÇÃO EXPLICATIVA (RESPONSIVA) ---
     const introContainer = document.getElementById('intro-animation-container');
     introContainer.innerHTML = `
         <style>
-            .tutorial-box { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; }
-            .words-anim { display: flex; align-items: center; gap: 20px; font-weight: 900; font-size: 1.6rem; color: var(--primary-dark); }
-            .word-card { background: white; padding: 12px 25px; border-radius: 15px; border: 4px solid var(--primary-blue); box-shadow: 0 6px 0 var(--primary-blue); animation: pulseWord 2.5s infinite ease-in-out; }
-            .arrow-anim { font-size: 2.5rem; color: var(--primary-blue); animation: flipArrow 2.5s infinite; }
+            .tutorial-box { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 10px; width:100%; }
+            .words-anim { display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 900; color: var(--primary-dark); }
+            .word-card { 
+                background: white; padding: 12px 25px; border-radius: 15px; 
+                border: 4px solid var(--primary-blue); box-shadow: 0 6px 0 var(--primary-blue); 
+                animation: pulseWord 2.5s infinite ease-in-out; min-width: 120px; text-align: center;
+            }
+            .arrow-anim { font-size: 2rem; color: var(--primary-blue); }
+            .arrow-anim::before { content: "↔️"; } /* Seta Horizontal por defeito */
+
+            /* AJUSTE PARA MOBILE VERTICAL */
+            @media (max-width: 600px) and (orientation: portrait) {
+                .words-anim { flex-direction: column; gap: 10px; }
+                .arrow-anim::before { content: "↕️"; } /* Seta Vertical em mobile */
+                .word-card { padding: 10px 20px; font-size: 1.2rem; }
+            }
+
             @keyframes pulseWord { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); color: var(--primary-blue); } }
-            @keyframes flipArrow { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(180deg); } }
         </style>
         <div class="tutorial-box">
             <div class="words-anim">
                 <div class="word-card">ALTO</div>
-                <div class="arrow-anim">↔️</div>
+                <div class="arrow-anim"></div>
                 <div class="word-card">BAIXO</div>
             </div>
-            <p style="font-weight: 900; color: var(--text-grey); text-align: center; font-size: 1.1rem; line-height: 1.4;">
+            <p style="font-weight: 900; color: var(--text-grey); text-align: center; font-size: 1rem; line-height: 1.4; margin-top:10px;">
                 Antónimos são palavras<br>com significados <span style="color:var(--primary-blue)">OPOSTOS</span>!
             </p>
         </div>
@@ -112,7 +124,6 @@ function renderizarEcra() {
         const opcoes = shuffleArray([...desafio.opcoes]);
         htmlBotoes = opcoes.map(opt => `<button class="btn-pill" onclick="validarEscolha(this, '${opt}')">${opt}</button>`).join('');
     } else {
-        // NÍVEL 2: AGORA COM A MESMA CLASSE .btn-pill DO NÍVEL 1
         htmlBotoes = `
             <button class="btn-pill btn-vf-certo" onclick="validarVF(this, true)">CERTO</button>
             <button class="btn-pill btn-vf-errado" onclick="validarVF(this, false)">ERRADO</button>
@@ -124,46 +135,32 @@ function renderizarEcra() {
             .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-evenly; padding: 10px; box-sizing: border-box; }
             .row-question { height: 40%; display: flex; align-items: center; justify-content: center; width: 100%; }
             .row-options { height: 50%; display: flex; align-items: center; justify-content: center; width: 100%; }
-            
             .question-box { background: rgba(255, 255, 255, 0.9); border: 3px dashed var(--primary-blue); border-radius: 25px; padding: 20px; width: 90%; max-width: 400px; text-align: center; }
             .main-text { font-size: 2.2rem; font-weight: 950; color: var(--primary-dark); text-transform: uppercase; }
-            
             .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 420px; }
-            
-            /* ESTILO ÚNICO PARA TODOS OS BOTÕES */
-            .btn-pill { 
-                background: white; border: 3px solid #eee; border-radius: 20px; padding: 15px 5px; 
-                font-size: 1.1rem; font-weight: 900; color: var(--text-grey); cursor: pointer; 
-                transition: 0.2s; box-shadow: 0 5px 0 #ddd; text-transform: uppercase; 
-            }
+            .btn-pill { background: white; border: 3px solid #eee; border-radius: 20px; padding: 15px 5px; font-size: 1.1rem; font-weight: 900; color: var(--text-grey); cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #ddd; text-transform: uppercase; }
             .btn-pill:active { transform: translateY(3px); box-shadow: none; }
+            .btn-vf-certo { color: #7ed321 !important; }
+            .btn-vf-errado { color: #ff5e5e !important; }
 
-            /* MOBILE VERTICAL: EMPILHAR */
             @media (max-width: 600px) and (orientation: portrait) {
                 .options-grid { grid-template-columns: 1fr; gap: 10px; width: 90%; }
                 .btn-pill { padding: 12px 5px; font-size: 1.2rem; }
             }
-
             .hint-blink { animation: blinkHelp 0.6s infinite alternate; border-color: #f59e0b !important; background: #fef3c7 !important; }
             @keyframes blinkHelp { from { transform: scale(1); } to { transform: scale(1.05); } }
         </style>
         <div class="factory-wrapper">
-            <div style="font-size:0.7rem; font-weight:900; color:var(--primary-blue); text-transform:uppercase; letter-spacing:1px;">${config.nome}</div>
-            
+            <div style="font-size:0.7rem; font-weight:900; color:var(--primary-blue); text-transform:uppercase;">${config.nome}</div>
             <div class="row-question">
                 <div class="question-box">
                     ${config.tipo === 'multipla' ? 
-                        `<div style="font-size:0.65rem; font-weight:800; color:#88a; margin-bottom:5px;">QUAL É O ANTÓNIMO DE:</div><div class="main-text">${desafio.pergunta}</div>` :
+                        `<div style="font-size:0.65rem; font-weight:800; color:#88a; margin-bottom:5px;">OPOSTO DE:</div><div class="main-text">${desafio.pergunta}</div>` :
                         `<div class="main-text" style="font-size:1.8rem;">${desafio.par[0]}</div><div style="color:var(--primary-blue); font-size:1.5rem; margin:5px;">↔️</div><div class="main-text" style="font-size:1.8rem;">${desafio.par[1]}</div>`
                     }
                 </div>
             </div>
-
-            <div class="row-options">
-                <div class="options-grid">
-                    ${htmlBotoes}
-                </div>
-            </div>
+            <div class="row-options"><div class="options-grid">${htmlBotoes}</div></div>
             <div style="height:5px;"></div>
         </div>
     `;
@@ -186,14 +183,8 @@ window.validarVF = function(btn, escolhaUtilizador) {
     setTimeout(proximaRonda, 1500);
 };
 
-function sucesso(btn) { 
-    somAcerto.play(); acertos++; document.getElementById('hits-val').innerText = acertos; 
-    btn.style.background = "#dcfce7"; btn.style.borderColor = "#22c55e"; btn.style.color = "#166534"; btn.style.boxShadow = "0 5px 0 #15803d";
-}
-function falha(btn) { 
-    somErro.play(); erros++; document.getElementById('miss-val').innerText = erros; 
-    btn.style.background = "#fee2e2"; btn.style.borderColor = "#ef4444"; btn.style.color = "#991b1b"; btn.style.boxShadow = "0 5px 0 #b91c1c";
-}
+function sucesso(btn) { somAcerto.play(); acertos++; document.getElementById('hits-val').innerText = acertos; btn.style.background = "#dcfce7"; btn.style.borderColor = "#22c55e"; btn.style.color = "#166534"; btn.style.boxShadow = "0 5px 0 #15803d"; }
+function falha(btn) { somErro.play(); erros++; document.getElementById('miss-val').innerText = erros; btn.style.background = "#fee2e2"; btn.style.borderColor = "#ef4444"; btn.style.color = "#991b1b"; btn.style.boxShadow = "0 5px 0 #b91c1c"; }
 
 window.darAjuda = function() {
     if (!jogoAtivo) return;
@@ -203,7 +194,6 @@ window.darAjuda = function() {
     if (config.tipo === "multipla") {
         document.querySelectorAll('.btn-pill').forEach(b => { if (b.innerText.trim() === desafio.resposta) { b.classList.add('hint-blink'); setTimeout(() => b.classList.remove('hint-blink'), 2500); } });
     } else {
-        // Ajuda no V/F: Brilha o botão correspondente à resposta lógica
         const targetClass = desafio.resposta ? ".btn-vf-certo" : ".btn-vf-errado";
         const b = document.querySelector(targetClass);
         if(b) { b.classList.add('hint-blink'); setTimeout(() => b.classList.remove('hint-blink'), 2500); }
