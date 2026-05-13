@@ -24,23 +24,16 @@ window.startLogic = function() {
         categoriaAtual = Object.keys(JOGO_CONFIG.categorias)[0];
     }
 
-    // --- MARCA D'ÁGUA (DOODLES) ---
+    // --- MARCA D'ÁGUA ---
     const tema = BIBLIOTECA_TEMAS[CONFIG_MESTRE.area];
     const corDoodle = tema.corPrimaria.replace('#', '%23');
-    
     let doodleBg = document.getElementById('marca-agua-doodles');
     if(!doodleBg) {
         doodleBg = document.createElement('div');
         doodleBg.id = 'marca-agua-doodles';
         document.body.appendChild(doodleBg);
     }
-    
-    doodleBg.style.cssText = `
-        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-        pointer-events: none; z-index: 0; opacity: 0.08;
-        background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='20' y='40' font-family='Arial' font-size='22' fill='${corDoodle}' font-weight='900'%3EÇ%3C/text%3E%3Ctext x='150' y='30' font-family='Arial' font-size='18' fill='${corDoodle}'%3EÃ%3C/text%3E%3Ctext x='100' y='100' font-family='Arial' font-size='30' fill='${corDoodle}'%3E↕%3C/text%3E%3Ctext x='170' y='160' font-family='Arial' font-size='20' fill='${corDoodle}'%3EÕ%3C/text%3E%3Ctext x='30' y='160' font-family='Arial' font-size='25' fill='${corDoodle}' font-weight='bold'%3E?%3C/text%3E%3Cpath d='M80 150h30v-15h-30z' fill='none' stroke='${corDoodle}' stroke-width='1.5'/%3E%3Cpath d='M20 100l10 10m-10 0l10-10' stroke='${corDoodle}' stroke-width='2'/%3E%3C/svg%3E");
-        background-repeat: repeat;
-    `;
+    doodleBg.style.cssText = `position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; opacity: 0.08; background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='20' y='40' font-family='Arial' font-size='22' fill='${corDoodle}' font-weight='900'%3EÇ%3C/text%3E%3Ctext x='150' y='30' font-family='Arial' font-size='18' fill='${corDoodle}'%3EÃ%3C/text%3E%3Ctext x='100' y='100' font-family='Arial' font-size='30' fill='${corDoodle}'%3E↕%3C/text%3E%3Ctext x='30' y='160' font-family='Arial' font-size='25' fill='${corDoodle}' font-weight='bold'%3E?%3C/text%3E%3C/svg%3E"); background-repeat: repeat;`;
     
     document.querySelector('.game-container').style.background = "transparent";
 
@@ -53,37 +46,32 @@ window.startLogic = function() {
         timerBadge.onclick = darAjuda;
     }
 
-    // --- ANIMAÇÃO EXPLICATIVA (RESPONSIVA) ---
+    // --- ANIMAÇÃO EXPLICATIVA ---
     const introContainer = document.getElementById('intro-animation-container');
     introContainer.innerHTML = `
         <style>
-            .tutorial-box { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 10px; width:100%; }
-            .words-anim { display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 900; color: var(--primary-dark); }
-            .word-card { 
-                background: white; padding: 12px 25px; border-radius: 15px; 
-                border: 4px solid var(--primary-blue); box-shadow: 0 6px 0 var(--primary-blue); 
-                animation: pulseWord 2.5s infinite ease-in-out; min-width: 120px; text-align: center;
-            }
-            .arrow-anim { font-size: 2rem; color: var(--primary-blue); }
-            .arrow-anim::before { content: "↔️"; } /* Seta Horizontal por defeito */
+            .tutorial-box { display: flex; flex-direction: column; align-items: center; justify-content: center; width:100%; gap: 15px; }
+            .words-anim { display: flex; align-items: center; justify-content: center; gap: 20px; font-weight: 900; }
+            .word-card { background: white; padding: 12px 25px; border-radius: 15px; border: 4px solid var(--primary-blue); box-shadow: 0 6px 0 var(--primary-blue); animation: pulseWord 2.5s infinite; min-width: 120px; text-align: center; font-size: 1.4rem; color: var(--primary-dark); }
+            .arrow-tut { font-size: 2.5rem; color: var(--primary-blue); display: flex; align-items: center; justify-content: center; }
+            .arrow-tut::before { content: "↔️"; }
 
-            /* AJUSTE PARA MOBILE VERTICAL */
-            @media (max-width: 600px) and (orientation: portrait) {
-                .words-anim { flex-direction: column; gap: 10px; }
-                .arrow-anim::before { content: "↕️"; } /* Seta Vertical em mobile */
-                .word-card { padding: 10px 20px; font-size: 1.2rem; }
+            /* MOBILE VERTICAL: FORÇAR CARTA EM CIMA E CARTA EM BAIXO */
+            @media (max-width: 650px) {
+                .words-anim { flex-direction: column !important; gap: 10px; }
+                .arrow-tut::before { content: "↕️" !important; }
+                .word-card { padding: 8px 20px; font-size: 1.1rem; min-width: 100px; }
             }
-
-            @keyframes pulseWord { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); color: var(--primary-blue); } }
+            @keyframes pulseWord { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         </style>
         <div class="tutorial-box">
             <div class="words-anim">
                 <div class="word-card">ALTO</div>
-                <div class="arrow-anim"></div>
+                <div class="arrow-tut"></div>
                 <div class="word-card">BAIXO</div>
             </div>
-            <p style="font-weight: 900; color: var(--text-grey); text-align: center; font-size: 1rem; line-height: 1.4; margin-top:10px;">
-                Antónimos são palavras<br>com significados <span style="color:var(--primary-blue)">OPOSTOS</span>!
+            <p style="font-weight: 900; color: var(--text-grey); text-align: center; font-size: 1.1rem; margin-top:10px;">
+                Antónimos são palavras com<br>significados <span style="color:var(--primary-blue)">OPOSTOS</span>!
             </p>
         </div>
     `;
@@ -124,9 +112,10 @@ function renderizarEcra() {
         const opcoes = shuffleArray([...desafio.opcoes]);
         htmlBotoes = opcoes.map(opt => `<button class="btn-pill" onclick="validarEscolha(this, '${opt}')">${opt}</button>`).join('');
     } else {
+        // NÍVEL 2: BOTÕES SEM CORES INICIAIS (IGUAIS AO NÍVEL 1)
         htmlBotoes = `
-            <button class="btn-pill btn-vf-certo" onclick="validarVF(this, true)">CERTO</button>
-            <button class="btn-pill btn-vf-errado" onclick="validarVF(this, false)">ERRADO</button>
+            <button class="btn-pill btn-vf-true" onclick="validarVF(this, true)">CERTO</button>
+            <button class="btn-pill btn-vf-false" onclick="validarVF(this, false)">ERRADO</button>
         `;
     }
 
@@ -138,13 +127,16 @@ function renderizarEcra() {
             .question-box { background: rgba(255, 255, 255, 0.9); border: 3px dashed var(--primary-blue); border-radius: 25px; padding: 20px; width: 90%; max-width: 400px; text-align: center; }
             .main-text { font-size: 2.2rem; font-weight: 950; color: var(--primary-dark); text-transform: uppercase; }
             .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 420px; }
-            .btn-pill { background: white; border: 3px solid #eee; border-radius: 20px; padding: 15px 5px; font-size: 1.1rem; font-weight: 900; color: var(--text-grey); cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #ddd; text-transform: uppercase; }
+            
+            .btn-pill { 
+                background: white; border: 3px solid #eee; border-radius: 20px; padding: 15px 5px; 
+                font-size: 1.1rem; font-weight: 900; color: var(--text-grey); cursor: pointer; 
+                transition: 0.2s; box-shadow: 0 5px 0 #ddd; text-transform: uppercase; 
+            }
             .btn-pill:active { transform: translateY(3px); box-shadow: none; }
-            .btn-vf-certo { color: #7ed321 !important; }
-            .btn-vf-errado { color: #ff5e5e !important; }
 
             @media (max-width: 600px) and (orientation: portrait) {
-                .options-grid { grid-template-columns: 1fr; gap: 10px; width: 90%; }
+                .options-grid { grid-template-columns: 1fr !important; gap: 10px; width: 90%; }
                 .btn-pill { padding: 12px 5px; font-size: 1.2rem; }
             }
             .hint-blink { animation: blinkHelp 0.6s infinite alternate; border-color: #f59e0b !important; background: #fef3c7 !important; }
@@ -155,7 +147,7 @@ function renderizarEcra() {
             <div class="row-question">
                 <div class="question-box">
                     ${config.tipo === 'multipla' ? 
-                        `<div style="font-size:0.65rem; font-weight:800; color:#88a; margin-bottom:5px;">OPOSTO DE:</div><div class="main-text">${desafio.pergunta}</div>` :
+                        `<div style="font-size:0.65rem; font-weight:800; color:#88a; margin-bottom:5px;">QUAL É O ANTÓNIMO DE:</div><div class="main-text">${desafio.pergunta}</div>` :
                         `<div class="main-text" style="font-size:1.8rem;">${desafio.par[0]}</div><div style="color:var(--primary-blue); font-size:1.5rem; margin:5px;">↔️</div><div class="main-text" style="font-size:1.8rem;">${desafio.par[1]}</div>`
                     }
                 </div>
@@ -183,8 +175,14 @@ window.validarVF = function(btn, escolhaUtilizador) {
     setTimeout(proximaRonda, 1500);
 };
 
-function sucesso(btn) { somAcerto.play(); acertos++; document.getElementById('hits-val').innerText = acertos; btn.style.background = "#dcfce7"; btn.style.borderColor = "#22c55e"; btn.style.color = "#166534"; btn.style.boxShadow = "0 5px 0 #15803d"; }
-function falha(btn) { somErro.play(); erros++; document.getElementById('miss-val').innerText = erros; btn.style.background = "#fee2e2"; btn.style.borderColor = "#ef4444"; btn.style.color = "#991b1b"; btn.style.boxShadow = "0 5px 0 #b91c1c"; }
+function sucesso(btn) { 
+    somAcerto.play(); acertos++; document.getElementById('hits-val').innerText = acertos; 
+    btn.style.background = "#dcfce7"; btn.style.borderColor = "#22c55e"; btn.style.color = "#166534"; btn.style.boxShadow = "0 5px 0 #15803d";
+}
+function falha(btn) { 
+    somErro.play(); erros++; document.getElementById('miss-val').innerText = erros; 
+    btn.style.background = "#fee2e2"; btn.style.borderColor = "#ef4444"; btn.style.color = "#991b1b"; btn.style.boxShadow = "0 5px 0 #b91c1c";
+}
 
 window.darAjuda = function() {
     if (!jogoAtivo) return;
@@ -194,7 +192,7 @@ window.darAjuda = function() {
     if (config.tipo === "multipla") {
         document.querySelectorAll('.btn-pill').forEach(b => { if (b.innerText.trim() === desafio.resposta) { b.classList.add('hint-blink'); setTimeout(() => b.classList.remove('hint-blink'), 2500); } });
     } else {
-        const targetClass = desafio.resposta ? ".btn-vf-certo" : ".btn-vf-errado";
+        const targetClass = desafio.resposta ? ".btn-vf-true" : ".btn-vf-false";
         const b = document.querySelector(targetClass);
         if(b) { b.classList.add('hint-blink'); setTimeout(() => b.classList.remove('hint-blink'), 2500); }
     }
