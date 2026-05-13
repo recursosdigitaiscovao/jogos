@@ -24,6 +24,25 @@ window.startLogic = function() {
         categoriaAtual = Object.keys(JOGO_CONFIG.categorias)[0];
     }
 
+    // --- LÓGICA DA MARCA DE ÁGUA (DOODLES) ---
+    const tema = BIBLIOTECA_TEMAS[CONFIG_MESTRE.area];
+    const corDoodle = tema.corPrimaria.replace('#', '%23'); // Prepara cor para o SVG
+
+    // Remove fundo antigo se existir para não duplicar
+    const antigo = document.getElementById('marca-agua-doodles');
+    if(antigo) antigo.remove();
+
+    const doodleBg = document.createElement('div');
+    doodleBg.id = 'marca-agua-doodles';
+    doodleBg.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        pointer-events: none; z-index: -1; opacity: 0.06;
+        background-image: url("data:image/svg+xml,%3Csvg width='250' height='250' viewBox='0 0 250 250' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' font-family='Arial' font-size='26' fill='${corDoodle}' font-weight='bold'%3EÇ%3C/text%3E%3Ctext x='180' y='40' font-family='Arial' font-size='22' fill='${corDoodle}'%3EÃ%3C/text%3E%3Ctext x='110' y='120' font-family='Arial' font-size='35' fill='${corDoodle}'%3E↕%3C/text%3E%3Ctext x='40' y='200' font-family='Arial' font-size='24' fill='${corDoodle}'%3EÕ%3C/text%3E%3Ctext x='210' y='210' font-family='Arial' font-size='28' fill='${corDoodle}' font-weight='bold'%3E?%3C/text%3E%3Ctext x='20' y='110' font-family='Arial' font-size='20' fill='${corDoodle}'%3E!%3C/text%3E%3Cpath d='M150 180h30v-20h-30zM150 170h30' fill='none' stroke='${corDoodle}' stroke-width='1.5'/%3E%3Cpath d='M80 30l15 15m-15 0l15-15' stroke='${corDoodle}' stroke-width='2'/%3E%3Cpath d='M200 100c0 10-15 10-15 20' fill='none' stroke='${corDoodle}' stroke-width='2'/%3E%3C/svg%3E");
+        background-repeat: repeat;
+    `;
+    document.body.appendChild(doodleBg);
+
+    // Configuração do Botão Ajuda
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.id = "btn-ajuda";
@@ -48,13 +67,13 @@ window.startLogic = function() {
         <div style="text-align:center; display:flex; flex-direction:column; align-items:center; gap:10px;">
             <div style="font-size: 70px;">🤔 ↔️ 😄</div>
             <h2 style="color: var(--primary-blue); font-size: 22px; font-weight:900; text-transform:uppercase;">Antónimos</h2>
-            <p style="color: var(--text-grey); font-weight:700;">Encontra os opostos!</p>
+            <p style="color: var(--text-grey); font-weight:700;">Diz o contrário das palavras!</p>
         </div>
     `;
 };
 
 window.gerarIntroJogo = function() {
-    return categoriaAtual === "Nível 1" ? "Clica no antónimo correto!" : "Estes pares são antónimos?";
+    return categoriaAtual === "Nível 1" ? "Escolhe o antónimo correto!" : "Estes pares são antónimos?";
 };
 
 window.selecionarCategoria = function(key) { categoriaAtual = key; };
@@ -64,7 +83,6 @@ window.initGame = function() {
     acertos = 0; erros = 0; contadorAjudas = 0; roundAtual = 0;
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
-
     const config = JOGO_CONFIG.categorias[categoriaAtual];
     desafiosEmbaralhados = shuffleArray([...config.desafios]); 
     proximaRonda();
@@ -86,7 +104,6 @@ function renderizarEcra() {
     let htmlConteudo = "";
 
     if (config.tipo === "multipla") {
-        // LAYOUT ESCOLHA MÚLTIPLA
         const opcoes = shuffleArray([...desafio.opcoes]);
         htmlConteudo = `
             <div class="row-question">
@@ -102,7 +119,6 @@ function renderizarEcra() {
             </div>
         `;
     } else {
-        // LAYOUT CERTO OU ERRADO (Nível 2)
         htmlConteudo = `
             <div class="row-question">
                 <div class="question-box" style="border-style: solid; background: white;">
@@ -125,89 +141,57 @@ function renderizarEcra() {
             .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-evenly; padding: 10px; box-sizing: border-box; }
             .row-question { height: 40%; display: flex; align-items: center; justify-content: center; width: 100%; }
             .row-options { height: 50%; display: flex; align-items: center; justify-content: center; width: 100%; }
-            .question-box { background: #f0f9ff; border: 3px dashed var(--primary-blue); border-radius: 25px; padding: 20px; width: 90%; max-width: 400px; text-align: center; }
+            .question-box { background: rgba(240, 249, 255, 0.85); border: 3px dashed var(--primary-blue); border-radius: 25px; padding: 20px; width: 90%; max-width: 400px; text-align: center; }
             .main-text { font-size: 2.2rem; font-weight: 950; color: var(--primary-dark); text-transform: uppercase; }
-            
             .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 400px; }
-            @media (max-width: 600px) and (orientation: portrait) { .options-grid { grid-template-columns: 1fr; } }
-            
+            @media (max-width: 600px) and (orientation: portrait) { .options-grid { grid-template-columns: 1fr; gap: 8px; } .btn-pill { padding: 12px 5px !important; } }
             .tf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 400px; }
-            
             .btn-pill, .btn-tf { background: white; border: 3px solid #eee; border-radius: 20px; padding: 15px 5px; font-size: 1.1rem; font-weight: 900; color: var(--text-grey); cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #ddd; text-transform: uppercase; }
             .btn-certo { border-color: #7ed321; color: #7ed321; }
             .btn-errado { border-color: #ff5e5e; color: #ff5e5e; }
             .btn-pill:active, .btn-tf:active { transform: translateY(3px); box-shadow: none; }
-            
             .hint-blink { animation: blinkHelp 0.6s infinite alternate; border-color: #f59e0b !important; background: #fef3c7 !important; }
             @keyframes blinkHelp { from { transform: scale(1); } to { transform: scale(1.05); } }
         </style>
         <div class="factory-wrapper">
             <div style="font-size:0.7rem; font-weight:900; color:var(--primary-blue); text-transform:uppercase;">${config.nome}</div>
             ${htmlConteudo}
-            <div style="height:5px;"></div> <!-- Padding fundo -->
+            <div style="height:5px;"></div>
         </div>
     `;
 }
 
-// Validação Nível 1
 window.validarEscolha = function(btn, escolha) {
     if (!jogoAtivo) return;
     jogoAtivo = false;
     const desafio = desafiosEmbaralhados[roundAtual - 1];
-    if (escolha === desafio.resposta) {
-        sucesso(btn);
-    } else {
-        falha(btn);
-        document.querySelectorAll('.btn-pill').forEach(b => {
-            if(b.innerText.trim() === desafio.resposta) b.style.borderColor = "#7ed321";
-        });
-    }
+    if (escolha === desafio.resposta) { sucesso(btn); } 
+    else { falha(btn); document.querySelectorAll('.btn-pill').forEach(b => { if(b.innerText.trim() === desafio.resposta) b.style.borderColor = "#7ed321"; }); }
     setTimeout(proximaRonda, 1500);
 };
 
-// Validação Nível 2
 window.validarVF = function(btn, escolhaUtilizador) {
     if (!jogoAtivo) return;
     jogoAtivo = false;
     const desafio = desafiosEmbaralhados[roundAtual - 1];
-    if (escolhaUtilizador === desafio.resposta) {
-        sucesso(btn);
-    } else {
-        falha(btn);
-    }
+    if (escolhaUtilizador === desafio.resposta) { sucesso(btn); } else { falha(btn); }
     setTimeout(proximaRonda, 1500);
 };
 
-function sucesso(btn) {
-    somAcerto.play(); acertos++;
-    document.getElementById('hits-val').innerText = acertos;
-    btn.style.background = "#dcfce7"; btn.style.borderColor = "#22c55e"; btn.style.color = "#166534";
-}
-
-function falha(btn) {
-    somErro.play(); erros++;
-    document.getElementById('miss-val').innerText = erros;
-    btn.style.background = "#fee2e2"; btn.style.borderColor = "#ef4444"; btn.style.color = "#991b1b";
-}
+function sucesso(btn) { somAcerto.play(); acertos++; document.getElementById('hits-val').innerText = acertos; btn.style.background = "#dcfce7"; btn.style.borderColor = "#22c55e"; btn.style.color = "#166534"; }
+function falha(btn) { somErro.play(); erros++; document.getElementById('miss-val').innerText = erros; btn.style.background = "#fee2e2"; btn.style.borderColor = "#ef4444"; btn.style.color = "#991b1b"; }
 
 window.darAjuda = function() {
     if (!jogoAtivo) return;
     contadorAjudas++;
     const desafio = desafiosEmbaralhados[roundAtual - 1];
     const config = JOGO_CONFIG.categorias[categoriaAtual];
-
     if (config.tipo === "multipla") {
-        document.querySelectorAll('.btn-pill').forEach(b => {
-            if (b.innerText.trim() === desafio.resposta) {
-                b.classList.add('hint-blink');
-                setTimeout(() => b.classList.remove('hint-blink'), 2500);
-            }
-        });
+        document.querySelectorAll('.btn-pill').forEach(b => { if (b.innerText.trim() === desafio.resposta) { b.classList.add('hint-blink'); setTimeout(() => b.classList.remove('hint-blink'), 2500); } });
     } else {
-        const classeAlvo = desafio.resposta ? ".btn-certo" : ".btn-errado";
-        const b = document.querySelector(classeAlvo);
-        b.classList.add('hint-blink');
-        setTimeout(() => b.classList.remove('hint-blink'), 2500);
+        const target = desafio.resposta ? ".btn-certo" : ".btn-errado";
+        const b = document.querySelector(target);
+        if(b) { b.classList.add('hint-blink'); setTimeout(() => b.classList.remove('hint-blink'), 2500); }
     }
 };
 
