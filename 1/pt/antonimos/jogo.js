@@ -94,7 +94,7 @@ function renderizarDesafio() {
 
     container.innerHTML = `
         <style>
-            .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-between; padding: 10px; box-sizing: border-box; }
+            .factory-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: space-evenly; padding: 10px; box-sizing: border-box; }
             .row-title { height: 5%; display: flex; align-items: center; justify-content: center; }
             .row-question { height: 25%; display: flex; align-items: center; justify-content: center; width: 100%; }
             .row-options { height: 65%; display: flex; align-items: center; justify-content: center; width: 100%; }
@@ -105,20 +105,29 @@ function renderizarDesafio() {
             }
             .question-text { font-size: clamp(1.6rem, 4vh, 2.2rem); font-weight: 950; color: var(--primary-dark); text-transform: uppercase; }
             
-            /* OPÇÕES UMA POR BAIXO DA OUTRA */
-            .options-list { 
-                display: flex; flex-direction: column; gap: 8px; width: 95%; max-width: 400px; 
+            /* GRELHA PADRÃO (2 colunas para ecrãs maiores) */
+            .options-grid { 
+                display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 95%; max-width: 450px; 
             }
+
+            /* ALTERAÇÃO PARA MOBILE VERTICAL (Empilhado) */
+            @media (max-width: 600px) and (orientation: portrait) {
+                .options-grid { 
+                    grid-template-columns: 1fr; 
+                    gap: 8px;
+                }
+                .btn-option { padding: 12px 10px !important; }
+            }
+
             .btn-option { 
                 background: white; border: 3px solid #eee; border-radius: 15px; 
-                padding: clamp(10px, 2vh, 15px) 10px; font-size: 1.1rem; font-weight: 900; color: var(--text-grey);
+                padding: 15px 5px; font-size: 1rem; font-weight: 900; color: var(--text-grey);
                 cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 #ddd; text-transform: uppercase;
-                width: 100%;
             }
             .btn-option:active { transform: translateY(2px); box-shadow: none; }
             
             .btn-option.correct-hint { animation: blinkHelp 0.6s infinite alternate; border-color: #f59e0b !important; background: #fef3c7 !important; }
-            @keyframes blinkHelp { from { transform: scale(1); } to { transform: scale(1.02); } }
+            @keyframes blinkHelp { from { transform: scale(1); } to { transform: scale(1.03); } }
         </style>
 
         <div class="factory-wrapper">
@@ -128,13 +137,13 @@ function renderizarDesafio() {
             
             <div class="row-question">
                 <div class="question-box">
-                    <div style="font-size:0.6rem; font-weight:800; color:#88a; margin-bottom:2px;">QUAL É O OPOSTO DE:</div>
+                    <div style="font-size:0.6rem; font-weight:800; color:#88a; margin-bottom:2px;">O OPOSTO DE:</div>
                     <div class="question-text">${desafio.pergunta}</div>
                 </div>
             </div>
 
             <div class="row-options">
-                <div class="options-list">
+                <div class="options-grid">
                     ${opcoesAleatorias.map(opt => `<button class="btn-option" onclick="validarResposta(this, '${opt}')">${opt}</button>`).join('')}
                 </div>
             </div>
@@ -196,22 +205,21 @@ function finalizarJogo() {
     document.getElementById('scr-game').innerHTML = ""; 
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
-        <style>
-            .res-inner { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing: border-box; }
-            .res-stats { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; width:100%; max-width:400px; margin:15px 0; }
-            .stat-box { background:white; border-radius:20px; padding:15px 5px; text-align:center; border:1px solid #f0f0f0; box-shadow:0 6px 15px rgba(0,0,0,0.05); }
-            .stat-val { display:block; font-size:24px; font-weight:900; color:var(--primary-blue); }
-            .stat-label { font-size:10px; font-weight:800; color:#88a; text-transform:uppercase; }
-            .btn-res-container { display:flex; flex-direction:column; gap:12px; width:100%; max-width:320px; }
-            .btn-res { display: flex; align-items: center; padding: 14px 25px; border-radius: 50px; font-weight: 900; font-size: 16px; text-transform: uppercase; cursor: pointer; border: none; text-decoration: none; transition: 0.1s; gap: 15px; }
-            .btn-res i { font-size: 20px; }
-            .btn-res span { flex: 1; text-align: center; margin-right: 20px; }
-            .btn-novo { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
-            .btn-outro { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); box-shadow: 0 6px 0 var(--primary-blue); }
-            .btn-sair { background: #dce4ee; color: #5d7082; box-shadow: 0 6px 0 #b8c5d4; }
-            .btn-res:active { transform: translateY(3px); box-shadow: none; }
-        </style>
-        <div class="res-inner">
+        <div class="res-inner" style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing: border-box;">
+            <style>
+                .res-stats { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; width:100%; max-width:400px; margin:15px 0; }
+                .stat-box { background:white; border-radius:20px; padding:15px 5px; text-align:center; border:1px solid #f0f0f0; box-shadow:0 6px 15px rgba(0,0,0,0.05); }
+                .stat-val { display:block; font-size:24px; font-weight:900; color:var(--primary-blue); }
+                .stat-label { font-size:10px; font-weight:800; color:#88a; text-transform:uppercase; }
+                .btn-res-container { display:flex; flex-direction:column; gap:12px; width:100%; max-width:320px; }
+                .btn-res { display: flex; align-items: center; padding: 14px 25px; border-radius: 50px; font-weight: 900; font-size: 16px; text-transform: uppercase; cursor: pointer; border: none; text-decoration: none; transition: 0.1s; gap: 20px; }
+                .btn-res i { font-size: 20px; }
+                .btn-res span { flex: 1; text-align: center; margin-right: 20px; }
+                .btn-novo { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
+                .btn-outro { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); box-shadow: 0 6px 0 var(--primary-blue); }
+                .btn-sair { background: #dce4ee; color: #5d7082; box-shadow: 0 6px 0 #b8c5d4; }
+                .btn-res:active { transform: translateY(3px); box-shadow: none; }
+            </style>
             <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:100px; margin-bottom:10px;">
             <h2 style="color:var(--primary-blue); font-weight:900; font-size:1.8rem; margin-bottom:5px;">${rel.titulo}</h2>
             <div class="res-stats">
