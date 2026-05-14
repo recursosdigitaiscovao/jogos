@@ -4,39 +4,48 @@ let acertos = 0;
 let erros = 0;
 let jogoAtivo = false;
 let ajudaDisponivel = true;
+let lanternaAtiva = false; // Controlo para mostrar a lanterna apenas após o toque
 
-// Cor Castanha do sistema
 const COR_CASTANHA = "#6C3737"; 
 
-// 1. INICIALIZAÇÃO
+// 1. INICIALIZAÇÃO DA UI E LÓGICA
 window.startLogic = function() {
     rondaAtual = 1;
     acertos = 0;
     erros = 0;
     jogoAtivo = false;
     ajudaDisponivel = true;
+    lanternaAtiva = false;
 
-    // Injetar a Lâmpada de Ajuda (Imagem limpa)
-    const timerBadge = document.querySelector('.badge-timer');
-    if(timerBadge) {
-        timerBadge.style.cursor = "pointer";
-        timerBadge.style.background = "rgba(255,255,255,0.2)";
-        timerBadge.innerHTML = `
-            <img id="btn-ajuda-luz" src="${JOGO_CONFIG.caminhoImg}lampada.png" 
-                 style="height:30px; width:auto; vertical-align:middle; transition: 0.3s;"> 
-            <span id="timer-val" style="color:white; margin-left:5px; font-weight:900;">REVELAR</span>
+    // REORGANIZAÇÃO DA BARRA DE ESTADO (Formatada conforme pedido)
+    const statusBar = document.getElementById('status-bar');
+    if(statusBar) {
+        statusBar.style.display = "none"; // Escondida na intro
+        statusBar.innerHTML = `
+            <div class="status-group" style="display:flex; gap:10px; align-items:center;">
+                <div class="badge badge-timer" id="btn-ajuda-luz" style="cursor:pointer; background:rgba(255,255,255,0.2); padding: 5px 12px;">
+                    <img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:25px; vertical-align:middle;">
+                </div>
+                <div class="badge badge-round" style="background:var(--primary-blue); font-size:14px;">
+                    <span id="round-val">1 / 10</span>
+                </div>
+            </div>
+            <div class="status-group" style="display:flex; gap:8px; align-items:center;">
+                <div class="badge" style="background:#7ed321;">✓ <span id="hits-val">0</span></div>
+                <div class="badge" style="background:#ff5e5e;">✗ <span id="miss-val">0</span></div>
+                <img id="rd-game-btn" src="${JOGO_CONFIG.caminhoImg}rd.png" style="height:35px; width:35px; cursor:pointer;" onclick="openRDMenu(event)">
+            </div>
         `;
-        timerBadge.onclick = usarAjudaRelampago;
+        document.getElementById('btn-ajuda-luz').onclick = usarAjudaRelampago;
     }
     
     atualizarPlacar();
     renderTutorialAnimation();
 };
 
-// FUNÇÃO DE AJUDA: RELÂMPAGO (Mostra tudo por 1 segundo)
+// AJUDA: RELÂMPAGO
 function usarAjudaRelampago() {
     if (!jogoAtivo || !ajudaDisponivel) return;
-    
     ajudaDisponivel = false;
     const lanternaMask = document.getElementById('lanterna');
     const focoBrilho = document.getElementById('flashlight-glow');
@@ -44,31 +53,27 @@ function usarAjudaRelampago() {
 
     if(btnLuz) btnLuz.style.opacity = "0.2";
 
-    // Efeito Relâmpago: Remove a escuridão
     lanternaMask.style.transition = "opacity 0.2s ease-out";
-    lanternaMask.style.opacity = "0"; // Revela o fundo
+    lanternaMask.style.opacity = "0"; 
     if(focoBrilho) focoBrilho.style.display = "none";
 
-    // Tocar um som de "shimmer" ou luz se quiseres, ou usar o de acerto
-    
     setTimeout(() => {
-        // Volta a escuridão
         lanternaMask.style.opacity = "1";
         if(focoBrilho) focoBrilho.style.display = "block";
-        
-        // Cooldown da ajuda (pode ser usado novamente após 5 segundos)
         setTimeout(() => {
             ajudaDisponivel = true;
             if(btnLuz) btnLuz.style.opacity = "1";
         }, 5000);
-    }, 1200); // 1.2 segundos de visão total
+    }, 1200);
 }
 
+// TUTORIAL DINÂMICO
 function renderTutorialAnimation() {
     const container = document.getElementById('intro-animation-container');
     const config = JOGO_CATEGORIAS[categoriaAtual];
+    
     const animalExemplo = config.tipoAlvo === "domestico" ? "cao.png" : "leao.png";
-    const textoTutorial = config.tipoAlvo === "domestico" ? "ENCONTRA OS DOMÉSTICOS" : "ENCONTRA OS SELVAGENS";
+    const textoTutorial = config.tipoAlvo === "domestico" ? "DOMÉSTICOS" : "SELVAGENS";
 
     container.innerHTML = `
         <style>
@@ -85,12 +90,12 @@ function renderTutorialAnimation() {
                 transform: translate(-50%, -50%); z-index: 5; 
                 animation: revealTut 5s infinite ease-in-out;
             }
-            .tut-label { font-weight: 900; color: var(--primary-blue); font-size: 0.9rem; }
+            .tut-label { font-weight: 900; color: var(--primary-blue); font-size: 0.9rem; text-transform: uppercase; }
             @keyframes moveTut { 0%, 100% { left: 20%; top: 30%; } 40%, 60% { left: 70%; top: 50%; } 80% { left: 40%; top: 70%; } }
             @keyframes revealTut { 0%, 30%, 70%, 100% { opacity: 0; } 45%, 55% { opacity: 1; } }
         </style>
         <div class="tutorial-wrap">
-            <div class="tut-label">${textoTutorial}</div>
+            <div class="tut-label">ENCONTRA OS ${textoTutorial}</div>
             <div class="tutorial-box">
                 <div class="tut-spot"></div>
                 <img src="${JOGO_CONFIG.caminhoImg}${config.pastaAlvos}${animalExemplo}" class="tut-animal">
@@ -102,6 +107,7 @@ function renderTutorialAnimation() {
 // 2. MOTOR DO JOGO
 window.initGame = function() {
     jogoAtivo = true;
+    lanternaAtiva = false; // Reset da lanterna para cada jogo
     renderizarEstruturaLanterna();
     proximaRonda();
 };
@@ -115,25 +121,22 @@ function renderizarEstruturaLanterna() {
     container.innerHTML = `
         <style>
             #night-zone { position: relative; width: 100%; height: 100%; background: ${COR_CASTANHA}; overflow: hidden; cursor: none; border-radius: 25px; touch-action: none; }
-            /* Máscara Desfocada */
             .spotlight-mask { 
                 position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
                 background: ${COR_CASTANHA}; pointer-events: none; z-index: 10; 
                 --x: 50%; --y: 50%; 
                 mask-image: radial-gradient(circle 125px at var(--x) var(--y), transparent 0%, black 95%); 
                 -webkit-mask-image: radial-gradient(circle 125px at var(--x) var(--y), transparent 0%, black 95%); 
+                opacity: 0; transition: opacity 0.3s ease;
             }
             #flashlight-glow { 
                 position: absolute; width: 250px; height: 250px; 
                 background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 75%);
                 pointer-events: none; z-index: 11; transform: translate(-50%, -50%); 
+                opacity: 0; transition: opacity 0.3s ease;
             }
             .animal-item { position: absolute; width: 75px; height: 75px; object-fit: contain; cursor: pointer; z-index: 5; transition: transform 0.2s; }
-            .feedback-icon { position: absolute; font-size: 75px; font-weight: 900; pointer-events: none; z-index: 30; transform: translate(-50%, -50%); animation: popFeedback 0.6s ease-out forwards; }
-            @keyframes popFeedback { 0% { opacity:0; transform: translate(-50%, -50%) scale(0); } 50% { opacity:1; transform: translate(-50%, -100%) scale(1.4); } 100% { opacity:0; transform: translate(-50%, -150%) scale(1); } }
-            .shake { animation: shakeAnim 0.3s ease-in-out; }
-            @keyframes shakeAnim { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
-            #instrucao-ronda { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: white; padding: 8px 30px; border-radius: 30px; font-weight: 900; z-index: 20; color: ${COR_CASTANHA}; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-transform: uppercase; font-size: 0.85rem; pointer-events: none; }
+            #instrucao-ronda { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: white; padding: 8px 30px; border-radius: 30px; font-weight: 900; z-index: 20; color: ${COR_CASTANHA}; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-transform: uppercase; font-size: 1rem; pointer-events: none; }
         </style>
         <div id="night-zone">
             <div id="instrucao-ronda">...</div>
@@ -143,7 +146,15 @@ function renderizarEstruturaLanterna() {
     `;
 
     const zone = document.getElementById('night-zone');
+    
     const mover = (e) => {
+        // Ativar lanterna no primeiro toque
+        if(!lanternaAtiva) {
+            lanternaAtiva = true;
+            document.getElementById('lanterna').style.opacity = "1";
+            document.getElementById('flashlight-glow').style.opacity = "1";
+        }
+
         const rect = zone.getBoundingClientRect();
         const clientX = (e.clientX || (e.touches ? e.touches[0].clientX : 0));
         const clientY = (e.clientY || (e.touches ? e.touches[0].clientY : 0));
@@ -154,7 +165,9 @@ function renderizarEstruturaLanterna() {
         if(lan) { lan.style.setProperty('--x', `${x}px`); lan.style.setProperty('--y', `${y}px`); }
         if(glo) { glo.style.left = `${x}px`; glo.style.top = `${y}px`; }
     };
+    
     zone.addEventListener('mousemove', mover);
+    zone.addEventListener('touchstart', mover);
     zone.addEventListener('touchmove', mover);
 }
 
@@ -165,18 +178,17 @@ function proximaRonda() {
     const zone = document.getElementById('night-zone');
     zone.querySelectorAll('.animal-item').forEach(a => a.remove());
     
+    // Título Limpo (Apenas DOMÉSTICO ou SELVAGEM)
     const textoObjetivo = config.tipoAlvo === "domestico" ? "DOMÉSTICO" : "SELVAGEM";
-    document.getElementById('instrucao-ronda').innerText = `Encontra o animal ${textoObjetivo}!`;
+    document.getElementById('instrucao-ronda').innerText = textoObjetivo;
     
     atualizarPlacar();
     const posicoes = calcularGrelha(zone, 12);
 
-    // Animal Alvo
     const alvo = config.alvos[Math.floor(Math.random() * config.alvos.length)];
     const elAlvo = criarAnimal(alvo, config.pastaAlvos, true, posicoes.pop());
     elAlvo.classList.add('animal-alvo');
 
-    // 11 Distrações
     for (let i = 0; i < 11; i++) {
         const fake = config.distracoes[Math.floor(Math.random() * config.distracoes.length)];
         criarAnimal(fake, config.pastaDistracoes, false, posicoes.pop());
@@ -236,8 +248,9 @@ function criarAnimal(imgNome, pasta, isCorrect, pos) {
 
 function mostrarFeedback(t, c, x, y) {
     const fb = document.createElement('div');
-    fb.className = 'feedback-icon'; fb.innerText = t; fb.style.color = c;
-    fb.style.left = `${x}px`; fb.style.top = `${y}px`;
+    fb.className = 'feedback-icon'; 
+    fb.innerText = t; 
+    fb.style.cssText = `position:absolute; font-size:75px; font-weight:900; pointer-events:none; z-index:30; color:${c}; left:${x}px; top:${y}px; transform:translate(-50%,-50%); animation: popFeedback 0.6s ease-out forwards;`;
     const zone = document.getElementById('night-zone');
     if(zone) zone.appendChild(fb);
     setTimeout(() => fb.remove(), 600);
@@ -262,7 +275,7 @@ function finalizarJogo() {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const scrResult = document.getElementById('scr-result');
     scrResult.classList.add('active');
-    document.getElementById('status-bar').style.display = 'none';
+    document.getElementById('status-bar').style.display = "none";
 
     scrResult.innerHTML = `
         <div class="screen-box" style="justify-content: center; padding: 20px;">
@@ -281,4 +294,8 @@ function finalizarJogo() {
     tocarSom(JOGO_CONFIG.sons.vitoria);
 }
 
-window.gerarIntroJogo = function() { return JOGO_CATEGORIAS[categoriaAtual].descricao; };
+// INSTRUÇÃO DA INTRO CORRIGIDA
+window.gerarIntroJogo = function() { 
+    const config = JOGO_CATEGORIAS[categoriaAtual];
+    return config.tipoAlvo === "domestico" ? "Encontra os animais DOMÉSTICOS na escuridão!" : "Encontra os animais SELVAGENS na escuridão!";
+};
