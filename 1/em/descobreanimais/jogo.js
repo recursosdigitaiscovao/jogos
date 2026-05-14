@@ -5,6 +5,9 @@ let erros = 0;
 let jogoAtivo = false;
 let ajudaDisponivel = true;
 
+// Cor Castanha do teu sistema (Tema Estudo/Botão Voltar)
+const COR_CASTANHA = "#6C3737"; 
+
 // 1. INICIALIZAÇÃO
 window.startLogic = function() {
     rondaAtual = 1;
@@ -13,7 +16,7 @@ window.startLogic = function() {
     jogoAtivo = false;
     ajudaDisponivel = true;
 
-    // Injetar a Lâmpada de Ajuda (Caminho corrigido para pasta IMG)
+    // Injetar a Lâmpada de Ajuda
     const timerBadge = document.querySelector('.badge-timer');
     if(timerBadge) {
         timerBadge.style.cursor = "pointer";
@@ -32,7 +35,7 @@ function usarAjudaLuz() {
         ajudaDisponivel = false;
         document.getElementById('btn-ajuda-luz').style.opacity = "0.3";
         alvo.style.transition = "all 0.4s";
-        alvo.style.filter = "drop-shadow(0 0 30px yellow) brightness(1.8)";
+        alvo.style.filter = "drop-shadow(0 0 30px #FFD700) brightness(1.8)";
         alvo.style.transform = "scale(1.5)";
         setTimeout(() => {
             alvo.style.filter = "none";
@@ -48,22 +51,18 @@ function usarAjudaLuz() {
 function renderTutorialAnimation() {
     const container = document.getElementById('intro-animation-container');
     const config = JOGO_CATEGORIAS[categoriaAtual];
-    
-    // Escolher um animal representativo para o tutorial
     const animalExemplo = config.tipoAlvo === "domestico" ? "cao.png" : "leao.png";
-    const pastaExemplo = config.pastaAlvos;
     const textoTutorial = config.tipoAlvo === "domestico" ? "PROCURA DOMÉSTICOS" : "PROCURA SELVAGENS";
 
     container.innerHTML = `
         <style>
             .tutorial-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-            .tutorial-box { position: relative; width: 280px; height: 160px; background: #010409; border-radius: 20px; overflow: hidden; border: 4px solid var(--primary-blue); }
+            .tutorial-box { position: relative; width: 280px; height: 160px; background: ${COR_CASTANHA}; border-radius: 20px; overflow: hidden; border: 4px solid var(--primary-blue); }
             .tut-spot { 
                 position: absolute; width: 90px; height: 90px; 
-                background: radial-gradient(circle, transparent 10%, rgba(0,0,0,0.95) 80%); 
-                border: 2px solid white; border-radius: 50%; z-index: 10; 
-                transform: translate(-50%, -50%); 
-                animation: moveFlashlight 5s infinite ease-in-out; 
+                background: radial-gradient(circle, transparent 10%, ${COR_CASTANHA} 85%); 
+                border: 2px solid rgba(255,255,255,0.5); border-radius: 50%; z-index: 10; 
+                transform: translate(-50%, -50%); animation: moveFlashlight 5s infinite ease-in-out; 
             }
             .tut-animal { 
                 position: absolute; width: 60px; left: 70%; top: 50%; 
@@ -71,28 +70,20 @@ function renderTutorialAnimation() {
                 animation: revealAnimal 5s infinite ease-in-out;
             }
             .tut-label { font-weight: 900; color: var(--primary-blue); font-size: 0.9rem; text-transform: uppercase; }
-            
-            @keyframes moveFlashlight {
-                0%, 100% { left: 20%; top: 30%; }
-                40%, 60% { left: 70%; top: 50%; }
-                80% { left: 40%; top: 70%; }
-            }
-            @keyframes revealAnimal {
-                0%, 30%, 70%, 100% { filter: brightness(0); transform: translate(-50%, -50%) scale(1); }
-                40%, 60% { filter: brightness(1.2); transform: translate(-50%, -50%) scale(1.2); }
-            }
+            @keyframes moveFlashlight { 0%, 100% { left: 20%; top: 30%; } 40%, 60% { left: 70%; top: 50%; } 80% { left: 40%; top: 70%; } }
+            @keyframes revealAnimal { 0%, 30%, 70%, 100% { opacity: 0.2; transform: translate(-50%, -50%) scale(1); } 40%, 60% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } }
         </style>
         <div class="tutorial-wrap">
             <div class="tut-label">${textoTutorial}</div>
             <div class="tutorial-box">
                 <div class="tut-spot"></div>
-                <img src="${JOGO_CONFIG.caminhoImg}${pastaExemplo}${animalExemplo}" class="tut-animal">
+                <img src="${JOGO_CONFIG.caminhoImg}${config.pastaAlvos}${animalExemplo}" class="tut-animal">
             </div>
         </div>
     `;
 }
 
-// 2. MOTOR DO JOGO (Mantendo a lógica de 12 animais e grelha)
+// 2. MOTOR DO JOGO
 window.initGame = function() {
     jogoAtivo = true;
     renderizarEstruturaLanterna();
@@ -107,15 +98,21 @@ function renderizarEstruturaLanterna() {
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
         <style>
-            #night-zone { position: relative; width: 100%; height: 100%; background: #010409; overflow: hidden; cursor: none; border-radius: 25px; touch-action: none; }
-            .spotlight-mask { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; pointer-events: none; z-index: 10; --x: 50%; --y: 50%; mask-image: radial-gradient(circle 100px at var(--x) var(--y), transparent 0%, black 100%); -webkit-mask-image: radial-gradient(circle 100px at var(--x) var(--y), transparent 0%, black 100%); }
+            #night-zone { position: relative; width: 100%; height: 100%; background: ${COR_CASTANHA}; overflow: hidden; cursor: none; border-radius: 25px; touch-action: none; }
+            .spotlight-mask { 
+                position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+                background: ${COR_CASTANHA}; pointer-events: none; z-index: 10; 
+                --x: 50%; --y: 50%; 
+                mask-image: radial-gradient(circle 105px at var(--x) var(--y), transparent 0%, black 100%); 
+                -webkit-mask-image: radial-gradient(circle 105px at var(--x) var(--y), transparent 0%, black 100%); 
+            }
             #flashlight-cursor { position: absolute; width: 210px; height: 210px; border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; pointer-events: none; z-index: 11; transform: translate(-50%, -50%); }
             .animal-item { position: absolute; width: 75px; height: 75px; object-fit: contain; cursor: pointer; z-index: 5; transition: transform 0.2s; }
-            .feedback-icon { position: absolute; font-size: 60px; font-weight: 900; pointer-events: none; z-index: 30; transform: translate(-50%, -50%); animation: popFeedback 0.6s ease-out forwards; }
+            .feedback-icon { position: absolute; font-size: 65px; font-weight: 900; pointer-events: none; z-index: 30; transform: translate(-50%, -50%); animation: popFeedback 0.6s ease-out forwards; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
             @keyframes popFeedback { 0% { opacity:0; transform: translate(-50%, -50%) scale(0); } 50% { opacity:1; transform: translate(-50%, -100%) scale(1.5); } 100% { opacity:0; transform: translate(-50%, -150%) scale(1); } }
             .shake { animation: shakeAnim 0.3s ease-in-out; }
             @keyframes shakeAnim { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
-            #instrucao-ronda { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: white; padding: 8px 25px; border-radius: 30px; font-weight: 900; z-index: 20; color: #1a1a1a; box-shadow: 0 4px 20px rgba(0,0,0,0.6); text-transform: uppercase; font-size: 0.8rem; pointer-events: none; }
+            #instrucao-ronda { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: white; padding: 8px 25px; border-radius: 30px; font-weight: 900; z-index: 20; color: ${COR_CASTANHA}; box-shadow: 0 4px 20px rgba(0,0,0,0.3); text-transform: uppercase; font-size: 0.8rem; pointer-events: none; }
         </style>
         <div id="night-zone">
             <div id="instrucao-ronda">...</div>
@@ -131,13 +128,13 @@ function renderizarEstruturaLanterna() {
         const clientY = (e.clientY || (e.touches ? e.touches[0].clientY : 0));
         const x = clientX - rect.left;
         const y = clientY - rect.top;
-        const lanterna = document.getElementById('lanterna');
-        const cursor = document.getElementById('flashlight-cursor');
-        if(lanterna && cursor) {
-            lanterna.style.setProperty('--x', `${x}px`);
-            lanterna.style.setProperty('--y', `${y}px`);
-            cursor.style.left = `${x}px`;
-            cursor.style.top = `${y}px`;
+        const lan = document.getElementById('lanterna');
+        const cur = document.getElementById('flashlight-cursor');
+        if(lan && cur) {
+            lan.style.setProperty('--x', `${x}px`);
+            lan.style.setProperty('--y', `${y}px`);
+            cur.style.left = `${x}px`;
+            cur.style.top = `${y}px`;
         }
     };
     zone.addEventListener('mousemove', mover);
@@ -155,12 +152,10 @@ function proximaRonda() {
 
     const posicoes = calcularGrelha(zone, 12);
 
-    // Criar Animal Certo
     const alvo = config.alvos[Math.floor(Math.random() * config.alvos.length)];
     const elAlvo = criarAnimal(alvo, config.pastaAlvos, true, posicoes.pop());
     elAlvo.classList.add('animal-alvo');
 
-    // Criar 11 Distrações
     for (let i = 0; i < 11; i++) {
         const fake = config.distracoes[Math.floor(Math.random() * config.distracoes.length)];
         criarAnimal(fake, config.pastaDistracoes, false, posicoes.pop());
@@ -172,11 +167,11 @@ function calcularGrelha(container, qtd) {
     const h = container.clientHeight;
     const size = 82;
     const cols = Math.floor(w / size);
-    const rows = Math.floor((h - 80) / size);
+    const rows = Math.floor((h - 85) / size);
     let cells = [];
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-            cells.push({ x: c * size + size/2, y: (r * size + 80) + size/2 });
+            cells.push({ x: c * size + size/2, y: (r * size + 85) + size/2 });
         }
     }
     return cells.sort(() => Math.random() - 0.5).slice(0, qtd);
@@ -209,7 +204,7 @@ function criarAnimal(imgNome, pasta, isCorrect, pos) {
             img.classList.add('shake');
             setTimeout(() => img.classList.remove('shake'), 300);
             erros++;
-            img.style.opacity = "0.5";
+            img.style.opacity = "0.4";
             img.style.pointerEvents = "none";
         }
         atualizarPlacar();
