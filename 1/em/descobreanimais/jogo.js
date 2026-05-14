@@ -4,16 +4,17 @@ let acertos = 0;
 let erros = 0;
 let jogoAtivo = false;
 
-// Inicialização (Chamado pelo sistema quando entra na intro)
 window.startLogic = function() {
     rondaAtual = 1;
     acertos = 0;
     erros = 0;
     jogoAtivo = false;
+    // Mudar ícone do timer para Lâmpada no HTML
+    const timerBadge = document.querySelector('.badge-timer');
+    if(timerBadge) timerBadge.innerHTML = `💡 <span id="timer-val">LUZ</span>`;
     atualizarPlacar();
 };
 
-// Início Real (Botão JOGAR)
 window.initGame = function() {
     jogoAtivo = true;
     renderizarEstruturaLanterna();
@@ -30,53 +31,52 @@ function renderizarEstruturaLanterna() {
         <style>
             #night-zone {
                 position: relative; width: 100%; height: 100%;
-                background: #020617; overflow: hidden; cursor: none;
+                background: #010409; overflow: hidden; cursor: none;
                 border-radius: 25px; touch-action: none;
             }
             .spotlight-mask {
                 position: absolute; top: 0; left: 0; width: 100%; height: 100%;
                 background: black; pointer-events: none; z-index: 10;
                 --x: 50%; --y: 50%;
-                mask-image: radial-gradient(circle 100px at var(--x) var(--y), transparent 0%, rgba(0,0,0,0.98) 100%);
-                -webkit-mask-image: radial-gradient(circle 100px at var(--x) var(--y), transparent 0%, rgba(0,0,0,0.98) 100%);
+                mask-image: radial-gradient(circle 110px at var(--x) var(--y), transparent 0%, rgba(0,0,0,0.99) 100%);
+                -webkit-mask-image: radial-gradient(circle 110px at var(--x) var(--y), transparent 0%, rgba(0,0,0,0.99) 100%);
             }
             #flashlight-cursor {
-                position: absolute; width: 200px; height: 200px;
-                border: 2px solid rgba(255,255,255,0.3); border-radius: 50%;
+                position: absolute; width: 220px; height: 220px;
+                border: 2px solid rgba(255,255,255,0.2); border-radius: 50%;
                 pointer-events: none; z-index: 11; transform: translate(-50%, -50%);
-                box-shadow: 0 0 30px rgba(255,255,255,0.1);
             }
             .animal-item {
-                position: absolute; width: 70px; height: 70px;
+                position: absolute; width: 75px; height: 75px;
                 object-fit: contain; cursor: pointer; z-index: 5;
                 transition: transform 0.2s;
             }
-            /* Estímulos Visuais */
             .feedback-icon {
-                position: absolute; font-size: 40px; font-weight: bold;
+                position: absolute; font-size: 50px; font-weight: 900;
                 pointer-events: none; z-index: 30; transform: translate(-50%, -50%);
                 animation: popFeedback 0.6s ease-out forwards;
             }
             @keyframes popFeedback {
                 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-                50% { transform: translate(-50%, -100%) scale(1.5); opacity: 1; }
+                50% { transform: translate(-50%, -100%) scale(1.4); opacity: 1; }
                 100% { transform: translate(-50%, -150%) scale(1); opacity: 0; }
             }
             .shake { animation: shakeAnim 0.3s ease-in-out; }
             @keyframes shakeAnim {
                 0%, 100% { transform: translateX(0); }
-                25% { transform: translateX(-10px); }
-                75% { transform: translateX(10px); }
+                25% { transform: translateX(-8px); }
+                75% { transform: translateX(8px); }
             }
             #instrucao-ronda {
                 position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
-                background: white; padding: 6px 20px; border-radius: 20px;
+                background: white; padding: 8px 25px; border-radius: 30px;
                 font-weight: 900; z-index: 20; color: #1a1a1a;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.4); text-transform: uppercase;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.6); text-transform: uppercase;
+                letter-spacing: 1px; font-size: 0.85rem; pointer-events: none;
             }
         </style>
         <div id="night-zone">
-            <div id="instrucao-ronda">Procura o Animal Doméstico</div>
+            <div id="instrucao-ronda">Procurando...</div>
             <div id="flashlight-cursor"></div>
             <div class="spotlight-mask" id="lanterna"></div>
         </div>
@@ -111,17 +111,22 @@ function proximaRonda() {
 
     const zone = document.getElementById('night-zone');
     zone.querySelectorAll('.animal-item').forEach(a => a.remove());
+    
+    // Texto dinâmico conforme o nível
+    const textoAlvo = config.tipoAlvo === "domestico" ? "DOMÉSTICO" : "SELVAGEM";
+    document.getElementById('instrucao-ronda').innerText = `Encontra o animal ${textoAlvo}!`;
+    
     atualizarPlacar();
 
-    // Calcular Grelha
+    // Calcular Grelha (Mais apertada para caberem mais animais)
     const posicoes = calcularGrelha(zone, 1 + config.quantidadeDistracoes);
 
-    // Animal Certo
+    // Criar Animal Alvo
     const alvo = config.alvos[Math.floor(Math.random() * config.alvos.length)];
     const posAlvo = posicoes.pop();
     criarAnimal(alvo, config.pastaAlvos, true, posAlvo);
 
-    // Distrações
+    // Criar Distrações
     for (let i = 0; i < config.quantidadeDistracoes; i++) {
         const fake = config.distracoes[Math.floor(Math.random() * config.distracoes.length)];
         const posFake = posicoes.pop();
@@ -132,14 +137,14 @@ function proximaRonda() {
 function calcularGrelha(container, qtd) {
     const w = container.clientWidth;
     const h = container.clientHeight;
-    const size = 90; // tamanho da célula
-    const cols = Math.floor(w / size);
-    const rows = Math.floor((h - 80) / size);
+    const cellSize = 85; 
+    const cols = Math.floor(w / cellSize);
+    const rows = Math.floor((h - 70) / cellSize);
     
     let cells = [];
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-            cells.push({ x: c * size + size/2, y: (r * size + 80) + size/2 });
+            cells.push({ x: c * cellSize + cellSize/2, y: (r * cellSize + 70) + cellSize/2 });
         }
     }
     return cells.sort(() => Math.random() - 0.5).slice(0, qtd);
@@ -150,28 +155,25 @@ function criarAnimal(imgNome, pasta, isCorrect, pos) {
     const img = document.createElement('img');
     img.src = JOGO_CONFIG.caminhoImg + pasta + imgNome;
     img.className = 'animal-item';
-    img.style.left = `${pos.x - 35}px`;
-    img.style.top = `${pos.y - 35}px`;
+    img.style.left = `${pos.x - 37}px`;
+    img.style.top = `${pos.y - 37}px`;
 
     img.onclick = (e) => {
         if (!jogoAtivo) return;
         const rect = zone.getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
-        const clickY = e.clientY - rect.top;
+        const clickX = (e.clientX || e.touches[0].clientX) - rect.left;
+        const clickY = (e.clientY || e.touches[0].clientY) - rect.top;
 
         if (isCorrect) {
-            jogoAtivo = false; // Bloqueia cliques repetidos
-            mostrarFeedback("✓", "#4cd137", clickX, clickY);
+            jogoAtivo = false;
+            mostrarFeedback("✓", "#7ed321", clickX, clickY);
             tocarSom(JOGO_CONFIG.sons.acerto);
-            img.style.transform = "scale(1.5)";
+            img.style.transform = "scale(1.6) rotate(10deg)";
             acertos++;
             rondaAtual++;
-            setTimeout(() => { 
-                jogoAtivo = true; 
-                proximaRonda(); 
-            }, 800);
+            setTimeout(() => { jogoAtivo = true; proximaRonda(); }, 700);
         } else {
-            mostrarFeedback("✗", "#e84118", clickX, clickY);
+            mostrarFeedback("✗", "#ff5e5e", clickX, clickY);
             tocarSom(JOGO_CONFIG.sons.erro);
             img.classList.add('shake');
             setTimeout(() => img.classList.remove('shake'), 300);
@@ -193,7 +195,7 @@ function mostrarFeedback(texto, cor, x, y) {
     fb.style.left = `${x}px`;
     fb.style.top = `${y}px`;
     zone.appendChild(fb);
-    setTimeout(() => fb.remove(), 700);
+    setTimeout(() => fb.remove(), 600);
 }
 
 function atualizarPlacar() {
@@ -205,7 +207,7 @@ function atualizarPlacar() {
 
 function tocarSom(url) {
     const a = new Audio(url);
-    a.volume = 0.5;
+    a.volume = 0.4;
     a.play().catch(()=>{});
 }
 
@@ -219,16 +221,21 @@ function finalizarJogo() {
     scrResult.classList.add('active');
     document.getElementById('status-bar').style.display = 'none';
 
+    // Layout de resultados integrado no sistema
     scrResult.innerHTML = `
-        <div class="screen-box" style="text-align:center; padding: 30px; background: white;">
-            <h2 style="font-size:2rem; color:var(--primary-blue); margin-bottom:15px;">${rank.titulo}</h2>
-            <img src="${JOGO_CONFIG.caminhoImg}${rank.img}" style="width:160px; margin-bottom:20px;">
-            <div style="background:#f8f9fa; padding:15px; border-radius:15px; margin-bottom:20px;">
-                <p style="font-size:1.2rem; color:var(--text-grey); margin-bottom:5px;"><b>Nível:</b> ${JOGO_CONFIG.categorias[categoriaAtual].nome}</p>
-                <p style="color: #4cd137; font-weight:900;">Acertos: ${acertos}</p>
-                <p style="color: #e84118; font-weight:900;">Erros: ${erros}</p>
+        <div class="screen-box" style="justify-content: center; padding: 20px;">
+            <div style="background: white; width: 90%; max-width: 400px; padding: 30px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center;">
+                <h2 style="color: var(--primary-blue); font-weight: 900; margin-bottom: 15px; font-size: 1.6rem;">${rank.titulo}</h2>
+                <img src="${JOGO_CONFIG.caminhoImg}${rank.img}" style="width: 140px; margin-bottom: 20px;">
+                
+                <div style="display: flex; justify-content: space-around; background: #f0f4f8; padding: 15px; border-radius: 20px; margin-bottom: 25px;">
+                    <div><p style="font-size: 0.8rem; color: #88a;">ACERTOS</p><p style="font-size: 1.4rem; font-weight: 900; color: #7ed321;">${acertos}</p></div>
+                    <div style="width: 1px; background: #ccd; height: 40px;"></div>
+                    <div><p style="font-size: 0.8rem; color: #88a;">ERROS</p><p style="font-size: 1.4rem; font-weight: 900; color: #ff5e5e;">${erros}</p></div>
+                </div>
+
+                <button class="btn-jogar-stretch" onclick="goToIntro()">JOGAR DE NOVO</button>
             </div>
-            <button class="btn-jogar-stretch" onclick="goToIntro()" style="width:240px; align-self:center;">VOLTAR AO INÍCIO</button>
         </div>
     `;
     tocarSom(JOGO_CONFIG.sons.vitoria);
