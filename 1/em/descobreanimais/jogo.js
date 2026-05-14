@@ -5,7 +5,7 @@ let erros = 0;
 let jogoAtivo = false;
 let ajudaDisponivel = true;
 
-// Cor Castanha do teu sistema (Tema Estudo/Botão Voltar)
+// Cor Castanha do botão voltar/tema estudo
 const COR_CASTANHA = "#6C3737"; 
 
 // 1. INICIALIZAÇÃO
@@ -16,11 +16,16 @@ window.startLogic = function() {
     jogoAtivo = false;
     ajudaDisponivel = true;
 
-    // Injetar a Lâmpada de Ajuda
+    // Injetar a Lâmpada de Ajuda (Imagem limpa, sem filtros)
     const timerBadge = document.querySelector('.badge-timer');
     if(timerBadge) {
         timerBadge.style.cursor = "pointer";
-        timerBadge.innerHTML = `<img id="btn-ajuda-luz" src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:25px; vertical-align:middle;"> <span id="timer-val">AJUDA</span>`;
+        timerBadge.style.background = "rgba(255,255,255,0.2)";
+        timerBadge.innerHTML = `
+            <img id="btn-ajuda-luz" src="${JOGO_CONFIG.caminhoImg}lampada.png" 
+                 style="height:30px; width:auto; vertical-align:middle; filter:none;"> 
+            <span id="timer-val" style="color:white; margin-left:5px;">AJUDA</span>
+        `;
         timerBadge.onclick = usarAjudaLuz;
     }
     
@@ -33,17 +38,20 @@ function usarAjudaLuz() {
     const alvo = document.querySelector('.animal-alvo');
     if (alvo) {
         ajudaDisponivel = false;
-        document.getElementById('btn-ajuda-luz').style.opacity = "0.3";
-        alvo.style.transition = "all 0.4s";
-        alvo.style.filter = "drop-shadow(0 0 30px #FFD700) brightness(1.8)";
-        alvo.style.transform = "scale(1.5)";
+        const btn = document.getElementById('btn-ajuda-luz');
+        if(btn) btn.style.opacity = "0.3";
+        
+        alvo.style.transition = "all 0.4s ease";
+        alvo.style.filter = "drop-shadow(0 0 35px #FFF) brightness(1.5)";
+        alvo.style.transform = "scale(1.4)";
+        
         setTimeout(() => {
             alvo.style.filter = "none";
             alvo.style.transform = "scale(1)";
             setTimeout(() => {
                 ajudaDisponivel = true;
-                document.getElementById('btn-ajuda-luz').style.opacity = "1";
-            }, 3000);
+                if(btn) btn.style.opacity = "1";
+            }, 4000);
         }, 1200);
     }
 }
@@ -52,26 +60,27 @@ function renderTutorialAnimation() {
     const container = document.getElementById('intro-animation-container');
     const config = JOGO_CATEGORIAS[categoriaAtual];
     const animalExemplo = config.tipoAlvo === "domestico" ? "cao.png" : "leao.png";
-    const textoTutorial = config.tipoAlvo === "domestico" ? "PROCURA DOMÉSTICOS" : "PROCURA SELVAGENS";
+    const textoTutorial = config.tipoAlvo === "domestico" ? "ENCONTRA OS DOMÉSTICOS" : "ENCONTRA OS SELVAGENS";
 
     container.innerHTML = `
         <style>
             .tutorial-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-            .tutorial-box { position: relative; width: 280px; height: 160px; background: ${COR_CASTANHA}; border-radius: 20px; overflow: hidden; border: 4px solid var(--primary-blue); }
+            .tutorial-box { position: relative; width: 280px; height: 160px; background: ${COR_CASTANHA}; border-radius: 20px; overflow: hidden; border: 3px solid #fff; }
+            /* Lanterna Desfocada no Tutorial */
             .tut-spot { 
-                position: absolute; width: 90px; height: 90px; 
-                background: radial-gradient(circle, transparent 10%, ${COR_CASTANHA} 85%); 
-                border: 2px solid rgba(255,255,255,0.5); border-radius: 50%; z-index: 10; 
-                transform: translate(-50%, -50%); animation: moveFlashlight 5s infinite ease-in-out; 
+                position: absolute; width: 100px; height: 100px; 
+                background: radial-gradient(circle, transparent 0%, ${COR_CASTANHA} 75%); 
+                z-index: 10; transform: translate(-50%, -50%); 
+                animation: moveFlashlight 5s infinite ease-in-out; 
             }
             .tut-animal { 
                 position: absolute; width: 60px; left: 70%; top: 50%; 
                 transform: translate(-50%, -50%); z-index: 5; 
                 animation: revealAnimal 5s infinite ease-in-out;
             }
-            .tut-label { font-weight: 900; color: var(--primary-blue); font-size: 0.9rem; text-transform: uppercase; }
+            .tut-label { font-weight: 900; color: var(--primary-blue); font-size: 0.9rem; }
             @keyframes moveFlashlight { 0%, 100% { left: 20%; top: 30%; } 40%, 60% { left: 70%; top: 50%; } 80% { left: 40%; top: 70%; } }
-            @keyframes revealAnimal { 0%, 30%, 70%, 100% { opacity: 0.2; transform: translate(-50%, -50%) scale(1); } 40%, 60% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } }
+            @keyframes revealAnimal { 0%, 30%, 70%, 100% { opacity: 0; } 45%, 55% { opacity: 1; } }
         </style>
         <div class="tutorial-wrap">
             <div class="tut-label">${textoTutorial}</div>
@@ -99,24 +108,30 @@ function renderizarEstruturaLanterna() {
     container.innerHTML = `
         <style>
             #night-zone { position: relative; width: 100%; height: 100%; background: ${COR_CASTANHA}; overflow: hidden; cursor: none; border-radius: 25px; touch-action: none; }
+            /* Lanterna com foco desfocado (Mask com Radial Gradient Suave) */
             .spotlight-mask { 
                 position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
                 background: ${COR_CASTANHA}; pointer-events: none; z-index: 10; 
                 --x: 50%; --y: 50%; 
-                mask-image: radial-gradient(circle 105px at var(--x) var(--y), transparent 0%, black 100%); 
-                -webkit-mask-image: radial-gradient(circle 105px at var(--x) var(--y), transparent 0%, black 100%); 
+                mask-image: radial-gradient(circle 120px at var(--x) var(--y), transparent 0%, rgba(0,0,0,1) 90%); 
+                -webkit-mask-image: radial-gradient(circle 120px at var(--x) var(--y), transparent 0%, rgba(0,0,0,1) 90%); 
             }
-            #flashlight-cursor { position: absolute; width: 210px; height: 210px; border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; pointer-events: none; z-index: 11; transform: translate(-50%, -50%); }
+            /* Brilho sutil seguindo o foco */
+            #flashlight-glow { 
+                position: absolute; width: 240px; height: 240px; 
+                background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+                pointer-events: none; z-index: 11; transform: translate(-50%, -50%); 
+            }
             .animal-item { position: absolute; width: 75px; height: 75px; object-fit: contain; cursor: pointer; z-index: 5; transition: transform 0.2s; }
-            .feedback-icon { position: absolute; font-size: 65px; font-weight: 900; pointer-events: none; z-index: 30; transform: translate(-50%, -50%); animation: popFeedback 0.6s ease-out forwards; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
-            @keyframes popFeedback { 0% { opacity:0; transform: translate(-50%, -50%) scale(0); } 50% { opacity:1; transform: translate(-50%, -100%) scale(1.5); } 100% { opacity:0; transform: translate(-50%, -150%) scale(1); } }
+            .feedback-icon { position: absolute; font-size: 70px; font-weight: 900; pointer-events: none; z-index: 30; transform: translate(-50%, -50%); animation: popFeedback 0.6s ease-out forwards; }
+            @keyframes popFeedback { 0% { opacity:0; transform: translate(-50%, -50%) scale(0); } 50% { opacity:1; transform: translate(-50%, -100%) scale(1.4); } 100% { opacity:0; transform: translate(-50%, -150%) scale(1); } }
             .shake { animation: shakeAnim 0.3s ease-in-out; }
             @keyframes shakeAnim { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
-            #instrucao-ronda { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: white; padding: 8px 25px; border-radius: 30px; font-weight: 900; z-index: 20; color: ${COR_CASTANHA}; box-shadow: 0 4px 20px rgba(0,0,0,0.3); text-transform: uppercase; font-size: 0.8rem; pointer-events: none; }
+            #instrucao-ronda { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); background: white; padding: 8px 30px; border-radius: 30px; font-weight: 900; z-index: 20; color: ${COR_CASTANHA}; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-transform: uppercase; font-size: 0.85rem; pointer-events: none; }
         </style>
         <div id="night-zone">
             <div id="instrucao-ronda">...</div>
-            <div id="flashlight-cursor"></div>
+            <div id="flashlight-glow"></div>
             <div class="spotlight-mask" id="lanterna"></div>
         </div>
     `;
@@ -129,13 +144,10 @@ function renderizarEstruturaLanterna() {
         const x = clientX - rect.left;
         const y = clientY - rect.top;
         const lan = document.getElementById('lanterna');
-        const cur = document.getElementById('flashlight-cursor');
-        if(lan && cur) {
-            lan.style.setProperty('--x', `${x}px`);
-            lan.style.setProperty('--y', `${y}px`);
-            cur.style.left = `${x}px`;
-            cur.style.top = `${y}px`;
-        }
+        const glo = document.getElementById('flashlight-glow');
+        if(lan) lan.style.setProperty('--x', `${x}px`);
+        if(lan) lan.style.setProperty('--y', `${y}px`);
+        if(glo) { glo.style.left = `${x}px`; glo.style.top = `${y}px`; }
     };
     zone.addEventListener('mousemove', mover);
     zone.addEventListener('touchmove', mover);
@@ -147,15 +159,20 @@ function proximaRonda() {
 
     const zone = document.getElementById('night-zone');
     zone.querySelectorAll('.animal-item').forEach(a => a.remove());
-    document.getElementById('instrucao-ronda').innerText = `Encontra o animal ${config.tipoAlvo === "domestico" ? "DOMÉSTICO" : "SELVAGEM"}!`;
+    
+    // Instrução Corrigida conforme o Nível
+    const tipoTexto = config.tipoAlvo === "domestico" ? "DOMÉSTICO" : "SELVAGEM";
+    document.getElementById('instrucao-ronda').innerText = `Encontra o animal ${tipoTexto}!`;
+    
     atualizarPlacar();
-
     const posicoes = calcularGrelha(zone, 12);
 
+    // Alvo
     const alvo = config.alvos[Math.floor(Math.random() * config.alvos.length)];
     const elAlvo = criarAnimal(alvo, config.pastaAlvos, true, posicoes.pop());
     elAlvo.classList.add('animal-alvo');
 
+    // Distrações
     for (let i = 0; i < 11; i++) {
         const fake = config.distracoes[Math.floor(Math.random() * config.distracoes.length)];
         criarAnimal(fake, config.pastaDistracoes, false, posicoes.pop());
@@ -165,13 +182,13 @@ function proximaRonda() {
 function calcularGrelha(container, qtd) {
     const w = container.clientWidth;
     const h = container.clientHeight;
-    const size = 82;
+    const size = 80;
     const cols = Math.floor(w / size);
-    const rows = Math.floor((h - 85) / size);
+    const rows = Math.floor((h - 90) / size);
     let cells = [];
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-            cells.push({ x: c * size + size/2, y: (r * size + 85) + size/2 });
+            cells.push({ x: c * size + size/2, y: (r * size + 90) + size/2 });
         }
     }
     return cells.sort(() => Math.random() - 0.5).slice(0, qtd);
@@ -204,7 +221,7 @@ function criarAnimal(imgNome, pasta, isCorrect, pos) {
             img.classList.add('shake');
             setTimeout(() => img.classList.remove('shake'), 300);
             erros++;
-            img.style.opacity = "0.4";
+            img.style.opacity = "0.4"; // Apenas transparência, sem cinzento
             img.style.pointerEvents = "none";
         }
         atualizarPlacar();
