@@ -7,7 +7,8 @@ let jogoAtivo = false;
 let ajudaDisponivel = true;
 let lanternaAtiva = false; 
 
-const COR_CASTANHA = "#6C3737"; 
+// Nova Cor sugerida: Suave e equilibrada
+const COR_FUNDO = "#AC919B"; 
 
 // 1. INICIALIZAÇÃO E BARRA DE STATUS
 window.startLogic = function() {
@@ -22,13 +23,13 @@ window.startLogic = function() {
     const statusBar = document.getElementById('status-bar');
     if(statusBar) {
         statusBar.style.display = "none";
-        // BARRA COM ALTURA CORRIGIDA (35px exatos)
+        // BARRA COM ALTURAS PADRONIZADAS (35px)
         statusBar.innerHTML = `
             <div class="status-group" style="display:flex; gap:8px; align-items:center;">
-                <div class="badge" id="btn-ajuda-luz" style="cursor:pointer; background:rgba(255,255,255,0.2); height:35px; width:45px; display:flex; align-items:center; justify-content:center; border-radius:12px;">
-                    <img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:22px;">
+                <div class="badge" id="btn-ajuda-luz" style="cursor:pointer; background:rgba(255,255,255,0.3); height:35px; width:50px; display:flex; align-items:center; justify-content:center; border-radius:12px; border: 1px solid rgba(255,255,255,0.2);">
+                    <img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:22px; width:auto;">
                 </div>
-                <div class="badge" style="background:var(--primary-blue); height:35px; padding:0 12px; display:flex; align-items:center; border-radius:12px; font-weight:900; color:white; font-size:13px;">
+                <div class="badge" style="background:var(--primary-blue); height:35px; padding:0 15px; display:flex; align-items:center; border-radius:12px; font-weight:900; color:white; font-size:14px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
                     <span id="round-val">1 / 10</span>
                 </div>
             </div>
@@ -52,13 +53,13 @@ window.startLogic = function() {
 function usarAjudaRelampago() {
     if (!jogoAtivo || !ajudaDisponivel) return;
     ajudaDisponivel = false;
-    ajudasUtilizadas++; // Conta a ajuda
+    ajudasUtilizadas++;
     
     const lanternaMask = document.getElementById('lanterna');
     const btnLuz = document.getElementById('btn-ajuda-luz');
     if(btnLuz) btnLuz.style.opacity = "0.2";
 
-    lanternaMask.style.transition = "opacity 0.2s";
+    lanternaMask.style.transition = "opacity 0.2s ease-out";
     lanternaMask.style.opacity = "0"; 
     document.querySelectorAll('.animal-item').forEach(img => img.style.opacity = "1");
 
@@ -74,7 +75,7 @@ function usarAjudaRelampago() {
     }, 1200);
 }
 
-// 2. EXPLICAÇÃO / TUTORIAL LIMPO
+// 2. TUTORIAL / EXPLICAÇÃO
 function renderTutorialAnimation() {
     const container = document.getElementById('intro-animation-container');
     const config = JOGO_CATEGORIAS[categoriaAtual];
@@ -84,10 +85,10 @@ function renderTutorialAnimation() {
     container.innerHTML = `
         <style>
             .tutorial-wrap { display:flex; flex-direction:column; align-items:center; width:100%; }
-            .tutorial-box { position:relative; width:280px; height:150px; background:${COR_CASTANHA}; border-radius:20px; overflow:hidden; border:2px solid #ccc; }
-            .tut-spot { position:absolute; width:90px; height:90px; background:radial-gradient(circle, transparent 10%, ${COR_CASTANHA} 85%); z-index:10; transform:translate(-50%,-50%); animation:moveTut 4s infinite ease-in-out; }
+            .tutorial-box { position:relative; width:280px; height:150px; background:${COR_FUNDO}; border-radius:20px; overflow:hidden; border:3px solid #fff; }
+            .tut-spot { position:absolute; width:100px; height:100px; background:radial-gradient(circle, transparent 0%, ${COR_FUNDO} 80%); z-index:10; transform:translate(-50%,-50%); animation:moveTut 4s infinite ease-in-out; }
             .tut-animal { position:absolute; width:55px; left:70%; top:50%; transform:translate(-50%,-50%); z-index:5; animation:revealTut 4s infinite ease-in-out; }
-            .tut-txt { font-weight:900; color:var(--primary-blue); font-size:16px; margin-bottom:10px; text-transform:uppercase; }
+            .tut-txt { font-weight:900; color:var(--primary-blue); font-size:16px; margin-bottom:10px; }
             @keyframes moveTut { 0%,100% {left:25%; top:35%;} 50% {left:75%; top:55%;} }
             @keyframes revealTut { 0%,30%,70%,100% {opacity:0;} 45%,55% {opacity:1;} }
         </style>
@@ -117,16 +118,29 @@ function renderizarEstruturaLanterna() {
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
         <style>
-            #night-zone { position: relative; width: 100%; height: 100%; background: ${COR_CASTANHA}; overflow: hidden; cursor: none; border-radius: 25px; touch-action: none; }
+            :root { --raio: 130px; }
+            @media (max-width: 600px) { :root { --raio: 90px; } }
+
+            #night-zone { position: relative; width: 100%; height: 100%; background: ${COR_FUNDO}; overflow: hidden; cursor: none; border-radius: 25px; touch-action: none; }
+            
+            /* Lanterna Melhorada: Gradiente mais suave e realista */
             .spotlight-mask { 
                 position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-                background: ${COR_CASTANHA}; pointer-events: none; z-index: 10; 
+                background: ${COR_FUNDO}; pointer-events: none; z-index: 10; 
                 --x: 50%; --y: 50%; 
-                mask-image: radial-gradient(circle 80px at var(--x) var(--y), transparent 0%, black 98%); 
-                -webkit-mask-image: radial-gradient(circle 80px at var(--x) var(--y), transparent 0%, black 98%); 
+                mask-image: radial-gradient(circle var(--raio) at var(--x) var(--y), transparent 0%, rgba(0,0,0,0.8) 70%, black 100%); 
+                -webkit-mask-image: radial-gradient(circle var(--raio) at var(--x) var(--y), transparent 0%, rgba(0,0,0,0.8) 70%, black 100%); 
             }
+            
             .animal-item { position: absolute; width: 70px; height: 70px; object-fit: contain; cursor: pointer; z-index: 5; opacity: 0; transition: opacity 0.3s; }
-            #instrucao-ronda { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); background: white; padding: 6px 30px; border-radius: 30px; font-weight: 900; z-index: 20; color: ${COR_CASTANHA}; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-transform: uppercase; font-size: 1.1rem; pointer-events: none; }
+            
+            #instrucao-ronda { 
+                position: absolute; top: 12px; left: 50%; transform: translateX(-50%); 
+                background: white; padding: 6px 30px; border-radius: 30px; 
+                font-weight: 900; z-index: 20; color: var(--primary-blue); 
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-transform: uppercase; 
+                font-size: 1.1rem; pointer-events: none; 
+            }
         </style>
         <div id="night-zone">
             <div id="instrucao-ronda">...</div>
@@ -245,7 +259,7 @@ function atualizarPlacar() {
 
 function tocarSom(url) { new Audio(url).play().catch(()=>{}); }
 
-// 4. ECRÃ DE RESULTADOS COMPLETO (SISTEMA PADRÃO)
+// 4. ECRÃ DE RESULTADOS COMPLETO
 function finalizarJogo() {
     jogoAtivo = false;
     const perc = Math.round((acertos / (acertos + erros)) * 100) || 0;
