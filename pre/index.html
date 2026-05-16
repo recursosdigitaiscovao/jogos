@@ -37,8 +37,8 @@
 
         .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; z-index: 3001; }
         
-        /* VOLTAR - UNIFICADO: Agora usa sempre o estilo de ícone mobile */
-        .btn-voltar-header { display: none !important; } /* Esconde a versão antiga de texto */
+        /* VOLTAR HEADER - UNIFICADO */
+        .btn-voltar-header { display: none !important; } 
         
         .btn-voltar-mobile { 
             display: flex !important; 
@@ -48,15 +48,17 @@
             z-index: 3001; 
             transition: transform 0.2s ease;
         }
-        
         .btn-voltar-mobile:hover { transform: scale(1.1); }
         .btn-voltar-mobile img { height: 45px; width: auto; }
 
+        /* MENU HAMBURGUER */
         .menu-dropdown { position: absolute; top: 85px; left: 15px; display: none; flex-direction: column; gap: 6px; z-index: 3000; }
         .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: #5d7082; font-weight: 700; font-size: 0.9rem; min-width: 200px; transition: 0.2s; }
-        .menu-item:hover { background: var(--primary-blue); color: white; }
+        .menu-item:hover:not(.menu-item-voltar) { background: #f0f7ff; color: var(--primary-blue); }
         .menu-item img { height: 22px; width: 22px; object-fit: contain; }
-        .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
+        
+        /* Estilo especial para o Voltar no Menu */
+        .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; margin-top: 5px; }
         .menu-item-voltar img { filter: brightness(0) invert(1); }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.1); display: none; z-index: 2000; }
@@ -112,7 +114,6 @@
         </div>
 
         <div class="header-right">
-            <!-- Agora apenas este link é utilizado para o botão voltar -->
             <a href="../" id="link-voltar-mobile" class="btn-voltar-mobile">
                 <img id="header-back-mobile" src="" alt="Voltar">
             </a>
@@ -155,23 +156,32 @@
             document.getElementById('txt-rodape').innerHTML = info.rodape;
             
             document.getElementById('head-logo').src = pIconsMenu + conf.iconesMenu[conf.anoAtivo];
-            // O botão de voltar agora recebe o ícone colorido definido em biblioteca.js -> voltarMobile
             document.getElementById('header-back-mobile').src = pIconsMenu + tema.voltarMobile;
 
+            // MENU HAMBURGUER
             const menuBox = document.getElementById('dropdownMenu');
             menuBox.innerHTML = ''; 
             const menuLabels = { home: 'Início', pre: 'Pré', ano1: '1º Ano', ano2: '2º Ano', ano3: '3º Ano', ano4: '4º Ano' };
+            
+            // Adiciona as opções de navegação
             ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
                 if(conf.links[k]) {
-                    const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
+                    const a = document.createElement('a'); 
+                    a.className = 'menu-item'; 
+                    a.href = conf.links[k];
                     a.innerHTML = `<img src="${pIconsMenu}${conf.iconesMenu[k]}"><span>${menuLabels[k]}</span>`;
                     menuBox.appendChild(a);
                 }
             });
-            const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = "../"; 
+
+            // INCLUSÃO DO BOTÃO VOLTAR NO MENU
+            const btnV = document.createElement('a'); 
+            btnV.className = 'menu-item menu-item-voltar'; 
+            btnV.href = "../"; 
             btnV.innerHTML = `<img src="${pIconsMenu}${conf.iconesMenu.voltar}"> <span>VOLTAR</span>`;
             menuBox.appendChild(btnV);
 
+            // GRID DE JOGOS
             const grid = document.getElementById('gamesGrid');
             grid.innerHTML = ''; 
             conf.listaJogos.forEach(jogo => {
