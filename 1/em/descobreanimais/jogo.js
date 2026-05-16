@@ -9,15 +9,18 @@ let lanternaAtiva = false;
 
 const COR_FUNDO_SISTEMA = "#AC919B"; 
 
-// 1. INICIALIZAÇÃO
+// 1. INICIALIZAÇÃO E SINCRONIZAÇÃO
 window.startLogic = function() {
     rondaAtual = 1; acertos = 0; erros = 0; ajudasUtilizadas = 0;
     jogoAtivo = false; ajudaDisponivel = true; lanternaAtiva = false;
 
+    // Atualiza a descrição no ecrã de Intro (Garante que lê do nível atual)
+    const introInstr = document.getElementById('intro-instr');
+    if(introInstr) introInstr.innerText = JOGO_CATEGORIAS[categoriaAtual].descricao;
+
     const statusBar = document.getElementById('status-bar');
     if(statusBar) {
         statusBar.style.display = "none";
-        // BARRA DE STATUS: Altura 30px nos badges, 35px na lâmpada (Ajuda)
         statusBar.innerHTML = `
             <div class="status-group" style="display:flex; gap:8px; align-items:center;">
                 <div class="badge" id="btn-ajuda-luz" style="cursor:pointer; background:rgba(255,255,255,0.4); height:35px; width:55px; display:flex; align-items:center; justify-content:center; border-radius:10px;">
@@ -59,7 +62,7 @@ function usarAjudaRelampago() {
     }, 1200);
 }
 
-// TUTORIAL: Visual esbatido / sem cor
+// TUTORIAL: Visual esbatido e sem cor (Cinzentos)
 function renderTutorialAnimation() {
     const container = document.getElementById('intro-animation-container');
     const config = JOGO_CATEGORIAS[categoriaAtual];
@@ -68,10 +71,15 @@ function renderTutorialAnimation() {
     container.innerHTML = `
         <style>
             .tut-wrap { display: flex; flex-direction: column; align-items: center; width: 100%; }
-            .tut-screen { position: relative; width: 280px; height: 150px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 25px; overflow: hidden; }
-            .tut-dark { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #94a3b8; z-index: 2; }
-            .tut-lens { position: absolute; width: 90px; height: 90px; background: radial-gradient(circle, transparent 10%, #94a3b8 80%); border: 2px solid #f1f5f9; border-radius: 50%; z-index: 10; transform: translate(-50%, -50%); animation: moveLens 5s infinite ease-in-out; }
-            .tut-img { position: absolute; width: 50px; transform: translate(-50%, -50%); z-index: 5; opacity: 0; filter: grayscale(100%); }
+            /* Estilo "Botão/Ecrã sem cor" */
+            .tut-screen { 
+                position: relative; width: 280px; height: 150px; 
+                background: #e2e8f0; border: 2px solid #cbd5e1; 
+                border-radius: 25px; overflow: hidden; filter: grayscale(100%); opacity: 0.8;
+            }
+            .tut-dark { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #64748b; z-index: 2; }
+            .tut-lens { position: absolute; width: 90px; height: 90px; background: radial-gradient(circle, transparent 10%, #64748b 80%); border: 2px solid #fff; border-radius: 50%; z-index: 10; transform: translate(-50%, -50%); animation: moveLens 5s infinite ease-in-out; }
+            .tut-img { position: absolute; width: 50px; transform: translate(-50%, -50%); z-index: 5; opacity: 0; }
             .t-fake { left: 30%; top: 50%; animation: revFake 5s infinite; }
             .t-alvo { left: 70%; top: 50%; animation: revAlvo 5s infinite; }
             @keyframes moveLens { 0%, 100% { left: 15%; top: 50%; } 30% { left: 35%; top: 50%; } 60%, 85% { left: 70%; top: 50%; } }
@@ -79,7 +87,7 @@ function renderTutorialAnimation() {
             @keyframes revAlvo { 0%, 55%, 85%, 100% { opacity: 0; } 65%, 80% { opacity: 0.8; transform: translate(-50%,-50%) scale(1.1); } }
         </style>
         <div class="tut-wrap">
-            <div style="font-weight:900; color:#64748b; margin-bottom:12px; font-size:1.1rem; text-transform:uppercase;">ENCONTRA OS ${isDom ? 'DOMÉSTICOS' : 'SELVAGENS'}</div>
+            <div style="font-weight:900; color:#475569; margin-bottom:12px; font-size:1.1rem; text-transform:uppercase;">ENCONTRA OS ${isDom ? 'DOMÉSTICOS' : 'SELVAGENS'}</div>
             <div class="tut-screen">
                 <div class="tut-dark"></div><div class="tut-lens"></div>
                 <img src="${JOGO_CONFIG.caminhoImg}${isDom ? 'animaisselvagens/leao.png' : 'animaisdomesticos/cao.png'}" class="tut-img t-fake">
@@ -96,7 +104,12 @@ window.initGame = function() {
     proximaRonda();
 };
 
-function selecionarCategoria(id) { categoriaAtual = id; }
+function selecionarCategoria(id) { 
+    categoriaAtual = id; 
+    // Atualiza a intro imediatamente quando muda o nível no RD Menu
+    const introInstr = document.getElementById('intro-instr');
+    if(introInstr) introInstr.innerText = JOGO_CATEGORIAS[categoriaAtual].descricao;
+}
 
 function renderizarEstruturaLanterna() {
     const container = document.getElementById('game-main-content');
@@ -131,7 +144,7 @@ function renderizarEstruturaLanterna() {
 
 function proximaRonda() {
     const config = JOGO_CATEGORIAS[categoriaAtual];
-    if (rondaAtual > 10) { finalizarJogo(); return; } // Limite de 10 rondas
+    if (rondaAtual > 10) { finalizarJogo(); return; }
     const zone = document.getElementById('night-zone');
     zone.querySelectorAll('.animal-item').forEach(a => a.remove());
     document.getElementById('instrucao-ronda').innerText = config.tipoAlvo === "domestico" ? "DOMÉSTICO" : "SELVAGEM";
@@ -194,7 +207,7 @@ function atualizarPlacar() {
 
 function tocarSom(url) { new Audio(url).play().catch(()=>{}); }
 
-// 3. ECRÃ DE RESULTADOS DENTRO DO CARD (REPEITANDO O SISTEMA)
+// 3. ECRÃ DE RESULTADOS COMPLETO NO CARD
 function finalizarJogo() {
     jogoAtivo = false;
     const perc = Math.round((acertos / (acertos + erros || 1)) * 100) || 0;
@@ -237,6 +250,7 @@ function finalizarJogo() {
     tocarSom(JOGO_CONFIG.sons.vitoria);
 }
 
+// LER DESCRIÇÃO CORRETA
 window.gerarIntroJogo = function() { 
     return JOGO_CATEGORIAS[categoriaAtual].descricao;
 };
