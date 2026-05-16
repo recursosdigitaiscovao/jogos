@@ -196,7 +196,7 @@ const JOGO_CONFIG = {
     
     categorias: JOGO_CATEGORIAS,
 
-    relatorios: [
+relatorios: [
         { 
             min: 90, max: 100, 
             titulo: "És um craque!", 
@@ -210,7 +210,7 @@ const JOGO_CONFIG = {
         { 
             min: 50, max: 69, 
             titulo: "Estás quase lá!", 
-            img: "taca_2.png" 
+            img: "taca_3.png" // Corrigido para taca_3
         },
         { 
             min: 0, max: 49, 
