@@ -8,15 +8,7 @@ const CONFIG_MESTRE = {
 // === BIBLIOTECA DE TEMAS (CORES PADRÃO POR ÁREA) ===
 const BIBLIOTECA_TEMAS = {
     "portugues": { 
-        corPagina: "#e9f0f8",       // Fundo exterior
-        corHeader: "#ffffff",       // Fundo do Header
-        corContainer: "#e9f0f8",    // Fundo à volta do Card
-        corCard: "#f0f7ff",         // Fundo do Game-Card
-        bordaCard: "none",          // Limite do Card
-        sombraCard: "0 15px 35px rgba(176,196,217,0.4)",
-        // Controlo das 3 Telas (Intro, Game, Result)
-        corEspacoJogo: "#ffffff",   
-        bordaEspacoJogo: "3px dashed #5ba4e5",
+        corPagina: "#e9f0f8",
         corPrimaria: "#5ba4e5", 
         corEscura: "#3d7db8",   
         corTexto: "#5d7082",    
@@ -24,13 +16,6 @@ const BIBLIOTECA_TEMAS = {
     },
     "matematica": { 
         corPagina: "#e8f9f4",
-        corHeader: "#ffffff",
-        corContainer: "#e8f9f4",
-        corCard: "#f0fdfa",
-        bordaCard: "none",
-        sombraCard: "0 15px 35px rgba(160,210,190,0.4)",
-        corEspacoJogo: "#ffffff",
-        bordaEspacoJogo: "3px dashed #45cfa8",
         corPrimaria: "#45cfa8",
         corEscura: "#2BA886",
         corTexto: "#45cfa8",
@@ -38,13 +23,6 @@ const BIBLIOTECA_TEMAS = {
     },
     "estudo": { 
         corPagina: "#EAE2E5",
-        corHeader: "#ffffff",
-        corContainer: "#EAE2E5",
-        corCard: "#f7f3f4",
-        bordaCard: "none",
-        sombraCard: "0 15px 35px rgba(180,160,170,0.4)",
-        corEspacoJogo: "#ffffff",
-        bordaEspacoJogo: "3px dashed #994D4D",
         corPrimaria: "#994D4D",
         corEscura: "#6C3737",
         corTexto: "#994D4D",
@@ -52,13 +30,6 @@ const BIBLIOTECA_TEMAS = {
     },
     "pre": { 
         corPagina: "#FFF5F7",
-        corHeader: "#ffffff",
-        corContainer: "#FFF5F7",
-        corCard: "#FFDDE3",
-        bordaCard: "none",
-        sombraCard: "0 0 35px rgba(230,180,190,0.4)",
-        corEspacoJogo: "#ffffff",
-        bordaEspacoJogo: "3px dashed #E691A7",
         corPrimaria: "#E691A7",
         corEscura: "#D54267",
         corTexto: "#E691A7",
@@ -74,92 +45,27 @@ const BIBLIOTECA_CONTEUDO = {
             t2: "CURIOSOS", 
             sub: "Atividades | Pré-Escolar", 
             rodape: "&copy; Pequenos Curiosos - Recursos Digitais Covão" 
-            // Podes adicionar corCard, bordaEspacoJogo, etc, aqui para mudar apenas neste ano
         }
     },
-
     "ano1": {
-        "portugues": { 
-            t1: "PEQUENOS", 
-            t2: "LEITORES", 
-            sub: "Português | 1º Ano", 
-            rodape: "&copy; Pequenos Leitores - Recursos Digitais Covão" 
-        },
-        "matematica": { 
-            t1: "PEQUENOS", 
-            t2: "MATEMÁTICOS", 
-            sub: "Matemática | 1º Ano", 
-            rodape: "&copy; Pequenos Matemáticos - Recursos Digitais Covão" 
-        },
-        "estudo": { 
-            t1: "PEQUENOS", 
-            t2: "EXPLORADORES", 
-            sub: "Estudo do Meio | 1º Ano", 
-            rodape: "&copy; Pequenos Cientistas - Recursos Digitais Covão" 
-        }
+        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", rodape: "&copy; Pequenos Leitores" },
+        "matematica": { t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano", rodape: "&copy; Pequenos Matemáticos" },
+        "estudo": { t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano", rodape: "&copy; Pequenos Exploradores" }
     },
-
     "ano2": {
-        "portugues": { 
-            t1: "JOVENS", 
-            t2: "LEITORES", 
-            sub: "Português | 2º Ano", 
-            rodape: "&copy; Jovens Leitores - Recursos Digitais Covão" 
-        },
-        "matematica": { 
-            t1: "JOVENS", 
-            t2: "MATEMÁTICOS", 
-            sub: "Matemática | 2º Ano", 
-            rodape: "&copy; Jovens Matemáticos - Recursos Digitais Covão" 
-        },
-        "estudo": { 
-            t1: "JOVENS", 
-            t2: "INVESTIGADORES", 
-            sub: "Estudo do Meio | 2º Ano", 
-            rodape: "&copy; Jovens Cientistas - Recursos Digitais Covão" 
-        }
+        "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano", rodape: "&copy; Jovens Leitores" },
+        "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano", rodape: "&copy; Jovens Matemáticos" },
+        "estudo": { t1: "JOVENS", t2: "INVESTIGADORES", sub: "Estudo do Meio | 2º Ano", rodape: "&copy; Jovens Investigadores" }
     },
-
     "ano3": {
-        "portugues": { 
-            t1: "MESTRES", 
-            t2: "DA LÍNGUA", 
-            sub: "Português | 3º Ano", 
-            rodape: "&copy; Super Leitores - Recursos Digitais Covão" 
-        },
-        "matematica": { 
-            t1: "MESTRES", 
-            t2: "DO CÁLCULO", 
-            sub: "Matemática | 3º Ano", 
-            rodape: "&copy; Super Matemáticos - Recursos Digitais Covão" 
-        },
-        "estudo": { 
-            t1: "GRANDES", 
-            t2: "CIENTISTAS", 
-            sub: "Estudo do Meio | 3º Ano", 
-            rodape: "&copy; Super Cientistas - Recursos Digitais Covão" 
-        }
+        "portugues": { t1: "MESTRES", t2: "DA LÍNGUA", sub: "Português | 3º Ano", rodape: "&copy; Mestres Leitores" },
+        "matematica": { t1: "MESTRES", t2: "DO CÁLCULO", sub: "Matemática | 3º Ano", rodape: "&copy; Mestres Matemáticos" },
+        "estudo": { t1: "GRANDES", t2: "CIENTISTAS", sub: "Estudo do Meio | 3º Ano", rodape: "&copy; Grandes Cientistas" }
     },
-
     "ano4": {
-        "portugues": { 
-            t1: "GURU", 
-            t2: "DAS LETRAS", 
-            sub: "Português | 4º Ano", 
-            rodape: "&copy; Mestres Leitores - Recursos Digitais Covão" 
-        },
-        "matematica": { 
-            t1: "GURU", 
-            t2: "DOS NÚMEROS", 
-            sub: "Matemática | 4º Ano", 
-            rodape: "&copy; Mestres Matemáticos - Recursos Digitais Covão" 
-        },
-        "estudo": { 
-            t1: "GURU", 
-            t2: "DO MUNDO", 
-            sub: "Estudo do Meio | 4º Ano", 
-            rodape: "&copy; Mestres Cientistas - Recursos Digitais Covão" 
-        }
+        "portugues": { t1: "GURU", t2: "DAS LETRAS", sub: "Português | 4º Ano", rodape: "&copy; Guru das Letras" },
+        "matematica": { t1: "GURU", t2: "DOS NÚMEROS", sub: "Matemática | 4º Ano", rodape: "&copy; Guru dos Números" },
+        "estudo": { t1: "GURU", t2: "DO MUNDO", sub: "Estudo do Meio | 4º Ano", rodape: "&copy; Guru do Mundo" }
     }
 };
 
@@ -196,24 +102,25 @@ const JOGO_CONFIG = {
     
     categorias: JOGO_CATEGORIAS,
 
+    // REGRAS DE TAÇAS (Baseado em 10 rondas)
     relatorios: [
         { 
-            min: 90, max: 100, 
+            min: 90, max: 100, // 9 ou 10 certos
             titulo: "És um craque!", 
             img: "taca_1.png" 
         },
         { 
-            min: 70, max: 89, 
+            min: 70, max: 89, // 7 ou 8 certos
             titulo: "Muito bem!", 
             img: "taca_2.png" 
         },
         { 
-            min: 50, max: 69, 
+            min: 50, max: 69, // 5 ou 6 certos
             titulo: "Estás quase lá!", 
-            img: "taca_2.png" 
+            img: "taca_3.png" 
         },
         { 
-            min: 0, max: 49, 
+            min: 0, max: 49, // 0 a 4 certos
             titulo: "Continua a tentar!", 
             img: "taca_4.png" 
         }
