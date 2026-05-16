@@ -7,10 +7,9 @@ let jogoAtivo = false;
 let ajudaDisponivel = true;
 let lanternaAtiva = false; 
 
-// Configuração Visual
 const COR_FUNDO_SISTEMA = "#AC919B"; 
 
-// 1. INICIALIZAÇÃO DA LÓGICA E UI
+// 1. INICIALIZAÇÃO
 window.startLogic = function() {
     rondaAtual = 1; acertos = 0; erros = 0; ajudasUtilizadas = 0;
     jogoAtivo = false; ajudaDisponivel = true; lanternaAtiva = false;
@@ -18,21 +17,21 @@ window.startLogic = function() {
     const statusBar = document.getElementById('status-bar');
     if(statusBar) {
         statusBar.style.display = "none";
-        // BARRA DE STATUS: Alturas equalizadas (35px) e alinhamento perfeito
+        // BARRA DE STATUS: Altura reduzida (30px) e Lâmpada maior
         statusBar.innerHTML = `
             <div class="status-group" style="display:flex; gap:8px; align-items:center;">
-                <div class="badge" id="btn-ajuda-luz" style="cursor:pointer; background:rgba(255,255,255,0.4); height:35px; width:50px; display:flex; align-items:center; justify-content:center; border-radius:12px;">
-                    <img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:24px; filter:none;">
+                <div class="badge" id="btn-ajuda-luz" style="cursor:pointer; background:rgba(255,255,255,0.4); height:35px; width:55px; display:flex; align-items:center; justify-content:center; border-radius:10px;">
+                    <img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:28px; width:auto;">
                 </div>
-                <div class="badge" style="background:var(--primary-blue); height:35px; padding:0 15px; display:flex; align-items:center; border-radius:12px; font-weight:900; color:white; font-size:14px; white-space:nowrap;">
+                <div class="badge" style="background:var(--primary-blue); height:30px; padding:0 12px; display:flex; align-items:center; border-radius:10px; font-weight:900; color:white; font-size:13px;">
                     <span id="round-val">1 / 10</span>
                 </div>
             </div>
             <div class="status-group" style="display:flex; gap:8px; align-items:center;">
-                <div class="badge" style="background:#7ed321; height:35px; padding:0 12px; display:flex; align-items:center; border-radius:12px; font-weight:900; color:white;">
+                <div class="badge" style="background:#7ed321; height:30px; padding:0 10px; display:flex; align-items:center; border-radius:10px; font-weight:900; color:white; font-size:13px;">
                     ✓ <span id="hits-val" style="margin-left:4px;">0</span>
                 </div>
-                <div class="badge" style="background:#ff5e5e; height:35px; padding:0 12px; display:flex; align-items:center; border-radius:12px; font-weight:900; color:white;">
+                <div class="badge" style="background:#ff5e5e; height:30px; padding:0 10px; display:flex; align-items:center; border-radius:10px; font-weight:900; color:white; font-size:13px;">
                     ✗ <span id="miss-val" style="margin-left:4px;">0</span>
                 </div>
                 <img id="rd-game-btn" src="${JOGO_CONFIG.caminhoImg}rd.png" style="height:35px; width:35px; cursor:pointer;" onclick="openRDMenu(event)">
@@ -44,7 +43,6 @@ window.startLogic = function() {
     renderTutorialAnimation();
 };
 
-// AJUDA: EFEITO RELÂMPAGO
 function usarAjudaRelampago() {
     if (!jogoAtivo || !ajudaDisponivel) return;
     ajudaDisponivel = false; ajudasUtilizadas++;
@@ -63,35 +61,31 @@ function usarAjudaRelampago() {
     }, 1200);
 }
 
-// TUTORIAL: EXPLICAÇÃO DINÂMICA E LIMPA
+// TUTORIAL CORRIGIDO (Texto Nível 2)
 function renderTutorialAnimation() {
     const container = document.getElementById('intro-animation-container');
     const config = JOGO_CATEGORIAS[categoriaAtual];
     const isDom = config.tipoAlvo === "domestico";
-    const alvoImg = isDom ? "cao.png" : "leao.png";
-    const fakeImg = isDom ? "leao.png" : "cao.png";
-    const pAlvo = isDom ? "animaisdomesticos/" : "animaisselvagens/";
-    const pFake = isDom ? "animaisselvagens/" : "animaisdomesticos/";
-
+    
     container.innerHTML = `
         <style>
             .tut-wrap { display: flex; flex-direction: column; align-items: center; width: 100%; }
             .tut-screen { position: relative; width: 280px; height: 160px; background: #f8fafc; border: 2px dashed var(--primary-blue); border-radius: 25px; overflow: hidden; }
             .tut-dark { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #475569; z-index: 2; }
-            .tut-lens { position: absolute; width: 90px; height: 90px; background: radial-gradient(circle, transparent 10%, #475569 80%); border: 2px solid white; border-radius: 50%; z-index: 10; transform: translate(-50%, -50%); animation: moveLens 6s infinite ease-in-out; }
+            .tut-lens { position: absolute; width: 90px; height: 90px; background: radial-gradient(circle, transparent 10%, #475569 80%); border: 2px solid white; border-radius: 50%; z-index: 10; transform: translate(-50%, -50%); animation: moveLens 5s infinite ease-in-out; }
             .tut-img { position: absolute; width: 50px; transform: translate(-50%, -50%); z-index: 5; opacity: 0; }
-            .t-fake { left: 30%; top: 50%; animation: revFake 6s infinite; }
-            .t-alvo { left: 75%; top: 50%; animation: revAlvo 6s infinite; }
-            @keyframes moveLens { 0%, 100% { left: 15%; top: 50%; } 30% { left: 35%; top: 50%; } 60%, 80% { left: 75%; top: 50%; } }
+            .t-fake { left: 30%; top: 50%; animation: revFake 5s infinite; }
+            .t-alvo { left: 70%; top: 50%; animation: revAlvo 5s infinite; }
+            @keyframes moveLens { 0%, 100% { left: 15%; top: 50%; } 30% { left: 35%; top: 50%; } 60%, 85% { left: 70%; top: 50%; } }
             @keyframes revFake { 0%, 25%, 35%, 100% { opacity: 0; } 30% { opacity: 0.3; } }
             @keyframes revAlvo { 0%, 55%, 85%, 100% { opacity: 0; } 65%, 80% { opacity: 1; transform: translate(-50%,-50%) scale(1.2); } }
         </style>
         <div class="tut-wrap">
-            <div style="font-weight:900; color:var(--primary-blue); margin-bottom:10px; font-size:1.1rem;">ENCONTRA OS ${isDom ? 'DOMÉSTICOS' : 'SELVAGENS'}</div>
+            <div style="font-weight:900; color:var(--primary-blue); margin-bottom:10px; font-size:1.1rem; text-transform:uppercase;">ENCONTRA OS ${isDom ? 'DOMÉSTICOS' : 'SELVAGENS'}</div>
             <div class="tut-screen">
                 <div class="tut-dark"></div><div class="tut-lens"></div>
-                <img src="${JOGO_CONFIG.caminhoImg}${pFake}${fakeImg}" class="tut-img t-fake">
-                <img src="${JOGO_CONFIG.caminhoImg}${pAlvo}${alvoImg}" class="tut-img t-alvo">
+                <img src="${JOGO_CONFIG.caminhoImg}${isDom ? 'animaisselvagens/leao.png' : 'animaisdomesticos/cao.png'}" class="tut-img t-fake">
+                <img src="${JOGO_CONFIG.caminhoImg}${isDom ? 'animaisdomesticos/cao.png' : 'animaisselvagens/leao.png'}" class="tut-img t-alvo">
             </div>
         </div>
     `;
@@ -110,19 +104,20 @@ function renderizarEstruturaLanterna() {
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
         <style>
-            :root { --raio: 120px; }
-            @media (max-width: 600px) { :root { --raio: 80px; } }
+            :root { --raio-claro: 120px; }
+            @media (max-width: 600px) { :root { --raio-claro: 95px; } }
             #night-zone { position: relative; width: 100%; height: 100%; background: ${COR_FUNDO_SISTEMA}; overflow: hidden; cursor: none; border-radius: 25px; touch-action: none; }
-            /* LANTERNA PROFISSIONAL ESFUMADA */
+            
+            /* LANTERNA PROFISSIONAL: Centro limpo para clique preciso + Esfumado nas bordas */
             .spotlight-mask { 
                 position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
                 background: ${COR_FUNDO_SISTEMA}; pointer-events: none; z-index: 10; 
                 --x: 50%; --y: 50%; 
-                mask-image: radial-gradient(circle var(--raio) at var(--x) var(--y), transparent 0%, rgba(0,0,0,0.4) 45%, rgba(0,0,0,0.8) 75%, black 100%); 
-                -webkit-mask-image: radial-gradient(circle var(--raio) at var(--x) var(--y), transparent 0%, rgba(0,0,0,0.4) 45%, rgba(0,0,0,0.8) 75%, black 100%); 
-                opacity: 1; 
+                mask-image: radial-gradient(circle var(--raio-claro) at var(--x) var(--y), transparent 0%, transparent 45%, rgba(0,0,0,0.4) 65%, rgba(0,0,0,0.9) 85%, black 100%); 
+                -webkit-mask-image: radial-gradient(circle var(--raio-claro) at var(--x) var(--y), transparent 0%, transparent 45%, rgba(0,0,0,0.4) 65%, rgba(0,0,0,0.9) 85%, black 100%); 
             }
-            .animal-item { position: absolute; width: 70px; height: 70px; object-fit: contain; cursor: pointer; z-index: 5; opacity: 0; transition: opacity 0.3s; }
+            
+            .animal-item { position: absolute; width: 75px; height: 75px; object-fit: contain; cursor: pointer; z-index: 5; opacity: 0; transition: opacity 0.3s; }
             #instrucao-ronda { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); background: white; padding: 6px 30px; border-radius: 30px; font-weight: 900; z-index: 20; color: var(--primary-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-transform: uppercase; font-size: 1.1rem; pointer-events: none; }
         </style>
         <div id="night-zone"><div id="instrucao-ronda">...</div><div class="spotlight-mask" id="lanterna"></div></div>
@@ -158,7 +153,7 @@ function proximaRonda() {
 
 function calcularGrelha(container, qtd) {
     const w = container.clientWidth; const h = container.clientHeight;
-    const size = 78; const cols = Math.floor(w / size); const rows = Math.floor((h - 80) / size);
+    const size = 80; const cols = Math.floor(w / size); const rows = Math.floor((h - 80) / size);
     let cells = [];
     for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) cells.push({ x: c * size + size/2, y: (r * size + 80) + size/2 });
     return cells.sort(() => Math.random() - 0.5).slice(0, qtd);
@@ -169,7 +164,7 @@ function criarAnimal(imgNome, pasta, isCorrect, pos) {
     const img = document.createElement('img');
     img.src = JOGO_CONFIG.caminhoImg + pasta + imgNome;
     img.className = 'animal-item';
-    img.style.left = `${pos.x - 35}px`; img.style.top = `${pos.y - 35}px`;
+    img.style.left = `${pos.x - 37}px`; img.style.top = `${pos.y - 37}px`;
     if(lanternaAtiva) img.style.opacity = "1";
     img.onclick = (e) => {
         if (!jogoAtivo) return;
@@ -192,7 +187,7 @@ function criarAnimal(imgNome, pasta, isCorrect, pos) {
 
 function mostrarFeedback(t, c, x, y) {
     const fb = document.createElement('div');
-    fb.innerText = t; fb.style.cssText = `position:absolute; font-size:70px; font-weight:900; pointer-events:none; z-index:30; color:${c}; left:${x}px; top:${y}px; transform:translate(-50%,-50%); animation: popFeedback 0.6s ease-out forwards;`;
+    fb.innerText = t; fb.style.cssText = `position:absolute; font-size:75px; font-weight:900; pointer-events:none; z-index:30; color:${c}; left:${x}px; top:${y}px; transform:translate(-50%,-50%); animation: popFeedback 0.6s ease-out forwards;`;
     document.getElementById('night-zone').appendChild(fb); setTimeout(() => fb.remove(), 600);
 }
 
@@ -204,7 +199,7 @@ function atualizarPlacar() {
 
 function tocarSom(url) { new Audio(url).play().catch(()=>{}); }
 
-// 3. ECRÃ DE RESULTADOS (DESIGN FINAL)
+// 3. ECRÃ DE RESULTADOS (DESIGN FINAL IDÊNTICO À IMAGEM)
 function finalizarJogo() {
     jogoAtivo = false;
     const perc = Math.round((acertos / (acertos + erros)) * 100) || 0;
@@ -220,7 +215,7 @@ function finalizarJogo() {
             .res-card { display:flex; flex-direction:column; align-items:center; width:100%; max-width:550px; margin:auto; padding:10px; }
             .res-title { color:var(--primary-blue); font-size:2.2rem; font-weight:900; margin: 15px 0 25px; }
             .res-stats { display:flex; gap:15px; margin-bottom:30px; }
-            .res-box { background:white; border-radius:25px; width:105px; height:105px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+            .res-box { background:white; border-radius:25px; width:110px; height:110px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
             .res-num { font-size:1.8rem; font-weight:900; }
             .res-lab { font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase; margin-top:2px; }
             .res-btns { display:flex; flex-direction:column; gap:12px; width:100%; max-width:320px; }
