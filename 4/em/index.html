@@ -27,7 +27,6 @@
         .logo-center img { height: 65px; width: auto; } 
         .logo-text h1 { font-size: 22px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
         
-        /* SUBTÍTULO: Cor fixa e tamanho reduzido */
         .logo-text p { 
             font-size: 9px; 
             color: #7A8B9A !important; 
@@ -38,9 +37,19 @@
 
         .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; z-index: 3001; }
         
-        .btn-voltar-header { background: var(--primary-blue); color: white; padding: 10px 20px; border-radius: 14px; text-decoration: none; font-weight: 900; font-size: 14px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 0 var(--primary-dark); transition: 0.1s; }
-        .btn-voltar-header:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--primary-dark); }
-        .btn-voltar-mobile { display: none; text-decoration: none; padding: 5px; z-index: 3001; }
+        /* VOLTAR UNIFICADO - APENAS ÍCONE PARA TODOS OS ECRÃS */
+        .btn-voltar-header { display: none !important; } /* Esconde o botão antigo com texto */
+        
+        .btn-voltar-mobile { 
+            display: flex !important; /* Força exibição em Desktop e Mobile */
+            align-items: center; 
+            text-decoration: none; 
+            padding: 5px; 
+            z-index: 3001; 
+            transition: transform 0.2s ease;
+        }
+        .btn-voltar-mobile:hover { transform: scale(1.1); }
+        .btn-voltar-mobile img { height: 45px; width: auto; } /* Tamanho padrão para Desktop */
 
         .menu-dropdown { position: absolute; top: 85px; left: 15px; display: none; flex-direction: column; gap: 6px; z-index: 3000; }
         .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: #5d7082; font-weight: 700; font-size: 0.9rem; min-width: 200px; transition: 0.2s; }
@@ -72,9 +81,8 @@
         footer { padding: 15px; text-align: center; color: var(--text-grey); font-weight: 700; font-size: 0.8rem; border-top: 1px solid rgba(176,196,217,0.3); }
 
         @media (max-width: 650px) { 
-            header { padding: 0 15px; }
-            .btn-voltar-header { display: none !important; } 
-            .btn-voltar-mobile { display: flex; align-items: center; } 
+            header { height: 80px; padding: 0 15px; }
+            .btn-voltar-mobile img { height: 35px; } /* Ícone menor no mobile */
             .logo-text p { font-size: 8px; margin-top: 2px; }
             .logo-text h1 { font-size: 18px; }
             .logo-center img { height: 50px; }
@@ -88,9 +96,26 @@
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
 
     <header>
-        <div class="header-left"><i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i><div id="dropdownMenu" class="menu-dropdown"></div></div>
-        <div class="logo-center"><img id="head-logo" src="" alt="Logo"><div class="logo-text"><h1 id="tit-l1"></h1><h1 id="tit-l2"></h1><p id="sub-tit"></p></div></div>
-        <div class="header-right"><a href="../" id="link-voltar-header" class="btn-voltar-header"><img id="header-back-icon" src="" width="18"> <span id="txt-voltar-header">VOLTAR</span></a><a href="../" id="link-voltar-mobile" class="btn-voltar-mobile"><img id="header-back-mobile" src="" alt="Voltar" style="height:35px;"></a></div>
+        <div class="header-left">
+            <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
+            <div id="dropdownMenu" class="menu-dropdown"></div>
+        </div>
+        
+        <div class="logo-center">
+            <img id="head-logo" src="" alt="Logo">
+            <div class="logo-text">
+                <h1 id="tit-l1"></h1>
+                <h1 id="tit-l2"></h1>
+                <p id="sub-tit"></p>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <!-- Agora este botão dinâmico é usado em todas as resoluções -->
+            <a href="../" id="link-voltar-mobile" class="btn-voltar-mobile">
+                <img id="header-back-mobile" src="" alt="Voltar">
+            </a>
+        </div>
     </header>
 
     <main>
@@ -129,7 +154,8 @@
             document.getElementById('txt-rodape').innerHTML = info.rodape;
             
             document.getElementById('head-logo').src = pIconsMenu + conf.iconesMenu[conf.anoAtivo];
-            document.getElementById('header-back-icon').src = pIconsMenu + conf.iconesMenu.voltar;
+            
+            // Atribui o ícone colorido definido na biblioteca (voltarMobile) ao único botão de voltar
             document.getElementById('header-back-mobile').src = pIconsMenu + tema.voltarMobile;
 
             const menuBox = document.getElementById('dropdownMenu');
