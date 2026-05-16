@@ -15,11 +15,10 @@ window.startLogic = function() {
     const primeiraCat = Object.keys(JOGO_CATEGORIAS)[0];
     if (!categoriaAtual) categoriaAtual = primeiraCat;
     
-    // Atualiza descrição na intro
     const introInstr = document.getElementById('intro-instr');
     if(introInstr) introInstr.innerText = JOGO_CATEGORIAS[categoriaAtual].descricao || "Encontra o par igual!";
 
-    // Configurar botão da Lâmpada (Tamanho do RD)
+    // Configurar botão da Lâmpada (Tamanho igual ao RD: 30px)
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:30px; width:30px; cursor:pointer; display:block;" onclick="usarAjuda()">`;
@@ -42,7 +41,11 @@ function criarAnimacaoTutorial() {
     if(!container) return;
     const itemTut = JOGO_CATEGORIAS[categoriaAtual].itens[0];
     container.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:10px;">
+        <style>
+            .tut-box { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:10px; }
+            @keyframes tapP { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-5px,-8px) scale(1.1); } }
+        </style>
+        <div class="tut-box">
             <div style="height:90px; width:90px; background:white; border:3px solid var(--primary-blue); border-radius:20px; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 15px rgba(0,0,0,0.05);">
                 <img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:60px; object-fit:contain;">
             </div>
@@ -77,30 +80,30 @@ function mostrarPergunta() {
         <style>
             .game-wrapper { 
                 display: flex; flex-direction: column; width: 100%; height: 100%; 
-                justify-content: space-between; align-items: center; padding: 5px; box-sizing: border-box; overflow: hidden;
+                justify-content: space-between; align-items: center; padding: 10px; box-sizing: border-box; overflow: hidden;
             }
             .target-zone { 
-                height: 22%; width: 100%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+                height: 20%; width: 100%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
             }
             .target-card { 
                 height: 100%; aspect-ratio: 1/1; background: white; border: 3px solid var(--primary-blue); 
                 border-radius: 15px; display: flex; align-items: center; justify-content: center; 
                 box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
             }
-            .target-card img { max-height: 75%; max-width: 75%; object-fit: contain; }
+            .target-card img { max-height: 80%; max-width: 80%; object-fit: contain; }
 
             .options-grid { 
                 flex: 1; width: 100%; max-width: 800px; display: grid; 
                 grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); 
-                gap: 6px; margin-top: 5px; min-height: 0;
+                gap: 8px; margin-top: 10px; min-height: 0;
             }
             .card-item { 
                 background: white; border: 2px solid #f0f4f8; border-radius: 12px; 
                 display: flex; align-items: center; justify-content: center; 
                 cursor: pointer; transition: 0.15s; box-shadow: 0 3px 0 #d0d8de; 
-                padding: 5px; height: 100%; width: 100%; min-height: 0;
+                padding: 4px; height: 100%; width: 100%; min-height: 0;
             }
-            .card-item img { max-height: 80%; max-width: 80%; object-fit: contain; }
+            .card-item img { max-height: 85%; max-width: 85%; object-fit: contain; }
             
             .is-correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 3px 0 #5ea31a !important; }
             .is-wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 3px 0 #d13d3d !important; }
@@ -108,9 +111,11 @@ function mostrarPergunta() {
             .ajuda-foco { animation: brilharAjuda 0.5s 3; }
             @keyframes brilharAjuda { 0%, 100% { border-color: #f0f4f8; } 50% { border-color: #ff9f43; background: #fff5e6; transform: scale(1.02); } }
 
-            @media (max-width: 600px) { 
-                .options-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, 1fr); gap: 5px; } 
-                .target-zone { height: 18%; }
+            /* AJUSTE PARA TELEMÓVEIS VERTICAIS */
+            @media (max-width: 500px) { 
+                .options-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, 1fr); gap: 6px; } 
+                .target-zone { height: 16%; }
+                .card-item { border-radius: 10px; padding: 2px; }
             }
         </style>
         <div class="game-wrapper">
@@ -156,15 +161,16 @@ function verificar(el, acerto) {
     }, 1200);
 }
 
-// === 3. FINALIZAÇÃO E RESULTADOS ===
+// === 3. FINALIZAÇÃO E RESULTADOS (CONFORME IMAGEM) ===
 function finalizarJogo() {
     jogoAtivo = false;
     somVitoria.play();
     
+    // Cálculo de percentagem para a taça
     const perc = (acertos / 10) * 100;
     const rel = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
     
-    // CORREÇÃO: Esconder o ecrã de jogo e mostrar apenas o de resultados
+    // Esconder ecrã de jogo
     document.getElementById('scr-game').classList.remove('active');
     const resScreen = document.getElementById('scr-result');
     resScreen.classList.add('active');
@@ -172,31 +178,35 @@ function finalizarJogo() {
 
     resScreen.innerHTML = `
         <style>
-            .res-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 10px; box-sizing: border-box; }
-            .res-trophy { height: 120px; margin-bottom: 10px; object-fit: contain; }
-            .res-msg { color: var(--primary-blue); font-weight: 900; font-size: 2.2rem; margin-bottom: 25px; text-align: center; }
+            .res-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 15px; box-sizing: border-box; overflow-y: auto; }
+            .res-trophy { height: 110px; margin-bottom: 5px; object-fit: contain; }
+            .res-msg { color: var(--primary-blue); font-weight: 900; font-size: 2rem; margin-bottom: 20px; text-align: center; line-height: 1.1; }
             
-            .res-stats-row { display: flex; gap: 15px; margin-bottom: 30px; width: 100%; max-width: 420px; justify-content: center; }
-            .stat-box { background: white; border-radius: 25px; width: 110px; height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+            .res-stats-row { display: flex; gap: 10px; margin-bottom: 25px; width: 100%; max-width: 400px; justify-content: center; }
+            .stat-box { background: white; border-radius: 20px; width: 100px; height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
             .stat-val { font-size: 1.8rem; font-weight: 900; margin-bottom: 2px; }
             .stat-lab { font-size: 0.65rem; font-weight: 900; color: #88a; text-transform: uppercase; letter-spacing: 0.5px; }
             
-            .res-actions { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px; }
-            .btn-res { height: 60px; border-radius: 30px; display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 900; font-size: 1.1rem; text-decoration: none; cursor: pointer; transition: 0.2s; border: none; }
+            .res-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 320px; }
+            .btn-res { height: 55px; border-radius: 30px; display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 900; font-size: 1.1rem; text-decoration: none; cursor: pointer; transition: 0.2s; border: none; }
             
             .btn-redo { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
             .btn-redo:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
             
             .btn-outline { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); }
+            .btn-outline:active { background: #f0f7ff; }
+            
             .btn-exit { background: #e2e8f0; color: #64748b; }
 
             @media (max-width: 500px) {
-                .res-msg { font-size: 1.8rem; }
+                .res-msg { font-size: 1.6rem; }
                 .stat-box { width: 90px; height: 90px; }
                 .btn-res { height: 50px; font-size: 1rem; }
+                .res-trophy { height: 90px; }
             }
         </style>
         <div class="res-container">
+            <!-- Caminho da taça corrigido para caminhoImg -->
             <img src="${JOGO_CONFIG.caminhoImg}${rel.img}" class="res-trophy">
             <h1 class="res-msg">${rel.titulo}</h1>
             
