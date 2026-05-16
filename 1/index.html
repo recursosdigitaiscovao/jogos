@@ -48,7 +48,6 @@
             position: relative;
         }
 
-        /* Hambúrguer 32px */
         .hamburger-btn { 
             font-size: 32px; 
             color: var(--primary-blue); 
@@ -62,7 +61,6 @@
         
         .title-group { display: flex; flex-direction: column; justify-content: center; }
         
-        /* Títulos em duas linhas separadas */
         .title-main { 
             font-weight: 900; 
             font-size: 1.15rem; 
@@ -79,21 +77,21 @@
             margin-top: 4px; 
         }
 
-        /* --- BOTÕES VOLTAR --- */
-        /* Desktop: Botão 3D */
-        .btn-voltar-topo {
-            display: flex; align-items: center; gap: 8px;
-            background: var(--primary-blue); color: white; border-radius: 14px; 
-            padding: 10px 18px; font-weight: 900; font-size: 13px;
-            cursor: pointer; box-shadow: 0 4px 0 var(--primary-dark);
-            transition: 0.1s; border: none;
+        /* --- BOTÃO VOLTAR (UNIFICADO) --- */
+        .btn-voltar-mobile { 
+            display: flex; 
+            align-items: center; 
+            cursor: pointer; 
+            text-decoration: none;
+            transition: transform 0.2s ease;
         }
-        .btn-voltar-topo:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--primary-dark); }
-        .btn-voltar-topo img { height: 15px; filter: brightness(0) invert(1); }
-
-        /* Mobile: Ícone voltar_az.png */
-        .btn-voltar-mobile { display: none; cursor: pointer; text-decoration: none; }
-        .btn-voltar-mobile img { height: 35px; width: auto; }
+        
+        .btn-voltar-mobile:hover { transform: scale(1.1); }
+        
+        .btn-voltar-mobile img { 
+            height: 45px; /* Tamanho para Desktop */
+            width: auto; 
+        }
 
         /* --- MENU DROPDOWN --- */
         .menu-dropdown { 
@@ -119,7 +117,7 @@
         }
         .intro-text { color: #5d7082; font-size: 0.9rem; font-weight: 700; }
 
-        /* --- ÁREA CENTRAL (CARDS) --- */
+        /* --- ÁREA CENTRAL --- */
         main { flex: 1; padding: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden; }
         
         .game-wrapper { 
@@ -147,17 +145,15 @@
         /* --- RESPONSIVIDADE --- */
         @media (max-width: 650px) {
             header { grid-template-columns: 50px 1fr auto; padding: 0 10px; }
-            .btn-voltar-topo { display: none; } 
-            .btn-voltar-mobile { display: flex; align-items: center; } 
             #header-icon { height: 42px; }
             .title-main { font-size: 1rem; }
+            .btn-voltar-mobile img { height: 35px; } /* Tamanho menor para Mobile */
         }
 
         @media (min-width: 768px) {
             header { min-height: 100px; padding: 0 30px; }
             #header-icon { height: 60px; }
             .title-main { font-size: 1.5rem; }
-            .title-sub { font-size: 11px; }
             .game-wrapper { flex-direction: row; height: auto; max-height: 450px; max-width: 1100px; gap: 25px; }
             .game-card:hover { transform: translateY(-8px); }
             .game-card h2 { font-size: 1.1rem; }
@@ -186,12 +182,7 @@
         </div>
 
         <div class="header-right">
-            <!-- Desktop -->
-            <button onclick="voltarUmNivel()" class="btn-voltar-topo">
-                <img id="icon-voltar-topo" src="" alt="Voltar">
-                <span>VOLTAR</span>
-            </button>
-            <!-- Mobile -->
+            <!-- Botão Voltar Unificado (Apenas Ícone Colorido) -->
             <a href="javascript:voltarUmNivel()" class="btn-voltar-mobile">
                 <img id="icon-voltar-mobile" src="" alt="Voltar">
             </a>
@@ -224,7 +215,6 @@
             if (typeof JOGO_CONFIG !== 'undefined') {
                 const config = JOGO_CONFIG;
                 
-                // Textos
                 document.getElementById('txt-titulo1').innerText = config.textos.tituloLinha1;
                 document.getElementById('txt-titulo2').innerText = config.textos.tituloLinha2;
                 document.getElementById('txt-subtitulo').innerText = config.textos.subtitulo;
@@ -232,12 +222,11 @@
                 document.getElementById('txt-rodape').innerHTML = config.textos.rodape;
                 document.title = config.textos.tituloLinha1 + " " + config.textos.tituloLinha2;
                 
-                // Ícones do Header
                 document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.ano1;
-                document.getElementById('icon-voltar-topo').src = config.caminhoIconsMenu + config.iconesMenu.voltar;
+                
+                // Atribui o ícone colorido (ex: voltar_az.png) ao único botão de voltar
                 document.getElementById('icon-voltar-mobile').src = config.caminhoIconsMenu + config.iconesMenu.voltarMobile;
 
-                // Menu Lateral
                 const menuBox = document.getElementById('dropdownMenu');
                 const labels = { home: "Início", pre: "Pré-Escolar", ano1: "1º Ano", ano2: "2º Ano", ano3: "3º Ano", ano4: "4º Ano" };
 
@@ -257,11 +246,9 @@
                 btnVoltarMenu.innerHTML = `<img src="${config.caminhoIconsMenu}${config.iconesMenu.voltar}"> <span>VOLTAR</span>`;
                 menuBox.appendChild(btnVoltarMenu);
 
-                // Grelha de Jogos/Categorias
                 const grid = document.getElementById('gamesGrid');
                 config.listaJogos.forEach(jogo => {
-                    // Busca cores do temaCores definido no dados.js
-                    const tema = config.temaCores[jogo.tema] || { borda: "#e0eaf2", fundo: "#f8fbff" };
+                    const tema = config.temaCores[jogo.tema] || { border: "#e0eaf2", fundo: "#f8fbff" };
                     const card = document.createElement('a');
                     card.className = 'game-card';
                     card.href = jogo.link;
