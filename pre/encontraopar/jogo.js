@@ -18,7 +18,7 @@ window.startLogic = function() {
     const introInstr = document.getElementById('intro-instr');
     if(introInstr) introInstr.innerText = JOGO_CATEGORIAS[categoriaAtual].descricao || "Encontra o par igual!";
 
-    // Configurar botão da Lâmpada (Tamanho do RD)
+    // Configurar botão da Lâmpada
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:30px; width:30px; cursor:pointer; display:block;" onclick="usarAjuda()">`;
@@ -34,28 +34,28 @@ function selecionarCategoria(key) {
     categoriaAtual = key;
     const cat = JOGO_CATEGORIAS[key];
     perguntas = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 10);
-    const introInstr = document.getElementById('intro-instr');
-    if(introInstr) introInstr.innerText = cat.descricao || "Encontra o par igual!";
 }
 
 function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if(!container) return;
     const itemTut = JOGO_CATEGORIAS[categoriaAtual].itens[0];
+    
+    // Tutorial com CORES restauradas e tamanho adequado
     container.innerHTML = `
         <style>
-            .tut-box { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:10px; filter: grayscale(100%); opacity: 0.7; }
-            @keyframes tapP { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-5px,-8px) scale(1.1); } }
+            .tut-box { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:15px; }
+            @keyframes tapP { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-8px,-12px) scale(1.1); } }
         </style>
         <div class="tut-box">
-            <div style="height:70px; width:70px; background:white; border:2px solid #ccc; border-radius:15px; display:flex; align-items:center; justify-content:center;">
-                <img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:50px; width:auto; object-fit:contain;">
+            <div style="height:100px; width:100px; background:white; border:3px solid var(--primary-blue); border-radius:20px; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 15px rgba(0,0,0,0.05);">
+                <img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:70px; width:auto; object-fit:contain;">
             </div>
-            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:5px;">
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px;">
                 ${[1,2,3,4,5,6,7,8].map(i => `
-                    <div style="width:30px; height:30px; background:white; border:1px solid #ddd; border-radius:8px; display:flex; align-items:center; justify-content:center; position:relative;">
-                        ${i === 6 ? `<img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:20px;">` : ''}
-                        ${i === 6 ? `<div style="position:absolute; font-size:25px; bottom:-20px; right:-10px; animation: tapP 2s infinite;">☝️</div>` : ''}
+                    <div style="width:45px; height:45px; background:white; border:2px solid ${i===6 ? 'var(--primary-blue)' : '#eee'}; border-radius:10px; display:flex; align-items:center; justify-content:center; position:relative;">
+                        ${i === 6 ? `<img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:30px;">` : ''}
+                        ${i === 6 ? `<div style="position:absolute; font-size:35px; bottom:-25px; right:-15px; animation: tapP 2s infinite; z-index:10;">☝️</div>` : ''}
                     </div>`).join('')}
             </div>
         </div>
@@ -78,47 +78,48 @@ function mostrarPergunta() {
     let erradas = JOGO_CATEGORIAS[categoriaAtual].itens.filter(i => i.img !== alvo.img).sort(() => Math.random() - 0.5).slice(0, 7);
     let opcoes = [alvo, ...erradas].sort(() => Math.random() - 0.5);
 
-    // Estrutura com padding de 5px rigoroso e sem scroll
+    // Padding de 20px para haver margem dos limites
     container.innerHTML = `
         <style>
             .game-outer { 
-                width: 100%; height: 100%; padding: 5px; box-sizing: border-box; 
+                width: 100%; height: 100%; padding: 20px; box-sizing: border-box; 
                 display: flex; flex-direction: column; overflow: hidden;
             }
             .target-zone { 
-                height: 30%; width: 100%; display: flex; align-items: center; 
-                justify-content: center; flex-shrink: 0; padding-bottom: 5px;
+                height: 28%; width: 100%; display: flex; align-items: center; 
+                justify-content: center; flex-shrink: 0; margin-bottom: 15px;
             }
             .target-card { 
                 height: 100%; aspect-ratio: 1/1; background: white; 
-                border: 3px solid var(--primary-blue); border-radius: 20px; 
+                border: 4px solid var(--primary-blue); border-radius: 25px; 
                 display: flex; align-items: center; justify-content: center; 
-                box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+                box-shadow: 0 6px 15px rgba(0,0,0,0.06); 
             }
-            .target-card img { height: 80%; width: 80%; object-fit: contain; }
+            .target-card img { height: 75%; width: auto; object-fit: contain; }
 
             .options-grid { 
-                flex: 1; width: 100%; display: grid; 
+                flex: 1; width: 100%; max-width: 900px; margin: 0 auto; display: grid; 
                 grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); 
-                gap: 5px; min-height: 0;
+                gap: 12px; min-height: 0;
             }
             .card-item { 
-                background: white; border: 2px solid #f0f4f8; border-radius: 15px; 
+                background: white; border: 3px solid #f0f4f8; border-radius: 20px; 
                 display: flex; align-items: center; justify-content: center; 
-                cursor: pointer; transition: 0.2s; box-shadow: 0 3px 0 #d0d8de; 
-                padding: 4px; overflow: hidden;
+                cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #d0d8de; 
+                padding: 10px;
             }
-            .card-item img { height: 80%; width: 80%; object-fit: contain; }
+            .card-item img { height: 70%; width: auto; object-fit: contain; }
             
-            .is-correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 3px 0 #5ea31a !important; }
-            .is-wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 3px 0 #d13d3d !important; }
+            .is-correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 4px 0 #5ea31a !important; }
+            .is-wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 4px 0 #d13d3d !important; }
             
             .ajuda-foco { animation: brilharAjuda 0.5s 3; }
-            @keyframes brilharAjuda { 0%, 100% { border-color: #f0f4f8; } 50% { border-color: #ff9f43; background: #fff5e6; transform: scale(1.02); } }
+            @keyframes brilharAjuda { 0%, 100% { border-color: #f0f4f8; } 50% { border-color: #ff9f43; background: #fff5e6; transform: scale(1.05); } }
 
             @media (max-width: 600px) { 
-                .options-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, 1fr); gap: 5px; } 
-                .target-zone { height: 25%; }
+                .options-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, 1fr); gap: 8px; } 
+                .target-zone { height: 20%; }
+                .game-outer { padding: 10px; }
             }
         </style>
         <div class="game-outer">
@@ -175,17 +176,18 @@ function finalizarJogo() {
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <style>
-            .res-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 10px; box-sizing: border-box; }
-            .res-trophy { height: 100px; margin-bottom: 5px; object-fit: contain; }
-            .res-msg { color: var(--primary-blue); font-weight: 900; font-size: 1.8rem; margin-bottom: 15px; text-align: center; }
-            .res-stats-row { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; max-width: 380px; justify-content: center; }
-            .stat-box { background: white; border-radius: 20px; width: 95px; height: 95px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-            .stat-val { font-size: 1.6rem; font-weight: 900; margin-bottom: 2px; }
-            .stat-lab { font-size: 0.6rem; font-weight: 900; color: #88a; text-transform: uppercase; }
-            .res-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px; }
-            .btn-res { height: 50px; border-radius: 25px; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 900; font-size: 1rem; text-decoration: none; cursor: pointer; border: none; }
-            .btn-redo { background: var(--primary-blue); color: white; box-shadow: 0 4px 0 var(--primary-dark); }
-            .btn-outline { background: white; color: var(--primary-blue); border: 2px solid var(--primary-blue); }
+            .res-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 20px; box-sizing: border-box; }
+            .res-trophy { height: 130px; margin-bottom: 10px; object-fit: contain; }
+            .res-msg { color: var(--primary-blue); font-weight: 900; font-size: 2.2rem; margin-bottom: 25px; text-align: center; }
+            .res-stats-row { display: flex; gap: 15px; margin-bottom: 30px; width: 100%; max-width: 420px; justify-content: center; }
+            .stat-box { background: white; border-radius: 25px; width: 110px; height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+            .stat-val { font-size: 1.8rem; font-weight: 900; margin-bottom: 2px; }
+            .stat-lab { font-size: 0.65rem; font-weight: 900; color: #88a; text-transform: uppercase; letter-spacing: 0.5px; }
+            .res-actions { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px; }
+            .btn-res { height: 60px; border-radius: 30px; display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 900; font-size: 1.1rem; text-decoration: none; cursor: pointer; transition: 0.2s; border: none; }
+            .btn-redo { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
+            .btn-redo:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
+            .btn-outline { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); }
             .btn-exit { background: #e2e8f0; color: #64748b; }
         </style>
         <div class="res-container">
@@ -205,3 +207,7 @@ function finalizarJogo() {
     `;
     document.getElementById('status-bar').style.display = 'none';
 }
+
+window.gerarIntroJogo = function() { 
+    return JOGO_CATEGORIAS[categoriaAtual].descricao;
+};
