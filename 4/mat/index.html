@@ -18,30 +18,54 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-page); height: 100dvh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; transition: background 0.3s; }
 
+        /* HEADER - Estrutura estável para evitar desconfigurações */
         header { 
-            height: var(--header-h); background: #fbfdff; display: flex; align-items: center; 
-            justify-content: space-between; padding: 0 25px; z-index: 2500; flex-shrink: 0;
-            box-shadow: var(--outer-shadow); position: relative;
+            height: var(--header-h); 
+            background: #fbfdff; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 25px; 
+            z-index: 2500; 
+            flex-shrink: 0;
+            box-shadow: var(--outer-shadow); 
+            position: relative;
         }
-        .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; pointer-events: none; white-space: nowrap; }
+
+        .header-left { width: 60px; display: flex; align-items: center; }
+        .header-right { width: 60px; display: flex; align-items: center; justify-content: flex-end; }
+
+        .logo-center { 
+            position: absolute; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            pointer-events: none; 
+            white-space: nowrap; 
+        }
         .logo-center img { height: 65px; width: auto; } 
         .logo-text h1 { font-size: 22px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
-        
-        /* SUBTÍTULO: Cor fixa e tamanho reduzido */
-        .logo-text p { 
-            font-size: 9px; 
-            color: #7A8B9A !important; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px;
-        }
+        .logo-text p { font-size: 9px; color: #7A8B9A !important; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
 
         .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; z-index: 3001; }
         
-        .btn-voltar-header { background: var(--primary-blue); color: white; padding: 10px 20px; border-radius: 14px; text-decoration: none; font-weight: 900; font-size: 14px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 0 var(--primary-dark); transition: 0.1s; }
-        .btn-voltar-header:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--primary-dark); }
-        .btn-voltar-mobile { display: none; text-decoration: none; padding: 5px; z-index: 3001; }
+        /* VOLTAR UNIFICADO - ÍCONE DINÂMICO PARA TODAS AS RESOLUÇÕES */
+        .btn-voltar-header { display: none !important; } /* Esconde o botão antigo com texto */
+        
+        .btn-voltar-mobile { 
+            display: flex !important; 
+            align-items: center; 
+            text-decoration: none; 
+            z-index: 3001; 
+            transition: transform 0.2s ease;
+            pointer-events: auto;
+        }
+        .btn-voltar-mobile:hover { transform: scale(1.1); }
+        .btn-voltar-mobile img { height: 45px; width: auto; }
 
+        /* MENU HAMBURGUER */
         .menu-dropdown { position: absolute; top: 85px; left: 15px; display: none; flex-direction: column; gap: 6px; z-index: 3000; }
         .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: #5d7082; font-weight: 700; font-size: 0.9rem; min-width: 200px; transition: 0.2s; }
         .menu-item:hover { background: var(--primary-blue); color: white; }
@@ -60,26 +84,16 @@
         .game-card:hover { transform: translateY(-5px); border-color: var(--primary-blue); }
         .card-img-container { width: 100%; height: 90px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
         .card-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        
-        .game-card h2 { 
-            color: var(--primary-blue); 
-            font-size: 0.75rem; 
-            font-weight: 900; 
-            margin-top: auto; 
-            text-transform: uppercase; 
-        }
+        .game-card h2 { color: var(--primary-blue); font-size: 0.75rem; font-weight: 900; margin-top: auto; text-transform: uppercase; }
 
         footer { padding: 15px; text-align: center; color: var(--text-grey); font-weight: 700; font-size: 0.8rem; border-top: 1px solid rgba(176,196,217,0.3); }
 
         @media (max-width: 650px) { 
-            header { padding: 0 15px; }
-            .btn-voltar-header { display: none !important; } 
-            .btn-voltar-mobile { display: flex; align-items: center; } 
-            .logo-text p { font-size: 8px; margin-top: 2px; }
+            header { height: 80px; padding: 0 15px; }
+            .btn-voltar-mobile img { height: 35px; } 
             .logo-text h1 { font-size: 18px; }
             .logo-center img { height: 50px; }
-            .game-wrapper { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
-            .game-card h2 { font-size: 0.7rem; }
+            .logo-text p { font-size: 8px; }
         }
     </style>
 </head>
@@ -88,9 +102,26 @@
     <div class="overlay" id="overlay" onclick="closeMenus()"></div>
 
     <header>
-        <div class="header-left"><i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i><div id="dropdownMenu" class="menu-dropdown"></div></div>
-        <div class="logo-center"><img id="head-logo" src="" alt="Logo"><div class="logo-text"><h1 id="tit-l1"></h1><h1 id="tit-l2"></h1><p id="sub-tit"></p></div></div>
-        <div class="header-right"><a href="../" id="link-voltar-header" class="btn-voltar-header"><img id="header-back-icon" src="" width="18"> <span id="txt-voltar-header">VOLTAR</span></a><a href="../" id="link-voltar-mobile" class="btn-voltar-mobile"><img id="header-back-mobile" src="" alt="Voltar" style="height:35px;"></a></div>
+        <div class="header-left">
+            <i class="fas fa-bars hamburger-btn" onclick="toggleHamburger(event)"></i>
+            <div id="dropdownMenu" class="menu-dropdown"></div>
+        </div>
+        
+        <div class="logo-center">
+            <img id="head-logo" src="" alt="Logo">
+            <div class="logo-text">
+                <h1 id="tit-l1"></h1>
+                <h1 id="tit-l2"></h1>
+                <p id="sub-tit"></p>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <!-- Apenas o botão de ícone agora é exibido em todas as resoluções -->
+            <a href="../" id="link-voltar-mobile" class="btn-voltar-mobile">
+                <img id="header-back-mobile" src="" alt="Voltar">
+            </a>
+        </div>
     </header>
 
     <main>
@@ -112,8 +143,6 @@
             const conf = JOGO_CONFIG;
             const tema = BIBLIOTECA_TEMAS[conf.areaAtiva];
             const info = BIBLIOTECA_CONTEUDO[conf.anoAtivo][conf.areaAtiva];
-            const pIconsMenu = conf.caminhoIconsMenu;
-            const pIconsJogos = conf.caminhoIconsJogos;
             const root = document.documentElement;
 
             root.style.setProperty('--bg-page', tema.corPagina);
@@ -128,29 +157,30 @@
             document.getElementById('hub-intro-sub').innerText = info.intro;
             document.getElementById('txt-rodape').innerHTML = info.rodape;
             
-            document.getElementById('head-logo').src = pIconsMenu + conf.iconesMenu[conf.anoAtivo];
-            document.getElementById('header-back-icon').src = pIconsMenu + conf.iconesMenu.voltar;
-            document.getElementById('header-back-mobile').src = pIconsMenu + tema.voltarMobile;
+            document.getElementById('head-logo').src = conf.caminhoIconsMenu + conf.iconesMenu[conf.anoAtivo];
+            
+            // O botão de voltar recebe o ícone colorido definido na biblioteca (ex: voltar_az.png)
+            document.getElementById('header-back-mobile').src = conf.caminhoIconsMenu + tema.voltarMobile;
 
             const menuBox = document.getElementById('dropdownMenu');
             menuBox.innerHTML = ''; 
-            const menuLabels = { home: 'Início', pre: 'Pré', ano1: '1º Ano', ano2: '2º Ano', ano3: '3º Ano', ano4: '4º Ano' };
+            const labels = { home: 'Início', pre: 'Pré-Escolar', ano1: '1º Ano', ano2: '2º Ano', ano3: '3º Ano', ano4: '4º Ano' };
             ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
                 if(conf.links[k]) {
                     const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
-                    a.innerHTML = `<img src="${pIconsMenu}${conf.iconesMenu[k]}"><span>${menuLabels[k]}</span>`;
+                    a.innerHTML = `<img src="${conf.caminhoIconsMenu}${conf.iconesMenu[k]}"><span>${labels[k]}</span>`;
                     menuBox.appendChild(a);
                 }
             });
             const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = "../"; 
-            btnV.innerHTML = `<img src="${pIconsMenu}${conf.iconesMenu.voltar}"> <span>VOLTAR</span>`;
+            btnV.innerHTML = `<img src="${conf.caminhoIconsMenu}${conf.iconesMenu.voltar}"> <span>VOLTAR</span>`;
             menuBox.appendChild(btnV);
 
             const grid = document.getElementById('gamesGrid');
             grid.innerHTML = ''; 
             conf.listaJogos.forEach(jogo => {
                 const card = document.createElement('a'); card.className = 'game-card'; card.href = jogo.link;
-                card.innerHTML = `<div class="card-img-container"><img src="${pIconsJogos}${jogo.icon}"></div><h2>${jogo.nome}</h2>`;
+                card.innerHTML = `<div class="card-img-container"><img src="${conf.caminhoIconsJogos}${jogo.icon}"></div><h2>${jogo.nome}</h2>`;
                 grid.appendChild(card);
             });
         }
