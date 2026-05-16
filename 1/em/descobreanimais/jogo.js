@@ -17,7 +17,7 @@ window.startLogic = function() {
     const statusBar = document.getElementById('status-bar');
     if(statusBar) {
         statusBar.style.display = "none";
-        // BARRA DE STATUS: Altura 30px nos badges, 35px na lâmpada
+        // BARRA DE STATUS: Altura 30px nos badges, 35px na lâmpada (Ajuda)
         statusBar.innerHTML = `
             <div class="status-group" style="display:flex; gap:8px; align-items:center;">
                 <div class="badge" id="btn-ajuda-luz" style="cursor:pointer; background:rgba(255,255,255,0.4); height:35px; width:55px; display:flex; align-items:center; justify-content:center; border-radius:10px;">
@@ -59,7 +59,7 @@ function usarAjudaRelampago() {
     }, 1200);
 }
 
-// TUTORIAL: Visual de "Botão esbatido e sem cor"
+// TUTORIAL: Visual esbatido / sem cor
 function renderTutorialAnimation() {
     const container = document.getElementById('intro-animation-container');
     const config = JOGO_CATEGORIAS[categoriaAtual];
@@ -68,25 +68,10 @@ function renderTutorialAnimation() {
     container.innerHTML = `
         <style>
             .tut-wrap { display: flex; flex-direction: column; align-items: center; width: 100%; }
-            /* Estilo "Botão Esbatido" (Grayscale / Neutral) */
-            .tut-screen { 
-                position: relative; width: 280px; height: 150px; 
-                background: #f1f5f9; border: 1px solid #cbd5e1; 
-                border-radius: 25px; overflow: hidden; 
-                box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
-            }
+            .tut-screen { position: relative; width: 280px; height: 150px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 25px; overflow: hidden; }
             .tut-dark { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #94a3b8; z-index: 2; }
-            .tut-lens { 
-                position: absolute; width: 90px; height: 90px; 
-                background: radial-gradient(circle, transparent 10%, #94a3b8 80%); 
-                border: 2px solid #f1f5f9; border-radius: 50%; z-index: 10; 
-                transform: translate(-50%, -50%); animation: moveLens 5s infinite ease-in-out; 
-            }
-            /* Imagens sem cor (Grayscale) no tutorial */
-            .tut-img { 
-                position: absolute; width: 50px; transform: translate(-50%, -50%); 
-                z-index: 5; opacity: 0; filter: grayscale(100%); 
-            }
+            .tut-lens { position: absolute; width: 90px; height: 90px; background: radial-gradient(circle, transparent 10%, #94a3b8 80%); border: 2px solid #f1f5f9; border-radius: 50%; z-index: 10; transform: translate(-50%, -50%); animation: moveLens 5s infinite ease-in-out; }
+            .tut-img { position: absolute; width: 50px; transform: translate(-50%, -50%); z-index: 5; opacity: 0; filter: grayscale(100%); }
             .t-fake { left: 30%; top: 50%; animation: revFake 5s infinite; }
             .t-alvo { left: 70%; top: 50%; animation: revAlvo 5s infinite; }
             @keyframes moveLens { 0%, 100% { left: 15%; top: 50%; } 30% { left: 35%; top: 50%; } 60%, 85% { left: 70%; top: 50%; } }
@@ -120,8 +105,6 @@ function renderizarEstruturaLanterna() {
             :root { --raio-claro: 125px; }
             @media (max-width: 600px) { :root { --raio-claro: 100px; } }
             #night-zone { position: relative; width: 100%; height: 100%; background: ${COR_FUNDO_SISTEMA}; overflow: hidden; cursor: none; border-radius: 25px; touch-action: none; }
-            
-            /* LANTERNA PROFISSIONAL: Centro limpo e esfumado real */
             .spotlight-mask { 
                 position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
                 background: ${COR_FUNDO_SISTEMA}; pointer-events: none; z-index: 10; 
@@ -129,7 +112,6 @@ function renderizarEstruturaLanterna() {
                 mask-image: radial-gradient(circle var(--raio-claro) at var(--x) var(--y), transparent 0%, transparent 40%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.8) 85%, black 100%); 
                 -webkit-mask-image: radial-gradient(circle var(--raio-claro) at var(--x) var(--y), transparent 0%, transparent 40%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.8) 85%, black 100%); 
             }
-            
             .animal-item { position: absolute; width: 75px; height: 75px; object-fit: contain; cursor: pointer; z-index: 5; opacity: 0; transition: opacity 0.3s; }
             #instrucao-ronda { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); background: white; padding: 6px 30px; border-radius: 30px; font-weight: 900; z-index: 20; color: var(--primary-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-transform: uppercase; font-size: 1.1rem; pointer-events: none; }
         </style>
@@ -149,10 +131,9 @@ function renderizarEstruturaLanterna() {
 
 function proximaRonda() {
     const config = JOGO_CATEGORIAS[categoriaAtual];
-    if (rondaAtual > config.totalRondas) { finalizarJogo(); return; }
+    if (rondaAtual > 10) { finalizarJogo(); return; } // Limite de 10 rondas
     const zone = document.getElementById('night-zone');
     zone.querySelectorAll('.animal-item').forEach(a => a.remove());
-    // Título dinâmico (DOMÉSTICO ou SELVAGEM)
     document.getElementById('instrucao-ronda').innerText = config.tipoAlvo === "domestico" ? "DOMÉSTICO" : "SELVAGEM";
     atualizarPlacar();
     const posicoes = calcularGrelha(zone, 12);
@@ -206,17 +187,17 @@ function mostrarFeedback(t, c, x, y) {
 }
 
 function atualizarPlacar() {
-    if(document.getElementById('round-val')) document.getElementById('round-val').innerText = `${rondaAtual} / 10`;
+    if(document.getElementById('round-val')) document.getElementById('round-val').innerText = `${rondaAtual > 10 ? 10 : rondaAtual} / 10`;
     if(document.getElementById('hits-val')) document.getElementById('hits-val').innerText = acertos;
     if(document.getElementById('miss-val')) document.getElementById('miss-val').innerText = erros;
 }
 
 function tocarSom(url) { new Audio(url).play().catch(()=>{}); }
 
-// 3. ECRÃ DE RESULTADOS IDÊNTICO À IMAGEM
+// 3. ECRÃ DE RESULTADOS DENTRO DO CARD (REPEITANDO O SISTEMA)
 function finalizarJogo() {
     jogoAtivo = false;
-    const perc = Math.round((acertos / (acertos + erros)) * 100) || 0;
+    const perc = Math.round((acertos / (acertos + erros || 1)) * 100) || 0;
     let rank = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
     
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -225,40 +206,37 @@ function finalizarJogo() {
     document.getElementById('status-bar').style.display = "none";
 
     scrResult.innerHTML = `
-        <style>
-            .res-card { display:flex; flex-direction:column; align-items:center; width:100%; max-width:600px; margin:auto; padding:20px; }
-            .res-trophy { width:120px; margin-bottom:10px; }
-            .res-title { color:var(--primary-blue); font-size:2.4rem; font-weight:900; margin-bottom:30px; }
-            .res-stats { display:flex; gap:15px; margin-bottom:35px; width:100%; justify-content:center; }
-            .res-box { background:white; border-radius:25px; width:115px; height:115px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-            .res-num { font-size:1.8rem; font-weight:900; }
-            .res-lab { font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase; margin-top:2px; }
-            .res-btns { display:flex; flex-direction:column; gap:12px; width:100%; max-width:320px; }
-            .btn-base { height:60px; border-radius:30px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:1.1rem; text-decoration:none; cursor:pointer; border:none; gap:15px; }
-            .btn-solid { background:var(--primary-blue); color:white; box-shadow: 0 6px 0 var(--primary-dark); }
-            .btn-solid:active { transform:translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
-            .btn-outline { background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); }
-            .btn-subtle { background:#e2e8f0; color:#64748b; }
-        </style>
-        <div class="res-card">
-            <img src="${JOGO_CONFIG.caminhoImg}${rank.img}" class="res-trophy">
-            <h1 class="res-title">${rank.titulo}</h1>
-            <div class="res-stats">
-                <div class="res-box"><span class="res-num" style="color:#7ed321;">${acertos}</span><span class="res-lab">Certos</span></div>
-                <div class="res-box"><span class="res-num" style="color:#ff5e5e;">${erros}</span><span class="res-lab">Errados</span></div>
-                <div class="res-box"><span class="res-num" style="color:#ff9f43;">${ajudasUtilizadas}</span><span class="res-lab">Ajudas</span></div>
-            </div>
-            <div class="res-btns">
-                <button class="btn-base btn-solid" onclick="goToIntro()"><i class="fas fa-undo"></i> JOGAR DE NOVO</button>
-                <button class="btn-base btn-outline" onclick="openRDMenu(event)"><i class="fas fa-list"></i> OUTRO NÍVEL</button>
-                <a href="${JOGO_CONFIG.linkVoltar}" class="btn-base btn-subtle"><i class="fas fa-sign-out-alt"></i> SAIR</a>
+        <div class="screen-box" style="justify-content: center; padding: 20px;">
+            <div style="display:flex; flex-direction:column; align-items:center; width:100%; max-width:450px;">
+                <img src="${JOGO_CONFIG.caminhoImg}${rank.img}" style="width:120px; margin-bottom:10px;">
+                <h1 style="color:var(--primary-blue); font-size:2.2rem; font-weight:900; margin-bottom:25px;">${rank.titulo}</h1>
+
+                <div style="display:flex; gap:15px; margin-bottom:30px; width:100%; justify-content:center;">
+                    <div style="background:white; border-radius:25px; width:100px; height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                        <span style="font-size:1.8rem; font-weight:900; color:#7ed321;">${acertos}</span>
+                        <span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Certos</span>
+                    </div>
+                    <div style="background:white; border-radius:25px; width:100px; height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                        <span style="font-size:1.8rem; font-weight:900; color:#ff5e5e;">${erros}</span>
+                        <span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Errados</span>
+                    </div>
+                    <div style="background:white; border-radius:25px; width:100px; height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+                        <span style="font-size:1.8rem; font-weight:900; color:#ff9f43;">${ajudasUtilizadas}</span>
+                        <span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Ajudas</span>
+                    </div>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:320px;">
+                    <button class="btn-jogar-stretch" onclick="goToIntro()"><i class="fas fa-undo"></i> JOGAR DE NOVO</button>
+                    <button class="btn-jogar-stretch" onclick="openRDMenu(event)" style="background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); box-shadow:none;">OUTRO NÍVEL</button>
+                    <a href="${JOGO_CONFIG.linkVoltar}" class="btn-jogar-stretch" style="background:#e2e8f0; color:#64748b; box-shadow:none;">SAIR</a>
+                </div>
             </div>
         </div>
     `;
     tocarSom(JOGO_CONFIG.sons.vitoria);
 }
 
-// LER DESCRIÇÃO DA CATEGORIA
 window.gerarIntroJogo = function() { 
     return JOGO_CATEGORIAS[categoriaAtual].descricao;
 };
