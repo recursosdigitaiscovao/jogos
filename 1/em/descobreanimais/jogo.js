@@ -17,7 +17,7 @@ window.startLogic = function() {
     const statusBar = document.getElementById('status-bar');
     if(statusBar) {
         statusBar.style.display = "none";
-        // BARRA DE STATUS: Altura reduzida (30px) e Lâmpada maior
+        // BARRA DE STATUS: Altura 30px nos badges, 35px na lâmpada
         statusBar.innerHTML = `
             <div class="status-group" style="display:flex; gap:8px; align-items:center;">
                 <div class="badge" id="btn-ajuda-luz" style="cursor:pointer; background:rgba(255,255,255,0.4); height:35px; width:55px; display:flex; align-items:center; justify-content:center; border-radius:10px;">
@@ -29,10 +29,10 @@ window.startLogic = function() {
             </div>
             <div class="status-group" style="display:flex; gap:8px; align-items:center;">
                 <div class="badge" style="background:#7ed321; height:30px; padding:0 10px; display:flex; align-items:center; border-radius:10px; font-weight:900; color:white; font-size:13px;">
-                    ✓ <span id="hits-val" style="margin-left:4px;">0</span>
+                    ✓ <span id="hits-val">0</span>
                 </div>
                 <div class="badge" style="background:#ff5e5e; height:30px; padding:0 10px; display:flex; align-items:center; border-radius:10px; font-weight:900; color:white; font-size:13px;">
-                    ✗ <span id="miss-val" style="margin-left:4px;">0</span>
+                    ✗ <span id="miss-val">0</span>
                 </div>
                 <img id="rd-game-btn" src="${JOGO_CONFIG.caminhoImg}rd.png" style="height:35px; width:35px; cursor:pointer;" onclick="openRDMenu(event)">
             </div>
@@ -49,11 +49,9 @@ function usarAjudaRelampago() {
     const lanternaMask = document.getElementById('lanterna');
     const btnLuz = document.getElementById('btn-ajuda-luz');
     if(btnLuz) btnLuz.style.opacity = "0.2";
-
     lanternaMask.style.transition = "opacity 0.2s ease-out";
     lanternaMask.style.opacity = "0"; 
     document.querySelectorAll('.animal-item').forEach(img => img.style.opacity = "1");
-
     setTimeout(() => {
         lanternaMask.style.opacity = "1";
         if(!lanternaAtiva) document.querySelectorAll('.animal-item').forEach(img => img.style.opacity = "0");
@@ -61,7 +59,7 @@ function usarAjudaRelampago() {
     }, 1200);
 }
 
-// TUTORIAL CORRIGIDO (Texto Nível 2)
+// TUTORIAL: Visual de "Botão esbatido e sem cor"
 function renderTutorialAnimation() {
     const container = document.getElementById('intro-animation-container');
     const config = JOGO_CATEGORIAS[categoriaAtual];
@@ -70,18 +68,33 @@ function renderTutorialAnimation() {
     container.innerHTML = `
         <style>
             .tut-wrap { display: flex; flex-direction: column; align-items: center; width: 100%; }
-            .tut-screen { position: relative; width: 280px; height: 160px; background: #f8fafc; border: 2px dashed var(--primary-blue); border-radius: 25px; overflow: hidden; }
-            .tut-dark { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #475569; z-index: 2; }
-            .tut-lens { position: absolute; width: 90px; height: 90px; background: radial-gradient(circle, transparent 10%, #475569 80%); border: 2px solid white; border-radius: 50%; z-index: 10; transform: translate(-50%, -50%); animation: moveLens 5s infinite ease-in-out; }
-            .tut-img { position: absolute; width: 50px; transform: translate(-50%, -50%); z-index: 5; opacity: 0; }
+            /* Estilo "Botão Esbatido" (Grayscale / Neutral) */
+            .tut-screen { 
+                position: relative; width: 280px; height: 150px; 
+                background: #f1f5f9; border: 1px solid #cbd5e1; 
+                border-radius: 25px; overflow: hidden; 
+                box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+            }
+            .tut-dark { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #94a3b8; z-index: 2; }
+            .tut-lens { 
+                position: absolute; width: 90px; height: 90px; 
+                background: radial-gradient(circle, transparent 10%, #94a3b8 80%); 
+                border: 2px solid #f1f5f9; border-radius: 50%; z-index: 10; 
+                transform: translate(-50%, -50%); animation: moveLens 5s infinite ease-in-out; 
+            }
+            /* Imagens sem cor (Grayscale) no tutorial */
+            .tut-img { 
+                position: absolute; width: 50px; transform: translate(-50%, -50%); 
+                z-index: 5; opacity: 0; filter: grayscale(100%); 
+            }
             .t-fake { left: 30%; top: 50%; animation: revFake 5s infinite; }
             .t-alvo { left: 70%; top: 50%; animation: revAlvo 5s infinite; }
             @keyframes moveLens { 0%, 100% { left: 15%; top: 50%; } 30% { left: 35%; top: 50%; } 60%, 85% { left: 70%; top: 50%; } }
-            @keyframes revFake { 0%, 25%, 35%, 100% { opacity: 0; } 30% { opacity: 0.3; } }
-            @keyframes revAlvo { 0%, 55%, 85%, 100% { opacity: 0; } 65%, 80% { opacity: 1; transform: translate(-50%,-50%) scale(1.2); } }
+            @keyframes revFake { 0%, 25%, 35%, 100% { opacity: 0; } 30% { opacity: 0.2; } }
+            @keyframes revAlvo { 0%, 55%, 85%, 100% { opacity: 0; } 65%, 80% { opacity: 0.8; transform: translate(-50%,-50%) scale(1.1); } }
         </style>
         <div class="tut-wrap">
-            <div style="font-weight:900; color:var(--primary-blue); margin-bottom:10px; font-size:1.1rem; text-transform:uppercase;">ENCONTRA OS ${isDom ? 'DOMÉSTICOS' : 'SELVAGENS'}</div>
+            <div style="font-weight:900; color:#64748b; margin-bottom:12px; font-size:1.1rem; text-transform:uppercase;">ENCONTRA OS ${isDom ? 'DOMÉSTICOS' : 'SELVAGENS'}</div>
             <div class="tut-screen">
                 <div class="tut-dark"></div><div class="tut-lens"></div>
                 <img src="${JOGO_CONFIG.caminhoImg}${isDom ? 'animaisselvagens/leao.png' : 'animaisdomesticos/cao.png'}" class="tut-img t-fake">
@@ -104,17 +117,17 @@ function renderizarEstruturaLanterna() {
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
         <style>
-            :root { --raio-claro: 120px; }
-            @media (max-width: 600px) { :root { --raio-claro: 95px; } }
+            :root { --raio-claro: 125px; }
+            @media (max-width: 600px) { :root { --raio-claro: 100px; } }
             #night-zone { position: relative; width: 100%; height: 100%; background: ${COR_FUNDO_SISTEMA}; overflow: hidden; cursor: none; border-radius: 25px; touch-action: none; }
             
-            /* LANTERNA PROFISSIONAL: Centro limpo para clique preciso + Esfumado nas bordas */
+            /* LANTERNA PROFISSIONAL: Centro limpo e esfumado real */
             .spotlight-mask { 
                 position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
                 background: ${COR_FUNDO_SISTEMA}; pointer-events: none; z-index: 10; 
                 --x: 50%; --y: 50%; 
-                mask-image: radial-gradient(circle var(--raio-claro) at var(--x) var(--y), transparent 0%, transparent 45%, rgba(0,0,0,0.4) 65%, rgba(0,0,0,0.9) 85%, black 100%); 
-                -webkit-mask-image: radial-gradient(circle var(--raio-claro) at var(--x) var(--y), transparent 0%, transparent 45%, rgba(0,0,0,0.4) 65%, rgba(0,0,0,0.9) 85%, black 100%); 
+                mask-image: radial-gradient(circle var(--raio-claro) at var(--x) var(--y), transparent 0%, transparent 40%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.8) 85%, black 100%); 
+                -webkit-mask-image: radial-gradient(circle var(--raio-claro) at var(--x) var(--y), transparent 0%, transparent 40%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.8) 85%, black 100%); 
             }
             
             .animal-item { position: absolute; width: 75px; height: 75px; object-fit: contain; cursor: pointer; z-index: 5; opacity: 0; transition: opacity 0.3s; }
@@ -139,6 +152,7 @@ function proximaRonda() {
     if (rondaAtual > config.totalRondas) { finalizarJogo(); return; }
     const zone = document.getElementById('night-zone');
     zone.querySelectorAll('.animal-item').forEach(a => a.remove());
+    // Título dinâmico (DOMÉSTICO ou SELVAGEM)
     document.getElementById('instrucao-ronda').innerText = config.tipoAlvo === "domestico" ? "DOMÉSTICO" : "SELVAGEM";
     atualizarPlacar();
     const posicoes = calcularGrelha(zone, 12);
@@ -199,7 +213,7 @@ function atualizarPlacar() {
 
 function tocarSom(url) { new Audio(url).play().catch(()=>{}); }
 
-// 3. ECRÃ DE RESULTADOS (DESIGN FINAL IDÊNTICO À IMAGEM)
+// 3. ECRÃ DE RESULTADOS IDÊNTICO À IMAGEM
 function finalizarJogo() {
     jogoAtivo = false;
     const perc = Math.round((acertos / (acertos + erros)) * 100) || 0;
@@ -212,20 +226,22 @@ function finalizarJogo() {
 
     scrResult.innerHTML = `
         <style>
-            .res-card { display:flex; flex-direction:column; align-items:center; width:100%; max-width:550px; margin:auto; padding:10px; }
-            .res-title { color:var(--primary-blue); font-size:2.2rem; font-weight:900; margin: 15px 0 25px; }
-            .res-stats { display:flex; gap:15px; margin-bottom:30px; }
-            .res-box { background:white; border-radius:25px; width:110px; height:110px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+            .res-card { display:flex; flex-direction:column; align-items:center; width:100%; max-width:600px; margin:auto; padding:20px; }
+            .res-trophy { width:120px; margin-bottom:10px; }
+            .res-title { color:var(--primary-blue); font-size:2.4rem; font-weight:900; margin-bottom:30px; }
+            .res-stats { display:flex; gap:15px; margin-bottom:35px; width:100%; justify-content:center; }
+            .res-box { background:white; border-radius:25px; width:115px; height:115px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
             .res-num { font-size:1.8rem; font-weight:900; }
             .res-lab { font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase; margin-top:2px; }
             .res-btns { display:flex; flex-direction:column; gap:12px; width:100%; max-width:320px; }
-            .btn-base { height:55px; border-radius:30px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:1rem; text-decoration:none; cursor:pointer; border:none; gap:10px; }
+            .btn-base { height:60px; border-radius:30px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:1.1rem; text-decoration:none; cursor:pointer; border:none; gap:15px; }
             .btn-solid { background:var(--primary-blue); color:white; box-shadow: 0 6px 0 var(--primary-dark); }
-            .btn-outline { background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); box-shadow:none; }
+            .btn-solid:active { transform:translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
+            .btn-outline { background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); }
             .btn-subtle { background:#e2e8f0; color:#64748b; }
         </style>
         <div class="res-card">
-            <img src="${JOGO_CONFIG.caminhoImg}${rank.img}" style="width:130px;">
+            <img src="${JOGO_CONFIG.caminhoImg}${rank.img}" class="res-trophy">
             <h1 class="res-title">${rank.titulo}</h1>
             <div class="res-stats">
                 <div class="res-box"><span class="res-num" style="color:#7ed321;">${acertos}</span><span class="res-lab">Certos</span></div>
@@ -242,7 +258,7 @@ function finalizarJogo() {
     tocarSom(JOGO_CONFIG.sons.vitoria);
 }
 
+// LER DESCRIÇÃO DA CATEGORIA
 window.gerarIntroJogo = function() { 
-    const config = JOGO_CATEGORIAS[categoriaAtual];
-    return config.tipoAlvo === "domestico" ? "Encontra os animais DOMÉSTICOS na escuridão!" : "Encontra os animais SELVAGENS na escuridão!";
+    return JOGO_CATEGORIAS[categoriaAtual].descricao;
 };
