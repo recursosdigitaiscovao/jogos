@@ -37,11 +37,11 @@
 
         .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; z-index: 3001; }
         
-        /* VOLTAR UNIFICADO - APENAS ÍCONE PARA PC E MOBILE */
-        .btn-voltar-header { display: none !important; } 
+        /* --- ALTERAÇÃO: BOTÃO VOLTAR UNIFICADO --- */
+        .btn-voltar-header { display: none !important; } /* Esconde o botão de texto sempre */
         
         .btn-voltar-mobile { 
-            display: flex !important; 
+            display: flex !important; /* Mostra o ícone sempre */
             align-items: center; 
             text-decoration: none; 
             padding: 5px; 
@@ -50,28 +50,14 @@
         }
         .btn-voltar-mobile:hover { transform: scale(1.1); }
         .btn-voltar-mobile img { height: 45px; width: auto; }
+        /* ----------------------------------------- */
 
-        /* MENU HAMBURGUER */
         .menu-dropdown { position: absolute; top: 85px; left: 15px; display: none; flex-direction: column; gap: 6px; z-index: 3000; }
-        
-        .menu-item { 
-            display: flex; align-items: center; gap: 12px; padding: 12px 18px; 
-            background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); 
-            text-decoration: none; color: var(--text-grey) !important; 
-            font-weight: 800; font-size: 0.95rem; 
-            min-width: 210px; transition: background 0.2s; 
-        }
-
-        /* Hover: Fundo muda para a cor do tema, mas texto e ícone ficam iguais */
-        .menu-item:hover { 
-            background-color: var(--primary-blue) !important; 
-            color: var(--text-grey) !important; 
-        }
-
-        .menu-item img { height: 24px; width: 24px; object-fit: contain; }
-        
-        /* Botão Voltar dentro do Menu */
-        .menu-item-voltar { margin-top: 8px; border: 1px solid rgba(0,0,0,0.05); }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: #5d7082; font-weight: 700; font-size: 0.9rem; min-width: 200px; transition: 0.2s; }
+        .menu-item:hover { background: var(--primary-blue); color: white; }
+        .menu-item img { height: 22px; width: 22px; object-fit: contain; }
+        .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; }
+        .menu-item-voltar img { filter: brightness(0) invert(1); }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.1); display: none; z-index: 2000; }
 
@@ -118,6 +104,7 @@
         </div>
 
         <div class="header-right">
+            <!-- Usamos apenas o botão de ícone dinâmico em todas as resoluções -->
             <a href="../" id="link-voltar-mobile" class="btn-voltar-mobile">
                 <img id="header-back-mobile" src="" alt="Voltar">
             </a>
@@ -160,31 +147,23 @@
             document.getElementById('txt-rodape').innerHTML = info.rodape;
             
             document.getElementById('head-logo').src = pIconsMenu + conf.iconesMenu[conf.anoAtivo];
+            // Atribui o ícone dinâmico ao botão voltar
             document.getElementById('header-back-mobile').src = pIconsMenu + tema.voltarMobile;
 
-            // MENU HAMBURGUER
             const menuBox = document.getElementById('dropdownMenu');
             menuBox.innerHTML = ''; 
             const menuLabels = { home: 'Início', pre: 'Pré-Escolar', ano1: '1º Ano', ano2: '2º Ano', ano3: '3º Ano', ano4: '4º Ano' };
-            
             ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
                 if(conf.links[k]) {
-                    const a = document.createElement('a'); 
-                    a.className = 'menu-item'; 
-                    a.href = conf.links[k];
+                    const a = document.createElement('a'); a.className = 'menu-item'; a.href = conf.links[k];
                     a.innerHTML = `<img src="${pIconsMenu}${conf.iconesMenu[k]}"><span>${menuLabels[k]}</span>`;
                     menuBox.appendChild(a);
                 }
             });
-
-            // Adiciona o Botão Voltar no Menu
-            const btnV = document.createElement('a'); 
-            btnV.className = 'menu-item menu-item-voltar'; 
-            btnV.href = "../"; 
+            const btnV = document.createElement('a'); btnV.className = 'menu-item menu-item-voltar'; btnV.href = "../"; 
             btnV.innerHTML = `<img src="${pIconsMenu}${conf.iconesMenu.voltar}"> <span>VOLTAR</span>`;
             menuBox.appendChild(btnV);
 
-            // GRID DE JOGOS
             const grid = document.getElementById('gamesGrid');
             grid.innerHTML = ''; 
             conf.listaJogos.forEach(jogo => {
