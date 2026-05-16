@@ -26,39 +26,42 @@
         .logo-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; pointer-events: none; white-space: nowrap; }
         .logo-center img { height: 65px; width: auto; } 
         .logo-text h1 { font-size: 22px; color: var(--primary-blue); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
-        
-        .logo-text p { 
-            font-size: 9px; 
-            color: #7A8B9A !important; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px;
-        }
+        .logo-text p { font-size: 9px; color: #7A8B9A !important; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 
         .hamburger-btn { font-size: 32px; color: var(--primary-blue); cursor: pointer; padding: 5px; z-index: 3001; }
         
-        /* VOLTAR HEADER - UNIFICADO */
-        .btn-voltar-header { display: none !important; } 
-        
+        /* BOTÃO VOLTAR HEADER - APENAS ÍCONE */
         .btn-voltar-mobile { 
-            display: flex !important; 
-            align-items: center; 
-            text-decoration: none; 
-            padding: 5px; 
-            z-index: 3001; 
-            transition: transform 0.2s ease;
+            display: flex; align-items: center; text-decoration: none; padding: 5px; z-index: 3001; transition: transform 0.2s ease;
         }
         .btn-voltar-mobile:hover { transform: scale(1.1); }
         .btn-voltar-mobile img { height: 45px; width: auto; }
 
         /* MENU HAMBURGUER */
         .menu-dropdown { position: absolute; top: 85px; left: 15px; display: none; flex-direction: column; gap: 6px; z-index: 3000; }
-        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); text-decoration: none; color: #5d7082; font-weight: 700; font-size: 0.9rem; min-width: 200px; transition: 0.2s; }
-        .menu-item:hover:not(.menu-item-voltar) { background: #f0f7ff; color: var(--primary-blue); }
+        
+        .menu-item { 
+            display: flex; align-items: center; gap: 12px; padding: 12px 18px; 
+            background: white; border-radius: 12px; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); 
+            text-decoration: none; color: var(--text-grey); font-weight: 700; font-size: 0.9rem; 
+            min-width: 200px; transition: background 0.2s; 
+        }
+
+        /* HOVER: Fundo ganha a cor do tema (Rosa no Pré), mas letras e ícones NÃO MUDAM */
+        .menu-item:hover:not(.menu-item-voltar) { 
+            background-color: var(--primary-blue) !important; 
+            /* Mantém a cor do texto e não aplica filtro no ícone */
+            color: var(--text-grey) !important; 
+        }
+
         .menu-item img { height: 22px; width: 22px; object-fit: contain; }
         
-        /* Estilo especial para o Voltar no Menu */
-        .menu-item-voltar { background: var(--primary-blue) !important; color: white !important; margin-top: 5px; }
+        /* BOTÃO VOLTAR DENTRO DO MENU */
+        .menu-item-voltar { 
+            background: var(--primary-blue) !important; 
+            color: white !important; 
+            margin-top: 5px; 
+        }
         .menu-item-voltar img { filter: brightness(0) invert(1); }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.1); display: none; z-index: 2000; }
@@ -73,24 +76,16 @@
         .card-img-container { width: 100%; height: 90px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
         .card-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
         
-        .game-card h2 { 
-            color: var(--primary-blue); 
-            font-size: 0.75rem; 
-            font-weight: 900; 
-            margin-top: auto; 
-            text-transform: uppercase; 
-        }
+        .game-card h2 { color: var(--primary-blue); font-size: 0.75rem; font-weight: 900; margin-top: auto; text-transform: uppercase; }
 
         footer { padding: 15px; text-align: center; color: var(--text-grey); font-weight: 700; font-size: 0.8rem; border-top: 1px solid rgba(176,196,217,0.3); }
 
         @media (max-width: 650px) { 
             header { height: 80px; padding: 0 15px; }
             .btn-voltar-mobile img { height: 35px; } 
-            .logo-text p { font-size: 8px; margin-top: 2px; }
             .logo-text h1 { font-size: 18px; }
             .logo-center img { height: 50px; }
             .game-wrapper { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
-            .game-card h2 { font-size: 0.7rem; }
         }
     </style>
 </head>
@@ -161,9 +156,8 @@
             // MENU HAMBURGUER
             const menuBox = document.getElementById('dropdownMenu');
             menuBox.innerHTML = ''; 
-            const menuLabels = { home: 'Início', pre: 'Pré', ano1: '1º Ano', ano2: '2º Ano', ano3: '3º Ano', ano4: '4º Ano' };
+            const menuLabels = { home: 'Início', pre: 'Pré-Escolar', ano1: '1º Ano', ano2: '2º Ano', ano3: '3º Ano', ano4: '4º Ano' };
             
-            // Adiciona as opções de navegação
             ['home', 'pre', 'ano1', 'ano2', 'ano3', 'ano4'].forEach(k => {
                 if(conf.links[k]) {
                     const a = document.createElement('a'); 
@@ -174,7 +168,7 @@
                 }
             });
 
-            // INCLUSÃO DO BOTÃO VOLTAR NO MENU
+            // BOTÃO VOLTAR NO MENU
             const btnV = document.createElement('a'); 
             btnV.className = 'menu-item menu-item-voltar'; 
             btnV.href = "../"; 
