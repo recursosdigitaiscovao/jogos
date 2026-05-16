@@ -18,7 +18,6 @@ window.startLogic = function() {
     const introInstr = document.getElementById('intro-instr');
     if(introInstr) introInstr.innerText = JOGO_CATEGORIAS[categoriaAtual].descricao || "Encontra o par igual!";
 
-    // Configurar botão da Lâmpada
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:30px; width:30px; cursor:pointer; display:block;" onclick="usarAjuda()">`;
@@ -40,25 +39,19 @@ function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if(!container) return;
     const itemTut = JOGO_CATEGORIAS[categoriaAtual].itens[0];
-    
-    // Tutorial com CORES restauradas e tamanho adequado
     container.innerHTML = `
-        <style>
-            .tut-box { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:15px; }
-            @keyframes tapP { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-8px,-12px) scale(1.1); } }
-        </style>
-        <div class="tut-box">
-            <div style="height:100px; width:100px; background:white; border:3px solid var(--primary-blue); border-radius:20px; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 15px rgba(0,0,0,0.05);">
-                <img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:70px; width:auto; object-fit:contain;">
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:10px;">
+            <div style="height:90px; width:90px; background:white; border:3px solid var(--primary-blue); border-radius:20px; display:flex; align-items:center; justify-content:center;">
+                <img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:60px; object-fit:contain;">
             </div>
-            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px;">
-                ${[1,2,3,4,5,6,7,8].map(i => `
-                    <div style="width:45px; height:45px; background:white; border:2px solid ${i===6 ? 'var(--primary-blue)' : '#eee'}; border-radius:10px; display:flex; align-items:center; justify-content:center; position:relative;">
-                        ${i === 6 ? `<img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="height:30px;">` : ''}
-                        ${i === 6 ? `<div style="position:absolute; font-size:35px; bottom:-25px; right:-15px; animation: tapP 2s infinite; z-index:10;">☝️</div>` : ''}
-                    </div>`).join('')}
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px;">
+                ${[1,2,3,4,5,6,7,8].map(i => `<div style="width:40px; height:40px; background:white; border:2px solid ${i===6 ? 'var(--primary-blue)' : '#eee'}; border-radius:10px; display:flex; align-items:center; justify-content:center; position:relative;">
+                    ${i === 6 ? `<img src="${JOGO_CONFIG.caminhoImg}${itemTut.img}" style="width:75%;">` : ''}
+                    ${i === 6 ? `<div style="position:absolute; font-size:40px; bottom:-30px; right:-20px; animation: tapP 2s infinite;">☝️</div>` : ''}
+                </div>`).join('')}
             </div>
         </div>
+        <style>@keyframes tapP { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-8px,-12px) scale(1.1); } }</style>
     `;
 }
 
@@ -78,37 +71,35 @@ function mostrarPergunta() {
     let erradas = JOGO_CATEGORIAS[categoriaAtual].itens.filter(i => i.img !== alvo.img).sort(() => Math.random() - 0.5).slice(0, 7);
     let opcoes = [alvo, ...erradas].sort(() => Math.random() - 0.5);
 
-    // Padding de 20px para haver margem dos limites
+    // ESTRUTURA CORRIGIDA: Limita as alturas para caber sempre no monitor
     container.innerHTML = `
         <style>
-            .game-outer { 
-                width: 100%; height: 100%; padding: 20px; box-sizing: border-box; 
-                display: flex; flex-direction: column; overflow: hidden;
+            .game-wrapper { 
+                display: flex; flex-direction: column; width: 100%; height: 100%; 
+                padding: 10px; box-sizing: border-box; justify-content: space-between; align-items: center;
             }
             .target-zone { 
-                height: 28%; width: 100%; display: flex; align-items: center; 
-                justify-content: center; flex-shrink: 0; margin-bottom: 15px;
+                height: 25%; width: 100%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
             }
             .target-card { 
-                height: 100%; aspect-ratio: 1/1; background: white; 
-                border: 4px solid var(--primary-blue); border-radius: 25px; 
-                display: flex; align-items: center; justify-content: center; 
-                box-shadow: 0 6px 15px rgba(0,0,0,0.06); 
+                height: 100%; aspect-ratio: 1/1; background: white; border: 4px solid var(--primary-blue); 
+                border-radius: 20px; display: flex; align-items: center; justify-content: center; 
+                box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
             }
-            .target-card img { height: 75%; width: auto; object-fit: contain; }
+            .target-card img { max-height: 80%; max-width: 80%; object-fit: contain; }
 
             .options-grid { 
-                flex: 1; width: 100%; max-width: 900px; margin: 0 auto; display: grid; 
+                flex: 1; width: 100%; max-width: 900px; display: grid; 
                 grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); 
-                gap: 12px; min-height: 0;
+                gap: 10px; margin-top: 10px; min-height: 0;
             }
             .card-item { 
-                background: white; border: 3px solid #f0f4f8; border-radius: 20px; 
+                background: white; border: 2.5px solid #f0f4f8; border-radius: 15px; 
                 display: flex; align-items: center; justify-content: center; 
-                cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #d0d8de; 
-                padding: 10px;
+                cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 #d0d8de; 
+                padding: 8px; position: relative; height: 100%; width: 100%;
             }
-            .card-item img { height: 70%; width: auto; object-fit: contain; }
+            .card-item img { max-height: 85%; max-width: 85%; object-fit: contain; }
             
             .is-correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 4px 0 #5ea31a !important; }
             .is-wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 4px 0 #d13d3d !important; }
@@ -119,15 +110,23 @@ function mostrarPergunta() {
             @media (max-width: 600px) { 
                 .options-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, 1fr); gap: 8px; } 
                 .target-zone { height: 20%; }
-                .game-outer { padding: 10px; }
+            }
+            @media (max-height: 500px) {
+                .game-wrapper { flex-direction: row; gap: 15px; }
+                .target-zone { width: 30%; height: 90%; }
+                .options-grid { width: 70%; height: 100%; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); }
             }
         </style>
-        <div class="game-outer">
+        <div class="game-wrapper">
             <div class="target-zone">
                 <div class="target-card"><img src="${JOGO_CONFIG.caminhoImg}${alvo.img}"></div>
             </div>
             <div class="options-grid">
-                ${opcoes.map(opt => `<div class="card-item" data-img="${opt.img}" onclick="verificar(this, ${opt.img === alvo.img})"><img src="${JOGO_CONFIG.caminhoImg}${opt.img}"></div>`).join('')}
+                ${opcoes.map(opt => `
+                    <div class="card-item" data-img="${opt.img}" onclick="verificar(this, ${opt.img === alvo.img})">
+                        <img src="${JOGO_CONFIG.caminhoImg}${opt.img}">
+                    </div>
+                `).join('')}
             </div>
         </div>
     `;
@@ -176,8 +175,8 @@ function finalizarJogo() {
     resScreen.className = "screen screen-box active"; 
     resScreen.innerHTML = `
         <style>
-            .res-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 20px; box-sizing: border-box; }
-            .res-trophy { height: 130px; margin-bottom: 10px; object-fit: contain; }
+            .res-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 10px; }
+            .res-trophy { height: 120px; margin-bottom: 10px; object-fit: contain; }
             .res-msg { color: var(--primary-blue); font-weight: 900; font-size: 2.2rem; margin-bottom: 25px; text-align: center; }
             .res-stats-row { display: flex; gap: 15px; margin-bottom: 30px; width: 100%; max-width: 420px; justify-content: center; }
             .stat-box { background: white; border-radius: 25px; width: 110px; height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
