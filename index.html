@@ -7,155 +7,144 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --header-bg: #f0f5fa;    
-            --body-bg: #e9f1f8;       
-            --primary-red: #E63946;
-            --text-grey: #7a8b9a;
+            --header-bg: #ffffff;    
+            --body-bg: #f0f4f8;       
+            --text-main: #2d3436;
+            --text-grey: #636e72;
         }
 
+        /* Fundo com textura de pontos e gradiente */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
         
-        html, body { 
-            height: 100vh; 
+        body { 
+            background: var(--body-bg);
+            background-image: radial-gradient(#d1d8e0 1px, transparent 1px);
+            background-size: 30px 30px; /* Textura de pontos subtil */
             height: 100dvh; 
             width: 100vw; 
-            overflow: hidden; 
-        }
-
-        body { 
-            background-color: var(--body-bg); 
             display: flex; 
             flex-direction: column;
+            overflow-x: hidden;
         }
 
         /* HEADER */
         header { 
             background: var(--header-bg); 
-            padding: 10px; 
+            padding: 15px; 
             flex-shrink: 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             z-index: 10;
         }
         
-        .header-center { display: flex; align-items: center; justify-content: center; gap: 10px; }
-        #header-icon { height: 45px; width: auto; }
-        .title-main { font-weight: 900; font-size: 1.15rem; text-transform: uppercase; line-height: 1; }
-        #txt-titulo1 { color: var(--primary-red); }
-        #txt-titulo2 { color: #a5b4c4; }
-        .title-sub { color: var(--text-grey); font-weight: 700; font-size: 0.65rem; display: block; }
+        .header-center { display: flex; align-items: center; justify-content: center; gap: 15px; }
+        #header-icon { height: clamp(40px, 8vw, 60px); width: auto; }
+        
+        .title-group { display: flex; flex-direction: column; }
+        .title-main { font-weight: 900; font-size: clamp(1.1rem, 5vw, 1.8rem); text-transform: uppercase; line-height: 0.9; }
+        #txt-titulo1 { color: #d63031; } /* Vermelho Mundo */
+        #txt-titulo2 { color: #b2bec3; } /* Cinza Jogos */
+        .title-sub { color: var(--text-grey); font-weight: 700; font-size: clamp(0.6rem, 3vw, 0.9rem); margin-top: 4px; }
 
-        /* INTRO */
+        /* SUB-HEADER / INTRO */
         .sub-header { 
-            background: white; 
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(5px);
             text-align: center; 
-            padding: 8px; 
-            border-bottom-left-radius: 25px; 
-            border-bottom-right-radius: 25px; 
-            flex-shrink: 0;
+            padding: 12px; 
+            margin-bottom: 10px;
         }
-        .intro-text { color: #5d7082; font-size: 0.9rem; font-weight: 800; }
+        .intro-text { color: var(--text-grey); font-size: clamp(0.85rem, 4vw, 1.1rem); font-weight: 800; }
 
-        /* ÁREA CENTRAL */
+        /* GRID DE JOGOS */
         main { 
             flex: 1; 
-            min-height: 0; 
-            padding: 15px;
             display: flex;
-            align-items: center; /* Centraliza a grelha verticalmente */
+            align-items: center; 
             justify-content: center;
+            padding: 20px;
         }
 
         .game-wrapper { 
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(2, 1fr); /* Mobile: 2 colunas */
+            gap: 20px;
             width: 100%;
-            height: 100%; /* No mobile ocupa o espaço todo para evitar scroll */
-            max-width: 450px;
+            max-width: 1200px;
         }
 
+        /* CARD STYLE (BASEADO NA IMAGEM) */
         .game-card { 
-            border-radius: 22px; 
-            border: 4px solid #fff; 
+            position: relative;
+            border-radius: 30px; 
+            background: white;
             text-decoration: none; 
-            padding: 10px; 
+            padding: 15px; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            justify-content: center;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
-            transition: transform 0.2s ease;
-            min-height: 0;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 4px solid #fff;
+            aspect-ratio: 1 / 1.1;
         }
 
-        .game-card:nth-child(5) {
+        /* Estilo para o último card no mobile (centrado se for ímpar) */
+        .game-card:last-child:nth-child(odd) {
             grid-column: span 2;
+            width: calc(50% - 10px);
             justify-self: center;
-            width: 50%;
         }
 
+        /* Container da Imagem Interno */
         .card-img-container { 
-            flex: 1;
-            width: 100%; 
+            width: 100%;
+            height: 75%;
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            border-radius: 16px; 
-            background: rgba(255, 255, 255, 0.2);
-            min-height: 0; 
+            border-radius: 20px; 
+            background: rgba(255, 255, 255, 0.3); /* Será sobreposto via JS */
+            margin-bottom: 10px;
         }
         
         .card-img-container img { 
-            max-height: 85%; 
-            max-width: 85%; 
+            max-height: 80%; 
+            max-width: 80%; 
             object-fit: contain;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
         }
 
         .game-card h2 { 
             color: white; 
-            font-size: 0.9rem; 
+            font-size: clamp(0.9rem, 4vw, 1.3rem); 
             font-weight: 900; 
-            text-align: center;
-            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        /* HOVER E EFEITO GLOW */
+        .game-card:hover {
+            transform: scale(1.05) translateY(-5px);
         }
 
         /* FOOTER */
         footer { 
-            padding: 10px; 
+            padding: 15px; 
             text-align: center; 
             color: var(--text-grey); 
-            font-size: 0.7rem; 
+            font-size: 0.75rem; 
             font-weight: 700; 
-            flex-shrink: 0;
         }
 
-        /* AJUSTES PARA ECRÃS MAIORES (TABLETS E PC) */
-        @media (min-width: 768px) {
-            #header-icon { height: 65px; }
-            .title-main { font-size: 1.8rem; }
-            .title-sub { font-size: 0.9rem; }
-            .intro-text { font-size: 1.2rem; }
-
+        /* TABLET E DESKTOP (5 EM LINHA) */
+        @media (min-width: 900px) {
             .game-wrapper { 
-                grid-template-columns: repeat(5, 1fr); 
-                grid-template-rows: 1fr;
-                max-width: 1100px;
-                height: auto; /* Deixa de ser 100% da altura */
-                max-height: 400px; /* Limita a altura dos cards no PC */
-                gap: 20px;
+                grid-template-columns: repeat(5, 1fr); /* 5 cards em linha */
+                gap: 25px;
             }
-
-            .game-card { 
-                aspect-ratio: 1 / 1.2; /* Mantém um formato proporcional bonito */
-                padding: 20px;
+            .game-card:last-child:nth-child(odd) {
+                grid-column: span 1;
+                width: 100%;
             }
-
-            .game-card:nth-child(5) { grid-column: span 1; width: 100%; }
-            .game-card h2 { font-size: 1.2rem; }
-            .game-card:hover { transform: translateY(-10px); }
-            
-            footer { font-size: 0.85rem; padding: 20px; }
         }
     </style>
 </head>
@@ -199,15 +188,17 @@
 
                 const grid = document.getElementById('gamesGrid');
                 config.listaJogos.forEach(jogo => {
-                    const tema = config.temaCores[jogo.tema] || { borda: "#FFFFFF", fundo: "#5ba4e5" };
+                    const tema = config.temaCores[jogo.tema];
                     const card = document.createElement('a');
                     card.className = 'game-card';
                     card.href = jogo.link;
+                    
+                    // Aplica cores e sombra dinâmica (Glow)
                     card.style.backgroundColor = tema.fundo;
-                    card.style.borderColor = tema.borda;
+                    card.style.boxShadow = `0 15px 35px -10px ${tema.fundo}88`; // Glow suave
 
                     card.innerHTML = `
-                        <div class="card-img-container">
+                        <div class="card-img-container" style="background-color: rgba(255,255,255,0.25)">
                             <img src="${config.caminhoIconsJogos}${jogo.icon}" alt="${jogo.nome}">
                         </div>
                         <h2>${jogo.nome}</h2>
