@@ -37,7 +37,6 @@
             position: relative;
         }
 
-        /* Hambúrguer 32px como solicitado */
         .hamburger-btn { 
             font-size: 32px; color: var(--primary-blue); cursor: pointer; 
             background: none; border: none; padding: 5px; display: flex; align-items: center;
@@ -46,7 +45,6 @@
         .header-center { display: flex; align-items: center; justify-content: center; gap: 8px; }
         #header-icon { height: 48px; width: auto; }
         
-        /* Títulos em duas linhas (um por cima do outro) */
         .title-group { display: flex; flex-direction: column; justify-content: center; }
         .title-main { 
             font-weight: 900; font-size: 1.1rem; text-transform: uppercase; 
@@ -54,20 +52,18 @@
         }
         .title-sub { color: #7A8B9A; font-weight: 700; font-size: 8px; text-transform: uppercase; margin-top: 4px; }
 
-        /* --- BOTÕES VOLTAR --- */
-        .btn-voltar-topo {
-            display: flex; align-items: center; gap: 8px;
-            background: var(--primary-blue); color: white; border-radius: 14px; 
-            padding: 10px 18px; font-weight: 900; font-size: 13px;
-            cursor: pointer; box-shadow: 0 4px 0 var(--primary-dark);
-            transition: 0.1s; border: none;
-        }
-        .btn-voltar-topo:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--primary-dark); }
-        .btn-voltar-topo img { height: 15px; filter: brightness(0) invert(1); }
+        /* --- BOTÃO VOLTAR UNIFICADO --- */
+        .btn-voltar-topo { display: none !important; } /* Esconde o botão de texto sempre */
 
-        /* Botão Mobile (voltar_az.png) */
-        .btn-voltar-mobile { display: none; cursor: pointer; text-decoration: none; }
-        .btn-voltar-mobile img { height: 35px; width: auto; }
+        .btn-voltar-mobile { 
+            display: flex !important; /* Sempre visível */
+            align-items: center; 
+            cursor: pointer; 
+            text-decoration: none; 
+            transition: transform 0.2s ease;
+        }
+        .btn-voltar-mobile:hover { transform: scale(1.1); }
+        .btn-voltar-mobile img { height: 45px; width: auto; } /* Tamanho PC */
 
         /* MENU DROPDOWN */
         .menu-dropdown { 
@@ -100,7 +96,6 @@
             background: white; border-radius: 25px; border: 2px solid #e0eaf2; 
             text-decoration: none; padding: 10px; display: flex; flex-direction: column; 
             align-items: center; flex: 1; min-height: 0; box-shadow: 0 6px 12px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
         }
         .card-img-container { 
             flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; 
@@ -114,8 +109,7 @@
         /* RESPONSIVIDADE */
         @media (max-width: 650px) {
             header { grid-template-columns: 50px 1fr auto; padding: 0 10px; }
-            .btn-voltar-topo { display: none; }
-            .btn-voltar-mobile { display: flex; align-items: center; }
+            .btn-voltar-mobile img { height: 35px; } /* Ajuste Mobile */
             #header-icon { height: 42px; }
             .title-main { font-size: 0.95rem; }
         }
@@ -125,6 +119,7 @@
             #header-icon { height: 60px; }
             .title-main { font-size: 1.5rem; }
             .game-wrapper { flex-direction: row; height: auto; max-height: 450px; max-width: 1100px; gap: 25px; }
+            .game-card:hover { transform: translateY(-8px); }
             .game-card h2 { font-size: 1.1rem; }
         }
     </style>
@@ -151,10 +146,7 @@
         </div>
 
         <div class="header-right">
-            <button onclick="voltarUmNivel()" class="btn-voltar-topo">
-                <img id="icon-voltar-topo" src="" alt="Voltar">
-                <span>VOLTAR</span>
-            </button>
+            <!-- Apenas o botão de ícone dinâmico é mantido -->
             <a href="javascript:voltarUmNivel()" class="btn-voltar-mobile">
                 <img id="icon-voltar-mobile" src="" alt="Voltar">
             </a>
@@ -192,9 +184,9 @@
                 document.getElementById('txt-intro').innerText = config.textos.intro;
                 document.getElementById('txt-rodape').innerHTML = config.textos.rodape;
                 
-                // Carregar ícones dinamicamente do dados.js
                 document.getElementById('header-icon').src = config.caminhoIconsMenu + config.iconesMenu.ano3;
-                document.getElementById('icon-voltar-topo').src = config.caminhoIconsMenu + config.iconesMenu.voltar;
+                
+                // O botão único recebe o ícone colorido definido no dados.js (ex: voltar_az.png)
                 document.getElementById('icon-voltar-mobile').src = config.caminhoIconsMenu + config.iconesMenu.voltarMobile;
 
                 const menuBox = document.getElementById('dropdownMenu');
