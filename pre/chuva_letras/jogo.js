@@ -1,7 +1,7 @@
 let acertos = 0;
 let erros = 0;
 let ajudasUtilizadas = 0;
-let indicePergunta = 0; // Usado aqui como contador de letras capturadas
+let indicePergunta = 0; 
 let jogoAtivo = false;
 let ajudaDisponivel = true;
 let categoriaAtual = "maiusculas";
@@ -44,11 +44,11 @@ function renderTutorialAnimation() {
     
     container.innerHTML = `
         <style>
-            .tut-box { position:relative; width:150px; height:150px; background:#f8fafc; border:2px dashed var(--primary-blue); border-radius:20px; overflow:hidden; }
-            .tut-letter { position:absolute; left:50%; transform:translateX(-50%); font-size:40px; font-weight:900; color:var(--primary-blue); animation: fallTut 3s infinite linear; }
-            .tut-hand { position:absolute; font-size:35px; bottom:20px; left:60%; animation: tapTut 3s infinite; }
-            @keyframes fallTut { 0% { top:-50px; } 60% { top:60px; } 100% { top:60px; opacity:0; } }
-            @keyframes tapTut { 0%, 50% { transform:scale(1); opacity:0; } 60% { transform:scale(0.8); opacity:1; } 100% { opacity:0; } }
+            .tut-box { position:relative; width:180px; height:150px; background:#f0f7ff; border:3px solid var(--primary-blue); border-radius:25px; overflow:hidden; }
+            .tut-letter { position:absolute; left:50%; transform:translateX(-50%); font-size:45px; font-weight:900; color:var(--primary-blue); animation: fallTut 4s infinite linear; }
+            .tut-hand { position:absolute; font-size:40px; bottom:10px; left:55%; animation: tapTut 4s infinite; }
+            @keyframes fallTut { 0% { top:-50px; opacity:1; } 60% { top:50px; opacity:1; } 70%, 100% { top:50px; opacity:0; } }
+            @keyframes tapTut { 0%, 55% { transform:scale(1); opacity:0; } 60% { transform:scale(0.8); opacity:1; } 100% { opacity:0; } }
         </style>
         <div class="tut-box">
             <div class="tut-letter">${isUpper ? 'A' : 'a'}</div>
@@ -69,11 +69,10 @@ window.initGame = function() {
 
     renderEstruturaJogo();
     
-    // Iniciar fluxos
-    spawnInterval = setInterval(spawnLetra, 1500);
+    // Velocidade lenta para o Pré-Escolar
+    spawnInterval = setInterval(spawnLetra, 2500); // Uma letra a cada 2.5 segundos
     gameLoopInterval = setInterval(atualizarLetras, 50);
 
-    // Ouvir teclado real
     window.addEventListener('keydown', lidarTeclado);
 };
 
@@ -81,37 +80,47 @@ function renderEstruturaJogo() {
     const container = document.getElementById('game-main-content');
     container.innerHTML = `
         <style>
-            .rain-container { 
-                width: 98%; height: 98%; position: relative; 
-                background: #f0f4f8; border-radius: 20px; overflow: hidden;
-                display: flex; flex-direction: column;
+            .rain-outer { 
+                width: 100%; height: 100%; padding: 5px; box-sizing: border-box; 
+                display: flex; flex-direction: column; overflow: hidden;
             }
-            #sky { flex: 1; position: relative; width: 100%; }
+            .sky-area { 
+                flex: 1; position: relative; width: 100%; 
+                background: #f8fafc; border-radius: 20px; border: 2px solid #e2e8f0; 
+                margin-bottom: 8px; overflow: hidden;
+            }
             .falling-letter { 
-                position: absolute; font-size: clamp(30px, 8vmin, 50px); 
-                font-weight: 900; color: var(--primary-blue); 
-                cursor: pointer; user-select: none; transition: transform 0.1s;
-                background: white; width: 60px; height: 60px; 
+                position: absolute; font-size: 38px; font-weight: 900; 
+                color: var(--primary-blue); cursor: pointer;
+                background: white; width: 65px; height: 65px; 
                 display: flex; align-items: center; justify-content: center;
-                border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                border-radius: 18px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+                transition: transform 0.2s, opacity 0.2s;
             }
-            .virtual-keyboard { 
-                height: 80px; width: 100%; background: white; 
-                display: flex; align-items: center; justify-content: center; 
-                gap: 5px; padding: 5px; overflow-x: auto; border-top: 2px solid #ddd;
+            .keyboard-area { 
+                height: 120px; width: 100%; display: grid; 
+                grid-template-rows: repeat(2, 1fr); gap: 5px; 
+                padding: 5px; background: #fff; border-radius: 15px; border: 2px solid #eee;
             }
+            .kb-row { display: flex; justify-content: center; gap: 4px; height: 100%; }
             .key-btn { 
-                min-width: 40px; height: 50px; background: white; border: 2px solid #eee; 
-                border-radius: 10px; font-weight: 900; font-size: 18px; color: #5d7082;
-                display: flex; align-items: center; justify-content: center;
-                cursor: pointer; box-shadow: 0 3px 0 #ddd;
+                flex: 1; max-width: 45px; height: 100%; background: white; 
+                border: 2px solid #f0f0f0; border-radius: 10px; font-weight: 900; 
+                font-size: 16px; color: #5d7082; display: flex; align-items: center; 
+                justify-content: center; cursor: pointer; box-shadow: 0 3px 0 #ddd;
             }
             .key-btn:active { transform: translateY(2px); box-shadow: none; }
+            @media (max-width: 500px) {
+                .falling-letter { width: 50px; height: 50px; font-size: 28px; }
+                .keyboard-area { height: 100px; }
+                .key-btn { font-size: 14px; }
+            }
         </style>
-        <div class="rain-container">
-            <div id="sky"></div>
-            <div class="virtual-keyboard" id="v-keyboard">
-                <!-- Teclado gerado dinamicamente com as letras que estão a cair ou alfabeto -->
+        <div class="rain-outer">
+            <div class="sky-area" id="sky"></div>
+            <div class="keyboard-area">
+                <div class="kb-row" id="kb-1"></div>
+                <div class="kb-row" id="kb-2"></div>
             </div>
         </div>
     `;
@@ -119,10 +128,16 @@ function renderEstruturaJogo() {
 }
 
 function gerarTeclado() {
-    const kb = document.getElementById('v-keyboard');
-    const alfabeto = JOGO_CATEGORIAS[categoriaAtual].letras;
-    // Para não encher muito, vamos mostrar apenas 10 letras aleatórias que mudam ou o alfabeto completo scrollable
-    kb.innerHTML = alfabeto.map(l => `<div class="key-btn" onclick="verificarLetra('${l}')">${l}</div>`).join('');
+    const row1 = document.getElementById('kb-1');
+    const row2 = document.getElementById('kb-2');
+    const letras = JOGO_CATEGORIAS[categoriaAtual].letras;
+    
+    const metade = Math.ceil(letras.length / 2);
+    const l1 = letras.slice(0, metade);
+    const l2 = letras.slice(metade);
+
+    row1.innerHTML = l1.map(l => `<div class="key-btn" onclick="verificarLetra('${l}')">${l}</div>`).join('');
+    row2.innerHTML = l2.map(l => `<div class="key-btn" onclick="verificarLetra('${l}')">${l}</div>`).join('');
 }
 
 function spawnLetra() {
@@ -134,12 +149,10 @@ function spawnLetra() {
     const div = document.createElement('div');
     div.className = 'falling-letter';
     div.innerText = char;
-    div.style.left = Math.random() * (sky.clientWidth - 60) + "px";
-    div.style.top = "-70px";
+    div.style.left = (5 + Math.random() * 80) + "%";
+    div.style.top = "-80px";
     
-    const id = Date.now();
-    const letraObj = { id, char, element: div, top: -70 };
-    
+    const letraObj = { char, element: div, top: -80 };
     div.onclick = () => verificarLetra(char);
     
     sky.appendChild(div);
@@ -150,30 +163,31 @@ function atualizarLetras() {
     if (!jogoAtivo) return;
     const skyHeight = document.getElementById('sky').clientHeight;
     
-    letrasNoEcra.forEach((letra, index) => {
-        letra.top += 2; // Velocidade da queda
+    for (let i = letrasNoEcra.length - 1; i >= 0; i--) {
+        let letra = letrasNoEcra[i];
+        letra.top += 1.2; // Queda bem suave para crianças
         letra.element.style.top = letra.top + "px";
         
         if (letra.top > skyHeight) {
-            // Perdeu a letra
             somErro.play();
             erros++;
             document.getElementById('miss-val').innerText = erros;
-            letra.element.remove();
-            letrasNoEcra.splice(index, 1);
+            letra.element.style.opacity = "0";
+            setTimeout(() => letra.element.remove(), 200);
+            letrasNoEcra.splice(i, 1);
         }
-    });
+    }
 }
 
 function lidarTeclado(e) {
     if (!jogoAtivo) return;
-    verificarLetra(e.key);
+    verificarLetra(e.key.toUpperCase());
+    verificarLetra(e.key.toLowerCase());
 }
 
 function verificarLetra(charDigitado) {
     if (!jogoAtivo) return;
     
-    // Encontrar a letra correspondente mais baixa no ecrã
     const index = letrasNoEcra.findIndex(l => l.char === charDigitado);
     
     if (index !== -1) {
@@ -188,26 +202,28 @@ function verificarLetra(charDigitado) {
         letra.element.style.color = "white";
         letra.element.style.transform = "scale(0)";
         
-        setTimeout(() => letra.element.remove(), 200);
         letrasNoEcra.splice(index, 1);
+        setTimeout(() => letra.element.remove(), 250);
         
-        if (indicePergunta >= 10) {
-            setTimeout(finalizarJogo, 500);
-        }
+        if (indicePergunta >= 10) setTimeout(finalizarJogo, 600);
     }
 }
 
 window.usarAjuda = function() {
     if (!jogoAtivo || !ajudaDisponivel || letrasNoEcra.length === 0) return;
-    
     ajudaDisponivel = false;
     ajudasUtilizadas++;
     
-    // Encontra a letra mais baixa e "resolve-a"
+    // Apanha a letra que estiver mais em baixo
     let maisBaixa = letrasNoEcra.reduce((prev, curr) => (prev.top > curr.top) ? prev : curr);
     verificarLetra(maisBaixa.char);
     
-    setTimeout(() => { ajudaDisponivel = true; }, 2000);
+    const btnLuz = document.querySelector('.badge-timer img');
+    if(btnLuz) btnLuz.style.opacity = "0.3";
+    setTimeout(() => { 
+        ajudaDisponivel = true; 
+        if(btnLuz) btnLuz.style.opacity = "1";
+    }, 2000);
 };
 
 // === 3. FINALIZAÇÃO E RESULTADOS ===
@@ -218,7 +234,7 @@ function finalizarJogo() {
     window.removeEventListener('keydown', lidarTeclado);
     somVitoria.play();
 
-    const perc = (acertos / (acertos + erros || 1)) * 100;
+    const perc = (acertos / 10) * 100;
     const rel = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
     
     document.getElementById('scr-game').classList.remove('active');
@@ -232,14 +248,13 @@ function finalizarJogo() {
                 .res-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 450px; }
                 .res-trophy { height: 110px; margin-bottom: 10px; object-fit: contain; }
                 .res-msg { color: var(--primary-blue); font-weight: 900; font-size: 2.2rem; margin-bottom: 25px; text-align: center; line-height: 1; }
-                .res-stats-row { display: flex; gap: 15px; margin-bottom: 30px; width: 100%; justify-content: center; }
+                .res-stats-row { display: flex; gap: 12px; margin-bottom: 30px; width: 100%; justify-content: center; }
                 .stat-box { background: white; border-radius: 25px; width: 105px; height: 105px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
                 .stat-val { font-size: 1.8rem; font-weight: 900; margin-bottom: 2px; }
                 .stat-lab { font-size: 0.65rem; font-weight: 900; color: #88a; text-transform: uppercase; }
                 .res-actions { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; }
-                .btn-res { height: 60px; border-radius: 30px; display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 900; font-size: 1.1rem; text-decoration: none; cursor: pointer; transition: 0.2s; border: none; }
+                .btn-res { height: 60px; border-radius: 30px; display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 900; font-size: 1.1rem; text-decoration: none; cursor: pointer; border: none; }
                 .btn-redo { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
-                .btn-redo:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
                 .btn-outline { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); }
                 .btn-exit { background: #e2e8f0; color: #64748b; }
             </style>
