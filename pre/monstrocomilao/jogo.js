@@ -5,6 +5,7 @@ let rondaAtual = 1;
 let jogoAtivo = false;
 let ajudaDisponivel = true;
 let categoriaAtiva = "saudavel";
+let alvosRestantesNaRonda = 0;
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
@@ -57,14 +58,14 @@ function renderTutorialAnimation() {
             .tut-eye { width: 15px; height: 15px; background: white; border-radius: 50%; position: relative; }
             .tut-pupil { width: 7px; height: 7px; background: black; border-radius: 50%; position: absolute; top: 3px; left: 3px; }
             .tut-mouth { width: 40px; height: 15px; background: #210329; border-radius: 5px 5px 20px 20px; border: 2.5px solid #ffeb3b; }
-            .tut-food { position: absolute; width: 45px; z-index: 15; left: 200px; top: 60px; }
-            .tut-hand { position: absolute; font-size: 40px; z-index: 20; left: 220px; top: 90px; }
-            @keyframes handSeq { 0% { left: 220px; top: 95px; transform: scale(1); } 15% { left: 220px; top: 80px; transform: scale(0.9); } 45%, 65% { left: 50px; top: 90px; transform: scale(0.9); } 75% { left: 220px; top: 95px; transform: scale(1); } 100% { left: 220px; top: 95px; } }
-            @keyframes foodSeq { 0%, 15% { left: 200px; top: 60px; opacity: 1; transform: scale(1); } 45% { left: 30px; top: 70px; opacity: 1; transform: scale(0.8); } 50%, 100% { left: 30px; top: 70px; opacity: 0; transform: scale(0.4); } }
-            @keyframes mouthSeq { 0%, 40% { height: 15px; } 45%, 65% { height: 35px; } 70%, 100% { height: 15px; } }
-            .tut-hand { animation: handSeq 5s infinite ease-in-out; }
-            .tut-food { animation: foodSeq 5s infinite ease-in-out; }
-            .tut-mouth { animation: mouthSeq 5s infinite ease-in-out; }
+            .tut-food { position: absolute; width: 55px; z-index: 15; left: 220px; top: 65px; }
+            .tut-hand { position: absolute; font-size: 45px; z-index: 20; left: 240px; top: 100px; }
+            @keyframes handS { 0% { left: 240px; top: 105px; } 15% { left: 240px; top: 85px; transform: scale(0.9); } 45%, 65% { left: 50px; top: 95px; transform: scale(0.9); } 75% { left: 240px; top: 105px; transform: scale(1); } 100% { left: 240px; top: 105px; } }
+            @keyframes foodS { 0%, 15% { left: 220px; top: 65px; opacity: 1; transform: scale(1); } 45% { left: 30px; top: 75px; opacity: 1; transform: scale(0.8); } 50%, 100% { left: 30px; top: 75px; opacity: 0; transform: scale(0.4); } }
+            @keyframes mouthS { 0%, 40% { height: 15px; } 45%, 65% { height: 35px; } 70%, 100% { height: 15px; } }
+            .tut-hand { animation: handS 5s infinite ease-in-out; }
+            .tut-food { animation: foodS 5s infinite ease-in-out; }
+            .tut-mouth { animation: mouthS 5s infinite ease-in-out; }
         </style>
         <div class="tut-stage">
             <div class="tut-monster">
@@ -96,44 +97,60 @@ function proximaRonda() {
 function renderizarEcraAlimentacao() {
     const container = document.getElementById('game-main-content');
     const config = JOGO_CATEGORIAS[categoriaAtiva];
-    const alvo = config.alvos[Math.floor(Math.random() * config.alvos.length)];
-    const outras = [...config.distracoes].sort(() => 0.5 - Math.random()).slice(0, 3);
-    const opcoesRonda = [{ img: alvo, status: 'correto' }, ...outras.map(d => ({ img: d, status: 'errado' }))].sort(() => 0.5 - Math.random());
+    
+    // Determina quantos alimentos corretos haverá nesta ronda (entre 1 a 3)
+    const numAlvos = Math.floor(Math.random() * 3) + 1;
+    alvosRestantesNaRonda = numAlvos;
+
+    // Sorteia os alvos e as distrações para totalizar 6 imagens
+    const alvosSorteados = [...config.alvos].sort(() => 0.5 - Math.random()).slice(0, numAlvos);
+    const distracoesSorteados = [...config.distracoes].sort(() => 0.5 - Math.random()).slice(0, 6 - numAlvos);
+
+    const opcoesRonda = [
+        ...alvosSorteados.map(img => ({ img, status: 'correto' })),
+        ...distracoesSorteados.map(img => ({ img, status: 'errado' }))
+    ].sort(() => 0.5 - Math.random());
 
     container.innerHTML = `
         <style>
             .monster-wrap { width: 98%; height: 98%; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px; box-sizing: border-box; }
-            .instr-box { background: white; padding: 10px 25px; border-radius: 50px; font-weight: 900; color: #5d7082; border: 3px solid var(--primary-blue); display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-            .btn-som { background: #ff9800; border: none; width: 45px; height: 45px; border-radius: 50% !important; color: white; cursor: pointer; box-shadow: 0 4px 0 #e65100; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+            .instr-box { background: white; padding: 12px 25px; border-radius: 50px; font-weight: 900; color: #5d7082; border: 3px solid var(--primary-blue); display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+            .btn-som { background: #ff9800; border: none; width: 48px; height: 48px; border-radius: 50% !important; color: white; cursor: pointer; box-shadow: 0 4px 0 #e65100; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
             
-            .game-stage { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }
+            .game-stage { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; gap: 30px; flex-wrap: wrap; }
             
-            .monster { width: clamp(190px, 35vh, 280px); height: clamp(190px, 35vh, 280px); background: #9c27b0; border-radius: 50% 50% 40% 40%; position: relative; box-shadow: 0 14px 0 #4a148c, inset 0 -10px 20px rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.3s; pointer-events: none; }
-            .eye-row { display: flex; gap: 30px; margin-bottom: 10px; }
-            .eye { width: 45px; height: 45px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
-            .pupil { width: 20px; height: 20px; background: black; border-radius: 50%; }
-            .mouth { width: 45%; height: 22%; background: #210329; border: 5px solid #ffeb3b; border-radius: 10px 10px 60px 60px; transition: 0.2s; margin-top: 15px; box-shadow: inset 0 5px 10px rgba(0,0,0,0.5); }
+            .monster { width: clamp(170px, 30vh, 260px); height: clamp(170px, 30vh, 260px); background: #9c27b0; border-radius: 50% 50% 40% 40%; position: relative; box-shadow: 0 14px 0 #4a148c, inset 0 -10px 20px rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.3s; pointer-events: none; }
+            .eye-row { display: flex; gap: 25px; margin-bottom: 5px; }
+            .eye { width: 35px; height: 35px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
+            .pupil { width: 16px; height: 16px; background: black; border-radius: 50%; }
+            .mouth { width: 45%; height: 20%; background: #210329; border: 5px solid #ffeb3b; border-radius: 10px 10px 60px 60px; transition: 0.2s; margin-top: 15px; box-shadow: inset 0 5px 10px rgba(0,0,0,0.5); }
             
             .monster.open .mouth { height: 45%; }
             .monster.happy { background: #4caf50; box-shadow: 0 14px 0 #1b5e20; }
             .monster.sad { background: #f44336; box-shadow: 0 14px 0 #b71c1c; }
 
-            .food-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+            /* Grelha de 6 itens (3x2 ou 2x3 dependendo do ecrã) */
+            .food-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
             .food-card { 
-                width: clamp(100px, 18vh, 150px); height: clamp(100px, 18vh, 150px); 
-                background: white; border: 3px solid #f0f4f8; border-radius: 28px; 
+                width: clamp(90px, 16vh, 130px); height: clamp(90px, 16vh, 130px); 
+                background: white; border: 3px solid #f0f4f8; border-radius: 25px; 
                 display: flex; align-items: center; justify-content: center; 
-                box-shadow: 0 6px 0 #d0d8de; padding: 15px; position: relative;
+                box-shadow: 0 6px 0 #d0d8de; position: relative;
             }
-            .food-img { width: 85%; height: 85%; object-fit: contain; cursor: grab; transition: transform 0.1s; touch-action: none; user-select: none; }
-            .food-img:active { cursor: grabbing; }
+            /* ALIMENTOS MAIORES */
+            .food-img { width: 92%; height: 92%; object-fit: contain; cursor: grab; transition: transform 0.1s; touch-action: none; user-select: none; }
             
             .flying { position: fixed !important; z-index: 999; pointer-events: none; transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1); transform: scale(0.2) rotate(360deg); opacity: 0; }
-            @media (max-width: 600px) { .monster { width: 170px; height: 170px; } .food-card { width: 95px; height: 95px; } }
+            @media (max-width: 650px) { 
+                .food-grid { grid-template-columns: repeat(2, 1fr); }
+                .monster { width: 150px; height: 150px; } 
+                .food-card { width: 90px; height: 90px; } 
+            }
         </style>
 
         <div class="monster-wrap">
             <div class="instr-box"><button class="btn-som" onclick="falarInstrucao()"><i class="fas fa-volume-up"></i></button><span>${config.descricao}</span></div>
+            
             <div class="game-stage">
                 <div class="monster" id="monster-main">
                     <div class="eye-row"><div class="eye"><div class="pupil"></div></div><div class="eye"><div class="pupil"></div></div></div>
@@ -157,7 +174,7 @@ function renderizarEcraAlimentacao() {
     `;
 }
 
-// === LÓGICA DE INTERAÇÃO (APENAS ALIMENTO) ===
+// === LÓGICA DE INTERAÇÃO HÍBRIDA ===
 
 function cliqueItem(el) {
     if (!jogoAtivo || el.classList.contains('dragged')) return;
@@ -170,12 +187,13 @@ function voarAteBoca(el) {
     const mRect = monster.getBoundingClientRect();
 
     el.style.position = 'fixed';
+    el.style.width = rect.width + 'px';
     el.style.left = rect.left + "px";
     el.style.top = rect.top + "px";
     el.classList.add('flying');
     
     setTimeout(() => {
-        el.style.left = (mRect.left + mRect.width / 2 - 20) + "px";
+        el.style.left = (mRect.left + mRect.width / 2 - 25) + "px";
         el.style.top = (mRect.top + mRect.height / 2) + "px";
         processarAlimentacao(el);
     }, 10);
@@ -204,6 +222,7 @@ function iniciarArrasto(e, el) {
             el.style.zIndex = '1000';
             el.style.left = (cX - oX) + "px";
             el.style.top = (cY - oY) + "px";
+            el.style.transform = "scale(1.1)";
             document.getElementById('monster-main').classList.add('open');
         }
     }
@@ -211,7 +230,10 @@ function iniciarArrasto(e, el) {
     function soltar() {
         document.removeEventListener(isT ? 'touchmove' : 'mousemove', mover);
         document.removeEventListener(isT ? 'touchend' : 'mouseup', soltar);
-        if (moved) verificarColisao(el);
+        if (moved) {
+            el.style.transform = "scale(1)";
+            verificarColisao(el);
+        }
         setTimeout(() => el.classList.remove('dragged'), 100);
     }
 
@@ -243,16 +265,21 @@ function processarAlimentacao(el, imediato = false) {
             acertos++; somAcerto.play();
             monster.classList.add('happy');
             el.remove();
+            alvosRestantesNaRonda--;
         } else {
             erros++; somErro.play();
             monster.classList.add('sad');
             el.style.position = "static";
         }
+        
         setTimeout(() => {
             monster.classList.remove('happy', 'sad');
-            rondaAtual++;
             jogoAtivo = true;
-            proximaRonda();
+            // Só avança se não houver mais alvos no ecrã
+            if (alvosRestantesNaRonda <= 0) {
+                rondaAtual++;
+                proximaRonda();
+            }
         }, 1000);
     }, imediato ? 100 : 600);
 }
@@ -263,7 +290,7 @@ window.usarAjuda = function() {
     const foodImgs = document.querySelectorAll('.food-img');
     foodImgs.forEach(img => {
         if (img.getAttribute('data-status') === 'correto') {
-            img.style.filter = "drop-shadow(0 0 15px #ff9800)";
+            img.style.filter = "drop-shadow(0 0 20px #ff9800)";
             img.style.transform = "scale(1.2)";
             setTimeout(() => { img.style.filter = "none"; img.style.transform = "scale(1)"; ajudaDisponivel = true; }, 1500);
         }
@@ -272,8 +299,9 @@ window.usarAjuda = function() {
 
 function finalizarJogo() {
     jogoAtivo = false; somVitoria.play();
-    const perc = Math.round((acertos / 10) * 100);
-    const rel = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
+    const perc = Math.round((acertos / (acertos + erros || 1)) * 100);
+    let rank = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
+    
     document.getElementById('scr-game').classList.remove('active');
     const resScreen = document.getElementById('scr-result');
     resScreen.classList.add('active');
@@ -285,7 +313,7 @@ function finalizarJogo() {
                 .res-card { display:flex; flex-direction:column; align-items:center; width:100%; max-width:450px; margin:auto; }
                 .res-title { color:var(--primary-blue); font-size:2.2rem; font-weight:900; margin: 15px 0 25px; text-align:center; line-height:1; }
                 .res-stats { display:flex; gap:15px; margin-bottom:30px; }
-                .res-box { background:white; border-radius:25px; width:110px; height:110px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+                .res-box { background:white; border-radius:25px; width:105px; height:105px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
                 .res-num { font-size:1.8rem; font-weight:900; }
                 .res-lab { font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase; margin-top:2px; }
                 .res-btns { display:flex; flex-direction:column; gap:12px; width:100%; max-width:320px; }
@@ -296,12 +324,12 @@ function finalizarJogo() {
                 .btn-subtle { background:#e2e8f0; color:#64748b; }
             </style>
             <div class="res-card">
-                <img src="${JOGO_CONFIG.caminhoImg}${rel.img}" style="width:130px;">
-                <h1 class="res-title">${rel.titulo}</h1>
+                <img src="${JOGO_CONFIG.caminhoImg}${rank.img}" style="width:130px;">
+                <h1 class="res-title">${rank.titulo}</h1>
                 <div class="res-stats">
                     <div class="res-box"><span class="res-num" style="color:#7ed321;">${acertos}</span><span class="res-lab">Certos</span></div>
                     <div class="res-box"><span class="res-num" style="color:#ff5e5e;">${erros}</span><span class="res-lab">Errados</span></div>
-                    <div class="res-box"><span class="res-num" style="color:#ff9f43;">${ajudasUtilizadas}</span><span class="res-lab">Ajudas</span></div>
+                    <div class="stat-box res-box"><span class="res-num" style="color:#ff9f43;">${ajudasUtilizadas}</span><span class="res-lab">Ajudas</span></div>
                 </div>
                 <div class="res-btns">
                     <button class="btn-final btn-solid" onclick="location.reload()"><i class="fas fa-redo"></i> JOGAR DE NOVO</button>
