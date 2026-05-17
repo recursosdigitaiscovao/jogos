@@ -53,7 +53,7 @@ function renderTutorialAnimation() {
     if(!container) return;
     container.innerHTML = `
         <style>
-            .tut-box { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:10px; filter: grayscale(100%); opacity: 0.7; }
+            .tut-box { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:15px; }
             .tut-grid { display: grid; grid-template-columns: repeat(2, 1fr); width: 60px; height: 60px; gap: 2px; background: #ddd; }
             .tut-cell { background: white; width: 100%; height: 100%; }
             @keyframes tapP { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-5px,-8px) scale(1.1); } }
@@ -102,7 +102,7 @@ function mostrarPergunta() {
 
     container.innerHTML = `
         <style>
-            .game-outer { width: 100%; height: 100%; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; }
+            .game-outer { width: 100%; height: 100%; padding: 15px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; }
             .stage { display: flex; width: 100%; flex: 1; align-items: center; justify-content: center; gap: 20px; min-height: 0; }
             .grid-box { height: 90%; aspect-ratio: 1/1; display: grid; grid-template-columns: repeat(${tamanhoGrelha}, 1fr); gap: 2px; background: #ddd; border: 4px solid #ddd; border-radius: 12px; overflow: hidden; position: relative; }
             .cell { background: white; width: 100%; height: 100%; }
@@ -117,9 +117,8 @@ function mostrarPergunta() {
             
             @media (max-width: 600px) { 
                 .stage { flex-direction: column; gap: 10px; } 
-                .grid-box { height: 40%; } 
+                .grid-box { height: 42%; } 
                 .color-btn, .btn-action { width: 38px; height: 38px; }
-                .game-outer { padding: 10px; }
             }
         </style>
         <div class="game-outer">
@@ -148,7 +147,7 @@ window.usarAjuda = function() {
         layer.style.opacity = "1";
         setTimeout(() => { 
             layer.style.opacity = "0"; 
-            setTimeout(() => ajudaDisponivel = true, 3000); // Cooldown
+            setTimeout(() => ajudaDisponivel = true, 3000); 
         }, 1200);
     }
 };
@@ -187,45 +186,68 @@ window.validar = function() {
     }
 };
 
-// === 3. FINALIZAÇÃO E RESULTADOS (PADRÃO IMAGEM) ===
+// === 3. FINALIZAÇÃO E RESULTADOS (CONFORME PEDIDO) ===
 function finalizarJogo() {
     somVitoria.play();
     const perc = (acertos / 10) * 100;
     const rel = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
     
+    // Esconder ecrã de jogo
     document.getElementById('scr-game').classList.remove('active');
     const resScreen = document.getElementById('scr-result');
     resScreen.classList.add('active');
     document.getElementById('status-bar').style.display = 'none';
 
+    // Injeta o conteúdo dentro de uma div "screen-box" idêntica aos outros ecrãs
     resScreen.innerHTML = `
-        <style>
-            .res-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 20px; box-sizing: border-box; }
-            .res-trophy { height: 120px; margin-bottom: 10px; object-fit: contain; }
-            .res-msg { color: var(--primary-blue); font-weight: 900; font-size: 2.2rem; margin-bottom: 25px; text-align: center; }
-            .res-stats-row { display: flex; gap: 15px; margin-bottom: 30px; width: 100%; max-width: 420px; justify-content: center; }
-            .stat-box { background: white; border-radius: 25px; width: 110px; height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-            .stat-val { font-size: 1.8rem; font-weight: 900; margin-bottom: 2px; }
-            .stat-lab { font-size: 0.65rem; font-weight: 900; color: #88a; text-transform: uppercase; letter-spacing: 0.5px; }
-            .res-actions { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px; }
-            .btn-res { height: 60px; border-radius: 30px; display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 900; font-size: 1.1rem; text-decoration: none; cursor: pointer; transition: 0.2s; border: none; }
-            .btn-redo { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
-            .btn-redo:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
-            .btn-outline { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); }
-            .btn-exit { background: #e2e8f0; color: #64748b; }
-        </style>
-        <div class="res-container">
-            <img src="${JOGO_CONFIG.caminhoImg}${rel.img}" class="res-trophy">
-            <h1 class="res-msg">${rel.titulo}</h1>
-            <div class="res-stats-row">
-                <div class="stat-box"><span class="stat-val" style="color: #7ed321;">${acertos}</span><span class="stat-lab">Certos</span></div>
-                <div class="stat-box"><span class="stat-val" style="color: #ff5e5e;">${erros}</span><span class="stat-lab">Errados</span></div>
-                <div class="stat-box"><span class="stat-val" style="color: #ff9f43;">${ajudasUtilizadas}</span><span class="stat-lab">Ajudas</span></div>
-            </div>
-            <div class="res-actions">
-                <button class="btn-res btn-redo" onclick="location.reload()"><i class="fas fa-redo"></i> JOGAR DE NOVO</button>
-                <button class="btn-res btn-outline" onclick="openRDMenu()"><i class="fas fa-chart-line"></i> OUTRO NÍVEL</button>
-                <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-exit"><i class="fas fa-sign-out-alt"></i> SAIR</a>
+        <div class="screen-box" style="justify-content: center; padding: 20px;">
+            <style>
+                .res-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 450px; }
+                .res-trophy { height: 120px; margin-bottom: 10px; object-fit: contain; }
+                .res-msg { color: var(--primary-blue); font-weight: 900; font-size: 2.2rem; margin-bottom: 25px; text-align: center; line-height:1; }
+                .res-stats-row { display: flex; gap: 12px; margin-bottom: 30px; width: 100%; justify-content: center; }
+                .stat-box { background: white; border-radius: 25px; width: 105px; height: 105px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+                .stat-val { font-size: 1.8rem; font-weight: 900; margin-bottom: 2px; }
+                .stat-lab { font-size: 0.65rem; font-weight: 900; color: #88a; text-transform: uppercase; letter-spacing: 0.5px; }
+                .res-actions { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; }
+                .btn-res { height: 60px; border-radius: 30px; display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 900; font-size: 1.1rem; text-decoration: none; cursor: pointer; transition: 0.2s; border: none; }
+                .btn-redo { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
+                .btn-redo:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
+                .btn-outline { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); }
+                .btn-exit { background: #e2e8f0; color: #64748b; }
+                @media (max-width: 500px) { .res-msg { font-size: 1.8rem; } .stat-box { width: 90px; height: 90px; } .btn-res { height: 50px; font-size: 1rem; } }
+            </style>
+            
+            <div class="res-container">
+                <img src="${JOGO_CONFIG.caminhoImg}${rel.img}" class="res-trophy">
+                <h1 class="res-msg">${rel.titulo}</h1>
+                
+                <div class="res-stats-row">
+                    <div class="stat-box">
+                        <span class="stat-val" style="color: #7ed321;">${acertos}</span>
+                        <span class="stat-lab">Certos</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-val" style="color: #ff5e5e;">${erros}</span>
+                        <span class="stat-lab">Errados</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-val" style="color: #ff9f43;">${ajudasUtilizadas}</span>
+                        <span class="stat-lab">Ajudas</span>
+                    </div>
+                </div>
+
+                <div class="res-actions">
+                    <button class="btn-res btn-redo" onclick="location.reload()">
+                        <i class="fas fa-redo"></i> JOGAR DE NOVO
+                    </button>
+                    <button class="btn-res btn-outline" onclick="openRDMenu()">
+                        <i class="fas fa-chart-line"></i> OUTRO NÍVEL
+                    </button>
+                    <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-exit">
+                        <i class="fas fa-sign-out-alt"></i> SAIR
+                    </a>
+                </div>
             </div>
         </div>
     `;
