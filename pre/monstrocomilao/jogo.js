@@ -11,7 +11,7 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// CSS DO MONSTRO (Corpo Único, Braços atrás, Reativo)
+// CSS DO MONSTRO (Corpo único, braços atrás)
 const CSS_MONSTRO = `
     .monster-container { 
         position: relative; width: 100%; height: 100%; 
@@ -19,29 +19,27 @@ const CSS_MONSTRO = `
         --monster-c: #66d1ed;
     }
     .monster-body { 
-        width: 90%; height: 80%; background: var(--monster-c); border-radius: 50%; 
+        width: 85%; height: 75%; background: var(--monster-c); border-radius: 50%; 
         position: relative; z-index: 5; display: flex; flex-direction: column; 
-        align-items: center; justify-content: center; transition: background 0.2s;
+        align-items: center; justify-content: center; transition: background 0.3s;
         box-shadow: inset -8px -8px 15px rgba(0,0,0,0.1);
     }
     .monster-body::before, .monster-body::after { 
         content: ''; position: absolute; top: 40%; width: 25%; height: 45%; 
-        background: var(--monster-c); border-radius: 20px; z-index: -1; transition: background 0.2s;
+        background: var(--monster-c); border-radius: 20px; z-index: -1; transition: background 0.3s;
     }
-    .monster-body::before { left: -12%; transform: rotate(25deg); }
-    .monster-body::after { right: -12%; transform: rotate(-25deg); }
-    .spikes { position: absolute; top: -15px; font-size: 24px; color: var(--monster-c); letter-spacing: 3px; z-index: 4; transition: color 0.2s; }
+    .monster-body::before { left: -10%; transform: rotate(25deg); }
+    .monster-body::after { right: -10%; transform: rotate(-25deg); }
+    .spikes { position: absolute; top: -12px; font-size: 20px; color: var(--monster-c); letter-spacing: 2px; z-index: 4; }
     .monster-eye { width: 35%; height: 35%; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: -15%; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .monster-pupil { width: 50%; height: 50%; background: #222; border-radius: 50%; position: relative; }
     .monster-pupil::after { content: ''; position: absolute; top: 15%; left: 15%; width: 30%; height: 30%; background: white; border-radius: 50%; }
-    .monster-cheeks { display: flex; justify-content: space-between; width: 65%; position: absolute; top: 55%; pointer-events: none; }
-    .cheek { width: 22px; height: 14px; background: #ff8da1; border-radius: 50%; opacity: 0.4; }
-    .monster-mouth { width: 55%; height: 10px; background: transparent; border-bottom: 4px solid #222; border-radius: 50%; transition: 0.2s; margin-top: 10px; }
-    .monster-container.open .monster-mouth { height: 35%; background: #222; border: none; border-radius: 10px 10px 40px 40px; }
-    .monster-legs { display: flex; justify-content: space-around; width: 65%; height: 20%; margin-top: -12px; z-index: 4; }
-    .monster-leg { width: 35%; height: 100%; background: var(--monster-c); border-radius: 0 0 20px 20px; transition: background 0.2s; }
-    .monster-container.happy { --monster-c: #4caf50 !important; }
-    .monster-container.sad { --monster-c: #f44336 !important; animation: shake 0.4s; }
+    .monster-mouth { width: 55%; height: 10px; background: transparent; border-bottom: 4px solid #222; border-radius: 50%; transition: 0.3s; margin-top: 10px; }
+    .open .monster-mouth { height: 35%; background: #222; border: none; border-radius: 10px 10px 40px 40px; }
+    .happy { --monster-c: #4caf50 !important; }
+    .sad { --monster-c: #f44336 !important; animation: shake 0.4s; }
+    .monster-legs { display: flex; justify-content: space-around; width: 60%; height: 18%; margin-top: -10px; z-index: 4; }
+    .monster-leg { width: 35%; height: 100%; background: var(--monster-c); border-radius: 0 0 15px 15px; transition: background 0.3s; }
 `;
 
 function falarInstrucao() {
@@ -55,6 +53,9 @@ function falarInstrucao() {
 
 window.startLogic = function() {
     const config = JOGO_CATEGORIAS[categoriaAtiva];
+    const introInstr = document.getElementById('intro-instr');
+    if(introInstr) introInstr.innerText = config.descricao;
+
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:30px; width:30px; cursor:pointer;" onclick="usarAjuda()">`;
@@ -65,33 +66,41 @@ window.startLogic = function() {
 
 window.selecionarCategoria = function(key) {
     categoriaAtiva = key;
-    if(document.getElementById('intro-instr')) document.getElementById('intro-instr').innerText = JOGO_CATEGORIAS[key].descricao;
+    const introInstr = document.getElementById('intro-instr');
+    if(introInstr) introInstr.innerText = JOGO_CATEGORIAS[key].descricao;
     renderTutorialAnimation();
 };
 
 function renderTutorialAnimation() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
+    const config = JOGO_CATEGORIAS[categoriaAtiva];
     const itemTut = categoriaAtiva === "saudavel" ? "alface.png" : "bolo.png";
+    
     container.innerHTML = `
         <style>
             ${CSS_MONSTRO}
-            .tut-stage { position: relative; width: 340px; height: 190px; background: white; border: 3px dashed var(--primary-blue); border-radius: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-            .tut-m-box { width: 100px; height: 120px; margin-left: -100px; transform: scale(0.8); }
-            .tut-f { position: absolute; width: 45px; z-index: 15; left: 220px; top: 70px; animation: fS 5s infinite; }
-            .tut-h { position: absolute; font-size: 40px; z-index: 20; left: 230px; top: 100px; animation: hS 5s infinite; }
-            @keyframes hS { 0%, 15% { left: 230px; top: 100px; } 45%, 65% { left: 60px; top: 90px; } 80%, 100% { left: 230px; top: 100px; } }
-            @keyframes fS { 0%, 15% { left: 220px; top: 70px; opacity: 1; } 45% { left: 40px; top: 75px; opacity: 1; transform: scale(0.6); } 50%, 100% { left: 40px; top: 75px; opacity: 0; } }
+            .tut-wrapper { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+            .tut-label { font-weight: 900; color: var(--primary-blue); text-transform: uppercase; font-size: 0.9rem; }
+            .tut-stage { position: relative; width: 320px; height: 170px; background: white; border: 3px dashed var(--primary-blue); border-radius: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+            .tut-m-box { width: 100px; height: 120px; margin-left: -100px; transform: scale(0.85); }
+            .tut-f { position: absolute; width: 45px; z-index: 15; left: 220px; top: 60px; animation: fS 5s infinite; }
+            .tut-h { position: absolute; font-size: 40px; z-index: 20; left: 230px; top: 90px; animation: hS 5s infinite; }
+            @keyframes hS { 0%, 15% { left: 230px; top: 90px; } 45%, 65% { left: 55px; top: 85px; } 80%, 100% { left: 230px; top: 90px; } }
+            @keyframes fS { 0%, 15% { left: 220px; top: 60px; opacity: 1; } 45% { left: 35px; top: 75px; opacity: 1; transform: scale(0.6); } 50%, 100% { left: 35px; top: 75px; opacity: 0; } }
         </style>
-        <div class="tut-stage">
-            <div class="tut-m-box" id="tut-monster-parent">
-                <div class="monster-container">
-                    <div class="monster-body"><div class="monster-eye"><div class="monster-pupil"></div></div><div class="monster-mouth"></div></div>
-                    <div class="monster-legs"><div class="monster-leg"></div><div class="monster-leg"></div></div>
+        <div class="tut-wrapper">
+            <div class="tut-label">${config.descricao}</div>
+            <div class="tut-stage">
+                <div class="tut-m-box" id="tut-monster-parent">
+                    <div class="monster-container">
+                        <div class="monster-body"><div class="monster-eye"><div class="monster-pupil"></div></div><div class="monster-mouth"></div></div>
+                        <div class="monster-legs"><div class="monster-leg"></div><div class="monster-leg"></div></div>
+                    </div>
                 </div>
+                <img src="${JOGO_CONFIG.caminhoImg}comida/${itemTut}" class="tut-f">
+                <div class="tut-h">☝️</div>
             </div>
-            <img src="${JOGO_CONFIG.caminhoImg}comida/${itemTut}" class="tut-f">
-            <div class="tut-h">☝️</div>
         </div>
     `;
 }
@@ -119,31 +128,29 @@ function renderizarEcraAlimentacao() {
         <style>
             ${CSS_MONSTRO}
             .monster-wrap { width: 98%; height: 98%; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 5px; box-sizing: border-box; }
-            .instr-box { background: white; padding: 10px 25px; border-radius: 50px; font-weight: 900; color: #5d7082; border: 3px solid var(--primary-blue); display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); z-index:10; }
-            .btn-som { background: #ff9800; border: none; width: 45px; height: 45px; border-radius: 50% !important; color: white; cursor: pointer; box-shadow: 0 4px 0 #e65100; display: flex; align-items: center; justify-content: center; }
+            .instr-box { background: white; padding: 10px 25px; border-radius: 50px; font-weight: 900; color: #5d7082; border: 3px solid var(--primary-blue); display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+            .btn-som { background: #ff9800; border: none; width: 44px; height: 44px; border-radius: 50% !important; color: white; cursor: pointer; box-shadow: 0 4px 0 #e65100; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
             
-            /* GAME STAGE RESPONSIVO */
-            .game-stage { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; gap: 40px; }
+            .game-stage { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; gap: 30px; }
             
-            /* LANDSCAPE (Default) */
+            /* DESKTOP / LANDSCAPE: Lado a Lado */
             .game-stage { flex-direction: row; }
-            .m-size { width: clamp(200px, 35vh, 280px); height: clamp(220px, 38vh, 320px); }
-            .food-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-            .food-card { width: clamp(90px, 17vh, 140px); height: clamp(90px, 17vh, 140px); background: white; border: 3px solid #f0f4f8; border-radius: 25px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 0 #d0d8de; position: relative; }
-            
+            .m-size { width: clamp(190px, 32vh, 260px); height: clamp(210px, 35vh, 290px); }
+            .food-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+            .food-card { width: clamp(90px, 16vh, 130px); height: clamp(90px, 16vh, 130px); background: white; border: 3px solid #f0f4f8; border-radius: 25px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 0 #d0d8de; position: relative; }
             .food-img { width: 92%; height: 92%; object-fit: contain; cursor: pointer; touch-action: none; }
-            .dragged { position: fixed !important; z-index: 1000; width: 80px !important; height: 80px !important; pointer-events: none; transform: translate(-50%, -50%) scale(0.7) !important; }
-            .flying { position: fixed !important; z-index: 1000; width: 80px !important; height: 80px !important; pointer-events: none; transition: all 0.5s ease-in; transform: translate(-50%, -50%) scale(0.5); }
-
-            /* PORTRAIT (Vertical Mobile) */
-            @media (max-width: 600px) and (orientation: portrait) {
-                .game-stage { flex-direction: column; gap: 15px; }
-                .m-size { width: 160px; height: 180px; }
-                .food-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
-                .food-card { width: 85px; height: 85px; }
-                .instr-box { width: 95%; font-size: 0.9rem; }
-            }
             
+            /* PORTRAIT (Vertical Mobile): Monstro Cima, Cartas Baixo */
+            @media (max-width: 600px) and (orientation: portrait) {
+                .game-stage { flex-direction: column !important; gap: 15px; }
+                .m-size { width: 150px; height: 170px; margin-bottom: 0; }
+                .food-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+                .food-card { width: 85px; height: 85px; }
+                .instr-box { width: 95%; font-size: 0.85rem; padding: 8px 15px; }
+            }
+
+            .dragged { position: fixed !important; z-index: 1000; width: 75px !important; height: 75px !important; pointer-events: none; transform: translate(-50%, -50%) scale(0.8) !important; }
+            .flying { position: fixed !important; z-index: 1000; width: 75px !important; height: 75px !important; pointer-events: none; transition: all 0.5s ease-in; transform: translate(-50%, -50%) scale(0.6); }
             @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
         </style>
         <div class="monster-wrap">
@@ -163,7 +170,7 @@ function renderizarEcraAlimentacao() {
     `;
 }
 
-// === INTERAÇÃO ===
+// === INTERAÇÃO HÍBRIDA ===
 function startInteract(e, el) {
     if (!jogoAtivo) return;
     const isT = e.type === 'touchstart';
@@ -183,8 +190,7 @@ function startInteract(e, el) {
     function end() {
         document.removeEventListener(isT ? 'touchmove' : 'mousemove', move);
         document.removeEventListener(isT ? 'touchend' : 'mouseup', end);
-        if (moved) verificarColisao(el);
-        else voarAteBoca(el);
+        if (moved) verificarColisao(el); else voarAteBoca(el);
     }
     document.addEventListener(isT ? 'touchmove' : 'mousemove', move, { passive: false });
     document.addEventListener(isT ? 'touchend' : 'mouseup', end);
@@ -195,16 +201,14 @@ function voarAteBoca(el) {
     const r = el.getBoundingClientRect(); const mR = m.getBoundingClientRect();
     el.classList.add('flying');
     el.style.left = r.left + r.width/2 + "px"; el.style.top = r.top + r.height/2 + "px";
-    setTimeout(() => {
-        el.style.left = mR.left + mR.width/2 + "px"; el.style.top = mR.top + mR.height/2 + "px";
-        processarAlimentacao(el);
-    }, 10);
+    setTimeout(() => { el.style.left = mR.left + mR.width/2 + "px"; el.style.top = mR.top + mR.height/2 + "px"; processarAlimentacao(el); }, 10);
 }
 
 function verificarColisao(el) {
     const m = document.getElementById('monster-main');
     const mR = m.getBoundingClientRect(); const eR = el.getBoundingClientRect();
-    if (eR.left < mR.right && eR.right > mR.left && eR.top < mR.bottom && eR.bottom > mR.top) processarAlimentacao(el, true);
+    const cX = eR.left + eR.width / 2; const cY = eR.top + eR.height / 2;
+    if (cX > mR.left && cX < mR.right && cY > mR.top && cY < mR.bottom) processarAlimentacao(el, true);
     else { document.getElementById('monster-parent').classList.remove('open'); el.classList.remove('dragged'); el.style.position = 'static'; }
 }
 
@@ -221,8 +225,7 @@ function processarAlimentacao(el, imediato = false) {
 }
 
 window.usarAjuda = function() {
-    if (!jogoAtivo || !ajudaDisponivel) return;
-    ajudaDisponivel = false; ajudasUtilizadas++;
+    if (!jogoAtivo || !ajudaDisponivel) return; ajudaDisponivel = false; ajudasUtilizadas++;
     const imgs = document.querySelectorAll('.food-img');
     imgs.forEach(img => { if (img.getAttribute('data-status') === 'correto') { img.style.filter = "drop-shadow(0 0 15px #ff9800)"; img.style.transform = "scale(1.1)"; setTimeout(() => { img.style.filter = "none"; img.style.transform = "scale(1)"; ajudaDisponivel = true; }, 1500); } });
 };
@@ -231,10 +234,11 @@ function finalizarJogo() {
     jogoAtivo = false; somVitoria.play();
     const perc = Math.round((acertos / (acertos + erros || 1)) * 100);
     let rank = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
-    document.getElementById('scr-game').classList.remove('active');
-    const res = document.getElementById('scr-result');
-    res.classList.add('active');
-    res.innerHTML = `
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const resScreen = document.getElementById('scr-result'); resScreen.classList.add('active');
+    document.getElementById('status-bar').style.display = 'none';
+
+    resScreen.innerHTML = `
         <div class="screen-box" style="justify-content: center; padding: 20px; display: flex !important;">
             <div style="display:flex; flex-direction:column; align-items:center; width:100%; max-width:450px; margin:auto;">
                 <img src="${JOGO_CONFIG.caminhoImg}${rank.img}" style="width:130px; display:block; margin: 0 auto 10px;">
