@@ -6,10 +6,10 @@ let ajudasUtilizadas = 0;
 let jogoAtivo = false;
 let ajudaDisponivel = true;
 
-let categoriaAtual = "natureza";
+let categoriaAtual = ""; // Será definida no startLogic
 let mapaAtual = [];
 let posPersonagem = { x: 0, y: 0 };
-let cols, rows; // Dinâmicas
+let cols, rows; 
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
@@ -25,14 +25,35 @@ window.addEventListener('keydown', (e) => {
     if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) e.preventDefault();
 });
 
-// === 2. INICIALIZAÇÃO ===
+// === 2. FUNÇÃO PARA SELECIONAR CATEGORIA (CHAMADA PELO INDEX) ===
+window.selecionarCategoria = function(key) {
+    categoriaAtual = key;
+    const cat = JOGO_CATEGORIAS[key];
+    
+    // Atualizar texto de introdução no ecrã inicial
+    const introInstr = document.getElementById('intro-instr');
+    if(introInstr) introInstr.innerText = cat.descricao || "Leva o teu amigo ao objetivo!";
+    
+    // Atualizar animação do tutorial
+    renderTutorialAnimation();
+};
+
+// === 3. INICIALIZAÇÃO ===
 window.startLogic = function() {
+    // Se não houver categoria selecionada, pega a primeira
+    if (!categoriaAtual) {
+        const primeiraCat = Object.keys(JOGO_CATEGORIAS)[0];
+        window.selecionarCategoria(primeiraCat);
+    }
+
+    // Configurar botão da Lâmpada
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:30px; width:30px; cursor:pointer;" onclick="usarAjuda()">`;
         timerBadge.style.background = "transparent";
         timerBadge.style.padding = "0";
     }
+
     renderTutorialAnimation();
 };
 
@@ -40,12 +61,15 @@ function renderTutorialAnimation() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
     const cat = JOGO_CATEGORIAS[categoriaAtual] || JOGO_CATEGORIAS[Object.keys(JOGO_CATEGORIAS)[0]];
+    
     container.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
             <div style="display:grid; grid-template-columns:repeat(3, 30px); gap:2px; background:#eee; border:2px solid #ddd; border-radius:10px; position:relative; overflow:hidden;">
                 ${Array(9).fill('<div style="width:30px; height:30px; background:white;"></div>').join('')}
                 <div style="position:absolute; top:2px; left:64px;">🎯</div>
-                <div style="position:absolute; top:64px; left:2px; font-size:20px; animation: moveT 3s infinite;">${cat.personagem.includes('abelha') ? '🐝' : '👤'}</div>
+                <div style="position:absolute; top:64px; left:2px; font-size:20px; animation: moveT 3s infinite;">
+                    <img src="${JOGO_CONFIG.caminhoImg}${cat.personagem}" style="width:25px; height:25px; object-fit:contain;">
+                </div>
             </div>
             <div style="font-size:30px; animation: tapT 3s infinite;">☝️</div>
         </div>
@@ -56,7 +80,7 @@ function renderTutorialAnimation() {
     `;
 }
 
-// === 3. LÓGICA DO JOGO ===
+// === 4. LÓGICA DO JOGO ===
 window.initGame = function() {
     indicePergunta = 0; acertos = 0; erros = 0; ajudasUtilizadas = 0; jogoAtivo = true;
     document.getElementById('hits-val').innerText = "0";
@@ -70,13 +94,10 @@ function calcularDimensoesGrelha() {
     const altura = container.clientHeight;
     const isLandscape = largura > altura;
 
-    // Tamanho base da célula para garantir que cabe
     const cellSize = isLandscape ? 55 : 45; 
-
     cols = Math.floor((largura * 0.9) / cellSize);
     rows = Math.floor((altura * 0.7) / cellSize);
 
-    // Limites mínimos e máximos para jogabilidade
     cols = Math.max(5, Math.min(cols, 15));
     rows = Math.max(5, Math.min(rows, 12));
 }
@@ -85,7 +106,6 @@ function gerarLabirinto(c, r) {
     let maze = Array.from({ length: r }, () => Array(c).fill(1));
     let stack = [[0, 0]];
     maze[0][0] = 0;
-
     while (stack.length > 0) {
         let [cx, cy] = stack[stack.length - 1];
         let neighbors = [];
@@ -95,18 +115,13 @@ function gerarLabirinto(c, r) {
         });
         if (neighbors.length > 0) {
             let [nx, ny] = neighbors[Math.floor(Math.random() * neighbors.length)];
-            maze[cy + (ny - cy) / 2][cx + (nx - cx) / 2] = 0; 
-            maze[ny][nx] = 0; 
-            stack.push([nx, ny]);
+            maze[cy + (ny - cy) / 2][cx + (nx - cx) / 2] = 0; maze[ny][nx] = 0; stack.push([nx, ny]);
         } else { stack.pop(); }
     }
-    // Abrir alguns caminhos extras para não ser impossível
     for(let i=0; i < (c*r)/10; i++) {
-        let rx = Math.floor(Math.random()*(c-2))+1;
-        let ry = Math.floor(Math.random()*(r-2))+1;
-        maze[ry][rx] = 0;
+        let rx = Math.floor(Math.random()*(c-2))+1; let ry = Math.floor(Math.random()*(r-2))+1; maze[ry][rx] = 0;
     }
-    maze[r-1][c-1] = 0; // Saída
+    maze[r-1][c-1] = 0;
     return maze;
 }
 
@@ -131,12 +146,8 @@ function mostrarPergunta() {
             .maze-wrapper { display: flex; flex-direction: column; width: 98%; height: 98%; margin: auto; align-items: center; justify-content: space-between; box-sizing: border-box; overflow: hidden; padding: 5px; }
             .maze-area { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; min-height: 0; }
             .maze-grid { 
-                display: grid; 
-                grid-template-columns: repeat(${cols}, 1fr); 
-                grid-template-rows: repeat(${rows}, 1fr); 
-                width: auto; height: auto;
-                max-width: 100%; max-height: 100%;
-                aspect-ratio: ${cols}/${rows};
+                display: grid; grid-template-columns: repeat(${cols}, 1fr); grid-template-rows: repeat(${rows}, 1fr); 
+                width: auto; height: auto; max-width: 100%; max-height: 100%; aspect-ratio: ${cols}/${rows};
                 background: #fff; border: 3px solid #eee; border-radius: 12px; position: relative; 
             }
             .maze-cell { border: 0.5px solid #f0f0f0; display: flex; align-items: center; justify-content: center; position: relative; }
@@ -145,32 +156,24 @@ function mostrarPergunta() {
             .hero-p { position: absolute; width: ${100/cols}%; height: ${100/rows}%; display: flex; align-items: center; justify-content: center; transition: all 0.15s ease-out; z-index: 10; }
             .hero-p img { width: 90%; height: 90%; object-fit: contain; transition: transform 0.2s; }
             .hint-dot { width: 35%; height: 35%; background: var(--primary-blue); border-radius: 50%; opacity: 0.7; z-index: 5; animation: pulseHint 1s infinite; }
-            
             .maze-controls-row { display: flex; gap: 10px; padding: 5px 0; flex-shrink: 0; justify-content: center; width: 100%; }
             .b-nav { width: 50px; height: 50px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 2px solid #f0f0f0; }
             .b-nav img { height: 28px; width: auto; }
             .rot-up { transform: rotate(90deg); } .rot-down { transform: rotate(270deg); } .rot-right { transform: rotate(180deg); }
-
-            @media (orientation: landscape) {
-                .maze-wrapper { flex-direction: row; gap: 15px; }
-                .maze-controls-row { flex-direction: column; width: auto; height: 100%; }
-            }
+            @media (orientation: landscape) { .maze-wrapper { flex-direction: row; gap: 15px; } .maze-controls-row { flex-direction: column; width: auto; height: 100%; } }
             @keyframes pulseHint { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.4); } }
             @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
         </style>
-
         <div class="maze-wrapper">
-            <div class="maze-area">
-                <div class="maze-grid">
-                    ${mapaAtual.map((rowArr, y) => rowArr.map((cell, x) => {
-                        let content = "";
-                        if (cell === 1) content = `<img src="${JOGO_CONFIG.caminhoImg}${cat.obstaculo}" class="wall">`;
-                        else if (x === cols-1 && y === rows-1) content = `<img id="target-img" src="${JOGO_CONFIG.caminhoImg}${cat.objetivo}" class="goal">`;
-                        return `<div class="maze-cell" id="cell-${x}-${y}">${content}</div>`;
-                    }).join('')).join('')}
-                    <div class="hero-p" id="player" style="left:${posPersonagem.x*(100/cols)}%; top:${posPersonagem.y*(100/rows)}%;"><img src="${JOGO_CONFIG.caminhoImg}${cat.personagem}"></div>
-                </div>
-            </div>
+            <div class="maze-area"><div class="maze-grid">
+                ${mapaAtual.map((rowArr, y) => rowArr.map((cell, x) => {
+                    let content = "";
+                    if (cell === 1) content = `<img src="${JOGO_CONFIG.caminhoImg}${cat.obstaculo}" class="wall">`;
+                    else if (x === cols-1 && y === rows-1) content = `<img id="target-img" src="${JOGO_CONFIG.caminhoImg}${cat.objetivo}" class="goal">`;
+                    return `<div class="maze-cell" id="cell-${x}-${y}">${content}</div>`;
+                }).join('')).join('')}
+                <div class="hero-p" id="player" style="left:${posPersonagem.x*(100/cols)}%; top:${posPersonagem.y*(100/rows)}%;"><img src="${JOGO_CONFIG.caminhoImg}${cat.personagem}"></div>
+            </div></div>
             <div class="maze-controls-row">
                 <div class="b-nav" onclick="tentarMover(-1, 0)"><img src="${imgSeta}"></div>
                 <div class="b-nav" onclick="tentarMover(0, -1)"><img src="${imgSeta}" class="rot-up"></div>
@@ -222,11 +225,8 @@ window.tentarMover = function(dx, dy) {
     let nx = posPersonagem.x + dx, ny = posPersonagem.y + dy;
     const hero = document.getElementById('player');
     const heroImg = hero.querySelector('img');
-
-    // Virar conforme a direção
     if (dx > 0) heroImg.style.transform = "scaleX(-1)"; 
     else if (dx < 0) heroImg.style.transform = "scaleX(1)";
-
     if (nx < 0 || nx >= cols || ny < 0 || ny >= rows || mapaAtual[ny][nx] === 1) {
         somErro.play(); erros++; document.getElementById('miss-val').innerText = erros;
         hero.classList.add('shake'); setTimeout(() => hero.classList.remove('shake'), 300); return;
@@ -249,7 +249,6 @@ function finalizarJogo() {
     const resScreen = document.getElementById('scr-result');
     resScreen.classList.add('active');
     document.getElementById('status-bar').style.display = 'none';
-
     resScreen.innerHTML = `
         <div class="screen-box" style="justify-content: center; padding: 20px;">
             <style>
