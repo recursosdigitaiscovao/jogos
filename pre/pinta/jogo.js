@@ -10,12 +10,46 @@ let corSelecionada = "";
 let jogoAtivo = false;
 let ajudaDisponivel = true;
 
-const PALETA_MESTRE = ["#ff4d5e", "#2ecc71", "#2196f3", "#ff9800", "#9c27b0", "#e91e63", "#3f51b5"];
+const PALETA_MESTRE = ["#ff4d5e", "#2ecc71", "#2196f3", "#ff9800", "#9c27b0", "#e91e63", "#3f51b5", "#1abc9c", "#f1c40f"];
 
+// === BIBLIOTECA DE DESENHOS AMPLIADA ===
 const DESENHOS = {
-    3: [[0,1,0, 1,2,1, 0,1,0], [1,1,1, 0,2,0, 0,2,0], [1,0,1, 0,2,0, 1,0,1]],
-    4: [[0,1,1,0, 1,1,1,1, 2,2,2,2, 0,0,0,0], [0,0,1,0, 0,1,1,0, 0,0,1,0, 0,2,2,2]],
-    5: [[0,1,1,1,0, 1,1,1,1,1, 1,1,1,1,1, 0,2,2,2,0, 0,0,2,0,0], [0,0,1,0,0, 0,1,1,1,0, 2,2,2,2,2, 0,0,3,0,0, 0,0,3,0,0]]
+    3: [
+        [1,1,1, 1,0,1, 1,1,1], // Moldura
+        [0,1,0, 1,1,1, 0,1,0], // Cruz
+        [1,0,1, 0,1,0, 1,0,1], // Xadrez
+        [1,1,0, 1,1,0, 1,1,0], // Colunas
+        [0,1,0, 1,2,1, 0,1,0], // Alvo 2 cores
+        [1,0,0, 1,1,0, 1,1,1], // Escada
+        [1,0,1, 1,0,1, 1,1,1], // Letra U
+        [1,1,1, 0,1,0, 0,1,0], // Letra T
+        [2,1,2, 1,2,1, 2,1,2], // Mosaico
+        [1,1,1, 1,2,1, 1,1,1]  // Ponto central
+    ],
+    4: [
+        [1,1,1,1, 1,0,0,1, 1,0,0,1, 1,1,1,1], // Quadrado Oco
+        [1,0,0,0, 1,1,0,0, 1,1,1,0, 1,1,1,1], // Triângulo
+        [1,1,0,0, 1,1,0,0, 0,0,2,2, 0,0,2,2], // Quatro Cantos
+        [0,1,1,0, 1,1,1,1, 1,1,1,1, 0,1,1,0], // Losango
+        [1,1,1,1, 0,0,0,0, 2,2,2,2, 0,0,0,0], // Listras
+        [1,2,1,2, 2,1,2,1, 1,2,1,2, 2,1,2,1], // Tabuleiro
+        [1,0,0,1, 0,1,1,0, 0,1,1,0, 1,0,0,1], // Ampulheta
+        [1,1,1,1, 1,2,2,1, 1,2,2,1, 1,1,1,1], // Moldura dupla
+        [0,1,1,0, 0,1,1,0, 0,1,1,0, 0,1,1,0], // Barra Central
+        [1,0,0,2, 1,0,0,2, 1,0,0,2, 1,0,0,2]  // Duas Laterais
+    ],
+    5: [
+        [0,1,0,1,0, 1,1,1,1,1, 1,1,1,1,1, 0,1,1,1,0, 0,0,1,0,0], // Coração
+        [0,0,1,0,0, 0,1,1,1,0, 1,1,1,1,1, 0,1,1,1,0, 0,0,1,0,0], // Árvore / Flor
+        [1,1,1,1,1, 1,0,0,0,0, 1,1,1,1,1, 0,0,0,0,1, 1,1,1,1,1], // Serpente / S
+        [1,0,0,0,1, 0,1,0,1,0, 0,0,1,0,0, 0,1,0,1,0, 1,0,0,0,1], // Grande X
+        [1,1,1,1,1, 1,0,0,0,1, 1,0,1,0,1, 1,0,0,0,1, 1,1,1,1,1], // Labirinto
+        [0,0,1,0,0, 0,0,1,0,0, 1,1,1,1,1, 0,0,1,0,0, 0,0,1,0,0], // Sinal Mais
+        [1,1,0,1,1, 1,1,0,1,1, 0,0,0,0,0, 1,1,0,1,1, 1,1,0,1,1], // Janelas
+        [1,1,1,1,1, 1,2,2,2,1, 1,2,3,2,1, 1,2,2,2,1, 1,1,1,1,1], // Túnel 3 cores
+        [0,1,1,1,0, 1,0,0,0,1, 1,0,2,0,1, 1,0,0,0,1, 0,1,1,1,0], // Rosto
+        [1,0,1,0,1, 0,1,0,1,0, 1,0,1,0,1, 0,1,0,1,0, 1,0,1,0,1]  // Xadrez Total
+    ]
 };
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
@@ -27,7 +61,6 @@ window.startLogic = function() {
     if (!categoriaAtual) categoriaAtual = "facil";
     tamanhoGrelha = JOGO_CATEGORIAS[categoriaAtual].tamanho;
     
-    // Configurar botão da Lâmpada (Substituindo o Timer)
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:30px; width:30px; cursor:pointer; display:block;" onclick="usarAjuda()">`;
@@ -53,7 +86,7 @@ function renderTutorialAnimation() {
     if(!container) return;
     container.innerHTML = `
         <style>
-            .tut-box { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:15px; }
+            .tut-box { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:10px; filter: grayscale(100%); opacity: 0.7; }
             .tut-grid { display: grid; grid-template-columns: repeat(2, 1fr); width: 60px; height: 60px; gap: 2px; background: #ddd; }
             .tut-cell { background: white; width: 100%; height: 100%; }
             @keyframes tapP { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-5px,-8px) scale(1.1); } }
@@ -84,8 +117,11 @@ window.initGame = function() {
 
 function proximaRonda() {
     if (indicePergunta >= 10) { finalizarJogo(); return; }
-    const lista = DESENHOS[tamanhoGrelha] || DESENHOS[3];
-    const desenhoBase = lista[Math.floor(Math.random() * lista.length)];
+    
+    const listaPossibilidades = DESENHOS[tamanhoGrelha] || DESENHOS[3];
+    // Escolhe um desenho aleatório da lista correspondente ao tamanho
+    const desenhoBase = listaPossibilidades[Math.floor(Math.random() * listaPossibilidades.length)];
+    
     const numPartes = Math.max(...desenhoBase);
     let coresSorteadas = [...PALETA_MESTRE].sort(() => 0.5 - Math.random()).slice(0, numPartes);
     
@@ -186,19 +222,16 @@ window.validar = function() {
     }
 };
 
-// === 3. FINALIZAÇÃO E RESULTADOS (CONFORME PEDIDO) ===
 function finalizarJogo() {
     somVitoria.play();
     const perc = (acertos / 10) * 100;
     const rel = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
     
-    // Esconder ecrã de jogo
     document.getElementById('scr-game').classList.remove('active');
     const resScreen = document.getElementById('scr-result');
     resScreen.classList.add('active');
     document.getElementById('status-bar').style.display = 'none';
 
-    // Injeta o conteúdo dentro de uma div "screen-box" idêntica aos outros ecrãs
     resScreen.innerHTML = `
         <div class="screen-box" style="justify-content: center; padding: 20px;">
             <style>
@@ -215,38 +248,20 @@ function finalizarJogo() {
                 .btn-redo:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
                 .btn-outline { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); }
                 .btn-exit { background: #e2e8f0; color: #64748b; }
-                @media (max-width: 500px) { .res-msg { font-size: 1.8rem; } .stat-box { width: 90px; height: 90px; } .btn-res { height: 50px; font-size: 1rem; } }
             </style>
             
             <div class="res-container">
                 <img src="${JOGO_CONFIG.caminhoImg}${rel.img}" class="res-trophy">
                 <h1 class="res-msg">${rel.titulo}</h1>
-                
                 <div class="res-stats-row">
-                    <div class="stat-box">
-                        <span class="stat-val" style="color: #7ed321;">${acertos}</span>
-                        <span class="stat-lab">Certos</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-val" style="color: #ff5e5e;">${erros}</span>
-                        <span class="stat-lab">Errados</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-val" style="color: #ff9f43;">${ajudasUtilizadas}</span>
-                        <span class="stat-lab">Ajudas</span>
-                    </div>
+                    <div class="stat-box"><span class="stat-val" style="color: #7ed321;">${acertos}</span><span class="stat-lab">Certos</span></div>
+                    <div class="stat-box"><span class="stat-val" style="color: #ff5e5e;">${erros}</span><span class="stat-lab">Errados</span></div>
+                    <div class="stat-box"><span class="stat-val" style="color: #ff9f43;">${ajudasUtilizadas}</span><span class="stat-lab">Ajudas</span></div>
                 </div>
-
                 <div class="res-actions">
-                    <button class="btn-res btn-redo" onclick="location.reload()">
-                        <i class="fas fa-redo"></i> JOGAR DE NOVO
-                    </button>
-                    <button class="btn-res btn-outline" onclick="openRDMenu()">
-                        <i class="fas fa-chart-line"></i> OUTRO NÍVEL
-                    </button>
-                    <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-exit">
-                        <i class="fas fa-sign-out-alt"></i> SAIR
-                    </a>
+                    <button class="btn-res btn-redo" onclick="location.reload()"><i class="fas fa-redo"></i> JOGAR DE NOVO</button>
+                    <button class="btn-res btn-outline" onclick="openRDMenu()"><i class="fas fa-chart-line"></i> OUTRO NÍVEL</button>
+                    <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-exit"><i class="fas fa-sign-out-alt"></i> SAIR</a>
                 </div>
             </div>
         </div>
