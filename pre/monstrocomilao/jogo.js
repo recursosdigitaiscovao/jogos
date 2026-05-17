@@ -10,7 +10,7 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// === 1. FUNÇÃO DE VOZ ===
+// === 1. FUNÇÃO DE VOZ (TEXT-TO-SPEECH) ===
 function falarInstrucao() {
     if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
@@ -24,8 +24,9 @@ function falarInstrucao() {
 
 // === 2. INICIALIZAÇÃO ===
 window.startLogic = function() {
+    const config = JOGO_CATEGORIAS[categoriaAtiva];
     const introInstr = document.getElementById('intro-instr');
-    if(introInstr) introInstr.innerText = JOGO_CATEGORIAS[categoriaAtiva].descricao;
+    if(introInstr) introInstr.innerText = config.descricao;
 
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
@@ -38,24 +39,38 @@ window.startLogic = function() {
 
 window.selecionarCategoria = function(key) {
     categoriaAtiva = key;
-    if(document.getElementById('intro-instr')) 
-        document.getElementById('intro-instr').innerText = JOGO_CATEGORIAS[key].descricao;
+    const introInstr = document.getElementById('intro-instr');
+    if(introInstr) introInstr.innerText = JOGO_CATEGORIAS[key].descricao;
     renderTutorialAnimation();
 };
 
 function renderTutorialAnimation() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
+    const isSaudavel = categoriaAtiva === "saudavel";
+    const itemTutorial = isSaudavel ? "🍎" : "🍩";
+
     container.innerHTML = `
         <style>
-            .tut-monster { width: 100px; height: 100px; background: #9c27b0; border-radius: 50% 50% 40% 40%; position: relative; box-shadow: 0 8px 0 #4a148c; }
-            .tut-mouth { width: 50px; height: 25px; background: #210329; border-radius: 5px 5px 25px 25px; position: absolute; bottom: 15px; left: 25px; border: 3px solid #ffeb3b; }
-            .tut-food { position: absolute; font-size: 30px; animation: moveFood 3s infinite; }
-            @keyframes moveFood { 0% { transform: translate(120px, 40px); } 60% { transform: translate(50px, 60px); opacity:1; } 80%, 100% { transform: translate(50px, 60px); opacity:0; } }
+            .tut-stage { position: relative; width: 300px; height: 180px; background: white; border: 3px dashed var(--primary-blue); border-radius: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+            .tut-monster { width: 80px; height: 80px; background: #9c27b0; border-radius: 50% 50% 40% 40%; position: relative; box-shadow: 0 6px 0 #4a148c, inset 0 -5px 10px rgba(0,0,0,0.2); margin-left: -60px; }
+            .tut-mouth { width: 35px; height: 15px; background: #210329; border-radius: 5px 5px 15px 15px; position: absolute; bottom: 15px; left: 22.5px; border: 2px solid #ffeb3b; transition: 0.3s; }
+            .tut-food { position: absolute; font-size: 30px; z-index: 15; left: 180px; top: 70px; animation: foodFly 4s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95); }
+            .tut-hand { position: absolute; font-size: 35px; z-index: 20; left: 200px; top: 100px; animation: handMove 4s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95); }
+            
+            /* Animação do Monstro na Intro */
+            .tut-monster { animation: monsterWait 4s infinite; }
+            @keyframes monsterWait { 0%, 45% { transform: scale(1); } 50%, 70% { transform: scale(1.1); } 75%, 100% { transform: scale(1); } }
+            @keyframes monsterMouth { 0%, 45% { height: 15px; } 50%, 70% { height: 30px; } 75%, 100% { height: 15px; } }
+            .tut-monster .tut-mouth { animation: monsterMouth 4s infinite; }
+
+            @keyframes foodFly { 0%, 20% { left: 180px; top: 70px; opacity: 1; } 50%, 70% { left: 5px; top: 80px; opacity: 1; transform: scale(0.5); } 71%, 100% { opacity: 0; } }
+            @keyframes handMove { 0%, 15% { left: 200px; top: 110px; transform: scale(1); } 20% { transform: scale(0.8); } 50%, 70% { left: 25px; top: 120px; transform: scale(0.8); } 80%, 100% { left: 200px; top: 110px; transform: scale(1); } }
         </style>
-        <div style="position:relative; width:220px; height:150px; display:flex; align-items:center; justify-content:center;">
+        <div class="tut-stage">
             <div class="tut-monster"><div class="tut-mouth"></div></div>
-            <div class="tut-food">🍎</div>
+            <div class="tut-food">${itemTutorial}</div>
+            <div class="tut-hand">☝️</div>
         </div>
     `;
 }
@@ -69,6 +84,8 @@ window.initGame = function() {
 
 function proximaRonda() {
     if (rondaAtual > 10) { finalizarJogo(); return; }
+    document.getElementById('hits-val').innerText = acertos;
+    document.getElementById('miss-val').innerText = erros;
     document.getElementById('round-val').innerText = `${rondaAtual} / 10`;
     renderizarEcraAlimentacao();
     if(rondaAtual === 1) setTimeout(falarInstrucao, 500);
@@ -77,51 +94,38 @@ function proximaRonda() {
 function renderizarEcraAlimentacao() {
     const container = document.getElementById('game-main-content');
     const config = JOGO_CATEGORIAS[categoriaAtiva];
-    
-    // Sorteia 1 certo e 3 errados
     const alvo = config.alvos[Math.floor(Math.random() * config.alvos.length)];
     const outras = [...config.distracoes].sort(() => 0.5 - Math.random()).slice(0, 3);
     const opcoesRonda = [{ img: alvo, status: 'correto' }, ...outras.map(d => ({ img: d, status: 'errado' }))].sort(() => 0.5 - Math.random());
 
     container.innerHTML = `
         <style>
-            .monster-wrap { width: 98%; height: 98%; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 5px; box-sizing: border-box; }
+            .monster-wrap { width: 98%; height: 98%; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px; margin: auto; }
+            .instr-box { background: white; padding: 10px 25px; border-radius: 50px; font-weight: 900; color: #5d7082; border: 3px solid var(--primary-blue); display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); max-width: 90%; }
             
-            /* Instrução e Som Redondo */
-            .instr-box { background: white; padding: 10px 20px; border-radius: 50px; font-weight: 900; color: #5d7082; border: 3px solid var(--primary-blue); display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-            .btn-som { background: #ff9800; border: none; width: 45px; height: 45px; border-radius: 50% !important; color: white; cursor: pointer; box-shadow: 0 4px 0 #e65100; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-            .btn-som i { font-size: 20px; }
+            .btn-som { background: #ff9800; border: none; width: 45px; height: 45px; border-radius: 50% !important; color: white; cursor: pointer; box-shadow: 0 4px 0 #e65100; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: 0.1s; }
             .btn-som:active { transform: translateY(2px); box-shadow: none; }
 
-            .game-stage { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; gap: 30px; flex-wrap: wrap; }
+            .game-stage { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }
             
-            /* Monstro Clássico Melhorado */
-            .monster { width: 220px; height: 220px; background: #9c27b0; border-radius: 50% 50% 40% 40%; position: relative; box-shadow: 0 14px 0 #4a148c, inset 0 -10px 20px rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.3s; }
-            .eye-row { display: flex; gap: 30px; margin-bottom: 10px; }
-            .eye { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
-            .pupil { width: 18px; height: 18px; background: black; border-radius: 50%; }
-            .pupil::after { content:''; position:absolute; top:4px; left:4px; width:6px; height:6px; background:white; border-radius:50%; }
-            .mouth { width: 100px; height: 50px; background: #210329; border: 5px solid #ffeb3b; border-radius: 10px 10px 60px 60px; transition: 0.2s; margin-top: 15px; box-shadow: inset 0 5px 10px rgba(0,0,0,0.5); }
+            .monster { width: clamp(160px, 32vh, 240px); height: clamp(160px, 32vh, 240px); background: #9c27b0; border-radius: 50% 50% 40% 40%; position: relative; box-shadow: 0 14px 0 #4a148c, inset 0 -10px 20px rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.3s; }
+            .monster-eye { width: 35px; height: 35px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
+            .monster-pupil { width: 15px; height: 15px; background: black; border-radius: 50%; position: relative; }
+            .monster-pupil::after { content:''; position:absolute; top:3px; left:3px; width:5px; height:5px; background:white; border-radius:50%; }
+            .monster-mouth { width: 100px; height: 45px; background: #210329; border: 5px solid #ffeb3b; border-radius: 10px 10px 60px 60px; transition: 0.2s; margin-top: 15px; box-shadow: inset 0 5px 10px rgba(0,0,0,0.5); }
             
-            .monster.open .mouth { height: 90px; }
-            .monster.happy { background: #4caf50; box-shadow: 0 14px 0 #1b5e20, inset 0 -10px 20px rgba(0,0,0,0.1); }
+            .monster.open .monster-mouth { height: 90px; }
+            .monster.happy { background: #4caf50; box-shadow: 0 14px 0 #1b5e20; transform: scale(1.05); }
             .monster.sad { background: #f44336; box-shadow: 0 14px 0 #b71c1c; animation: shake 0.4s; }
 
-            /* Alimentos */
             .food-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-            .food-card { width: 100px; height: 100px; background: white; border: 3px solid #f0f4f8; border-radius: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 5px 0 #d0d8de; padding: 10px; transition: 0.2s; }
+            .food-card { width: clamp(85px, 14vh, 120px); height: clamp(85px, 14vh, 120px); background: white; border: 3px solid #f0f4f8; border-radius: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 5px 0 #d0d8de; padding: 10px; transition: 0.2s; }
             .food-card img { max-height: 85%; max-width: 85%; object-fit: contain; }
 
-            /* Tablet e Desktop */
-            @media (min-width: 850px) {
-                .food-card { width: 150px; height: 150px; }
-                .monster { width: 300px; height: 300px; }
-            }
-            /* Mobile */
             @media (max-width: 600px) {
-                .monster { width: 170px; height: 160px; }
-                .food-card { width: 90px; height: 90px; border-radius: 18px; }
-                .instr-box { font-size: 0.9rem; width: 95%; }
+                .monster { width: 160px; height: 160px; }
+                .food-card { width: 85px; height: 85px; border-radius: 18px; }
+                .instr-box { font-size: 0.85rem; padding: 8px 15px; }
             }
             
             @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
@@ -136,11 +140,11 @@ function renderizarEcraAlimentacao() {
             
             <div class="game-stage">
                 <div class="monster" id="monster-main">
-                    <div class="eye-row">
-                        <div class="eye"><div class="pupil"></div></div>
-                        <div class="eye"><div class="pupil"></div></div>
+                    <div style="display:flex; gap:30px;">
+                        <div class="monster-eye"><div class="monster-pupil"></div></div>
+                        <div class="monster-eye"><div class="monster-pupil"></div></div>
                     </div>
-                    <div class="mouth"></div>
+                    <div class="monster-mouth"></div>
                 </div>
                 <div class="food-grid">
                     ${opcoesRonda.map(opt => `
@@ -183,9 +187,6 @@ function darComida(el) {
             el.classList.remove('flying');
             el.style.position = "static";
         }
-        document.getElementById('hits-val').innerText = acertos;
-        document.getElementById('miss-val').innerText = erros;
-
         setTimeout(() => {
             monster.classList.remove('happy', 'sad');
             rondaAtual++;
@@ -226,10 +227,10 @@ function finalizarJogo() {
                 <h1 style="color:var(--primary-blue); font-weight:900; font-size:2.2rem; margin:15px 0;">${rel.titulo}</h1>
                 <div style="display:flex; gap:15px; margin-bottom:30px; width:100%; justify-content:center;">
                     <div style="background:white; border-radius:25px; width:100px; height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 25px rgba(0,0,0,0.05);"><span style="font-size:1.8rem; font-weight:900; color:#7ed321;">${acertos}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Certos</span></div>
-                    <div style="background:white; border-radius:25px; width:100px; height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 25px rgba(0,0,0,0.05);"><span style="font-size:1.8rem; font-weight:900; color:#ff5e5e;">${erros}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Errados</span></div>
-                    <div style="background:white; border-radius:25px; width:100px; height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 25px rgba(0,0,0,0.05);"><span style="font-size:1.8rem; font-weight:900; color:#ff9f43;">${ajudasUtilizadas}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Ajudas</span></div>
+                    <div style="background:white; border-radius:25px; width:100px; height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05);"><span style="font-size:1.8rem; font-weight:900; color:#ff5e5e;">${erros}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Errados</span></div>
+                    <div style="background:white; border-radius:25px; width:100px; height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05);"><span style="font-size:1.8rem; font-weight:900; color:#ff9f43;">${ajudasUtilizadas}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Ajudas</span></div>
                 </div>
-                <button class="btn-jogar-stretch" style="height:60px; border-radius:30px; font-size:1.2rem;" onclick="location.reload()">JOGAR DE NOVO</button>
+                <button class="btn-jogar-stretch" style="height:60px; border-radius:30px; font-size:1.2rem;" onclick="location.reload()"><i class="fas fa-redo"></i> JOGAR DE NOVO</button>
                 <a href="${JOGO_CONFIG.linkVoltar}" class="btn-jogar-stretch" style="height:60px; border-radius:30px; font-size:1.2rem; background:#e2e8f0; color:#64748b; box-shadow:0 6px 0 #cbd5e1;">SAIR</a>
             </div>
         </div>
