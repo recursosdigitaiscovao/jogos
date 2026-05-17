@@ -30,7 +30,6 @@ window.startLogic = function() {
     if (!JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = Object.keys(JOGO_CATEGORIAS)[0];
     tamanhoGrelha = JOGO_CATEGORIAS[categoriaAtual].tamanho;
     
-    // Configurar botão da Lâmpada (Substituindo o cronómetro)
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:30px; width:30px; cursor:pointer; display:block;" onclick="usarAjuda()">`;
@@ -123,18 +122,20 @@ function mostrarPergunta() {
             .maze-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; overflow: hidden; }
             .maze-area { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; min-height: 0; }
             .maze-grid { display: grid; grid-template-columns: repeat(${tamanhoGrelha}, 1fr); grid-template-rows: repeat(${tamanhoGrelha}, 1fr); height: 95%; aspect-ratio: 1/1; background: #fff; border: 4px solid #eee; border-radius: 15px; position: relative; }
-            .maze-cell { border: 1px solid #f9f9f9; display: flex; align-items: center; justify-content: center; }
-            .wall { width: 80%; height: 80%; object-fit: contain; transition: opacity 0.3s; }
-            .goal { width: 75%; height: 75%; object-fit: contain; animation: bounce 2s infinite; transition: opacity 0.3s; }
+            .maze-cell { border: 1px solid #f9f9f9; display: flex; align-items: center; justify-content: center; position: relative; }
+            .wall { width: 80%; height: 80%; object-fit: contain; }
+            .goal { width: 75%; height: 75%; object-fit: contain; animation: bounce 2s infinite; }
             .hero-p { position: absolute; width: ${100/tamanhoGrelha}%; height: ${100/tamanhoGrelha}%; display: flex; align-items: center; justify-content: center; transition: all 0.15s ease-out; z-index: 10; }
-            .hero-p img { width: 85%; height: 85%; object-fit: contain; }
+            .hero-p img { width: 85%; height: 85%; object-fit: contain; transition: transform 0.2s; }
             .hero-p.shake { animation: shake 0.3s; }
+            /* PISTA VISUAL DA AJUDA */
+            .hint-dot { width: 8px; height: 8px; background: var(--primary-blue); border-radius: 50%; opacity: 0.6; z-index: 5; animation: pulseHint 1s infinite; }
+            @keyframes pulseHint { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.5); } }
             @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
             .maze-controls { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px; flex-shrink: 0; }
             .c-row { display: flex; gap: 8px; }
             .b-dir { width: 65px; height: 55px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 26px; color: var(--primary-blue); cursor: pointer; box-shadow: 0 4px 0 #ddd; border: 2px solid #eee; }
             .b-dir:active { transform: translateY(2px); box-shadow: none; }
-            @media (orientation: landscape) and (max-height: 550px) { .maze-wrapper { flex-direction: row; gap: 20px; } .b-dir { width: 55px; height: 45px; } }
         </style>
         <div class="maze-wrapper">
             <div class="maze-area"><div class="maze-grid" id="maze-container">
@@ -142,7 +143,7 @@ function mostrarPergunta() {
                     let content = "";
                     if (cell === 1) content = `<img src="${JOGO_CONFIG.caminhoImg}${cat.obstaculo}" class="wall">`;
                     else if (x === tamanhoGrelha-1 && y === tamanhoGrelha-1) content = `<img id="target-img" src="${JOGO_CONFIG.caminhoImg}${cat.objetivo}" class="goal">`;
-                    return `<div class="maze-cell">${content}</div>`;
+                    return `<div class="maze-cell" id="cell-${x}-${y}">${content}</div>`;
                 }).join('')).join('')}
                 <div class="hero-p" id="player" style="left:${posPersonagem.x*(100/tamanhoGrelha)}%; top:${posPersonagem.y*(100/tamanhoGrelha)}%;"><img src="${JOGO_CONFIG.caminhoImg}${cat.personagem}"></div>
             </div></div>
@@ -159,55 +160,83 @@ function mostrarPergunta() {
     `;
 }
 
+// === FUNÇÃO DE AJUDA: ENCONTRAR O CAMINHO (BFS) ===
 window.usarAjuda = function() {
     if (!jogoAtivo || !ajudaDisponivel) return;
     ajudaDisponivel = false;
     ajudasUtilizadas++;
+    const btnLuz = document.querySelector('.badge-timer img');
+    if(btnLuz) btnLuz.style.opacity = "0.3";
+
+    const caminho = calcularCaminho(posPersonagem, {x: tamanhoGrelha-1, y: tamanhoGrelha-1});
     
-    // Efeito visual de ajuda: Paredes ficam semi-transparentes
-    const walls = document.querySelectorAll('.wall');
-    walls.forEach(w => w.style.opacity = "0.2");
-    
+    caminho.forEach(pos => {
+        const cell = document.getElementById(`cell-${pos.x}-${pos.y}`);
+        if (cell && !cell.querySelector('.wall') && !cell.querySelector('.goal')) {
+            const dot = document.createElement('div');
+            dot.className = 'hint-dot';
+            cell.appendChild(dot);
+        }
+    });
+
     setTimeout(() => {
-        walls.forEach(w => w.style.opacity = "1");
-        setTimeout(() => ajudaDisponivel = true, 3000); // Cooldown de 3 segundos
-    }, 1500);
+        document.querySelectorAll('.hint-dot').forEach(d => d.remove());
+        setTimeout(() => {
+            ajudaDisponivel = true;
+            if(btnLuz) btnLuz.style.opacity = "1";
+        }, 2000);
+    }, 2000);
 };
+
+function calcularCaminho(start, end) {
+    let queue = [[start]];
+    let visited = new Set([`${start.x},${start.y}`]);
+    
+    while (queue.length > 0) {
+        let path = queue.shift();
+        let current = path[path.length - 1];
+
+        if (current.x === end.x && current.y === end.y) return path;
+
+        const dirs = [[0,1], [0,-1], [1,0], [-1,0]];
+        for (let [dx, dy] of dirs) {
+            let nx = current.x + dx, ny = current.y + dy;
+            if (nx >= 0 && nx < tamanhoGrelha && ny >= 0 && ny < tamanhoGrelha && mapaAtual[ny][nx] === 0 && !visited.has(`${nx},${ny}`)) {
+                visited.add(`${nx},${ny}`);
+                queue.push([...path, {x: nx, y: ny}]);
+            }
+        }
+    }
+    return [];
+}
 
 window.tentarMover = function(dx, dy) {
     if (!jogoAtivo) return;
     let nx = posPersonagem.x + dx, ny = posPersonagem.y + dy;
     const hero = document.getElementById('player');
+    const heroImg = hero.querySelector('img');
+
+    if (dx > 0) heroImg.style.transform = "scaleX(1)";
+    else if (dx < 0) heroImg.style.transform = "scaleX(-1)";
+
     if (nx < 0 || nx >= tamanhoGrelha || ny < 0 || ny >= tamanhoGrelha || mapaAtual[ny][nx] === 1) {
-        somErro.play(); 
-        erros++; 
-        document.getElementById('miss-val').innerText = erros;
-        hero.classList.add('shake'); 
-        setTimeout(() => hero.classList.remove('shake'), 300); 
-        return;
+        somErro.play(); erros++; document.getElementById('miss-val').innerText = erros;
+        hero.classList.add('shake'); setTimeout(() => hero.classList.remove('shake'), 300); return;
     }
     posPersonagem.x = nx; posPersonagem.y = ny;
     hero.style.left = `${nx * (100/tamanhoGrelha)}%`;
     hero.style.top = `${ny * (100/tamanhoGrelha)}%`;
     if (nx === tamanhoGrelha - 1 && ny === tamanhoGrelha - 1) {
         const target = document.getElementById('target-img'); if(target) target.style.opacity = "0";
-        somAcerto.play(); 
-        acertos++; 
-        document.getElementById('hits-val').innerText = acertos;
+        somAcerto.play(); acertos++; document.getElementById('hits-val').innerText = acertos;
         jogoAtivo = false;
-        setTimeout(() => { 
-            indicePergunta++; 
-            proximaRonda(); 
-            jogoAtivo = true;
-        }, 800);
+        setTimeout(() => { indicePergunta++; proximaRonda(); jogoAtivo = true; }, 800);
     }
 };
 
-// === 4. ECRÃ DE RESULTADOS (PADRÃO IMAGEM) ===
 function finalizarJogo() {
     jogoAtivo = false;
     somVitoria.play();
-    
     const perc = (acertos / 10) * 100;
     const rel = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
     
@@ -232,38 +261,19 @@ function finalizarJogo() {
                 .btn-redo:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
                 .btn-outline { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); }
                 .btn-exit { background: #e2e8f0; color: #64748b; }
-                @media (max-width: 500px) { .res-msg { font-size: 1.8rem; } .stat-box { width: 90px; height: 90px; } .btn-res { height: 50px; font-size: 1rem; } }
             </style>
-            
             <div class="res-container">
                 <img src="${JOGO_CONFIG.caminhoImg}${rel.img}" class="res-trophy">
                 <h1 class="res-msg">${rel.titulo}</h1>
-                
                 <div class="res-stats-row">
-                    <div class="stat-box">
-                        <span class="stat-val" style="color: #7ed321;">${acertos}</span>
-                        <span class="stat-lab">Certos</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-val" style="color: #ff5e5e;">${erros}</span>
-                        <span class="stat-lab">Errados</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-val" style="color: #ff9f43;">${ajudasUtilizadas}</span>
-                        <span class="stat-lab">Ajudas</span>
-                    </div>
+                    <div class="stat-box"><span class="stat-val" style="color: #7ed321;">${acertos}</span><span class="stat-lab">Certos</span></div>
+                    <div class="stat-box"><span class="stat-val" style="color: #ff5e5e;">${erros}</span><span class="stat-lab">Errados</span></div>
+                    <div class="stat-box"><span class="stat-val" style="color: #ff9f43;">${ajudasUtilizadas}</span><span class="stat-lab">Ajudas</span></div>
                 </div>
-
                 <div class="res-actions">
-                    <button class="btn-res btn-redo" onclick="location.reload()">
-                        <i class="fas fa-redo"></i> JOGAR DE NOVO
-                    </button>
-                    <button class="btn-res btn-outline" onclick="openRDMenu()">
-                        <i class="fas fa-chart-line"></i> OUTRO NÍVEL
-                    </button>
-                    <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-exit">
-                        <i class="fas fa-sign-out-alt"></i> SAIR
-                    </a>
+                    <button class="btn-res btn-redo" onclick="location.reload()"><i class="fas fa-redo"></i> JOGAR DE NOVO</button>
+                    <button class="btn-res btn-outline" onclick="openRDMenu()"><i class="fas fa-chart-line"></i> OUTRO NÍVEL</button>
+                    <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-exit"><i class="fas fa-sign-out-alt"></i> SAIR</a>
                 </div>
             </div>
         </div>
