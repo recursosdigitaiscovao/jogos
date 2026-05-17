@@ -50,18 +50,12 @@ function criarAnimacaoTutorial() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
     container.innerHTML = `
-        <div style="position:relative; display:flex; align-items:center; gap:20px; background:white; padding:15px; border-radius:20px; border:2px solid #eee;">
+        <div style="position:relative; display:flex; align-items:center; gap:20px; background:white; padding:15px; border-radius:20px; border:2px solid #eee; filter: grayscale(100%); opacity:0.7;">
             <div style="display:grid; grid-template-columns:repeat(3, 30px); gap:2px; background:#ddd; position:relative;">
                 <div style="background:white; width:30px; height:30px;"></div><div style="background:white; width:30px; height:30px;"></div><div style="background:white; width:30px; height:30px; display:flex; align-items:center; justify-content:center;">🎯</div>
                 <div style="background:white; width:30px; height:30px;"></div><div style="background:#eee; width:30px; height:30px;"></div><div style="background:white; width:30px; height:30px;"></div>
                 <div style="background:white; width:30px; height:30px;"></div><div style="background:white; width:30px; height:30px;"></div><div style="background:white; width:30px; height:30px;"></div>
                 <div id="tut-hero" style="position:absolute; width:30px; height:30px; display:flex; align-items:center; justify-content:center; font-size:20px; transition:0.5s; top:64px; left:0;">🐝</div>
-            </div>
-            <div style="display:flex; flex-direction:column; align-items:center; gap:4px; opacity:0.7;">
-                <div style="width:22px; height:22px; background:#eee; border-radius:4px; border:1px solid #ddd;"></div>
-                <div style="display:flex; gap:4px;">
-                    <div style="width:22px; height:22px; background:#eee; border-radius:4px; border:1px solid #ddd;"></div><div style="width:22px; height:22px; background:#eee; border-radius:4px; border:1px solid #ddd;"></div><div id="tut-key-right" style="width:22px; height:22px; background:#eee; border-radius:4px; border:1px solid #ddd;">▶</div>
-                </div>
             </div>
             <div id="tut-hand" style="position:absolute; font-size:35px; z-index:10; animation: tutHandMove 3s infinite;">☝️</div>
         </div>
@@ -69,8 +63,6 @@ function criarAnimacaoTutorial() {
             @keyframes tutHandMove { 0%, 100% { transform:translate(110px, 45px); } 50% { transform:translate(110px, 45px) scale(0.8); } }
             #tut-hero { animation: tutHeroMove 3s infinite; }
             @keyframes tutHeroMove { 0%, 20% { left:0; } 40%, 100% { left:32px; } }
-            #tut-key-right { animation: tutKeyPress 3s infinite; }
-            @keyframes tutKeyPress { 0%, 15% { background:#eee; } 20%, 35% { background:var(--primary-blue); color:white; } 40%, 100% { background:#eee; } }
         </style>
     `;
 }
@@ -116,40 +108,44 @@ function proximaRonda() {
 function mostrarPergunta() {
     const container = document.getElementById('game-main-content');
     const cat = JOGO_CATEGORIAS[categoriaAtual];
+    const tema = BIBLIOTECA_TEMAS[CONFIG_MESTRE.area];
+    const imgSeta = JOGO_CONFIG.caminhoIcons + tema.voltarMobile; // Ícone da seta dinâmica
+
     document.getElementById('round-val').innerText = `${indicePergunta + 1} / 10`;
+    
     container.innerHTML = `
         <style>
             .maze-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; overflow: hidden; }
             .maze-area { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; min-height: 0; }
-            .maze-grid { display: grid; grid-template-columns: repeat(${tamanhoGrelha}, 1fr); grid-template-rows: repeat(${tamanhoGrelha}, 1fr); height: 95%; aspect-ratio: 1/1; background: #fff; border: 4px solid #eee; border-radius: 15px; position: relative; }
+            .maze-grid { display: grid; grid-template-columns: repeat(${tamanhoGrelha}, 1fr); grid-template-rows: repeat(${tamanhoGrelha}, 1fr); height: 90%; aspect-ratio: 1/1; background: #fff; border: 4px solid #eee; border-radius: 15px; position: relative; }
             .maze-cell { border: 1px solid #f9f9f9; display: flex; align-items: center; justify-content: center; position: relative; }
             .wall { width: 80%; height: 80%; object-fit: contain; }
             .goal { width: 75%; height: 75%; object-fit: contain; animation: bounce 2s infinite; }
             .hero-p { position: absolute; width: ${100/tamanhoGrelha}%; height: ${100/tamanhoGrelha}%; display: flex; align-items: center; justify-content: center; transition: all 0.15s ease-out; z-index: 10; }
-            .hero-p img { width: 85%; height: 85%; object-fit: contain; transition: transform 0.2s; }
+            .hero-p img { width: 85%; height: 85%; object-fit: contain; }
             .hero-p.shake { animation: shake 0.3s; }
             .hint-dot { width: 8px; height: 8px; background: var(--primary-blue); border-radius: 50%; opacity: 0.6; z-index: 5; animation: pulseHint 1s infinite; }
+            
+            /* NOVOS CONTROLOS LADO A LADO */
+            .maze-controls-row { display: flex; gap: 15px; padding: 15px; flex-shrink: 0; align-items: center; justify-content: center; width: 100%; }
+            .b-nav { 
+                width: 60px; height: 60px; background: white; border-radius: 50%; 
+                display: flex; align-items: center; justify-content: center; 
+                cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 2px solid #f0f0f0; transition: 0.1s; 
+            }
+            .b-nav:active { transform: scale(0.9); box-shadow: none; }
+            .b-nav img { height: 35px; width: auto; pointer-events: none; }
+            
+            /* ROTAÇÕES DA SETA VOLTAR */
+            .rot-up { transform: rotate(90deg); }
+            .rot-down { transform: rotate(270deg); }
+            .rot-right { transform: rotate(180deg); }
+            .rot-left { transform: rotate(0deg); }
+
             @keyframes pulseHint { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.5); } }
             @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-            
-            /* NOVOS BOTÕES DE DIREÇÃO */
-            .maze-controls { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 15px; flex-shrink: 0; }
-            .c-row { display: flex; gap: 10px; }
-            .b-dir { 
-                width: 60px; height: 55px; background: var(--primary-blue); border-radius: 15px; 
-                display: flex; align-items: center; justify-content: center; 
-                font-size: 22px; color: white; cursor: pointer; 
-                box-shadow: 0 5px 0 var(--primary-dark); border: none; transition: 0.1s; 
-            }
-            .b-dir:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--primary-dark); }
-            .b-reset { background: #e2e8f0; color: #64748b; box-shadow: 0 5px 0 #cbd5e1; font-size: 18px; }
-            .b-reset:active { box-shadow: 0 2px 0 #cbd5e1; }
-            
-            @media (orientation: landscape) and (max-height: 550px) { 
-                .maze-wrapper { flex-direction: row; gap: 30px; } 
-                .b-dir { width: 55px; height: 50px; } 
-            }
         </style>
+
         <div class="maze-wrapper">
             <div class="maze-area"><div class="maze-grid" id="maze-container">
                 ${mapaAtual.map((row, y) => row.map((cell, x) => {
@@ -160,14 +156,13 @@ function mostrarPergunta() {
                 }).join('')).join('')}
                 <div class="hero-p" id="player" style="left:${posPersonagem.x*(100/tamanhoGrelha)}%; top:${posPersonagem.y*(100/tamanhoGrelha)}%;"><img src="${JOGO_CONFIG.caminhoImg}${cat.personagem}"></div>
             </div></div>
-            <div class="maze-controls">
-                <div class="c-row"><button class="b-dir" onclick="tentarMover(0, -1)"><i class="fas fa-chevron-up"></i></button></div>
-                <div class="c-row">
-                    <button class="b-dir" onclick="tentarMover(-1, 0)"><i class="fas fa-chevron-left"></i></button>
-                    <button class="b-dir b-reset" onclick="proximaRonda()"><i class="fas fa-sync-alt"></i></button>
-                    <button class="b-dir" onclick="tentarMover(1, 0)"><i class="fas fa-chevron-right"></i></button>
-                </div>
-                <div class="c-row"><button class="b-dir" onclick="tentarMover(0, 1)"><i class="fas fa-chevron-down"></i></button></div>
+
+            <div class="maze-controls-row">
+                <div class="b-nav" onclick="tentarMover(-1, 0)"><img src="${imgSeta}" class="rot-left"></div>
+                <div class="b-nav" onclick="tentarMover(0, -1)"><img src="${imgSeta}" class="rot-up"></div>
+                <div class="b-nav" onclick="tentarMover(0, 1)"><img src="${imgSeta}" class="rot-down"></div>
+                <div class="b-nav" onclick="tentarMover(1, 0)"><img src="${imgSeta}" class="rot-right"></div>
+                <div class="b-nav" style="background:#f8f8f8;" onclick="proximaRonda()"><i class="fas fa-sync-alt" style="color:#88a;"></i></div>
             </div>
         </div>
     `;
@@ -220,10 +215,10 @@ window.tentarMover = function(dx, dy) {
     const hero = document.getElementById('player');
     const heroImg = hero.querySelector('img');
 
-    // --- CORRECÇÃO DE DIREÇÃO (Virar p/ lado certo) ---
-    if (dx > 0) heroImg.style.transform = "scaleX(-1)"; // Se o seu asset olha p/ esquerda, scaleX(-1) vira p/ direita
-    else if (dx < 0) heroImg.style.transform = "scaleX(1)"; // Volta ao normal p/ esquerda
-    // --------------------------------------------------
+    // --- DIREÇÃO CORRIGIDA ---
+    // Se mover para a DIREITA (dx=1), inverto o scaleX (considerando que a maioria das imagens olha para a esquerda)
+    if (dx > 0) heroImg.style.transform = "scaleX(-1)"; 
+    else if (dx < 0) heroImg.style.transform = "scaleX(1)";
 
     if (nx < 0 || nx >= tamanhoGrelha || ny < 0 || ny >= tamanhoGrelha || mapaAtual[ny][nx] === 1) {
         somErro.play(); erros++; document.getElementById('miss-val').innerText = erros;
@@ -267,7 +262,6 @@ function finalizarJogo() {
                 .btn-redo:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
                 .btn-outline { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); }
                 .btn-exit { background: #e2e8f0; color: #64748b; }
-                @media (max-width: 500px) { .res-msg { font-size: 1.8rem; } .stat-box { width: 90px; height: 90px; } .btn-res { height: 50px; font-size: 1rem; } }
             </style>
             <div class="res-container">
                 <img src="${JOGO_CONFIG.caminhoImg}${rel.img}" class="res-trophy">
