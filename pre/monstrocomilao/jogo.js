@@ -39,8 +39,8 @@ window.startLogic = function() {
 
 window.selecionarCategoria = function(key) {
     categoriaAtiva = key;
-    const introInstr = document.getElementById('intro-instr');
-    if(introInstr) introInstr.innerText = JOGO_CATEGORIAS[key].descricao;
+    if(document.getElementById('intro-instr')) 
+        document.getElementById('intro-instr').innerText = JOGO_CATEGORIAS[key].descricao;
     renderTutorialAnimation();
 };
 
@@ -52,35 +52,26 @@ function renderTutorialAnimation() {
     container.innerHTML = `
         <style>
             .tut-stage { position: relative; width: 340px; height: 200px; background: white; border: 3px dashed var(--primary-blue); border-radius: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-            .tut-monster { width: 100px; height: 100px; background: #9c27b0; border-radius: 50% 50% 40% 40%; position: relative; box-shadow: 0 8px 0 #4a148c; margin-left: -100px; }
-            .tut-mouth { width: 40px; height: 15px; background: #210329; border-radius: 5px 5px 20px 20px; position: absolute; bottom: 20px; left: 30px; border: 2.5px solid #ffeb3b; }
-            .tut-food { position: absolute; width: 50px; z-index: 15; left: 220px; top: 70px; }
-            .tut-hand { position: absolute; font-size: 45px; z-index: 20; left: 240px; top: 100px; }
-
-            @keyframes handSequence {
-                0% { left: 240px; top: 100px; transform: scale(1); }
-                15% { left: 240px; top: 85px; transform: scale(0.9); } 
-                45%, 65% { left: 60px; top: 95px; transform: scale(0.9); }
-                75% { left: 240px; top: 100px; transform: scale(1); }
-                100% { left: 240px; top: 100px; }
-            }
-            @keyframes foodSequence {
-                0%, 15% { left: 220px; top: 70px; opacity: 1; transform: scale(1); }
-                45% { left: 40px; top: 80px; opacity: 1; transform: scale(0.8); }
-                50%, 100% { left: 40px; top: 80px; opacity: 0; transform: scale(0.4); }
-            }
-            @keyframes mouthSequence {
-                0%, 40% { height: 15px; }
-                45%, 65% { height: 40px; }
-                70%, 100% { height: 15px; }
-            }
-            .tut-hand { animation: handSequence 5s infinite ease-in-out; }
-            .tut-food { animation: foodSequence 5s infinite ease-in-out; }
-            .tut-mouth { animation: mouthSequence 5s infinite ease-in-out; }
+            .tut-monster { width: 100px; height: 100px; background: #9c27b0; border-radius: 50% 50% 40% 40%; position: relative; box-shadow: 0 8px 0 #4a148c; margin-left: -100px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+            .tut-eyes { display: flex; gap: 15px; margin-bottom: 5px; }
+            .tut-eye { width: 15px; height: 15px; background: white; border-radius: 50%; position: relative; }
+            .tut-pupil { width: 7px; height: 7px; background: black; border-radius: 50%; position: absolute; top: 3px; left: 3px; }
+            .tut-mouth { width: 40px; height: 15px; background: #210329; border-radius: 5px 5px 20px 20px; border: 2.5px solid #ffeb3b; }
+            .tut-food { position: absolute; width: 45px; z-index: 15; left: 200px; top: 60px; }
+            .tut-hand { position: absolute; font-size: 40px; z-index: 20; left: 220px; top: 90px; }
+            @keyframes handSeq { 0% { left: 220px; top: 95px; transform: scale(1); } 15% { left: 220px; top: 80px; transform: scale(0.9); } 45%, 65% { left: 50px; top: 90px; transform: scale(0.9); } 75% { left: 220px; top: 95px; transform: scale(1); } 100% { left: 220px; top: 95px; } }
+            @keyframes foodSeq { 0%, 15% { left: 200px; top: 60px; opacity: 1; transform: scale(1); } 45% { left: 30px; top: 70px; opacity: 1; transform: scale(0.8); } 50%, 100% { left: 30px; top: 70px; opacity: 0; transform: scale(0.4); } }
+            @keyframes mouthSeq { 0%, 40% { height: 15px; } 45%, 65% { height: 35px; } 70%, 100% { height: 15px; } }
+            .tut-hand { animation: handSeq 5s infinite ease-in-out; }
+            .tut-food { animation: foodSeq 5s infinite ease-in-out; }
+            .tut-mouth { animation: mouthSeq 5s infinite ease-in-out; }
         </style>
         <div class="tut-stage">
-            <div class="tut-monster"><div class="tut-mouth"></div></div>
-            <img src="${JOGO_CONFIG.caminhoImg}comida/${itemTutorial}" class="tut-food" draggable="false">
+            <div class="tut-monster">
+                <div class="tut-eyes"><div class="tut-eye"><div class="tut-pupil"></div></div><div class="tut-eye"><div class="tut-pupil"></div></div></div>
+                <div class="tut-mouth"></div>
+            </div>
+            <img src="${JOGO_CONFIG.caminhoImg}comida/${itemTutorial}" class="tut-food">
             <div class="tut-hand">☝️</div>
         </div>
     `;
@@ -114,6 +105,7 @@ function renderizarEcraAlimentacao() {
             .monster-wrap { width: 98%; height: 98%; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px; box-sizing: border-box; }
             .instr-box { background: white; padding: 10px 25px; border-radius: 50px; font-weight: 900; color: #5d7082; border: 3px solid var(--primary-blue); display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
             .btn-som { background: #ff9800; border: none; width: 45px; height: 45px; border-radius: 50% !important; color: white; cursor: pointer; box-shadow: 0 4px 0 #e65100; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+            
             .game-stage { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }
             
             .monster { width: clamp(190px, 35vh, 280px); height: clamp(190px, 35vh, 280px); background: #9c27b0; border-radius: 50% 50% 40% 40%; position: relative; box-shadow: 0 14px 0 #4a148c, inset 0 -10px 20px rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.3s; pointer-events: none; }
@@ -131,33 +123,32 @@ function renderizarEcraAlimentacao() {
                 width: clamp(100px, 18vh, 150px); height: clamp(100px, 18vh, 150px); 
                 background: white; border: 3px solid #f0f4f8; border-radius: 28px; 
                 display: flex; align-items: center; justify-content: center; 
-                cursor: grab; box-shadow: 0 6px 0 #d0d8de; padding: 15px; 
-                touch-action: none; user-select: none;
+                box-shadow: 0 6px 0 #d0d8de; padding: 15px; position: relative;
             }
-            .food-card img { max-height: 90%; max-width: 90%; object-fit: contain; pointer-events: none; }
+            .food-img { width: 85%; height: 85%; object-fit: contain; cursor: grab; transition: transform 0.1s; touch-action: none; user-select: none; }
+            .food-img:active { cursor: grabbing; }
             
             .flying { position: fixed !important; z-index: 999; pointer-events: none; transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1); transform: scale(0.2) rotate(360deg); opacity: 0; }
             @media (max-width: 600px) { .monster { width: 170px; height: 170px; } .food-card { width: 95px; height: 95px; } }
         </style>
 
         <div class="monster-wrap">
-            <div class="instr-box">
-                <button class="btn-som" onclick="falarInstrucao()"><i class="fas fa-volume-up"></i></button>
-                <span>${config.descricao}</span>
-            </div>
-            
+            <div class="instr-box"><button class="btn-som" onclick="falarInstrucao()"><i class="fas fa-volume-up"></i></button><span>${config.descricao}</span></div>
             <div class="game-stage">
                 <div class="monster" id="monster-main">
                     <div class="eye-row"><div class="eye"><div class="pupil"></div></div><div class="eye"><div class="pupil"></div></div></div>
                     <div class="mouth"></div>
                 </div>
-                <div class="food-grid" id="food-grid">
+                <div class="food-grid">
                     ${opcoesRonda.map((opt, i) => `
-                        <div class="food-card" id="food-${i}" data-status="${opt.status}" 
-                             onclick="cliqueAlimento(this)"
-                             onmousedown="iniciarArrasto(event, this)"
-                             ontouchstart="iniciarArrasto(event, this)">
-                            <img src="${JOGO_CONFIG.caminhoImg}comida/${opt.img}" draggable="false">
+                        <div class="food-card">
+                            <img src="${JOGO_CONFIG.caminhoImg}comida/${opt.img}" 
+                                 class="food-img"
+                                 id="food-${i}" data-status="${opt.status}" 
+                                 onclick="cliqueItem(this)"
+                                 onmousedown="iniciarArrasto(event, this)"
+                                 ontouchstart="iniciarArrasto(event, this)"
+                                 draggable="false">
                         </div>
                     `).join('')}
                 </div>
@@ -166,9 +157,9 @@ function renderizarEcraAlimentacao() {
     `;
 }
 
-// === INTERAÇÃO HÍBRIDA (CLIQUE E ARRASTE) ===
+// === LÓGICA DE INTERAÇÃO (APENAS ALIMENTO) ===
 
-function cliqueAlimento(el) {
+function cliqueItem(el) {
     if (!jogoAtivo || el.classList.contains('dragged')) return;
     voarAteBoca(el);
 }
@@ -177,10 +168,14 @@ function voarAteBoca(el) {
     const monster = document.getElementById('monster-main');
     const rect = el.getBoundingClientRect();
     const mRect = monster.getBoundingClientRect();
+
+    el.style.position = 'fixed';
+    el.style.left = rect.left + "px";
+    el.style.top = rect.top + "px";
     el.classList.add('flying');
-    el.style.left = rect.left + "px"; el.style.top = rect.top + "px";
+    
     setTimeout(() => {
-        el.style.left = (mRect.left + mRect.width / 2 - 25) + "px";
+        el.style.left = (mRect.left + mRect.width / 2 - 20) + "px";
         el.style.top = (mRect.top + mRect.height / 2) + "px";
         processarAlimentacao(el);
     }, 10);
@@ -188,7 +183,7 @@ function voarAteBoca(el) {
 
 function iniciarArrasto(e, el) {
     if (!jogoAtivo) return;
-    e.preventDefault(); // Impede arrasto padrão do browser (fantasma)
+    e.preventDefault();
     
     let isT = e.type === 'touchstart';
     let sX = isT ? e.touches[0].clientX : e.clientX;
@@ -205,6 +200,7 @@ function iniciarArrasto(e, el) {
             moved = true;
             el.classList.add('dragged');
             el.style.position = 'fixed';
+            el.style.width = rect.width + 'px';
             el.style.zIndex = '1000';
             el.style.left = (cX - oX) + "px";
             el.style.top = (cY - oY) + "px";
@@ -215,7 +211,7 @@ function iniciarArrasto(e, el) {
     function soltar() {
         document.removeEventListener(isT ? 'touchmove' : 'mousemove', mover);
         document.removeEventListener(isT ? 'touchend' : 'mouseup', soltar);
-        if (moved) { verificarColisao(el); }
+        if (moved) verificarColisao(el);
         setTimeout(() => el.classList.remove('dragged'), 100);
     }
 
@@ -250,7 +246,6 @@ function processarAlimentacao(el, imediato = false) {
         } else {
             erros++; somErro.play();
             monster.classList.add('sad');
-            el.classList.remove('flying');
             el.style.position = "static";
         }
         setTimeout(() => {
@@ -265,12 +260,12 @@ function processarAlimentacao(el, imediato = false) {
 window.usarAjuda = function() {
     if (!jogoAtivo || !ajudaDisponivel) return;
     ajudaDisponivel = false; ajudasUtilizadas++;
-    const cards = document.querySelectorAll('.food-card');
-    cards.forEach(c => {
-        if (c.getAttribute('data-status') === 'correto') {
-            c.style.borderColor = "#ff9800";
-            c.style.transform = "scale(1.1)";
-            setTimeout(() => { c.style.borderColor = "#f0f4f8"; c.style.transform = "scale(1)"; ajudaDisponivel = true; }, 1500);
+    const foodImgs = document.querySelectorAll('.food-img');
+    foodImgs.forEach(img => {
+        if (img.getAttribute('data-status') === 'correto') {
+            img.style.filter = "drop-shadow(0 0 15px #ff9800)";
+            img.style.transform = "scale(1.2)";
+            setTimeout(() => { img.style.filter = "none"; img.style.transform = "scale(1)"; ajudaDisponivel = true; }, 1500);
         }
     });
 };
@@ -279,7 +274,6 @@ function finalizarJogo() {
     jogoAtivo = false; somVitoria.play();
     const perc = Math.round((acertos / 10) * 100);
     const rel = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
-    
     document.getElementById('scr-game').classList.remove('active');
     const resScreen = document.getElementById('scr-result');
     resScreen.classList.add('active');
@@ -291,11 +285,13 @@ function finalizarJogo() {
                 .res-card { display:flex; flex-direction:column; align-items:center; width:100%; max-width:450px; margin:auto; }
                 .res-title { color:var(--primary-blue); font-size:2.2rem; font-weight:900; margin: 15px 0 25px; text-align:center; line-height:1; }
                 .res-stats { display:flex; gap:15px; margin-bottom:30px; }
-                .res-box { background:white; border-radius:25px; width:105px; height:105px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+                .res-box { background:white; border-radius:25px; width:110px; height:110px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
                 .res-num { font-size:1.8rem; font-weight:900; }
                 .res-lab { font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase; margin-top:2px; }
-                .btn-final { height:60px; border-radius:30px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:1.1rem; text-decoration:none; cursor:pointer; border:none; gap:15px; width:100%; margin-bottom:12px; }
+                .res-btns { display:flex; flex-direction:column; gap:12px; width:100%; max-width:320px; }
+                .btn-final { height:60px; border-radius:30px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:1.1rem; text-decoration:none; cursor:pointer; border:none; gap:15px; transition: 0.2s; }
                 .btn-solid { background:var(--primary-blue); color:white; box-shadow: 0 6px 0 var(--primary-dark); }
+                .btn-solid:active { transform:translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
                 .btn-outline { background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); }
                 .btn-subtle { background:#e2e8f0; color:#64748b; }
             </style>
@@ -307,9 +303,11 @@ function finalizarJogo() {
                     <div class="res-box"><span class="res-num" style="color:#ff5e5e;">${erros}</span><span class="res-lab">Errados</span></div>
                     <div class="res-box"><span class="res-num" style="color:#ff9f43;">${ajudasUtilizadas}</span><span class="res-lab">Ajudas</span></div>
                 </div>
-                <button class="btn-final btn-solid" onclick="location.reload()"><i class="fas fa-redo"></i> JOGAR DE NOVO</button>
-                <button class="btn-final btn-outline" onclick="openRDMenu(event)"><i class="fas fa-chart-line"></i> OUTRO NÍVEL</button>
-                <a href="${JOGO_CONFIG.linkVoltar}" class="btn-final btn-subtle"><i class="fas fa-sign-out-alt"></i> SAIR</a>
+                <div class="res-btns">
+                    <button class="btn-final btn-solid" onclick="location.reload()"><i class="fas fa-redo"></i> JOGAR DE NOVO</button>
+                    <button class="btn-final btn-outline" onclick="openRDMenu(event)"><i class="fas fa-chart-line"></i> OUTRO NÍVEL</button>
+                    <a href="${JOGO_CONFIG.linkVoltar}" class="btn-final btn-subtle"><i class="fas fa-sign-out-alt"></i> SAIR</a>
+                </div>
             </div>
         </div>
     `;
