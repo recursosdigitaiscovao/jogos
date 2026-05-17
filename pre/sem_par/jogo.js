@@ -43,9 +43,9 @@ function criarAnimacaoTutorial() {
     container.innerHTML = `
         <style>
             .tut-box { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:10px; }
-            .tut-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; }
-            .tut-item { width:45px; height:45px; background:white; border:2px solid #eee; border-radius:10px; display:flex; align-items:center; justify-content:center; position:relative; }
-            .tut-item img { height:30px; object-fit:contain; }
+            .tut-grid { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:200px; }
+            .tut-item { width:40px; height:40px; background:white; border:2px solid #eee; border-radius:10px; display:flex; align-items:center; justify-content:center; position:relative; }
+            .tut-item img { height:28px; object-fit:contain; }
             @keyframes tapP { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-5px,-8px) scale(1.1); } }
         </style>
         <div class="tut-box">
@@ -75,11 +75,13 @@ function proximaRonda() {
     if (indicePergunta >= 10) { finalizarJogo(); return; }
     
     const cat = JOGO_CATEGORIAS[categoriaAtual];
-    let sorteio = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 5);
+    // Escolher 6 itens diferentes para criar 1 solitário e 5 pares
+    let sorteio = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 6);
     
     itemSolitario = sorteio[0]; 
-    let pares = sorteio.slice(1, 5);
+    let pares = sorteio.slice(1, 6);
     
+    // Criar lista final: 1 solitário + 5 pares (10 itens) = 11 itens no total
     let listaRonda = [itemSolitario];
     pares.forEach(p => {
         listaRonda.push(p);
@@ -97,21 +99,25 @@ function mostrarPergunta() {
     container.innerHTML = `
         <style>
             .game-wrapper { 
-                display: flex; flex-direction: column; width: 100%; height: 100%; 
-                justify-content: center; align-items: center; padding: 10px; box-sizing: border-box; overflow: hidden;
+                width: 98%; height: 98%; margin: auto;
+                display: flex; flex-direction: column;
+                justify-content: center; align-items: center; 
+                box-sizing: border-box; overflow: hidden;
             }
+            /* Grelha Flexível para 11 itens */
             .options-grid { 
-                display: grid; grid-template-columns: repeat(3, 1fr); 
-                gap: 10px; width: 100%; max-width: 450px; 
-                max-height: 85%; /* Garante que a grelha nunca sai do ecrã */
+                display: flex; flex-wrap: wrap;
+                gap: 8px; width: 100%; height: 100%;
+                justify-content: center; align-content: center;
             }
             .card-item { 
-                background: white; border: 3px solid #f0f4f8; border-radius: 15px; 
-                aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; 
+                background: white; border: 3px solid #f0f4f8; border-radius: 18px; 
+                width: calc(23% - 8px); height: calc(30% - 8px); /* Desktop: aprox 4 por linha */
+                display: flex; align-items: center; justify-content: center; 
                 cursor: pointer; transition: 0.15s; box-shadow: 0 4px 0 #d0d8de; 
-                padding: 8px; min-height: 0;
+                padding: 5px;
             }
-            .card-item img { height: 75%; width: auto; object-fit: contain; }
+            .card-item img { max-height: 85%; max-width: 85%; object-fit: contain; }
             
             .is-correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 4px 0 #5ea31a !important; }
             .is-wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 4px 0 #d13d3d !important; }
@@ -120,14 +126,13 @@ function mostrarPergunta() {
             @keyframes brilharAjuda { 0%, 100% { border-color: #f0f4f8; } 50% { border-color: #ff9f43; background: #fff5e6; transform: scale(1.05); } }
 
             /* Mobile Vertical */
-            @media (max-width: 500px) { 
-                .options-grid { gap: 8px; max-width: 320px; }
-                .card-item { border-radius: 12px; padding: 5px; }
+            @media (max-width: 600px) { 
+                .card-item { width: calc(31% - 8px); height: calc(23% - 8px); border-radius: 12px; }
             }
-            /* Mobile Landscape (Ecrãs baixos) */
+            /* Mobile Landscape / Monitores Baixos */
             @media (max-height: 480px) {
-                .options-grid { max-width: 380px; gap: 5px; }
-                .card-item { padding: 4px; border-width: 2px; }
+                .card-item { width: calc(18% - 8px); height: calc(45% - 8px); padding: 2px; }
+                .options-grid { gap: 5px; }
             }
         </style>
         <div class="game-wrapper">
@@ -196,7 +201,7 @@ function finalizarJogo() {
                 .res-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 450px; }
                 .res-trophy { height: 110px; margin-bottom: 10px; object-fit: contain; }
                 .res-msg { color: var(--primary-blue); font-weight: 900; font-size: 2.2rem; margin-bottom: 25px; text-align: center; line-height: 1; }
-                .res-stats-row { display: flex; gap: 12px; margin-bottom: 30px; width: 100%; justify-content: center; }
+                .res-stats-row { display: flex; gap: 15px; margin-bottom: 30px; width: 100%; justify-content: center; }
                 .stat-box { background: white; border-radius: 25px; width: 105px; height: 105px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
                 .stat-val { font-size: 1.8rem; font-weight: 900; margin-bottom: 2px; }
                 .stat-lab { font-size: 0.65rem; font-weight: 900; color: #88a; text-transform: uppercase; letter-spacing: 0.5px; }
