@@ -1,33 +1,128 @@
-const JOGO_CONFIG = {
-    caminhoIcons: "../../icons/", // Ajustar conforme necessário
-    caminhoImg: "../../img/",
-    iconesMenu: {
-        pre: "iconpre.png",
-        ano1: "icon1.png",
-        ano2: "icon2.png",
-        ano3: "icon3.png",
-        ano4: "icon4.png"
+// === CONFIGURAÇÃO MESTRE ===
+const CONFIG_MESTRE = {
+    ano: "pre",        
+    area: "pre",  
+    nomeJogo: "Encontra o Par"
+};
+
+// === BIBLIOTECA DE TEMAS (CORES PADRÃO POR ÁREA) ===
+const BIBLIOTECA_TEMAS = {
+    "portugues": { 
+        corPagina: "#e9f0f8",
+        corPrimaria: "#5ba4e5", 
+        corEscura: "#3d7db8",   
+        corTexto: "#5d7082",    
+        voltarMobile: "voltar_az.png" 
     },
-    categorias: {
-        animais: {
-            nome: "Animais",
-            caminho: "../../img/animaisdomesticos/",
-            lista: ["galinha.png", "cabra.png", "ovelha.png", "coelho.png", "burro.png", "peru.png", "porco.png", "cavalo.png", "vaca.png", "pato.png", "gato.png", "cao.png"]
-        },
-        frutas: {
-            nome: "Frutas",
-            caminho: "../../img/frutas/",
-            lista: ["ananas.png", "banana.png", "cereja.png", "kiwi.png", "laranja.png", "maca.png", "melancia.png", "morango.png", "papaia.png", "pera.png", "uvas.png"]
-        },
-        materialescolar: {
-            nome: "Material Escolar",
-            caminho: "../../img/materialescolar/",
-            lista: ["cola.png", "folha.png", "tesoura.png", "capa.png", "estojo.png", "livro.png", "esquadro.png", "regua.png", "mochila.png", "borracha.png", "caneta.png", "pincel.png", "lapis.png", "afia.png"]
+    "matematica": { 
+        corPagina: "#e8f9f4",
+        corPrimaria: "#45cfa8",
+        corEscura: "#2BA886",
+        corTexto: "#45cfa8",
+        voltarMobile: "voltar_vr.png"
+    },
+    "estudo": { 
+        corPagina: "#EAE2E5",
+        corPrimaria: "#994D4D",
+        corEscura: "#6C3737",
+        corTexto: "#994D4D",
+        voltarMobile: "voltar_cs.png"
+    },
+    "pre": { 
+        corPagina: "#FFF5F7",
+        corPrimaria: "#E691A7",
+        corEscura: "#D54267",
+        corTexto: "#E691A7",
+        voltarMobile: "voltar_rs.png"
+    }
+};
+
+// === BIBLIOTECA DE CONTEÚDO (TEXTOS E CUSTOMIZAÇÃO POR ANO) ===
+const BIBLIOTECA_CONTEUDO = {
+    "pre": {
+        "pre": { 
+            t1: "PEQUENOS", 
+            t2: "CURIOSOS", 
+            sub: "Atividades | Pré-Escolar", 
+            rodape: "&copy; Pequenos Curiosos - Recursos Digitais Covão" 
         }
     },
-    relatorio: {
-        titulo: "Fim do Jogo!",
-        pontosTotal: "Pontos:",
-        tempoTotal: "Tempo:"
+    "ano1": {
+        "portugues": { t1: "PEQUENOS", t2: "LEITORES", sub: "Português | 1º Ano", rodape: "&copy; Pequenos Leitores" },
+        "matematica": { t1: "PEQUENOS", t2: "MATEMÁTICOS", sub: "Matemática | 1º Ano", rodape: "&copy; Pequenos Matemáticos" },
+        "estudo": { t1: "PEQUENOS", t2: "EXPLORADORES", sub: "Estudo do Meio | 1º Ano", rodape: "&copy; Pequenos Exploradores" }
+    },
+    "ano2": {
+        "portugues": { t1: "JOVENS", t2: "LEITORES", sub: "Português | 2º Ano", rodape: "&copy; Jovens Leitores" },
+        "matematica": { t1: "JOVENS", t2: "MATEMÁTICOS", sub: "Matemática | 2º Ano", rodape: "&copy; Jovens Matemáticos" },
+        "estudo": { t1: "JOVENS", t2: "INVESTIGADORES", sub: "Estudo do Meio | 2º Ano", rodape: "&copy; Jovens Investigadores" }
+    },
+    "ano3": {
+        "portugues": { t1: "MESTRES", t2: "DA LÍNGUA", sub: "Português | 3º Ano", rodape: "&copy; Mestres Leitores" },
+        "matematica": { t1: "MESTRES", t2: "DO CÁLCULO", sub: "Matemática | 3º Ano", rodape: "&copy; Mestres Matemáticos" },
+        "estudo": { t1: "GRANDES", t2: "CIENTISTAS", sub: "Estudo do Meio | 3º Ano", rodape: "&copy; Grandes Cientistas" }
+    },
+    "ano4": {
+        "portugues": { t1: "GURU", t2: "DAS LETRAS", sub: "Português | 4º Ano", rodape: "&copy; Guru das Letras" },
+        "matematica": { t1: "GURU", t2: "DOS NÚMEROS", sub: "Matemática | 4º Ano", rodape: "&copy; Guru dos Números" },
+        "estudo": { t1: "GURU", t2: "DO MUNDO", sub: "Estudo do Meio | 4º Ano", rodape: "&copy; Guru do Mundo" }
     }
+};
+
+// === CONFIGURAÇÕES GERAIS DO JOGO ===
+const JOGO_CONFIG = {
+    linkVoltar: "../",
+    textoVoltar: "VOLTAR",
+    caminhoImg: "../../img/",    
+    caminhoIcons: "../../icons/", 
+    
+    sons: {
+        acerto: "https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3",
+        erro: "https://cdn.pixabay.com/audio/2022/03/10/audio_c330c67761.mp3",
+        vitoria: "https://cdn.pixabay.com/audio/2024/02/07/audio_293963428f.mp3"
+    },
+
+    iconesMenu: { 
+        home: "home.png", 
+        pre: "iconpre.png", 
+        ano1: "icon1.png", 
+        ano2: "icon2.png", 
+        ano3: "icon3.png", 
+        ano4: "icon4.png" 
+    },
+
+    links: { 
+        home: "/jogos", 
+        pre: "/jogos/pre", 
+        ano1: "/jogos/1", 
+        ano2: "/jogos/2", 
+        ano3: "/jogos/3", 
+        ano4: "/jogos/4" 
+    },
+    
+    categorias: JOGO_CATEGORIAS,
+
+    // REGRAS DE TAÇAS (Baseado em 10 rondas)
+    relatorios: [
+        { 
+            min: 90, max: 100, // 9 ou 10 certos
+            titulo: "És um craque!", 
+            img: "taca_1.png" 
+        },
+        { 
+            min: 70, max: 89, // 7 ou 8 certos
+            titulo: "Muito bem!", 
+            img: "taca_2.png" 
+        },
+        { 
+            min: 50, max: 69, // 5 ou 6 certos
+            titulo: "Estás quase lá!", 
+            img: "taca_3.png" 
+        },
+        { 
+            min: 0, max: 49, // 0 a 4 certos
+            titulo: "Continua a tentar!", 
+            img: "taca_4.png" 
+        }
+    ]
 };
