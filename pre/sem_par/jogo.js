@@ -19,7 +19,7 @@ window.startLogic = function() {
     const introInstr = document.getElementById('intro-instr');
     if(introInstr) introInstr.innerText = "Observa com atenção e encontra o desenho que não tem um par igual!";
 
-    // Configurar botão da Lâmpada (Tamanho do RD)
+    // Configurar botão da Lâmpada (Tamanho 30px)
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:30px; width:30px; cursor:pointer; display:block;" onclick="usarAjuda()">`;
@@ -42,7 +42,7 @@ function criarAnimacaoTutorial() {
     
     container.innerHTML = `
         <style>
-            .tut-box { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:15px; }
+            .tut-box { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:10px; }
             .tut-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; }
             .tut-item { width:45px; height:45px; background:white; border:2px solid #eee; border-radius:10px; display:flex; align-items:center; justify-content:center; position:relative; }
             .tut-item img { height:30px; object-fit:contain; }
@@ -73,12 +73,19 @@ window.initGame = function() {
 
 function proximaRonda() {
     if (indicePergunta >= 10) { finalizarJogo(); return; }
+    
     const cat = JOGO_CATEGORIAS[categoriaAtual];
     let sorteio = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 5);
-    itemSolitario = sorteio[0];
+    
+    itemSolitario = sorteio[0]; 
     let pares = sorteio.slice(1, 5);
+    
     let listaRonda = [itemSolitario];
-    pares.forEach(p => { listaRonda.push(p); listaRonda.push(p); });
+    pares.forEach(p => {
+        listaRonda.push(p);
+        listaRonda.push(p);
+    });
+    
     perguntas = listaRonda.sort(() => Math.random() - 0.5);
     mostrarPergunta();
 }
@@ -91,34 +98,36 @@ function mostrarPergunta() {
         <style>
             .game-wrapper { 
                 display: flex; flex-direction: column; width: 100%; height: 100%; 
-                justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; overflow: hidden;
+                justify-content: center; align-items: center; padding: 10px; box-sizing: border-box; overflow: hidden;
             }
             .options-grid { 
                 display: grid; grid-template-columns: repeat(3, 1fr); 
                 gap: 10px; width: 100%; max-width: 450px; 
-                max-height: 80vh; /* Impede que a grelha saia do monitor */
+                max-height: 85%; /* Garante que a grelha nunca sai do ecrã */
             }
             .card-item { 
-                background: white; border: 3px solid #f0f4f8; border-radius: 20px; 
+                background: white; border: 3px solid #f0f4f8; border-radius: 15px; 
                 aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; 
-                cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 #d0d8de; 
-                padding: 10px; min-height: 0;
+                cursor: pointer; transition: 0.15s; box-shadow: 0 4px 0 #d0d8de; 
+                padding: 8px; min-height: 0;
             }
             .card-item img { height: 75%; width: auto; object-fit: contain; }
             
             .is-correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 4px 0 #5ea31a !important; }
             .is-wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 4px 0 #d13d3d !important; }
+            
             .ajuda-foco { animation: brilharAjuda 0.5s 3; }
             @keyframes brilharAjuda { 0%, 100% { border-color: #f0f4f8; } 50% { border-color: #ff9f43; background: #fff5e6; transform: scale(1.05); } }
 
-            @media (max-width: 600px) { 
-                .game-wrapper { padding: 10px; }
+            /* Mobile Vertical */
+            @media (max-width: 500px) { 
                 .options-grid { gap: 8px; max-width: 320px; }
-                .card-item { border-radius: 15px; border-width: 2px; }
+                .card-item { border-radius: 12px; padding: 5px; }
             }
-            @media (max-height: 500px) {
-                .options-grid { max-width: 400px; gap: 5px; }
-                .card-item { padding: 5px; }
+            /* Mobile Landscape (Ecrãs baixos) */
+            @media (max-height: 480px) {
+                .options-grid { max-width: 380px; gap: 5px; }
+                .card-item { padding: 4px; border-width: 2px; }
             }
         </style>
         <div class="game-wrapper">
@@ -169,7 +178,7 @@ function verificar(el, nomeItem) {
     }, 1500);
 }
 
-// === 3. FINALIZAÇÃO E RESULTADOS (CONFORME PEDIDO) ===
+// === 3. FINALIZAÇÃO E RESULTADOS ===
 function finalizarJogo() {
     jogoAtivo = false;
     somVitoria.play();
@@ -185,7 +194,7 @@ function finalizarJogo() {
         <div class="screen-box" style="justify-content: center; padding: 20px;">
             <style>
                 .res-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 450px; }
-                .res-trophy { height: 120px; margin-bottom: 10px; object-fit: contain; }
+                .res-trophy { height: 110px; margin-bottom: 10px; object-fit: contain; }
                 .res-msg { color: var(--primary-blue); font-weight: 900; font-size: 2.2rem; margin-bottom: 25px; text-align: center; line-height: 1; }
                 .res-stats-row { display: flex; gap: 12px; margin-bottom: 30px; width: 100%; justify-content: center; }
                 .stat-box { background: white; border-radius: 25px; width: 105px; height: 105px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
@@ -199,36 +208,18 @@ function finalizarJogo() {
                 .btn-exit { background: #e2e8f0; color: #64748b; }
                 @media (max-width: 500px) { .res-msg { font-size: 1.8rem; } .stat-box { width: 90px; height: 90px; } .btn-res { height: 50px; font-size: 1rem; } }
             </style>
-            
             <div class="res-container">
                 <img src="${JOGO_CONFIG.caminhoImg}${rel.img}" class="res-trophy">
                 <h1 class="res-msg">${rel.titulo}</h1>
-                
                 <div class="res-stats-row">
-                    <div class="stat-box">
-                        <span class="stat-val" style="color: #7ed321;">${acertos}</span>
-                        <span class="stat-lab">Certos</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-val" style="color: #ff5e5e;">${erros}</span>
-                        <span class="stat-lab">Errados</span>
-                    </div>
-                    <div class="stat-box">
-                        <span class="stat-val" style="color: #ff9f43;">${ajudasUtilizadas}</span>
-                        <span class="stat-lab">Ajudas</span>
-                    </div>
+                    <div class="stat-box"><span class="stat-val" style="color: #7ed321;">${acertos}</span><span class="stat-lab">Certos</span></div>
+                    <div class="stat-box"><span class="stat-val" style="color: #ff5e5e;">${erros}</span><span class="stat-lab">Errados</span></div>
+                    <div class="stat-box"><span class="stat-val" style="color: #ff9f43;">${ajudasUtilizadas}</span><span class="stat-lab">Ajudas</span></div>
                 </div>
-
                 <div class="res-actions">
-                    <button class="btn-res btn-redo" onclick="location.reload()">
-                        <i class="fas fa-redo"></i> JOGAR DE NOVO
-                    </button>
-                    <button class="btn-res btn-outline" onclick="openRDMenu()">
-                        <i class="fas fa-chart-line"></i> OUTRO NÍVEL
-                    </button>
-                    <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-exit">
-                        <i class="fas fa-sign-out-alt"></i> SAIR
-                    </a>
+                    <button class="btn-res btn-redo" onclick="location.reload()"><i class="fas fa-redo"></i> JOGAR DE NOVO</button>
+                    <button class="btn-res btn-outline" onclick="openRDMenu()"><i class="fas fa-chart-line"></i> OUTRO NÍVEL</button>
+                    <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-exit"><i class="fas fa-sign-out-alt"></i> SAIR</a>
                 </div>
             </div>
         </div>
