@@ -45,13 +45,13 @@ function renderTutorialAnimation() {
     container.innerHTML = `
         <style>
             .tut-box { position:relative; width:180px; height:140px; background:#f0f7ff; border:3px solid var(--primary-blue); border-radius:25px; overflow:hidden; }
-            .tut-letter { position:absolute; left:50%; transform:translateX(-50%); font-size:45px; font-weight:900; color:var(--primary-blue); animation: fallTut 5s infinite linear; }
-            .tut-hand { position:absolute; font-size:40px; bottom:10px; left:55%; animation: tapTut 5s infinite; }
-            @keyframes fallTut { 0% { top:-50px; opacity:1; } 60% { top:45px; opacity:1; } 70%, 100% { top:45px; opacity:0; } }
+            .tut-letter { position:absolute; left:50%; transform:translateX(-50%); font-size:55px; font-weight:900; color:var(--primary-blue); animation: fallTut 5s infinite linear; }
+            .tut-hand { position:absolute; font-size:45px; bottom:5px; left:55%; animation: tapTut 5s infinite; }
+            @keyframes fallTut { 0% { top:-60px; opacity:1; } 60% { top:40px; opacity:1; } 70%, 100% { top:40px; opacity:0; } }
             @keyframes tapTut { 0%, 55% { transform:scale(1); opacity:0; } 60% { transform:scale(0.8); opacity:1; } 100% { opacity:0; } }
         </style>
         <div class="tut-box">
-            <div class="tut-letter">${isUpper ? 'B' : 'b'}</div>
+            <div class="tut-letter">${isUpper ? 'A' : 'a'}</div>
             <div class="tut-hand">☝️</div>
         </div>
     `;
@@ -69,8 +69,7 @@ window.initGame = function() {
 
     renderEstruturaJogo();
     
-    // RITMO MUITO CALMO (Pré-Escolar)
-    spawnInterval = setInterval(spawnLetra, 4000); // Uma letra a cada 4 segundos
+    spawnInterval = setInterval(spawnLetra, 4000); 
     gameLoopInterval = setInterval(atualizarLetras, 50);
 
     window.addEventListener('keydown', lidarTeclado);
@@ -86,42 +85,41 @@ function renderEstruturaJogo() {
             }
             .sky-area { 
                 flex: 1; position: relative; width: 100%; 
-                background: #f8fafc; border-radius: 20px; border: 2px solid #e2e8f0; 
-                margin-bottom: 5px; overflow: hidden;
+                background: #f8fafc; border-radius: 20px; border: 2.5px solid #e2e8f0; 
+                margin-bottom: 8px; overflow: hidden;
             }
             .falling-letter { 
-                position: absolute; font-size: 36px; font-weight: 900; 
+                position: absolute; font-size: 48px; font-weight: 900; 
                 color: var(--primary-blue); cursor: pointer;
-                background: white; width: 60px; height: 60px; 
+                background: white; width: 85px; height: 85px; 
                 display: flex; align-items: center; justify-content: center;
-                border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                border-radius: 22px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);
                 transition: transform 0.2s, opacity 0.2s;
             }
+            /* TECLADO COM TECLAS MAIORES */
             .keyboard-area { 
                 width: 100%; display: flex; flex-direction: column; 
-                gap: 4px; padding: 5px; background: #fff; border-radius: 15px; border: 1px solid #eee;
+                gap: 6px; padding: 10px; background: #fff; border-radius: 20px; border: 1px solid #eee;
             }
-            .kb-row { display: flex; justify-content: center; gap: 4px; flex: 1; }
+            .kb-row { display: flex; justify-content: center; gap: 6px; flex: 1; }
             .key-btn { 
-                flex: 1; height: 45px; background: white; 
-                border: 2.5px solid #f0f0f0; border-radius: 10px; font-weight: 900; 
-                font-size: 16px; color: #5d7082; display: flex; align-items: center; 
-                justify-content: center; cursor: pointer; box-shadow: 0 3px 0 #ddd;
+                flex: 1; height: 65px; background: white; 
+                border: 3px solid #f0f0f0; border-radius: 12px; font-weight: 900; 
+                font-size: 24px; color: #5d7082; display: flex; align-items: center; 
+                justify-content: center; cursor: pointer; box-shadow: 0 4px 0 #ddd;
             }
             .key-btn:active { transform: translateY(2px); box-shadow: none; }
 
-            /* MEDIA QUERY PARA 4 LINHAS NO MOBILE VERTICAL */
-            @media (max-width: 550px) and (orientation: portrait) {
-                .keyboard-area { height: 160px; }
-                .key-btn { height: 35px; font-size: 14px; }
-                .falling-letter { width: 50px; height: 50px; font-size: 28px; }
+            /* AJUSTE PARA 4 LINHAS (MOBILE PORTRAIT) */
+            @media (max-width: 600px) and (orientation: portrait) {
+                .keyboard-area { gap: 4px; padding: 6px; }
+                .key-btn { height: 50px; font-size: 18px; border-width: 2px; }
+                .falling-letter { width: 70px; height: 70px; font-size: 38px; }
             }
         </style>
         <div class="rain-outer">
             <div class="sky-area" id="sky"></div>
-            <div class="keyboard-area" id="kb-container">
-                <!-- Linhas geradas via JS -->
-            </div>
+            <div class="keyboard-area" id="kb-container"></div>
         </div>
     `;
     gerarTecladoDinamico();
@@ -129,11 +127,12 @@ function renderEstruturaJogo() {
 
 function gerarTecladoDinamico() {
     const kbContainer = document.getElementById('kb-container');
+    if(!kbContainer) return;
     const letras = JOGO_CATEGORIAS[categoriaAtual].letras;
-    const isPortrait = window.innerHeight > window.innerWidth && window.innerWidth < 550;
+    const isPortrait = window.innerHeight > window.innerWidth;
     
-    // Determinar número de linhas
-    const numRows = isPortrait ? 4 : 2;
+    // Landscape = 3 filas | Portrait = 4 filas
+    const numRows = isPortrait ? 4 : 3;
     const itemsPerRow = Math.ceil(letras.length / numRows);
     
     kbContainer.innerHTML = '';
@@ -146,10 +145,7 @@ function gerarTecladoDinamico() {
     }
 }
 
-// Re-gerar teclado se rodar o telemóvel
-window.addEventListener('resize', () => {
-    if (jogoAtivo) gerarTecladoDinamico();
-});
+window.addEventListener('resize', () => { if (jogoAtivo) gerarTecladoDinamico(); });
 
 function spawnLetra() {
     if (!jogoAtivo) return;
@@ -161,9 +157,9 @@ function spawnLetra() {
     div.className = 'falling-letter';
     div.innerText = char;
     div.style.left = (10 + Math.random() * 75) + "%";
-    div.style.top = "-70px";
+    div.style.top = "-100px";
     
-    const letraObj = { char, element: div, top: -70 };
+    const letraObj = { char, element: div, top: -100 };
     div.onclick = () => verificarLetra(char);
     
     sky.appendChild(div);
@@ -176,7 +172,7 @@ function atualizarLetras() {
     
     for (let i = letrasNoEcra.length - 1; i >= 0; i--) {
         let letra = letrasNoEcra[i];
-        letra.top += 0.8; // QUEDA MUITO LENTA (0.8 em vez de 1.2 ou 2)
+        letra.top += 0.7; // Queda bem lenta
         letra.element.style.top = letra.top + "px";
         
         if (letra.top > skyHeight) {
@@ -192,18 +188,19 @@ function atualizarLetras() {
 
 function lidarTeclado(e) {
     if (!jogoAtivo) return;
-    // Tenta as duas formas para garantir captura
-    verificarLetra(e.key.toUpperCase());
-    verificarLetra(e.key.toLowerCase());
+    const tecla = e.key;
+    if (/^[a-zA-Z]$/.test(tecla)) {
+        verificarLetra(JOGO_CATEGORIAS[categoriaAtual].tipo === "upper" ? tecla.toUpperCase() : tecla.toLowerCase());
+    }
 }
 
 function verificarLetra(charDigitado) {
     if (!jogoAtivo) return;
     
-    // Encontrar a letra que bate com o clique e está mais baixa
     const index = letrasNoEcra.findIndex(l => l.char === charDigitado);
     
     if (index !== -1) {
+        // ACERTO
         const letra = letrasNoEcra[index];
         somAcerto.play();
         acertos++;
@@ -219,6 +216,15 @@ function verificarLetra(charDigitado) {
         setTimeout(() => letra.element.remove(), 250);
         
         if (indicePergunta >= 10) setTimeout(finalizarJogo, 600);
+    } else {
+        // ERRO AO CLICAR EM LETRA ERRADA
+        somErro.play();
+        erros++;
+        document.getElementById('miss-val').innerText = erros;
+        
+        const sky = document.getElementById('sky');
+        sky.style.background = "#fff1f1";
+        setTimeout(() => sky.style.background = "#f8fafc", 200);
     }
 }
 
@@ -238,7 +244,6 @@ window.usarAjuda = function() {
     }, 2500);
 };
 
-// === 3. FINALIZAÇÃO E RESULTADOS ===
 function finalizarJogo() {
     jogoAtivo = false;
     clearInterval(spawnInterval);
@@ -258,14 +263,14 @@ function finalizarJogo() {
         <div class="screen-box" style="justify-content: center; padding: 20px;">
             <style>
                 .res-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 450px; }
-                .res-trophy { height: 110px; margin-bottom: 10px; object-fit: contain; }
+                .res-trophy { height: 120px; margin-bottom: 10px; object-fit: contain; }
                 .res-msg { color: var(--primary-blue); font-weight: 900; font-size: 2.2rem; margin-bottom: 25px; text-align: center; line-height: 1; }
-                .res-stats-row { display: flex; gap: 12px; margin-bottom: 30px; width: 100%; justify-content: center; }
+                .res-stats-row { display: flex; gap: 15px; margin-bottom: 30px; width: 100%; justify-content: center; }
                 .stat-box { background: white; border-radius: 25px; width: 105px; height: 105px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
                 .stat-val { font-size: 1.8rem; font-weight: 900; margin-bottom: 2px; }
                 .stat-lab { font-size: 0.65rem; font-weight: 900; color: #88a; text-transform: uppercase; }
                 .res-actions { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; }
-                .btn-res { height: 60px; border-radius: 30px; display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 900; font-size: 1.1rem; text-decoration: none; cursor: pointer; transition: 0.2s; border: none; }
+                .btn-res { height: 60px; border-radius: 30px; display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 900; font-size: 1.1rem; text-decoration: none; cursor: pointer; border: none; }
                 .btn-redo { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
                 .btn-redo:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
                 .btn-outline { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); }
