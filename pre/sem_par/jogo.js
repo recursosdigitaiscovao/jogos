@@ -19,7 +19,7 @@ window.startLogic = function() {
     const introInstr = document.getElementById('intro-instr');
     if(introInstr) introInstr.innerText = "Observa com atenção e encontra o desenho que não tem um par igual!";
 
-    // Barra de Status: Lâmpada maior (30px), sem contador
+    // Configurar botão da Lâmpada (Tamanho do RD)
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:30px; width:30px; cursor:pointer; display:block;" onclick="usarAjuda()">`;
@@ -73,22 +73,12 @@ window.initGame = function() {
 
 function proximaRonda() {
     if (indicePergunta >= 10) { finalizarJogo(); return; }
-    
     const cat = JOGO_CATEGORIAS[categoriaAtual];
-    // Escolher 5 itens diferentes
     let sorteio = [...cat.itens].sort(() => Math.random() - 0.5).slice(0, 5);
-    
-    itemSolitario = sorteio[0]; // O primeiro será o único
-    let pares = sorteio.slice(1, 5); // Os outros 4 terão par
-    
-    // Criar lista final: 1 solitário + 4 pares (8 itens) = 9 itens no total
+    itemSolitario = sorteio[0];
+    let pares = sorteio.slice(1, 5);
     let listaRonda = [itemSolitario];
-    pares.forEach(p => {
-        listaRonda.push(p);
-        listaRonda.push(p);
-    });
-    
-    // Baralhar os 9 itens
+    pares.forEach(p => { listaRonda.push(p); listaRonda.push(p); });
     perguntas = listaRonda.sort(() => Math.random() - 0.5);
     mostrarPergunta();
 }
@@ -99,34 +89,39 @@ function mostrarPergunta() {
 
     container.innerHTML = `
         <style>
-            .game-outer { 
-                width: 100%; height: 100%; padding: 20px; box-sizing: border-box; 
-                display: flex; flex-direction: column; overflow: hidden; align-items: center; justify-content: center;
+            .game-wrapper { 
+                display: flex; flex-direction: column; width: 100%; height: 100%; 
+                justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; overflow: hidden;
             }
             .options-grid { 
                 display: grid; grid-template-columns: repeat(3, 1fr); 
-                gap: 12px; width: 100%; max-width: 500px; margin: auto;
+                gap: 10px; width: 100%; max-width: 450px; 
+                max-height: 80vh; /* Impede que a grelha saia do monitor */
             }
             .card-item { 
                 background: white; border: 3px solid #f0f4f8; border-radius: 20px; 
                 aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; 
-                cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #d0d8de; 
-                padding: 10px;
+                cursor: pointer; transition: 0.2s; box-shadow: 0 4px 0 #d0d8de; 
+                padding: 10px; min-height: 0;
             }
             .card-item img { height: 75%; width: auto; object-fit: contain; }
             
             .is-correct { background: #e8f9e8 !important; border-color: #7ed321 !important; box-shadow: 0 4px 0 #5ea31a !important; }
             .is-wrong { background: #fff1f1 !important; border-color: #ff5e5e !important; box-shadow: 0 4px 0 #d13d3d !important; }
-            
             .ajuda-foco { animation: brilharAjuda 0.5s 3; }
             @keyframes brilharAjuda { 0%, 100% { border-color: #f0f4f8; } 50% { border-color: #ff9f43; background: #fff5e6; transform: scale(1.05); } }
 
-            @media (max-width: 500px) { 
-                .options-grid { gap: 8px; } 
-                .game-outer { padding: 10px; }
+            @media (max-width: 600px) { 
+                .game-wrapper { padding: 10px; }
+                .options-grid { gap: 8px; max-width: 320px; }
+                .card-item { border-radius: 15px; border-width: 2px; }
+            }
+            @media (max-height: 500px) {
+                .options-grid { max-width: 400px; gap: 5px; }
+                .card-item { padding: 5px; }
             }
         </style>
-        <div class="game-outer">
+        <div class="game-wrapper">
             <div class="options-grid">
                 ${perguntas.map((opt, i) => `
                     <div class="card-item" data-id="${opt.nome}" onclick="verificar(this, '${opt.nome}')">
@@ -162,7 +157,6 @@ function verificar(el, nomeItem) {
     } else {
         erros++; somErro.play(); el.classList.add('is-wrong');
         document.getElementById('miss-val').innerText = erros;
-        // Mostrar qual era o correto
         document.querySelectorAll('.card-item').forEach(c => {
             if(c.getAttribute('data-id') === itemSolitario.nome) c.classList.add('is-correct');
         });
@@ -175,7 +169,7 @@ function verificar(el, nomeItem) {
     }, 1500);
 }
 
-// === 3. FINALIZAÇÃO E RESULTADOS ===
+// === 3. FINALIZAÇÃO E RESULTADOS (CONFORME PEDIDO) ===
 function finalizarJogo() {
     jogoAtivo = false;
     somVitoria.play();
@@ -203,25 +197,40 @@ function finalizarJogo() {
                 .btn-redo:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
                 .btn-outline { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); }
                 .btn-exit { background: #e2e8f0; color: #64748b; }
+                @media (max-width: 500px) { .res-msg { font-size: 1.8rem; } .stat-box { width: 90px; height: 90px; } .btn-res { height: 50px; font-size: 1rem; } }
             </style>
+            
             <div class="res-container">
                 <img src="${JOGO_CONFIG.caminhoImg}${rel.img}" class="res-trophy">
                 <h1 class="res-msg">${rel.titulo}</h1>
+                
                 <div class="res-stats-row">
-                    <div class="stat-box"><span class="stat-val" style="color: #7ed321;">${acertos}</span><span class="stat-lab">Certos</span></div>
-                    <div class="stat-box"><span class="stat-val" style="color: #ff5e5e;">${erros}</span><span class="stat-lab">Errados</span></div>
-                    <div class="stat-box"><span class="stat-val" style="color: #ff9f43;">${ajudasUtilizadas}</span><span class="stat-lab">Ajudas</span></div>
+                    <div class="stat-box">
+                        <span class="stat-val" style="color: #7ed321;">${acertos}</span>
+                        <span class="stat-lab">Certos</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-val" style="color: #ff5e5e;">${erros}</span>
+                        <span class="stat-lab">Errados</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-val" style="color: #ff9f43;">${ajudasUtilizadas}</span>
+                        <span class="stat-lab">Ajudas</span>
+                    </div>
                 </div>
+
                 <div class="res-actions">
-                    <button class="btn-res btn-redo" onclick="location.reload()"><i class="fas fa-redo"></i> JOGAR DE NOVO</button>
-                    <button class="btn-res btn-outline" onclick="openRDMenu()"><i class="fas fa-chart-line"></i> OUTRO NÍVEL</button>
-                    <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-exit"><i class="fas fa-sign-out-alt"></i> SAIR</a>
+                    <button class="btn-res btn-redo" onclick="location.reload()">
+                        <i class="fas fa-redo"></i> JOGAR DE NOVO
+                    </button>
+                    <button class="btn-res btn-outline" onclick="openRDMenu()">
+                        <i class="fas fa-chart-line"></i> OUTRO NÍVEL
+                    </button>
+                    <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-exit">
+                        <i class="fas fa-sign-out-alt"></i> SAIR
+                    </a>
                 </div>
             </div>
         </div>
     `;
 }
-
-window.gerarIntroJogo = function() { 
-    return "Encontra o desenho que não tem par!"; 
-};
