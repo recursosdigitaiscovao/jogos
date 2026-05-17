@@ -11,7 +11,7 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// CSS DO MONSTRO (Corpo único, braços atrás)
+// CSS DO MONSTRO (Corpo Único, Braços atrás, Reativo)
 const CSS_MONSTRO = `
     .monster-container { 
         position: relative; width: 100%; height: 100%; 
@@ -21,25 +21,35 @@ const CSS_MONSTRO = `
     .monster-body { 
         width: 85%; height: 75%; background: var(--monster-c); border-radius: 50%; 
         position: relative; z-index: 5; display: flex; flex-direction: column; 
-        align-items: center; justify-content: center; transition: background 0.3s;
+        align-items: center; justify-content: center; transition: background 0.3s, transform 0.2s;
         box-shadow: inset -8px -8px 15px rgba(0,0,0,0.1);
     }
+    /* Braços por trás do tronco */
     .monster-body::before, .monster-body::after { 
         content: ''; position: absolute; top: 40%; width: 25%; height: 45%; 
         background: var(--monster-c); border-radius: 20px; z-index: -1; transition: background 0.3s;
     }
     .monster-body::before { left: -10%; transform: rotate(25deg); }
     .monster-body::after { right: -10%; transform: rotate(-25deg); }
+    
     .spikes { position: absolute; top: -12px; font-size: 20px; color: var(--monster-c); letter-spacing: 2px; z-index: 4; }
+
     .monster-eye { width: 35%; height: 35%; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: -15%; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .monster-pupil { width: 50%; height: 50%; background: #222; border-radius: 50%; position: relative; }
     .monster-pupil::after { content: ''; position: absolute; top: 15%; left: 15%; width: 30%; height: 30%; background: white; border-radius: 50%; }
-    .monster-mouth { width: 55%; height: 10px; background: transparent; border-bottom: 4px solid #222; border-radius: 50%; transition: 0.3s; margin-top: 10px; }
-    .open .monster-mouth { height: 35%; background: #222; border: none; border-radius: 10px 10px 40px 40px; }
-    .happy { --monster-c: #4caf50 !important; }
-    .sad { --monster-c: #f44336 !important; animation: shake 0.4s; }
+    
+    .monster-cheeks { display: flex; justify-content: space-between; width: 65%; position: absolute; top: 55%; pointer-events: none; }
+    .cheek { width: 20px; height: 12px; background: #ff8da1; border-radius: 50%; opacity: 0.4; }
+    
+    .monster-mouth { width: 55%; height: 10px; background: transparent; border-bottom: 4px solid #222; border-radius: 50%; transition: all 0.3s ease; position: relative; margin-top: 10px; }
+    
+    .monster-container.open .monster-mouth { height: 35%; background: #222; border: none; border-radius: 10px 10px 40px 40px; }
     .monster-legs { display: flex; justify-content: space-around; width: 60%; height: 18%; margin-top: -10px; z-index: 4; }
     .monster-leg { width: 35%; height: 100%; background: var(--monster-c); border-radius: 0 0 15px 15px; transition: background 0.3s; }
+
+    /* Cores de Estado */
+    .monster-container.happy { --monster-c: #4caf50 !important; }
+    .monster-container.sad { --monster-c: #f44336 !important; animation: shake 0.4s; }
 `;
 
 function falarInstrucao() {
@@ -51,6 +61,7 @@ function falarInstrucao() {
     }
 }
 
+// === 1. INICIALIZAÇÃO ===
 window.startLogic = function() {
     const config = JOGO_CATEGORIAS[categoriaAtiva];
     const introInstr = document.getElementById('intro-instr');
@@ -66,34 +77,32 @@ window.startLogic = function() {
 
 window.selecionarCategoria = function(key) {
     categoriaAtiva = key;
-    const introInstr = document.getElementById('intro-instr');
-    if(introInstr) introInstr.innerText = JOGO_CATEGORIAS[key].descricao;
+    if(document.getElementById('intro-instr')) document.getElementById('intro-instr').innerText = JOGO_CATEGORIAS[key].descricao;
     renderTutorialAnimation();
 };
 
 function renderTutorialAnimation() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
-    const config = JOGO_CATEGORIAS[categoriaAtiva];
     const itemTut = categoriaAtiva === "saudavel" ? "alface.png" : "bolo.png";
     
     container.innerHTML = `
         <style>
             ${CSS_MONSTRO}
             .tut-wrapper { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-            .tut-label { font-weight: 900; color: var(--primary-blue); text-transform: uppercase; font-size: 0.9rem; }
-            .tut-stage { position: relative; width: 320px; height: 170px; background: white; border: 3px dashed var(--primary-blue); border-radius: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+            .tut-label { font-weight: 900; color: var(--primary-blue); text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px; }
+            .tut-stage { position: relative; width: 340px; height: 180px; background: white; border: 3px dashed var(--primary-blue); border-radius: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
             .tut-m-box { width: 100px; height: 120px; margin-left: -100px; transform: scale(0.85); }
-            .tut-f { position: absolute; width: 45px; z-index: 15; left: 220px; top: 60px; animation: fS 5s infinite; }
-            .tut-h { position: absolute; font-size: 40px; z-index: 20; left: 230px; top: 90px; animation: hS 5s infinite; }
-            @keyframes hS { 0%, 15% { left: 230px; top: 90px; } 45%, 65% { left: 55px; top: 85px; } 80%, 100% { left: 230px; top: 90px; } }
-            @keyframes fS { 0%, 15% { left: 220px; top: 60px; opacity: 1; } 45% { left: 35px; top: 75px; opacity: 1; transform: scale(0.6); } 50%, 100% { left: 35px; top: 75px; opacity: 0; } }
+            .tut-f { position: absolute; width: 45px; z-index: 15; left: 220px; top: 70px; animation: fS 5s infinite; }
+            .tut-h { position: absolute; font-size: 40px; z-index: 20; left: 230px; top: 100px; animation: hS 5s infinite; }
+            @keyframes hS { 0%, 15% { left: 230px; top: 100px; } 45%, 65% { left: 55px; top: 85px; } 80%, 100% { left: 230px; top: 100px; } }
+            @keyframes fS { 0%, 15% { left: 220px; top: 70px; opacity: 1; } 45% { left: 40px; top: 75px; opacity: 1; transform: scale(0.6); } 50%, 100% { left: 40px; top: 75px; opacity: 0; } }
         </style>
         <div class="tut-wrapper">
-            <div class="tut-label">${config.descricao}</div>
+            <div class="tut-label" style="color: var(--primary-blue);">MONSTRINHO COMILÃO</div>
             <div class="tut-stage">
-                <div class="tut-m-box" id="tut-monster-parent">
-                    <div class="monster-container">
+                <div class="tut-m-box">
+                    <div class="monster-container" id="tut-monster-visual">
                         <div class="monster-body"><div class="monster-eye"><div class="monster-pupil"></div></div><div class="monster-mouth"></div></div>
                         <div class="monster-legs"><div class="monster-leg"></div><div class="monster-leg"></div></div>
                     </div>
@@ -103,8 +112,14 @@ function renderTutorialAnimation() {
             </div>
         </div>
     `;
+    // Animação de abrir boca no tutorial
+    setInterval(() => {
+        const m = document.getElementById('tut-monster-visual');
+        if(m) m.classList.toggle('open');
+    }, 2500);
 }
 
+// === 2. MOTOR DO JOGO ===
 window.initGame = function() { acertos = 0; erros = 0; ajudasUtilizadas = 0; rondaAtual = 1; jogoAtivo = true; proximaRonda(); };
 
 function proximaRonda() {
@@ -129,37 +144,34 @@ function renderizarEcraAlimentacao() {
             ${CSS_MONSTRO}
             .monster-wrap { width: 98%; height: 98%; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 5px; box-sizing: border-box; }
             .instr-box { background: white; padding: 10px 25px; border-radius: 50px; font-weight: 900; color: #5d7082; border: 3px solid var(--primary-blue); display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-            .btn-som { background: #ff9800; border: none; width: 44px; height: 44px; border-radius: 50% !important; color: white; cursor: pointer; box-shadow: 0 4px 0 #e65100; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-            
+            .btn-som { background: #ff9800; border: none; width: 45px; height: 45px; border-radius: 50% !important; color: white; cursor: pointer; box-shadow: 0 4px 0 #e65100; display: flex; align-items: center; justify-content: center; }
             .game-stage { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; gap: 30px; }
             
-            /* DESKTOP / LANDSCAPE: Lado a Lado */
+            /* DESKTOP / LANDSCAPE */
             .game-stage { flex-direction: row; }
             .m-size { width: clamp(190px, 32vh, 260px); height: clamp(210px, 35vh, 290px); }
             .food-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
             .food-card { width: clamp(90px, 16vh, 130px); height: clamp(90px, 16vh, 130px); background: white; border: 3px solid #f0f4f8; border-radius: 25px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 0 #d0d8de; position: relative; }
             .food-img { width: 92%; height: 92%; object-fit: contain; cursor: pointer; touch-action: none; }
             
-            /* PORTRAIT (Vertical Mobile): Monstro Cima, Cartas Baixo */
+            /* PORTRAIT (Mobile) */
             @media (max-width: 600px) and (orientation: portrait) {
                 .game-stage { flex-direction: column !important; gap: 15px; }
-                .m-size { width: 150px; height: 170px; margin-bottom: 0; }
+                .m-size { width: 150px; height: 170px; }
                 .food-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
                 .food-card { width: 85px; height: 85px; }
-                .instr-box { width: 95%; font-size: 0.85rem; padding: 8px 15px; }
             }
 
-            .dragged { position: fixed !important; z-index: 1000; width: 75px !important; height: 75px !important; pointer-events: none; transform: translate(-50%, -50%) scale(0.8) !important; }
-            .flying { position: fixed !important; z-index: 1000; width: 75px !important; height: 75px !important; pointer-events: none; transition: all 0.5s ease-in; transform: translate(-50%, -50%) scale(0.6); }
-            @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
+            .dragged { position: fixed !important; z-index: 1000; width: 80px !important; height: 80px !important; pointer-events: none; transform: translate(-50%, -50%) scale(0.8) !important; }
+            .flying { position: fixed !important; z-index: 1000; width: 80px !important; height: 80px !important; pointer-events: none; transition: all 0.5s ease-in; transform: translate(-50%, -50%) scale(0.6); }
         </style>
         <div class="monster-wrap">
             <div class="instr-box"><button class="btn-som" onclick="falarInstrucao()"><i class="fas fa-volume-up"></i></button><span>${config.descricao}</span></div>
             <div class="game-stage">
                 <div class="monster-container m-size" id="monster-parent">
-                    <div class="spikes">▼▼▼</div>
                     <div class="monster-body" id="monster-main">
                         <div class="monster-eye"><div class="monster-pupil"></div></div>
+                        <div class="monster-cheeks"><div class="cheek"></div><div class="cheek"></div></div>
                         <div class="monster-mouth"></div>
                     </div>
                     <div class="monster-legs"><div class="monster-leg"></div><div class="monster-leg"></div></div>
@@ -216,8 +228,18 @@ function processarAlimentacao(el, imediato = false) {
     const status = el.getAttribute('data-status');
     const parent = document.getElementById('monster-parent');
     parent.classList.add('open'); jogoAtivo = false;
-    if (status === 'correto') { acertos++; somAcerto.play(); parent.classList.add('happy'); el.remove(); alvosRestantesNaRonda--; }
-    else { erros++; somErro.play(); parent.classList.add('sad'); el.style.position = "static"; el.classList.remove('flying', 'dragged'); }
+
+    if (status === 'correto') {
+        acertos++; somAcerto.play();
+        parent.classList.add('happy'); el.remove(); alvosRestantesNaRonda--;
+    } else {
+        erros++; somErro.play();
+        parent.classList.add('sad'); el.style.position = "static"; el.classList.remove('flying', 'dragged');
+    }
+    
+    document.getElementById('hits-val').innerText = acertos;
+    document.getElementById('miss-val').innerText = erros;
+
     setTimeout(() => {
         parent.classList.remove('happy', 'sad', 'open'); jogoAtivo = true;
         if (alvosRestantesNaRonda <= 0) { rondaAtual++; proximaRonda(); }
@@ -230,6 +252,7 @@ window.usarAjuda = function() {
     imgs.forEach(img => { if (img.getAttribute('data-status') === 'correto') { img.style.filter = "drop-shadow(0 0 15px #ff9800)"; img.style.transform = "scale(1.1)"; setTimeout(() => { img.style.filter = "none"; img.style.transform = "scale(1)"; ajudaDisponivel = true; }, 1500); } });
 };
 
+// === 3. ECRÃ DE RESULTADOS FINAL ===
 function finalizarJogo() {
     jogoAtivo = false; somVitoria.play();
     const perc = Math.round((acertos / (acertos + erros || 1)) * 100);
