@@ -27,8 +27,8 @@ window.addEventListener('keydown', (e) => {
 
 // === 2. INICIALIZAÇÃO ===
 window.startLogic = function() {
-    if (!JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = Object.keys(JOGO_CATEGORIAS)[0];
-    tamanhoGrelha = JOGO_CATEGORIAS[categoriaAtual].tamanho;
+    const cat = JOGO_CATEGORIAS[categoriaAtual] || Object.keys(JOGO_CATEGORIAS)[0];
+    tamanhoGrelha = cat.tamanho;
     
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
@@ -38,7 +38,7 @@ window.startLogic = function() {
     }
 
     document.getElementById('intro-instr').innerText = "Leva o teu amigo ao objetivo sem bater nas paredes!";
-    setTimeout(criarAnimacaoTutorial, 100);
+    renderTutorialAnimation();
 };
 
 window.selecionarCategoria = function(key) {
@@ -46,24 +46,31 @@ window.selecionarCategoria = function(key) {
     tamanhoGrelha = JOGO_CATEGORIAS[key].tamanho;
 };
 
-function criarAnimacaoTutorial() {
+function renderTutorialAnimation() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
+    const cat = JOGO_CATEGORIAS[categoriaAtual];
+    
     container.innerHTML = `
-        <div style="position:relative; display:flex; align-items:center; gap:20px; background:white; padding:15px; border-radius:20px; border:2px solid #eee; filter: grayscale(100%); opacity:0.7;">
-            <div style="display:grid; grid-template-columns:repeat(3, 30px); gap:2px; background:#ddd; position:relative;">
-                <div style="background:white; width:30px; height:30px;"></div><div style="background:white; width:30px; height:30px;"></div><div style="background:white; width:30px; height:30px; display:flex; align-items:center; justify-content:center;">🎯</div>
-                <div style="background:white; width:30px; height:30px;"></div><div style="background:#eee; width:30px; height:30px;"></div><div style="background:white; width:30px; height:30px;"></div>
-                <div style="background:white; width:30px; height:30px;"></div><div style="background:white; width:30px; height:30px;"></div><div style="background:white; width:30px; height:30px;"></div>
-                <div id="tut-hero" style="position:absolute; width:30px; height:30px; display:flex; align-items:center; justify-content:center; font-size:20px; transition:0.5s; top:64px; left:0;">🐝</div>
-            </div>
-            <div id="tut-hand" style="position:absolute; font-size:35px; z-index:10; animation: tutHandMove 3s infinite;">☝️</div>
-        </div>
         <style>
-            @keyframes tutHandMove { 0%, 100% { transform:translate(110px, 45px); } 50% { transform:translate(110px, 45px) scale(0.8); } }
-            #tut-hero { animation: tutHeroMove 3s infinite; }
-            @keyframes tutHeroMove { 0%, 20% { left:0; } 40%, 100% { left:32px; } }
+            .tut-wrapper { position:relative; display:flex; flex-direction:column; align-items:center; gap:15px; width:100%; }
+            .tut-grid { display:grid; grid-template-columns:repeat(3, 35px); gap:2px; background:#eee; border:2px solid #ddd; border-radius:10px; overflow:hidden; position:relative; }
+            .tut-cell { background:white; width:35px; height:35px; display:flex; align-items:center; justify-content:center; }
+            .tut-hero { position:absolute; width:35px; height:35px; display:flex; align-items:center; justify-content:center; transition:0.5s; top:74px; left:0; z-index:5; }
+            .tut-hand { position:absolute; font-size:40px; z-index:10; animation: tutHandTap 3s infinite; }
+            @keyframes tutHandTap { 0%, 100% { transform:translate(80px, 40px); } 50% { transform:translate(80px, 40px) scale(0.8); } }
+            @keyframes tutHeroMove { 0%, 20% { left:0; } 40%, 100% { left:37px; } }
+            .tut-hero img { width:85%; height:85%; object-fit:contain; animation: tutHeroMove 3s infinite; }
         </style>
+        <div class="tut-wrapper">
+            <div class="tut-grid">
+                <div class="tut-cell"></div><div class="tut-cell"></div><div class="tut-cell">🎯</div>
+                <div class="tut-cell"></div><div class="tut-cell" style="background:#f5f5f5"></div><div class="tut-cell"></div>
+                <div class="tut-cell"></div><div class="tut-cell"></div><div class="tut-cell"></div>
+                <div class="tut-hero"><img src="${JOGO_CONFIG.caminhoImg}${cat.personagem}"></div>
+            </div>
+            <div class="tut-hand">☝️</div>
+        </div>
     `;
 }
 
@@ -109,34 +116,40 @@ function mostrarPergunta() {
     const container = document.getElementById('game-main-content');
     const cat = JOGO_CATEGORIAS[categoriaAtual];
     const tema = BIBLIOTECA_TEMAS[CONFIG_MESTRE.area];
-    const imgSeta = JOGO_CONFIG.caminhoIcons + tema.voltarMobile; // Ícone da seta dinâmica
+    const imgSeta = JOGO_CONFIG.caminhoIcons + tema.voltarMobile;
 
     document.getElementById('round-val').innerText = `${indicePergunta + 1} / 10`;
     
     container.innerHTML = `
         <style>
-            .maze-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; overflow: hidden; }
+            .maze-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; justify-content: center; padding: 5px; box-sizing: border-box; overflow: hidden; }
             .maze-area { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; min-height: 0; }
-            .maze-grid { display: grid; grid-template-columns: repeat(${tamanhoGrelha}, 1fr); grid-template-rows: repeat(${tamanhoGrelha}, 1fr); height: 90%; aspect-ratio: 1/1; background: #fff; border: 4px solid #eee; border-radius: 15px; position: relative; }
-            .maze-cell { border: 1px solid #f9f9f9; display: flex; align-items: center; justify-content: center; position: relative; }
-            .wall { width: 80%; height: 80%; object-fit: contain; }
-            .goal { width: 75%; height: 75%; object-fit: contain; animation: bounce 2s infinite; }
-            .hero-p { position: absolute; width: ${100/tamanhoGrelha}%; height: ${100/tamanhoGrelha}%; display: flex; align-items: center; justify-content: center; transition: all 0.15s ease-out; z-index: 10; }
-            .hero-p img { width: 85%; height: 85%; object-fit: contain; }
-            .hero-p.shake { animation: shake 0.3s; }
-            .hint-dot { width: 8px; height: 8px; background: var(--primary-blue); border-radius: 50%; opacity: 0.6; z-index: 5; animation: pulseHint 1s infinite; }
             
-            /* NOVOS CONTROLOS LADO A LADO */
-            .maze-controls-row { display: flex; gap: 15px; padding: 15px; flex-shrink: 0; align-items: center; justify-content: center; width: 100%; }
-            .b-nav { 
-                width: 60px; height: 60px; background: white; border-radius: 50%; 
-                display: flex; align-items: center; justify-content: center; 
-                cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 2px solid #f0f0f0; transition: 0.1s; 
+            /* Grelha responsiva para evitar transbordar no mobile vertical */
+            .maze-grid { 
+                display: grid; 
+                grid-template-columns: repeat(${tamanhoGrelha}, 1fr); 
+                grid-template-rows: repeat(${tamanhoGrelha}, 1fr); 
+                width: 90vmin; height: 90vmin;
+                max-width: 95%; max-height: 95%;
+                background: #fff; border: 4px solid #eee; border-radius: 15px; position: relative; 
             }
-            .b-nav:active { transform: scale(0.9); box-shadow: none; }
-            .b-nav img { height: 35px; width: auto; pointer-events: none; }
+
+            .maze-cell { border: 1px solid #f9f9f9; display: flex; align-items: center; justify-content: center; position: relative; }
+            .wall { width: 85%; height: 85%; object-fit: contain; }
+            .goal { width: 80%; height: 80%; object-fit: contain; animation: bounce 2s infinite; }
+            .hero-p { position: absolute; width: ${100/tamanhoGrelha}%; height: ${100/tamanhoGrelha}%; display: flex; align-items: center; justify-content: center; transition: all 0.15s ease-out; z-index: 10; }
+            .hero-p img { width: 85%; height: 85%; object-fit: contain; transition: transform 0.2s; }
+            .hero-p.shake { animation: shake 0.3s; }
+            .hint-dot { width: 30%; height: 30%; background: var(--primary-blue); border-radius: 50%; opacity: 0.6; z-index: 5; animation: pulseHint 1s infinite; }
             
-            /* ROTAÇÕES DA SETA VOLTAR */
+            .maze-controls-row { display: flex; gap: 10px; padding: 10px 0; flex-shrink: 0; align-items: center; justify-content: center; width: 100%; }
+            .b-nav { 
+                width: 55px; height: 55px; background: white; border-radius: 50%; 
+                display: flex; align-items: center; justify-content: center; 
+                cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 2px solid #f0f0f0; 
+            }
+            .b-nav img { height: 32px; width: auto; pointer-events: none; }
             .rot-up { transform: rotate(90deg); }
             .rot-down { transform: rotate(270deg); }
             .rot-right { transform: rotate(180deg); }
@@ -144,25 +157,32 @@ function mostrarPergunta() {
 
             @keyframes pulseHint { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.5); } }
             @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+            @media (max-width: 500px) {
+                .maze-grid { width: 75vw; height: 75vw; }
+                .b-nav { width: 50px; height: 50px; }
+                .b-nav img { height: 28px; }
+            }
         </style>
 
         <div class="maze-wrapper">
-            <div class="maze-area"><div class="maze-grid" id="maze-container">
-                ${mapaAtual.map((row, y) => row.map((cell, x) => {
-                    let content = "";
-                    if (cell === 1) content = `<img src="${JOGO_CONFIG.caminhoImg}${cat.obstaculo}" class="wall">`;
-                    else if (x === tamanhoGrelha-1 && y === tamanhoGrelha-1) content = `<img id="target-img" src="${JOGO_CONFIG.caminhoImg}${cat.objetivo}" class="goal">`;
-                    return `<div class="maze-cell" id="cell-${x}-${y}">${content}</div>`;
-                }).join('')).join('')}
-                <div class="hero-p" id="player" style="left:${posPersonagem.x*(100/tamanhoGrelha)}%; top:${posPersonagem.y*(100/tamanhoGrelha)}%;"><img src="${JOGO_CONFIG.caminhoImg}${cat.personagem}"></div>
-            </div></div>
+            <div class="maze-area">
+                <div class="maze-grid" id="maze-container">
+                    ${mapaAtual.map((row, y) => row.map((cell, x) => {
+                        let content = "";
+                        if (cell === 1) content = `<img src="${JOGO_CONFIG.caminhoImg}${cat.obstaculo}" class="wall">`;
+                        else if (x === tamanhoGrelha-1 && y === tamanhoGrelha-1) content = `<img id="target-img" src="${JOGO_CONFIG.caminhoImg}${cat.objetivo}" class="goal">`;
+                        return `<div class="maze-cell" id="cell-${x}-${y}">${content}</div>`;
+                    }).join('')).join('')}
+                    <div class="hero-p" id="player" style="left:${posPersonagem.x*(100/tamanhoGrelha)}%; top:${posPersonagem.y*(100/tamanhoGrelha)}%;"><img src="${JOGO_CONFIG.caminhoImg}${cat.personagem}"></div>
+                </div>
+            </div>
 
             <div class="maze-controls-row">
                 <div class="b-nav" onclick="tentarMover(-1, 0)"><img src="${imgSeta}" class="rot-left"></div>
                 <div class="b-nav" onclick="tentarMover(0, -1)"><img src="${imgSeta}" class="rot-up"></div>
                 <div class="b-nav" onclick="tentarMover(0, 1)"><img src="${imgSeta}" class="rot-down"></div>
                 <div class="b-nav" onclick="tentarMover(1, 0)"><img src="${imgSeta}" class="rot-right"></div>
-                <div class="b-nav" style="background:#f8f8f8;" onclick="proximaRonda()"><i class="fas fa-sync-alt" style="color:#88a;"></i></div>
             </div>
         </div>
     `;
@@ -215,8 +235,6 @@ window.tentarMover = function(dx, dy) {
     const hero = document.getElementById('player');
     const heroImg = hero.querySelector('img');
 
-    // --- DIREÇÃO CORRIGIDA ---
-    // Se mover para a DIREITA (dx=1), inverto o scaleX (considerando que a maioria das imagens olha para a esquerda)
     if (dx > 0) heroImg.style.transform = "scaleX(-1)"; 
     else if (dx < 0) heroImg.style.transform = "scaleX(1)";
 
