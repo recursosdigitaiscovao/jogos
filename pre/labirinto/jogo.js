@@ -2,8 +2,9 @@ let perguntas = [];
 let indicePergunta = 0;
 let acertos = 0;
 let erros = 0;
-let tempoInicio;
-let intervaloTempo;
+let ajudasUtilizadas = 0;
+let jogoAtivo = false;
+let ajudaDisponivel = true;
 
 let categoriaAtual = "natureza";
 let mapaAtual = [];
@@ -16,7 +17,7 @@ const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
 // === 1. CONTROLO POR TECLADO ===
 window.addEventListener('keydown', (e) => {
-    if (!document.getElementById('scr-game').classList.contains('active')) return;
+    if (!document.getElementById('scr-game').classList.contains('active') || !jogoAtivo) return;
     if (e.key === "ArrowUp") tentarMover(0, -1);
     if (e.key === "ArrowDown") tentarMover(0, 1);
     if (e.key === "ArrowLeft") tentarMover(-1, 0);
@@ -29,6 +30,14 @@ window.startLogic = function() {
     if (!JOGO_CATEGORIAS[categoriaAtual]) categoriaAtual = Object.keys(JOGO_CATEGORIAS)[0];
     tamanhoGrelha = JOGO_CATEGORIAS[categoriaAtual].tamanho;
     
+    // Configurar botão da Lâmpada (Substituindo o cronómetro)
+    const timerBadge = document.querySelector('.badge-timer');
+    if (timerBadge) {
+        timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:30px; width:30px; cursor:pointer; display:block;" onclick="usarAjuda()">`;
+        timerBadge.style.background = "transparent";
+        timerBadge.style.padding = "0";
+    }
+
     document.getElementById('intro-instr').innerText = "Leva o teu amigo ao objetivo sem bater nas paredes!";
     setTimeout(criarAnimacaoTutorial, 100);
 };
@@ -69,23 +78,11 @@ function criarAnimacaoTutorial() {
 
 // === 3. LÓGICA DO JOGO ===
 window.initGame = function() {
-    indicePergunta = 0; acertos = 0; erros = 0;
+    indicePergunta = 0; acertos = 0; erros = 0; ajudasUtilizadas = 0; jogoAtivo = true;
     document.getElementById('hits-val').innerText = "0";
     document.getElementById('miss-val').innerText = "0";
-    iniciarCronometro();
     proximaRonda();
 };
-
-function iniciarCronometro() {
-    tempoInicio = Date.now();
-    clearInterval(intervaloTempo);
-    intervaloTempo = setInterval(() => {
-        const decorrido = Math.floor((Date.now() - tempoInicio) / 1000);
-        const min = Math.floor(decorrido / 60).toString().padStart(2, '0');
-        const seg = (decorrido % 60).toString().padStart(2, '0');
-        document.getElementById('timer-val').innerText = `${min}:${seg}`;
-    }, 1000);
-}
 
 function gerarLabirinto(dim) {
     let maze = Array.from({ length: dim }, () => Array(dim).fill(1));
@@ -127,7 +124,7 @@ function mostrarPergunta() {
             .maze-area { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; min-height: 0; }
             .maze-grid { display: grid; grid-template-columns: repeat(${tamanhoGrelha}, 1fr); grid-template-rows: repeat(${tamanhoGrelha}, 1fr); height: 95%; aspect-ratio: 1/1; background: #fff; border: 4px solid #eee; border-radius: 15px; position: relative; }
             .maze-cell { border: 1px solid #f9f9f9; display: flex; align-items: center; justify-content: center; }
-            .wall { width: 80%; height: 80%; object-fit: contain; }
+            .wall { width: 80%; height: 80%; object-fit: contain; transition: opacity 0.3s; }
             .goal { width: 75%; height: 75%; object-fit: contain; animation: bounce 2s infinite; transition: opacity 0.3s; }
             .hero-p { position: absolute; width: ${100/tamanhoGrelha}%; height: ${100/tamanhoGrelha}%; display: flex; align-items: center; justify-content: center; transition: all 0.15s ease-out; z-index: 10; }
             .hero-p img { width: 85%; height: 85%; object-fit: contain; }
@@ -140,7 +137,7 @@ function mostrarPergunta() {
             @media (orientation: landscape) and (max-height: 550px) { .maze-wrapper { flex-direction: row; gap: 20px; } .b-dir { width: 55px; height: 45px; } }
         </style>
         <div class="maze-wrapper">
-            <div class="maze-area"><div class="maze-grid">
+            <div class="maze-area"><div class="maze-grid" id="maze-container">
                 ${mapaAtual.map((row, y) => row.map((cell, x) => {
                     let content = "";
                     if (cell === 1) content = `<img src="${JOGO_CONFIG.caminhoImg}${cat.obstaculo}" class="wall">`;
@@ -162,65 +159,113 @@ function mostrarPergunta() {
     `;
 }
 
+window.usarAjuda = function() {
+    if (!jogoAtivo || !ajudaDisponivel) return;
+    ajudaDisponivel = false;
+    ajudasUtilizadas++;
+    
+    // Efeito visual de ajuda: Paredes ficam semi-transparentes
+    const walls = document.querySelectorAll('.wall');
+    walls.forEach(w => w.style.opacity = "0.2");
+    
+    setTimeout(() => {
+        walls.forEach(w => w.style.opacity = "1");
+        setTimeout(() => ajudaDisponivel = true, 3000); // Cooldown de 3 segundos
+    }, 1500);
+};
+
 window.tentarMover = function(dx, dy) {
+    if (!jogoAtivo) return;
     let nx = posPersonagem.x + dx, ny = posPersonagem.y + dy;
     const hero = document.getElementById('player');
     if (nx < 0 || nx >= tamanhoGrelha || ny < 0 || ny >= tamanhoGrelha || mapaAtual[ny][nx] === 1) {
-        somErro.play(); hero.classList.add('shake'); setTimeout(() => hero.classList.remove('shake'), 300); return;
+        somErro.play(); 
+        erros++; 
+        document.getElementById('miss-val').innerText = erros;
+        hero.classList.add('shake'); 
+        setTimeout(() => hero.classList.remove('shake'), 300); 
+        return;
     }
     posPersonagem.x = nx; posPersonagem.y = ny;
     hero.style.left = `${nx * (100/tamanhoGrelha)}%`;
     hero.style.top = `${ny * (100/tamanhoGrelha)}%`;
     if (nx === tamanhoGrelha - 1 && ny === tamanhoGrelha - 1) {
         const target = document.getElementById('target-img'); if(target) target.style.opacity = "0";
-        somAcerto.play(); acertos++; document.getElementById('hits-val').innerText = acertos;
-        setTimeout(() => { indicePergunta++; proximaRonda(); }, 800);
+        somAcerto.play(); 
+        acertos++; 
+        document.getElementById('hits-val').innerText = acertos;
+        jogoAtivo = false;
+        setTimeout(() => { 
+            indicePergunta++; 
+            proximaRonda(); 
+            jogoAtivo = true;
+        }, 800);
     }
 };
 
-// === 4. ECRÃ DE RESULTADOS (CORRIGIDO) ===
+// === 4. ECRÃ DE RESULTADOS (PADRÃO IMAGEM) ===
 function finalizarJogo() {
-    clearInterval(intervaloTempo); somVitoria.play();
-    const rel = JOGO_CONFIG.relatorios.find(r => (acertos * 10) >= r.min && (acertos * 10) <= r.max);
-    const tempoFinal = document.getElementById('timer-val').innerText;
+    jogoAtivo = false;
+    somVitoria.play();
+    
+    const perc = (acertos / 10) * 100;
+    const rel = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
+    
+    document.getElementById('scr-game').classList.remove('active');
     const resScreen = document.getElementById('scr-result');
-
-    resScreen.className = "screen screen-box active"; 
+    resScreen.classList.add('active');
+    document.getElementById('status-bar').style.display = 'none';
 
     resScreen.innerHTML = `
-        <style>
-            .res-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 10px; box-sizing: border-box; }
-            .res-stats { display: flex; gap: 12px; width: 100%; max-width: 320px; margin: 15px 0; }
-            .res-card { background: white; border-radius: 18px; padding: 12px; flex: 1; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; }
-            .res-val { display: block; font-size: 24px; font-weight: 900; color: var(--primary-blue); line-height: 1.1; }
-            .res-lab { font-size: 10px; font-weight: 800; color: #88a; text-transform: uppercase; letter-spacing: 0.5px; }
+        <div class="screen-box" style="justify-content: center; padding: 20px;">
+            <style>
+                .res-container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 450px; }
+                .res-trophy { height: 120px; margin-bottom: 10px; object-fit: contain; }
+                .res-msg { color: var(--primary-blue); font-weight: 900; font-size: 2.2rem; margin-bottom: 25px; text-align: center; line-height: 1; }
+                .res-stats-row { display: flex; gap: 15px; margin-bottom: 30px; width: 100%; justify-content: center; }
+                .stat-box { background: white; border-radius: 25px; width: 105px; height: 105px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+                .stat-val { font-size: 1.8rem; font-weight: 900; margin-bottom: 2px; }
+                .stat-lab { font-size: 0.65rem; font-weight: 900; color: #88a; text-transform: uppercase; letter-spacing: 0.5px; }
+                .res-actions { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; }
+                .btn-res { height: 60px; border-radius: 30px; display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 900; font-size: 1.1rem; text-decoration: none; cursor: pointer; transition: 0.2s; border: none; }
+                .btn-redo { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
+                .btn-redo:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--primary-dark); }
+                .btn-outline { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); }
+                .btn-exit { background: #e2e8f0; color: #64748b; }
+                @media (max-width: 500px) { .res-msg { font-size: 1.8rem; } .stat-box { width: 90px; height: 90px; } .btn-res { height: 50px; font-size: 1rem; } }
+            </style>
             
-            .res-btns { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 280px; }
-            .btn-f { padding: 16px; border-radius: 20px; font-weight: 900; font-size: 15px; cursor: pointer; border: none; text-align: center; text-decoration: none; text-transform: uppercase; transition: 0.2s; }
-            
-            .btn-f-primary { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--primary-dark); }
-            .btn-f-outline { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); box-shadow: 0 6px 0 var(--primary-blue); padding: 13px; }
-            .btn-f-muted { background: #dce4ee; color: #5d7082; box-shadow: 0 6px 0 #b8c5d4; }
-            
-            .btn-f:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
-        </style>
-        <div class="res-container">
-            <img src="${JOGO_CONFIG.caminhoIcons}${rel.img}" style="height:25%; min-height:90px; width:auto; margin-bottom:10px; object-fit:contain;">
-            <h2 style="color: var(--primary-blue); font-weight:900; font-size:1.8rem; margin-bottom:5px; text-align:center;">${rel.titulo}</h2>
-            
-            <div class="res-stats">
-                <div class="res-card"><span class="res-val">${acertos} / 10</span><span class="res-lab">Acertos</span></div>
-                <div class="res-card"><span class="res-val">${tempoFinal}</span><span class="res-lab">Tempo</span></div>
-            </div>
+            <div class="res-container">
+                <img src="${JOGO_CONFIG.caminhoImg}${rel.img}" class="res-trophy">
+                <h1 class="res-msg">${rel.titulo}</h1>
+                
+                <div class="res-stats-row">
+                    <div class="stat-box">
+                        <span class="stat-val" style="color: #7ed321;">${acertos}</span>
+                        <span class="stat-lab">Certos</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-val" style="color: #ff5e5e;">${erros}</span>
+                        <span class="stat-lab">Errados</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-val" style="color: #ff9f43;">${ajudasUtilizadas}</span>
+                        <span class="stat-lab">Ajudas</span>
+                    </div>
+                </div>
 
-            <div class="res-btns">
-                <button class="btn-f btn-f-primary" onclick="location.reload()">Jogar de Novo</button>
-                <button class="btn-f btn-f-outline" onclick="openRDMenu()">Outro Tema / Nível</button>
-                <a href="${JOGO_CONFIG.linkVoltar}" class="btn-f btn-f-muted">Escolher outro jogo</a>
+                <div class="res-actions">
+                    <button class="btn-res btn-redo" onclick="location.reload()">
+                        <i class="fas fa-redo"></i> JOGAR DE NOVO
+                    </button>
+                    <button class="btn-res btn-outline" onclick="openRDMenu()">
+                        <i class="fas fa-chart-line"></i> OUTRO NÍVEL
+                    </button>
+                    <a href="${JOGO_CONFIG.linkVoltar}" class="btn-res btn-exit">
+                        <i class="fas fa-sign-out-alt"></i> SAIR
+                    </a>
+                </div>
             </div>
         </div>
     `;
-
-    document.querySelectorAll('.screen').forEach(s => { if(s.id !== 'scr-result') s.classList.remove('active'); });
-    document.getElementById('status-bar').style.display = 'none';
 }
