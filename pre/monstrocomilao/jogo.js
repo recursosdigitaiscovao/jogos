@@ -53,14 +53,14 @@ function renderTutorialAnimation() {
     container.innerHTML = `
         <style>
             .tut-stage { position: relative; width: 340px; height: 180px; background: white; border: 3px dashed var(--primary-blue); border-radius: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-            .tut-monster { width: 90px; height: 90px; background: #66d1ed; border-radius: 50%; position: relative; margin-left: -80px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1); }
-            .tut-eye { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; }
-            .tut-pupil { width: 18px; height: 18px; background: #222; border-radius: 50%; }
-            .tut-mouth { width: 40px; height: 10px; border-bottom: 3px solid #222; border-radius: 50%; }
-            .tut-food { position: absolute; width: 40px; z-index: 15; left: 200px; top: 60px; animation: tutFly 4s infinite; }
-            @keyframes tutFly { 0%, 20% { left: 200px; opacity:1; } 50%, 70% { left: 40px; opacity:1; } 80%, 100% { opacity:0; } }
-            .tut-hand { position: absolute; font-size: 35px; z-index: 20; left: 210px; top: 90px; animation: tutHand 4s infinite; }
-            @keyframes tutHand { 0%, 15% { left: 210px; transform: scale(1); } 20%, 70% { left: 50px; transform: scale(0.8); } 85%, 100% { left: 210px; transform: scale(1); } }
+            .tut-monster { width: 90px; height: 90px; background: #66d1ed; border-radius: 50%; position: relative; margin-left: -80px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: inset -5px -5px 15px rgba(0,0,0,0.1), 0 0 10px #66d1ed; }
+            .tut-eye { width: 30px; height: 30px; background: white; border-radius: 50%; position: relative; display:flex; align-items:center; justify-content:center; }
+            .tut-pupil { width: 14px; height: 14px; background: #222; border-radius: 50%; }
+            .tut-mouth { width: 35px; height: 8px; border-bottom: 3px solid #222; border-radius: 50%; }
+            .tut-food { position: absolute; width: 45px; z-index: 15; left: 220px; top: 60px; animation: tutFly 4s infinite; }
+            .tut-hand { position: absolute; font-size: 35px; z-index: 20; left: 230px; top: 90px; animation: tutHand 4s infinite; }
+            @keyframes tutFly { 0%, 20% { left: 220px; opacity:1; } 50%, 75% { left: 45px; opacity:1; } 80%, 100% { opacity:0; } }
+            @keyframes tutHand { 0%, 15% { left: 230px; transform: scale(1); } 20%, 70% { left: 65px; transform: scale(0.8); } 85%, 100% { left: 230px; transform: scale(1); } }
         </style>
         <div class="tut-stage">
             <div class="tut-monster"><div class="tut-eye"><div class="tut-pupil"></div></div><div class="tut-mouth"></div></div>
@@ -105,48 +105,74 @@ function renderizarEcraAlimentacao() {
         <style>
             .monster-wrap { width: 98%; height: 98%; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 5px; box-sizing: border-box; }
             .instr-box { background: white; padding: 10px 25px; border-radius: 50px; font-weight: 900; color: #5d7082; border: 3px solid var(--primary-blue); display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-            .btn-som { background: #ff9800; border: none; width: 45px; height: 45px; border-radius: 50% !important; color: white; cursor: pointer; box-shadow: 0 4px 0 #e65100; display: flex; align-items: center; justify-content: center; }
             
-            .game-stage { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; gap: 30px; flex-wrap: wrap; }
+            /* Botão Som Redondo */
+            .btn-som { background: #ff9800; border: none; width: 45px; height: 45px; border-radius: 50% !important; color: white; cursor: pointer; box-shadow: 0 4px 0 #e65100; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
             
-            /* NOVO MONSTRO AZUL (CSS) */
-            .monster-container { position: relative; width: clamp(180px, 35vh, 260px); height: clamp(200px, 38vh, 300px); display: flex; flex-direction: column; align-items: center; }
+            .game-stage { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }
+            
+            /* MONSTRO AZUL PELUDO PREMIUM */
+            .monster-container { position: relative; width: clamp(200px, 35vh, 280px); height: clamp(220px, 40vh, 310px); display: flex; flex-direction: column; align-items: center; }
             .monster-body { 
                 width: 100%; height: 85%; 
-                background: #66d1ed; border-radius: 50%; position: relative; 
-                box-shadow: inset -10px -10px 20px rgba(0,0,0,0.1), 0 10px 20px rgba(0,0,0,0.1);
+                background: radial-gradient(circle at 30% 30%, #a8e6f5, #66d1ed); 
+                border-radius: 50%; position: relative; 
+                /* Efeito de Pelo */
+                box-shadow: 
+                    0 0 0 2px #66d1ed,
+                    0 4px 10px rgba(0,0,0,0.2),
+                    inset -10px -10px 20px rgba(0,0,0,0.1);
                 display: flex; flex-direction: column; align-items: center; justify-content: center;
-                transition: background 0.3s, transform 0.3s;
+                transition: all 0.3s ease;
             }
-            /* Pelos no topo */
-            .monster-body::before { content: '▼▼▼'; position: absolute; top: -15px; font-size: 20px; color: inherit; letter-spacing: 2px; }
+            /* Pelos extras no topo */
+            .monster-body::before { 
+                content: '▲'; position: absolute; top: -18px; font-size: 35px; color: #66d1ed; 
+                text-shadow: -40px 10px #66d1ed, 40px 10px #66d1ed, -20px 5px #66d1ed, 20px 5px #66d1ed;
+            }
             
-            .monster-eye { width: 35%; height: 35%; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: -15%; box-shadow: 0 5px 10px rgba(0,0,0,0.1); position: relative; }
-            .monster-pupil { width: 50%; height: 50%; background: #222; border-radius: 50%; position: relative; }
-            .monster-pupil::after { content: ''; position: absolute; top: 15%; left: 15%; width: 30%; height: 30%; background: white; border-radius: 50%; }
+            .monster-eye { width: 38%; height: 38%; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: -15%; box-shadow: 0 5px 15px rgba(0,0,0,0.1), inset 0 2px 5px rgba(0,0,0,0.05); position: relative; border: 2px solid #55c0db; }
+            .monster-pupil { width: 55%; height: 55%; background: #222; border-radius: 50%; position: relative; }
+            .monster-pupil::after { content: ''; position: absolute; top: 15%; left: 15%; width: 35%; height: 35%; background: white; border-radius: 50%; opacity: 0.8; }
             
-            .monster-cheeks { display: flex; justify-content: space-between; width: 70%; position: absolute; top: 55%; }
-            .cheek { width: 25px; height: 15px; background: #ff8da1; border-radius: 50%; opacity: 0.6; }
+            .monster-cheeks { display: flex; justify-content: space-between; width: 75%; position: absolute; top: 55%; pointer-events: none; }
+            .cheek { width: 28px; height: 16px; background: #ff8da1; border-radius: 50%; opacity: 0.4; filter: blur(2px); }
             
-            .monster-mouth { width: 50%; height: 10px; background: transparent; border-bottom: 4px solid #222; border-radius: 50%; transition: all 0.3s ease; position: relative; margin-top: 10px; }
-            .monster-body.open .monster-mouth { height: 30%; background: #222; border: none; border-radius: 10px 10px 40px 40px; }
+            .monster-mouth { width: 55%; height: 12px; background: transparent; border-bottom: 5px solid #222; border-radius: 50%; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; margin-top: 15px; }
             
-            /* Perninhas */
-            .monster-feet { display: flex; gap: 40px; width: 60%; height: 15%; }
-            .foot { flex: 1; background: #66d1ed; border-radius: 0 0 15px 15px; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1); }
+            /* Boca Aberta com Dentes */
+            .monster-body.open .monster-mouth { 
+                height: 35%; background: #222; border: none; border-radius: 15px 15px 50px 50px; 
+            }
+            .monster-body.open .monster-mouth::before, 
+            .monster-body.open .monster-mouth::after { 
+                content: ''; position: absolute; top: 0; width: 0; height: 0; 
+                border-left: 10px solid transparent; border-right: 10px solid transparent; 
+                border-top: 15px solid white; 
+            }
+            .monster-body.open .monster-mouth::before { left: 15%; }
+            .monster-body.open .monster-mouth::after { right: 15%; }
+            
+            .monster-feet { display: flex; gap: 40px; width: 60%; height: 15%; margin-top: -5px; }
+            .foot { flex: 1; background: #66d1ed; border-radius: 0 0 20px 20px; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1); }
 
-            /* Estados de cor */
-            .monster-body.happy { background: #4caf50 !important; }
-            .monster-body.sad { background: #f44336 !important; animation: shake 0.4s; }
+            /* Estados Reativos */
+            .monster-body.happy { background: radial-gradient(circle at 30% 30%, #b2f2bb, #4caf50) !important; }
+            .monster-body.sad { background: radial-gradient(circle at 30% 30%, #ffc9c9, #f44336) !important; animation: shake 0.4s; }
 
-            .food-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-            .food-card { width: clamp(85px, 16vh, 130px); height: clamp(85px, 16vh, 130px); background: white; border: 3px solid #f0f4f8; border-radius: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 0 #d0d8de; position: relative; }
-            .food-img { width: 90%; height: 90%; object-fit: contain; cursor: grab; transition: transform 0.2s; touch-action: none; }
+            .food-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+            .food-card { width: clamp(95px, 17vh, 145px); height: clamp(95px, 17vh, 145px); background: white; border: 3px solid #f0f4f8; border-radius: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 0 #d0d8de; position: relative; }
+            .food-img { width: 90%; height: 90%; object-fit: contain; cursor: pointer; transition: transform 0.2s; touch-action: none; }
             
-            .dragged-item { position: fixed !important; z-index: 1000; width: 70px !important; height: 70px !important; pointer-events: none; transform: translate(-50%, -50%) !important; }
-            .flying { position: fixed !important; z-index: 1000; width: 70px !important; height: 70px !important; pointer-events: none; transition: all 0.5s ease-in; }
+            .dragged-item { position: fixed !important; z-index: 1000; width: 75px !important; height: 75px !important; object-fit: contain; pointer-events: none; transform: translate(-50%, -50%) !important; }
+            .flying { position: fixed !important; z-index: 1000; width: 75px !important; height: 75px !important; pointer-events: none; transition: all 0.5s ease-in; }
             
-            @media (max-width: 650px) { .food-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; } .monster-container { width: 140px; height: 160px; } .food-card { width: 75px; height: 75px; } }
+            @media (max-width: 650px) { 
+                .food-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; } 
+                .monster-container { width: 150px; height: 180px; } 
+                .food-card { width: 85px; height: 85px; } 
+                .monster-cheeks { width: 80%; }
+            }
             @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
         </style>
 
@@ -194,9 +220,9 @@ function voarAteBoca(el) {
     el.classList.add('flying');
     
     setTimeout(() => {
-        el.style.left = (mRect.left + mRect.width / 2 - 35) + "px";
-        el.style.top = (mRect.top + mRect.height / 2 - 35) + "px";
-        el.style.transform = "scale(0.5)";
+        el.style.left = (mRect.left + mRect.width / 2) + "px";
+        el.style.top = (mRect.top + mRect.height / 2) + "px";
+        el.style.transform = "translate(-50%, -50%) scale(0.4)";
         processarAlimentacao(el);
     }, 10);
 }
@@ -211,7 +237,6 @@ function iniciarArrasto(e, el) {
         let cX = isT ? e.touches[0].clientX : e.clientX;
         let cY = isT ? e.touches[0].clientY : e.clientY;
         el.classList.add('dragged-item');
-        el.style.position = 'fixed';
         el.style.left = cX + "px";
         el.style.top = cY + "px";
         document.getElementById('monster-main').classList.add('open');
@@ -260,6 +285,7 @@ function processarAlimentacao(el, imediato = false) {
             monster.classList.add('sad');
             el.style.position = "static";
             el.classList.remove('flying', 'dragged-item');
+            el.style.transform = "scale(1)";
         }
         
         setTimeout(() => {
@@ -291,7 +317,7 @@ function finalizarJogo() {
     const perc = Math.round((acertos / (acertos + erros || 1)) * 100);
     let rank = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
     
-    document.getElementById('scr-game').classList.remove('active');
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const resScreen = document.getElementById('scr-result');
     resScreen.classList.add('active');
     document.getElementById('status-bar').style.display = 'none';
