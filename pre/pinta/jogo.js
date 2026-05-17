@@ -12,43 +12,21 @@ let ajudaDisponivel = true;
 
 const PALETA_MESTRE = ["#ff4d5e", "#2ecc71", "#2196f3", "#ff9800", "#9c27b0", "#e91e63", "#3f51b5", "#1abc9c", "#f1c40f"];
 
-// === BIBLIOTECA DE DESENHOS AMPLIADA ===
 const DESENHOS = {
     3: [
-        [1,1,1, 1,0,1, 1,1,1], // Moldura
-        [0,1,0, 1,1,1, 0,1,0], // Cruz
-        [1,0,1, 0,1,0, 1,0,1], // Xadrez
-        [1,1,0, 1,1,0, 1,1,0], // Colunas
-        [0,1,0, 1,2,1, 0,1,0], // Alvo 2 cores
-        [1,0,0, 1,1,0, 1,1,1], // Escada
-        [1,0,1, 1,0,1, 1,1,1], // Letra U
-        [1,1,1, 0,1,0, 0,1,0], // Letra T
-        [2,1,2, 1,2,1, 2,1,2], // Mosaico
-        [1,1,1, 1,2,1, 1,1,1]  // Ponto central
+        [1,1,1, 1,0,1, 1,1,1], [0,1,0, 1,1,1, 0,1,0], [1,0,1, 0,1,0, 1,0,1],
+        [1,1,0, 1,1,0, 1,1,0], [0,1,0, 1,2,1, 0,1,0], [1,0,0, 1,1,0, 1,1,1],
+        [1,0,1, 1,0,1, 1,1,1], [1,1,1, 0,1,0, 0,1,0], [2,1,2, 1,2,1, 2,1,2], [1,1,1, 1,2,1, 1,1,1]
     ],
     4: [
-        [1,1,1,1, 1,0,0,1, 1,0,0,1, 1,1,1,1], // Quadrado Oco
-        [1,0,0,0, 1,1,0,0, 1,1,1,0, 1,1,1,1], // Triângulo
-        [1,1,0,0, 1,1,0,0, 0,0,2,2, 0,0,2,2], // Quatro Cantos
-        [0,1,1,0, 1,1,1,1, 1,1,1,1, 0,1,1,0], // Losango
-        [1,1,1,1, 0,0,0,0, 2,2,2,2, 0,0,0,0], // Listras
-        [1,2,1,2, 2,1,2,1, 1,2,1,2, 2,1,2,1], // Tabuleiro
-        [1,0,0,1, 0,1,1,0, 0,1,1,0, 1,0,0,1], // Ampulheta
-        [1,1,1,1, 1,2,2,1, 1,2,2,1, 1,1,1,1], // Moldura dupla
-        [0,1,1,0, 0,1,1,0, 0,1,1,0, 0,1,1,0], // Barra Central
-        [1,0,0,2, 1,0,0,2, 1,0,0,2, 1,0,0,2]  // Duas Laterais
+        [1,1,1,1, 1,0,0,1, 1,0,0,1, 1,1,1,1], [1,0,0,0, 1,1,0,0, 1,1,1,0, 1,1,1,1],
+        [1,1,0,0, 1,1,0,0, 0,0,2,2, 0,0,2,2], [0,1,1,0, 1,1,1,1, 1,1,1,1, 0,1,1,0],
+        [1,1,1,1, 0,0,0,0, 2,2,2,2, 0,0,0,0], [1,2,1,2, 2,1,2,1, 1,2,1,2, 2,1,2,1],
+        [1,0,0,1, 0,1,1,0, 0,1,1,0, 1,0,0,1], [1,1,1,1, 1,2,2,1, 1,2,2,1, 1,1,1,1]
     ],
     5: [
-        [0,1,0,1,0, 1,1,1,1,1, 1,1,1,1,1, 0,1,1,1,0, 0,0,1,0,0], // Coração
-        [0,0,1,0,0, 0,1,1,1,0, 1,1,1,1,1, 0,1,1,1,0, 0,0,1,0,0], // Árvore / Flor
-        [1,1,1,1,1, 1,0,0,0,0, 1,1,1,1,1, 0,0,0,0,1, 1,1,1,1,1], // Serpente / S
-        [1,0,0,0,1, 0,1,0,1,0, 0,0,1,0,0, 0,1,0,1,0, 1,0,0,0,1], // Grande X
-        [1,1,1,1,1, 1,0,0,0,1, 1,0,1,0,1, 1,0,0,0,1, 1,1,1,1,1], // Labirinto
-        [0,0,1,0,0, 0,0,1,0,0, 1,1,1,1,1, 0,0,1,0,0, 0,0,1,0,0], // Sinal Mais
-        [1,1,0,1,1, 1,1,0,1,1, 0,0,0,0,0, 1,1,0,1,1, 1,1,0,1,1], // Janelas
-        [1,1,1,1,1, 1,2,2,2,1, 1,2,3,2,1, 1,2,2,2,1, 1,1,1,1,1], // Túnel 3 cores
-        [0,1,1,1,0, 1,0,0,0,1, 1,0,2,0,1, 1,0,0,0,1, 0,1,1,1,0], // Rosto
-        [1,0,1,0,1, 0,1,0,1,0, 1,0,1,0,1, 0,1,0,1,0, 1,0,1,0,1]  // Xadrez Total
+        [0,1,0,1,0, 1,1,1,1,1, 1,1,1,1,1, 0,1,1,1,0, 0,0,1,0,0], [0,0,1,0,0, 0,1,1,1,0, 1,1,1,1,1, 0,1,1,1,0, 0,0,1,0,0],
+        [1,1,1,1,1, 1,0,0,0,0, 1,1,1,1,1, 0,0,0,0,1, 1,1,1,1,1], [1,0,0,0,1, 0,1,0,1,0, 0,0,1,0,0, 0,1,0,1,0, 1,0,0,0,1]
     ]
 };
 
@@ -61,6 +39,7 @@ window.startLogic = function() {
     if (!categoriaAtual) categoriaAtual = "facil";
     tamanhoGrelha = JOGO_CATEGORIAS[categoriaAtual].tamanho;
     
+    // Configurar botão da Lâmpada
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:30px; width:30px; cursor:pointer; display:block;" onclick="usarAjuda()">`;
@@ -78,30 +57,52 @@ window.gerarIntroJogo = function() {
 window.selecionarCategoria = function(key) {
     categoriaAtual = key;
     tamanhoGrelha = JOGO_CATEGORIAS[key].tamanho;
-    if(document.getElementById('intro-instr')) document.getElementById('intro-instr').innerText = window.gerarIntroJogo();
+    const introInstr = document.getElementById('intro-instr');
+    if(introInstr) introInstr.innerText = JOGO_CATEGORIAS[key].descricao || window.gerarIntroJogo();
 };
 
+// ANIMAÇÃO DE TUTORIAL COLORIDA E MAIOR
 function renderTutorialAnimation() {
     const container = document.getElementById('intro-animation-container');
     if(!container) return;
     container.innerHTML = `
         <style>
-            .tut-box { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:10px; filter: grayscale(100%); opacity: 0.7; }
-            .tut-grid { display: grid; grid-template-columns: repeat(2, 1fr); width: 60px; height: 60px; gap: 2px; background: #ddd; }
+            .tut-box { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; gap:20px; }
+            .tut-grids-row { display: flex; gap: 30px; align-items: center; }
+            .tut-grid { display: grid; grid-template-columns: repeat(2, 1fr); width: 100px; height: 100px; gap: 4px; background: #ddd; border: 4px solid #ddd; border-radius: 10px; overflow: hidden; }
             .tut-cell { background: white; width: 100%; height: 100%; }
-            @keyframes tapP { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-5px,-8px) scale(1.1); } }
-            @keyframes paintTut { 0%, 40% { background: white; } 45%, 100% { background: #ff4d5e; } }
+            .tut-hand { position: absolute; font-size: 45px; z-index: 10; pointer-events: none; animation: tapMove 4s infinite ease-in-out; }
+            
+            @keyframes tapMove {
+                0%, 100% { transform: translate(20px, 40px); } /* Posição inicial na cor */
+                30% { transform: translate(-30px, -60px); } /* Move para a grelha */
+                40% { transform: translate(-30px, -60px) scale(0.8); } /* Clica */
+                50% { transform: translate(-30px, -60px) scale(1); }
+            }
+            @keyframes paintStep {
+                0%, 39% { background: white; }
+                40%, 100% { background: #ff4d5e; }
+            }
         </style>
         <div class="tut-box">
-            <div style="display:flex; gap:15px;">
-                <div class="tut-grid"><div style="background:#ff4d5e"></div><div></div><div></div><div></div></div>
+            <div class="tut-grids-row">
+                <!-- Modelo Colorido -->
                 <div class="tut-grid">
-                    <div class="tut-cell" style="animation: paintTut 4s infinite;"></div>
+                    <div style="background:#ff4d5e"></div><div style="background:white"></div>
+                    <div style="background:white"></div><div style="background:white"></div>
+                </div>
+                <div style="font-size: 24px; font-weight: 900; color: #ccc;">➔</div>
+                <!-- Alvo que será pintado -->
+                <div class="tut-grid">
+                    <div class="tut-cell" style="animation: paintStep 4s infinite;"></div>
                     <div class="tut-cell"></div><div class="tut-cell"></div><div class="tut-cell"></div>
                 </div>
             </div>
-            <div style="position:relative; width:40px; height:40px; border-radius:50%; background:#ff4d5e; border:2px solid #ccc;">
-                <div style="position:absolute; font-size:30px; bottom:-20px; right:-15px; animation: tapP 4s infinite;">☝️</div>
+            <!-- Paleta de Cores -->
+            <div style="position:relative; display:flex; gap:10px;">
+                <div style="width:45px; height:45px; border-radius:50%; background:#ff4d5e; border:3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"></div>
+                <div style="width:45px; height:45px; border-radius:50%; background:#2196f3; border:3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"></div>
+                <div class="tut-hand">☝️</div>
             </div>
         </div>
     `;
@@ -117,17 +118,14 @@ window.initGame = function() {
 
 function proximaRonda() {
     if (indicePergunta >= 10) { finalizarJogo(); return; }
-    
-    const listaPossibilidades = DESENHOS[tamanhoGrelha] || DESENHOS[3];
-    // Escolhe um desenho aleatório da lista correspondente ao tamanho
-    const desenhoBase = listaPossibilidades[Math.floor(Math.random() * listaPossibilidades.length)];
-    
+    const lista = DESENHOS[tamanhoGrelha] || DESENHOS[3];
+    const desenhoBase = lista[Math.floor(Math.random() * lista.length)];
     const numPartes = Math.max(...desenhoBase);
     let coresSorteadas = [...PALETA_MESTRE].sort(() => 0.5 - Math.random()).slice(0, numPartes);
     
-    coresAtivasNaRonda = coresSorteadas; 
     padraoCorreto = desenhoBase.map(v => v === 0 ? "#ffffff" : coresSorteadas[v-1]);
     grelhaUtilizador = new Array(tamanhoGrelha * tamanhoGrelha).fill("#ffffff");
+    coresAtivasNaRonda = coresSorteadas; 
     corSelecionada = coresAtivasNaRonda[0]; 
     mostrarPergunta();
 }
@@ -148,14 +146,8 @@ function mostrarPergunta() {
             .color-btn.active { transform: scale(1.15); border-color: #555; }
             .btn-action { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
             .btn-verify { background: #7ed321; color: white; font-weight: 900; font-size: 22px; box-shadow: 0 4px 0 #5ea31a; }
-            
             #flash-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: grid; grid-template-columns: repeat(${tamanhoGrelha}, 1fr); gap: 2px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 10; }
-            
-            @media (max-width: 600px) { 
-                .stage { flex-direction: column; gap: 10px; } 
-                .grid-box { height: 42%; } 
-                .color-btn, .btn-action { width: 38px; height: 38px; }
-            }
+            @media (max-width: 600px) { .stage { flex-direction: column; gap: 10px; } .grid-box { height: 42%; } .color-btn, .btn-action { width: 38px; height: 38px; } }
         </style>
         <div class="game-outer">
             <div class="stage">
@@ -181,10 +173,7 @@ window.usarAjuda = function() {
     const layer = document.getElementById('flash-layer');
     if (layer) {
         layer.style.opacity = "1";
-        setTimeout(() => { 
-            layer.style.opacity = "0"; 
-            setTimeout(() => ajudaDisponivel = true, 3000); 
-        }, 1200);
+        setTimeout(() => { layer.style.opacity = "0"; setTimeout(() => ajudaDisponivel = true, 3000); }, 1200);
     }
 };
 
@@ -226,7 +215,6 @@ function finalizarJogo() {
     somVitoria.play();
     const perc = (acertos / 10) * 100;
     const rel = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
-    
     document.getElementById('scr-game').classList.remove('active');
     const resScreen = document.getElementById('scr-result');
     resScreen.classList.add('active');
@@ -249,7 +237,6 @@ function finalizarJogo() {
                 .btn-outline { background: white; color: var(--primary-blue); border: 3px solid var(--primary-blue); }
                 .btn-exit { background: #e2e8f0; color: #64748b; }
             </style>
-            
             <div class="res-container">
                 <img src="${JOGO_CONFIG.caminhoImg}${rel.img}" class="res-trophy">
                 <h1 class="res-msg">${rel.titulo}</h1>
