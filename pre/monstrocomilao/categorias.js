@@ -1,38 +1,22 @@
 const JOGO_CATEGORIAS = {
-    nivel1: {
-        nome: "Nível 1",
-        descricao: "Alimenta o monstrinho apenas com frutas VERMELHAS!",
-        imgCapa: "frutas/maca.png", // Imagem de exemplo na tua pasta
-        targetProp: "vermelho",
-        itens: [
-            { id: 1, type: "vermelho", icon: "🍎" },
-            { id: 2, type: "vermelho", icon: "🍓" },
-            { id: 3, type: "amarelo", icon: "🍌" },
-            { id: 4, type: "verde", icon: "🍏" }
-        ]
+    saudavel: {
+        nome: "Comida Saudável",
+        descricao: "Alimenta o monstrinho apenas com alimentos SAUDÁVEIS!",
+        imgCapa: "comida/alface.png",
+        tipoAlvo: "bom",
+        // Alvos: Alface, Bróculos, Cenoura, Couve, Ervilhas, Queijo
+        alvos: ['alface.png', 'broculos.png', 'cenoura.png', 'couve.png', 'ervilhas.png', 'queijo.png'],
+        // Distrações: Doces
+        distracoes: ['bolo.png', 'chocolate.png', 'chupa.png', 'doce.png', 'goma.png', 'goma1.png', 'queque.png', 'rebucado.png', 'rebucado1.png']
     },
-    nivel2: {
-        nome: "Nível 2",
-        descricao: "O monstrinho quer comer apenas DOCES saborosos!",
-        imgCapa: "objetos/doce.png",
-        targetProp: "doce",
-        items: [
-            { id: 5, type: "doce", icon: "🍩" },
-            { id: 6, type: "saudavel", icon: "🥦" },
-            { id: 7, type: "doce", icon: "🍦" },
-            { id: 8, type: "saudavel", icon: "Carne" }
-        ]
-    },
-    nivel3: {
-        nome: "Nível 3",
-        descricao: "O monstrinho quer comer apenas ANIMAIS!",
-        imgCapa: "animais/leao.png",
-        targetProp: "animal",
-        items: [
-            { id: 9, type: "animal", icon: "🐸" },
-            { id: 10, type: "veiculo", icon: "🚗" },
-            { id: 11, type: "animal", icon: "🐱" },
-            { id: 12, type: "veiculo", icon: "✈️" }
-        ]
+    doces: {
+        nome: "Doces",
+        descricao: "O monstrinho hoje só quer comer DOCES e GULOSEIMAS!",
+        imgCapa: "comida/doce.png",
+        tipoAlvo: "doce",
+        // Alvos: Bolo, Chocolate, Chupa, Doce, Gomas, Queque, Rebuçados
+        alvos: ['bolo.png', 'chocolate.png', 'chupa.png', 'doce.png', 'goma.png', 'goma1.png', 'queque.png', 'rebucado.png', 'rebucado1.png'],
+        // Distrações: Saudáveis
+        distracoes: ['alface.png', 'broculos.png', 'cenoura.png', 'couve.png', 'ervilhas.png', 'queijo.png']
     }
 };
