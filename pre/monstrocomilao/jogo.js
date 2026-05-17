@@ -1,4 +1,4 @@
-   let acertos = 0;
+let acertos = 0;
 let erros = 0;
 let ajudasUtilizadas = 0;
 let rondaAtual = 1;
@@ -52,17 +52,17 @@ function renderTutorialAnimation() {
 
     container.innerHTML = `
         <style>
-            .tut-stage { position: relative; width: 340px; height: 200px; background: white; border: 3px dashed var(--primary-blue); border-radius: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-            .tut-monster { width: 100px; height: 100px; background: #9c27b0; border-radius: 50% 50% 40% 40%; position: relative; box-shadow: 0 8px 0 #4a148c; margin-left: -100px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-            .tut-eyes { display: flex; gap: 15px; margin-bottom: 5px; }
-            .tut-eye { width: 15px; height: 15px; background: white; border-radius: 50%; position: relative; }
-            .tut-pupil { width: 7px; height: 7px; background: black; border-radius: 50%; position: absolute; top: 3px; left: 3px; }
-            .tut-mouth { width: 40px; height: 15px; background: #210329; border-radius: 5px 5px 20px 20px; border: 2.5px solid #ffeb3b; }
-            .tut-food { position: absolute; width: 45px; z-index: 15; left: 220px; top: 65px; }
-            .tut-hand { position: absolute; font-size: 45px; z-index: 20; left: 240px; top: 100px; }
-            @keyframes handS { 0% { left: 240px; top: 105px; } 15% { left: 240px; top: 85px; transform: scale(0.9); } 45%, 65% { left: 50px; top: 90px; transform: scale(0.9); } 75% { left: 240px; top: 105px; transform: scale(1); } 100% { left: 240px; top: 105px; } }
-            @keyframes foodS { 0%, 15% { left: 220px; top: 65px; opacity: 1; transform: scale(1); } 45% { left: 30px; top: 75px; opacity: 1; transform: scale(0.5); } 50%, 100% { left: 30px; top: 75px; opacity: 0; } }
-            @keyframes mouthS { 0%, 40% { height: 15px; } 45%, 65% { height: 35px; } 70%, 100% { height: 15px; } }
+            .tut-stage { position: relative; width: 320px; height: 180px; background: white; border: 3px dashed var(--primary-blue); border-radius: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+            .tut-monster { width: 90px; height: 90px; background: #9c27b0; border-radius: 50% 50% 40% 40%; position: relative; box-shadow: 0 8px 0 #4a148c; margin-left: -80px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+            .tut-eyes { display: flex; gap: 12px; margin-bottom: 5px; }
+            .tut-eye { width: 12px; height: 12px; background: white; border-radius: 50%; position: relative; }
+            .tut-pupil { width: 6px; height: 6px; background: black; border-radius: 50%; position: absolute; top: 2px; left: 2px; }
+            .tut-mouth { width: 35px; height: 12px; background: #210329; border-radius: 5px 5px 15px 15px; border: 2px solid #ffeb3b; }
+            .tut-food { position: absolute; width: 45px; z-index: 15; left: 200px; top: 60px; }
+            .tut-hand { position: absolute; font-size: 40px; z-index: 20; left: 220px; top: 90px; }
+            @keyframes handS { 0% { left: 220px; top: 105px; } 15% { left: 220px; top: 85px; transform: scale(0.9); } 45%, 65% { left: 50px; top: 90px; transform: scale(0.9); } 75% { left: 220px; top: 105px; transform: scale(1); } 100% { left: 220px; top: 105px; } }
+            @keyframes foodS { 0%, 15% { left: 220px; top: 60px; opacity: 1; transform: scale(1); } 45% { left: 30px; top: 70px; opacity: 1; transform: scale(0.5); } 50%, 100% { left: 30px; top: 70px; opacity: 0; } }
+            @keyframes mouthS { 0%, 40% { height: 12px; } 45%, 65% { height: 30px; } 70%, 100% { height: 12px; } }
             .tut-hand { animation: handS 5s infinite ease-in-out; }
             .tut-food { animation: foodS 5s infinite ease-in-out; }
             .tut-mouth { animation: mouthS 5s infinite ease-in-out; }
@@ -87,6 +87,8 @@ window.initGame = function() {
 
 function proximaRonda() {
     if (rondaAtual > 10) { finalizarJogo(); return; }
+    document.getElementById('hits-val').innerText = acertos;
+    document.getElementById('miss-val').innerText = erros;
     document.getElementById('round-val').innerText = `${rondaAtual} / 10`;
     renderizarEcraAlimentacao();
     if(rondaAtual === 1) setTimeout(falarInstrucao, 500);
@@ -111,43 +113,40 @@ function renderizarEcraAlimentacao() {
         <style>
             .monster-wrap { width: 98%; height: 98%; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px; box-sizing: border-box; }
             .instr-box { background: white; padding: 10px 25px; border-radius: 50px; font-weight: 900; color: #5d7082; border: 3px solid var(--primary-blue); display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-            .btn-som { background: #ff9800; border: none; width: 48px; height: 48px; border-radius: 50% !important; color: white; cursor: pointer; box-shadow: 0 4px 0 #e65100; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+            .btn-som { background: #ff9800; border: none; width: 45px; height: 45px; border-radius: 50% !important; color: white; cursor: pointer; box-shadow: 0 4px 0 #e65100; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
             
-            .game-stage { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }
+            .game-stage { flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; gap: 30px; flex-wrap: wrap; }
             
-            .monster { width: clamp(180px, 32vh, 280px); height: clamp(180px, 32vh, 280px); background: #9c27b0; border-radius: 50% 50% 40% 40%; position: relative; box-shadow: 0 14px 0 #4a148c, inset 0 -10px 20px rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.3s; pointer-events: none; }
+            .monster { width: clamp(170px, 30vh, 250px); height: clamp(170px, 30vh, 250px); background: #9c27b0; border-radius: 50% 50% 40% 40%; position: relative; box-shadow: 0 12px 0 #4a148c, inset 0 -10px 20px rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.3s; pointer-events: none; }
             .eye-row { display: flex; gap: 25px; margin-bottom: 5px; }
             .eye { width: 35px; height: 35px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; }
             .pupil { width: 16px; height: 16px; background: black; border-radius: 50%; }
             .mouth { width: 45%; height: 20%; background: #210329; border: 5px solid #ffeb3b; border-radius: 10px 10px 60px 60px; transition: 0.2s; margin-top: 15px; box-shadow: inset 0 5px 10px rgba(0,0,0,0.5); }
             
             .monster.open .mouth { height: 45%; }
-            .monster.happy { background: #4caf50; box-shadow: 0 14px 0 #1b5e20; }
-            .monster.sad { background: #f44336; box-shadow: 0 14px 0 #b71c1c; }
+            .monster.happy { background: #4caf50; box-shadow: 0 12px 0 #1b5e20; }
+            .monster.sad { background: #f44336; box-shadow: 0 12px 0 #b71c1c; }
 
-            .food-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+            /* Grelha de 6 itens: 3 colunas padrão */
+            .food-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
             .food-card { 
-                width: clamp(100px, 16vh, 140px); height: clamp(100px, 16vh, 140px); 
-                background: white; border: 3px solid #f0f4f8; border-radius: 28px; 
+                width: clamp(90px, 15vh, 140px); height: clamp(90px, 15vh, 140px); 
+                background: white; border: 3px solid #f0f4f8; border-radius: 25px; 
                 display: flex; align-items: center; justify-content: center; 
                 box-shadow: 0 6px 0 #d0d8de; position: relative;
             }
             .food-img { width: 95%; height: 95%; object-fit: contain; cursor: grab; transition: transform 0.2s; touch-action: none; user-select: none; }
             
-            /* CORREÇÃO AQUI: Estilo para o item quando está a ser arrastado */
-            .dragged-item { 
-                position: fixed !important; 
-                z-index: 1000; 
-                width: 80px !important; /* Tamanho fixo e pequeno para o arrasto */
-                height: 80px !important; 
-                object-fit: contain;
-                pointer-events: none; 
-                transform: translate(-50%, -50%) !important; /* Centra o objeto no toque/rato */
-            }
-
-            .flying { position: fixed !important; z-index: 999; pointer-events: none; transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1); transform: scale(0.2) rotate(360deg); opacity: 0; }
+            .dragged-item { position: fixed !important; z-index: 1000; width: 80px !important; height: 80px !important; object-fit: contain; pointer-events: none; transform: translate(-50%, -50%) !important; }
+            .flying { position: fixed !important; z-index: 999; pointer-events: none; transition: all 0.6s ease-in; transform: scale(0.2) rotate(360deg); opacity: 0; }
             
-            @media (max-width: 650px) { .food-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } .monster { width: 160px; height: 160px; } .food-card { width: 95px; height: 95px; } }
+            /* MOBILE VERTICAL: 2 linhas de 3 colunas */
+            @media (max-width: 600px) { 
+                .food-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; } 
+                .monster { width: 160px; height: 160px; } 
+                .food-card { width: 85px; height: 85px; border-radius: 18px; }
+                .instr-box { font-size: 0.85rem; width: 95%; }
+            }
         </style>
 
         <div class="monster-wrap">
@@ -179,20 +178,14 @@ function renderizarEcraAlimentacao() {
 
 function cliqueItem(el) {
     if (!jogoAtivo || el.classList.contains('dragged-item')) return;
-    voarAteBoca(el);
-}
-
-function voarAteBoca(el) {
     const monster = document.getElementById('monster-main');
     const rect = el.getBoundingClientRect();
     const mRect = monster.getBoundingClientRect();
-
     el.style.position = 'fixed';
-    el.style.width = '80px'; // Fica pequeno ao voar
+    el.style.width = '80px';
     el.style.left = rect.left + "px";
     el.style.top = rect.top + "px";
     el.classList.add('flying');
-    
     setTimeout(() => {
         el.style.left = (mRect.left + mRect.width / 2) + "px";
         el.style.top = (mRect.top + mRect.height / 2) + "px";
@@ -203,28 +196,20 @@ function voarAteBoca(el) {
 function iniciarArrasto(e, el) {
     if (!jogoAtivo) return;
     e.preventDefault();
-    
     let isT = e.type === 'touchstart';
-    
     function mover(e) {
         let cX = isT ? e.touches[0].clientX : e.clientX;
         let cY = isT ? e.touches[0].clientY : e.clientY;
-        
         el.classList.add('dragged-item');
         el.style.left = cX + "px";
         el.style.top = cY + "px";
         document.getElementById('monster-main').classList.add('open');
     }
-
     function soltar() {
         document.removeEventListener(isT ? 'touchmove' : 'mousemove', mover);
         document.removeEventListener(isT ? 'touchend' : 'mouseup', soltar);
-        
-        if (el.classList.contains('dragged-item')) {
-            verificarColisao(el);
-        }
+        if (el.classList.contains('dragged-item')) verificarColisao(el);
     }
-
     document.addEventListener(isT ? 'touchmove' : 'mousemove', mover, { passive: false });
     document.addEventListener(isT ? 'touchend' : 'mouseup', soltar);
 }
@@ -233,8 +218,6 @@ function verificarColisao(el) {
     const m = document.getElementById('monster-main');
     const mR = m.getBoundingClientRect();
     const eR = el.getBoundingClientRect();
-    
-    // Verifica se o centro do alimento está dentro da área do monstro
     if (eR.left < mR.right && eR.right > mR.left && eR.top < mR.bottom && eR.bottom > mR.top) {
         processarAlimentacao(el, true);
     } else {
@@ -249,7 +232,6 @@ function processarAlimentacao(el, imediato = false) {
     const monster = document.getElementById('monster-main');
     monster.classList.add('open');
     jogoAtivo = false;
-
     setTimeout(() => {
         monster.classList.remove('open');
         if (status === 'correto') {
@@ -263,7 +245,6 @@ function processarAlimentacao(el, imediato = false) {
             el.classList.remove('dragged-item', 'flying');
             el.style.position = "static";
         }
-        
         setTimeout(() => {
             monster.classList.remove('happy', 'sad');
             jogoAtivo = true;
@@ -292,7 +273,6 @@ function finalizarJogo() {
     jogoAtivo = false; somVitoria.play();
     const perc = Math.round((acertos / (acertos + erros || 1)) * 100);
     let rank = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
-    
     document.getElementById('scr-game').classList.remove('active');
     const resScreen = document.getElementById('scr-result');
     resScreen.classList.add('active');
