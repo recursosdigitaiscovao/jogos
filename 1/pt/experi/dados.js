@@ -2,7 +2,7 @@
 const CONFIG_MESTRE = {
     ano: "ano1",        
     area: "portugues",  
-    nomeJogo: "Fábrica das Palavras"
+    nomeJogo: "As metades"
 };
 
 // === BIBLIOTECA DE TEMAS (CORES PADRÃO POR ÁREA) ===
