@@ -9,7 +9,7 @@ const JOGO_CATEGORIAS = {
     nivel2: {
         nome: "Frutas",
         descricao: "Consegues completar estas frutas? Escolhe a metade que falta!",
-        imgCapa: "comida/maca.png",
+        imgCapa: "frutas/maca.png",
         pasta: "comida/",
         itens: ['maca.png', 'banana.png', 'laranja.png', 'morango.png', 'pera.png', 'kiwi.png', 'figo.png', 'alface.png', 'broculos.png', 'cenoura.png']
     }
