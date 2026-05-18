@@ -17,7 +17,7 @@ window.startLogic = function() {
     const introInstr = document.getElementById('intro-instr');
     if(introInstr) introInstr.innerText = config.descricao;
 
-    // Configurar Lâmpada de Ajuda na barra de status
+    // Configurar Lâmpada de Ajuda
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:30px; width:30px; cursor:pointer;" onclick="usarAjuda()">`;
@@ -41,10 +41,10 @@ function renderTutorialAnimation() {
 
     container.innerHTML = `
         <style>
-            .tut-stage { position: relative; width: 320px; height: 180px; background: white; border: 3px dashed var(--primary-blue); border-radius: 25px; display: flex; align-items: center; justify-content: center; gap: 5px; overflow: hidden; }
-            .crop-box { width: 60px; height: 90px; overflow: hidden; border: 2px solid #ddd; background: #fff; position: relative; border-radius: 10px; }
+            .tut-stage { position: relative; width: 320px; height: 160px; background: white; border: 3px dashed var(--primary-blue); border-radius: 25px; display: flex; align-items: center; justify-content: center; gap: 4px; overflow: hidden; }
+            .crop-box { width: 60px; height: 90px; overflow: hidden; border: 2px solid #ddd; background: #fff; position: relative; border-radius: 8px; }
             .crop-box img { position: absolute; height: 100%; width: 120px; object-fit: contain; }
-            .side-l img { left: 0; }
+            .side-l img { left: 0; filter: brightness(0); opacity: 0.8; } /* Sombra no tutorial */
             .side-r img { right: 0; }
             .tut-hand { position: absolute; font-size: 35px; z-index: 20; animation: handM 4s infinite ease-in-out; }
             .moving-p { animation: partM 4s infinite ease-in-out; }
@@ -86,30 +86,30 @@ function renderizarEcraJogo() {
 
     container.innerHTML = `
         <style>
-            .game-path { width: 98%; height: 98%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 10px; box-sizing: border-box; }
+            .game-path { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; box-sizing: border-box; }
             
-            /* Área do Alvo (Metade Esquerda já lá está) */
+            /* Área do Alvo */
             .target-zone { display: flex; align-items: center; justify-content: center; gap: 4px; height: 45%; }
-            .half-left { 
-                width: clamp(100px, 22vh, 160px); height: clamp(130px, 28vh, 200px); 
+            .box-left-shadow { 
+                width: clamp(100px, 20vh, 150px); height: clamp(120px, 25vh, 180px); 
                 background: white; border: 4px solid var(--primary-blue); border-radius: 20px 0 0 20px; 
-                overflow: hidden; position: relative; box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+                overflow: hidden; position: relative; 
             }
-            .half-right-empty { 
-                width: clamp(100px, 22vh, 160px); height: clamp(130px, 28vh, 200px); 
-                border: 4px dashed #ccc; border-radius: 0 20px 20px 0; background: rgba(255,255,255,0.4); 
-                display: flex; align-items: center; justify-content: center; font-size: 50px; color: #ddd;
+            .box-right-empty { 
+                width: clamp(100px, 20vh, 150px); height: clamp(120px, 25vh, 180px); 
+                border: 4px dashed #ccc; border-radius: 0 20px 20px 0; background: rgba(0,0,0,0.02); 
+                display: flex; align-items: center; justify-content: center; font-size: 40px; color: #ddd;
             }
-            /* Regra de Ouro: Imagem a 200% da largura da caixa */
-            .half-left img, .half-right-filled img { position: absolute; height: 100%; width: 200%; object-fit: contain; }
-            .half-left img { left: 0; } /* Mostra o lado esquerdo */
-            .half-right-filled img { right: 0; } /* Mostra o lado direito */
+            
+            /* A imagem à esquerda começa como SOMBRA (brightness 0) */
+            #img-left { position: absolute; height: 100%; width: 200%; object-fit: contain; left: 0; filter: brightness(0); opacity: 0.8; transition: filter 0.5s; }
+            .box-full-right img { position: absolute; height: 100%; width: 200%; right: 0; object-fit: contain; }
 
-            /* Área das Opções (Apenas metades direitas) */
-            .options-row { display: flex; gap: 15px; justify-content: center; width: 100%; flex-wrap: wrap; }
+            /* Área das Opções (Metades Direitas em cores) */
+            .options-row { display: flex; gap: 15px; justify-content: center; width: 100%; }
             .option-card { 
-                width: clamp(80px, 18vh, 110px); height: clamp(100px, 20vh, 140px); 
-                background: white; border: 3px solid #eee; border-radius: 15px; 
+                width: clamp(70px, 15vh, 100px); height: clamp(90px, 18vh, 130px); 
+                background: white; border: 3px solid #eee; border-radius: 12px; 
                 overflow: hidden; cursor: pointer; box-shadow: 0 5px 0 #ddd; position: relative; 
             }
             .option-card img { position: absolute; height: 100%; width: 200%; right: 0; object-fit: contain; }
@@ -120,16 +120,16 @@ function renderizarEcraJogo() {
 
             @media (max-width: 600px) {
                 .target-zone { transform: scale(0.9); }
-                .option-card { width: 22%; height: 110px; }
+                .option-card { width: 22%; height: 100px; }
             }
         </style>
 
         <div class="game-path">
             <div class="target-zone">
-                <div class="half-left">
-                    <img src="${JOGO_CONFIG.caminhoImg}${config.pasta}${itemCorreto}">
+                <div class="box-left-shadow">
+                    <img id="img-left" src="${JOGO_CONFIG.caminhoImg}${config.pasta}${itemCorreto}">
                 </div>
-                <div class="half-right-empty" id="target-slot">?</div>
+                <div class="box-right-empty" id="target-slot">?</div>
             </div>
 
             <div class="options-row">
@@ -148,24 +148,30 @@ function validarEscolha(el, imgNome) {
     const config = JOGO_CATEGORIAS[categoriaAtiva];
     jogoAtivo = false;
     
-    document.querySelectorAll('.option-card').forEach(c => c.style.pointerEvents = 'none');
+    const allCards = document.querySelectorAll('.option-card');
+    allCards.forEach(c => c.style.pointerEvents = 'none');
 
     if (imgNome === itemCorreto) {
         acertos++; somAcerto.play();
         el.classList.add('correct-anim');
         
-        // Completa a imagem no modelo
+        // 1. Tira a sombra da metade esquerda
+        const imgLeft = document.getElementById('img-left');
+        imgLeft.style.filter = "none";
+        imgLeft.style.opacity = "1";
+
+        // 2. Preenche a metade direita com cor
         const slot = document.getElementById('target-slot');
-        slot.style.border = "4px solid #7ed321";
-        slot.style.background = "white";
-        slot.innerHTML = `<div class="half-right-filled" style="width:100%; height:100%; position:relative; overflow:hidden;">
+        slot.innerHTML = `<div class="box-full-right" style="width:100%; height:100%; position:relative; overflow:hidden;">
                             <img src="${JOGO_CONFIG.caminhoImg}${config.pasta}${imgNome}">
                           </div>`;
+        slot.style.border = "4px solid #7ed321";
+        slot.style.background = "white";
     } else {
         erros++; somErro.play();
         el.classList.add('wrong-anim');
-        // Mostra a correta
-        document.querySelectorAll('.option-card').forEach(c => {
+        // Mostra qual era a certa nas opções
+        allCards.forEach(c => {
             if(c.getAttribute('data-img') === itemCorreto) c.classList.add('correct-anim');
         });
     }
@@ -174,7 +180,7 @@ function validarEscolha(el, imgNome) {
         rondaAtual++;
         jogoAtivo = true;
         proximaRonda();
-    }, 1800);
+    }, 2000);
 }
 
 window.usarAjuda = function() {
@@ -184,7 +190,7 @@ window.usarAjuda = function() {
     cards.forEach(c => {
         if (c.getAttribute('data-img') === itemCorreto) {
             c.style.borderColor = "#ff9800";
-            c.style.boxShadow = "0 0 20px #ff9800";
+            c.style.boxShadow = "0 0 15px #ff9800";
             setTimeout(() => {
                 c.style.boxShadow = "0 5px 0 #ddd";
                 ajudaDisponivel = true;
@@ -206,12 +212,12 @@ function finalizarJogo() {
     resScreen.innerHTML = `
         <div class="screen-box" style="justify-content: center; padding: 20px; display: flex !important;">
             <div style="display:flex; flex-direction:column; align-items:center; width:100%; max-width:450px; margin:auto;">
-                <img src="${JOGO_CONFIG.caminhoImg}${rank.img}" style="width:130px; margin-bottom:10px;">
-                <h1 style="color:var(--primary-blue); font-weight:900; font-size:2.2rem; margin:15px 0; text-align:center;">${rank.titulo}</h1>
+                <img src="${JOGO_CONFIG.caminhoImg}${rank.img}" style="width:130px; margin-bottom:10px; display:block; margin-left:auto; margin-right:auto;">
+                <h1 style="color:var(--primary-blue); font-weight:900; font-size:2.2rem; margin:15px 0; text-align:center; line-height:1;">${rank.titulo}</h1>
                 <div style="display:flex; gap:15px; margin-bottom:30px; width:100%; justify-content:center;">
-                    <div style="background:white; border-radius:25px; width:105px; height:105px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 25px rgba(0,0,0,0.05);"><span style="font-size:1.8rem; font-weight:900; color:#7ed321;">${acertos}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Certos</span></div>
-                    <div style="background:white; border-radius:25px; width:100px; height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05);"><span style="font-size:1.8rem; font-weight:900; color:#ff5e5e;">${erros}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Errados</span></div>
-                    <div style="background:white; border-radius:25px; width:100px; height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05);"><span style="font-size:1.8rem; font-weight:900; color:#ff9f43;">${ajudasUtilizadas}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Ajudas</span></div>
+                    <div style="background:white; border-radius:25px; width:105px; height:105px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border:1px solid #f0f0f0;"><span style="font-size:1.8rem; font-weight:900; color:#7ed321;">${acertos}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Certos</span></div>
+                    <div style="background:white; border-radius:25px; width:100px; height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border:1px solid #f0f0f0;"><span style="font-size:1.8rem; font-weight:900; color:#ff5e5e;">${erros}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Errados</span></div>
+                    <div style="background:white; border-radius:20px; width:100px; height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border:1px solid #f0f0f0;"><span style="font-size:1.8rem; font-weight:900; color:#ff9f43;">${ajudasUtilizadas}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Ajudas</span></div>
                 </div>
                 <button class="btn-redo-final" style="height:60px; border-radius:30px; font-size:1.2rem; width:100%; max-width:320px; background:var(--primary-blue); color:white; border:none; box-shadow:0 6px 0 var(--primary-dark); font-weight:900; cursor:pointer;" onclick="location.reload()"><i class="fas fa-redo"></i> JOGAR DE NOVO</button>
                 <button class="btn-other-final" style="height:60px; border-radius:30px; font-size:1.1rem; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); margin: 12px 0; width:100%; max-width:320px; font-weight:900; cursor:pointer;" onclick="openRDMenu()"><i class="fas fa-chart-line"></i> OUTRO NÍVEL</button>
