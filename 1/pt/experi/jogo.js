@@ -40,19 +40,22 @@ function renderTutorialAnimation() {
 
     container.innerHTML = `
         <style>
-            .tut-stage { position: relative; width: 320px; height: 160px; background: white; border: 3px dashed var(--primary-blue); border-radius: 25px; display: flex; align-items: center; justify-content: center; gap: 4px; overflow: hidden; }
-            .crop-box { width: 60px; height: 90px; overflow: hidden; border: 2px solid #ddd; background: #fff; position: relative; border-radius: 8px; }
-            .crop-box img { position: absolute; height: 100%; width: 120px; object-fit: contain; }
-            .side-l img { left: 0; filter: brightness(0); opacity: 0.7; }
-            .side-r img { right: 0; }
+            .tut-stage { position: relative; width: 320px; height: 160px; background: white; border: 3px dashed var(--primary-blue); border-radius: 25px; display: flex; align-items: center; justify-content: center; gap: 5px; overflow: hidden; }
+            .crop-box { 
+                width: 60px; height: 90px; border: 2px solid #ddd; background-color: #fff; border-radius: 8px;
+                background-size: 120px 90px; /* Dobro da largura */
+                background-repeat: no-repeat;
+            }
+            .side-l { background-position: left center; filter: brightness(0); opacity: 0.6; }
+            .side-r { background-position: right center; }
             .tut-hand { position: absolute; font-size: 35px; z-index: 20; animation: handM 4s infinite ease-in-out; }
             .moving-p { animation: partM 4s infinite ease-in-out; }
             @keyframes handM { 0%, 20% { left: 200px; top: 100px; } 50%, 70% { left: 165px; top: 80px; } 100% { left: 200px; top: 100px; } }
             @keyframes partM { 0%, 20% { transform: translateX(60px); opacity: 0.5; } 50%, 70% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(60px); opacity: 0.5; } }
         </style>
         <div class="tut-stage">
-            <div class="crop-box side-l"><img src="${imgEx}"></div>
-            <div class="crop-box side-r moving-p"><img src="${imgEx}"></div>
+            <div class="crop-box side-l" style="background-image: url('${imgEx}')"></div>
+            <div class="crop-box side-r moving-p" style="background-image: url('${imgEx}')"></div>
             <div class="tut-hand">☝️</div>
         </div>
     `;
@@ -77,51 +80,66 @@ function renderizarEcraJogo() {
     const container = document.getElementById('game-main-content');
     const config = JOGO_CATEGORIAS[categoriaAtiva];
     
-    // Sorteia o correto e agora 4 distrações (Total 5 opções)
     const embaralhado = [...config.itens].sort(() => 0.5 - Math.random());
     itemCorreto = embaralhado[0];
     const distracoes = embaralhado.slice(1, 5); 
     const opcoes = [itemCorreto, ...distracoes].sort(() => 0.5 - Math.random());
+
+    const imgPath = JOGO_CONFIG.caminhoImg + config.pasta;
 
     container.innerHTML = `
         <style>
             .game-path { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; box-sizing: border-box; }
             
             .target-zone { display: flex; align-items: center; justify-content: center; gap: 4px; height: 40%; width: 100%; }
-            .box-l { width: clamp(90px, 20vh, 140px); height: clamp(110px, 25vh, 170px); background: white; border: 4px solid var(--primary-blue); border-radius: 20px 0 0 20px; overflow: hidden; position: relative; }
-            .box-r-empty { width: clamp(90px, 20vh, 140px); height: clamp(110px, 25vh, 170px); border: 4px dashed #ccc; border-radius: 0 20px 20px 0; background: rgba(0,0,0,0.02); display: flex; align-items: center; justify-content: center; font-size: 40px; color: #ddd; }
             
-            #img-l { position: absolute; height: 100%; width: 200%; object-fit: contain; left: 0; filter: brightness(0); opacity: 0.8; transition: filter 0.5s; }
-            .box-full-r img { position: absolute; height: 100%; width: 200%; right: 0; object-fit: contain; }
+            /* Metade Esquerda com Sombra */
+            .box-l { 
+                width: clamp(90px, 20vh, 140px); height: clamp(110px, 25vh, 170px); 
+                background-color: white; border: 4px solid var(--primary-blue); border-radius: 20px 0 0 20px; 
+                background-size: 200% 100%; background-position: left center; background-repeat: no-repeat;
+                filter: brightness(0); opacity: 0.8; transition: all 0.5s;
+            }
+            
+            /* Espaço para a Metade Direita */
+            .box-r-slot { 
+                width: clamp(90px, 20vh, 140px); height: clamp(110px, 25vh, 170px); 
+                border: 4px dashed #ccc; border-radius: 0 20px 20px 0; background: rgba(0,0,0,0.02); 
+                display: flex; align-items: center; justify-content: center; font-size: 40px; color: #ddd;
+                background-size: 200% 100%; background-position: right center; background-repeat: no-repeat;
+            }
 
             .options-area { display: flex; gap: 10px; justify-content: center; width: 100%; flex-wrap: wrap; }
+            
+            /* Cartões das Opções usando Background */
             .option-card { 
-                width: clamp(65px, 14vh, 90px); height: clamp(85px, 17vh, 120px); 
+                width: clamp(65px, 14vh, 95px); height: clamp(85px, 17vh, 125px); 
                 background: white; border: 3px solid #eee; border-radius: 12px; 
-                overflow: hidden; cursor: pointer; box-shadow: 0 4px 0 #ddd; position: relative; 
+                cursor: pointer; box-shadow: 0 4px 0 #ddd; transition: 0.2s;
+                background-size: 200% 100%; background-position: right center; background-repeat: no-repeat;
             }
-            .option-card img { position: absolute; height: 100%; width: 200%; right: 0; object-fit: contain; }
             .option-card:active { transform: translateY(2px); box-shadow: none; }
 
-            .correct-anim { border-color: #7ed321 !important; background: #e8f9e8 !important; }
-            .wrong-anim { border-color: #ff5e5e !important; background: #fff1f1 !important; }
+            .correct-anim { border-color: #7ed321 !important; background-color: #e8f9e8 !important; }
+            .wrong-anim { border-color: #ff5e5e !important; background-color: #fff1f1 !important; }
 
             @media (max-width: 600px) {
-                .target-zone { transform: scale(0.9); }
-                .option-card { width: 18%; height: 85px; }
+                .target-zone { transform: scale(0.95); }
+                .option-card { width: 18%; height: 90px; }
             }
         </style>
 
         <div class="game-path">
             <div class="target-zone">
-                <div class="box-l"><img id="img-l" src="${JOGO_CONFIG.caminhoImg}${config.pasta}${itemCorreto}"></div>
-                <div class="box-r-empty" id="target-slot">?</div>
+                <div class="box-l" id="main-left" style="background-image: url('${imgPath}${itemCorreto}')"></div>
+                <div class="box-r-slot" id="main-right">?</div>
             </div>
 
             <div class="options-area">
                 ${opcoes.map(img => `
-                    <div class="option-card" data-img="${img}" onclick="validarEscolha(this, '${img}')">
-                        <img src="${JOGO_CONFIG.caminhoImg}${config.pasta}${img}">
+                    <div class="option-card" data-img="${img}" 
+                         style="background-image: url('${imgPath}${img}')"
+                         onclick="validarEscolha(this, '${img}')">
                     </div>
                 `).join('')}
             </div>
@@ -132,18 +150,25 @@ function renderizarEcraJogo() {
 function validarEscolha(el, imgNome) {
     if (!jogoAtivo) return;
     const config = JOGO_CATEGORIAS[categoriaAtiva];
+    const imgPath = JOGO_CONFIG.caminhoImg + config.pasta;
     jogoAtivo = false;
     document.querySelectorAll('.option-card').forEach(c => c.style.pointerEvents = 'none');
 
     if (imgNome === itemCorreto) {
         acertos++; somAcerto.play();
         el.classList.add('correct-anim');
-        document.getElementById('img-l').style.filter = "none";
-        document.getElementById('img-l').style.opacity = "1";
+        
+        // Revela a cor à esquerda
+        const leftSide = document.getElementById('main-left');
+        leftSide.style.filter = "none";
+        leftSide.style.opacity = "1";
 
-        const slot = document.getElementById('target-slot');
-        slot.innerHTML = `<div class="box-full-r" style="width:100%; height:100%; position:relative; overflow:hidden;"><img src="${JOGO_CONFIG.caminhoImg}${config.pasta}${imgNome}"></div>`;
-        slot.style.border = "4px solid #7ed321"; slot.style.background = "white";
+        // Preenche a direita
+        const rightSide = document.getElementById('main-right');
+        rightSide.style.backgroundImage = `url('${imgPath}${imgNome}')`;
+        rightSide.style.border = "4px solid #7ed321";
+        rightSide.style.backgroundWeight = "white";
+        rightSide.innerText = "";
     } else {
         erros++; somErro.play();
         el.classList.add('wrong-anim');
@@ -179,37 +204,29 @@ function finalizarJogo() {
 
     resScreen.innerHTML = `
         <div class="screen-box" style="justify-content: center; padding: 15px; display: flex !important;">
-            <style>
-                .res-c { display:flex; flex-direction:column; align-items:center; width:100%; max-width:420px; margin:auto; }
-                .res-t { height: clamp(80px, 15vh, 110px); margin-bottom: 5px; }
-                .res-m { color:var(--primary-blue); font-size: 1.8rem; font-weight:900; margin: 10px 0 20px; text-align:center; line-height:1; }
-                .res-s { display:flex; gap:10px; margin-bottom:25px; width:100%; justify-content:center; }
-                .res-b { background:white; border-radius:20px; width:95px; height:95px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 8px 20px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; }
-                .res-n { font-size: 1.5rem; font-weight: 900; }
-                .res-l { font-size: 0.6rem; font-weight: 900; color:#88a; text-transform:uppercase; letter-spacing: 0.5px; }
-                .res-gs { display:flex; flex-direction:column; gap:10px; width:100%; max-width:300px; }
-                .btn-f { height:50px; border-radius:30px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:900; font-size:1rem; text-decoration:none; cursor:pointer; border:none; transition: 0.2s; }
-                .btn-s { background:var(--primary-blue); color:white; box-shadow: 0 5px 0 var(--primary-dark); }
-                .btn-s:active { transform:translateY(3px); box-shadow: 0 2px 0 var(--primary-dark); }
-                .btn-o { background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); }
-                .btn-m { background:#e2e8f0; color:#64748b; }
-            </style>
-            <div class="res-c">
-                <img src="${JOGO_CONFIG.caminhoImg}${rank.img}" class="res-t">
-                <h1 class="res-m">${rank.titulo}</h1>
-                <div class="res-s">
-                    <div class="res-b"><span class="res-n" style="color:#7ed321;">${acertos}</span><span class="res-l">Certos</span></div>
-                    <div class="res-b"><span class="res-n" style="color:#ff5e5e;">${erros}</span><span class="res-l">Errados</span></div>
-                    <div class="res-b"><span class="res-n" style="color:#ff9f43;">${ajudasUtilizadas}</span><span class="res-l">Ajudas</span></div>
+            <div style="display:flex; flex-direction:column; align-items:center; width:100%; max-width:420px; margin:auto;">
+                <img src="${JOGO_CONFIG.caminhoImg}${rank.img}" style="height: clamp(80px, 15vh, 110px); margin-bottom: 5px;">
+                <h1 style="color:var(--primary-blue); font-size: 1.8rem; font-weight:900; margin: 10px 0 20px; text-align:center; line-height:1;">${rank.titulo}</h1>
+                <div style="display:flex; gap:10px; margin-bottom:25px; width:100%; justify-content:center;">
+                    <div style="background:white; border-radius:20px; width:95px; height:95px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 8px 20px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;">
+                        <span style="font-size: 1.5rem; font-weight: 900; color:#7ed321;">${acertos}</span>
+                        <span style="font-size: 0.6rem; font-weight: 900; color:#88a; text-transform:uppercase;">Certos</span>
+                    </div>
+                    <div style="background:white; border-radius:20px; width:95px; height:95px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 8px 20px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;">
+                        <span style="font-size: 1.5rem; font-weight: 900; color:#ff5e5e;">${erros}</span>
+                        <span style="font-size: 0.6rem; font-weight: 900; color:#88a; text-transform:uppercase;">Errados</span>
+                    </div>
+                    <div style="background:white; border-radius:20px; width:95px; height:95px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 8px 20px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;">
+                        <span style="font-size: 1.5rem; font-weight: 900; color:#ff9f43;">${ajudasUtilizadas}</span>
+                        <span style="font-size: 0.6rem; font-weight: 900; color:#88a; text-transform:uppercase;">Ajudas</span>
+                    </div>
                 </div>
-                <div class="res-gs">
-                    <button class="btn-f btn-s" onclick="location.reload()"><i class="fas fa-redo"></i> JOGAR DE NOVO</button>
-                    <button class="btn-f btn-o" onclick="openRDMenu(event)"><i class="fas fa-chart-line"></i> OUTRO NÍVEL</button>
-                    <a href="${JOGO_CONFIG.linkVoltar}" class="btn-f btn-m"><i class="fas fa-sign-out-alt"></i> SAIR</a>
+                <div style="display:flex; flex-direction:column; gap:10px; width:100%; max-width:300px;">
+                    <button style="height:50px; border-radius:30px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:900; font-size:1rem; text-decoration:none; cursor:pointer; border:none; background:var(--primary-blue); color:white; box-shadow: 0 5px 0 var(--primary-dark);" onclick="location.reload()"><i class="fas fa-redo"></i> JOGAR DE NOVO</button>
+                    <button style="height:50px; border-radius:30px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:900; font-size:1rem; text-decoration:none; cursor:pointer; border:3px solid var(--primary-blue); background:white; color:var(--primary-blue);" onclick="openRDMenu(event)"><i class="fas fa-chart-line"></i> OUTRO NÍVEL</button>
+                    <a href="${JOGO_CONFIG.linkVoltar}" style="height:50px; border-radius:30px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:900; font-size:1rem; text-decoration:none; background:#e2e8f0; color:#64748b;"><i class="fas fa-sign-out-alt"></i> SAIR</a>
                 </div>
             </div>
         </div>
     `;
 }
-
-window.gerarIntroJogo = function() { return JOGO_CATEGORIAS[categoriaAtiva].descricao; };
