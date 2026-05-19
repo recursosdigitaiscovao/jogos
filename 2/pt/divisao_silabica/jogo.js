@@ -13,12 +13,9 @@ const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
 // === 1. INICIALIZAÇÃO E LIVRO MÁGICO ===
 window.startLogic = function() {
-    // Definir categoria padrão caso o aluno clique direto em JOGAR
     if (!categoriaAtual) categoriaAtual = "simples";
-    const cat = JOGO_CATEGORIAS[categoriaAtual];
-    perguntas = [...cat.itens].sort(() => 0.5 - Math.random());
+    carregarPerguntas(categoriaAtual);
 
-    // Injetar Lâmpada de Ajuda
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:30px; width:30px; cursor:pointer;" onclick="usarAjuda()">`;
@@ -27,6 +24,12 @@ window.startLogic = function() {
 
     abrirLivroRegras();
 };
+
+function carregarPerguntas(key) {
+    const cat = JOGO_CATEGORIAS[key];
+    // Sorteia 10 das 20+ palavras disponíveis
+    perguntas = [...cat.itens].sort(() => 0.5 - Math.random()).slice(0, 10);
+}
 
 function abrirLivroRegras() {
     const container = document.getElementById('intro-animation-container');
@@ -43,7 +46,6 @@ function abrirLivroRegras() {
             .dot { width: 12px; height: 12px; background: #eee; border-radius: 50%; cursor: pointer; border: 2px solid #ddd; }
             .dot.active { background: var(--primary-blue); border-color: var(--primary-dark); }
             .audio-btn-rule { background: #ff9800; border: none; color: white; padding: 8px 20px; border-radius: 25px; cursor: pointer; font-weight: 900; box-shadow: 0 4px 0 #e65100; }
-            .audio-btn-rule:active { transform: translateY(2px); box-shadow: none; }
         </style>
         <div class="magic-book">
             <div class="rule-page active" id="p1">
@@ -92,17 +94,12 @@ window.selecionarCategoria = function(key) {
     const cat = JOGO_CATEGORIAS[key];
     const introInstr = document.getElementById('intro-instr');
     if(introInstr) introInstr.innerText = cat.descricao;
-    perguntas = [...cat.itens].sort(() => 0.5 - Math.random());
+    carregarPerguntas(key);
 };
 
-// === 2. LÓGICA DO JOGO (CHAMADA PELO BOTÃO JOGAR) ===
+// === 2. LÓGICA DO JOGO ===
 window.initGame = function() {
-    // Garante que temos perguntas carregadas se o usuário clicou direto em JOGAR
-    if (perguntas.length === 0) {
-        const cat = JOGO_CATEGORIAS[categoriaAtual];
-        perguntas = [...cat.itens].sort(() => 0.5 - Math.random());
-    }
-    
+    if (perguntas.length === 0) carregarPerguntas(categoriaAtual);
     acertos = 0; erros = 0; ajudasUtilizadas = 0; indicePergunta = 0; jogoAtivo = true;
     mostrarPergunta();
 };
@@ -110,12 +107,12 @@ window.initGame = function() {
 function mostrarPergunta() {
     const container = document.getElementById('game-main-content');
     const item = perguntas[indicePergunta];
-    document.getElementById('round-val').innerText = `${indicePergunta + 1} / ${perguntas.length}`;
+    document.getElementById('round-val').innerText = `${indicePergunta + 1} / 10`;
 
     container.innerHTML = `
         <style>
             .syllable-play { width: 98%; height: 98%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 10px; }
-            .main-word { background: white; padding: 20px 50px; border-radius: 40px; border: 5px solid var(--primary-blue); font-size: 3rem; font-weight: 900; color: #333; letter-spacing: 4px; box-shadow: 0 10px 0 #eee; }
+            .main-word { background: white; padding: 25px 60px; border-radius: 40px; border: 5px solid var(--primary-blue); font-size: 3rem; font-weight: 900; color: #333; letter-spacing: 4px; box-shadow: 0 10px 0 #eee; }
             .grid-opts { display: grid; grid-template-columns: 1fr; gap: 12px; width: 100%; max-width: 500px; }
             .btn-opt { background: white; border: 3px solid #f0f4f8; padding: 18px; border-radius: 20px; font-size: 1.5rem; font-weight: 900; color: var(--primary-blue); cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #d0d8de; text-align: center; }
             .btn-opt:hover { border-color: var(--primary-blue); background: #f8fbff; }
@@ -150,7 +147,7 @@ window.validar = function(el, escolhida) {
 
     setTimeout(() => {
         indicePergunta++;
-        if (indicePergunta < perguntas.length) { jogoAtivo = true; mostrarPergunta(); }
+        if (indicePergunta < 10) { jogoAtivo = true; mostrarPergunta(); }
         else { finalizarJogo(); }
     }, 1800);
 };
@@ -167,10 +164,9 @@ window.usarAjuda = function() {
     });
 };
 
-// === 3. ECRÃ DE RESULTADOS (PADRÃO HUB) ===
 function finalizarJogo() {
     somVitoria.play();
-    const perc = Math.round((acertos / perguntas.length) * 100);
+    const perc = Math.round((acertos / 10) * 100);
     let rank = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
     
     document.getElementById('scr-game').classList.remove('active');
@@ -195,7 +191,3 @@ function finalizarJogo() {
         </div>
     `;
 }
-
-window.gerarIntroJogo = function() { 
-    return JOGO_CATEGORIAS[categoriaAtual].descricao;
-};
