@@ -47,13 +47,13 @@ function renderTutorialAnimation() {
             .side-r img { right: 0; }
             .tut-hand { position: absolute; font-size: 35px; z-index: 20; animation: handM 4s infinite ease-in-out; }
             @keyframes handM { 0%, 20% { left: 200px; top: 100px; } 50%, 70% { left: 165px; top: 80px; } 100% { left: 200px; top: 100px; } }
+            @keyframes partM { 0%, 20% { transform: translateX(60px); opacity: 0; } 50%, 70% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(60px); opacity: 0; } }
         </style>
         <div class="tut-stage">
             <div class="crop-box side-l"><img src="${imgEx}"></div>
             <div class="crop-box side-r" style="animation: partM 4s infinite ease-in-out;"><img src="${imgEx}"></div>
             <div class="tut-hand">☝️</div>
         </div>
-        <style>@keyframes partM { 0%, 20% { transform: translateX(60px); opacity: 0; } 50%, 70% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(60px); opacity: 0; } }</style>
     `;
 }
 
@@ -84,26 +84,24 @@ function renderizarEcraJogo() {
             .game-path { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; box-sizing: border-box; }
             .target-zone { display: flex; align-items: center; justify-content: center; gap: 5px; height: 40%; width: 100%; }
             
-            /* CONTENTOR DA METADE ESQUERDA */
             .box-l { 
                 width: clamp(90px, 20vh, 140px); height: clamp(110px, 25vh, 170px); 
                 background: white; border: 4px solid var(--primary-blue); border-radius: 20px 0 0 20px; 
                 overflow: hidden; position: relative; 
             }
-            /* IMAGEM DA ESQUERDA (SOMBRA) */
             .box-l img { 
                 position: absolute; width: 200%; height: 100%; 
                 left: 0; top: 0; object-fit: contain; 
                 filter: brightness(0); opacity: 0.8; transition: all 0.5s; 
             }
-
             .box-r-slot { 
                 width: clamp(90px, 20vh, 140px); height: clamp(110px, 25vh, 170px); 
                 border: 4px dashed #ccc; border-radius: 0 20px 20px 0; background: rgba(0,0,0,0.02); 
                 display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;
             }
 
-            .options-area { display: flex; gap: 10px; justify-content: center; width: 100%; flex-wrap: wrap; }
+            /* Grelha de Opções */
+            .options-area { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; width: 100%; max-width: 600px; }
             
             .option-card { 
                 width: clamp(65px, 14vh, 95px); height: clamp(85px, 17vh, 125px); 
@@ -116,7 +114,15 @@ function renderizarEcraJogo() {
             .correct-anim { border-color: #7ed321 !important; background-color: #e8f9e8 !important; }
             .wrong-anim { border-color: #ff5e5e !important; background-color: #fff1f1 !important; }
 
-            @media (max-width: 600px) { .target-zone { transform: scale(0.95); } .option-card { width: 18%; height: 90px; } }
+            /* MOBILE VERTICAL: 3 em cima, 2 em baixo */
+            @media (max-width: 600px) and (orientation: portrait) {
+                .target-zone { height: 35%; transform: scale(0.9); margin-bottom: 0; }
+                .options-area { gap: 8px; }
+                .option-card { 
+                    width: calc(31% - 6px); /* Garante 3 por linha */
+                    height: 95px; 
+                }
+            }
         </style>
 
         <div class="game-path">
@@ -200,3 +206,5 @@ function finalizarJogo() {
         </div>
     `;
 }
+
+window.gerarIntroJogo = function() { return JOGO_CATEGORIAS[categoriaAtiva].descricao; };
