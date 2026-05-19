@@ -7,7 +7,23 @@ const JOGO_CATEGORIAS = {
             { palavra: "BONECA", divisao: "BO-NE-CA", opcoes: ["BON-E-CA", "BO-NE-CA", "BONE-CA"] },
             { palavra: "PIPOCA", divisao: "PI-PO-CA", opcoes: ["PI-PO-CA", "PIP-O-CA", "PI-POC-A"] },
             { palavra: "SAPATO", divisao: "SA-PA-TO", opcoes: ["SAP-A-TO", "SA-PAT-O", "SA-PA-TO"] },
-            { palavra: "CANETA", divisao: "CA-NE-TA", opcoes: ["CA-NET-A", "CA-NE-TA", "CAN-E-TA"] }
+            { palavra: "CANETA", divisao: "CA-NE-TA", opcoes: ["CA-NET-A", "CA-NE-TA", "CAN-E-TA"] },
+            { palavra: "GAVETA", divisao: "GA-VE-TA", opcoes: ["GAV-E-TA", "GA-VE-TA", "GA-VET-A"] },
+            { palavra: "JANELA", divisao: "JA-NE-LA", opcoes: ["JAN-E-LA", "JA-NE-LA", "JA-NEL-A"] },
+            { palavra: "CAVALO", divisao: "CA-VA-LO", opcoes: ["CA-VAL-O", "CA-VA-LO", "CAV-A-LO"] },
+            { palavra: "PANELA", divisao: "PA-NE-LA", opcoes: ["PA-NE-LA", "PAN-E-LA", "PA-NEL-A"] },
+            { palavra: "BATATA", divisao: "BA-TA-TA", opcoes: ["BAT-A-TA", "BA-TA-TA", "BA-TAT-A"] },
+            { palavra: "TOMATE", divisao: "TO-MA-TE", opcoes: ["TOM-A-TE", "TO-MA-TE", "TO-MAT-E"] },
+            { palavra: "BOLA", divisao: "BO-LA", opcoes: ["BOL-A", "BO-LA", "B-OLA"] },
+            { palavra: "PATO", divisao: "PA-TO", opcoes: ["PAT-O", "PA-TO", "P-ATO"] },
+            { palavra: "SAPO", divisao: "SA-PO", opcoes: ["SAP-O", "SA-PO", "S-APO"] },
+            { palavra: "MOTA", divisao: "MO-TA", opcoes: ["MOT-A", "MO-TA", "M-OTA"] },
+            { palavra: "CASA", divisao: "CA-SA", opcoes: ["CAS-A", "CA-SA", "C-ASA"] },
+            { palavra: "LUVA", divisao: "LU-VA", opcoes: ["LUV-A", "LU-VA", "L-UVA"] },
+            { palavra: "MESA", divisao: "ME-SA", opcoes: ["MES-A", "ME-SA", "M-ESA"] },
+            { palavra: "GATO", divisao: "GA-TO", opcoes: ["GAT-O", "GA-TO", "G-ATO"] },
+            { palavra: "GELADO", divisao: "GE-LA-DO", opcoes: ["GEL-A-DO", "GE-LA-DO", "GE-LAD-O"] },
+            { palavra: "GIRAFA", divisao: "GI-RA-FA", opcoes: ["GIR-A-FA", "GI-RA-FA", "GI-RAF-A"] }
         ]
     },
     gemeos: {
@@ -19,7 +35,22 @@ const JOGO_CATEGORIAS = {
             { palavra: "PASSO", divisao: "PA-SSO", opcoes: ["PAS-SO", "PA-SSO", "PASS-O"] },
             { palavra: "FERRO", divisao: "FE-RRO", opcoes: ["FER-RO", "FE-RRO", "FERR-O"] },
             { palavra: "MASSA", divisao: "MA-SSA", opcoes: ["MAS-SA", "MA-SSA", "MASS-A"] },
-            { palavra: "PÁSSARO", divisao: "PÁ-SSA-RO", opcoes: ["PÁS-SA-RO", "PÁ-SSA-RO", "PÁSS-A-RO"] }
+            { palavra: "PÁSSARO", divisao: "PÁ-SSA-RO", opcoes: ["PÁS-SA-RO", "PÁ-SSA-RO", "PÁSS-A-RO"] },
+            { palavra: "ARROZ", divisao: "A-RROZ", opcoes: ["AR-ROZ", "A-RROZ", "ARR-OZ"] },
+            { palavra: "VASSOURA", divisao: "VA-SSOU-RA", opcoes: ["VAS-SOU-RA", "VA-SSOU-RA", "VASS-OU-RA"] },
+            { palavra: "OSSO", divisao: "O-SSO", opcoes: ["OS-SO", "O-SSO", "OSS-O"] },
+            { palavra: "GARRAFA", divisao: "GA-RRA-FA", opcoes: ["GAR-RA-FA", "GA-RRA-FA", "GA-RRAF-A"] },
+            { palavra: "SERRA", divisao: "SE-RRA", opcoes: ["SER-RA", "SE-RRA", "SERR-A"] },
+            { palavra: "TERRA", divisao: "TE-RRA", opcoes: ["TER-RA", "TE-RRA", "TERR-A"] },
+            { palavra: "PÊSSEGO", divisao: "PÊ-SSE-GO", opcoes: ["PÊS-SE-GO", "PÊ-SSE-GO", "PÊSS-E-GO"] },
+            { palavra: "GIRASSOL", divisao: "GI-RA-SSOL", opcoes: ["GIR-AS-SOL", "GI-RA-SSOL", "GI-RAS-SOL"] },
+            { palavra: "CARROSSEL", divisao: "CA-RRO-SSEL", opcoes: ["CAR-ROS-SEL", "CA-RRO-SSEL", "CARR-O-SSEL"] },
+            { palavra: "BÚSSOLA", divisao: "BÚ-SSO-LA", opcoes: ["BÚS-SO-LA", "BÚ-SSO-LA", "BÚSS-O-LA"] },
+            { palavra: "SOCORRO", divisao: "SO-CO-RRO", opcoes: ["SO-COR-RO", "SO-CO-RRO", "SO-CORR-O"] },
+            { palavra: "BARRACA", divisao: "BA-RRA-CA", opcoes: ["BAR-RA-CA", "BA-RRA-CA", "BA-RRAC-A"] },
+            { palavra: "CARRETA", divisao: "CA-RRE-TA", opcoes: ["CAR-RE-TA", "CA-RRE-TA", "CA-RRET-A"] },
+            { palavra: "ASSADO", divisao: "A-SSA-DO", opcoes: ["AS-SA-DO", "A-SSA-DO", "ASS-A-DO"] },
+            { palavra: "SOSSEGO", divisao: "SO-SSE-GO", opcoes: ["SOS-SE-GO", "SO-SSE-GO", "SO-SSEG-O"] }
         ]
     },
     inseparaveis: {
@@ -30,7 +61,23 @@ const JOGO_CATEGORIAS = {
             { palavra: "CHUVA", divisao: "CHU-VA", opcoes: ["CH-U-VA", "CHU-VA", "CHUV-A"] },
             { palavra: "COELHO", divisao: "CO-E-LHO", opcoes: ["CO-EL-HO", "CO-E-LHO", "COE-LHO"] },
             { palavra: "GALINHA", divisao: "GA-LI-NHA", opcoes: ["GA-LIN-HA", "GA-LI-NHA", "GAL-I-NHA"] },
-            { palavra: "PALHAÇO", divisao: "PA-LHA-ÇO", opcoes: ["PAL-HA-ÇO", "PA-LHA-ÇO", "PA-LH-AÇO"] }
+            { palavra: "NINHO", divisao: "NI-NHO", opcoes: ["NIN-HO", "NI-NHO", "NI-NH-O"] },
+            { palavra: "PALHAÇO", divisao: "PA-LHA-ÇO", opcoes: ["PAL-HA-ÇO", "PA-LHA-ÇO", "PA-LH-AÇO"] },
+            { palavra: "CHUPETA", divisao: "CHU-PE-TA", opcoes: ["CH-U-PE-TA", "CHU-PE-TA", "CHUP-E-TA"] },
+            { palavra: "MILHO", divisao: "MI-LHO", opcoes: ["MIL-HO", "MI-LHO", "M-ILHO"] },
+            { palavra: "ARANHA", divisao: "A-RA-NHA", opcoes: ["A-RAN-HA", "A-RA-NHA", "AR-A-NHA"] },
+            { palavra: "CHAVE", divisao: "CHA-VE", opcoes: ["CH-A-VE", "CHA-VE", "CHAV-E"] },
+            { palavra: "ABELHA", divisao: "A-BE-LHA", opcoes: ["A-BEL-HA", "A-BE-LHA", "AB-E-LHA"] },
+            { palavra: "CAMINHO", divisao: "CA-MI-NHO", opcoes: ["CA-MIN-HO", "CA-MI-NHO", "CAM-I-NHO"] },
+            { palavra: "CHOCALHO", divisao: "CHO-CA-LHO", opcoes: ["CHO-CAL-HO", "CHO-CA-LHO", "CHOC-A-LHO"] },
+            { palavra: "FOLHA", divisao: "FO-LHA", opcoes: ["FOL-HA", "FO-LHA", "F-OLHA"] },
+            { palavra: "LENHA", divisao: "LE-NHA", opcoes: ["LEN-HA", "LE-NHA", "L-ENHA"] },
+            { palavra: "MOCHILA", divisao: "MO-CHI-LA", opcoes: ["MO-CH-I-LA", "MO-CHI-LA", "MOCH-I-LA"] },
+            { palavra: "PINHEIRO", divisao: "PI-NHEI-RO", opcoes: ["PIN-HEI-RO", "PI-NHEI-RO", "PI-NHE-IRO"] },
+            { palavra: "ROLHA", divisao: "RO-LHA", opcoes: ["ROL-HA", "RO-LHA", "R-OLHA"] },
+            { palavra: "TOALHA", divisao: "TO-A-LHA", opcoes: ["TO-AL-HA", "TO-A-LHA", "TOA-LHA"] },
+            { palavra: "UNHA", divisao: "U-NHA", opcoes: ["UN-HA", "U-NHA", "U-NH-A"] },
+            { palavra: "VELHA", divisao: "VE-LHA", opcoes: ["VEL-HA", "VE-LHA", "V-ELHA"] }
         ]
     }
 };
