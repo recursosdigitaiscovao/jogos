@@ -22,7 +22,8 @@ const JOGO_CONFIG = {
         { nome: "Não tenho par!", icon: "sem_par.png", link: "sem_par/" },
         { nome: "Sombras Mágicas", icon: "sombrasmagicas.png", link: "sombrasmagicas/" },
         { nome: "Labirinto", icon: "labirinto.png", link: "labirinto/" },
-        { nome: "Chuva de Letras", icon: "chuva_letras.png", link: "chuva_letras/" }
+        { nome: "Chuva de Letras", icon: "chuva_letras.png", link: "chuva_letras/" },
+        { nome: "As metades", icon: "metade.png", link: "metade/" }
         // ... adicione os restantes
     ]
 };
