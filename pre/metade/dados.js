@@ -2,7 +2,7 @@
 const CONFIG_MESTRE = {
     ano: "pre",        
     area: "pre",  
-    nomeJogo: "Encontra o Par"
+    nomeJogo: "As metades"
 };
 
 // === BIBLIOTECA DE TEMAS (CORES PADRÃO POR ÁREA) ===
