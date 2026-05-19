@@ -11,7 +11,13 @@ const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
 const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 
-// === 1. INICIALIZAÇÃO E LIVRO MÁGICO ===
+// FUNÇÃO MÁGICA: Transforma o traço "-" numa bolinha colorida
+function formatarSílaba(texto) {
+    // Substitui o hífen por um pequeno círculo HTML estilizado
+    return texto.replace(/-/g, '<span class="syllable-dot"></span>');
+}
+
+// === 1. INICIALIZAÇÃO ===
 window.startLogic = function() {
     if (!categoriaAtual) categoriaAtual = "simples";
     carregarPerguntas(categoriaAtual);
@@ -27,7 +33,6 @@ window.startLogic = function() {
 
 function carregarPerguntas(key) {
     const cat = JOGO_CATEGORIAS[key];
-    // Sorteia 10 das 20+ palavras disponíveis
     perguntas = [...cat.itens].sort(() => 0.5 - Math.random()).slice(0, 10);
 }
 
@@ -42,6 +47,7 @@ function abrirLivroRegras() {
             .rule-icon { font-size: 50px; display: block; margin-bottom: 10px; }
             .rule-title { color: var(--primary-dark); font-weight: 900; font-size: 1.3rem; margin-bottom: 10px; text-transform: uppercase; }
             .rule-text { color: #5d7082; font-size: 1rem; font-weight: 700; line-height: 1.4; margin-bottom: 15px; }
+            .syllable-dot { display: inline-block; width: 10px; height: 10px; background: #ff9800; border-radius: 50%; margin: 0 5px; vertical-align: middle; }
             .book-nav { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
             .dot { width: 12px; height: 12px; background: #eee; border-radius: 50%; cursor: pointer; border: 2px solid #ddd; }
             .dot.active { background: var(--primary-blue); border-color: var(--primary-dark); }
@@ -51,19 +57,19 @@ function abrirLivroRegras() {
             <div class="rule-page active" id="p1">
                 <span class="rule-icon">🗣️</span>
                 <p class="rule-title">O que são sílabas?</p>
-                <p class="rule-text">São os pedacinhos de som que dizemos de uma vez. <br> <b>BO-NE-CA</b> tem 3 sílabas!</p>
+                <p class="rule-text">São os pedacinhos de som das palavras. <br> <b>BO<span class="syllable-dot"></span>NE<span class="syllable-dot"></span>CA</b> tem 3 sílabas!</p>
                 <button class="audio-btn-rule" onclick="falar('Sílaba é cada pedacinho de som. Como bo ne ca. Três sons!')">👂 OUVIR</button>
             </div>
             <div class="rule-page" id="p2">
                 <span class="rule-icon">🤝</span>
                 <p class="rule-title">O RR e o SS juntos!</p>
-                <p class="rule-text">Neste jogo, o <b>RR</b> e o <b>SS</b> ficam sempre na mesma sílaba. <br> Exemplo: <b>CA-RRO</b></p>
+                <p class="rule-text">Neste jogo, o <b>RR</b> e o <b>SS</b> ficam sempre na mesma sílaba. <br> Exemplo: <b>CA<span class="syllable-dot"></span>RRO</b></p>
                 <button class="audio-btn-rule" onclick="falar('O erra erra e o essa essa ficam sempre de mãos dadas na mesma sílaba. Ca rro!')">👂 OUVIR</button>
             </div>
             <div class="rule-page" id="p3">
                 <span class="rule-icon">🤝</span>
                 <p class="rule-title">CH, LH e NH juntos!</p>
-                <p class="rule-text">Estes amigos nunca se separam. <br> Ficam sempre juntos: <b>CHU-VA</b></p>
+                <p class="rule-text">Estes amigos nunca se separam. <br> Ficam sempre juntos: <b>CHU<span class="syllable-dot"></span>VA</b></p>
                 <button class="audio-btn-rule" onclick="falar('O cê agá, o éle agá e o ene agá nunca se separam. Ficam sempre juntos!')">👂 OUVIR</button>
             </div>
             <div class="book-nav">
@@ -114,17 +120,22 @@ function mostrarPergunta() {
             .syllable-play { width: 98%; height: 98%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 10px; }
             .main-word { background: white; padding: 25px 60px; border-radius: 40px; border: 5px solid var(--primary-blue); font-size: 3rem; font-weight: 900; color: #333; letter-spacing: 4px; box-shadow: 0 10px 0 #eee; }
             .grid-opts { display: grid; grid-template-columns: 1fr; gap: 12px; width: 100%; max-width: 500px; }
-            .btn-opt { background: white; border: 3px solid #f0f4f8; padding: 18px; border-radius: 20px; font-size: 1.5rem; font-weight: 900; color: var(--primary-blue); cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #d0d8de; text-align: center; }
+            .btn-opt { background: white; border: 3px solid #f0f4f8; padding: 18px; border-radius: 20px; font-size: 1.5rem; font-weight: 900; color: #5d7082; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 0 #d0d8de; text-align: center; }
             .btn-opt:hover { border-color: var(--primary-blue); background: #f8fbff; }
             .btn-opt.correct { background: #7ed321 !important; color: white !important; border-color: #5ea31a !important; box-shadow: 0 5px 0 #5ea31a !important; }
             .btn-opt.wrong { background: #ff5e5e !important; color: white !important; border-color: #d13d3d !important; box-shadow: 0 5px 0 #d13d3d !important; }
-            @media (max-width: 600px) { .main-word { font-size: 2.2rem; padding: 15px 30px; } .btn-opt { font-size: 1.2rem; } }
+            
+            /* ESTILO DA BOLINHA SEPARADORA */
+            .syllable-dot { display: inline-block; width: 14px; height: 14px; background: var(--primary-blue); border-radius: 50%; margin: 0 8px; vertical-align: middle; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .correct .syllable-dot, .wrong .syllable-dot { background: white; }
+
+            @media (max-width: 600px) { .main-word { font-size: 2.2rem; padding: 15px 30px; } .btn-opt { font-size: 1.2rem; } .syllable-dot { width: 10px; height: 10px; margin: 0 5px; } }
         </style>
         <div class="syllable-play">
-            <div style="font-weight: 900; color: #88a; text-transform: uppercase;">Como dividimos esta palavra?</div>
+            <div style="font-weight: 900; color: #88a; text-transform: uppercase; font-size: 0.9rem;">Como dividimos esta palavra?</div>
             <div class="main-word">${item.palavra}</div>
             <div class="grid-opts">
-                ${item.opcoes.map(opt => `<div class="btn-opt" onclick="validar(this, '${opt}')">${opt}</div>`).join('')}
+                ${item.opcoes.map(opt => `<div class="btn-opt" onclick="validar(this, '${opt}')">${formatarSílaba(opt)}</div>`).join('')}
             </div>
         </div>
     `;
@@ -141,7 +152,8 @@ window.validar = function(el, escolhida) {
     } else {
         erros++; somErro.play(); el.classList.add('wrong');
         document.querySelectorAll('.btn-opt').forEach(btn => {
-            if(btn.innerText === correta) btn.classList.add('correct');
+            // Comparamos o texto original (com hífens) guardado internamente
+            if(btn.onclick.toString().includes(correta)) btn.classList.add('correct');
         });
     }
 
@@ -157,13 +169,15 @@ window.usarAjuda = function() {
     ajudaDisponivel = false; ajudasUtilizadas++;
     const correta = perguntas[indicePergunta].divisao;
     document.querySelectorAll('.btn-opt').forEach(btn => {
-        if(btn.innerText === correta) {
-            btn.style.borderColor = "#ff9800"; btn.style.background = "#fff5e6";
-            setTimeout(() => { btn.style.borderColor = "#f0f4f8"; btn.style.background = "white"; ajudaDisponivel = true; }, 1500);
+        if(btn.innerHTML.includes('syllable-dot') && btn.innerText.replace(/\s/g, '') === correta.replace(/-/g, '')) {
+             // Lógica de ajuda simplificada: pisca a opção que tem as letras certas na ordem certa
+             btn.style.borderColor = "#ff9800"; btn.style.background = "#fff5e6";
+             setTimeout(() => { btn.style.borderColor = "#f0f4f8"; btn.style.background = "white"; ajudaDisponivel = true; }, 1500);
         }
     });
 };
 
+// === 3. ECRÃ DE RESULTADOS ===
 function finalizarJogo() {
     somVitoria.play();
     const perc = Math.round((acertos / 10) * 100);
@@ -179,8 +193,8 @@ function finalizarJogo() {
             <div style="display:flex; flex-direction:column; align-items:center; width:100%; max-width:450px; margin:auto;">
                 <img src="${JOGO_CONFIG.caminhoImg}${rank.img}" style="width:130px; margin-bottom:10px; display:block; margin-left:auto; margin-right:auto;">
                 <h1 style="color:var(--primary-blue); font-weight:900; font-size:2.2rem; margin:15px 0; text-align:center; line-height:1;">${rank.titulo}</h1>
-                <div style="display:flex; gap:15px; margin-bottom:30px; width:100%; justify-content:center;">
-                    <div style="background:white; border-radius:25px; width:105px; height:105px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border:1px solid #f0f0f0;"><span style="font-size:1.8rem; font-weight:900; color:#7ed321;">${acertos}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Certos</span></div>
+                <div style="display:flex; gap:12px; margin-bottom:30px; width:100%; justify-content:center;">
+                    <div style="background:white; border-radius:20px; width:105px; height:105px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border:1px solid #f0f0f0;"><span style="font-size:1.8rem; font-weight:900; color:#7ed321;">${acertos}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Certos</span></div>
                     <div style="background:white; border-radius:20px; width:100px; height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border:1px solid #f0f0f0;"><span style="font-size:1.8rem; font-weight:900; color:#ff5e5e;">${erros}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Errados</span></div>
                     <div style="background:white; border-radius:20px; width:100px; height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border:1px solid #f0f0f0;"><span style="font-size:1.8rem; font-weight:900; color:#ff9f43;">${ajudasUtilizadas}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Ajudas</span></div>
                 </div>
