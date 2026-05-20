@@ -1,11 +1,10 @@
 let acertos = 0;
 let erros = 0;
 let ajudasUtilizadas = 0;
-let rondaAtual = 1;
+let rondaAtual = 0;
 let jogoAtivo = false;
-let ajudaDisponivel = true;
 let categoriaAtiva = "nivel1";
-let itemCorreto = "";
+let textoAtualObj = null;
 
 const somAcerto = new Audio(JOGO_CONFIG.sons.acerto);
 const somErro = new Audio(JOGO_CONFIG.sons.erro);
@@ -14,9 +13,9 @@ const somVitoria = new Audio(JOGO_CONFIG.sons.vitoria);
 // === 1. INICIALIZAÇÃO ===
 window.startLogic = function() {
     const config = JOGO_CATEGORIAS[categoriaAtiva];
-    const introInstr = document.getElementById('intro-instr');
-    if(introInstr) introInstr.innerText = config.descricao;
+    document.getElementById('intro-instr').innerText = config.descricao;
 
+    // Configurar Lâmpada de Ajuda
     const timerBadge = document.querySelector('.badge-timer');
     if (timerBadge) {
         timerBadge.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}lampada.png" style="height:30px; width:30px; cursor:pointer;" onclick="usarAjuda()">`;
@@ -29,29 +28,21 @@ window.selecionarCategoria = function(key) {
     categoriaAtiva = key;
     if(document.getElementById('intro-instr')) 
         document.getElementById('intro-instr').innerText = JOGO_CATEGORIAS[key].descricao;
-    renderTutorialAnimation();
 };
 
 function renderTutorialAnimation() {
     const container = document.getElementById('intro-animation-container');
     if (!container) return;
-    const config = JOGO_CATEGORIAS[categoriaAtiva];
-    const imgEx = JOGO_CONFIG.caminhoImg + config.pasta + config.itens[0];
-
     container.innerHTML = `
         <style>
-            .tut-stage { position: relative; width: 320px; height: 160px; background: white; border: 3px dashed var(--primary-blue); border-radius: 25px; display: flex; align-items: center; justify-content: center; gap: 5px; }
-            .crop-box { width: 60px; height: 90px; overflow: hidden; border: 2px solid #ddd; background: #fff; position: relative; border-radius: 8px; }
-            .crop-box img { position: absolute; height: 100%; width: 200%; object-fit: contain; top: 0; }
-            .side-l img { left: 0; filter: brightness(0); opacity: 0.7; }
-            .side-r img { right: 0; }
-            .tut-hand { position: absolute; font-size: 35px; z-index: 20; animation: handM 4s infinite ease-in-out; }
-            @keyframes handM { 0%, 20% { left: 200px; top: 100px; } 50%, 70% { left: 165px; top: 80px; } 100% { left: 200px; top: 100px; } }
-            @keyframes partM { 0%, 20% { transform: translateX(60px); opacity: 0; } 50%, 70% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(60px); opacity: 0; } }
+            .tut-area { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+            .tut-box { padding: 15px; border: 2px dashed #ccc; border-radius: 15px; background: white; font-weight: 800; color: #555; }
+            .tut-gap { display: inline-block; width: 60px; height: 20px; background: #eee; border-radius: 5px; vertical-align: middle; border-bottom: 3px solid #ddd; }
+            .tut-hand { font-size: 35px; animation: handTap 3s infinite; }
+            @keyframes handTap { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px) scale(0.9); } }
         </style>
-        <div class="tut-stage">
-            <div class="crop-box side-l"><img src="${imgEx}"></div>
-            <div class="crop-box side-r" style="animation: partM 4s infinite ease-in-out;"><img src="${imgEx}"></div>
+        <div class="tut-area">
+            <div class="tut-box">O Sol brilha no <div class="tut-gap"></div></div>
             <div class="tut-hand">☝️</div>
         </div>
     `;
@@ -59,152 +50,198 @@ function renderTutorialAnimation() {
 
 // === 2. MOTOR DO JOGO ===
 window.initGame = function() {
-    acertos = 0; erros = 0; ajudasUtilizadas = 0; rondaAtual = 1;
+    acertos = 0; erros = 0; ajudasUtilizadas = 0; rondaAtual = 0;
     jogoAtivo = true;
     proximaRonda();
 };
 
 function proximaRonda() {
-    if (rondaAtual > 10) { finalizarJogo(); return; }
-    document.getElementById('round-val').innerText = `${rondaAtual} / 10`;
+    const textos = JOGO_CATEGORIAS[categoriaAtiva].textos;
+    if (rondaAtual >= textos.length) { finalizarJogo(); return; }
+    
+    document.getElementById('round-val').innerText = `${rondaAtual + 1} / ${textos.length}`;
     document.getElementById('hits-val').innerText = acertos;
     document.getElementById('miss-val').innerText = erros;
-    renderizarEcraJogo();
+    
+    renderizarTexto();
 }
 
-function renderizarEcraJogo() {
+function renderizarEcraAlimentacao() {} // Não usado neste jogo
+
+function renderizarTexto() {
     const container = document.getElementById('game-main-content');
-    const config = JOGO_CATEGORIAS[categoriaAtiva];
-    const embaralhado = [...config.itens].sort(() => 0.5 - Math.random());
-    itemCorreto = embaralhado[0];
-    const opcoes = [itemCorreto, ...embaralhado.slice(1, 5)].sort(() => 0.5 - Math.random());
+    textoAtualObj = JOGO_CATEGORIAS[categoriaAtiva].textos[rondaAtual];
+    
+    // Substituir [[n]] por elementos span interativos
+    let fraseProcessada = textoAtualObj.frase;
+    textoAtualObj.lacunas.forEach((lac, index) => {
+        const spanGap = `<span class="gap-box" id="gap-${index}" onclick="abrirDropdown(event, ${index})">...</span>`;
+        fraseProcessada = fraseProcessada.replace(`[[${index}]]`, spanGap);
+    });
 
     container.innerHTML = `
         <style>
-            .game-path { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 10px; box-sizing: border-box; }
-            .target-zone { display: flex; align-items: center; justify-content: center; gap: 5px; height: 40%; width: 100%; }
-            
-            .box-l { 
-                width: clamp(90px, 20vh, 140px); height: clamp(110px, 25vh, 170px); 
-                background: white; border: 4px solid var(--primary-blue); border-radius: 20px 0 0 20px; 
-                overflow: hidden; position: relative; 
+            .text-game-wrap { width: 98%; height: 98%; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+            .text-card { 
+                background: white; padding: 40px; border-radius: 40px; 
+                border: 3px dashed #cbd5e0; position: relative;
+                font-size: clamp(1.2rem, 4vh, 2rem); line-height: 1.8;
+                color: #2d3748; font-weight: 700; text-align: left;
+                width: 100%; max-width: 800px;
             }
-            .box-l img { 
-                position: absolute; width: 200%; height: 100%; 
-                left: 0; top: 0; object-fit: contain; 
-                filter: brightness(0); opacity: 0.8; transition: all 0.5s; 
+            .gap-box { 
+                display: inline-flex; align-items: center; justify-content: center;
+                min-width: 120px; height: 1.4em; background: #edf2f7; 
+                border-radius: 12px; border-bottom: 4px solid #cbd5e0;
+                margin: 0 5px; cursor: pointer; color: #a0aec0; transition: 0.2s;
+                padding: 0 15px; vertical-align: middle;
             }
-            .box-r-slot { 
-                width: clamp(90px, 20vh, 140px); height: clamp(110px, 25vh, 170px); 
-                border: 4px dashed #ccc; border-radius: 0 20px 20px 0; background: rgba(0,0,0,0.02); 
-                display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;
-            }
+            .gap-box.filled { color: var(--primary-blue); border-bottom-color: var(--primary-blue); background: #ebf8ff; }
+            .gap-box.correct-gap { color: #48bb78; border-bottom-color: #48bb78; background: #f0fff4; }
 
-            /* Grelha de Opções */
-            .options-area { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; width: 100%; max-width: 600px; }
-            
-            .option-card { 
-                width: clamp(65px, 14vh, 95px); height: clamp(85px, 17vh, 125px); 
-                background: white; border: 3px solid #eee; border-radius: 12px; 
-                overflow: hidden; cursor: pointer; box-shadow: 0 4px 0 #ddd; position: relative; 
+            /* Dropdown Estilizado */
+            #dropdown-options {
+                position: absolute; display: none; z-index: 5000;
+                background: white; border-radius: 20px; padding: 10px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                grid-template-columns: 1fr 1fr; gap: 8px;
+                min-width: 280px; border: 2px solid var(--primary-blue);
             }
-            .option-card img { position: absolute; width: 200%; height: 100%; right: 0; top: 0; object-fit: contain; }
-            .option-card:active { transform: translateY(2px); box-shadow: none; }
+            .opt-btn {
+                background: #f8fafc; border: 2px solid #e2e8f0; padding: 12px;
+                border-radius: 15px; cursor: pointer; font-weight: 900;
+                color: #4a5568; font-size: 1rem; text-align: center;
+                transition: 0.2s;
+            }
+            .opt-btn:hover { background: #ebf8ff; border-color: var(--primary-blue); }
 
-            .correct-anim { border-color: #7ed321 !important; background-color: #e8f9e8 !important; }
-            .wrong-anim { border-color: #ff5e5e !important; background-color: #fff1f1 !important; }
-
-            /* MOBILE VERTICAL: 3 em cima, 2 em baixo */
-            @media (max-width: 600px) and (orientation: portrait) {
-                .target-zone { height: 35%; transform: scale(0.9); margin-bottom: 0; }
-                .options-area { gap: 8px; }
-                .option-card { 
-                    width: calc(31% - 6px); /* Garante 3 por linha */
-                    height: 95px; 
-                }
+            @media (max-width: 600px) {
+                .text-card { padding: 20px; font-size: 1.1rem; }
+                .gap-box { min-width: 80px; }
+                #dropdown-options { min-width: 200px; }
             }
         </style>
 
-        <div class="game-path">
-            <div class="target-zone">
-                <div class="box-l"><img id="main-left" src="${JOGO_CONFIG.caminhoImg}${config.pasta}${itemCorreto}"></div>
-                <div class="box-r-slot" id="main-right"></div>
-            </div>
-
-            <div class="options-area">
-                ${opcoes.map(img => `
-                    <div class="option-card" data-img="${img}" onclick="validarEscolha(this, '${img}')">
-                        <img src="${JOGO_CONFIG.caminhoImg}${config.pasta}${img}">
-                    </div>
-                `).join('')}
+        <div class="text-game-wrap">
+            <div class="text-card">
+                ${fraseProcessada}
             </div>
         </div>
+        <div id="dropdown-options"></div>
     `;
 }
 
-function validarEscolha(el, imgNome) {
+function abrirDropdown(event, lacunaIndex) {
     if (!jogoAtivo) return;
-    const config = JOGO_CATEGORIAS[categoriaAtiva];
-    jogoAtivo = false;
-    document.querySelectorAll('.option-card').forEach(c => c.style.pointerEvents = 'none');
+    const dropdown = document.getElementById('dropdown-options');
+    const gap = event.target;
+    const lacunaData = textoAtualObj.lacunas[lacunaIndex];
 
-    if (imgNome === itemCorreto) {
-        acertos++; somAcerto.play();
-        el.classList.add('correct-anim');
-        document.getElementById('main-left').style.filter = "none";
-        document.getElementById('main-left').style.opacity = "1";
-        const rightSide = document.getElementById('main-right');
-        rightSide.style.border = "4px solid #7ed321"; rightSide.style.background = "white";
-        rightSide.innerHTML = `<img src="${JOGO_CONFIG.caminhoImg}${config.pasta}${imgNome}" style="position:absolute; width:200%; height:100%; right:0; top:0; object-fit:contain;">`;
-    } else {
-        erros++; somErro.play();
-        el.classList.add('wrong-anim');
-        document.querySelectorAll('.option-card').forEach(c => {
-            if(c.getAttribute('data-img') === itemCorreto) c.classList.add('correct-anim');
-        });
+    // Criar lista de 4 opções (1 certa + 3 erradas)
+    let opcoes = [lacunaData.certa, ...lacunaData.erradas].sort(() => 0.5 - Math.random());
+
+    dropdown.innerHTML = opcoes.map(opt => `
+        <div class="opt-btn" onclick="selecionarOpcao(${lacunaIndex}, '${opt}')">${opt}</div>
+    `).join('');
+
+    // Posicionar o dropdown perto da lacuna
+    const rect = gap.getBoundingClientRect();
+    const containerRect = document.getElementById('game-main-content').getBoundingClientRect();
+    
+    dropdown.style.display = 'grid';
+    dropdown.style.left = (rect.left - containerRect.left) + 'px';
+    dropdown.style.top = (rect.bottom - containerRect.top + 5) + 'px';
+
+    // Ajuste se sair do ecrã à direita
+    if (rect.left + 280 > window.innerWidth) {
+        dropdown.style.left = (rect.right - containerRect.left - 280) + 'px';
     }
-    setTimeout(() => { rondaAtual++; jogoAtivo = true; proximaRonda(); }, 2000);
+}
+
+window.selecionarOpcao = function(index, valor) {
+    const dropdown = document.getElementById('dropdown-options');
+    dropdown.style.display = 'none';
+    
+    const gap = document.getElementById(`gap-${index}`);
+    const lacunaData = textoAtualObj.lacunas[index];
+
+    gap.innerText = valor;
+    gap.classList.add('filled');
+
+    if (valor === lacunaData.certa) {
+        somAcerto.play();
+        acertos++;
+        gap.classList.add('correct-gap');
+        verificarTextoCompleto();
+    } else {
+        somErro.play();
+        erros++;
+        gap.style.color = "#f56565";
+        gap.style.borderBottomColor = "#f56565";
+        setTimeout(() => {
+            gap.innerText = "...";
+            gap.classList.remove('filled');
+            gap.style.color = ""; gap.style.borderBottomColor = "";
+        }, 1000);
+    }
+    document.getElementById('hits-val').innerText = acertos;
+    document.getElementById('miss-val').innerText = erros;
+}
+
+function verificarTextoCompleto() {
+    const gaps = document.querySelectorAll('.gap-box');
+    const todosCertos = Array.from(gaps).every(g => g.classList.contains('correct-gap'));
+
+    if (todosCertos) {
+        jogoAtivo = false;
+        setTimeout(() => {
+            rondaAtual++;
+            jogoAtivo = true;
+            proximaRonda();
+        }, 1500);
+    }
 }
 
 window.usarAjuda = function() {
     if (!jogoAtivo || !ajudaDisponivel) return;
-    ajudaDisponivel = false; ajudasUtilizadas++;
-    const cards = document.querySelectorAll('.option-card');
-    cards.forEach(c => {
-        if (c.getAttribute('data-img') === itemCorreto) {
-            c.style.borderColor = "#ff9800"; c.style.boxShadow = "0 0 15px #ff9800";
-            setTimeout(() => { c.style.boxShadow = "0 4px 0 #ddd"; ajudaDisponivel = true; }, 1500);
-        }
-    });
+    ajudasUtilizadas++;
+    
+    // Encontrar a primeira lacuna não preenchida
+    const gaps = document.querySelectorAll('.gap-box:not(.correct-gap)');
+    if (gaps.length > 0) {
+        const firstGapId = gaps[0].id;
+        const index = parseInt(firstGapId.split('-')[1]);
+        const correta = textoAtualObj.lacunas[index].certa;
+        
+        selecionarOpcao(index, correta);
+    }
 };
 
 function finalizarJogo() {
     jogoAtivo = false; somVitoria.play();
-    const perc = Math.round((acertos / 10) * 100);
+    const total = acertos + erros;
+    const perc = Math.round((acertos / (total || 1)) * 100);
     let rank = JOGO_CONFIG.relatorios.find(r => perc >= r.min && perc <= r.max);
+    
     document.getElementById('scr-game').classList.remove('active');
     const resScreen = document.getElementById('scr-result');
     resScreen.classList.add('active');
     document.getElementById('status-bar').style.display = 'none';
 
     resScreen.innerHTML = `
-        <div class="screen-box" style="justify-content: center; padding: 15px; display: flex !important;">
-            <div style="display:flex; flex-direction:column; align-items:center; width:100%; max-width:420px; margin:auto;">
-                <img src="${JOGO_CONFIG.caminhoImg}${rank.img}" style="height: clamp(80px, 15vh, 110px); margin-bottom: 5px;">
-                <h1 style="color:var(--primary-blue); font-size: 1.8rem; font-weight:900; margin: 10px 0 20px; text-align:center; line-height:1;">${rank.titulo}</h1>
-                <div style="display:flex; gap:10px; margin-bottom:25px; width:100%; justify-content:center;">
-                    <div style="background:white; border-radius:20px; width:95px; height:95px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 8px 20px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;"><span style="font-size: 1.5rem; font-weight: 900; color:#7ed321;">${acertos}</span><span style="font-size: 0.6rem; font-weight: 900; color:#88a; text-transform:uppercase;">Certos</span></div>
-                    <div style="background:white; border-radius:20px; width:95px; height:95px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 8px 20px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;"><span style="font-size: 1.5rem; font-weight: 900; color:#ff5e5e;">${erros}</span><span style="font-size: 0.6rem; font-weight: 900; color:#88a; text-transform:uppercase;">Errados</span></div>
-                    <div style="background:white; border-radius:20px; width:95px; height:95px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 8px 20px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;"><span style="font-size: 1.5rem; font-weight: 900; color:#ff9f43;">${ajudasUtilizadas}</span><span style="font-size: 0.6rem; font-weight: 900; color:#88a; text-transform:uppercase;">Ajudas</span></div>
+        <div class="screen-box" style="justify-content: center; padding: 20px; display: flex !important;">
+            <div style="display:flex; flex-direction:column; align-items:center; width:100%; max-width:450px; margin:auto;">
+                <img src="${JOGO_CONFIG.caminhoImg}${rank.img}" style="width:130px; margin-bottom:10px;">
+                <h1 style="color:var(--primary-blue); font-weight:900; font-size:2.2rem; margin:15px 0; text-align:center;">${rank.titulo}</h1>
+                <div style="display:flex; gap:15px; margin-bottom:30px; width:100%; justify-content:center;">
+                    <div style="background:white; border-radius:25px; width:105px; height:105px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 25px rgba(0,0,0,0.05);"><span style="font-size:1.8rem; font-weight:900; color:#7ed321;">${acertos}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Certos</span></div>
+                    <div style="background:white; border-radius:25px; width:100px; height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05);"><span style="font-size:1.8rem; font-weight:900; color:#ff5e5e;">${erros}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Errados</span></div>
+                    <div style="background:white; border-radius:20px; width:100px; height:100px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow: 0 10px 20px rgba(0,0,0,0.05);"><span style="font-size:1.8rem; font-weight:900; color:#ff9f43;">${ajudasUtilizadas}</span><span style="font-size:0.65rem; font-weight:900; color:#88a; text-transform:uppercase;">Ajudas</span></div>
                 </div>
-                <div style="display:flex; flex-direction:column; gap:10px; width:100%; max-width:300px;">
-                    <button style="height:50px; border-radius:30px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:900; font-size:1rem; text-decoration:none; cursor:pointer; border:none; background:var(--primary-blue); color:white; box-shadow: 0 5px 0 var(--primary-dark);" onclick="location.reload()"><i class="fas fa-redo"></i> JOGAR DE NOVO</button>
-                    <button style="height:50px; border-radius:30px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:900; font-size:1rem; text-decoration:none; cursor:pointer; border:3px solid var(--primary-blue); background:white; color:var(--primary-blue);" onclick="openRDMenu(event)"><i class="fas fa-chart-line"></i> OUTRO NÍVEL</button>
-                    <a href="${JOGO_CONFIG.linkVoltar}" style="height:50px; border-radius:30px; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:900; font-size:1rem; text-decoration:none; background:#e2e8f0; color:#64748b;"><i class="fas fa-sign-out-alt"></i> SAIR</a>
-                </div>
+                <button class="btn-redo" style="height:60px; border-radius:30px; font-size:1.2rem; width:100%; max-width:320px; background:var(--primary-blue); color:white; border:none; box-shadow:0 6px 0 var(--primary-dark); font-weight:900; cursor:pointer;" onclick="location.reload()"><i class="fas fa-redo"></i> JOGAR DE NOVO</button>
+                <button class="btn-other" style="height:60px; border-radius:30px; font-size:1.1rem; background:white; color:var(--primary-blue); border:3px solid var(--primary-blue); margin: 12px 0; width:100%; max-width:320px; font-weight:900; cursor:pointer;" onclick="openRDMenu()"><i class="fas fa-chart-line"></i> OUTRO NÍVEL</button>
+                <a href="${JOGO_CONFIG.linkVoltar}" style="height:60px; border-radius:30px; font-size:1.1rem; background:#e2e8f0; color:#64748b; text-decoration:none; display:flex; align-items:center; justify-content:center; width:100%; max-width:320px; font-weight:900;"><i class="fas fa-sign-out-alt"></i> SAIR</a>
             </div>
         </div>
     `;
 }
-
-window.gerarIntroJogo = function() { return JOGO_CATEGORIAS[categoriaAtiva].descricao; };
